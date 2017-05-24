@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  lupo:
+    image: datacite/lupo
+    ports:
+      - "8060:80"
+    volumes:
+      - ./:/home/app/webapp/
+      # - ./app:/home/app/webapp/app
+      # - ./config:/home/app/webapp/config
+      # - ./spec:/home/app/webapp/spec
+  memcached:
+    image: memcached:1.4.31

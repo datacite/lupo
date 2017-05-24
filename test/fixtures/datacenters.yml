@@ -1,0 +1,37 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  comments: MyString
+  contact_email: MyString
+  contact_name: MyString
+  created: 2017-05-23 14:26:26
+  doi_quota_allowed: 1
+  doi_quota_used: 1
+  domains: MyString
+  is_active: 
+  name: MyString
+  password: MyString
+  role_name: MyString
+  symbol: MyString
+  updated: 2017-05-23 14:26:26
+  version: 1
+  allocator: 1
+  experiments: MyString
+
+two:
+  comments: MyString
+  contact_email: MyString
+  contact_name: MyString
+  created: 2017-05-23 14:26:26
+  doi_quota_allowed: 1
+  doi_quota_used: 1
+  domains: MyString
+  is_active: 
+  name: MyString
+  password: MyString
+  role_name: MyString
+  symbol: MyString
+  updated: 2017-05-23 14:26:26
+  version: 1
+  allocator: 1
+  experiments: MyString
