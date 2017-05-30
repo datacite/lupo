@@ -5,6 +5,10 @@ require File.expand_path('../../config/environment', __FILE__)
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
+
+
+Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -71,10 +75,11 @@ Shoulda::Matchers.configure do |config|
 end
 
 # [...]
-RSpec.configuration do |config|
+RSpec.configure do |config|
   # [...]
   # add `FactoryGirl` methods
   config.include FactoryGirl::Syntax::Methods
+  config.include RequestSpecHelper, type: :request
 
   # start by truncating all the tables but then use the faster transaction strategy the rest of the time.
   config.before(:suite) do

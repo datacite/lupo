@@ -1,6 +1,7 @@
-class CreateDatacenters < ActiveRecord::Migration[5.1]
+class CreateDatacentres < ActiveRecord::Migration[5.1]
   def change
-    create_table :datacenters do |t|
+    create_table :datacentre do |t|
+      t.belongs_to :allocator, index: true
       t.string :comments
       t.string :contact_email
       t.string :contact_name

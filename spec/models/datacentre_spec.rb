@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 
-RSpec.describe Datacenter, type: :model  do
+RSpec.describe Datacentre, type: :model  do
   # pending "add some examples to (or delete) #{__FILE__}"
   #
   # Association test
