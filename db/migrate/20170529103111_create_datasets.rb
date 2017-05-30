@@ -16,5 +16,6 @@ class CreateDatasets < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
+    # rename_column :dataset, :datacentre_id, :datacentre
   end
 end

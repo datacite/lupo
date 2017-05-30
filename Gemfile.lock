@@ -181,6 +181,7 @@ GEM
     minitest (5.10.2)
     multi_json (1.12.1)
     multipart-post (2.0.0)
+    mysql2 (0.4.6)
     namae (0.10.2)
     nio4r (2.0.0)
     nokogiri (1.7.2)
@@ -193,7 +194,6 @@ GEM
     public_suffix (2.0.5)
     puma (3.8.2)
     rack (2.0.3)
-    rack-cors (0.4.1)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (5.1.1)
@@ -329,10 +329,10 @@ DEPENDENCIES
   lograge (~> 0.5)
   maremma (~> 3.5)
   multi_json
+  mysql2
   nokogiri (~> 1.6, >= 1.6.8)
   oj (~> 2.18, >= 2.18.1)
   puma (~> 3.7)
-  rack-cors
   rails (~> 5.1.1)
   rspec-rails (~> 3.5, >= 3.5.2)
   shoulda-matchers (~> 3.1)

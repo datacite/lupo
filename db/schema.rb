@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema.define(version: 20170529135915) do
 
-  create_table "allocator", force: :cascade do |t|
+  create_table "allocator", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "comments"
     t.string "contact_email"
     t.string "contact_name"
@@ -31,15 +31,15 @@ ActiveRecord::Schema.define(version: 20170529135915) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "allocator_prefixes", force: :cascade do |t|
-    t.integer "allocator_id"
-    t.integer "prefix_id"
-    t.index ["allocator_id"], name: "index_allocator_prefixes_on_allocator_id"
-    t.index ["prefix_id"], name: "index_allocator_prefixes_on_prefix_id"
+  create_table "allocator_prefixes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "allocator"
+    t.bigint "prefixes"
+    t.index ["allocator"], name: "index_allocator_prefixes_on_allocator"
+    t.index ["prefixes"], name: "index_allocator_prefixes_on_prefixes"
   end
 
-  create_table "datacentre", force: :cascade do |t|
-    t.integer "allocator_id"
+  create_table "datacentre", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "allocator_id"
     t.string "comments"
     t.string "contact_email"
     t.string "contact_name"
@@ -61,15 +61,15 @@ ActiveRecord::Schema.define(version: 20170529135915) do
     t.index ["allocator_id"], name: "index_datacentre_on_allocator_id"
   end
 
-  create_table "datacentre_prefixes", primary_key: "datacentre", force: :cascade do |t|
-    t.integer "datacentre_id"
-    t.integer "prefix_id"
-    t.index ["datacentre_id"], name: "index_datacentre_prefixes_on_datacentre_id"
-    t.index ["prefix_id"], name: "index_datacentre_prefixes_on_prefix_id"
+  create_table "datacentre_prefixes", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "datacentre"
+    t.bigint "prefixes"
+    t.index ["datacentre"], name: "index_datacentre_prefixes_on_datacentre"
+    t.index ["prefixes"], name: "index_datacentre_prefixes_on_prefixes"
   end
 
-  create_table "dataset", force: :cascade do |t|
-    t.integer "datacentre_id"
+  create_table "dataset", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.bigint "datacentre_id"
     t.datetime "created"
     t.string "doi"
     t.binary "is_active"
@@ -86,7 +86,7 @@ ActiveRecord::Schema.define(version: 20170529135915) do
     t.index ["datacentre_id"], name: "index_dataset_on_datacentre_id"
   end
 
-  create_table "prefix", force: :cascade do |t|
+  create_table "prefix", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.datetime "created"
     t.string "prefix"
     t.integer "version"

@@ -16,6 +16,12 @@ require "rails/test_unit/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+env_file = File.expand_path("../../.env", __FILE__)
+if File.exist?(env_file)
+  require 'dotenv'
+  Dotenv.load! env_file
+end
+
 module Lupo
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.

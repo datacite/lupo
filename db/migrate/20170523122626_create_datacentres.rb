@@ -21,5 +21,6 @@ class CreateDatacentres < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
+    # rename_column :datacentre, :allocator_id, :allocator
   end
 end

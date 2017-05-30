@@ -27,7 +27,7 @@ gem 'puma', '~> 3.7'
 #
 gem 'faker'
 
-gem 'rack-cors'
+# gem 'rack-cors'
 gem 'dotenv'
 gem 'multi_json'
 gem 'json', '~> 1.8', '>= 1.8.5'
@@ -44,6 +44,7 @@ gem 'librato-rails', '~> 1.4.2'
 gem 'gender_detector', '~> 0.1.2'
 # gem 'active_model_serializers', '~> 0.10.0'
 gem 'jsonapi-resources'
+gem 'mysql2'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5', '>= 3.5.2'

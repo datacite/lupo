@@ -12,3 +12,8 @@ services:
       # - ./spec:/home/app/webapp/spec
   memcached:
     image: memcached:1.4.31
+  db:
+    env_file: .env
+    image: mysql:5.6
+    ports:
+      - "3309:3306"
