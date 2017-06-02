@@ -3,4 +3,13 @@ class DatacentreResource < JSONAPI::Resource
   has_many :datasets
   has_many :prefixes
   has_one :allocator, class_name: 'Allocator', foreign_key: "allocator"
+
+  def meta(options)
+    {
+      total: @model.datasets.count
+    }
+   end
+
+
+
 end

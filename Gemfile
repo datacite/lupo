@@ -43,6 +43,7 @@ gem 'bugsnag', '~> 5.3'
 gem 'librato-rails', '~> 1.4.2'
 gem 'gender_detector', '~> 0.1.2'
 # gem 'active_model_serializers', '~> 0.10.0'
+gem 'jwt'
 gem 'jsonapi-resources'
 gem 'mysql2'
 
