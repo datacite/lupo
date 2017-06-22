@@ -14,18 +14,21 @@ class DatacentresController < JSONAPI::ResourceController
   #   render json: @datacentre
   # end
   #
-  # # POST /datacentres
-  # def create
-  #   @datacentre = datacentre.new(datacentre_params)
-  #
-  #   if @datacentre.save
-  #     render json: @datacentre, status: :created, location: @datacentre
-  #   else
-  #     render json: @datacentre.errors, status: :unprocessable_entity
-  #   end
-  # end
-  #
-  # # PATCH/PUT /datacentres/1
+  # POST /datacentres
+  def create
+    pp = datacentre_params
+    pp[:allocator] = Allocator.find(datacentre_params[:allocator])
+    puts pp.inspect
+    @datacentre = Datacentre.new(pp)
+
+    if @datacentre.save
+      render json: @datacentre, status: :created, location: @datacentre
+    else
+      render json: @datacentre.errors, status: :unprocessable_entity
+    end
+  end
+
+  # PATCH/PUT /datacentres/1
   # def update
   #   if @datacentre.update(datacentre_params)
   #     render json: @datacentre
@@ -38,15 +41,15 @@ class DatacentresController < JSONAPI::ResourceController
   # def destroy
   #   @datacentre.destroy
   # end
-  #
-  # private
-  #   # Use callbacks to share common setup or constraints between actions.
-  #   def set_datacentre
-  #     @datacentre = datacentre.find(params[:id])
-  #   end
-  #
-  #   # Only allow a trusted parameter "white list" through.
-  #   def datacentre_params
-  #     params.require(:datacentre).permit(:comments, :contact_email, :contact_name, :created, :doi_quota_allowed, :doi_quota_used, :domains, :is_active, :name, :password, :role_name, :symbol, :updated, :version, :allocator, :experiments)
-  #   end
+
+  private
+    # Use callbacks to share common setup or constraints between actions.
+    def set_datacentre
+      @datacentre = Datacentre.find(params[:id])
+    end
+
+    # Only allow a trusted parameter "white list" through.
+    def datacentre_params
+      params[:data].require(:attributes).permit(:comments, :contact_email, :contact_name, :created, :doi_quota_allowed, :doi_quota_used, :domains, :is_active, :name, :password, :role_name, :symbol, :updated, :version, :allocator, :experiments)
+    end
 end

@@ -15,9 +15,11 @@ class DatasetsController < JSONAPI::ResourceController
   #
   # # POST /datasets
   def create
-    dataset_params[:datacentre] =  Datacentre.find(dataset_params[:datacentre])
-    @dataset = Dataset.new(dataset_params)
-    puts params[:data][:attributes].inspect
+    pp = dataset_params
+    pp[:datacentre] = Datacentre.find(dataset_params[:datacentre])
+    puts pp.inspect
+    @dataset = Dataset.new(pp)
+
     if @dataset.save
       render json: @dataset, status: :created, location: @dataset
     else

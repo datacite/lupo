@@ -13,14 +13,12 @@ class DatacentreResource < JSONAPI::Resource
     }
   end
 
-  # def allocator(context = nil)
-  #  super - [:allocator]
-  #  AllocatorResource.find_by_key(@model.allocator.id)
-  # end
-  #
-  # def allocator_id(context = {})
-  #  super - [:allocator]
-  #  @model.allocator.id
-  # end
+  def allocator()
+   AllocatorResource.find_by_key(@model.allocator.id)
+  end
+
+  def allocator_id()
+   @model.allocator.id
+  end
 
 end
