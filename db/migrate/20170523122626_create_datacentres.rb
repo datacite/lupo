@@ -16,7 +16,7 @@ class CreateDatacentres < ActiveRecord::Migration[5.1]
       t.string :symbol
       t.datetime :updated
       t.integer :version
-      t.integer :allocator
+      t.bigint :allocator
       t.string :experiments
 
       t.timestamps

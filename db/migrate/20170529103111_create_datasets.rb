@@ -11,7 +11,7 @@ class CreateDatasets < ActiveRecord::Migration[5.1]
       t.string :last_metadata_status
       t.datetime :updated
       t.integer :version
-      t.integer :datacentre
+      t.bigint :datacentre
       t.datetime :minted
 
       t.timestamps

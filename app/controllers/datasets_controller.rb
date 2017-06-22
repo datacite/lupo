@@ -14,15 +14,16 @@ class DatasetsController < JSONAPI::ResourceController
   # end
   #
   # # POST /datasets
-  # def create
-  #   @dataset = Dataset.new(dataset_params)
-  #
-  #   if @dataset.save
-  #     render json: @dataset, status: :created, location: @dataset
-  #   else
-  #     render json: @dataset.errors, status: :unprocessable_entity
-  #   end
-  # end
+  def create
+    dataset_params[:datacentre] =  Datacentre.find(dataset_params[:datacentre])
+    @dataset = Dataset.new(dataset_params)
+    puts params[:data][:attributes].inspect
+    if @dataset.save
+      render json: @dataset, status: :created, location: @dataset
+    else
+      render json: @dataset.errors, status: :unprocessable_entity
+    end
+  end
   #
   # # PATCH/PUT /datasets/1
   # def update
@@ -45,7 +46,8 @@ class DatasetsController < JSONAPI::ResourceController
   #   end
   #
   #   # Only allow a trusted parameter "white list" through.
-  #   def dataset_params
-  #     params.require(:dataset).permit(:created, :doi, :is_active, :is_ref_quality, :last_landing_page_status, :last_landing_page_status_check, :last_landing_page_status_check, :updated, :version, :datacenter, :minted)
-  #   end
+  def dataset_params
+    params[:data][:attributes].permit(:created, :doi, :is_active, :is_ref_quality, :last_landing_page_status, :last_landing_page_status_check, :last_landing_page_status_check, :updated, :version, :datacentre, :minted)
+    # params[:data][:attributes]
+  end
 end

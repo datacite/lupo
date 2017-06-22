@@ -45,6 +45,7 @@ gem 'gender_detector', '~> 0.1.2'
 # gem 'active_model_serializers', '~> 0.10.0'
 gem 'jwt'
 gem 'jsonapi-resources'
+gem 'jsonapi-utils', '~> 0.4.9'
 gem 'mysql2'
 
 group :development, :test do
