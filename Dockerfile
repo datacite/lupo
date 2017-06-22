@@ -44,12 +44,12 @@ COPY vendor/docker/cors.conf /etc/nginx/conf.d/cors.conf
 # Use Amazon NTP servers
 COPY vendor/docker/ntp.conf /etc/ntp.conf
 
-WORKDIR /tmp
-ADD Gemfile Gemfile
-ADD Gemfile.lock Gemfile.lock
-RUN gem update --system && \
-    gem install bundler && \
-    /sbin/setuser app bundle install
+# WORKDIR /tmp
+# ADD Gemfile Gemfile
+# ADD Gemfile.lock Gemfile.lock
+# RUN gem update --system && \
+#     gem install bundler && \
+#     /sbin/setuser app bundle install
 
 # Copy webapp folder
 COPY . /home/app/webapp/
@@ -58,10 +58,10 @@ RUN mkdir -p /home/app/webapp/vendor/bundle && \
     chmod -R 755 /home/app/webapp
 
 # Install Ruby gems
-# WORKDIR /home/app/webapp
-# RUN gem update --system && \
-#     gem install bundler && \
-#     /sbin/setuser app bundle install
+WORKDIR /home/app/webapp
+RUN gem update --system && \
+    gem install bundler && \
+    /sbin/setuser app bundle install
     #/sbin/setuser app bundle install --path vendor/bundle
 
 # Run additional scripts during container startup (i.e. not at build time)
