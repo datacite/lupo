@@ -5,12 +5,12 @@ class AllocatorsController < ApplicationController
   def index
     @allocators = Allocator.all
 
-    render json: @allocators
+    render json: @allocators, include: 'datacentres, prefixes'
   end
 
   # GET /allocators/1
   def show
-    render json: @allocator
+      render json: @allocator, include: @include
   end
 
   # POST /allocators
@@ -41,11 +41,15 @@ class AllocatorsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_allocator
-      @allocator = Allocator.find(params[:id])
+      @allocator = Allocator.find_by(symbol: params[:id])
+      fail ActiveRecord::RecordNotFound unless @allocator.present?
     end
 
     # Only allow a trusted parameter "white list" through.
     def allocator_params
-      params.require(:allocator).permit(:comments, :contact_email, :contact_name, :created, :doi_quota_allowed, :doi_quota_used, :is_active, :name, :password, :role_name, :symbol, :updated, :version, :experiments)
+
+      params[:data][:attributes] = params[:data][:attributes].transform_keys!{ |key| key.to_s.snakecase }
+
+      params[:data].require(:attributes).permit(:comments, :contact_email, :contact_name, :created, :doi_quota_allowed, :doi_quota_used, :is_active, :name, :password, :role_name, :symbol, :updated, :version, :experiments)
     end
 end

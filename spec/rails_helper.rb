@@ -4,10 +4,15 @@ ENV['RAILS_ENV'] ||= 'test'
 require File.expand_path('../../config/environment', __FILE__)
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
-require 'rspec/rails'
 
 
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+require "rspec/rails"
+require "shoulda-matchers"
+require "webmock/rspec"
+require "rack/test"
+require "colorize"
+require 'database_cleaner'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -63,7 +68,7 @@ Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
 
 # require database cleaner at the top level
-require 'database_cleaner'
+# require 'database_cleaner'
 
 # [...]
 # configure shoulda matchers to use rspec as the test framework and full matcher libraries for rails
@@ -74,12 +79,30 @@ Shoulda::Matchers.configure do |config|
   end
 end
 
+# VCR.configure do |c|
+#   c.cassette_library_dir = "spec/fixtures/vcr_cassettes"
+#   c.hook_into :webmock
+#   c.ignore_localhost = true
+#   c.ignore_hosts "codeclimate.com"
+#   c.filter_sensitive_data("<ORCID_CLIENT_ID>") { ENV["ORCID_CLIENT_ID"] }
+#   c.filter_sensitive_data("<ORCID_CLIENT_SECRET>") { ENV["ORCID_CLIENT_SECRET"] }
+#   c.filter_sensitive_data("<ORCID_AUTHENTICATION_TOKEN>") { ENV["ORCID_AUTHENTICATION_TOKEN"] }
+#   c.filter_sensitive_data("<LAGOTTO_TOKEN>") { ENV["LAGOTTO_TOKEN"] }
+#   c.filter_sensitive_data("<VOLPINO_TOKEN>") { ENV["VOLPINO_TOKEN"] }
+#   c.filter_sensitive_data("<GITHUB_PERSONAL_ACCESS_TOKEN>") { ENV["GITHUB_PERSONAL_ACCESS_TOKEN"] }
+#   c.configure_rspec_metadata!
+#   c.default_cassette_options = {
+#     :record => :once
+#   }
+# end
+
 # [...]
 RSpec.configure do |config|
   # [...]
   # add `FactoryGirl` methods
   config.include FactoryGirl::Syntax::Methods
   config.include RequestSpecHelper, type: :request
+
 
   # start by truncating all the tables but then use the faster transaction strategy the rest of the time.
   config.before(:suite) do

@@ -5,7 +5,7 @@ class PrefixesController < ApplicationController
   def index
     @prefixes = Prefix.all
 
-    render json: @prefixes
+    paginate json: @prefixes, include:'datacentres, allocators' , per_page: 25
   end
 
   # GET /prefixes/1
@@ -41,11 +41,15 @@ class PrefixesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_prefix
-      @prefix = Prefix.find(params[:id])
+      # @prefix = Prefix.find(params[:id])
+      @prefix = Prefix.find_by(prefix: params[:id])
+      fail ActiveRecord::RecordNotFound unless @prefix.present?
     end
 
     # Only allow a trusted parameter "white list" through.
     def prefix_params
-      params.require(:prefix).permit(:created, :prefix, :version, :datacentre)
+      params[:data][:attributes] = params[:data][:attributes].transform_keys!{ |key| key.to_s.snakecase }
+
+      params[:data].require(:attributes).permit(:created, :prefix, :version, :datacentre)
     end
 end

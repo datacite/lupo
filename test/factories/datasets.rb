@@ -1,15 +1,13 @@
 FactoryGirl.define do
   factory :dataset do
-    created "2017-05-29 12:31:11"
-    doi "MyString"
+    created {Faker::Time.backward(14, :evening)}
+    doi {Faker::Bitcoin.unique.address}
     is_active ""
-    is_ref_quality ""
-    last_landing_page_status 1
-    last_landing_page_status_check "2017-05-29 12:31:11"
-    last_metadata_status "MyString"
-    updated "2017-05-29 12:31:11"
+    updated {Faker::Time.backward(5, :evening)}
     version 1
-    datacentre 1
-    minted "2017-05-29 12:31:11"
+    minted {Faker::Time.backward(15, :evening)}
+
+
+    association :datacentre, factory: :datacentre, strategy: :build
   end
 end
