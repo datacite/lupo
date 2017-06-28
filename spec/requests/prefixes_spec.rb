@@ -53,32 +53,36 @@ RSpec.describe "Prefixes", type: :request   do
   # Test suite for POST /prefixes
   describe 'POST /prefixes' do
     # valid payload
-    # let(:valid_attributes) { { prefix: '10.202', version: '3'} }
-    #
-    # context 'when the request is valid' do
-    #   before { post '/prefixes', params: valid_attributes, headers: headers }
-    #
-    #   it 'creates a prefix' do
-    #     puts json
-    #     expect(json['name']).to eq('10.202')
-    #   end
-    #
-    #   it 'returns status code 201' do
-    #     expect(response).to have_http_status(201)
-    #   end
-    # end
-    #
-    # context 'when the request is invalid' do
-    #   before { post '/prefixes', params: { version: '7' }, headers: headers }
-    #
-    #   it 'returns status code 422' do
-    #     expect(response).to have_http_status(422)
-    #   end
-    #
-    #   # it 'returns a validation failure message' do
-    #   #   expect(response.body).to match(/Validation failed: Created by can't be blank/)
-    #   # end
-    # end
+    let(:valid_attributes) { ActiveModelSerializers::Adapter.create(PrefixSerializer.new(FactoryGirl.build(:prefix)), {adapter: "json_api"}).to_json }
+
+    context 'when the request is valid' do
+      before { post '/prefixes', params: valid_attributes, headers: headers }
+
+      it 'creates a prefix' do
+        expect(json['data']['attributes']['prefix']).to eq(JSON.parse(valid_attributes)['data']['attributes']['prefix'])
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+    end
+
+    context 'when the request is invalid' do
+      let(:not_valid_attributes) { ActiveModelSerializers::Adapter.create(DatacentreSerializer.new(FactoryGirl.build(:datacentre)), {adapter: "json_api"}).to_json }
+
+      before { post '/prefixes', params: not_valid_attributes }
+
+      it 'returns status code 500' do
+        expect(response).to have_http_status(500)
+      end
+      # it 'returns status code 422' do
+      #   expect(response).to have_http_status(422)
+      # end
+
+      # it 'returns a validation failure message' do
+      #   expect(response.body).to match(/Validation failed: Created by can't be blank/)
+      # end
+    end
   end
 
   # # Test suite for PUT /prefixes/:id

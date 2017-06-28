@@ -52,32 +52,36 @@ RSpec.describe "Datasets", type: :request  do
   # Test suite for POST /datasets
   describe 'POST /datasets' do
     # valid payload
-    # let(:valid_attributes) { { doi: '10.5072/MRYN-36VS', datacentre: 121212} }
-    #
-    # context 'when the request is valid' do
-    #   before { post '/datasets', params: valid_attributes, headers: headers }
-    #
-    #   it 'creates a Dataset' do
-    #     puts json
-    #     expect(json['doi']).to eq('10.5072/MRYN-36VS')
-    #   end
-    #
-    #   it 'returns status code 201' do
-    #     expect(response).to have_http_status(201)
-    #   end
-    # end
-    #
-    # context 'when the request is invalid' do
-    #   before { post '/datasets', params: { datacentre: 222 }, headers: headers }
-    #
-    #   it 'returns status code 422' do
-    #     expect(response).to have_http_status(422)
-    #   end
-    #
-    #   # it 'returns a validation failure message' do
-    #   #   expect(response.body).to match(/Validation failed: Created by can't be blank/)
-    #   # end
-    # end
+    let!(:datacentre)  { create(:datacentre) }
+    let(:valid_attributes) { ActiveModelSerializers::Adapter.create(DatasetSerializer.new(FactoryGirl.build(:dataset, datacentre: datacentre)), {adapter: "json_api"}).to_json }
+
+    context 'when the request is valid' do
+      before { post '/datasets', params: valid_attributes, headers: headers }
+
+      it 'creates a Dataset' do
+        expect(json['data']['attributes']['doi']).to eq(JSON.parse(valid_attributes)['data']['attributes']['doi'])
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+    end
+
+    context 'when the request is invalid' do
+      let(:not_valid_attributes) { ActiveModelSerializers::Adapter.create(DatacentreSerializer.new(FactoryGirl.build(:datacentre)), {adapter: "json_api"}).to_json }
+      before { post '/datasets', params: not_valid_attributes }
+
+      it 'returns status code 500' do
+        expect(response).to have_http_status(500)
+      end
+      # it 'returns status code 422' do
+      #   expect(response).to have_http_status(422)
+      # end
+
+      # it 'returns a validation failure message' do
+      #   expect(response.body).to match(/Validation failed: Created by can't be blank/)
+      # end
+    end
   end
 
   # # Test suite for PUT /datasets/:id

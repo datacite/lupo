@@ -5,12 +5,12 @@ class AllocatorsController < ApplicationController
   def index
     @allocators = Allocator.all
 
-    render json: @allocators, include: 'datacentres, prefixes'
+    paginate json: @allocators, include: 'datacentres, prefixes', per_page: 25
   end
 
   # GET /allocators/1
   def show
-      render json: @allocator, include: @include
+      render json: @allocator, include: 'datacentres, prefixes'
   end
 
   # POST /allocators

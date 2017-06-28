@@ -52,7 +52,8 @@ RSpec.describe 'Datacentres',  type: :request  do
   # Test suite for POST /datacentres
   describe 'POST /datacentres' do
     # valid payload
-    let(:valid_attributes) { ActiveModelSerializers::Adapter.create(DatacentreSerializer.new(FactoryGirl.build(:datacentre)), {adapter: "json_api"}).to_json }
+    let!(:allocator)  { create(:allocator) }
+    let(:valid_attributes) { ActiveModelSerializers::Adapter.create(DatacentreSerializer.new(FactoryGirl.build(:datacentre, allocator: allocator)), {adapter: "json_api"}).to_json }
 
     context 'when the request is valid' do
       before { post '/datacentres', params: valid_attributes, headers: headers }
