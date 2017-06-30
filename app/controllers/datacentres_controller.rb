@@ -1,5 +1,6 @@
 class DatacentresController < ApplicationController
 # class DatacentresController < JSONAPI::ResourceController
+  # before_action :authenticate_request #, only: [:create, :update, :destroy]
   before_action :set_datacentre, only: [:show, :update, :destroy]
 
   # GET /datacentres
@@ -17,13 +18,14 @@ class DatacentresController < ApplicationController
   # POST /datacentres
   def create
     pp = datacentre_params
-    pp[:allocator] = Allocator.find(datacentre_params[:allocator])
+    pp[:allocator] = Allocator.find_by(symbol: datacentre_params[:allocator])
     @datacentre = Datacentre.new(pp)
 
     if @datacentre.save
       render json: @datacentre, status: :created, location: @datacentre
     else
       render json: @datacentre.errors, status: :unprocessable_entity
+      # render json: ErrorSerializer.serialize(@datacentre.errors) #, status: :unprocessable_entity
     end
   end
 

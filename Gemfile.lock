@@ -48,6 +48,7 @@ GEM
     aggregate (0.2.2)
     api-pagination (4.6.3)
     arel (8.0.0)
+    bcrypt (3.1.11)
     benchmark_methods (0.7)
     better_errors (2.1.1)
       coderay (>= 1.0.0)
@@ -274,6 +275,7 @@ GEM
     safe_yaml (1.0.4)
     shoulda-matchers (3.1.1)
       activesupport (>= 4.0.0)
+    simple_command (0.0.9)
     simplecov (0.13.0)
       docile (~> 1.1.0)
       json (>= 1.8, < 3)
@@ -320,6 +322,7 @@ PLATFORMS
 DEPENDENCIES
   active_model_serializers (~> 0.10.0)
   api-pagination
+  bcrypt (~> 3.1.7)
   better_errors
   binding_of_caller
   bolognese (~> 0.9)
@@ -351,6 +354,7 @@ DEPENDENCIES
   rails (~> 5.1.1)
   rspec-rails (~> 3.5, >= 3.5.2)
   shoulda-matchers (~> 3.1)
+  simple_command
   simplecov
   spring
   spring-watcher-listen (~> 2.0.0)

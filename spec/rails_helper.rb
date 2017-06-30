@@ -79,22 +79,6 @@ Shoulda::Matchers.configure do |config|
   end
 end
 
-# VCR.configure do |c|
-#   c.cassette_library_dir = "spec/fixtures/vcr_cassettes"
-#   c.hook_into :webmock
-#   c.ignore_localhost = true
-#   c.ignore_hosts "codeclimate.com"
-#   c.filter_sensitive_data("<ORCID_CLIENT_ID>") { ENV["ORCID_CLIENT_ID"] }
-#   c.filter_sensitive_data("<ORCID_CLIENT_SECRET>") { ENV["ORCID_CLIENT_SECRET"] }
-#   c.filter_sensitive_data("<ORCID_AUTHENTICATION_TOKEN>") { ENV["ORCID_AUTHENTICATION_TOKEN"] }
-#   c.filter_sensitive_data("<LAGOTTO_TOKEN>") { ENV["LAGOTTO_TOKEN"] }
-#   c.filter_sensitive_data("<VOLPINO_TOKEN>") { ENV["VOLPINO_TOKEN"] }
-#   c.filter_sensitive_data("<GITHUB_PERSONAL_ACCESS_TOKEN>") { ENV["GITHUB_PERSONAL_ACCESS_TOKEN"] }
-#   c.configure_rspec_metadata!
-#   c.default_cassette_options = {
-#     :record => :once
-#   }
-# end
 
 # [...]
 RSpec.configure do |config|
@@ -104,17 +88,17 @@ RSpec.configure do |config|
   config.include RequestSpecHelper, type: :request
 
 
-  # # start by truncating all the tables but then use the faster transaction strategy the rest of the time.
-  # config.before(:suite) do
-  #   DatabaseCleaner.clean_with(:truncation)
-  #   DatabaseCleaner.strategy = :transaction
-  # end
-  #
-  # # start the transaction strategy as examples are run
-  # config.around(:each) do |example|
-  #   DatabaseCleaner.cleaning do
-  #     example.run
-  #   end
-  # end
+  # start by truncating all the tables but then use the faster transaction strategy the rest of the time.
+  config.before(:suite) do
+    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  # start the transaction strategy as examples are run
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
+  end
   # [...]
 end

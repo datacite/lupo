@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  post 'authenticate', to: 'authentication#authenticate'
   # jsonapi_resources :datasets
   # jsonapi_resources :allocators
   # jsonapi_resources :prefixes
