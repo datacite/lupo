@@ -2,7 +2,6 @@ class AuthenticationController < ApplicationController
   skip_before_action :authenticate_request
 
   def authenticate
-    puts params
     command = AuthenticateDatacentre.call(params[:symbol], params[:password])
 
     if command.success?

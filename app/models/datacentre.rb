@@ -7,6 +7,7 @@ class Datacentre < ApplicationRecord
   has_and_belongs_to_many :prefixes, class_name: 'Prefix', join_table: "datacentre_prefixes", foreign_key: :prefixes, association_foreign_key: :datacentre
   belongs_to :allocator, class_name: 'Allocator', foreign_key: :allocator
   has_many :datasets
+
   # attr_accessor :password_digest
   # has_secure_password
 
