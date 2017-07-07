@@ -3,7 +3,7 @@
 [![Identifier](https://img.shields.io/badge/doi-10.5438%2Ft1jg--hvhn-fca709.svg)](https://doi.org/10.5438/t1jg-hvhn)
 [![Build Status](https://travis-ci.org/datacite/lupo.svg?branch=master)](https://travis-ci.org/datacite/lupo) [![Code Climate](https://codeclimate.com/github/datacite/lupo/badges/gpa.svg)](https://codeclimate.com/github/datacite/lupo) [![Test Coverage](https://codeclimate.com/github/datacite/lupo/badges/coverage.svg)](https://codeclimate.com/github/datacite/lupo/coverage)
 
-Rails web application for conversion of DOI metadata into different metadata formats, including [schema.org](https://schema.org). Based on the [bolognese](https://github.com/datacite/bolognese) library for metadata conversion.
+Rails API only application for managing the Members, Datacentres and Prefixes from the DataCite database. The API is based on the JSONAPI specification.
 
 ## Installation
 
