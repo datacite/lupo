@@ -1,16 +1,21 @@
 require 'jwt'
 class JsonWebToken
   class << self
-    def encode(payload, exp = 24.hours.from_now)
-      payload[:exp] = exp.to_i
-      JWT.encode(payload, Rails.application.secrets.secret_key_base)
+    def encode_token(payload)
+      # replace newline characters with actual newlines
+      private_key = OpenSSL::PKey::RSA.new(ENV['JWT_PRIVATE_KEY'].to_s.gsub('\n', "\n"))
+      JWT.encode(payload, private_key, 'RS256')
     end
-    def decode(token)
-      body = JWT.decode token, Rails.application.secrets.secret_key_base, false, { :algorithm => 'HS256' }
-      # body = JWT.decode(token, Rails.application.secrets.secret_key_base)[0]
-      HashWithIndifferentAccess.new body
-    rescue
-      nil
+
+    # decode token using SHA-256 hash algorithm
+    def decode_token(token)
+      public_key = OpenSSL::PKey::RSA.new(ENV['JWT_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
+      payload = (JWT.decode token, public_key, true, { :algorithm => 'RS256' }).first
+
+      # check whether token has expired
+      return {} unless Time.now.to_i < payload["exp"]
+      payload
     end
+    nil
   end
 end

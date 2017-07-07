@@ -33,7 +33,7 @@ class ApplicationController < ActionController::API
     token = token_from_request_headers
     raise CanCan::AccessDenied unless token.present? && token.length > 25
 
-    payload = decode_token(token)
+    payload = JsonWebToken.decode_token(token)
     raise CanCan::AccessDenied unless payload.present?
 
     User.new(payload)
@@ -48,15 +48,6 @@ class ApplicationController < ActionController::API
     unless request.headers['Authorization'].nil?
       request.headers['Authorization'].split.last
     end
-  end
-
-  def decode_token(token)
-    public_key = OpenSSL::PKey::RSA.new(ENV['JWT_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
-    payload = (JWT.decode token, public_key, true, { :algorithm => 'RS256' }).first
-
-    # check whether token has expired
-    return {} unless Time.now.to_i < payload["exp"]
-    payload
   end
 
   unless Rails.env.development?

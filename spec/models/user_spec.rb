@@ -13,27 +13,52 @@ RSpec.describe User, type: :model do
     end
   end
 
-  # describe "abilities" do
-  #   subject(:ability){ Ability.new(User.new(FactoryGirl.attributes_for(:user))) }
-  #   # let(:user){ nil }
-  #
-  #   context "when is an datacentre admin" do
-  #     # let(:user){ Factory(:datacentre_admin) }
-  #     it "madsds" do
-  #       puts ability
-  #     end
-  #
-  #     it{ should be_able_to(:update, FactoryGirl.create(:datacentre)) }
-  #     # it{ should_not be_able_to(:update, Allocator.new) }
-  #   end
-  # end
-
   describe "abilities" do
     subject(:ability){ Ability.new(User.new(FactoryGirl.attributes_for(:user))) }
-    let(:user){ FactoryGirl.build(:user, roles: [role]) }
+    let(:user){ {name: "kris" , uid: 11222, email: "kdskd@dsds", role: "member_user", jwt: "ds", orcid: "sds", member_id:"TIB", datacenter_id:"TIB.PANGAEA"} }
 
-    context "when is a admin" do
+    context "when is a data centre admin" do
       let(:role){ "datacentre_admin" }
+
+      it{ is_expected.not_to be_able_to(:create, Allocator.new) }
+      it{ is_expected.to be_able_to(:read, FactoryGirl.create(:datacentre)) }
+      it{ is_expected.not_to be_able_to(:update, Allocator.new) }
+      it{ is_expected.not_to be_able_to(:destroy, Allocator.new) }
+    end
+    context "when is a data centre user" do
+      let(:role){ "datacentre_user" }
+
+      it{ is_expected.not_to be_able_to(:create, Allocator.new) }
+      it{ is_expected.to be_able_to(:read, FactoryGirl.create(:datacentre)) }
+      it{ is_expected.not_to be_able_to(:update, Allocator.new) }
+      it{ is_expected.not_to be_able_to(:destroy, Allocator.new) }
+    end
+    context "when is a anonymous" do
+      let(:role){ "anonymous" }
+
+      it{ is_expected.not_to be_able_to(:read, Allocator.new) }
+      it{ is_expected.to be_able_to(:read, Dataset.new) }
+      it{ is_expected.not_to be_able_to(:update, Allocator.new) }
+      it{ is_expected.not_to be_able_to(:destroy, Allocator.new) }
+    end
+    context "when is a member admin" do
+      let(:role){ "member_admin" }
+
+      it{ is_expected.not_to be_able_to(:create, Allocator.new) }
+      it{ is_expected.to be_able_to(:read, FactoryGirl.create(:datacentre)) }
+      it{ is_expected.not_to be_able_to(:update, Allocator.new) }
+      it{ is_expected.not_to be_able_to(:destroy, Allocator.new) }
+    end
+    context "when is a member user" do
+      let(:role){ "member_user" }
+
+      it{ is_expected.not_to be_able_to(:create, Allocator.new) }
+      it{ is_expected.to be_able_to(:read, FactoryGirl.create(:datacentre)) }
+      it{ is_expected.not_to be_able_to(:update, Allocator.new) }
+      it{ is_expected.not_to be_able_to(:destroy, Allocator.new) }
+    end
+    context "when is a staff admin" do
+      let(:role){ "staff_admin" }
 
       it{ is_expected.not_to be_able_to(:create, Allocator.new) }
       it{ is_expected.to be_able_to(:read, FactoryGirl.create(:datacentre)) }
