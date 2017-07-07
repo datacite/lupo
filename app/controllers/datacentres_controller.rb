@@ -2,12 +2,40 @@ class DatacentresController < ApplicationController
 # class DatacentresController < JSONAPI::ResourceController
   # before_action :authenticate_request #, only: [:create, :update, :destroy]
   before_action :set_datacentre, only: [:show, :update, :destroy]
+  load_and_authorize_resource
 
   # GET /datacentres
   def index
-    @datacentres = Datacentre.all
 
-    paginate json: @datacentres, include:'allocators, prefixes', per_page: 25
+    collection = Datacentre
+    collection = collection.query(params[:query]) if params[:query]
+
+    if params[:allocator].present?
+      collection = collection.where(allocator: params[:allocator])
+      @allocator = collection.where(allocator: params[:allocator]).group(:allocator).count.first
+    end
+
+    if params[:allocator].present?
+      allocators = [{ id: params[:allocator],
+                 member: params[:allocator],
+                 count: Datacentre.where(allocator: params[:allocator]).count }]
+    else
+      allocators = Datacentre.where.not(allocator: nil).order("allocator DESC").group(:allocator).count
+      allocators = allocators.map { |k,v| { id: k.id.to_s, member: k.symbol.to_s, count: v } }
+    end
+    #
+    page = params[:page] || { number: 1, size: 1000 }
+    #
+    @datacentres = Datacentre.order(:allocator).page(page[:number]).per_page(page[:size])
+    #
+    meta = { total: @datacentres.total_entries,
+             total_pages: @datacentres.total_pages ,
+             page: page[:number].to_i,
+            #  member_types: member_types,
+            #  regions: regions,
+             members: allocators }
+
+    paginate json: @datacentres, meta: meta, per_page: 25
   end
 
   # GET /datacentres/1
@@ -19,6 +47,8 @@ class DatacentresController < ApplicationController
   def create
     pp = datacentre_params
     pp[:allocator] = Allocator.find_by(symbol: datacentre_params[:allocator])
+    # puts pp[:allocator].inspect
+    puts "marafa"
     @datacentre = Datacentre.new(pp)
 
     if @datacentre.save

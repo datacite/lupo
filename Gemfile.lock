@@ -78,7 +78,7 @@ GEM
     bugsnag (5.3.3)
     builder (3.2.3)
     byebug (9.0.6)
-    cancancan (1.9.2)
+    cancancan (1.17.0)
     capybara (2.14.3)
       addressable
       mime-types (>= 1.16)
@@ -142,6 +142,10 @@ GEM
       multi_json (~> 1.12)
       rdf (~> 2.2)
     jsonapi-renderer (0.1.2)
+    jsonapi-resources (0.9.0)
+      activerecord (>= 4.1)
+      concurrent-ruby
+      railties (>= 4.1)
     jsonlint (0.2.0)
       oj (~> 2)
       trollop (~> 2)
@@ -328,7 +332,7 @@ DEPENDENCIES
   bolognese (~> 0.9)
   bugsnag (~> 5.3)
   byebug
-  cancancan (~> 1.9.2)
+  cancancan (~> 1.10)
   capybara
   codeclimate-test-reporter (~> 1.0.0)
   dalli (~> 2.7.6)
@@ -341,6 +345,7 @@ DEPENDENCIES
   gender_detector (~> 0.1.2)
   iso8601 (~> 0.9.0)
   json (~> 1.8, >= 1.8.5)
+  jsonapi-resources
   jwt
   librato-rails (~> 1.4.2)
   listen (>= 3.0.5, < 3.2)

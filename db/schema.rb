@@ -12,109 +12,86 @@
 
 ActiveRecord::Schema.define(version: 20170613131615) do
 
-  create_table "allocator", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string "contact_email", null: false
-    t.string "contact_name", limit: 80, null: false
+  create_table "allocator", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+    t.string "comments"
+    t.string "contact_email"
+    t.string "contact_name"
     t.datetime "created"
-    t.integer "doi_quota_allowed", null: false
-    t.integer "doi_quota_used", null: false
-    t.binary "is_active", limit: 1
-    t.string "name", null: false
+    t.integer "doi_quota_allowed"
+    t.integer "doi_quota_used"
+    t.binary "is_active"
+    t.string "name"
     t.string "password"
     t.string "role_name"
-    t.string "symbol", null: false
+    t.string "symbol"
     t.datetime "updated"
     t.integer "version"
-    t.text "comments", limit: 4294967295
     t.string "experiments"
-    t.index ["symbol"], name: "symbol", unique: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "allocator_prefixes", primary_key: ["allocator", "prefixes"], force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.bigint "allocator", null: false
-    t.bigint "prefixes", null: false
-    t.index ["allocator"], name: "FKE7FBD67446EBD781"
-    t.index ["prefixes"], name: "FKE7FBD674AF86A1C7"
+  create_table "allocator_prefixes", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+    t.bigint "allocator"
+    t.bigint "prefixes"
+    t.index ["allocator"], name: "index_allocator_prefixes_on_allocator"
+    t.index ["prefixes"], name: "index_allocator_prefixes_on_prefixes"
   end
 
-  create_table "datacentre", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.text "comments", limit: 4294967295
-    t.string "contact_email", null: false
-    t.string "contact_name", limit: 80, null: false
+  create_table "datacentre", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+    t.bigint "allocator_id"
+    t.string "comments"
+    t.string "contact_email"
+    t.string "contact_name"
     t.datetime "created"
-    t.integer "doi_quota_allowed", null: false
-    t.integer "doi_quota_used", null: false
+    t.integer "doi_quota_allowed"
+    t.integer "doi_quota_used"
     t.string "domains"
-    t.binary "is_active", limit: 1
-    t.string "name", null: false
+    t.binary "is_active"
+    t.string "name"
     t.string "password"
     t.string "role_name"
-    t.string "symbol", null: false
+    t.string "symbol"
     t.datetime "updated"
     t.integer "version"
-    t.bigint "allocator", null: false
+    t.bigint "allocator"
     t.string "experiments"
-    t.index ["allocator"], name: "FK6695D60546EBD781"
-    t.index ["symbol"], name: "symbol", unique: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["allocator_id"], name: "index_datacentre_on_allocator_id"
   end
 
-  create_table "datacentre_prefixes", primary_key: ["datacentre", "prefixes"], force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.bigint "datacentre", null: false
-    t.bigint "prefixes", null: false
-    t.index ["datacentre"], name: "FK13A1B3BA47B5F5FF"
-    t.index ["prefixes"], name: "FK13A1B3BAAF86A1C7"
+  create_table "datacentre_prefixes", id: false, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+    t.bigint "datacentre"
+    t.bigint "prefixes"
+    t.index ["datacentre"], name: "index_datacentre_prefixes_on_datacentre"
+    t.index ["prefixes"], name: "index_datacentre_prefixes_on_prefixes"
   end
 
-  create_table "dataset", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "dataset", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+    t.bigint "datacentre_id"
     t.datetime "created"
-    t.string "doi", null: false
-    t.binary "is_active", limit: 1, null: false
-    t.binary "is_ref_quality", limit: 1
+    t.string "doi"
+    t.binary "is_active"
+    t.binary "is_ref_quality"
     t.integer "last_landing_page_status"
     t.datetime "last_landing_page_status_check"
     t.string "last_metadata_status"
     t.datetime "updated"
     t.integer "version"
-    t.bigint "datacentre", null: false
+    t.bigint "datacentre"
     t.datetime "minted"
-    t.index ["datacentre"], name: "FK5605B47847B5F5FF"
-    t.index ["doi"], name: "doi", unique: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["datacentre_id"], name: "index_dataset_on_datacentre_id"
   end
 
-  create_table "media", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "prefix", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
     t.datetime "created"
-    t.string "media_type", limit: 80
-    t.datetime "updated"
-    t.string "url", null: false
+    t.string "prefix"
     t.integer "version"
-    t.bigint "dataset", null: false
-    t.index ["dataset"], name: "FK62F6FE44D3D6B1B"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
-  create_table "metadata", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.datetime "created"
-    t.integer "metadata_version"
-    t.integer "version"
-    t.binary "xml", limit: 16777215
-    t.bigint "dataset", null: false
-    t.binary "is_converted_by_mds", limit: 1
-    t.string "namespace"
-    t.index ["dataset"], name: "FKE52D7B2F4D3D6B1B"
-  end
-
-  create_table "prefix", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.datetime "created"
-    t.string "prefix", limit: 80, null: false
-    t.integer "version"
-    t.index ["prefix"], name: "prefix", unique: true
-  end
-
-  add_foreign_key "allocator_prefixes", "allocator", column: "allocator", name: "FKE7FBD67446EBD781"
-  add_foreign_key "allocator_prefixes", "prefix", column: "prefixes", name: "FKE7FBD674AF86A1C7"
-  add_foreign_key "datacentre", "allocator", column: "allocator", name: "FK6695D60546EBD781"
-  add_foreign_key "datacentre_prefixes", "datacentre", column: "datacentre", name: "FK13A1B3BA47B5F5FF"
-  add_foreign_key "datacentre_prefixes", "prefix", column: "prefixes", name: "FK13A1B3BAAF86A1C7"
-  add_foreign_key "dataset", "datacentre", column: "datacentre", name: "FK5605B47847B5F5FF"
-  add_foreign_key "media", "dataset", column: "dataset", name: "FK62F6FE44D3D6B1B"
-  add_foreign_key "metadata", "dataset", column: "dataset", name: "FKE52D7B2F4D3D6B1B"
 end

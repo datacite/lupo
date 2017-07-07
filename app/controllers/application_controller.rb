@@ -1,32 +1,9 @@
 class ApplicationController < ActionController::API
   include Authenticable
-  # include ApplicationHelper
+  include CanCan::ControllerAdditions
   require 'facets/string/snakecase'
+  require 'jwt'
 
-#   load_and_authorize_resource
-#
-#   before_action :authenticate_request #, only: [:show, :update, :destroy]
-#
-#
-#   # attr_reader :current_user
-#
-#   private
-#
-#   def authenticate_request
-#     user = call(request.headers)
-#
-#     # @current_user = call(request.headers).result
-#     render json: error_message, status: 401, content_type: "application/json" unless user
-#   end
-#
-#   def error_message
-#     { errors: [{ status: 401,
-#       title: 'Not Authorized' }]
-#     }
-#   end
-#
-# end
-  before_action :authenticate_user_from_token!
   before_action :default_format_json
   after_action :cors_set_access_control_headers, :set_jsonp_format
   # https://stackoverflow.com/questions/16519828/rails-4-before-filter-vs-before-action
@@ -52,15 +29,18 @@ class ApplicationController < ActionController::API
     request.format = :json if request.format.html?
   end
 
-  def authenticate_user_from_token!
+  def current_user
     token = token_from_request_headers
-    raise CanCan::AccessDenied unless token.present?
+    raise CanCan::AccessDenied unless token.present? && token.length > 25
 
     payload = decode_token(token)
     raise CanCan::AccessDenied unless payload.present?
 
-    # create user from token
-    @current_user = User.new(payload)
+    User.new(payload)
+  end
+
+  def current_ability
+    @current_ability ||= Ability.new(current_user)
   end
 
   # from https://github.com/nsarno/knock/blob/master/lib/knock/authenticable.rb
@@ -68,6 +48,15 @@ class ApplicationController < ActionController::API
     unless request.headers['Authorization'].nil?
       request.headers['Authorization'].split.last
     end
+  end
+
+  def decode_token(token)
+    public_key = OpenSSL::PKey::RSA.new(ENV['JWT_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
+    payload = (JWT.decode token, public_key, true, { :algorithm => 'RS256' }).first
+
+    # check whether token has expired
+    return {} unless Time.now.to_i < payload["exp"]
+    payload
   end
 
   unless Rails.env.development?

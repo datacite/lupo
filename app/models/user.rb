@@ -1,16 +1,17 @@
 class User
   # include jwt encode and decode
   ROLES = %i[admin superadmin staff user banned guest]
-  attr_accessor :name, :uid, :email, :role, :jwt, :orcid, :symbol
+
 
   include Authenticable
 
   attr_accessor :name, :uid, :email, :role, :jwt, :orcid, :member_id, :datacenter_id
 
-  def initialize(token)
-    payload = decode_token(token)
+  def initialize(payload)
+    # payload = decode_token(token)
 
-    @jwt = token
+
+    # @jwt = token
     @uid = payload.fetch("uid", nil)
     @name = payload.fetch("name", nil)
     @email = payload.fetch("email", nil)

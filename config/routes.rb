@@ -1,9 +1,8 @@
 Rails.application.routes.draw do
-  post 'authenticate', to: 'authentication#authenticate'
   # jsonapi_resources :datasets
   # jsonapi_resources :allocators
   # jsonapi_resources :prefixes
-  # jsonapi_resources :datacentres
+  # jsonapi_resources :datacentres, constraints: { :id => /.+/ }
   resources :datacentres, constraints: { :id => /.+/ }
   # resources :datasets
   resources :datasets, constraints: { :id => /.+/ }

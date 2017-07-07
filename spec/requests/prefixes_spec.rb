@@ -5,7 +5,8 @@ RSpec.describe "Prefixes", type: :request   do
   # initialize test data
   let!(:prefixes)  { create_list(:prefix, 10) }
   let(:prefix_id) { prefixes.first.prefix }
-  headers = {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json'}
+  auth = 'Bearer ' + ENV['JWT_TOKEN']
+  headers = {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => auth}
 
   # Test suite for GET /prefixes
   describe 'GET /prefixes' do

@@ -3,9 +3,35 @@ class DatasetsController < ApplicationController
   #
   # # # GET /datasets
   def index
-    @datasets = Dataset.all
+    collection = Dataset
+    collection = collection.query(params[:query]) if params[:query]
 
-    paginate json: @datasets, include:'datacentres' , per_page: 25
+    if params[:datacentre].present?
+      collection = collection.where(datacentre: params[:datacentre])
+      @datacentre = collection.where(datacentre: params[:datacentre]).group(:datacentre).count.first
+    end
+
+    if params[:datacentre].present?
+      datacentres = [{ id: params[:datacentre],
+                 datacentre: params[:datacentre],
+                 count: Dataset.where(datacentre: params[:datacentre]).count }]
+    else
+      datacentres = Dataset.where.not(datacentre: nil).order("datacentre DESC").group(:datacentre).count
+      datacentres = datacentres.map { |k,v| { id: k.id.to_s, datacentre: k.symbol.to_s, count: v } }
+    end
+    #
+    page = params[:page] || { number: 1, size: 1000 }
+    #
+    @datasets = Dataset.order(:datacentre).page(page[:number]).per_page(page[:size])
+    #
+    meta = { total: @datasets.total_entries,
+             total_pages: @datasets.total_pages ,
+             page: page[:number].to_i,
+            #  member_types: member_types,
+            #  regions: regions,
+             datacentres: datacentres }
+
+    paginate json: @datasets, meta: meta, per_page: 25
   end
   #
   # # # GET /datasets/1

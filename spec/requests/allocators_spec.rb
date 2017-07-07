@@ -4,7 +4,9 @@ RSpec.describe "Allocators", type: :request  do
   # initialize test data
   let!(:allocators)  { create_list(:allocator, 10) }
   let(:allocator_id) { allocators.first.symbol }
-  headers = {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json'}
+
+  auth = 'Bearer ' + ENV['JWT_TOKEN']
+  headers = {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => auth}
 
   # Test suite for GET /allocators
   describe 'GET /allocators' do

@@ -4,7 +4,8 @@ RSpec.describe "Datasets", type: :request  do
   # initialize test data
   let!(:datasets)  { create_list(:dataset, 10) }
   let(:dataset_id) { datasets.first.doi }
-  headers = {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json'}
+  auth = 'Bearer ' + ENV['JWT_TOKEN']
+  headers = {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => auth}
 
   # Test suite for GET /datasets
   describe 'GET /datasets' do

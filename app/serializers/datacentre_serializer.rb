@@ -4,6 +4,7 @@ class DatacentreSerializer < ActiveModel::Serializer
   has_many :prefixes
   belongs_to :allocator, serializer: AllocatorSerializer
 
+  # url [:allocators, :prefixes]
   #
   def allocator()
   #  AllocatorResource.find_by_key(@model.allocator.id)
@@ -19,6 +20,7 @@ class DatacentreSerializer < ActiveModel::Serializer
   def id
     object.symbol
   end
+
 
   def meta(options)
     {

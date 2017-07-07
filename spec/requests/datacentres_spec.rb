@@ -4,7 +4,8 @@ RSpec.describe 'Datacentres',  type: :request  do
   # initialize test data
   let!(:datacentres)  { create_list(:datacentre, 10) }
   let(:datacentre_id) { datacentres.first.symbol }
-  headers = {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json'}
+  auth = 'Bearer ' + ENV['JWT_TOKEN']
+  headers = {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => auth}
 
   # Test suite for GET /datacentres
   describe 'GET /datacentres' do
