@@ -1,0 +1,36 @@
+language: ruby
+rvm:
+- 2.3.3
+sudo: required
+
+services:
+  - mysql
+  - docker
+
+addons:
+  code_climate:
+    repo_token: $CODECLIMATE_REPO_TOKEN
+
+install:
+  - travis_retry bundle install
+
+before_script:
+  - mysql -e 'create database lupo_test;'
+  - memcached -p 11211 &
+  - cp .env.travis .env
+
+script:
+  - bundle exec rspec
+  - bundle exec codeclimate-test-reporter
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker login -u="$DOCKER_USER" -p="$DOCKER_PASS";
+    export REPO=datacite/lupo;
+    docker build -f Dockerfile -t $REPO:$COMMIT .;
+    docker push $REPO:$COMMIT;
+    fi
+
+notifications:
+  slack: datacite:Wt8En0ALoTA6Kjc5EOKNDWxN
+  email: false

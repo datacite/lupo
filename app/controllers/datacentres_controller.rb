@@ -45,11 +45,7 @@ class DatacentresController < ApplicationController
 
   # POST /datacentres
   def create
-    pp = datacentre_params
-    pp[:allocator] = Allocator.find_by(symbol: datacentre_params[:allocator])
-    # puts pp[:allocator].inspect
-    puts "marafa"
-    @datacentre = Datacentre.new(pp)
+    @datacentre = Datacentre.new(datacentre_params)
 
     if @datacentre.save
       render json: @datacentre, status: :created, location: @datacentre
@@ -61,10 +57,7 @@ class DatacentresController < ApplicationController
 
   # PATCH/PUT /datacentres/1
   def update
-    pp = datacentre_params
-    pp[:allocator] = Allocator.find(datacentre_params[:allocator])
-
-    if @datacentre.update(pp)
+    if @datacentre.update(datacentre_params)
       render json: @datacentre
     else
       render json: @datacentre.errors, status: :unprocessable_entity
@@ -88,6 +81,8 @@ class DatacentresController < ApplicationController
     def datacentre_params
       params[:data][:attributes] = params[:data][:attributes].transform_keys!{ |key| key.to_s.snakecase }
 
-      params[:data].require(:attributes).permit(:comments, :contact_email, :contact_name, :created, :doi_quota_allowed, :doi_quota_used, :domains, :is_active, :name, :password, :role_name, :symbol, :updated, :version, :allocator, :experiments)
+      dc_params = params[:data][:attributes].permit(:comments, :contact_email, :contact_name, :doi_quota_allowed, :doi_quota_used, :domains, :is_active, :name, :password, :role_name, :symbol, :version, :allocator, :experiments)
+      dc_params[:allocator] = Allocator.find_by(symbol: dc_params[:allocator])
+      dc_params
     end
 end

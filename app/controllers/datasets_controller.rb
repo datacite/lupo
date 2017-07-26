@@ -41,9 +41,7 @@ class DatasetsController < ApplicationController
 
   # # POST /datasets
   def create
-    pp = dataset_params
-    pp[:datacentre] = Datacentre.find(dataset_params[:datacentre])
-    @dataset = Dataset.new(pp)
+    @dataset = Dataset.new(dataset_params)
 
     if @dataset.save
       render json: @dataset, status: :created, location: @dataset
@@ -54,10 +52,7 @@ class DatasetsController < ApplicationController
   #
   # # PATCH/PUT /datasets/1
   def update
-    pp = dataset_params
-    pp[:datacentre] = Datacentre.find(dataset_params[:datacentre])
-
-    if @dataset.update(pp)
+    if @dataset.update(dataset_params)
       render json: @dataset
     else
       render json: @dataset.errors, status: :unprocessable_entity
@@ -81,6 +76,8 @@ class DatasetsController < ApplicationController
   def dataset_params
     params[:data][:attributes] = params[:data][:attributes].transform_keys!{ |key| key.to_s.snakecase }
 
-    params[:data].require(:attributes).permit(:created, :doi, :is_active, :is_ref_quality, :last_landing_page_status, :last_landing_page_status_check, :last_landing_page_status_check, :updated, :version, :datacentre, :minted)
+    ds_params= params[:data].require(:attributes).permit(:created, :doi, :is_active, :is_ref_quality, :last_landing_page_status, :last_landing_page_status_check, :last_landing_page_status_check, :updated, :version, :datacentre, :minted)
+    ds_params[:datacentre] = Datacentre.find_by(symbol: ds_params[:datacentre])
+    ds_params
   end
 end

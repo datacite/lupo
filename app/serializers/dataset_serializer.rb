@@ -5,7 +5,7 @@ class DatasetSerializer < ActiveModel::Serializer
   # include metadata helper methods
   include Metadatable
 
-  attributes  :created, :doi, :version, :is_active, :updated, :datacentre, :deposited
+  attributes   :doi, :version, :datacentre, :is_active, :created, :deposited, :updated
   attribute :datacentre_id
   #  :is_ref_quality, :last_landing_page_status, :last_landing_page_status_check, :last_metadata_status, :minted
   # has_one :datacentre, class_name: "Datacentre", foreign_key: :datacentre
@@ -22,11 +22,11 @@ class DatasetSerializer < ActiveModel::Serializer
   end
 
   def datacentre
-    object.datacentre.id
+    object.datacentre[:symbol]
   end
 
   def datacentre_id
-    object.datacentre.id
+    object.datacentre[:symbol]
   end
 
 end

@@ -1,13 +1,11 @@
 Rails.application.routes.draw do
-  # jsonapi_resources :datasets
-  # jsonapi_resources :allocators
-  # jsonapi_resources :prefixes
-  # jsonapi_resources :datacentres, constraints: { :id => /.+/ }
+  resources :heartbeat, only: [:index]
+  resources :index, path: '/', only: [:index]
   resources :datacentres, constraints: { :id => /.+/ }
-  # resources :datasets
   resources :datasets, constraints: { :id => /.+/ }
   resources :prefixes, constraints: { :id => /.+/ }
   resources :allocators
   resources :members, controller: 'allocators'
+  resources :datacenters, controller: 'datacentres'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

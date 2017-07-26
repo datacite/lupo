@@ -11,6 +11,7 @@ require "action_controller/railtie"
 # require "action_cable/engine"
 # require "sprockets/railtie"
 require "rails/test_unit/railtie"
+require 'syslog/logger'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -36,6 +37,14 @@ module Lupo
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # See everything in the log (default is :info)
+    log_level = ENV["LOG_LEVEL"] ? ENV["LOG_LEVEL"].to_sym : :info
+    config.log_level = log_level
+
+    # Use a different logger for distributed setups
+    config.lograge.enabled = true
+    config.logger = Syslog::Logger.new(ENV['APPLICATION'])
 
     config.generators do |g|
       g.fixture_replacement :factory_girl
