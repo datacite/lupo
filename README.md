@@ -20,7 +20,7 @@ You can now point your browser to `http://localhost:8080` and use the applicatio
 We use Rspec for unit and acceptance testing:
 
 ```
-bundle exec rspec spec/request
+bundle exec rspec spec
 ```
 
 Follow along via [Github Issues](https://github.com/datacite/lupo/issues).
