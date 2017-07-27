@@ -17,7 +17,7 @@ install:
 before_script:
   - mysql -e 'create database lupo_test;'
   - memcached -p 11211 &
-  - cp .env.travis .env
+
 
 script:
   - bundle exec rspec
