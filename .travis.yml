@@ -20,7 +20,7 @@ before_script:
 
 
 script:
-  - bundle exec rspec
+  - bundle exec rspec spec/requests
   - bundle exec codeclimate-test-reporter
 
 after_success:
