@@ -5,7 +5,6 @@ Rails.application.routes.draw do
   resources :datasets, constraints: { :id => /.+/ }
   resources :prefixes, constraints: { :id => /.+/ }
   resources :allocators
-  resources :members, controller: 'allocators'
-  resources :datacenters, controller: 'datacentres'
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  resources :members, path: '/members', controller: 'allocators'
+  resources :data_centers, path: "/data-centers", controller: 'datacentres'
 end
