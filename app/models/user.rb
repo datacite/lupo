@@ -3,7 +3,7 @@ class User
   attr_accessor :name, :uid, :email, :role, :jwt, :orcid, :member_id, :datacenter_id, :token
 
   def initialize(token)
-    payload = JsonWebToken.decode_token(token)
+    payload = decode_token(token)
 
     @jwt = token
     @uid = payload.fetch("uid", nil)

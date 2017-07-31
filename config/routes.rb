@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  resources :members
   resources :heartbeat, only: [:index]
   resources :index, path: '/', only: [:index]
   resources :datacentres, constraints: { :id => /.+/ }
