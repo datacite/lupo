@@ -32,11 +32,7 @@ class ApplicationController < ActionController::API
   def current_user
     token = token_from_request_headers
     raise CanCan::AccessDenied unless token.present? && token.length > 25
-
-    payload = JsonWebToken.decode_token(token)
-    raise CanCan::AccessDenied unless payload.present?
-
-    User.new(payload)
+    User.new(token)
   end
 
   def current_ability
@@ -65,13 +61,6 @@ class ApplicationController < ActionController::API
         message = "You are not authorized to access this page."
       else
         message = exception.message
-      end
-
-      respond_to do |format|
-        format.all { render json: { errors: [{ status: status.to_s,
-                                               title: message }]
-                                  }, status: status
-                   }
       end
     end
   end
