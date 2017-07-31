@@ -1,5 +1,5 @@
 class DatacentreSerializer < ActiveModel::Serializer
-  attributes  :name, :role_name, :symbol,  :member_id, :contact_email, :doi_quota_allowed, :doi_quota_used, :version, :is_active, :created, :updated, :domains
+  attributes  :name, :role_name, :member_id, :contact_email, :doi_quota_allowed, :doi_quota_used, :version, :is_active, :created, :updated, :domains
   has_many :datasets
   # has_many :prefixes
   belongs_to :allocator, serializer: AllocatorSerializer
@@ -11,9 +11,7 @@ class DatacentreSerializer < ActiveModel::Serializer
   end
   #
   def domains
-    if object.domains.is_a? String
-      object.domains.split(/\s*,\s*/)
-    end
+    object.domains.to_s.split(/\s*,\s*/).presence
   end
 
   def id
@@ -21,11 +19,11 @@ class DatacentreSerializer < ActiveModel::Serializer
   end
 
   def updated
-    object.updated.change(:sec => 0)
+    object.updated.iso8601
   end
 
   def created
-    object.created.change(:sec => 0)
+    object.created.iso8601
   end
 
   def prefixes

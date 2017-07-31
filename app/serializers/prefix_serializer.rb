@@ -8,6 +8,6 @@ class PrefixSerializer < ActiveModel::Serializer
   end
 
   def created
-    object.created.change(:sec => 0)
+    object.created.iso8601
   end
 end

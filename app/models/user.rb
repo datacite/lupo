@@ -2,7 +2,7 @@ class User
   include Authenticable
 
   # include jwt encode and decode
-  ROLES = %i[admin superadmin staff user banned guest]
+  # ROLES = %i[admin superadmin staff user banned guest]
 
 
 
@@ -11,7 +11,7 @@ class User
   def initialize(payload)
     # payload = decode_token(token)
 
-    @jwt = JsonWebToken.encode_token(payload)
+    # @jwt = JsonWebToken.encode_token(payload)
     @uid = payload.fetch("uid", nil)
     @name = payload.fetch("name", nil)
     @email = payload.fetch("email", nil)

@@ -13,6 +13,14 @@ FactoryGirl.define do
     symbol {Faker::Code.unique.asin}
     updated {Faker::Time.backward(5, :evening)}
     version 1
+    website { Faker::Internet.url }
+    description { Faker::Lorem.paragraph(sentence_count = 1, supplemental = false, random_sentences_to_add = 1) }
+    member_type {Faker::StarWars.droid}
+    year { Faker::Number.number(4) }
+    image { Faker::Internet.url }
+    region { Faker::Address.country }
+    country_code { Faker::Address.country_code }
+    logo { Faker::Internet.url }
     experiments "MyString"
   end
 end

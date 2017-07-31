@@ -11,7 +11,7 @@ class Ability
       can :read, :all
       can :update, :all
     elsif user.role == "member_admin"
-      can [:read], Allocator, :symbol => user.member_id
+      can [:update, :read], Allocator, :symbol => user.member_id
       can [:create, :update, :read], Datacentre, :allocator => user.member_id
       can [:create, :update, :read], Dataset, :datacentre => user.datacenter_id
       # can [:update, :read], Prefix, :datacentre => user.datacenter_id
@@ -28,11 +28,11 @@ class Ability
       # can [:read], Prefix, :allocator => user.member_id
       can [:read], Dataset, :datacentre => user.member_id
       can [:read], User, :id => user.id
-    elsif user.role == "datacentre_admin"
+    elsif user.role == "data_center_admin"
       can [:read, :create, :update], Datacentre, :symbol => user.datacenter_id
       can [:create, :update, :read], Dataset, :datacentre => user.datacenter_id
       can [:create, :update, :read, :destroy], User, :datacenter_id => user.datacenter_id
-    elsif user.role == "datacentre_user"
+    elsif user.role == "data_center_user"
       can [:read], Datacentre, :symbol => user.datacenter_id
       can [:update, :read], Dataset, :datacentre => user.datacenter_id
       can [:update, :read], User, :id => user.id

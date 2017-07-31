@@ -3,14 +3,14 @@
 [![Identifier](https://img.shields.io/badge/doi-10.5438%2Ft1jg--hvhn-fca709.svg)](https://doi.org/10.5438/t1jg-hvhn)
 [![Build Status](https://travis-ci.org/datacite/lupo.svg?branch=master)](https://travis-ci.org/datacite/lupo) [![Code Climate](https://codeclimate.com/github/datacite/lupo/badges/gpa.svg)](https://codeclimate.com/github/datacite/lupo) [![Test Coverage](https://codeclimate.com/github/datacite/lupo/badges/coverage.svg)](https://codeclimate.com/github/datacite/lupo/coverage)
 
-Rails API only application for managing the Members, Datacentres and Prefixes from the DataCite database. The API is based on the JSONAPI specification. 
+Rails API only application for managing the Members, Datacentres and Prefixes from the DataCite database. The API is based on the JSONAPI specification.
 
 ## Installation
 
 Using Docker.
 
 ```
-docker run -p 8080:8080 datacite/lupo
+docker run -p 8060:80 datacite/lupo
 ```
 
 You can now point your browser to `http://localhost:8080` and use the application.

@@ -6,14 +6,11 @@ class DatasetSerializer < ActiveModel::Serializer
   include Metadatable
 
   attributes   :doi, :version, :datacentre, :is_active, :created, :deposited, :updated
-  attribute :datacentre_id
-  #  :is_ref_quality, :last_landing_page_status, :last_landing_page_status_check, :last_metadata_status, :minted
-  # has_one :datacentre, class_name: "Datacentre", foreign_key: :datacentre
+  attribute    :datacentre_id
   belongs_to :datacentre, serializer: DatacentreSerializer
 
   def id
     doi_as_url(object.doi)
-    # object.doi
   end
 
 
@@ -22,11 +19,19 @@ class DatasetSerializer < ActiveModel::Serializer
   end
 
   def datacentre
-    object.datacentre[:symbol]
+    object.datacentre[:symbol].downcase
   end
 
   def datacentre_id
-    object.datacentre[:symbol]
+    object.datacentre[:symbol].downcase
+  end
+
+  def updated
+    object.updated.iso8601
+  end
+
+  def created
+    object.created.iso8601
   end
 
 end
