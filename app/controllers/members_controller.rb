@@ -16,8 +16,6 @@ class MembersController < ApplicationController
             #  regions: regions,
             }
 
-    @prefixes =
-
     paginate json: @members, meta: meta, include:['datacenters', 'prefixes'], per_page: 25
   end
 
