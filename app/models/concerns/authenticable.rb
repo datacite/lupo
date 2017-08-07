@@ -20,5 +20,9 @@ module Authenticable
       return {} unless Time.now.to_i < payload["exp"]
       payload
     end
+
+    def encrypt_password(password)
+      Digest::SHA256.hexdigest password + "{" + ENV["SESSION_ENCRYPTED_COOKIE_SALT"] + "}" if password.present?
+    end
   end
 end

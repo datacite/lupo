@@ -66,6 +66,7 @@ class DatacentersController < ApplicationController
       allocator = Member.find_by(symbol: dc_params[:member_id])
       fail("member_id Not found") unless allocator.present?
       dc_params[:allocator] = allocator.id
+      dc_params[:password] = encrypt_password(dc_params[:password])
       dc_params[:symbol] = dc_params[:datacenter_id]
       dc_params
     end
