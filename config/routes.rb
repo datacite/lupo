@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :datacenters, constraints: { :id => /.+/ }
   resources :datasets, constraints: { :id => /.+/ }
   resources :prefixes, constraints: { :id => /.+/ }
-  # resources :allocators
+  resources :members
   # resources :members, path: '/members', controller: 'allocators'
   resources :data_centers, path: "/data-centers", controller: 'datacenters'
 end
