@@ -3,7 +3,7 @@ class Datacenter < ApplicationRecord
   # alias_attribute :created_at, :created
   # alias_attribute :updated_at, :updated
   attribute :member_id
-  alias_attribute :member_id, :allocator
+  # alias_attribute :member_id, :allocator
   attribute :datacenter_id
   alias_attribute :datacenter_id, :symbol
   # attribute :title

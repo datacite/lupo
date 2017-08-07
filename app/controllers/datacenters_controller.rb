@@ -20,7 +20,7 @@ class DatacentersController < ApplicationController
 
   # GET /datacenters/1
   def show
-    render json: @datacenter
+    render json: @datacenter, include:['member', 'prefixes']
   end
 
   # POST /datacenters
