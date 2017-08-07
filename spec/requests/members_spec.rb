@@ -1,19 +1,19 @@
 require 'rails_helper'
 
-RSpec.describe "Allocators", type: :request  do
+RSpec.describe "Members", type: :request  do
   # initialize test data
-  let!(:allocators)  { create_list(:allocator, 10) }
-  let(:allocator_id) { allocators.first.symbol.downcase }
+  let!(:members)  { create_list(:member, 10) }
+  let(:member_id) { members.first.symbol.downcase }
 
   auth = 'Bearer ' + ENV['JWT_TOKEN']
   headers = {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => auth}
 
-  # Test suite for GET /allocators
-  describe 'GET /allocators' do
+  # Test suite for GET /members
+  describe 'GET /members' do
     # make HTTP get request before each example
-    before { get '/allocators', headers: headers }
+    before { get '/members', headers: headers }
 
-    it 'returns allocators' do
+    it 'returns members' do
       expect(json).not_to be_empty
       expect(json['data'].size).to eq(10)
     end
@@ -23,14 +23,14 @@ RSpec.describe "Allocators", type: :request  do
     end
   end
 
-  # Test suite for GET /allocators/:id
-  describe 'GET /allocators/:id' do
-    before { get "/allocators/#{allocator_id}" , headers: headers}
+  # Test suite for GET /members/:id
+  describe 'GET /members/:id' do
+    before { get "/members/#{member_id}" , headers: headers}
 
     context 'when the record exists' do
-      it 'returns the allocator' do
+      it 'returns the member' do
         expect(json).not_to be_empty
-        expect(json['data']['id']).to eq(allocator_id)
+        expect(json['data']['id']).to eq(member_id)
       end
 
       it 'returns status code 200' do
@@ -39,7 +39,7 @@ RSpec.describe "Allocators", type: :request  do
     end
 
     context 'when the record does not exist' do
-      let(:allocator_id) { 1222200 }
+      let(:member_id) { 1222200 }
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
@@ -51,15 +51,15 @@ RSpec.describe "Allocators", type: :request  do
     end
   end
 
-  # Test suite for POST /allocators
-  describe 'POST /allocators' do
+  # Test suite for POST /members
+  describe 'POST /members' do
     # valid payload
-    let(:valid_attributes) { ActiveModelSerializers::Adapter.create(AllocatorSerializer.new(FactoryGirl.build(:allocator)), {adapter: "json_api"}).to_json }
+    let(:valid_attributes) { ActiveModelSerializers::Adapter.create(MemberSerializer.new(FactoryGirl.build(:member)), {adapter: "json_api"}).to_json }
 
     context 'when the request is valid' do
-      before { post '/allocators', params: valid_attributes , headers: headers }
+      before { post '/members', params: valid_attributes , headers: headers }
 
-      it 'creates a allocator' do
+      it 'creates a member' do
         expect(json['data']['attributes']['name']).to eq(JSON.parse(valid_attributes)['data']['attributes']['name'])
       end
 
@@ -69,8 +69,8 @@ RSpec.describe "Allocators", type: :request  do
     end
 
     context 'when the request is invalid' do
-        let(:not_valid_attributes) { ActiveModelSerializers::Adapter.create(DatacentreSerializer.new(FactoryGirl.build(:datacentre)), {adapter: "json_api"}).to_json }
-      before { post '/allocators', params: not_valid_attributes }
+        let(:not_valid_attributes) { ActiveModelSerializers::Adapter.create(DatacenterSerializer.new(FactoryGirl.build(:datacenter)), {adapter: "json_api"}).to_json }
+      before { post '/members', params: not_valid_attributes }
 
       it 'returns status code 500' do
         expect(response).to have_http_status(500)
@@ -86,12 +86,12 @@ RSpec.describe "Allocators", type: :request  do
     end
   end
 
-  # # Test suite for PUT /allocators/:id
-  describe 'PUT /allocators/:id' do
-    let(:valid_attributes) { ActiveModelSerializers::Adapter.create(AllocatorSerializer.new(allocators.first), {adapter: "json_api"}).to_json }
+  # # Test suite for PUT /members/:id
+  describe 'PUT /members/:id' do
+    let(:valid_attributes) { ActiveModelSerializers::Adapter.create(MemberSerializer.new(members.first), {adapter: "json_api"}).to_json }
 
     context 'when the record exists' do
-      before { put "/allocators/#{allocator_id}", params: valid_attributes, headers: headers }
+      before { put "/members/#{member_id}", params: valid_attributes, headers: headers }
 
       it 'updates the record' do
         expect(response.body).not_to be_empty
@@ -103,9 +103,9 @@ RSpec.describe "Allocators", type: :request  do
     end
   end
 
-  # Test suite for DELETE /allocators/:id
-  describe 'DELETE /allocators/:id' do
-    before { delete "/allocators/#{allocator_id}", headers: headers }
+  # Test suite for DELETE /members/:id
+  describe 'DELETE /members/:id' do
+    before { delete "/members/#{member_id}", headers: headers }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

@@ -1,13 +1,14 @@
-class DatacentreSerializer < ActiveModel::Serializer
+class DatacenterSerializer < ActiveModel::Serializer
   attributes  :name, :role_name, :member_id, :contact_email, :doi_quota_allowed, :doi_quota_used, :version, :is_active, :created, :updated, :domains
   has_many :datasets
-  # has_many :prefixes
-  belongs_to :allocator, serializer: AllocatorSerializer
+  has_many :prefixes
+  belongs_to :member, serializer: MemberSerializer
 
   # url [:allocators, :prefixes]
   #
+
   def member_id
-   object.allocator[:symbol]
+   object.member[:symbol].downcase
   end
   #
   def domains

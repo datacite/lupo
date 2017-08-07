@@ -8,6 +8,6 @@ FactoryGirl.define do
     minted {Faker::Time.backward(15, :evening)}
 
 
-    association :datacentre, factory: :datacentre, strategy: :build
+    association :datacenter, factory: :datacenter, strategy: :build
   end
 end

@@ -53,8 +53,8 @@ RSpec.describe "Datasets", type: :request  do
   # Test suite for POST /datasets
   describe 'POST /datasets' do
     # valid payload
-    let!(:datacentre)  { create(:datacentre) }
-    let(:valid_attributes) { ActiveModelSerializers::Adapter.create(DatasetSerializer.new(FactoryGirl.build(:dataset, datacentre: datacentre)), {adapter: "json_api"}).to_json }
+    let!(:datacenter)  { create(:datacenter) }
+    let(:valid_attributes) { ActiveModelSerializers::Adapter.create(DatasetSerializer.new(FactoryGirl.build(:dataset, datacenter: datacenter)), {adapter: "json_api"}).to_json }
 
     context 'when the request is valid' do
       before { post '/datasets', params: valid_attributes, headers: headers }
@@ -69,7 +69,7 @@ RSpec.describe "Datasets", type: :request  do
     end
 
     context 'when the request is invalid' do
-      let(:not_valid_attributes) { ActiveModelSerializers::Adapter.create(DatacentreSerializer.new(FactoryGirl.build(:datacentre)), {adapter: "json_api"}).to_json }
+      let(:not_valid_attributes) { ActiveModelSerializers::Adapter.create(DatacenterSerializer.new(FactoryGirl.build(:datacenter)), {adapter: "json_api"}).to_json }
       before { post '/datasets', params: not_valid_attributes }
 
       it 'returns status code 500' do
