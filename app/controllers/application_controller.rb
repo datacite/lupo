@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::API
   include Authenticable
   include CanCan::ControllerAdditions
+  include ErrorSerializable
   require 'facets/string/snakecase'
   require 'jwt'
 

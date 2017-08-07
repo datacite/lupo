@@ -20,7 +20,7 @@ class PrefixesController < ApplicationController
     if @prefix.save
       render json: @prefix, status: :created, location: @prefix
     else
-      render json: @prefix.errors, status: :unprocessable_entity
+      render json: serialize(@prefix.errors), status: :unprocessable_entity
     end
   end
 
@@ -29,7 +29,7 @@ class PrefixesController < ApplicationController
     if @prefix.update(prefix_params)
       render json: @prefix
     else
-      render json: @prefix.errors, status: :unprocessable_entity
+      render json: serialize(@prefix.errors), status: :unprocessable_entity
     end
   end
 

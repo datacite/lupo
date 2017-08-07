@@ -1,6 +1,7 @@
 class DatacentersController < ApplicationController
 # class DatacentersController < JSONAPI::ResourceController
   # before_action :authenticate_request #, only: [:create, :update, :destroy]
+
   before_action :set_datacenter, only: [:show, :update, :destroy]
   load_and_authorize_resource
 
@@ -30,7 +31,7 @@ class DatacentersController < ApplicationController
     if @datacenter.save
       render json: @datacenter, status: :created, include:['datasets', 'prefixes', 'member'], location: @datacenter
     else
-      render json: @datacenter.errors, status: :unprocessable_entity
+      render json: serialize(@datacenter.errors), status: :unprocessable_entity
       # render json: ErrorSerializer.serialize(@datacenter.errors) #, status: :unprocessable_entity
     end
   end
@@ -40,7 +41,7 @@ class DatacentersController < ApplicationController
     if @datacenter.update(datacenter_params)
       render json: @datacenter,  include:['datasets', 'prefixes', 'member']
     else
-      render json: @datacenter.errors, status: :unprocessable_entity
+      render json: serialize(@datacenter.errors), status: :unprocessable_entity
     end
   end
 
@@ -62,7 +63,9 @@ class DatacentersController < ApplicationController
       params[:data][:attributes] = params[:data][:attributes].transform_keys!{ |key| key.to_s.snakecase }
 
       dc_params = params[:data][:attributes].permit(:comments, :contact_email, :contact_name, :doi_quota_allowed, :doi_quota_used, :domains, :is_active, :name, :password, :role_name, :datacenter_id, :version, :member_id, :experiments)
-      dc_params[:allocator] = Member.find_by(symbol: dc_params[:member_id]).id
+      allocator = Member.find_by(symbol: dc_params[:member_id])
+      fail("member_id Not found") unless allocator.present?
+      dc_params[:allocator] = allocator.id
       dc_params[:symbol] = dc_params[:datacenter_id]
       dc_params
     end

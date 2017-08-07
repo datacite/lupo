@@ -3,33 +3,14 @@ class DatasetsController < ApplicationController
   #
   # # # GET /datasets
   def index
-    collection = Dataset
-    collection = collection.query(params[:query]) if params[:query]
-
-    if params[:datacenter].present?
-      collection = collection.where(datacentre: params[:datacenter])
-      @datacenter = collection.where(datacentre: params[:datacenter]).group(:datacenter).count.first
-    end
-
-    if params[:datacenter].present?
-      datacenters = [{ id: params[:datacenter],
-                 datacenter: params[:datacenter],
-                 count: Dataset.where(datacentre: params[:datacenter]).count }]
-    else
-      datacenters = Dataset.where.not(datacentre: nil).order("datacentre DESC").group(:datacentre).count
-      datacenters = datacenters.map { |k,v| { id: k.to_s, datacenter: k.to_s, count: v } }
-    end
-    #
-    page = params[:page] || { number: 1, size: 1000 }
-    #
-    @datasets = Dataset.order(:datacentre).page(page[:number]).per_page(page[:size])
-    #
+    @datasets = Dataset.get_all(params)
     meta = { total: @datasets.total_entries,
-             total_pages: @datasets.total_pages ,
-             page: page[:number].to_i,
-            #  member_types: member_types,
-            #  regions: regions,
-             datacenters: datacenters }
+            #  total_pages: @datasets.total_pages ,
+            #  page: page[:number].to_i,
+            # #  member_types: member_types,
+            # #  regions: regions,
+            #  datacenters: datacenters
+           }
 
     paginate json: @datasets, meta: meta, per_page: 25
   end
@@ -46,7 +27,7 @@ class DatasetsController < ApplicationController
     if @dataset.save
       render json: @dataset, status: :created, location: @dataset
     else
-      render json: @dataset.errors, status: :unprocessable_entity
+      render json: serialize(@dataset.errors), status: :unprocessable_entity
     end
   end
   #
@@ -55,7 +36,7 @@ class DatasetsController < ApplicationController
     if @dataset.update(dataset_params)
       render json: @dataset
     else
-      render json: @dataset.errors, status: :unprocessable_entity
+      render json: serialize(@dataset.errors), status: :unprocessable_entity
     end
   end
 
