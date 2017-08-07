@@ -5,12 +5,12 @@ class PrefixesController < ApplicationController
   def index
     @prefixes = Prefix.all
 
-    paginate json: @prefixes, include:'datacentres, allocators' , per_page: 25
+    paginate json: @prefixes , per_page: 25
   end
 
   # GET /prefixes/1
   def show
-    render json: @prefix
+    render json: @prefix, include:['datacenters', 'members']
   end
 
   # POST /prefixes

@@ -69,7 +69,7 @@ RSpec.describe "Members", type: :request  do
     end
 
     context 'when the request is invalid' do
-        let(:not_valid_attributes) { ActiveModelSerializers::Adapter.create(DatacentreSerializer.new(FactoryGirl.build(:datacentre)), {adapter: "json_api"}).to_json }
+        let(:not_valid_attributes) { ActiveModelSerializers::Adapter.create(DatacenterSerializer.new(FactoryGirl.build(:datacenter)), {adapter: "json_api"}).to_json }
       before { post '/members', params: not_valid_attributes }
 
       it 'returns status code 500' do

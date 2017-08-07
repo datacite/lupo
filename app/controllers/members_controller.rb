@@ -5,12 +5,25 @@ class MembersController < ApplicationController
   def index
     @members = Member.all
 
-    paginate json: @members, include: 'datacentres, prefixes', per_page: 25
+    page = params[:page] || { number: 1, size: 1000 }
+
+    @members = Member.order(:name).page(page[:number]).per_page(page[:size])
+
+    meta = { total: @members.total_entries,
+             total_pages: @members.total_pages ,
+             page: page[:number].to_i,
+            #  member_types: member_types,
+            #  regions: regions,
+            }
+
+    @prefixes =
+
+    paginate json: @members, meta: meta, include:['datacenters', 'prefixes'], per_page: 25
   end
 
   # GET /members/1
   def show
-      render json: @member, include: 'datacentres, prefixes'
+      render json: @member, include:['datacenters', 'prefixes']
   end
 
   # POST /members
@@ -53,6 +66,8 @@ class MembersController < ApplicationController
           params[:data][:attributes][:password] = Digest::SHA256.hexdigest params[:data][:attributes][:password] + "{" + ENV["SESSION_ENCRYPTED_COOKIE_SALT"] + "}"
       end
 
-      params[:data].require(:attributes).permit(:comments, :contact_email, :contact_name, :description, :member_type, :year, :image, :region, :country_code, :website, :logo, :doi_quota_allowed, :doi_quota_used, :is_active, :name, :password, :role_name, :symbol, :version, :experiments)
+      mb_params= params[:data].require(:attributes).permit(:comments, :contact_email, :contact_name, :description, :member_type, :year, :image, :region, :country_code, :website, :logo, :doi_quota_allowed, :doi_quota_used, :is_active, :name, :password, :role_name, :member_id, :version, :experiments)
+      mb_params[:symbol] = mb_params[:member_id]
+      mb_params
     end
 end

@@ -1,8 +1,8 @@
 FactoryGirl.define do
-  factory :datacentre do
+  factory :datacenter do
     comments { Faker::StarWars.character  }
     contact_email {Faker::Internet.email}
-    contact_name {Faker::Name.name }
+    contact_name { "ddsdsds" }
     created {Faker::Time.backward(14, :evening)}
     doi_quota_allowed 1
     doi_quota_used 1
@@ -16,6 +16,6 @@ FactoryGirl.define do
     version 1
     experiments "MyString"
 
-    association :allocator, factory: :allocator, strategy: :build
+    association :member, factory: :member, strategy: :build
   end
 end

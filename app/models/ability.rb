@@ -11,19 +11,19 @@ class Ability
       can :read, :all
       can :update, :all
     elsif user.role == "member_admin"
-      can [:update, :read], Allocator, :symbol => user.member_id
+      can [:update, :read], Member, :symbol => user.member_id
       can [:create, :update, :read], Datacentre, :allocator => user.member_id
       can [:create, :update, :read], Dataset, :datacentre => user.datacenter_id
       # can [:update, :read], Prefix, :datacentre => user.datacenter_id
       can [:create, :update, :read, :destroy], User, :member_id => user.member_id
     elsif user.role == "member_user"
-      can [:read], Allocator, :symbol => user.member_id
+      can [:read], Member, :symbol => user.member_id
       can [:update, :read], Datacentre, :allocator => user.member_id
       # can [:read], Prefix, :allocator => user.member_id
       can [:update, :read], Dataset, :datacentre => user.member_id
       can [:update, :read], User, :id => user.id
     elsif user.role == "member_user" && Member.find_by(:symbol => user.member_id).member_type == "non_allocating"
-      can [:read], Allocator, :symbol => user.member_id
+      can [:read], Member, :symbol => user.member_id
       can [:read], Datacentre, :allocator => user.member_id
       # can [:read], Prefix, :allocator => user.member_id
       can [:read], Dataset, :datacentre => user.member_id

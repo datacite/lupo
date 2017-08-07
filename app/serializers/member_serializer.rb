@@ -1,6 +1,6 @@
 class MemberSerializer < ActiveModel::Serializer
   attributes   :name, :member_type, :description, :member_type, :year, :image, :region, :country_code, :website, :logo, :doi_quota_allowed, :is_active, :created,  :updated
-  has_many :datacentres
+  has_many :datacenters
   has_many :prefixes
 
   def id

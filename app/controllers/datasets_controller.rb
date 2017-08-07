@@ -6,18 +6,18 @@ class DatasetsController < ApplicationController
     collection = Dataset
     collection = collection.query(params[:query]) if params[:query]
 
-    if params[:datacentre].present?
-      collection = collection.where(datacentre: params[:datacentre])
-      @datacentre = collection.where(datacentre: params[:datacentre]).group(:datacentre).count.first
+    if params[:datacenter].present?
+      collection = collection.where(datacentre: params[:datacenter])
+      @datacenter = collection.where(datacentre: params[:datacenter]).group(:datacenter).count.first
     end
 
-    if params[:datacentre].present?
-      datacentres = [{ id: params[:datacentre],
-                 datacentre: params[:datacentre],
-                 count: Dataset.where(datacentre: params[:datacentre]).count }]
+    if params[:datacenter].present?
+      datacenters = [{ id: params[:datacenter],
+                 datacenter: params[:datacenter],
+                 count: Dataset.where(datacentre: params[:datacenter]).count }]
     else
-      datacentres = Dataset.where.not(datacentre: nil).order("datacentre DESC").group(:datacentre).count
-      datacentres = datacentres.map { |k,v| { id: k.id.to_s, datacentre: k.symbol.to_s, count: v } }
+      datacenters = Dataset.where.not(datacentre: nil).order("datacentre DESC").group(:datacentre).count
+      datacenters = datacenters.map { |k,v| { id: k.to_s, datacenter: k.to_s, count: v } }
     end
     #
     page = params[:page] || { number: 1, size: 1000 }
@@ -29,14 +29,14 @@ class DatasetsController < ApplicationController
              page: page[:number].to_i,
             #  member_types: member_types,
             #  regions: regions,
-             datacentres: datacentres }
+             datacenters: datacenters }
 
     paginate json: @datasets, meta: meta, per_page: 25
   end
   #
   # # # GET /datasets/1
   def show
-    render json: @dataset
+    render json: @dataset, include:['datacentre']
   end
 
   # # POST /datasets
@@ -76,8 +76,8 @@ class DatasetsController < ApplicationController
   def dataset_params
     params[:data][:attributes] = params[:data][:attributes].transform_keys!{ |key| key.to_s.snakecase }
 
-    ds_params= params[:data].require(:attributes).permit(:created, :doi, :is_active, :is_ref_quality, :last_landing_page_status, :last_landing_page_status_check, :last_landing_page_status_check, :updated, :version, :datacentre, :minted)
-    ds_params[:datacentre] = Datacentre.find_by(symbol: ds_params[:datacentre])
+    ds_params= params[:data].require(:attributes).permit(:created, :doi, :is_active, :is_ref_quality, :last_landing_page_status, :last_landing_page_status_check, :last_landing_page_status_check, :updated, :version, :datacenter_id, :minted)
+    ds_params[:datacentre] = Datacenter.find_by(symbol: ds_params[:datacenter_id]).id
     ds_params
   end
 end
