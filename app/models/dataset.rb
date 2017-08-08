@@ -11,6 +11,8 @@ class Dataset < ApplicationRecord
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
   validates_numericality_of :version, if: :version?
 
+  before_create :is_quota_exceeded
+  after_create  :decrease_doi_quota
 
   def self.get_all(options={})
 
@@ -37,7 +39,14 @@ class Dataset < ApplicationRecord
     @datasets
   end
 
+  def is_quota_exceeded
+    datacenter = Datacenter.find(self.datacenter_id)
+    fail("You have excceded your DOI quota. You cannot mint DOIs anymore.") if datacenter[:doi_quota_allowed] < 0
+  end
 
-
+  def decrease_doi_quota
+    datacenter = Datacenter.find(self.datacenter_id)
+    fail("Something went wrong when decreasing your DOI quota") unless Datacenter.update(datacenter[:id], doi_quota_allowed: datacenter[:doi_quota_allowed] - 1)
+  end
 
 end

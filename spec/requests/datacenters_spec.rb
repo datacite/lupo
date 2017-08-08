@@ -66,6 +66,11 @@ RSpec.describe 'Datacenters',  type: :request  do
       it 'returns status code 201' do
         expect(response).to have_http_status(201)
       end
+
+      it 'Associates test Prefix' do
+        expect(json['relationships']['prefixes']['data']).to include(:id => "10.5072")
+      end
+
     end
 
     context 'when the request is invalid' do

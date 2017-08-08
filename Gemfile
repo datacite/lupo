@@ -52,6 +52,7 @@ gem 'api-pagination'
 # gem 'jsonapi-utils', '~> 0.4.9'
 gem 'mysql2'
 gem 'cancancan', '~> 1.10'
+gem 'countries'
 gem "facets", require: false
 
 group :development, :test do

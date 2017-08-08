@@ -21,6 +21,8 @@ class Datacenter < ApplicationRecord
   belongs_to :member, class_name: 'Member', foreign_key: :allocator
   has_many :datasets
 
+  after_create  :add_test_prefix
+
 
   #  * Increase used quota counter for a datacentre.
   #  *
@@ -84,6 +86,9 @@ class Datacenter < ApplicationRecord
     @datacenters
   end
 
+  def add_test_prefix
 
+
+  end
 
 end

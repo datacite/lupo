@@ -60,9 +60,6 @@ class MembersController < ApplicationController
     def member_params
 
       params[:data][:attributes] = params[:data][:attributes].transform_keys!{ |key| key.to_s.snakecase }
-      # if params[:data][:attributes][:password]
-      #     params[:data][:attributes][:password] = Digest::SHA256.hexdigest params[:data][:attributes][:password] + "{" + ENV["SESSION_ENCRYPTED_COOKIE_SALT"] + "}"
-      # end
 
       mb_params= params[:data].require(:attributes).permit(:comments, :contact_email, :contact_name, :description, :member_type, :year, :image, :region, :country_code, :website, :logo, :doi_quota_allowed, :doi_quota_used, :is_active, :name, :password, :role_name, :member_id, :version, :experiments)
       mb_params[:symbol] = mb_params[:member_id]

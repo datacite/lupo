@@ -54,6 +54,7 @@ RSpec.describe "Datasets", type: :request  do
   describe 'POST /datasets' do
     # valid payload
     let!(:datacenter)  { create(:datacenter) }
+    let!(:doi_quota_used)  { datacenter.doi_quota_used }
     let(:valid_attributes) { ActiveModelSerializers::Adapter.create(DatasetSerializer.new(FactoryGirl.build(:dataset, datacenter: datacenter)), {adapter: "json_api"}).to_json }
 
     context 'when the request is valid' do
@@ -61,6 +62,10 @@ RSpec.describe "Datasets", type: :request  do
 
       it 'creates a Dataset' do
         expect(json['data']['attributes']['doi']).to eq(JSON.parse(valid_attributes)['data']['attributes']['doi'])
+      end
+
+      it 'Increase Quota' do
+        expect(doi_quota_used).to lt(datacenter.doi_quota_used)
       end
 
       it 'returns status code 201' do
@@ -75,6 +80,11 @@ RSpec.describe "Datasets", type: :request  do
       it 'returns status code 500' do
         expect(response).to have_http_status(500)
       end
+
+      it 'doesn not Increase Quota' do
+        expect(doi_quota_used).to eq(datacenter.doi_quota_used)
+      end
+
       # it 'returns status code 422' do
       #   expect(response).to have_http_status(422)
       # end
