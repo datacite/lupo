@@ -22,6 +22,17 @@ class Datacenter < ApplicationRecord
   has_many :datasets
 
   after_create  :add_test_prefix
+  # after_create on: [:create] do
+  #   __elasticsearch__.index_document
+  # end
+  #
+  # after_commit on: [:update] do
+  #   __elasticsearch__.update_document
+  # end
+  #
+  # after_commit on: [:destroy] do
+  #   __elasticsearch__.delete_document
+  # end
 
 
   #  * Increase used quota counter for a datacentre.

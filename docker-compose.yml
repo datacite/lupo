@@ -10,10 +10,38 @@ services:
       # - ./app:/home/app/webapp/app
       # - ./config:/home/app/webapp/config
       # - ./spec:/home/app/webapp/spec
+    networks:
+      - elk
   memcached:
     image: memcached:1.4.31
+    networks:
+      - elk
   db:
     env_file: .env
     image: mysql:5.6
     ports:
       - "3309:3306"
+    networks:
+      - elk
+  elasticsearch:
+    build: elasticsearch/
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - elk
+
+networks:
+
+  elk:
+    driver: bridge

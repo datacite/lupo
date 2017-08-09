@@ -93,6 +93,7 @@ GEM
     coderay (1.1.1)
     colorize (0.8.1)
     concurrent-ruby (1.0.5)
+    connection_pool (2.2.1)
     countries (2.1.2)
       i18n_data (~> 0.8.0)
       money (~> 6.9)
@@ -109,6 +110,19 @@ GEM
     ebnf (1.1.0)
       rdf (~> 2.0)
       sxp (~> 1.0)
+    elasticsearch (5.0.4)
+      elasticsearch-api (= 5.0.4)
+      elasticsearch-transport (= 5.0.4)
+    elasticsearch-api (5.0.4)
+      multi_json
+    elasticsearch-model (5.0.1)
+      activesupport (> 3)
+      elasticsearch (~> 5)
+      hashie
+    elasticsearch-rails (5.0.1)
+    elasticsearch-transport (5.0.4)
+      faraday
+      multi_json
     equivalent-xml (0.6.0)
       nokogiri (>= 1.4.3)
     erubi (1.6.0)
@@ -138,6 +152,7 @@ GEM
       tilt
     hamster (3.0.0)
       concurrent-ruby (~> 1.0)
+    hashie (3.5.6)
     hetchy (1.0.0)
     htmlentities (4.3.4)
     i18n (0.8.4)
@@ -212,6 +227,8 @@ GEM
     public_suffix (2.0.5)
     puma (3.9.1)
     rack (2.0.3)
+    rack-protection (2.0.0)
+      rack
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (5.1.1)
@@ -262,6 +279,7 @@ GEM
       rdf (~> 2.2)
     rdf-xsd (2.1.0)
       rdf (~> 2.1)
+    redis (3.3.3)
     rspec-core (3.6.0)
       rspec-support (~> 3.6.0)
     rspec-expectations (3.6.0)
@@ -283,6 +301,11 @@ GEM
     safe_yaml (1.0.4)
     shoulda-matchers (3.1.1)
       activesupport (>= 4.0.0)
+    sidekiq (5.0.4)
+      concurrent-ruby (~> 1.0)
+      connection_pool (~> 2.2, >= 2.2.0)
+      rack-protection (>= 1.5.0)
+      redis (~> 3.3, >= 3.3.3)
     simple_command (0.0.9)
     simplecov (0.13.0)
       docile (~> 1.1.0)
@@ -344,6 +367,8 @@ DEPENDENCIES
   dalli (~> 2.7.6)
   database_cleaner
   dotenv
+  elasticsearch-model
+  elasticsearch-rails
   equivalent-xml (~> 0.6.0)
   facets
   factory_girl_rails (~> 4.0)
@@ -364,6 +389,7 @@ DEPENDENCIES
   rails (~> 5.1.1)
   rspec-rails (~> 3.5, >= 3.5.2)
   shoulda-matchers (~> 3.1)
+  sidekiq
   simple_command
   simplecov
   spring

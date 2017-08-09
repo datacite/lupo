@@ -18,7 +18,7 @@ class Member < ApplicationRecord
 
   has_and_belongs_to_many :prefixes, class_name: 'Prefix', join_table: "allocator_prefixes", foreign_key: :prefixes, association_foreign_key: :allocator
 
-  after_create  :add_test_prefix
+  # after_create  :add_test_prefix
 
   def member_type
     return "allocating"  if doi_quota_allowed >= 0
