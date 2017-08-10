@@ -48,8 +48,10 @@ class PrefixesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def prefix_params
-      params[:data][:attributes] = params[:data][:attributes].transform_keys!{ |key| key.to_s.snakecase }
-
-      params[:data].require(:attributes).permit(:created, :prefix, :version, :datacentre)
+      params.require(:data)
+        .require(:attributes)
+        .permit(:created, :prefix, :version)
+      pf_params = ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
+      pf_params
     end
 end

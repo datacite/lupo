@@ -16,7 +16,7 @@ class Member < ApplicationRecord
   validates_inclusion_of :role_name, :in => %w( ROLE_ALLOCATOR ROLE_ADMIN ROLE_DEV ), :message => "Role {{value}} is not included in the list", if: :role_name?
   validates_inclusion_of :country_code, :in => ISO3166::Country.all.map(&:alpha2), :message => "must be a 2 character country representation (ISO 3166-1)", if: :country_code?
 
-  has_and_belongs_to_many :prefixes, class_name: 'Prefix', join_table: "allocator_prefixes", foreign_key: :prefixes, association_foreign_key: :allocator
+  has_and_belongs_to_many :prefixes, class_name: 'Prefix', join_table: "allocator_prefixes", foreign_key: :prefixes, association_foreign_key: :allocator, autosave: true
 
   # after_create  :add_test_prefix
 

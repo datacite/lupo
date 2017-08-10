@@ -2,6 +2,7 @@ class Datacenter < ApplicationRecord
   self.table_name = "datacentre"
   # alias_attribute :created_at, :created
   # alias_attribute :updated_at, :updated
+
   attribute :member_id
   alias_attribute :member_id, :allocator
   attribute :datacenter_id
@@ -22,45 +23,6 @@ class Datacenter < ApplicationRecord
   has_many :datasets
 
   after_create  :add_test_prefix
-  # after_create on: [:create] do
-  #   __elasticsearch__.index_document
-  # end
-  #
-  # after_commit on: [:update] do
-  #   __elasticsearch__.update_document
-  # end
-  #
-  # after_commit on: [:destroy] do
-  #   __elasticsearch__.delete_document
-  # end
-
-
-  #  * Increase used quota counter for a datacentre.
-  #  *
-  #  * Implementation uses HQL update in order to maintain potential concurrent access (i.e. a datacentre using
-  #  * concurrently many API clients. Using HQL update makes sure database row level lock will guarantee only one
-  #  * client changes the value at the time.
-  #  *
-  #  * @param forceRefresh the consequence of using HQL update is lack of the value in the instance field.
-  #  * Use ForceRefresh.YES to reread the value from database but be aware that refresh() rereads all fields, not
-  #  * only doiQuotaUsed so if you have any other changes in the object persist them first.
-
-  def incQuotaUsed
-    # adds a day to the quote used it should trigger after each DOI is created
-  end
-
-  # /**
-  #  * Check if quota exceeded.
-  #  *
-  #  * Implementation uses HQL select in order to maintain potential concurrent access (i.e. a datacentre using
-  #  * concurrently many API clients.
-  #  *
-  #  * @return true if quota is exceeded
-  #  */
-  def isQuotaExceeded
-    return false if doi_quota_allowed < 0
-    true
-  end
 
   def self.get_all(options={})
 
