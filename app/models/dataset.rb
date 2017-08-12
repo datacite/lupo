@@ -1,5 +1,10 @@
 class Dataset < ApplicationRecord
+  include Identifiable
+  include Metadatable
+
+  require 'maremma'
   attribute :datacenter_id
+  attribute :url
   alias_attribute :datacenter_id, :datacentre
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
@@ -11,6 +16,7 @@ class Dataset < ApplicationRecord
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
   validates_numericality_of :version, if: :version?
 
+  before_create :add_url
   before_create :is_quota_exceeded
   after_create  :decrease_doi_quota
 
@@ -37,6 +43,10 @@ class Dataset < ApplicationRecord
     #
     @datasets = Dataset.order(:datacentre).page(page[:number]).per_page(page[:size])
     @datasets
+  end
+
+  def add_url
+    self.url = Maremma.head(doi_as_url(self.doi)).url
   end
 
   def is_quota_exceeded

@@ -3,16 +3,23 @@ class DatasetsController < ApplicationController
   #
   # # # GET /datasets
   def index
-    @datasets = Dataset.get_all(params)
-    meta = { total: @datasets.total_entries,
+    if params["q"].nil?
+      @datasets = Dataset.__elasticsearch__.search "*"
+    else
+      @datasets = Dataset.__elasticsearch__.search params["q"]
+    end
+    @datasets = Dataset.get_all
+
+    meta = { #total: @datasets.total_entries,
             #  total_pages: @datasets.total_pages ,
             #  page: page[:number].to_i,
             # #  member_types: member_types,
             # #  regions: regions,
             #  datacenters: datacenters
            }
+    # @datasets = Dataset.all
 
-    paginate json: @datasets, meta: meta, per_page: 25
+    paginate json: @datasets, meta: meta,per_page: 25 , each_serializer: DatasetSerializer
   end
   #
   # # # GET /datasets/1
@@ -55,10 +62,15 @@ class DatasetsController < ApplicationController
 
   #   # Only allow a trusted parameter "white list" through.
   def dataset_params
-    params[:data][:attributes] = params[:data][:attributes].transform_keys!{ |key| key.to_s.snakecase }
+    params.require(:data)
+      .require(:attributes)
+      .permit(:created, :doi, :is_active, :is_ref_quality, :last_landing_page_status, :last_landing_page_status_check, :last_landing_page_status_check, :updated, :version, :datacenter_id, :minted)
 
-    ds_params= params[:data].require(:attributes).permit(:created, :doi, :is_active, :is_ref_quality, :last_landing_page_status, :last_landing_page_status_check, :last_landing_page_status_check, :updated, :version, :datacenter_id, :minted)
-    ds_params[:datacentre] = Datacenter.find_by(symbol: ds_params[:datacenter_id]).id
+    ds_params= ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
+
+    datacentre = Datacenter.find_by(symbol: ds_params["datacenter_id"])
+    fail("datacenter_id Not found") unless   datacentre.present?
+    ds_params["datacentre"] = datacentre.id
     ds_params
   end
 end

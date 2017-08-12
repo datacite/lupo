@@ -3,20 +3,21 @@ class MembersController < ApplicationController
 
   # GET /members
   def index
+
+    if params["q"].nil?
+      @members = Member.__elasticsearch__.search "*"
+    else
+      @members = Member.__elasticsearch__.search params["q"]
+    end
     @members = Member.all
 
-    page = params[:page] || { number: 1, size: 1000 }
-
-    @members = Member.order(:name).page(page[:number]).per_page(page[:size])
-
-    meta = { total: @members.total_entries,
-             total_pages: @members.total_pages ,
-             page: page[:number].to_i,
+    meta = { #total: @members.total_entries,
+             #total_pages: @members.total_pages ,
+             #page: page[:number].to_i,
             #  member_types: member_types,
             #  regions: regions,
             }
-
-    paginate json: @members, meta: meta, include:['datacenters', 'prefixes'], per_page: 25
+    paginate json: @members, meta: meta,  each_serializer: MemberSerializer,per_page: 25
   end
 
   # GET /members/1
@@ -58,12 +59,13 @@ class MembersController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def member_params
+      params.require(:data)
+        .require(:attributes)
+        .permit(:comments, :contact_email, :contact_name, :description, :member_type, :year, :image, :region, :country_code, :website, :logo, :doi_quota_allowed, :doi_quota_used, :is_active, :name, :password, :role_name, :member_id, :version, :experiments)
 
-      params[:data][:attributes] = params[:data][:attributes].transform_keys!{ |key| key.to_s.snakecase }
-
-      mb_params= params[:data].require(:attributes).permit(:comments, :contact_email, :contact_name, :description, :member_type, :year, :image, :region, :country_code, :website, :logo, :doi_quota_allowed, :doi_quota_used, :is_active, :name, :password, :role_name, :member_id, :version, :experiments)
-      mb_params[:symbol] = mb_params[:member_id]
-      mb_params[:password] = encrypt_password(mb_params[:password])
+      mb_params= ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
+      mb_params["symbol"] = mb_params["member_id"]
+      mb_params["password"] = encrypt_password(mb_params["password"])
       mb_params
     end
 end

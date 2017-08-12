@@ -3,9 +3,20 @@ class PrefixesController < ApplicationController
 
   # GET /prefixes
   def index
+    if params["q"].nil?
+      @prefixes = Prefix.__elasticsearch__.search "*"
+    else
+      @prefixes = Prefix.__elasticsearch__.search params["q"]
+    end
     @prefixes = Prefix.all
 
-    paginate json: @prefixes , per_page: 25
+    meta = { #total: @prefixes.total_entries,
+             #total_pages: @prefixes.total_pages ,
+             #page: page[:number].to_i,
+            #  member_types: member_types,
+            #  regions: regions,
+            }
+    paginate json: @prefixes, meta: meta,  each_serializer: PrefixSerializer,per_page: 25
   end
 
   # GET /prefixes/1
@@ -48,8 +59,10 @@ class PrefixesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def prefix_params
-      params[:data][:attributes] = params[:data][:attributes].transform_keys!{ |key| key.to_s.snakecase }
-
-      params[:data].require(:attributes).permit(:created, :prefix, :version, :datacentre)
+      params.require(:data)
+        .require(:attributes)
+        .permit(:created, :prefix, :version)
+      pf_params = ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
+      pf_params
     end
 end

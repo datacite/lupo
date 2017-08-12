@@ -28,6 +28,9 @@ gem 'mysql2'
 gem 'cancancan', '~> 1.10'
 gem 'countries'
 gem "facets", require: false
+gem 'elasticsearch-model'
+gem 'elasticsearch-rails'
+gem 'sidekiq'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5', '>= 3.5.2'

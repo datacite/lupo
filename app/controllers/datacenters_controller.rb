@@ -7,16 +7,20 @@ class DatacentersController < ApplicationController
 
   # GET /datacenters
   def index
-    @datacenters = Datacenter.get_all(params)
-    meta = { total: @datacenters.total_entries,
+    if params["q"].nil?
+      @datacenters = Datacenter.__elasticsearch__.search "*"
+    else
+      @datacenters = Datacenter.__elasticsearch__.search params["q"]
+    end
+    @datacenters = Datacenter.get_all
+    meta = { #total: @datacenters.total_entries,
             #  total_pages: @datacenters.total_pages ,
             #  page: page[:number].to_i,
             #  member_types: member_types,
             #  regions: regions,
             #  members: allocators
            }
-
-    paginate json: @datacenters, meta: meta,  per_page: 25
+    paginate json: @datacenters, meta: meta , each_serializer: DatacenterSerializer  ,per_page: 25
   end
 
   # GET /datacenters/1
@@ -26,6 +30,7 @@ class DatacentersController < ApplicationController
 
   # POST /datacenters
   def create
+    datacenter_params
     @datacenter = Datacenter.new(datacenter_params)
 
     if @datacenter.save
@@ -60,14 +65,16 @@ class DatacentersController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def datacenter_params
-      params[:data][:attributes] = params[:data][:attributes].transform_keys!{ |key| key.to_s.snakecase }
+      params.require(:data)
+        .require(:attributes)
+        .permit(:comments, :contact_email, :contact_name, :doi_quota_allowed, :doi_quota_used, :domains, :is_active, :name, :password, :role_name, :version, :datacenter_id, :member_id, :experiments)
 
-      dc_params = params[:data][:attributes].permit(:comments, :contact_email, :contact_name, :doi_quota_allowed, :doi_quota_used, :domains, :is_active, :name, :password, :role_name, :datacenter_id, :version, :member_id, :experiments)
-      allocator = Member.find_by(symbol: dc_params[:member_id])
+      dc_params = ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
+      allocator = Member.find_by(symbol: dc_params["member_id"])
       fail("member_id Not found") unless allocator.present?
-      dc_params[:allocator] = allocator.id
-      dc_params[:password] = encrypt_password(dc_params[:password])
-      dc_params[:symbol] = dc_params[:datacenter_id]
+      dc_params["allocator"] = allocator.id
+      dc_params["password"] = encrypt_password(dc_params["password"])
+      dc_params["symbol"] = dc_params["datacenter_id"]
       dc_params
     end
 end

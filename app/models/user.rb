@@ -19,8 +19,6 @@ class User
     @jwt
   end
 
-
-
   # Helper method to check for admin user
   def is_admin?
     role == "staff_admin"

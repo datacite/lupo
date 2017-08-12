@@ -21,34 +21,7 @@ class Datacenter < ApplicationRecord
   belongs_to :member, class_name: 'Member', foreign_key: :allocator
   has_many :datasets
 
-  # after_create  :add_test_prefix
-
-  #  * Increase used quota counter for a datacentre.
-  #  *
-  #  * Implementation uses HQL update in order to maintain potential concurrent access (i.e. a datacentre using
-  #  * concurrently many API clients. Using HQL update makes sure database row level lock will guarantee only one
-  #  * client changes the value at the time.
-  #  *
-  #  * @param forceRefresh the consequence of using HQL update is lack of the value in the instance field.
-  #  * Use ForceRefresh.YES to reread the value from database but be aware that refresh() rereads all fields, not
-  #  * only doiQuotaUsed so if you have any other changes in the object persist them first.
-
-  def incQuotaUsed
-    # adds a day to the quote used it should trigger after each DOI is created
-  end
-
-  # /**
-  #  * Check if quota exceeded.
-  #  *
-  #  * Implementation uses HQL select in order to maintain potential concurrent access (i.e. a datacentre using
-  #  * concurrently many API clients.
-  #  *
-  #  * @return true if quota is exceeded
-  #  */
-  def isQuotaExceeded
-    return false if doi_quota_allowed < 0
-    true
-  end
+  after_create  :add_test_prefix
 
   def self.get_all(options={})
 

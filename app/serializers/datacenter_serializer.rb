@@ -1,11 +1,12 @@
 class DatacenterSerializer < ActiveModel::Serializer
   attributes  :name, :role_name, :member_id, :contact_email, :doi_quota_allowed, :doi_quota_used, :version, :is_active, :created, :updated, :domains
+
   has_many :datasets
   has_many :prefixes
   belongs_to :member, serializer: MemberSerializer
 
-  # url [:allocators, :prefixes]
-  #
+  # [:name, :role_name, :member_id, :contact_email, :doi_quota_allowed, :doi_quota_used, :version, :is_active, :created, :updated, :domains].map{|a| attribute(a) {object[:_source][a]}}
+
 
   def member_id
    object.member[:symbol].downcase
