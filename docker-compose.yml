@@ -9,6 +9,7 @@ services:
     volumes:
       - ./app:/home/app/webapp/app
       - ./config:/home/app/webapp/config
+      - ./db:/home/app/webapp/db
       - ./spec:/home/app/webapp/spec
   memcached:
     image: memcached:1.4.31
