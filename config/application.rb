@@ -38,6 +38,9 @@ module Lupo
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # secret_key_base is not used by Rails API, as there are no sessions
+    config.secret_key_base = 'blipblapblup'
+
     # See everything in the log (default is :info)
     log_level = ENV["LOG_LEVEL"] ? ENV["LOG_LEVEL"].to_sym : :info
     config.log_level = log_level
