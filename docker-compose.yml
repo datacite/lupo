@@ -1,19 +1,22 @@
 version: '2'
 
 services:
-  lupo:
+  web:
+    env_file: .env
     image: datacite/lupo
     ports:
       - "8060:80"
     volumes:
-      - ./:/home/app/webapp/
-      # - ./app:/home/app/webapp/app
-      # - ./config:/home/app/webapp/config
-      # - ./spec:/home/app/webapp/spec
+      - ./app:/home/app/webapp/app
+      - ./config:/home/app/webapp/config
+      - ./spec:/home/app/webapp/spec
   memcached:
     image: memcached:1.4.31
   db:
-    env_file: .env
+    environment:
+      MYSQL_DATABASE: datacite
+      MYSQL_USER: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     image: mysql:5.6
     ports:
       - "3309:3306"

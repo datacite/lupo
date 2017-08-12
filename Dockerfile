@@ -61,14 +61,13 @@ RUN mkdir -p /home/app/webapp/vendor/bundle && \
 WORKDIR /home/app/webapp
 RUN gem update --system && \
     gem install bundler && \
-    /sbin/setuser app bundle install
-    #/sbin/setuser app bundle install --path vendor/bundle
+    /sbin/setuser app bundle install --path vendor/bundle
 
 # Run additional scripts during container startup (i.e. not at build time)
 RUN mkdir -p /etc/my_init.d
-COPY vendor/docker/80_flush_cache.sh /etc/my_init.d/80_flush_cache.sh
 COPY vendor/docker/70_templates.sh /etc/my_init.d/70_templates.sh
 COPY vendor/docker/nginx.conf.tmpl /etc/nginx/nginx.conf
+COPY vendor/docker/80_flush_cache.sh /etc/my_init.d/80_flush_cache.sh
 COPY vendor/docker/90_migrate.sh /etc/my_init.d/90_migrate.sh
 
 # Expose web
