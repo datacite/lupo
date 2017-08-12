@@ -10,7 +10,7 @@ class DatasetSerializer < ActiveModel::Serializer
   attribute    :datacenter_id
   belongs_to :datacenter, serializer: DatacenterSerializer
 
-  [:doi, :url, :datacenter_id, :version, :datacentre, :is_active, :created, :deposited, :updated].map{|a| attribute(a) {object[:_source][a]}}
+  # [:doi, :url, :datacenter_id, :version, :datacentre, :is_active, :created, :deposited, :updated].map{|a| attribute(a) {object[:_source][a]}}
 
 
   def id

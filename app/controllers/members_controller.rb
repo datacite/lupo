@@ -9,6 +9,8 @@ class MembersController < ApplicationController
     else
       @members = Member.__elasticsearch__.search params["q"]
     end
+    @members = Member.all
+
     meta = { #total: @members.total_entries,
              #total_pages: @members.total_pages ,
              #page: page[:number].to_i,

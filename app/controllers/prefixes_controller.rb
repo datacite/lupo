@@ -8,6 +8,8 @@ class PrefixesController < ApplicationController
     else
       @prefixes = Prefix.__elasticsearch__.search params["q"]
     end
+    @prefixes = Prefix.all
+
     meta = { #total: @prefixes.total_entries,
              #total_pages: @prefixes.total_pages ,
              #page: page[:number].to_i,

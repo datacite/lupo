@@ -5,7 +5,7 @@ class DatacenterSerializer < ActiveModel::Serializer
   has_many :prefixes
   belongs_to :member, serializer: MemberSerializer
 
-  [:name, :role_name, :member_id, :contact_email, :doi_quota_allowed, :doi_quota_used, :version, :is_active, :created, :updated, :domains].map{|a| attribute(a) {object[:_source][a]}}
+  # [:name, :role_name, :member_id, :contact_email, :doi_quota_allowed, :doi_quota_used, :version, :is_active, :created, :updated, :domains].map{|a| attribute(a) {object[:_source][a]}}
 
 
   def member_id

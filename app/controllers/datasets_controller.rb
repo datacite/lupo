@@ -8,6 +8,8 @@ class DatasetsController < ApplicationController
     else
       @datasets = Dataset.__elasticsearch__.search params["q"]
     end
+    @datasets = Dataset.get_all
+
     meta = { #total: @datasets.total_entries,
             #  total_pages: @datasets.total_pages ,
             #  page: page[:number].to_i,

@@ -12,6 +12,7 @@ class DatacentersController < ApplicationController
     else
       @datacenters = Datacenter.__elasticsearch__.search params["q"]
     end
+    @datacenters = Datacenter.get_all
     meta = { #total: @datacenters.total_entries,
             #  total_pages: @datacenters.total_pages ,
             #  page: page[:number].to_i,
