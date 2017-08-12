@@ -8,7 +8,6 @@ class DatacentersController < ApplicationController
   # GET /datacenters
   def index
     if params["q"].nil?
-      Datacenter.__elasticsearch__.create_index!
       @datacenters = Datacenter.__elasticsearch__.search "*"
     else
       @datacenters = Datacenter.__elasticsearch__.search params["q"]
@@ -20,7 +19,7 @@ class DatacentersController < ApplicationController
             #  regions: regions,
             #  members: allocators
            }
-    paginate json: @datacenters, meta: meta, each_serializer: DatacenterSerializer  ,per_page: 25
+    paginate json: @datacenters, meta: meta , each_serializer: DatacenterSerializer  ,per_page: 25
   end
 
   # GET /datacenters/1
@@ -70,7 +69,6 @@ class DatacentersController < ApplicationController
         .permit(:comments, :contact_email, :contact_name, :doi_quota_allowed, :doi_quota_used, :domains, :is_active, :name, :password, :role_name, :version, :datacenter_id, :member_id, :experiments)
 
       dc_params = ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
-      puts dc_params.inspect
       allocator = Member.find_by(symbol: dc_params["member_id"])
       fail("member_id Not found") unless allocator.present?
       dc_params["allocator"] = allocator.id

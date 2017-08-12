@@ -7,7 +7,7 @@ class Member < ApplicationRecord
   alias_attribute :member_id, :symbol
   has_many :datacenters
   validates_presence_of :name
-  validates_uniqueness_of :member_id, message: "This member_id has already been taken"
+  validates_uniqueness_of :symbol, message: "This member_id has already been taken"
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, message: "contact_email should be an email"
   validates_format_of :website, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be an url"
   validates_format_of :logo, :with => /https?:\/\/[\S]+/ , if: :logo?, message: "Logo should be an url"

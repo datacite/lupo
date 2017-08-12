@@ -5,11 +5,12 @@ class DatasetSerializer < ActiveModel::Serializer
   # include metadata helper methods
   include Metadatable
 
-  # attributes   :doi, :version, :datacentre, :is_active, :created, :deposited, :updated
-  # attribute    :datacenter_id
+
+  attributes   :doi, :url, :version, :datacentre, :is_active, :created, :deposited, :updated
+  attribute    :datacenter_id
   belongs_to :datacenter, serializer: DatacenterSerializer
 
-  [:name, :role_name, :member_id, :contact_email, :doi_quota_allowed, :doi_quota_used, :version, :is_active, :created, :updated, :domains].map{|a| attribute(a) {object[:_source][a]}}
+  [:doi, :url, :datacenter_id, :version, :datacentre, :is_active, :created, :deposited, :updated].map{|a| attribute(a) {object[:_source][a]}}
 
 
   def id

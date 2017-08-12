@@ -15,8 +15,9 @@ class DatasetsController < ApplicationController
             # #  regions: regions,
             #  datacenters: datacenters
            }
+    # @datasets = Dataset.all
 
-    paginate json: @datasets, meta: meta, each_serializer: DatasetSerializer ,per_page: 25
+    paginate json: @datasets, meta: meta,per_page: 25 , each_serializer: DatasetSerializer
   end
   #
   # # # GET /datasets/1
@@ -64,7 +65,10 @@ class DatasetsController < ApplicationController
       .permit(:created, :doi, :is_active, :is_ref_quality, :last_landing_page_status, :last_landing_page_status_check, :last_landing_page_status_check, :updated, :version, :datacenter_id, :minted)
 
     ds_params= ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
-    ds_params["datacentre"] = Datacenter.find_by(symbol: ds_params["datacenter_id"]).id
+
+    datacentre = Datacenter.find_by(symbol: ds_params["datacenter_id"])
+    fail("datacenter_id Not found") unless   datacentre.present?
+    ds_params["datacentre"] = datacentre.id
     ds_params
   end
 end

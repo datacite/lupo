@@ -3,20 +3,19 @@ class MembersController < ApplicationController
 
   # GET /members
   def index
-    @members = Member.all
 
-    page = params[:page] || { number: 1, size: 1000 }
-
-    @members = Member.order(:name).page(page[:number]).per_page(page[:size])
-
-    meta = { total: @members.total_entries,
-             total_pages: @members.total_pages ,
-             page: page[:number].to_i,
+    if params["q"].nil?
+      @members = Member.__elasticsearch__.search "*"
+    else
+      @members = Member.__elasticsearch__.search params["q"]
+    end
+    meta = { #total: @members.total_entries,
+             #total_pages: @members.total_pages ,
+             #page: page[:number].to_i,
             #  member_types: member_types,
             #  regions: regions,
             }
-
-    paginate json: @members, meta: meta, include:['datacenters', 'prefixes'], per_page: 25
+    paginate json: @members, meta: meta,  each_serializer: MemberSerializer,per_page: 25
   end
 
   # GET /members/1

@@ -1,17 +1,13 @@
 class Datacenter < ApplicationRecord
   self.table_name = "datacentre"
-  # alias_attribute :created_at, :created
-  # alias_attribute :updated_at, :updated
-
+  self.per_page = 10
   attribute :member_id
   alias_attribute :member_id, :allocator
   attribute :datacenter_id
   alias_attribute :datacenter_id, :symbol
-  # attribute :title
-  # alias_attribute :title, :symbol
   validates_presence_of :name, :member_id
   validates_presence_of :datacenter_id
-  validates_uniqueness_of :datacenter_id, message: "This datacenter_id has already been taken"
+  validates_uniqueness_of :symbol, message: "This datacenter_id has already been taken"
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
   validates_numericality_of :doi_quota_allowed, :doi_quota_used
   validates_numericality_of :version, if: :version?

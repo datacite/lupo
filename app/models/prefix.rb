@@ -10,7 +10,7 @@ class Prefix < ApplicationRecord
   validates_numericality_of :version, if: :version?
 
   has_and_belongs_to_many :datacenters, join_table: "datacentre_prefixes", foreign_key: :prefixes, association_foreign_key: :datacentre, autosave: true
-  has_and_belongs_to_many :members, join_table: "allocator_prefixes", foreign_key: :prefixes, association_foreign_key: :allocator, autosave: true
+  has_and_belongs_to_many :members, join_table: "allocator_prefixes", foreign_key: :prefixes
 
   def set_updated_at
     "NA"

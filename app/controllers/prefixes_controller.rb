@@ -3,9 +3,18 @@ class PrefixesController < ApplicationController
 
   # GET /prefixes
   def index
-    @prefixes = Prefix.all
-
-    paginate json: @prefixes , per_page: 25
+    if params["q"].nil?
+      @prefixes = Prefix.__elasticsearch__.search "*"
+    else
+      @prefixes = Prefix.__elasticsearch__.search params["q"]
+    end
+    meta = { #total: @prefixes.total_entries,
+             #total_pages: @prefixes.total_pages ,
+             #page: page[:number].to_i,
+            #  member_types: member_types,
+            #  regions: regions,
+            }
+    paginate json: @prefixes, meta: meta,  each_serializer: PrefixSerializer,per_page: 25
   end
 
   # GET /prefixes/1
