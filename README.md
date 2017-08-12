@@ -34,4 +34,4 @@ Follow along via [Github Issues](https://github.com/datacite/lupo/issues).
 * Commit, push and make a pull request. Bonus points for topical branches.
 
 ## License
-**Content Resolver** is released under the [MIT License](https://github.com/datacite/lupo/blob/master/LICENSE).
+**Lupo** is released under the [MIT License](https://github.com/datacite/lupo/blob/master/LICENSE).
