@@ -11,6 +11,8 @@ services:
       - ./config:/home/app/webapp/config
       - ./db:/home/app/webapp/db
       - ./spec:/home/app/webapp/spec
+    networks:
+      - public
   memcached:
     image: memcached:1.4.31
     networks:
@@ -49,5 +51,5 @@ networks:
     ipam:
       driver: default
       config:
-      - subnet: 10.0.10.0/24
-        gateway: 10.0.10.1
+      - subnet: 10.0.20.0/24
+        gateway: 10.0.20.1
