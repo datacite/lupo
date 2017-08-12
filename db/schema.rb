@@ -28,13 +28,11 @@ ActiveRecord::Schema.define(version: 20170807091837) do
     t.text "comments", limit: 4294967295
     t.string "experiments"
     t.string "description"
-    t.string "member_type"
     t.integer "year"
-    t.string "image"
     t.string "region"
     t.string "country_code"
     t.string "website"
-    t.string "logo"
+    t.string "phone"
     t.index ["symbol"], name: "symbol", unique: true
   end
 
