@@ -1,7 +1,6 @@
 require 'rails_helper'
 require "cancan/matchers"
 
-
 RSpec.describe User, type: :model do
   let(:new_user)  { FactoryGirl.attributes_for(:user) }
   subject { new_user }
@@ -66,7 +65,6 @@ RSpec.describe User, type: :model do
       it{ is_expected.not_to be_able_to(:destroy, Allocator.new) }
     end
   end
-
 end
 
 
