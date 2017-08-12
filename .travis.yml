@@ -15,12 +15,11 @@ install:
   - travis_retry bundle install
 
 before_script:
-  - mysql -e 'create database lupo_test;'
+  - bundle exec rake db:setup RAILS_ENV=test
   - memcached -p 11211 &
 
-
 script:
-  - bundle exec rspec spec/requests
+  - bundle exec rspec spec
   - bundle exec codeclimate-test-reporter
 
 after_success:
