@@ -1,17 +1,17 @@
-class Datacenter < ApplicationRecord
+class Datacenter < ActiveRecord::Base
+  # index in Elasticsearch
+  include Indexable
+
   # define table and attribute names
-  # we rename name -> title, so that we can do symbol -> name
-  # name is used as unique identifier for most of our records,
-  # mapped to id in serializer
+  # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
-  alias_attribute :title, :name
-  alias_attribute :name, :symbol
+  alias_attribute :uid, :symbol
   alias_attribute :member_id, :allocator
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
 
-  validates_presence_of :name, :title, :member_id, :contact_email, :contact_name, :doi_quota_allowed, :doi_quota_used
-  validates_uniqueness_of :name, message: "This name has already been taken"
+  validates_presence_of :uid, :name, :member_id, :contact_email
+  validates_uniqueness_of :uid, message: "This name has already been taken"
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
   validates_numericality_of :doi_quota_allowed, :doi_quota_used
   validates_numericality_of :version, if: :version?
@@ -21,44 +21,65 @@ class Datacenter < ApplicationRecord
   belongs_to :member, class_name: 'Member', foreign_key: :allocator
   has_many :datasets
 
-  after_create  :add_test_prefix
+  before_validation :set_defaults
 
-  def self.get_all(options={})
+  delegate :uid, to: :member, prefix: true
 
-    collection = Datacenter
-    collection = collection.query(options[:query]) if options[:query]
+  delegate :next_repetition,
+           to: :meta_sm2
 
-    # options[:allocator] = Member.find_by(symbol: options[:allocator]).id if options[:allocator].present?
-    #
-    # if options[:allocator].present?
-    #   collection = collection.where(allocator: options[:allocator])
-    #   @allocator = collection.where(allocator: options[:allocator]).group(:allocator).count.first
-    # end
+  alias_method :member_id, :next_repetition
 
-    if options[:allocator].present?
-      member_id = Member.find_by(symbol: options[:allocator]).id
-      allocators = [{ id: member_id,
-                 member: options[:allocator],
-                 count: Datacenter.where(allocator: member_id).count }]
-    else
-      allocators = Datacenter.where.not(allocator: nil).order("allocator DESC").group(:allocator).count
-      allocators = allocators.map { |k,v| { id: k.to_s, member: k.to_s, count: v } }
-    end
-    #
-    page = options[:page] || { number: 1, size: 1000 }
-    #
-    @datacenters = Datacenter.order(:allocator).page(page[:number]).per_page(page[:size])
-    #
-    meta = { total: @datacenters.total_entries,
-             total_pages: @datacenters.total_pages ,
-             page: page[:number].to_i,
-            #  member_types: member_types,
-            #  regions: regions,
-             members: allocators }
-    @datacenters
+  def year
+    created_at.year if created_at.present?
   end
 
-  def add_test_prefix
+  # Elasticsearch indexing
+  mappings dynamic: 'false' do
+    indexes :uid, type: 'text'
+    indexes :name, type: 'text'
+    indexes :member_id, type: 'text'
+    indexes :prefixes
+    indexes :domains
+    indexes :contact_email, type: 'text'
+    indexes :year, type: 'integer'
+    indexes :created_at, type: 'date'
+    indexes :updated_at, type: 'date'
+  end
 
+  def as_indexed_json(options={})
+    {
+      "id" => uid.downcase,
+      "name" => name,
+      "prefixes" => prefixes,
+      "domains" => domains,
+      "member_id" => member_id,
+      "year" => year,
+      "email" => contact_email,
+      "created" => created_at.iso8601,
+      "updated" => updated_at.iso8601 }
+  end
+
+  # Elasticsearch custom search
+  def self.search(query, options={})
+    __elasticsearch__.search(
+      {
+        query: {
+          query_string: {
+            query: query,
+            fields: ['uid^10', 'name^10', 'contact_email']
+          }
+        }
+      }
+    )
+  end
+
+  private
+
+  def set_defaults
+    self.contact_name = "" unless contact_name.present?
+    self.role_name = "ROLE_DATACENTRE" unless role_name.present?
+    self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
+    self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
   end
 end

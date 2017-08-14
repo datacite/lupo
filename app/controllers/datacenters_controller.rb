@@ -1,52 +1,65 @@
 class DatacentersController < ApplicationController
-# class DatacentersController < JSONAPI::ResourceController
-  # before_action :authenticate_request #, only: [:create, :update, :destroy]
-
   before_action :set_datacenter, only: [:show, :update, :destroy]
-  load_and_authorize_resource
+  before_action :authenticate_user_from_token!
+  load_and_authorize_resource :except => [:index, :show]
+
+  serialization_scope :view_context
 
   # GET /datacenters
   def index
-    if params["q"].nil?
-      @datacenters = Datacenter.__elasticsearch__.search "*"
-    else
-      @datacenters = Datacenter.__elasticsearch__.search params["q"]
-    end
-    @datacenters = Datacenter.get_all
-    meta = { #total: @datacenters.total_entries,
-            #  total_pages: @datacenters.total_pages ,
-            #  page: page[:number].to_i,
-            #  member_types: member_types,
-            #  regions: regions,
-            #  members: allocators
-           }
-    paginate json: @datacenters, meta: meta , each_serializer: DatacenterSerializer  ,per_page: 25
+    options = {
+      member_id: params["member-id"] }
+    params[:query] ||= "*"
+    response = Member.search(params[:query], options)
+
+    # pagination
+    page = (params.dig(:page, :number) || 1).to_i
+    per_page =(params.dig(:page, :size) || 25).to_i
+    total = response.results.total
+    total_pages = (total.to_f / per_page).ceil
+    collection = response.page(page).per(per_page).results
+
+    # extract source hash from each result to feed into serializer
+    collection = collection.map { |m| m[:_source] }
+
+    meta = { total: total,
+             total_pages: total_pages,
+             page: page }
+
+    render jsonapi: collection, meta: meta, each_serializer: DatacenterSerializer
   end
 
   # GET /datacenters/1
   def show
-    render json: @datacenter, include:['member', 'prefixes']
+    render jsonapi: @datacenter
   end
 
   # POST /datacenters
   def create
-    datacenter_params
-    @datacenter = Datacenter.new(datacenter_params)
-
-    if @datacenter.save
-      render json: @datacenter, status: :created, include:['datasets', 'prefixes', 'member'], location: @datacenter
+    unless [:type, :attributes].all? { |k| safe_params.key? k }
+      render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
     else
-      render json: serialize(@datacenter.errors), status: :unprocessable_entity
-      # render json: ErrorSerializer.serialize(@datacenter.errors) #, status: :unprocessable_entity
+      @datacenter = Datacenter.new(safe_params.except(:type))
+      authorize! :create, @datacenter
+
+      if @datacenter.save
+        render jsonapi: @datacenter, status: :created, location: @datacenter
+      else
+        render jsonapi: serialize(@datacenter.errors), status: :unprocessable_entity
+      end
     end
   end
 
   # PATCH/PUT /datacenters/1
   def update
-    if @datacenter.update(datacenter_params)
-      render json: @datacenter,  include:['datasets', 'prefixes', 'member']
+    unless [:type, :attributes].all? { |k| safe_params.key? k }
+      render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
     else
-      render json: serialize(@datacenter.errors), status: :unprocessable_entity
+      if @datacenter.update_attributes(safe_params.except(:type))
+        render jsonapi: @datacenter
+      else
+        render json: serialize(@datacenter.errors), status: :unprocessable_entity
+      end
     end
   end
 
@@ -56,25 +69,29 @@ class DatacentersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_datacenter
-      # @datacenter = Datacenter.find(params[:id])
-      @datacenter = Datacenter.find_by(symbol: params[:id])
-      fail ActiveRecord::RecordNotFound unless @datacenter.present?
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def datacenter_params
-      params.require(:data)
-        .require(:attributes)
-        .permit(:comments, :contact_email, :contact_name, :doi_quota_allowed, :doi_quota_used, :domains, :is_active, :name, :password, :role_name, :version, :datacenter_id, :member_id, :experiments)
+  # Use callbacks to share common setup or constraints between actions.
+  def set_datacenter
+    @datacenter = Datacenter.where(symbol: params[:id]).first
+    fail ActiveRecord::RecordNotFound unless @datacenter.present?
+  end
 
-      dc_params = ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
-      allocator = Member.find_by(symbol: dc_params["member_id"])
-      fail("member_id Not found") unless allocator.present?
-      dc_params["allocator"] = allocator.id
-      dc_params["password"] = encrypt_password(dc_params["password"])
-      dc_params["symbol"] = dc_params["datacenter_id"]
-      dc_params
-    end
+  private
+
+  # Only allow a trusted parameter "white list" through.
+  def safe_params
+    attributes = [:uid, :name, :contact_email, :contact_name, :doi_quota_allowed, :doi_quota_used, :domains, :is_active, :password, :role_name, :version, :member_id]
+    params.require(:data).permit(:id, :type, attributes: attributes)
+  end
+
+  # # Only allow a trusted parameter "white list" through.
+  # def datacenter_params
+  #   dc_params = ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
+  #   allocator = Member.find_by(symbol: dc_params["member_id"])
+  #   fail("member_id Not found") unless allocator.present?
+  #   dc_params["allocator"] = allocator.id
+  #   dc_params["password"] = encrypt_password(dc_params["password"])
+  #   dc_params["symbol"] = dc_params["datacenter_id"]
+  #   dc_params
+  # end
 end

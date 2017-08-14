@@ -1,5 +1,6 @@
 RESCUABLE_EXCEPTIONS = [CanCan::AccessDenied,
                         JWT::VerificationError,
+                        ActiveRecord::RecordNotFound,
                         AbstractController::ActionNotFound,
                         ActionController::RoutingError,
                         ActionController::ParameterMissing,
@@ -28,4 +29,9 @@ DATACITE_VERSION = "4"
 # Date of DataCite Schema
 DATACITE_SCHEMA_DATE = "2016-09-21"
 
-# CSL types: https://github.com/citation-st
+# regions used by countries gem
+REGIONS = {
+  "APAC" => "Asia and Pacific",
+  "EMEA" => "Europe, Middle East and Africa",
+  "AMER" => "Americas"
+}

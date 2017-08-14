@@ -4,7 +4,7 @@ class Ability
   # To simplify, all admin permissions are linked to the Notification resource
 
   def initialize(user)
-    user ||= User.new(:role => "anonymous") # Guest user
+    user ||= User.new(nil) # Guest user
     if user.role == "staff_admin"
       can :manage, :all
     elsif user.role == "staff_user"

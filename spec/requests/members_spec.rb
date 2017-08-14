@@ -2,11 +2,17 @@ require 'rails_helper'
 
 RSpec.describe "Members", type: :request  do
   # initialize test data
-  let!(:members)  { create_list(:member, 10) }
-  let(:member_id) { members.first.symbol.downcase }
-
-  auth = 'Bearer ' + ENV['JWT_TOKEN']
-  headers = {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => auth}
+  let(:members)  { create_list(:member, 10) }
+  let(:member) { members.first }
+  let(:params) do
+    { "data" => { "type" => "members",
+                  "attributes" => {
+                    "uid" => "BL",
+                    "name" => "British Library",
+                    "contact_email" => "bob@example.com",
+                    "country_code" => "GB" } } }
+  end
+  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN'] } }
 
   # Test suite for GET /members
   describe 'GET /members' do
@@ -15,7 +21,7 @@ RSpec.describe "Members", type: :request  do
 
     it 'returns members' do
       expect(json).not_to be_empty
-      expect(json['data'].size).to eq(10)
+      expect(json['data'].size).to eq(25)
     end
 
     it 'returns status code 200' do
@@ -25,12 +31,12 @@ RSpec.describe "Members", type: :request  do
 
   # Test suite for GET /members/:id
   describe 'GET /members/:id' do
-    before { get "/members/#{member_id}" , headers: headers}
+    before { get "/members/#{member.uid}" , headers: headers}
 
     context 'when the record exists' do
       it 'returns the member' do
         expect(json).not_to be_empty
-        expect(json['data']['id']).to eq(member_id)
+        expect(json['data']['id'].to_i).to eq(member.id)
       end
 
       it 'returns status code 200' do
@@ -39,66 +45,80 @@ RSpec.describe "Members", type: :request  do
     end
 
     context 'when the record does not exist' do
-      let(:member_id) { 1222200 }
+      before { get "/members/xxx" , headers: headers}
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
       end
 
       it 'returns a not found message' do
-        # expect(response.body).to match(/Record not found/)
+        expect(response.body).to eq(2)
       end
     end
   end
 
   # Test suite for POST /members
   describe 'POST /members' do
-    # valid payload
-    let(:valid_attributes) { ActiveModelSerializers::Adapter.create(MemberSerializer.new(FactoryGirl.build(:member)), {adapter: "json_api"}).to_json }
-
     context 'when the request is valid' do
-      before { post '/members', params: valid_attributes , headers: headers }
+      before { post '/members', params: params.to_json, headers: headers }
 
       it 'creates a member' do
-        expect(json['data']['attributes']['name']).to eq(JSON.parse(valid_attributes)['data']['attributes']['name'])
+        expect(json.dig('data', 'attributes', 'region')).to eq("EMEA")
       end
 
       it 'returns status code 201' do
         expect(response).to have_http_status(201)
       end
+    end
 
-      it 'Associates test Prefix' do
-        expect(json['relationships']['prefixes']['data']).to include(:id => "10.5072")
+    context 'when the request is missing a required attribute' do
+      let(:params) do
+        { "data" => { "type" => "members",
+                      "attributes" => {
+                        "uid" => "BL",
+                        "name" => "British Library",
+                        "country_code" => "GB" } } }
+      end
+
+      before { post '/members', params: params.to_json, headers: headers }
+
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'returns a validation failure message' do
+        expect(json["errors"].first).to eq("id"=>"contact_email", "title"=>"Contact email can't be blank")
       end
     end
 
-    context 'when the request is invalid' do
-        let(:not_valid_attributes) { ActiveModelSerializers::Adapter.create(DatacenterSerializer.new(FactoryGirl.build(:datacenter)), {adapter: "json_api"}).to_json }
-      before { post '/members', params: not_valid_attributes }
-
-      it 'returns status code 500' do
-        expect(response).to have_http_status(500)
+    context 'when the request is missing a data object' do
+      let(:params) do
+        { "type" => "members",
+          "attributes" => {
+            "uid" => "BL",
+            "name" => "British Library",
+            "country_code" => "GB" } }
       end
 
-      # it 'returns status code 422' do
-      #   expect(response).to have_http_status(422)
-      # end
+      before { post '/members', params: params.to_json, headers: headers }
+
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
+      end
 
       it 'returns a validation failure message' do
-        # expect(response.body).to match(/Validation failed: Created by can't be blank/)
+        expect(json["errors"].first).to eq("id"=>"contact_email", "title"=>"Contact email can't be blank")
       end
     end
   end
 
   # # Test suite for PUT /members/:id
   describe 'PUT /members/:id' do
-    let(:valid_attributes) { ActiveModelSerializers::Adapter.create(MemberSerializer.new(members.first), {adapter: "json_api"}).to_json }
-
     context 'when the record exists' do
-      before { put "/members/#{member_id}", params: valid_attributes, headers: headers }
+      before { put "/members/#{member.uid}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
-        expect(response.body).not_to be_empty
+        expect(json.dig('data', 'attributes', 'region')).to eq("EMEA")
       end
 
       it 'returns status code 200' do
@@ -109,7 +129,7 @@ RSpec.describe "Members", type: :request  do
 
   # Test suite for DELETE /members/:id
   describe 'DELETE /members/:id' do
-    before { delete "/members/#{member_id}", headers: headers }
+    before { delete "/members/#{member.uid}", headers: headers }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

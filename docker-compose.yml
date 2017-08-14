@@ -10,6 +10,7 @@ services:
       - ./app:/home/app/webapp/app
       - ./config:/home/app/webapp/config
       - ./db:/home/app/webapp/db
+      - ./lib:/home/app/webapp/lib
       - ./spec:/home/app/webapp/spec
     networks:
       - public
@@ -30,7 +31,7 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:5.5.1
     volumes:
-      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     ports:
       - "9200:9200"
       - "9300:9300"

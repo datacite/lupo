@@ -7,6 +7,7 @@ SimpleCov.start
 require File.expand_path('../../config/environment', __FILE__)
 
 Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+
 require "rspec/rails"
 require "shoulda-matchers"
 require "webmock/rspec"
@@ -16,6 +17,11 @@ require 'database_cleaner'
 
 # Checks for pending migration and applies them before tests are run.
 ActiveRecord::Migration.maintain_test_schema!
+
+WebMock.disable_net_connect!(
+  allow: ['codeclimate.com:443', ENV['PRIVATE_IP'], ENV['ES_HOST']],
+  allow_localhost: true
+)
 
 # configure shoulda matchers to use rspec as the test framework and full matcher libraries for rails
 Shoulda::Matchers.configure do |config|
@@ -28,20 +34,10 @@ end
 RSpec.configure do |config|
   # add `FactoryGirl` methods
   config.include FactoryGirl::Syntax::Methods
-  
+
+  # don't use transactions, use database_clear gem via support file
+  config.use_transactional_fixtures = false
+
   # add custom json method
   config.include RequestSpecHelper, type: :request
-
-  # start by truncating all the tables but then use the faster transaction strategy the rest of the time.
-  config.before(:suite) do
-    DatabaseCleaner.clean_with(:truncation)
-    DatabaseCleaner.strategy = :transaction
-  end
-
-  # start the transaction strategy as examples are run
-  config.around(:each) do |example|
-    DatabaseCleaner.cleaning do
-      example.run
-    end
-  end
 end

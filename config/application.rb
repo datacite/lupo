@@ -49,6 +49,18 @@ module Lupo
     config.lograge.enabled = true
     config.logger = Syslog::Logger.new(ENV['APPLICATION'])
 
+    # add elasticsearch instrumentation to logs
+    require 'elasticsearch/rails/lograge'
+
+    # raise error with unpermitted parameters
+    config.action_controller.action_on_unpermitted_parameters = :raise
+
+    # compress responses with deflate or gzip
+    config.middleware.use Rack::Deflater
+
+    # set Active Job queueing backend
+    config.active_job.queue_adapter = :sidekiq
+
     config.generators do |g|
       g.fixture_replacement :factory_girl
     end

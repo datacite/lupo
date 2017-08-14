@@ -1,5 +1,3 @@
-# ActiveModel::Serializer.config.adapter = :json_api
-
 ActiveModel::Serializer.config.adapter = ActiveModelSerializers::Adapter::JsonApi
 ActiveModel::Serializer.config.include_data_default = :if_sideloaded
 ActiveSupport.on_load(:action_controller) do

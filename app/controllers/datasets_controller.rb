@@ -1,6 +1,8 @@
 class DatasetsController < ApplicationController
   before_action :set_dataset, only: [:show, :update, :destroy]
-  #
+  before_action :authenticate_user_from_token!
+  load_and_authorize_resource :except => [:index, :show]
+  
   # # # GET /datasets
   def index
     if params["q"].nil?

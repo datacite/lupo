@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :user do
-    name { Faker::StarWars.character   }
+    name { Faker::StarWars.character }
     uid { Faker::Number.between(1, 100) }
     email {Faker::Internet.email}
     role "datacentre_admin"

@@ -3,18 +3,21 @@ class User
   attr_accessor :name, :uid, :email, :role, :jwt, :orcid, :member_id, :datacenter_id, :token
 
   def initialize(token)
-    payload = decode_token(token)
+    if token.present?
+      payload = decode_token(token)
 
-    @jwt = token
-    @uid = payload.fetch("uid", nil)
-    @name = payload.fetch("name", nil)
-    @email = payload.fetch("email", nil)
-    @role = payload.fetch("role", nil)
-    @member_id = payload.fetch("member_id", nil)
-    @datacenter_id = payload.fetch("datacenter_id", nil)
+      @jwt = token
+      @uid = payload.fetch("uid", nil)
+      @name = payload.fetch("name", nil)
+      @email = payload.fetch("email", nil)
+      @role = payload.fetch("role", nil)
+      @member_id = payload.fetch("member_id", nil)
+      @datacenter_id = payload.fetch("datacenter_id", nil)
+    else
+      @role = "anonymous"
+    end
   end
 
-  # Helper method to check for admin user
   def generate_token
     @jwt
   end

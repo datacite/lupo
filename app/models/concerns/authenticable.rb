@@ -17,8 +17,10 @@ module Authenticable
       payload = (JWT.decode token, public_key, true, { :algorithm => 'RS256' }).first
 
       # check whether token has expired
-      return {} unless Time.now.to_i < payload["exp"]
+      return { "error" => "Token expired." } unless Time.now.to_i < payload["exp"]
       payload
+    rescue JWT::VerificationError => e
+      { "error" => e }
     end
 
     def encrypt_password(password)

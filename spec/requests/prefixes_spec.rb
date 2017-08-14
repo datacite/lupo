@@ -1,6 +1,5 @@
 require 'rails_helper'
 
-
 RSpec.describe "Prefixes", type: :request   do
   # initialize test data
   let!(:prefixes)  { create_list(:prefix, 10) }

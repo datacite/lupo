@@ -1,41 +1,41 @@
 class DatacenterSerializer < ActiveModel::Serializer
-  attributes  :name, :role_name, :member_id, :contact_email, :doi_quota_allowed, :doi_quota_used, :version, :is_active, :created, :updated, :domains
+  type 'data-centers'
 
-  has_many :datasets
-  has_many :prefixes
-  belongs_to :member, serializer: MemberSerializer
-
-  # [:name, :role_name, :member_id, :contact_email, :doi_quota_allowed, :doi_quota_used, :version, :is_active, :created, :updated, :domains].map{|a| attribute(a) {object[:_source][a]}}
-
-
-  def member_id
-   object.member[:symbol].downcase
-  end
-  #
-  def domains
-    object.domains.to_s.split(/\s*,\s*/).presence
-  end
+  attributes :name, :prefixes, :domains, :member_id, :year, :created, :updated
 
   def id
-    object.symbol.downcase
+    object.id
   end
 
-  def updated
-    object.updated.iso8601
-  end
+  # has_many :datasets
+  # has_many :prefixes
+  # belongs_to :member, serializer: MemberSerializer
 
-  def created
-    object.created.iso8601
+  def name
+    object.name
   end
 
   def prefixes
-    object.prefixes.map { |p| p.prefix }
+    object.prefixes
   end
 
-  def meta(options)
-    {
-      total: object.datacentres.count
-    }
+  def domains
+    object.domains #object.domains.to_s.split(/\s*,\s*/).presence
   end
 
+  def member_id
+   object.member_id
+  end
+
+  def year
+   object.year
+  end
+
+  def created
+    object.created
+  end
+
+  def updated
+    object.updated
+  end
 end

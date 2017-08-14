@@ -1,23 +1,36 @@
 class MembersController < ApplicationController
   before_action :set_member, only: [:show, :update, :destroy]
+  before_action :authenticate_user_from_token!
+  load_and_authorize_resource :except => [:create, :index, :show]
+
+  serialization_scope :view_context
 
   # GET /members
   def index
+    options = {
+      member_type: params["member-type"],
+      region: params[:region],
+      year: params[:year] }
+    params[:query] ||= "*"
+    response = Member.search(params[:query], options)
 
-    if params["q"].nil?
-      @members = Member.__elasticsearch__.search "*"
-    else
-      @members = Member.__elasticsearch__.search params["q"]
-    end
-    @members = Member.all
+    # pagination
+    page = (params.dig(:page, :number) || 1).to_i
+    per_page =(params.dig(:page, :size) || 25).to_i
+    total = response.results.total
+    total_pages = (total.to_f / per_page).ceil
+    collection = response.page(page).per(per_page).results.to_a
 
-    meta = { #total: @members.total_entries,
-             #total_pages: @members.total_pages ,
-             #page: page[:number].to_i,
-            #  member_types: member_types,
-            #  regions: regions,
-            }
-    paginate json: @members, meta: meta,  each_serializer: MemberSerializer,per_page: 25
+    Rails.logger.info collection
+
+    # extract source hash from each result to feed into serializer
+    collection = collection.map { |m| m[:_source] }
+
+    meta = { total: total,
+             total_pages: total_pages,
+             page: page }
+
+    render jsonapi: collection, meta: meta, each_serializer: MemberSerializer
   end
 
   # GET /members/1
@@ -27,21 +40,30 @@ class MembersController < ApplicationController
 
   # POST /members
   def create
-    @member = Member.new(member_params)
-
-    if @member.save
-      render json: @member, status: :created, location: @member
+    unless [:type, :attributes].all? { |k| safe_params.key? k }
+      render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
     else
-      render json: serialize(@member.errors), status: :unprocessable_entity
+      @member = Member.new(safe_params.except(:type))
+      authorize! :create, @member
+
+      if @member.save
+        render json: @member, status: :created, location: @member
+      else
+        render json: serialize(@member.errors), status: :unprocessable_entity
+      end
     end
   end
 
   # PATCH/PUT /members/1
   def update
-    if @member.update(member_params)
-      render json: @member
+    unless [:type, :attributes].all? { |k| safe_params.key? k }
+      render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
     else
-      render json: serialize(@member.errors), status: :unprocessable_entity
+      if @member.update_attributes(safe_params.except(:type))
+        render json: @member
+      else
+        render json: serialize(@member.errors), status: :unprocessable_entity
+      end
     end
   end
 
@@ -51,21 +73,29 @@ class MembersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_member
-      @member = Member.find_by(symbol: params[:id])
-      fail ActiveRecord::RecordNotFound unless @member.present?
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def member_params
-      params.require(:data)
-        .require(:attributes)
-        .permit(:comments, :contact_email, :contact_name, :description, :member_type, :year, :image, :region, :country_code, :website, :logo, :doi_quota_allowed, :doi_quota_used, :is_active, :name, :password, :role_name, :member_id, :version, :experiments)
+  # Use callbacks to share common setup or constraints between actions.
+  def set_member
+    @member = Member.where(symbol: params[:id])
+    fail ActiveRecord::RecordNotFound unless @member.present?
+  end
 
-      mb_params= ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
-      mb_params["symbol"] = mb_params["member_id"]
-      mb_params["password"] = encrypt_password(mb_params["password"])
-      mb_params
-    end
+  private
+
+  # Only allow a trusted parameter "white list" through.
+  def safe_params
+    attributes = [:uid, :name, :contact_email, :contact_name, :description, :year, :region, :country_code, :website, :doi_quota_allowed, :doi_quota_used, :is_active, :name, :password, :role_name, :member_id, :version]
+    params.require(:data).permit(:id, :type, attributes: attributes)
+  end
+
+  # Only allow a trusted parameter "white list" through.
+  # def member_params
+  #   params.require(:data)
+  #     .require(:attributes)
+  #     .permit(:uid, :name, :contact_email, :contact_name, :description, :year, :region, :country_code, :website, :doi_quota_allowed, :doi_quota_used, :is_active, :name, :password, :role_name, :member_id, :version)
+  #
+  #   mb_params= ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
+  #   mb_params["password"] = encrypt_password(mb_params["password"])
+  #   mb_params
+  # end
 end

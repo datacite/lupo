@@ -1,4 +1,7 @@
-class Dataset < ApplicationRecord
+class Dataset < ActiveRecord::Base
+  # index in Elasticsearch
+  include Indexable
+  
   include Identifiable
   include Metadatable
 

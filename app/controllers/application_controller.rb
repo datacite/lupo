@@ -30,10 +30,8 @@ class ApplicationController < ActionController::API
     request.format = :json if request.format.html?
   end
 
-  def current_user
-    token = token_from_request_headers
-    raise CanCan::AccessDenied unless token.present? && token.length > 25
-    User.new(token)
+  def authenticate_user_from_token!
+    @current_user = User.new(token_from_request_headers)
   end
 
   def current_ability
@@ -51,8 +49,8 @@ class ApplicationController < ActionController::API
     rescue_from *RESCUABLE_EXCEPTIONS do |exception|
       status = case exception.class.to_s
                when "CanCan::AccessDenied", "JWT::DecodeError" then 401
-               when "AbstractController::ActionNotFound", "ActionController::RoutingError" then 404
-               when "ActiveModel::ForbiddenAttributesError", "ActionController::UnpermittedParameters", "NoMethodError" then 422
+               when "ActiveRecord::RecordNotFound", "AbstractController::ActionNotFound", "ActionController::RoutingError" then 404
+               when "ActiveModel::ForbiddenAttributesError", "ActionController::ParameterMissing", "ActionController::UnpermittedParameters", "NoMethodError" then 422
                else 400
                end
 
@@ -62,6 +60,13 @@ class ApplicationController < ActionController::API
         message = "You are not authorized to access this page."
       else
         message = exception.message
+      end
+
+      respond_to do |format|
+        format.all { render json: { errors: [{ status: status.to_s,
+                                               title: message }]
+                                  }, status: status
+                   }
       end
     end
   end
