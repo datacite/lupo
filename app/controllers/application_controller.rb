@@ -62,12 +62,12 @@ class ApplicationController < ActionController::API
         message = exception.message
       end
 
-      respond_to do |format|
-        format.all { render json: { errors: [{ status: status.to_s,
-                                               title: message }]
-                                  }, status: status
-                   }
-      end
+      # respond_to do |format|
+      #   format.all { render json: { errors: [{ status: status.to_s,
+      #                                          title: message }]
+      #                             }, status: status
+      #              }
+      # end
     end
   end
 

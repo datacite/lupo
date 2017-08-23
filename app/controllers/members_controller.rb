@@ -1,7 +1,7 @@
 class MembersController < ApplicationController
   before_action :set_member, only: [:show, :update, :destroy]
   before_action :authenticate_user_from_token!
-  load_and_authorize_resource :except => [:create, :index, :show]
+  load_and_authorize_resource :except => [:index, :show]
 
   serialization_scope :view_context
 

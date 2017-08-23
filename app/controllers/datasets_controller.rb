@@ -29,7 +29,7 @@ class DatasetsController < ApplicationController
              total_pages: total_pages,
              page: page }
 
-    render jsonapi: response, meta: meta, include:['datacenter', 'member']
+    render jsonapi: collection, meta: meta
   end
   #
   # # # GET /datasets/1
