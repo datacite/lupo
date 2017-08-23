@@ -1,6 +1,5 @@
 class Datacenter < ActiveRecord::Base
-  # index in Elasticsearch
-  include Indexable
+
 
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
@@ -24,28 +23,30 @@ class Datacenter < ActiveRecord::Base
   before_validation :set_defaults
 
   delegate :uid, to: :member, prefix: true
+  before_create { self.created = Time.zone.now.utc.iso8601 }
+  before_save { self.updated = Time.zone.now.utc.iso8601 }
 
-  delegate :next_repetition,
-           to: :meta_sm2
-
-  alias_method :member_id, :next_repetition
+  # delegate :next_repetition,
+  #          to: :meta_sm2
+  #
+  # alias_method :member_id, :next_repetition
 
   def year
     created_at.year if created_at.present?
   end
 
-  # Elasticsearch indexing
-  mappings dynamic: 'false' do
-    indexes :uid, type: 'text'
-    indexes :name, type: 'text'
-    indexes :member_id, type: 'text'
-    indexes :prefixes
-    indexes :domains
-    indexes :contact_email, type: 'text'
-    indexes :year, type: 'integer'
-    indexes :created_at, type: 'date'
-    indexes :updated_at, type: 'date'
-  end
+  # # Elasticsearch indexing
+  # mappings dynamic: 'false' do
+  #   indexes :uid, type: 'text'
+  #   indexes :name, type: 'text'
+  #   indexes :member_id, type: 'text'
+  #   indexes :prefixes
+  #   indexes :domains
+  #   indexes :contact_email, type: 'text'
+  #   indexes :year, type: 'integer'
+  #   indexes :created_at, type: 'date'
+  #   indexes :updated_at, type: 'date'
+  # end
 
   def as_indexed_json(options={})
     {
@@ -60,18 +61,23 @@ class Datacenter < ActiveRecord::Base
       "updated" => updated_at.iso8601 }
   end
 
+  # def domains
+  #   domains.to_s.split(/\s*,\s*/).presence
+  # end
+
   # Elasticsearch custom search
   def self.search(query, options={})
-    __elasticsearch__.search(
-      {
-        query: {
-          query_string: {
-            query: query,
-            fields: ['uid^10', 'name^10', 'contact_email']
-          }
-        }
-      }
-    )
+    # __elasticsearch__.search(
+    #   {
+    #     query: {
+    #       query_string: {
+    #         query: query,
+    #         fields: ['uid^10', 'name^10', 'contact_email']
+    #       }
+    #     }
+    #   }
+    # )
+    self.all
   end
 
   private

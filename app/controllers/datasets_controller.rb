@@ -2,50 +2,67 @@ class DatasetsController < ApplicationController
   before_action :set_dataset, only: [:show, :update, :destroy]
   before_action :authenticate_user_from_token!
   load_and_authorize_resource :except => [:index, :show]
-  
+
+  serialization_scope :view_context
+
+
   # # # GET /datasets
   def index
-    if params["q"].nil?
-      @datasets = Dataset.__elasticsearch__.search "*"
-    else
-      @datasets = Dataset.__elasticsearch__.search params["q"]
-    end
-    @datasets = Dataset.get_all
+    options = { }
+    params[:query] ||= "*"
+    response = Dataset.search(params[:query], options)
 
-    meta = { #total: @datasets.total_entries,
-            #  total_pages: @datasets.total_pages ,
-            #  page: page[:number].to_i,
-            # #  member_types: member_types,
-            # #  regions: regions,
-            #  datacenters: datacenters
-           }
-    # @datasets = Dataset.all
 
-    paginate json: @datasets, meta: meta,per_page: 25 , each_serializer: DatasetSerializer
+    # pagination
+    page = (params.dig(:page, :number) || 1).to_i
+    per_page =(params.dig(:page, :size) || 25).to_i
+    total = response.size
+    total_pages = (total.to_f / per_page).ceil
+    collection = response.page(page).per(per_page).order(created: :desc).to_a
+
+    # Rails.logger.info collection
+    #
+    # # extract source hash from each result to feed into serializer
+    # collection = collection.map { |m| m[:_source] }
+
+    meta = { total: total,
+             total_pages: total_pages,
+             page: page }
+
+    render jsonapi: response, meta: meta, include:['datacenter', 'member']
   end
   #
   # # # GET /datasets/1
   def show
-    render json: @dataset, include:['datacentre']
+    render jsonapi: @dataset, include:['datacentre']
   end
 
   # # POST /datasets
   def create
-    @dataset = Dataset.new(dataset_params)
-
-    if @dataset.save
-      render json: @dataset, status: :created, location: @dataset
+    unless [:type, :attributes].all? { |k| safe_params.key? k }
+      render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
     else
-      render json: serialize(@dataset.errors), status: :unprocessable_entity
+      @dataset = Dataset.new(safe_params.except(:type))
+      authorize! :create, @dataset
+
+      if @dataset.save
+        render json: @dataset, status: :created, location: @dataset
+      else
+        render json: serialize(@dataset.errors), status: :unprocessable_entity
+      end
     end
   end
   #
   # # PATCH/PUT /datasets/1
   def update
-    if @dataset.update(dataset_params)
-      render json: @dataset
+    unless [:type, :attributes].all? { |k| safe_params.key? k }
+      render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
     else
-      render json: serialize(@dataset.errors), status: :unprocessable_entity
+      if @dataset.update_attributes(safe_params.except(:type))
+        render json: @dataset
+      else
+        render json: serialize(@dataset.errors), status: :unprocessable_entity
+      end
     end
   end
 
@@ -57,22 +74,29 @@ class DatasetsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_dataset
-      # @dataset = Dataset.find(params[:id])
-      @dataset = Dataset.find_by(doi: params[:id])
+      @dataset = Dataset.where(doi: params[:id]).first
       fail ActiveRecord::RecordNotFound unless @dataset.present?
     end
 
-  #   # Only allow a trusted parameter "white list" through.
-  def dataset_params
-    params.require(:data)
-      .require(:attributes)
-      .permit(:created, :doi, :is_active, :is_ref_quality, :last_landing_page_status, :last_landing_page_status_check, :last_landing_page_status_check, :updated, :version, :datacenter_id, :minted)
 
-    ds_params= ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
+  private
 
-    datacentre = Datacenter.find_by(symbol: ds_params["datacenter_id"])
-    fail("datacenter_id Not found") unless   datacentre.present?
-    ds_params["datacentre"] = datacentre.id
-    ds_params
+  # Only allow a trusted parameter "white list" through.
+  def safe_params
+    attributes = [:uid, :created, :doi, :is_active, :version, :datacenter_id]
+    params.require(:data).permit(:id, :type, attributes: attributes)
   end
+  #   # Only allow a trusted parameter "white list" through.
+  # def dataset_params
+  #   params.require(:data)
+  #     .require(:attributes)
+  #     .permit(:created, :doi, :is_active, :is_ref_quality, :last_landing_page_status, :last_landing_page_status_check, :last_landing_page_status_check, :updated, :version, :datacenter_id, :minted)
+  #
+  #   ds_params= ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
+  #
+  #   datacentre = Datacenter.find_by(symbol: ds_params["datacenter_id"])
+  #   fail("datacenter_id Not found") unless   datacentre.present?
+  #   ds_params["datacentre"] = datacentre.id
+  #   ds_params
+  # end
 end

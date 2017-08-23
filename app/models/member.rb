@@ -1,8 +1,7 @@
 require "countries"
 
 class Member < ActiveRecord::Base
-  # index in Elasticsearch
-  include Indexable
+
 
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
@@ -23,25 +22,26 @@ class Member < ActiveRecord::Base
   has_and_belongs_to_many :prefixes, class_name: 'Prefix', join_table: "allocator_prefixes", foreign_key: :prefixes, association_foreign_key: :allocator
 
   before_validation :set_region, :set_defaults
-
-  # Elasticsearch indexing
-  mappings dynamic: 'false' do
-    indexes :uid, type: 'text'
-    indexes :name, type: 'text'
-    indexes :description, type: 'text'
-    indexes :contact_email, type: 'text'
-    indexes :country_code, type: 'text'
-    indexes :country_name, type: 'text'
-    indexes :region, type: 'text'
-    indexes :region_name, type: 'text'
-    indexes :member_type, type: 'text'
-    indexes :year, type: 'integer'
-    indexes :website, type: 'text'
-    indexes :phone, type: 'text'
-    indexes :image_url, type: 'text'
-    indexes :created_at, type: 'date'
-    indexes :updated_at, type: 'date'
-  end
+  before_create { self.created = Time.zone.now.utc.iso8601 }
+  before_save { self.updated = Time.zone.now.utc.iso8601 }
+  # # Elasticsearch indexing
+  # mappings dynamic: 'false' do
+  #   indexes :uid, type: 'text'
+  #   indexes :name, type: 'text'
+  #   indexes :description, type: 'text'
+  #   indexes :contact_email, type: 'text'
+  #   indexes :country_code, type: 'text'
+  #   indexes :country_name, type: 'text'
+  #   indexes :region, type: 'text'
+  #   indexes :region_name, type: 'text'
+  #   indexes :member_type, type: 'text'
+  #   indexes :year, type: 'integer'
+  #   indexes :website, type: 'text'
+  #   indexes :phone, type: 'text'
+  #   indexes :image_url, type: 'text'
+  #   indexes :created_at, type: 'date'
+  #   indexes :updated_at, type: 'date'
+  # end
 
   def as_indexed_json(options={})
     {
@@ -62,16 +62,17 @@ class Member < ActiveRecord::Base
 
   # Elasticsearch custom search
   def self.search(query, options={})
-    __elasticsearch__.search(
-      {
-        query: {
-          query_string: {
-            query: query,
-            fields: ['uid^10', 'name^10', 'description', 'contact_email', 'country_name', 'website']
-          }
-        }
-      }
-    )
+    # __elasticsearch__.search(
+    #   {
+    #     query: {
+    #       query_string: {
+    #         query: query,
+    #         fields: ['uid^10', 'name^10', 'description', 'contact_email', 'country_name', 'website']
+    #       }
+    #     }
+    #   }
+    # )
+    self.all
   end
 
   def member_type

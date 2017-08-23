@@ -10,23 +10,23 @@ class DatacentersController < ApplicationController
     options = {
       member_id: params["member-id"] }
     params[:query] ||= "*"
-    response = Member.search(params[:query], options)
+    response = Datacenter.search(params[:query], options)
 
     # pagination
     page = (params.dig(:page, :number) || 1).to_i
     per_page =(params.dig(:page, :size) || 25).to_i
-    total = response.results.total
+    total = response.size
     total_pages = (total.to_f / per_page).ceil
-    collection = response.page(page).per(per_page).results
+    collection = response.page(page).per(per_page).order(created: :desc)
 
     # extract source hash from each result to feed into serializer
-    collection = collection.map { |m| m[:_source] }
+    # collection = collection.map { |m| m[:_source] }
 
     meta = { total: total,
              total_pages: total_pages,
              page: page }
 
-    render jsonapi: collection, meta: meta, each_serializer: DatacenterSerializer
+    render jsonapi: collection, meta: meta
   end
 
   # GET /datacenters/1

@@ -1,11 +1,12 @@
+require 'maremma'
+
 class Dataset < ActiveRecord::Base
-  # index in Elasticsearch
-  include Indexable
-  
+
+
   include Identifiable
   include Metadatable
 
-  require 'maremma'
+  alias_attribute :uid, :doi
   attribute :datacenter_id
   attribute :url
   alias_attribute :datacenter_id, :datacentre
@@ -22,34 +23,56 @@ class Dataset < ActiveRecord::Base
   before_create :add_url
   before_create :is_quota_exceeded
   after_create  :decrease_doi_quota
+  before_create { self.created = Time.zone.now.utc.iso8601 }
+  before_save { self.updated = Time.zone.now.utc.iso8601 }
 
-  def self.get_all(options={})
+  # # Elasticsearch indexing
+  # mappings dynamic: 'false' do
+  #   indexes :uid, type: 'text'
+  #   indexes :doi, type: 'text'
+  #   indexes :url, type: 'text'
+  #   indexes :version, type: 'integer'
+  #   indexes :is_active, type: 'binary'
+  #   indexes :datacenter_id, type: 'text'
+  #   indexes :minted, type: 'date'
+  #   indexes :created_at, type: 'date'
+  #   indexes :updated_at, type: 'date'
+  # end
 
-    collection = Dataset
-    collection = collection.query(options[:query]) if options[:query]
+  def as_indexed_json(options={})
+    {
+      "id" => uid.downcase,
+      "doi" => doi,
+      "url" => url,
+      "version" => version,
+      "is_active" => is_active,
+      "datacenter" => datacenter_id,
+      "minted" => created_at.iso8601,
+      "created" => created_at.iso8601,
+      "updated" => updated_at.iso8601 }
+  end
 
-    if options[:datacenter].present?
-      collection = collection.where(datacentre: options[:datacenter])
-      @datacenter = collection.where(datacentre: options[:datacenter]).group(:datacenter).count.first
-    end
-
-    if options[:datacenter].present?
-      datacenters = [{ id: options[:datacenter],
-                 datacenter: options[:datacenter],
-                 count: Dataset.where(datacentre: options[:datacenter]).count }]
-    else
-      datacenters = Dataset.where.not(datacentre: nil).order("datacentre DESC").group(:datacentre).count
-      datacenters = datacenters.map { |k,v| { id: k.to_s, datacenter: k.to_s, count: v } }
-    end
-    #
-    page = options[:page] || { number: 1, size: 1000 }
-    #
-    @datasets = Dataset.order(:datacentre).page(page[:number]).per_page(page[:size])
-    @datasets
+  # Elasticsearch custom search
+  def self.search(query, options={})
+    # __elasticsearch__.search(
+    #   {
+    #     query: {
+    #       query_string: {
+    #         query: query,
+    #         fields: ['uid^10', 'name^10', 'description', 'contact_email', 'country_name', 'website']
+    #       }
+    #     }
+    #   }
+    # )
+    self.all
   end
 
   def add_url
     self.url = Maremma.head(doi_as_url(self.doi)).url
+  end
+
+  def minted
+    self.created_at
   end
 
   def is_quota_exceeded
