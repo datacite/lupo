@@ -22,14 +22,21 @@ class MembersController < ApplicationController
     total_pages = (total.to_f / per_page).ceil
     collection = response.page(page).per(per_page).order(created: :desc).to_a
 
-    # Rails.logger.info collection
-    #
-    # # extract source hash from each result to feed into serializer
-    # collection = collection.map { |m| m[:_source] }
+
+    years = nil
+    years = response.map{|member| { id: member[:id],  year: member[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    member_types = nil
+    member_types = response.map{|member| { id: member[:id],  member_type: member[:member_type] }}.group_by { |d| d[:member_type] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    regions = nil
+    regions = response.map{|member| { id: member[:id],  region: member[:region] }}.group_by { |d| d[:region] }.map{ |k, v| { id: k, title: k, count: v.count} }
 
     meta = { total: total,
              total_pages: total_pages,
-             page: page }
+             page: page,
+             regions: regions,
+             member_types: member_types,
+             years: years
+            }
 
     render jsonapi: collection, meta: meta
   end

@@ -35,6 +35,8 @@ class Datacenter < ActiveRecord::Base
     created_at.year if created_at.present?
   end
 
+
+
   # # Elasticsearch indexing
   # mappings dynamic: 'false' do
   #   indexes :uid, type: 'text'
@@ -80,7 +82,15 @@ class Datacenter < ActiveRecord::Base
     self.all
   end
 
+  def member_id
+    r = Member.find(allocator).uid.downcase
+    write_attribute(:member_id, r)
+    r
+  end
+
+
   private
+
 
   def set_defaults
     self.contact_name = "" unless contact_name.present?

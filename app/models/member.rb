@@ -6,6 +6,7 @@ class Member < ActiveRecord::Base
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "allocator"
+  attribute :member_type
   alias_attribute :uid, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
@@ -21,7 +22,7 @@ class Member < ActiveRecord::Base
   has_many :datacenters
   has_and_belongs_to_many :prefixes, class_name: 'Prefix', join_table: "allocator_prefixes", foreign_key: :prefixes, association_foreign_key: :allocator
 
-  before_validation :set_region, :set_defaults
+  before_validation :set_region, :set_defaults, :set_member_type
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   # # Elasticsearch indexing
@@ -75,13 +76,11 @@ class Member < ActiveRecord::Base
     self.all
   end
 
-  def member_type
-    if doi_quota_allowed != 0
-      "allocating"
-    else
-      "non_allocating"
-    end
+  def year
+    created.year
   end
+
+
 
   def country_name
     return nil unless country_code.present?
@@ -112,6 +111,15 @@ class Member < ActiveRecord::Base
       r = nil
     end
     write_attribute(:region, r)
+  end
+
+  def set_member_type
+    if doi_quota_allowed != 0
+      r = "allocating"
+    else
+      r = "non_allocating"
+    end
+    write_attribute(:member_type, r)
   end
 
   def set_defaults

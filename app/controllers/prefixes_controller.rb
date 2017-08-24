@@ -3,6 +3,7 @@ class PrefixesController < ApplicationController
   before_action :authenticate_user_from_token!
   load_and_authorize_resource :except => [:index, :show]
 
+  serialization_scope :view_context
   # GET /prefixes
   def index
     options = {}
@@ -15,13 +16,6 @@ class PrefixesController < ApplicationController
     total = response.size
     total_pages = (total.to_f / per_page).ceil
     collection = response.page(page).per(per_page).order(created: :desc)
-
-    # extract source hash from each result to feed into serializer
-    # collection = collection.map { |m| m[:_source] }
-
-    meta = { total: total,
-             total_pages: total_pages,
-             page: page }
 
     render jsonapi: collection, meta: meta
   end

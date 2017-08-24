@@ -19,7 +19,19 @@ class User
   end
 
   def generate_token
-    @jwt
+    # @jwt
+    payload = {
+      uid: Faker::Code.unique.asin,
+      name: Faker::Name.name,
+      email: Faker::Internet.email,
+      member_id: "TIB",
+      datacenter_id: "TIB.PANGAEA",
+      role: "staff_admin",
+      iat: Time.now.to_i,
+      exp: Time.now.to_i + 50 * 24 * 3600
+    }.compact
+
+    encode_token(payload)
   end
 
   # Helper method to check for admin user

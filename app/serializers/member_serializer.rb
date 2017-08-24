@@ -6,8 +6,8 @@ class MemberSerializer < ActiveModel::Serializer
   # if @scope.current_user.is_admin?
   #   attributes :role_name, :doi_quota_allowed, :is_active
   # end
-  # has_many :datacenters
-  # has_many :prefixes
+  has_many :datacenters
+  has_many :prefixes
 
   def id
     object.uid

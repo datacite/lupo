@@ -20,14 +20,18 @@ class DatasetsController < ApplicationController
     total_pages = (total.to_f / per_page).ceil
     collection = response.page(page).per(per_page).order(created: :desc).to_a
 
-    # Rails.logger.info collection
-    #
-    # # extract source hash from each result to feed into serializer
-    # collection = collection.map { |m| m[:_source] }
+    years = nil
+    years = response.map{|doi| { id: doi[:id],  year: doi[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    clients = nil
+    clients = response.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: k, count: v.count} }
+
 
     meta = { total: total,
              total_pages: total_pages,
-             page: page }
+             page: page,
+             clients: clients,
+             years: years
+            }
 
     render jsonapi: collection, meta: meta
   end

@@ -19,12 +19,18 @@ class DatacentersController < ApplicationController
     total_pages = (total.to_f / per_page).ceil
     collection = response.page(page).per(per_page).order(created: :desc)
 
-    # extract source hash from each result to feed into serializer
-    # collection = collection.map { |m| m[:_source] }
+    years = nil
+    years = response.map{|member| { id: member[:id],  year: member[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    members = nil
+    members = response.map{|member| { id: member[:id],  member_id: member[:member_id] }}.group_by { |d| d[:member_id] }.map{ |k, v| { id: k, title: k, count: v.count} }
+
 
     meta = { total: total,
              total_pages: total_pages,
-             page: page }
+             page: page,
+             members: members,
+             years: years
+            }
 
     render jsonapi: collection, meta: meta
   end
