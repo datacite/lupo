@@ -17,7 +17,14 @@ class PrefixesController < ApplicationController
     total_pages = (total.to_f / per_page).ceil
     collection = response.page(page).per(per_page).order(created: :desc)
 
-    render jsonapi: collection, meta: meta
+    # extract source hash from each result to feed into serializer
+    # collection = collection.map { |m| m[:_source] }
+
+    meta = { total: total,
+             total_pages: total_pages,
+             page: page }
+
+    render jsonapi: collection, meta: meta, include:['datacenters', 'members']
   end
 
   # GET /prefixes/1

@@ -21,9 +21,9 @@ class DatasetsController < ApplicationController
     collection = response.page(page).per(per_page).order(created: :desc).to_a
 
     years = nil
-    years = response.map{|doi| { id: doi[:id],  year: doi[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    years = collection.map{|doi| { id: doi[:id],  year: doi[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
     clients = nil
-    clients = response.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    clients = collection.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: k, count: v.count} }
 
 
     meta = { total: total,
