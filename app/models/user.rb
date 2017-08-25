@@ -1,3 +1,4 @@
+require "faker"
 class User
   include Authenticable
   attr_accessor :name, :uid, :email, :role, :jwt, :orcid, :member_id, :datacenter_id, :token
@@ -26,7 +27,7 @@ class User
       email: Faker::Internet.email,
       member_id: "TIB",
       datacenter_id: "TIB.PANGAEA",
-      role: "staff_admin",
+      role: "data_center_admin",
       iat: Time.now.to_i,
       exp: Time.now.to_i + 50 * 24 * 3600
     }.compact
