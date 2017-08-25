@@ -5,7 +5,7 @@ class Datacenter < ActiveRecord::Base
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
   alias_attribute :uid, :symbol
-  alias_attribute :member_id, :allocator
+  attr_accessor :member_id
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
 
@@ -20,7 +20,7 @@ class Datacenter < ActiveRecord::Base
   belongs_to :member, class_name: 'Member', foreign_key: :allocator
   has_many :datasets
 
-  before_validation :set_defaults
+  before_validation :set_defaults, :set_allocator
 
   delegate :uid, to: :member, prefix: true
   before_create { self.created = Time.zone.now.utc.iso8601 }
@@ -83,11 +83,9 @@ class Datacenter < ActiveRecord::Base
   end
 
   def member_id
-    r = Member.find(allocator).uid.downcase
-    write_attribute(:member_id, r)
-    r
+    @member_id = Member.find(allocator).uid.downcase if allocator
+    @member_id
   end
-
 
   private
 
@@ -97,5 +95,11 @@ class Datacenter < ActiveRecord::Base
     self.role_name = "ROLE_DATACENTRE" unless role_name.present?
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
+  end
+
+  def set_allocator
+    r = Member.find_by(symbol: member_id)
+    fail("member_id Not found") unless r.present?
+    write_attribute(:allocator, r.id)
   end
 end

@@ -7,9 +7,9 @@ class Dataset < ActiveRecord::Base
   include Metadatable
 
   alias_attribute :uid, :doi
-  attribute :datacenter_id
+  attr_accessor :datacenter_id
   attribute :url
-  alias_attribute :datacenter_id, :datacentre
+  # alias_attribute :datacenter_id, :datacentre
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   belongs_to :datacenter, class_name: 'Datacenter', foreign_key: :datacentre
@@ -22,6 +22,7 @@ class Dataset < ActiveRecord::Base
 
   before_create :add_url
   before_create :is_quota_exceeded
+  before_validation :set_datacentre
   after_create  :decrease_doi_quota
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
@@ -75,14 +76,27 @@ class Dataset < ActiveRecord::Base
     self.created_at
   end
 
+  def datacenter_id
+    @datacenter_id = Datacenter.find(datacentre).uid.downcase if datacentre
+    @datacenter_id
+  end
+
   def is_quota_exceeded
-    datacenter = Datacenter.find(self.datacenter_id)
+    datacenter = Datacenter.find(self.datacentre)
     fail("You have excceded your DOI quota. You cannot mint DOIs anymore.") if datacenter[:doi_quota_allowed] < 0
   end
 
   def decrease_doi_quota
-    datacenter = Datacenter.find(self.datacenter_id)
+    datacenter = Datacenter.find(self.datacentre)
     fail("Something went wrong when decreasing your DOI quota") unless Datacenter.update(datacenter[:id], doi_quota_allowed: datacenter[:doi_quota_allowed] - 1)
+  end
+
+  private
+
+  def set_datacentre
+    r = Datacenter.find_by(symbol: datacenter_id)
+    fail("datacenter_id Not found") unless r.present?
+    write_attribute(:datacentre, r.id)
   end
 
 end
