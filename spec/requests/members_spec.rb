@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Members", type: :request  do
   # initialize test data
-  let(:members)  { create_list(:member, 10) }
+  let(:members)  { create_list(:member, 25) }
   let(:member) { members.first }
   let(:params) do
     { "data" => { "type" => "members",

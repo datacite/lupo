@@ -5,7 +5,7 @@ class Datacenter < ActiveRecord::Base
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
   alias_attribute :uid, :symbol
-  attr_accessor :member_id
+  attribute :member_id
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
 
@@ -79,7 +79,22 @@ class Datacenter < ActiveRecord::Base
     #     }
     #   }
     # )
-    self.all
+
+    collection = self.where(options).all
+
+    collection.each do |line|
+      line[:member_id] = Member.find(line[:allocator]).uid.downcase
+    end
+
+    years = nil
+    years = collection.map{|member| { id: member[:id],  year: member[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    members = nil
+    members = collection.map{|member| { id: member[:id],  member_id: member[:member_id] }}.group_by { |d| d[:member_id] }.map{ |k, v| { id: k, title: k, count: v.count} }
+
+    result = { response: collection,
+               members: members,
+               years: years
+            }
   end
 
   def member_id

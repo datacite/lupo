@@ -10,7 +10,7 @@ class MemberSerializer < ActiveModel::Serializer
   has_many :prefixes
 
   def id
-    object.uid
+    object.uid.downcase
   end
 
   # def id

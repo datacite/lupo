@@ -8,28 +8,24 @@ class DatacentersController < ApplicationController
   # GET /datacenters
   def index
     options = {
-      member_id: params["member-id"] }
+      }
+      #allocator: Member.find_by(symbol: params["member-id"])
     params[:query] ||= "*"
     response = Datacenter.search(params[:query], options)
 
     # pagination
     page = (params.dig(:page, :number) || 1).to_i
     per_page =(params.dig(:page, :size) || 25).to_i
-    total = response.size
+    total = response[:response].size
     total_pages = (total.to_f / per_page).ceil
-    collection = response.page(page).per(per_page).order(created: :desc)
-
-    years = nil
-    years = response.map{|member| { id: member[:id],  year: member[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
-    members = nil
-    members = response.map{|member| { id: member[:id],  member_id: member[:member_id] }}.group_by { |d| d[:member_id] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    collection = response[:response].page(page).per(per_page).order(created: :desc)
 
 
     meta = { total: total,
              total_pages: total_pages,
              page: page,
-             members: members,
-             years: years
+             members: response[:members],
+             years: response[:years]
             }
 
     render jsonapi: collection, meta: meta

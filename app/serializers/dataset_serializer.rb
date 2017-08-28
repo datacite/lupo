@@ -14,7 +14,7 @@ class DatasetSerializer < ActiveModel::Serializer
 
 
   def id
-    object.uid
+    object.uid.downcase
   end
   #
   #

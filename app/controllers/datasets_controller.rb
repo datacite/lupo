@@ -16,9 +16,9 @@ class DatasetsController < ApplicationController
     # pagination
     page = (params.dig(:page, :number) || 1).to_i
     per_page =(params.dig(:page, :size) || 25).to_i
-    total = response.size
+    total = response[:response].size
     total_pages = (total.to_f / per_page).ceil
-    collection = response.page(page).per(per_page).order(created: :desc).to_a
+    collection = response[:response].page(page).per(per_page).order(created: :desc).to_a
 
     years = nil
     years = collection.map{|doi| { id: doi[:id],  year: doi[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }

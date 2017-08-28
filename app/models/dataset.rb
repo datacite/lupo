@@ -7,7 +7,7 @@ class Dataset < ActiveRecord::Base
   include Metadatable
 
   alias_attribute :uid, :doi
-  attr_accessor :datacenter_id
+  attribute :datacenter_id
   attribute :url
   # alias_attribute :datacenter_id, :datacentre
   alias_attribute :created_at, :created
@@ -65,7 +65,23 @@ class Dataset < ActiveRecord::Base
     #     }
     #   }
     # )
-    self.all
+    collection = self.where(options).all
+
+    # collection.each do |line|
+    #   line[:datacenter_id] = Datacenter.find(line[:datacentre]).uid.downcase
+    # end
+
+    # years = nil
+    # years = collection.map{|doi| { id: doi[:id],  year: doi[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    # clients = nil
+    # clients = collection.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: k, count: v.count} }
+
+
+    result = { response: collection
+      # ,
+      #          clients: clients,
+      #          years: years
+             }
   end
 
   def add_url

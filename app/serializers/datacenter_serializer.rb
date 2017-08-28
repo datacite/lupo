@@ -4,7 +4,7 @@ class DatacenterSerializer < ActiveModel::Serializer
   attributes :name, :prefixes, :domains, :member_id, :year, :created, :updated
 
   def id
-    object.uid
+    object.uid.downcase
   end
 
   has_many :datasets

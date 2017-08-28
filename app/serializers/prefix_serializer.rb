@@ -4,6 +4,6 @@ class PrefixSerializer < ActiveModel::Serializer
   belongs_to :member, serializer: MemberSerializer
 
   def id
-    object.uid
+    object.uid.downcase
   end
 end
