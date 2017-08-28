@@ -7,11 +7,11 @@ class MembersController < ApplicationController
 
   # GET /members
   def index
-    # options = {
-    #   member_type: params["member-type"],
-    #   region: params[:region],
-    #   year: params[:year] }
-    options = { }
+    options = {
+      member_type: params["member-type"],
+      region: params[:region],
+      year: params[:year] }
+
     params[:query] ||= "*"
     response = Member.search(params[:query], options)
 
@@ -36,7 +36,7 @@ class MembersController < ApplicationController
 
   # GET /members/1
   def show
-      render jsonapi: @member, include:['datacenters', 'prefixes']
+      render jsonapi: @member
   end
 
   # POST /members

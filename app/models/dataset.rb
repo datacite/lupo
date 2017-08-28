@@ -65,16 +65,10 @@ class Dataset < ActiveRecord::Base
     #     }
     #   }
     # )
-    collection = self.where(options).all
-
-    # collection.each do |line|
-    #   line[:datacenter_id] = Datacenter.find(line[:datacentre]).uid.downcase
-    # end
-
-    # years = nil
-    # years = collection.map{|doi| { id: doi[:id],  year: doi[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
-    # clients = nil
-    # clients = collection.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    collection = self
+    collection = collection.all unless options.values.include?([nil,nil])
+    collection = collection.where('extract(year  from created) = ?', options[:year]) if options[:year].present?
+    collection = collection.where(datacentre:  Datacenter.find_by(symbol: options[:datacenter_id]).id) if options[:datacenter_id].present?
 
 
     result = { response: collection

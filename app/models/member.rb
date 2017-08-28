@@ -75,7 +75,10 @@ class Member < ActiveRecord::Base
     #   }
     # )
     #
-    collection = self.where(options).all
+    collection = self
+    collection = collection.all unless options.values.include?([nil,nil,nil])
+    collection = collection.where('extract(year  from created) = ?', options[:year]) if options[:year].present?
+    collection = collection.where(region:  options[:region]) if options[:region].present?
 
     collection.each do |line|
       if line[:doi_quota_allowed] != 0
@@ -85,6 +88,9 @@ class Member < ActiveRecord::Base
       end
       line[:member_type] = r
     end
+
+    # collection = collection.where(member_type:  options[:member_type]) if options[:member_type].present?
+
 
     years = nil
     years = collection.map{|member| { id: member[:id],  year: member[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }

@@ -79,8 +79,14 @@ class Datacenter < ActiveRecord::Base
     #     }
     #   }
     # )
+    # if options[:allocator].present?
+    #   options[:allocator] = Member.find_by(symbol: options[:allocator]).id
+    # end
 
-    collection = self.where(options).all
+    collection = self
+    collection = collection.all unless options.values.include?([nil,nil])
+    collection = collection.where(allocator: Member.find_by(symbol: options[:member]).id) if options[:member].present?
+    collection = collection.where('extract(year  from created) = ?', options[:year]) if options[:year].present?
 
     collection.each do |line|
       line[:member_id] = Member.find(line[:allocator]).uid.downcase

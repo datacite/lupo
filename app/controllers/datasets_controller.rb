@@ -8,7 +8,10 @@ class DatasetsController < ApplicationController
 
   # # # GET /datasets
   def index
-    options = { }
+    options = {
+      datacenter_id: params[:datacenter_id],
+      year: params[:year]
+    }
     params[:query] ||= "*"
     response = Dataset.search(params[:query], options)
 
@@ -19,6 +22,10 @@ class DatasetsController < ApplicationController
     total = response[:response].size
     total_pages = (total.to_f / per_page).ceil
     collection = response[:response].page(page).per(per_page).order(created: :desc).to_a
+
+    collection.each do |line|
+      line[:datacenter_id] = Datacenter.find(line[:datacentre]).uid.downcase
+    end
 
     years = nil
     years = collection.map{|doi| { id: doi[:id],  year: doi[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
@@ -38,7 +45,7 @@ class DatasetsController < ApplicationController
   #
   # # # GET /datasets/1
   def show
-    render jsonapi: @dataset, include:['datacentre']
+    render jsonapi: @dataset
   end
 
   # # POST /datasets

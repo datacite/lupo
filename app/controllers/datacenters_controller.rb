@@ -8,8 +8,9 @@ class DatacentersController < ApplicationController
   # GET /datacenters
   def index
     options = {
-      }
-      #allocator: Member.find_by(symbol: params["member-id"])
+       member: params["member-id"],
+       year: params[:year]
+    }
     params[:query] ||= "*"
     response = Datacenter.search(params[:query], options)
 
