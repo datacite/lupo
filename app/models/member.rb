@@ -26,98 +26,12 @@ class Member < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   accepts_nested_attributes_for :prefixes
-  # # Elasticsearch indexing
-  # mappings dynamic: 'false' do
-  #   indexes :uid, type: 'text'
-  #   indexes :name, type: 'text'
-  #   indexes :description, type: 'text'
-  #   indexes :contact_email, type: 'text'
-  #   indexes :country_code, type: 'text'
-  #   indexes :country_name, type: 'text'
-  #   indexes :region, type: 'text'
-  #   indexes :region_name, type: 'text'
-  #   indexes :member_type, type: 'text'
-  #   indexes :year, type: 'integer'
-  #   indexes :website, type: 'text'
-  #   indexes :phone, type: 'text'
-  #   indexes :image_url, type: 'text'
-  #   indexes :created_at, type: 'date'
-  #   indexes :updated_at, type: 'date'
-  # end
 
-  def as_indexed_json(options={})
-    {
-      "id" => uid.downcase,
-      "name" => name,
-      "description" => description,
-      "member_type" => member_type,
-      "region" => region_name,
-      "country" => country_name,
-      "year" => year,
-      "logo_url" => logo_url,
-      "email" => contact_email,
-      "website" => website,
-      "phone" => phone,
-      "created" => created_at.iso8601,
-      "updated" => updated_at.iso8601 }
-  end
-
-  # Elasticsearch custom search
-  def self.search(query, options={})
-    # __elasticsearch__.search(
-    #   {
-    #     query: {
-    #       query_string: {
-    #         query: query,
-    #         fields: ['uid^10', 'name^10', 'description', 'contact_email', 'country_name', 'website']
-    #       }
-    #     }
-    #   }
-    # )
-    #
-    collection = self
-    collection = collection.all unless options.values.include?([nil,nil,nil])
-    collection = collection.where('extract(year  from created) = ?', options[:year]) if options[:year].present?
-    collection = collection.where(region:  options[:region]) if options[:region].present?
-
-    collection.each do |line|
-      if line[:doi_quota_allowed] != 0
-        r = "allocating"
-      else
-        r = "non_allocating"
-      end
-      line[:member_type] = r
-    end
-
-    # collection = collection.where(member_type:  options[:member_type]) if options[:member_type].present?
-
-
-    years = nil
-    years = collection.map{|member| { id: member[:id],  year: member[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
-    member_types = nil
-    member_types = collection.map{|member| { id: member[:id],  member_type: member[:member_type] }}.group_by { |d| d[:member_type] }.map{ |k, v| { id: k, title: k, count: v.count} }
-    regions = nil
-    regions = collection.map{|member| { id: member[:id],  region: member[:region] }}.group_by { |d| d[:region] }.map{ |k, v| { id: k, title: k, count: v.count} }
-
-    result = { response: collection,
-               member_types: member_types.sort_by!{ |hsh| -hsh[:count] },
-               years: years.sort_by!{ |hsh| -hsh[:title] }
-            }
-  end
+  scope :query, ->(query) { where("symbol like ? OR name like ?", "%#{query}%", "%#{query}%") }
 
   def year
     created.year
   end
-
-  def member_type
-    if doi_quota_allowed != 0
-      r = "allocating"
-    else
-      r = "non_allocating"
-    end
-    r
-  end
-
 
   def country_name
     return nil unless country_code.present?
@@ -156,7 +70,7 @@ class Member < ActiveRecord::Base
     else
       r = "non_allocating"
     end
-    r
+    write_attribute(:member_type, r)
   end
 
   def set_defaults

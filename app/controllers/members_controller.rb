@@ -3,38 +3,66 @@ class MembersController < ApplicationController
   before_action :authenticate_user_from_token!
   load_and_authorize_resource :except => [:index, :show]
 
-  # GET /members
   def index
-    options = {
-      member_type: params["member-type"],
-      region: params[:region],
-      year: params[:year] }
+    collection = Member
 
-    params[:query] ||= "*"
-    response = Member.search(params[:query], options)
+    if params[:id].present?
+      collection = collection.where(symbol: params[:id])
+    elsif params[:query].present?
+      collection = collection.query(params[:query])
+    end
 
+    collection = collection.where(member_type: params['member-type']) if params['member-type'].present?
+    collection = collection.where(region: params[:region]) if params[:region].present?
+    collection = collection.where(year: params[:year]) if params[:year].present?
 
-    # pagination
-    page = (params.dig(:page, :number) || 1).to_i
-    per_page =(params.dig(:page, :size) || 25).to_i
-    total = response[:response].size
-    total_pages = (total.to_f / per_page).ceil
-    collection = response[:response].page(page).per(per_page).order(created: :desc).to_a
+    # calculate facet counts after filtering
+    if params["member-type"].present?
+      member_types = [{ id: params["member-type"],
+                        title: params["member-type"].humanize,
+                        count: collection.where(member_type: params["member-type"]).count }]
+    else
+      member_types = collection.where.not(member_type: nil).group(:member_type).count
+      member_types = member_types.map { |k,v| { id: k, title: k.humanize, count: v } }
+    end
+    if params[:region].present?
+      regions = [{ id: params[:region],
+                   title: REGIONS[params[:region].upcase],
+                   count: collection.where(region: params[:region]).count }]
+    else
+      regions = collection.where.not(region: nil).group(:region).count
+      regions = regions.map { |k,v| { id: k.downcase, title: REGIONS[k], count: v } }
+    end
+    if params[:year].present?
+      years = [{ id: params[:year],
+                 title: params[:year],
+                 count: collection.where(year: params[:year]).count }]
+    else
+      years = collection.where.not(year: nil).order("year DESC").group(:year).count
+      years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
+    end
 
-    meta = { total: total,
-             total_pages: total_pages,
-             page: page,
-             regions: response[:regions],
-             member_types: response[:member_types],
-             years: response[:years]
-            }
+    page = params[:page] || {}
+    page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
+    page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 1000
 
-    render jsonapi: collection, meta: meta
+    @members = collection.order(:name).page(page[:number]).per(page[:size])
+
+    meta = { total: @members.count,
+             total_pages: @members.total_pages ,
+             page: page[:number].to_i,
+             member_types: member_types,
+             regions: regions,
+             years: years }
+
+    render json: @members, meta: meta
   end
 
-  # GET /members/1
   def show
-      render jsonapi: @member
+    @member = Member.where(symbol: params[:id]).first
+    fail ActiveRecord::RecordNotFound unless @member.present?
+
+    render json: @member
   end
 
   # POST /members
