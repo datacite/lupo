@@ -1,5 +1,5 @@
 class DatacenterSerializer < ActiveModel::Serializer
-  # type 'data-centers'
+  type 'data-centers'
   cache key: 'data-center'
 
   attributes :name, :domains, :member_id, :year, :created, :updated

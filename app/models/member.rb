@@ -1,8 +1,6 @@
 require "countries"
 
 class Member < ActiveRecord::Base
-
-
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "allocator"
@@ -20,6 +18,8 @@ class Member < ActiveRecord::Base
   validates_inclusion_of :role_name, :in => %w( ROLE_ALLOCATOR ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list", if: :role_name?
 
   has_many :datacenters
+  alias_attribute :data_centers, :datacenters
+  
   has_and_belongs_to_many :prefixes, class_name: 'Prefix', join_table: "allocator_prefixes", foreign_key: :prefixes, association_foreign_key: :allocator
 
   before_validation :set_region, :set_defaults, :set_member_type
