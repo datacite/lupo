@@ -1,11 +1,17 @@
 class PrefixSerializer < ActiveModel::Serializer
   cache key: 'prefix'
+  type 'prefixes'
 
-  attributes :prefix, :version, :created, :updated
-  belongs_to :datacenter, serializer: DatacenterSerializer
-  belongs_to :member, serializer: MemberSerializer
+  attributes :registration_agency, :created, :updated
+
+  has_many :datacenters
+  has_many :members
 
   def id
-    object.uid.downcase
+    object.uid
+  end
+
+  def updated
+    object.updated_at
   end
 end
