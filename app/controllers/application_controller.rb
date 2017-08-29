@@ -6,7 +6,7 @@ class ApplicationController < ActionController::API
   require 'jwt'
 
   before_action :default_format_json
-  after_action :cors_set_access_control_headers, :set_jsonp_format
+  after_action :set_jsonp_format
   # https://stackoverflow.com/questions/16519828/rails-4-before-filter-vs-before-action
 
   attr_reader :current_user
@@ -17,13 +17,6 @@ class ApplicationController < ActionController::API
       self.response_body = "#{params[:callback]}(#{response.body})"
       headers["Content-Type"] = 'application/javascript'
     end
-  end
-
-  def cors_set_access_control_headers
-    headers['Access-Control-Allow-Origin'] = '*'
-    headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS'
-    headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, Accept, Authorization, Token'
-    headers['Access-Control-Max-Age'] = "1728000"
   end
 
   def default_format_json
