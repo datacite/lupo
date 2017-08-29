@@ -97,7 +97,7 @@ class Datacenter < ActiveRecord::Base
     years = nil
     years = collection.map{|member| { id: member[:id],  year: member[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
     members = nil
-    members = collection.map{|member| { id: member[:id],  member_id: member[:member_id] }}.group_by { |d| d[:member_id] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    members = collection.map{|member| { id: member[:id],  member_id: member[:member_id],  name: member[:name]}}.group_by { |d| d[:member_id] }.map{ |k, v| { id: k, title: v.first[:name], count: v.count} }
 
     result = { response: collection,
                members: members,

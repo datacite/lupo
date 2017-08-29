@@ -8,6 +8,7 @@ class Dataset < ActiveRecord::Base
 
   alias_attribute :uid, :doi
   attribute :datacenter_id
+  attribute :datacenter_name
   attribute :url
   # alias_attribute :datacenter_id, :datacentre
   alias_attribute :created_at, :created

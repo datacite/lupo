@@ -25,13 +25,15 @@ class DatasetsController < ApplicationController
     collection = response[:response].page(page).per(per_page).order(created: :desc).to_a
 
     collection.each do |line|
-      line[:datacenter_id] = Datacenter.find(line[:datacentre]).uid.downcase
+      dc = Datacenter.find(line[:datacentre])
+      line[:datacenter_id] = dc.uid.downcase
+      line[:datacenter_name] = dc.name
     end
 
     years = nil
     years = collection.map{|doi| { id: doi[:id],  year: doi[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
     clients = nil
-    clients = collection.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    clients = collection.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id],  name: doi[:datacenter_name] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: v.first[:name], count: v.count} }
 
 
     meta = { total: total,
