@@ -25,7 +25,12 @@ ENV['CONCURRENCY'] ||= "25"
 ENV['CDN_URL'] ||= "https://assets.datacite.org"
 ENV['GITHUB_URL'] ||= "https://github.com/datacite/lupo"
 ENV['SEARCH_URL'] ||= "https://search.datacite.org/"
-ENV['TRUSTED_IP'] ||= "127.0.0.0/8"
+ENV['TRUSTED_IP'] ||= "10.0.10.1"
+
+# more detailed error reporting in development
+if Rails.env.development?
+  BetterErrors::Middleware.allow_ip! ENV['TRUSTED_IP']
+end
 
 Rails.application.config.log_level = ENV['LOG_LEVEL'].to_sym
 
