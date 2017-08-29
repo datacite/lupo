@@ -9,7 +9,8 @@ class DatasetsController < ApplicationController
   # # # GET /datasets
   def index
     options = {
-      datacenter_id: params[:datacenter_id],
+      datacenter_id: params["data-center-id"],
+      member_id: params["member-id"],
       year: params[:year]
     }
     params[:query] ||= "*"

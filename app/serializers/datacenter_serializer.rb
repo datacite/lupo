@@ -1,5 +1,5 @@
 class DatacenterSerializer < ActiveModel::Serializer
-  # type 'data-centers'
+  type 'data-centers'
 
   attributes :name, :prefixes, :domains, :member_id, :year, :created, :updated
 
