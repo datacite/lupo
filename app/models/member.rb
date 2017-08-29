@@ -100,8 +100,8 @@ class Member < ActiveRecord::Base
     regions = collection.map{|member| { id: member[:id],  region: member[:region] }}.group_by { |d| d[:region] }.map{ |k, v| { id: k, title: k, count: v.count} }
 
     result = { response: collection,
-               member_types: member_types,
-               years: years
+               member_types: member_types.sort_by!{ |hsh| -hsh[:count] },
+               years: years.sort_by!{ |hsh| -hsh[:title] }
             }
   end
 

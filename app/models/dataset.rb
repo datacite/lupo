@@ -73,7 +73,7 @@ class Dataset < ActiveRecord::Base
     years = cached_years_response
 
     result = { response: collection,
-               years: years
+               years: years.sort_by!{ |hsh| -hsh[:title] }
              }
   end
 

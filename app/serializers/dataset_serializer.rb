@@ -2,7 +2,7 @@ class DatasetSerializer < ActiveModel::Serializer
   cache key: 'dataset'
 
   # include helper module for extracting identifier
-  type "works"
+  # type "works"
   include Identifiable
 
   # include metadata helper methods

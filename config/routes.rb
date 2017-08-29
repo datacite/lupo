@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :metadata
+  resources :media
   root :to => 'index#index'
 
   resources :heartbeat, only: [:index]
