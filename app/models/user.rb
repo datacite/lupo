@@ -1,7 +1,8 @@
-require "faker"
 class User
+  # include jwt encode and decode
   include Authenticable
-  attr_accessor :name, :uid, :email, :role, :jwt, :orcid, :member_id, :datacenter_id, :token
+
+  attr_accessor :name, :uid, :email, :role, :jwt, :orcid, :member_id, :datacenter_id
 
   def initialize(token)
     if token.present?
@@ -19,21 +20,8 @@ class User
     end
   end
 
-  def generate_token
-    # @jwt
-    payload = {
-      uid: Faker::Code.unique.asin,
-      name: Faker::Name.name,
-      email: Faker::Internet.email,
-      member_id: "TIB",
-      datacenter_id: "TIB.PANGAEA",
-      role: "data_center_admin",
-      iat: Time.now.to_i,
-      exp: Time.now.to_i + 50 * 24 * 3600
-    }.compact
-
-    encode_token(payload)
-  end
+  alias_method :orcid, :uid
+  alias_method :id, :uid
 
   # Helper method to check for admin user
   def is_admin?

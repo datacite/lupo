@@ -3,13 +3,14 @@ class ApplicationController < ActionController::API
   include CanCan::ControllerAdditions
   include ErrorSerializable
   require 'facets/string/snakecase'
-  require 'jwt'
+
+  attr_accessor :current_user
+
+  # pass ability into serializer
+  serialization_scope :current_ability
 
   before_action :default_format_json
-  after_action :set_jsonp_format
-  # https://stackoverflow.com/questions/16519828/rails-4-before-filter-vs-before-action
-
-  attr_reader :current_user
+  after_action :set_jsonp_format, :set_consumer_header
 
   # from https://github.com/spree/spree/blob/master/api/app/controllers/spree/api/base_controller.rb
   def set_jsonp_format
@@ -19,12 +20,23 @@ class ApplicationController < ActionController::API
     end
   end
 
+  def set_consumer_header
+    if current_user
+      response.headers['X-Credential-Username'] = current_user.uid
+    else
+      response.headers['X-Anonymous-Consumer'] = true
+    end
+  end
+
   def default_format_json
     request.format = :json if request.format.html?
   end
 
   def authenticate_user_from_token!
-    @current_user = User.new(token_from_request_headers)
+    token = token_from_request_headers
+    return false unless token.present?
+
+    @current_user = User.new(token)
   end
 
   def current_ability
@@ -55,12 +67,12 @@ class ApplicationController < ActionController::API
         message = exception.message
       end
 
-      # respond_to do |format|
-      #   format.all { render json: { errors: [{ status: status.to_s,
-      #                                          title: message }]
-      #                             }, status: status
-      #              }
-      # end
+      respond_to do |format|
+        format.all { render json: { errors: [{ status: status.to_s,
+                                               title: message }]
+                                  }, status: status
+                   }
+      end
     end
   end
 

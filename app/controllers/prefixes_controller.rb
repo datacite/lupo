@@ -3,7 +3,6 @@ class PrefixesController < ApplicationController
   before_action :authenticate_user_from_token!
   load_and_authorize_resource :except => [:index, :show]
 
-  serialization_scope :view_context
   # GET /prefixes
   def index
     options = {}
