@@ -1,6 +1,5 @@
 class MemberSerializer < ActiveModel::Serializer
   cache key: 'member'
-  # type :members
 
   attributes :name, :description, :member_type, :region, :country, :year, :logo_url, :email, :website, :phone, :created, :updated
 
@@ -14,30 +13,6 @@ class MemberSerializer < ActiveModel::Serializer
     object.uid.downcase
   end
 
-  # def id
-  #   object.id
-  # end
-  #
-  # def name
-  #   object.name
-  # end
-  #
-  # def description
-  #   object.description
-  # end
-  #
-  # def member_type
-  #   object.member_type
-  # end
-  #
-  # def year
-  #   object.year
-  # end
-  #
-  # def region
-  #   object.region
-  # end
-  #
   def country
     object.country_code
   end
@@ -45,28 +20,4 @@ class MemberSerializer < ActiveModel::Serializer
   def email
     object.contact_email
   end
-  #
-  # def website
-  #   object.website
-  # end
-  #
-  # def phone
-  #   object.phone
-  # end
-  #
-  # def logo_url
-  #   object.logo_url
-  # end
-  #
-  # def role_name
-  #   object.role_name
-  # end
-  #
-  # def updated
-  #   object.updated_at
-  # end
-  #
-  # def created
-  #   object.created_at
-  # end
 end

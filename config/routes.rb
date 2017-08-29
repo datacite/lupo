@@ -14,5 +14,5 @@ Rails.application.routes.draw do
   resources :members, constraints: { :id => /.+/ }
 
   # rescue routing errors
-  match "*path", to: "index#routing_error", via: :all
+  # match "*path", to: "index#routing_error", via: :all
 end
