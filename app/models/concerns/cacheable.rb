@@ -1,13 +1,21 @@
 module Cacheable
   extend ActiveSupport::Concern
 
-  module ClassMethods
+  included do
     def cached_members
-      Rails.cache.fetch("members", expires_in: 1.month) do
-        Member.all
+      Rails.cache.fetch("members", expires_in: 1.day) do
+        Member.all.select(:id, :symbol, :name, :created)
       end
     end
 
+    def cached_member_response(id, options={})
+      Rails.cache.fetch("member_response/#{id}", expires_in: 7.days) do
+        Member.where(symbol: id).select(:id, :symbol, :name, :created).first
+      end
+    end
+  end
+
+  module ClassMethods
     def cached_datasets
       Rails.cache.fetch("datasets", expires_in: 1.day) do
         Dataset.all
@@ -52,12 +60,6 @@ module Cacheable
         end
 
         collection.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id],  name: doi[:datacenter_name] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: v.first[:name], count: v.count} }
-      end
-    end
-
-    def cached_member_response(id, options={})
-      Rails.cache.fetch("member_response/#{id}", expires_in: 1.day) do
-        Base::DB[:allocator].where(symbol: id).select(:id, :symbol, :name, :created).first
       end
     end
 

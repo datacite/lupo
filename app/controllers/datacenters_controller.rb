@@ -1,33 +1,66 @@
 class DatacentersController < ApplicationController
   before_action :set_datacenter, only: [:show, :update, :destroy]
   before_action :authenticate_user_from_token!
+  before_action :set_include
   load_and_authorize_resource :except => [:index, :show]
 
-  # GET /datacenters
+  # include helper module for caching infrequently changing resources
+  include Cacheable
+
   def index
-    options = {
-       member: params["member-id"],
-       year: params[:year]
-    }
-    params[:query] ||= "*"
-    response = Datacenter.search(params[:query], options)
+    collection = Datacenter
 
-    # pagination
-    page = (params.dig(:page, :number) || 1).to_i
-    per_page =(params.dig(:page, :size) || 25).to_i
-    total = response[:response].size
-    total_pages = (total.to_f / per_page).ceil
-    collection = response[:response].page(page).per(per_page).order(created: :desc)
+    if params[:id].present?
+      collection = collection.where(symbol: params[:id])
+    elsif params[:query].present?
+      collection = collection.query(params[:query])
+    end
 
+    # cache members for faster queries
+    if params["member-id"].present?
+      member = cached_member_response(params["member-id"].upcase)
+      collection = collection.where(allocator: member.id)
+    end
+    collection = collection.where('YEAR(created) = ?', params[:year]) if params[:year].present?
+
+    # calculate facet counts after filtering
+    if params["member-id"].present?
+      members = [{ id: params["member-id"],
+                   title: member.name,
+                   count: collection.where(allocator: member.id).count }]
+    else
+      members = collection.where.not(allocator: nil).group(:allocator).count
+      Rails.logger.info members.inspect
+      members = members
+                  .sort { |a, b| b[1] <=> a[1] }
+                  .map do |i|
+                         member = cached_members.find { |m| m.id == i[0] }
+                         { id: member.symbol.downcase, title: member.name, count: i[1] }
+                       end
+    end
+    if params[:year].present?
+      years = [{ id: params[:year],
+                 title: params[:year],
+                 count: collection.where('YEAR(created) = ?', params[:year]).count }]
+    else
+      years = collection.where.not(created: nil).order("YEAR(created) DESC").group("YEAR(created)").count
+      years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
+    end
+
+    page = params[:page] || {}
+    page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
+    page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
+    total = collection.count
+
+    @datacenters = collection.order(:name).page(page[:number]).per(page[:size])
 
     meta = { total: total,
-             total_pages: total_pages,
-             page: page,
-             members: response[:members],
-             years: response[:years]
-            }
+             total_pages: @datacenters.total_pages,
+             page: page[:number].to_i,
+             members: members,
+             years: years }
 
-    render jsonapi: collection, meta: meta
+    render jsonapi: @datacenters, meta: meta, include: @include
   end
 
   # GET /datacenters/1
@@ -69,7 +102,16 @@ class DatacentersController < ApplicationController
     @datacenter.destroy
   end
 
-  private
+  protected
+
+  def set_include
+    if params[:include].present?
+      @include = params[:include].split(",").map { |i| i.downcase.underscore }.join(",")
+      @include = [@include]
+    else
+      @include = nil
+    end
+  end
 
   # Use callbacks to share common setup or constraints between actions.
   def set_datacenter

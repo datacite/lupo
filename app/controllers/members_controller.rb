@@ -45,24 +45,22 @@ class MembersController < ApplicationController
     page = params[:page] || {}
     page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
     page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 1000
+    total = collection.count
 
     @members = collection.order(:name).page(page[:number]).per(page[:size])
 
-    meta = { total: @members.count,
-             total_pages: @members.total_pages ,
+    meta = { total: total,
+             total_pages: @members.total_pages,
              page: page[:number].to_i,
              member_types: member_types,
              regions: regions,
              years: years }
 
-    render json: @members, meta: meta
+    render jsonapi: @members, meta: meta
   end
 
   def show
-    @member = Member.where(symbol: params[:id]).first
-    fail ActiveRecord::RecordNotFound unless @member.present?
-
-    render json: @member
+    render jsonapi: @member
   end
 
   # POST /members
