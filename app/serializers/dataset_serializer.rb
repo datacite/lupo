@@ -1,10 +1,11 @@
 class DatasetSerializer < ActiveModel::Serializer
+  cache key: 'dataset'
+
   # include helper module for extracting identifier
   include Identifiable
 
   # include metadata helper methods
   include Metadatable
-
 
   attributes   :doi, :url, :version, :datacenter_id, :is_active, :created, :minted, :updated
   attribute    :datacenter_id
