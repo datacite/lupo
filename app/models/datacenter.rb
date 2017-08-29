@@ -5,7 +5,9 @@ class Datacenter < ActiveRecord::Base
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
   alias_attribute :uid, :symbol
-  attr_accessor :member_id
+  # alias_attribute :member_id, :allocator
+  # attribute :member
+  attribute :member_id
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
 
@@ -79,7 +81,28 @@ class Datacenter < ActiveRecord::Base
     #     }
     #   }
     # )
-    self.all
+    # if options[:allocator].present?
+    #   options[:allocator] = Member.find_by(symbol: options[:allocator]).id
+    # end
+
+    collection = self
+    collection = collection.all unless options.values.include?([nil,nil])
+    collection = collection.where(allocator: Member.find_by(symbol: options[:member]).id) if options[:member].present?
+    collection = collection.where('extract(year  from created) = ?', options[:year]) if options[:year].present?
+
+    collection.each do |line|
+      line[:member_id] = Member.find(line[:allocator]).uid.downcase
+    end
+
+    years = nil
+    years = collection.map{|member| { id: member[:id],  year: member[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    members = nil
+    members = collection.map{|member| { id: member[:id],  member_id: member[:member_id],  name: member[:name]}}.group_by { |d| d[:member_id] }.map{ |k, v| { id: k, title: v.first[:name], count: v.count} }
+
+    result = { response: collection,
+               members: members,
+               years: years
+            }
   end
 
   def member_id

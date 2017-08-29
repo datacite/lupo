@@ -1,5 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe Prefix, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should validate_presence_of(:uid) }
+  it { should validate_presence_of(:prefix) }
 end

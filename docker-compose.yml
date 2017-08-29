@@ -5,7 +5,7 @@ services:
     env_file: .env
     image: datacite/lupo
     ports:
-      - "8060:80"
+      - "8065:80"
     volumes:
       - ./app:/home/app/webapp/app
       - ./config:/home/app/webapp/config

@@ -2,6 +2,7 @@ class DatasetSerializer < ActiveModel::Serializer
   cache key: 'dataset'
 
   # include helper module for extracting identifier
+  type "works"
   include Identifiable
 
   # include metadata helper methods
@@ -10,12 +11,11 @@ class DatasetSerializer < ActiveModel::Serializer
   attributes   :doi, :url, :version, :datacenter_id, :is_active, :created, :minted, :updated
   attribute    :datacenter_id
   belongs_to :datacenter, serializer: DatacenterSerializer
-
   # [:doi, :url, :datacenter_id, :version, :datacentre, :is_active, :created, :deposited, :updated].map{|a| attribute(a) {object[:_source][a]}}
 
 
   def id
-    object.uid
+    object.uid.downcase
   end
   #
   #

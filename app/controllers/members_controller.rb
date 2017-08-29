@@ -9,6 +9,7 @@ class MembersController < ApplicationController
       member_type: params["member-type"],
       region: params[:region],
       year: params[:year] }
+
     params[:query] ||= "*"
     response = Member.search(params[:query], options)
 
@@ -16,24 +17,16 @@ class MembersController < ApplicationController
     # pagination
     page = (params.dig(:page, :number) || 1).to_i
     per_page =(params.dig(:page, :size) || 25).to_i
-    total = response.size
+    total = response[:response].size
     total_pages = (total.to_f / per_page).ceil
-    collection = response.page(page).per(per_page).order(created: :desc).to_a
-
-
-    years = nil
-    years = response.map{|member| { id: member[:id],  year: member[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
-    member_types = nil
-    member_types = response.map{|member| { id: member[:id],  member_type: member[:member_type] }}.group_by { |d| d[:member_type] }.map{ |k, v| { id: k, title: k, count: v.count} }
-    regions = nil
-    regions = response.map{|member| { id: member[:id],  region: member[:region] }}.group_by { |d| d[:region] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    collection = response[:response].page(page).per(per_page).order(created: :desc).to_a
 
     meta = { total: total,
              total_pages: total_pages,
              page: page,
-             regions: regions,
-             member_types: member_types,
-             years: years
+             regions: response[:regions],
+             member_types: response[:member_types],
+             years: response[:years]
             }
 
     render jsonapi: collection, meta: meta
@@ -41,7 +34,7 @@ class MembersController < ApplicationController
 
   # GET /members/1
   def show
-      render jsonapi: @member, include:['datacenters', 'prefixes']
+      render jsonapi: @member
   end
 
   # POST /members
@@ -91,7 +84,10 @@ class MembersController < ApplicationController
   # Only allow a trusted parameter "white list" through.
   def safe_params
     attributes = [:uid, :name, :contact_email, :contact_name, :description, :year, :region, :country_code, :website, :doi_quota_allowed, :doi_quota_used, :is_active, :name, :password, :role_name, :member_id, :version]
-    params.require(:data).permit(:id, :type, attributes: attributes)
+    # ActiveModelSerializers::Deserialization.jsonapi_parse!(params.to_unsafe_h)[:prefixes_ids]
+    relationships = [:relationships, :prefixes]
+    params.require(:data).permit(:id, :type, attributes: attributes, prefixes_attributes: relationships)
+
   end
 
   # Only allow a trusted parameter "white list" through.

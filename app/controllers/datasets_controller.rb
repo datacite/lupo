@@ -5,7 +5,11 @@ class DatasetsController < ApplicationController
 
   # # # GET /datasets
   def index
-    options = { }
+    options = {
+      datacenter_id: params["data-center-id"],
+      member_id: params["member-id"],
+      year: params[:year]
+    }
     params[:query] ||= "*"
     response = Dataset.search(params[:query], options)
 
@@ -13,21 +17,26 @@ class DatasetsController < ApplicationController
     # pagination
     page = (params.dig(:page, :number) || 1).to_i
     per_page =(params.dig(:page, :size) || 25).to_i
-    total = response.size
+    total = response[:response].size
     total_pages = (total.to_f / per_page).ceil
-    collection = response.page(page).per(per_page).order(created: :desc).to_a
+    collection = response[:response].page(page).per(per_page).order(created: :desc).to_a
 
-    years = nil
-    years = collection.map{|doi| { id: doi[:id],  year: doi[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    collection.each do |line|
+      dc = Datacenter.find(line[:datacentre])
+      line[:datacenter_id] = dc.uid.downcase
+      line[:datacenter_name] = dc.name
+    end
+
+
     clients = nil
-    clients = collection.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    clients = collection.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id],  name: doi[:datacenter_name] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: v.first[:name], count: v.count} }
 
 
     meta = { total: total,
              total_pages: total_pages,
              page: page,
              clients: clients,
-             years: years
+             years: response[:years]
             }
 
     render jsonapi: collection, meta: meta
@@ -35,7 +44,7 @@ class DatasetsController < ApplicationController
   #
   # # # GET /datasets/1
   def show
-    render jsonapi: @dataset, include:['datacentre']
+    render jsonapi: @dataset
   end
 
   # # POST /datasets

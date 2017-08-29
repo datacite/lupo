@@ -25,6 +25,7 @@ class Member < ActiveRecord::Base
   before_validation :set_region, :set_defaults, :set_member_type
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
+  accepts_nested_attributes_for :prefixes
   # # Elasticsearch indexing
   # mappings dynamic: 'false' do
   #   indexes :uid, type: 'text'
@@ -73,13 +74,49 @@ class Member < ActiveRecord::Base
     #     }
     #   }
     # )
-    self.all
+    #
+    collection = self
+    collection = collection.all unless options.values.include?([nil,nil,nil])
+    collection = collection.where('extract(year  from created) = ?', options[:year]) if options[:year].present?
+    collection = collection.where(region:  options[:region]) if options[:region].present?
+
+    collection.each do |line|
+      if line[:doi_quota_allowed] != 0
+        r = "allocating"
+      else
+        r = "non_allocating"
+      end
+      line[:member_type] = r
+    end
+
+    # collection = collection.where(member_type:  options[:member_type]) if options[:member_type].present?
+
+
+    years = nil
+    years = collection.map{|member| { id: member[:id],  year: member[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    member_types = nil
+    member_types = collection.map{|member| { id: member[:id],  member_type: member[:member_type] }}.group_by { |d| d[:member_type] }.map{ |k, v| { id: k, title: k, count: v.count} }
+    regions = nil
+    regions = collection.map{|member| { id: member[:id],  region: member[:region] }}.group_by { |d| d[:region] }.map{ |k, v| { id: k, title: k, count: v.count} }
+
+    result = { response: collection,
+               member_types: member_types,
+               years: years
+            }
   end
 
   def year
     created.year
   end
 
+  def member_type
+    if doi_quota_allowed != 0
+      r = "allocating"
+    else
+      r = "non_allocating"
+    end
+    r
+  end
 
 
   def country_name
@@ -119,7 +156,7 @@ class Member < ActiveRecord::Base
     else
       r = "non_allocating"
     end
-    write_attribute(:member_type, r)
+    r
   end
 
   def set_defaults

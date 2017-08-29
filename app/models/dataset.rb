@@ -5,9 +5,11 @@ class Dataset < ActiveRecord::Base
 
   include Identifiable
   include Metadatable
+  include Cacheable
 
   alias_attribute :uid, :doi
-  attr_accessor :datacenter_id
+  attribute :datacenter_id
+  attribute :datacenter_name
   attribute :url
   # alias_attribute :datacenter_id, :datacentre
   alias_attribute :created_at, :created
@@ -65,8 +67,16 @@ class Dataset < ActiveRecord::Base
     #     }
     #   }
     # )
-    self.all
+    #
+
+    collection = cached_datasets_options(options)
+    years = cached_years_response
+
+    result = { response: collection,
+               years: years
+             }
   end
+
 
   def add_url
     self.url = Maremma.head(doi_as_url(self.doi)).url
