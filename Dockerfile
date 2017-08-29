@@ -39,7 +39,6 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
 COPY vendor/docker/webapp.conf /etc/nginx/sites-enabled/webapp.conf
 COPY vendor/docker/00_app_env.conf /etc/nginx/conf.d/00_app_env.conf
 COPY vendor/docker/70_templates.sh /etc/my_init.d/70_templates.sh
-COPY vendor/docker/cors.conf /etc/nginx/conf.d/cors.conf
 
 # Use Amazon NTP servers
 COPY vendor/docker/ntp.conf /etc/ntp.conf

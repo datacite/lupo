@@ -1,8 +1,6 @@
 class Ability
   include CanCan::Ability
 
-  # To simplify, all admin permissions are linked to the Notification resource
-
   def initialize(user)
     user ||= User.new(nil) # Guest user
     if user.role == "staff_admin"
