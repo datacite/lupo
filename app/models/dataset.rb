@@ -5,6 +5,7 @@ class Dataset < ActiveRecord::Base
 
   include Identifiable
   include Metadatable
+  include Cacheable
 
   alias_attribute :uid, :doi
   attribute :datacenter_id
@@ -66,18 +67,16 @@ class Dataset < ActiveRecord::Base
     #     }
     #   }
     # )
-    collection = self
-    collection = collection.all unless options.values.include?([nil,nil])
-    collection = collection.where('extract(year  from created) = ?', options[:year]) if options[:year].present?
-    collection = collection.where(datacentre:  Datacenter.find_by(symbol: options[:datacenter_id]).id) if options[:datacenter_id].present?
+    #
 
+    collection = cached_datasets_options(options)
+    years = cached_years_response
 
-    result = { response: collection
-      # ,
-      #          clients: clients,
-      #          years: years
+    result = { response: collection,
+               years: years
              }
   end
+
 
   def add_url
     self.url = Maremma.head(doi_as_url(self.doi)).url

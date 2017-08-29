@@ -30,8 +30,7 @@ class DatasetsController < ApplicationController
       line[:datacenter_name] = dc.name
     end
 
-    years = nil
-    years = collection.map{|doi| { id: doi[:id],  year: doi[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
+
     clients = nil
     clients = collection.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id],  name: doi[:datacenter_name] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: v.first[:name], count: v.count} }
 
@@ -40,7 +39,7 @@ class DatasetsController < ApplicationController
              total_pages: total_pages,
              page: page,
              clients: clients,
-             years: years
+             years: response[:years]
             }
 
     render jsonapi: collection, meta: meta
