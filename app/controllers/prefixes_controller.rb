@@ -6,7 +6,51 @@ class PrefixesController < ApplicationController
 
   # GET /prefixes
   def index
-    collection = Prefix.all
+    collection = Prefix
+
+    if params[:id].present?
+      collection = collection.where(prefix: params[:id])
+    elsif params[:query].present?
+      collection = collection.query(params[:query])
+    end
+
+    # cache members for faster queries
+    if params["member-id"].present?
+      member = cached_member_response(params["member-id"].upcase)
+      collection = collection.includes(:members).where('allocator.id' => member.id)
+    end
+
+    if params["data-center-id"].present?
+      data_center = cached_data_center_response(params["data-center-id"].upcase)
+      collection = collection.includes(:datacenters).where('datacentre.id' => data_center.id)
+    end
+
+    collection = collection.where('YEAR(prefix.created) = ?', params[:year]) if params[:year].present?
+
+    if params[:year].present?
+      years = [{ id: params[:year],
+                 title: params[:year],
+                 count: collection.where('YEAR(prefix.created) = ?', params[:year]).count }]
+    else
+      years = collection.where.not(created: nil).order("YEAR(prefix.created) DESC").group("YEAR(prefix.created)").count
+      years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
+    end
+
+    # calculate facet counts after filtering
+    # no faceting by data-center
+    if params["member-id"].present?
+      members = [{ id: params["member-id"],
+                   title: member.name,
+                   count: collection.includes(:members).where('allocator.id' => member.id).count }]
+    else
+      members = collection.includes(:members).where.not('allocator.id' => nil).group('allocator.id').count
+      members = members
+                  .sort { |a, b| b[1] <=> a[1] }
+                  .map do |i|
+                         member = cached_members.find { |m| m.id == i[0] }
+                         { id: member.symbol.downcase, title: member.name, count: i[1] }
+                       end
+    end
 
     # pagination
     page = params[:page] || {}
@@ -18,9 +62,11 @@ class PrefixesController < ApplicationController
 
     meta = { total: total,
              total_pages: @prefixes.total_pages,
-             page: page[:number].to_i }
+             page: page[:number].to_i,
+             members: members,
+             years: years }
 
-    render jsonapi: collection, meta: meta, include: @include
+    render jsonapi: @prefixes, meta: meta, include: @include
   end
 
   # GET /prefixes/1
@@ -69,7 +115,8 @@ class PrefixesController < ApplicationController
       @include = params[:include].split(",").map { |i| i.downcase.underscore }.join(",")
       @include = [@include]
     else
-      @include = nil
+      # always include because Ember pagination doesn't (yet) understand include parameter
+      @include = ['data_centers','members']
     end
   end
 

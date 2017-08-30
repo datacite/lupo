@@ -4,11 +4,11 @@ class PrefixSerializer < ActiveModel::Serializer
 
   attributes :registration_agency, :created, :updated
 
-  has_many :datacenters
+  has_many :data_centers
   has_many :members
 
   def id
-    object.uid
+    object.prefix
   end
 
   def updated

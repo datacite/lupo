@@ -4,9 +4,6 @@ class DatacentersController < ApplicationController
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show]
 
-  # include helper module for caching infrequently changing resources
-  include Cacheable
-
   def index
     collection = Datacenter
 

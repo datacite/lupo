@@ -2,6 +2,12 @@ module Cacheable
   extend ActiveSupport::Concern
 
   included do
+    def cached_data_center_response(id, options={})
+      Rails.cache.fetch("data_center_response/#{id}", expires_in: 7.days) do
+        Datacenter.where(symbol: id).select(:id, :symbol, :name, :created).first
+      end
+    end
+
     def cached_members
       Rails.cache.fetch("members", expires_in: 1.day) do
         Member.all.select(:id, :symbol, :name, :created)
@@ -60,13 +66,6 @@ module Cacheable
         end
 
         collection.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id],  name: doi[:datacenter_name] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: v.first[:name], count: v.count} }
-      end
-    end
-
-    def cached_data_center_response(id, options={})
-      Rails.cache.fetch("data_center_response/#{id}", expires_in: 1.day) do
-        data = self.ds.where(symbol: id).first
-        { "data" => { "data-center" => data } }
       end
     end
 

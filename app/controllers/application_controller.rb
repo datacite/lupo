@@ -4,6 +4,9 @@ class ApplicationController < ActionController::API
   include ErrorSerializable
   require 'facets/string/snakecase'
 
+  # include helper module for caching infrequently changing resources
+  include Cacheable
+
   attr_accessor :current_user
 
   # pass ability into serializer
