@@ -20,7 +20,7 @@ class MediaController < ApplicationController
              media_types: response[:media_types],
              years: response[:years] }
 
-    render jsonapi: @media, meta: meta, include: @include
+    render jsonapi: @media, meta: meta, include: ["dataset"]
   end
 
   # GET /media/1

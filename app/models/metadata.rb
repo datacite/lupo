@@ -1,7 +1,7 @@
 class Metadata < ActiveRecord::Base
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
-  attribute :dataset_id
+  # alias_attribute :dataset_id, :dataset
   alias_attribute :uid, :id
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
@@ -19,8 +19,4 @@ class Metadata < ActiveRecord::Base
 
   scope :query, ->(query) { where("symbol like ? OR name like ?", "%#{query}%", "%#{query}%") }
 
-  def dataset_id
-    @dataset_id = Dataset.find(dataset.id).uid.downcase if dataset
-    @dataset_id
-  end
 end
