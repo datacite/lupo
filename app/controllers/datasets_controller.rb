@@ -5,41 +5,49 @@ class DatasetsController < ApplicationController
 
   # # # GET /datasets
   def index
-    options = {
-      datacenter_id: params["data-center-id"],
-      member_id: params["member-id"],
-      year: params[:year]
-    }
-    params[:query] ||= "*"
-    response = Dataset.search(params[:query], options)
+
+    works = Maremma.get("https://api.test.datacite.org/works")
+    # puts @works.inspect
+    # works = ActiveModelSerializers::Deserialization.jsonapi_parse(Maremma.get("https://api.test.datacite.org/works"))
+    # puts works.inspect
+    # render jsonapi: @works[:data], meta: @works[:meta], include: @include
 
 
-    # pagination
-    page = (params.dig(:page, :number) || 1).to_i
-    per_page =(params.dig(:page, :size) || 25).to_i
-    total = response[:response].size
-    total_pages = (total.to_f / per_page).ceil
-    collection = response[:response].page(page).per(per_page).order(created: :desc).to_a
+    # options = {
+    #   datacenter_id: params["data-center-id"],
+    #   member_id: params["member-id"],
+    #   year: params[:year]
+    # }
+    # params[:query] ||= "*"
+    # response = Dataset.search(params[:query], options)
+    #
+    #
+    # # pagination
+    # page = (params.dig(:page, :number) || 1).to_i
+    # per_page =(params.dig(:page, :size) || 25).to_i
+    # total = response[:response].size
+    # total_pages = (total.to_f / per_page).ceil
+    # collection = response[:response].page(page).per(per_page).order(created: :desc).to_a
+    #
+    # collection.each do |line|
+    #   dc = Datacenter.find(line[:datacentre])
+    #   line[:datacenter_id] = dc.uid.downcase
+    #   line[:datacenter_name] = dc.name
+    # end
+    #
+    #
+    # clients = nil
+    # clients = collection.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id],  name: doi[:datacenter_name] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: v.first[:name], count: v.count} }
+    #
+    #
+    # meta = { total: total,
+    #          total_pages: total_pages,
+    #          page: page,
+    #          clients: clients,
+    #          years: response[:years]
+    #         }
 
-    collection.each do |line|
-      dc = Datacenter.find(line[:datacentre])
-      line[:datacenter_id] = dc.uid.downcase
-      line[:datacenter_name] = dc.name
-    end
-
-
-    clients = nil
-    clients = collection.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id],  name: doi[:datacenter_name] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: v.first[:name], count: v.count} }
-
-
-    meta = { total: total,
-             total_pages: total_pages,
-             page: page,
-             clients: clients,
-             years: response[:years]
-            }
-
-    render jsonapi: collection, meta: meta
+    render jsonapi: works.to_h[:body]
   end
   #
   # # # GET /datasets/1
