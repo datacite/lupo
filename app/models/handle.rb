@@ -1,5 +1,5 @@
 class Handle < Base
-  attr_reader :id, :uid, :registration_agency, :created, :updated_at
+  attr_reader :id, :prefix, :registration_agency, :data_centers, :members, :created, :updated_at
 
   RA_HANDLES = {
     "10.SERV/CROSSREF" => "Crossref",
@@ -18,7 +18,7 @@ class Handle < Base
 
   def initialize(attributes, options={})
     @id = attributes.fetch("id").underscore.dasherize
-    @uid = @id
+    @prefix = @id
     @registration_agency = attributes.fetch("registration_agency", nil)
     @updated_at = attributes.fetch("updated_at", nil)
   end
