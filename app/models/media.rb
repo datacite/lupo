@@ -1,26 +1,21 @@
 class Media < ActiveRecord::Base
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
-  # alias_attribute :dataset_id, :dataset
+  attribute :dataset_id
   alias_attribute :uid, :id
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-  validates_presence_of :uid, :dataset, :url, :media_type
+  validates_presence_of :dataset_id, :url, :media_type
   validates_uniqueness_of :uid, message: "This name has already been taken"
-  validates_format_of :url, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be an url"
+  validates_format_of :url, :with => /https?:\/\/[\S]+/ , if: :url?, message: "Website should be an url"
   validates_numericality_of :version, if: :version?
 
   belongs_to :dataset, class_name: 'Dataset', foreign_key: :dataset
-
+  before_validation :set_dataset
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
   scope :query, ->(query) { where("symbol like ? OR name like ?", "%#{query}%", "%#{query}%") }
-
-  # def dataset_id
-  #   # @dataset_id = Dataset.find(dataset.id).uid.downcase if dataset
-  #   # @dataset_id
-  # end
 
   def self.get_all(options={})
     collection = Media
@@ -47,5 +42,13 @@ class Media < ActiveRecord::Base
       media_types: media_types,
       years: years
     }
+  end
+
+  private
+
+  def set_dataset
+    r = Dataset.where(doi: dataset_id).first
+    fail("dataset_id Not found") unless r.present?
+    write_attribute(:dataset, r.id)
   end
 end

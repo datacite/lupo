@@ -71,7 +71,7 @@ class MediaController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def safe_params
-      attributes = [:created, :updated, :dataset, :version, :url, :media_type]
+      attributes = [:created, :updated, :dataset_id, :version, :url, :media_type]
       params.require(:data).permit(:id, :type, attributes: attributes)
     end
 end

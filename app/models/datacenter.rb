@@ -90,10 +90,10 @@ end
   #   domains.to_s.split(/\s*,\s*/).presence
   # end
 
-  def member_id
-    @member_id = Member.find(allocator).uid.downcase if allocator
-    @member_id
-  end
+  # def member_id
+  #   @member_id = Member.find(allocator).uid.downcase if allocator
+  #   @member_id
+  # end
 
   private
 
