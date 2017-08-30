@@ -1,2 +1,0 @@
-class Medium < ApplicationRecord
-end

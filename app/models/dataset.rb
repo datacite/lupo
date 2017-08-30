@@ -15,6 +15,8 @@ class Dataset < ActiveRecord::Base
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   belongs_to :datacenter, class_name: 'Datacenter', foreign_key: :datacentre
+  has_many :media, class_name: 'Media'
+  has_many :metadata, class_name: 'Metadata'
   self.table_name = "dataset"
 
   validates_presence_of :doi, :datacentre

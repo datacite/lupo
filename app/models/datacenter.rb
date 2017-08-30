@@ -1,4 +1,7 @@
 class Datacenter < ActiveRecord::Base
+
+  # include helper module for caching infrequently changing resources
+  include Cacheable
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
@@ -36,6 +39,52 @@ class Datacenter < ActiveRecord::Base
   def year
     created_at.year if created_at.present?
   end
+
+
+  def self.get_all(options={})
+    collection = Datacenter
+    if options[:id].present?
+      collection = collection.where(symbol: options[:id])
+    elsif options[:query].present?
+      collection = collection.query(options[:query])
+    end
+
+    # cache members for faster queries
+    if options["member-id"].present?
+      member = cached_member_response(options["member-id"].upcase)
+      collection = collection.where(allocator: member.id)
+    end
+    collection = collection.where('YEAR(created) = ?', options[:year]) if options[:year].present?
+
+    # calculate facet counts after filtering
+    if options["member-id"].present?
+      members = [{ id: options["member-id"],
+                   title: member.name,
+                   count: collection.where(allocator: member.id).count }]
+    else
+      members = collection.where.not(allocator: nil).group(:allocator).count
+      Rails.logger.info members.inspect
+      members = members
+                  .sort { |a, b| b[1] <=> a[1] }
+                  .map do |i|
+                         member = cached_members.find { |m| m.id == i[0] }
+                         { id: member.symbol.downcase, title: member.name, count: i[1] }
+                       end
+    end
+    if options[:year].present?
+      years = [{ id: options[:year],
+                 title: options[:year],
+                 count: collection.where('YEAR(created) = ?', options[:year]).count }]
+    else
+      years = collection.where.not(created: nil).order("YEAR(created) DESC").group("YEAR(created)").count
+      years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
+    end
+    response ={
+      collection: collection,
+      years: years,
+      members: members
+    }
+end
 
   # def domains
   #   domains.to_s.split(/\s*,\s*/).presence
