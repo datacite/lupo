@@ -87,7 +87,7 @@ class MetadataController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def safe_params
-      attributes = [:created, :version, :metadata_version, :dataset_id, :is_converted_by_mds, :namespace, :xml]
+      attributes = [:created, :version, :metadata_version, :dataset_id, :is_converted_by_mds, :namespace, :xml, :url]
       params.require(:data).permit(:id, :type, attributes: attributes)
     end
 end

@@ -5,9 +5,10 @@ class Metadata < ActiveRecord::Base
   alias_attribute :uid, :id
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-  validates_presence_of :dataset, :xml, :metadata_version
+  validates_presence_of :dataset, :xml, :metadata_version, :url
   validates_uniqueness_of :uid, message: "This name has already been taken"
   validates_numericality_of :version, if: :version?
+  validates_format_of :url, :with => /https?:\/\/[\S]+/ , if: :url?, message: "Website should be an url"
   # validates_inclusion_of :metadata_version, :in => %w( 1 2 3 4 ), :message => "Metadata version is not included in the list", if: :metadata_version?
 
   belongs_to :dataset, class_name: 'Dataset', foreign_key: :dataset
