@@ -21,4 +21,31 @@ class Media < ActiveRecord::Base
     @dataset_id = Dataset.find(dataset.id).uid.downcase if dataset
     @dataset_id
   end
+
+  def self.get_all(options={})
+    collection = Media
+
+    if options[:year].present?
+      years = [{ id: options[:year],
+                 title: options[:year],
+                 count: collection.where('YEAR(created) = ?', options[:year]).count }]
+    else
+      years = collection.where.not(created: nil).order("YEAR(created) DESC").group("YEAR(created)").count
+      years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
+    end
+
+    if options[:media_type].present?
+      media_types = [{ id: options[:media_type],
+                 title: options[:media_type],
+                 count: collection.where('media_type = ?', options[:media_type]).count }]
+    else
+      media_types = collection.where.not(created: nil).order("media_type DESC").group("media_type").count
+      media_types = media_types.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
+    end
+    response = {
+      collection: collection,
+      media_types: media_types,
+      years: years
+    }
+  end
 end

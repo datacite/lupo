@@ -81,7 +81,7 @@ class MetadataController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_metadata
-      @metadata = Metadata.where(dataset: params[:id]).first
+      @metadata = Metadata.where(id: params[:id]).first
       fail ActiveRecord::RecordNotFound unless @metadata.present?
     end
 

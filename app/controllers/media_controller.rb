@@ -5,45 +5,27 @@ class MediaController < ApplicationController
   # GET /media
   def index
 
-    collection = Media
-
-    if params[:year].present?
-      years = [{ id: params[:year],
-                 title: params[:year],
-                 count: collection.where('YEAR(created) = ?', params[:year]).count }]
-    else
-      years = collection.where.not(created: nil).order("YEAR(created) DESC").group("YEAR(created)").count
-      years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
-    end
-
-    if params[:media_type].present?
-      media_types = [{ id: params[:media_type],
-                 title: params[:media_type],
-                 count: collection.where('media_type = ?', params[:media_type]).count }]
-    else
-      media_types = collection.where.not(created: nil).order("media_type DESC").group("media_type").count
-      media_types = media_types.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
-    end
+    response = Media.get_all(params)
 
     page = params[:page] || {}
     page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
     page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
-    total = collection.count
+    total = response[:collection].count
 
-    @media = collection.order(:created).page(page[:number]).per(page[:size])
+    @media = response[:collection].order(:created).page(page[:number]).per(page[:size])
 
     meta = { total: total,
              total_pages: @media.total_pages,
              page: page[:number].to_i,
-             media_types: media_types,
-             years: years }
+             media_types: response[:media_types],
+             years: response[:years] }
 
     render jsonapi: @media, meta: meta, include: @include
   end
 
   # GET /media/1
   def show
-    render jsonapi: @media
+    render jsonapi: @media, include: @include
   end
 
   # POST /media
@@ -83,7 +65,7 @@ class MediaController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_media
-      @media = Media.where(dataset: params[:id]).first
+      @media = Media.where(id: params[:id]).first
       fail ActiveRecord::RecordNotFound unless @media.present?
     end
 
