@@ -2,7 +2,7 @@ class User
   # include jwt encode and decode
   include Authenticable
 
-  attr_accessor :name, :uid, :email, :role, :jwt, :orcid, :member_id, :datacenter_id
+  attr_accessor :name, :uid, :email, :role, :jwt, :orcid, :member_id, :datacenter_id, :allocator, :datacentre
 
   def initialize(token)
     if token.present?
@@ -31,5 +31,32 @@ class User
   # Helper method to check for admin or staff user
   def is_admin_or_staff?
     ["staff_admin", "staff_user"].include?(role)
+  end
+
+  # Helper method to check for admin user
+  def allocator
+    Member.find_by(symbol: @member_id).id if @member_id
+  end
+
+  # Helper method to check for admin user
+  def datacentre
+    Datacenter.find_by(symbol: @datacenter_id).id if @datacenter_id
+  end
+
+  private
+  def generate_token
+    # @jwt
+    payload = {
+      uid: "Faker::Code.unique.asin",
+      name: "Faker::Name.name",
+      email: "sasasasa",
+      member_id: "TIB",
+      datacenter_id: "TIB.PANGAEA",
+      role: "data_center_admin",
+      iat: Time.now.to_i,
+      exp: Time.now.to_i + 50 * 24 * 3600
+    }.compact
+
+    encode_token(payload)
   end
 end
