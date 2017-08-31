@@ -190,8 +190,8 @@ class Work < Base
       { data: parse_item(item,
         # relation_types: RelationType.all,
         # resource_types: cached_resource_types,
-        data_centers: [data_center].compact
-        # members: cached_members
+        data_centers: [data_center].compact,
+        members: cached_members
         ), meta: meta }
     else
       if options["work-id"].present?
@@ -214,12 +214,13 @@ class Work < Base
       result = result.to_h
       items = result.fetch(:body, {}).fetch("data", {}).fetch("response", {}).fetch("docs", [])
 
-      facets = result.fetch("data", {}).fetch("facet_counts", {})
+      facets = result.fetch(:body, {}).fetch("data", {}).fetch("facet_counts", {})
+
 
       page = (options.dig(:page, :number) || 1).to_i
       per_page = (options.dig(:page, :size) || 25).to_i
       offset = (page - 1) * per_page
-      total = result.fetch("data", {}).fetch("response", {}).fetch("numFound", 0)
+      total = result.fetch(:body, {}).fetch("data", {}).fetch("response", {}).fetch("numFound", 0)
       total_pages = (total.to_f / per_page).ceil
 
       meta = parse_facet_counts(facets, options)
@@ -229,7 +230,7 @@ class Work < Base
                        .each_slice(2)
                        .map do |p|
                               id, title = p.first.split(' - ', 2)
-                              [Datacenter, { "id" => id, "title" => title }]
+                              [Datacenter, { "id" => id, "name" => title }]
                             end
       data_centers = Array(data_centers).map do |item|
         parse_include(item.first, item.last)
@@ -238,8 +239,8 @@ class Work < Base
       { data: parse_items(items,
         # relation_types: RelationType.all,
         # resource_types: cached_resource_types,
-        data_centers: data_centers
-        # members: cached_members
+        data_centers: data_centers,
+        members: cached_members
         ), meta: meta }
     end
   end
@@ -262,7 +263,7 @@ class Work < Base
                               id, title = p.first.split(' - ', 2)
                               [id, p.last]
                             end.to_h
-    # data_centers = get_data_center_facets(data_centers)
+    data_centers = get_data_center_facets(data_centers)
     schema_versions = facets.fetch("facet_fields", {}).fetch("schema_version", [])
                             .each_slice(2)
                             .sort { |a, b| b.first <=> a.first }
@@ -275,14 +276,15 @@ class Work < Base
     { "resource-types" => resource_types,
       "years" => years,
       "registered" => registered,
-      # "data_centers" => data_centers,
+      "data_centers" => data_centers,
       "schema-versions" => schema_versions }
   end
 
   def self.get_data_center_facets(data_centers, options={})
-    response = Datacenter.where(ids: data_centers.keys.join(","))
-    response.fetch(:data, [])
-            .map { |p| { id: p.id.downcase, title: p.title, count: data_centers.fetch(p.id.upcase, 0) } }
+    response = Datacenter.where(symbol: data_centers.keys.join(",").split(/\s*,\s*/))
+    puts response.inspect
+
+    response.map { |p| { id: p.uid.downcase, name: p.name, count: data_centers.fetch(p.uid.upcase, 0) } }
             .sort { |a, b| b[:count] <=> a[:count] }
   end
 

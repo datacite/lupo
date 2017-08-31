@@ -38,7 +38,7 @@ class MembersController < ApplicationController
                  title: params[:year],
                  count: collection.where(year: params[:year]).count }]
     else
-      years = collection.where.not(year: nil).order("year DESC").group(:year).count
+      years = collection.where.not(created: nil).order("YEAR(created) DESC").group("YEAR(created)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 

@@ -19,7 +19,7 @@ class Member < ActiveRecord::Base
 
   has_many :datacenters
   alias_attribute :data_centers, :datacenters
-  
+
   has_and_belongs_to_many :prefixes, class_name: 'Prefix', join_table: "allocator_prefixes", foreign_key: :prefixes, association_foreign_key: :allocator
 
   before_validation :set_region, :set_defaults, :set_member_type

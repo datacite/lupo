@@ -22,6 +22,13 @@ module Cacheable
   end
 
   module ClassMethods
+
+    def cached_members
+      Rails.cache.fetch("members", expires_in: 1.day) do
+        Member.all.select(:id, :symbol, :name, :created)
+      end
+    end
+
     def cached_datasets
       Rails.cache.fetch("datasets", expires_in: 1.day) do
         Dataset.all
@@ -44,11 +51,11 @@ module Cacheable
       end
     end
 
-    # def cached_members_response(options={})
-    #   Rails.cache.fetch("member_response", expires_in: 1.day) do
-    #     Base::DB[:allocator].select(:id, :symbol, :name, :created).all
-    #   end
-    # end
+    def cached_members_response(options={})
+      Rails.cache.fetch("member_response", expires_in: 1.day) do
+        Members.where(options)
+      end
+    end
 
     def cached_datasets_datacenters_join(options={})
       Rails.cache.fetch("datacenters", expires_in: 1.day) do
