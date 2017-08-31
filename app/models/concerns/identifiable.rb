@@ -19,6 +19,10 @@ module Identifiable
       Array(/\A(?:http:\/\/orcid\.org\/)?(\d{4}-\d{4}-\d{4}-\d{3}[0-9X]+)\z/.match(orcid)).last
     end
 
+    def validate_orcid_scheme(orcid_scheme)
+      Array(/\A(http|https):\/\/(www\.)?(orcid\.org)/.match(orcid_scheme)).last
+    end
+
     def github_from_url(url)
       return {} unless /\Ahttps:\/\/github\.com\/(.+)(?:\/)?(.+)?(?:\/tree\/)?(.*)\z/.match(url)
       words = URI.parse(url).path[1..-1].split('/')

@@ -31,47 +31,17 @@ class Dataset < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
-  # # Elasticsearch indexing
-  # mappings dynamic: 'false' do
-  #   indexes :uid, type: 'text'
-  #   indexes :doi, type: 'text'
-  #   indexes :url, type: 'text'
-  #   indexes :version, type: 'integer'
-  #   indexes :is_active, type: 'binary'
-  #   indexes :datacenter_id, type: 'text'
-  #   indexes :minted, type: 'date'
-  #   indexes :created_at, type: 'date'
-  #   indexes :updated_at, type: 'date'
-  # end
+  scope :query, ->(query) { where("doi like ? OR title like ?", "%#{query}%", "%#{query}%") }
 
-  def as_indexed_json(options={})
-    {
-      "id" => uid.downcase,
-      "doi" => doi,
-      "url" => url,
-      "version" => version,
-      "is_active" => is_active,
-      "datacenter" => datacenter_id,
-      "minted" => created_at.iso8601,
-      "created" => created_at.iso8601,
-      "updated" => updated_at.iso8601 }
-  end
 
   # Elasticsearch custom search
-  def self.search(query, options={})
-    # __elasticsearch__.search(
-    #   {
-    #     query: {
-    #       query_string: {
-    #         query: query,
-    #         fields: ['uid^10', 'name^10', 'description', 'contact_email', 'country_name', 'website']
-    #       }
-    #     }
-    #   }
-    # )
-    #
+  def self.get_all(query, options={})
 
-    collection = cached_datasets_options(options)
+    collection = self
+    collection = collection.where('extract(year  from created) = ?', options[:year]) if options[:year].present?
+    collection = collection.where(datacentre:  Datacenter.find_by(symbol: options[:datacenter_id]).id) if options[:datacenter_id].present?
+    collection = collection.all unless options.values.include?([nil,nil])
+
     years = cached_years_response
 
     result = { response: collection,

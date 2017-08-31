@@ -189,9 +189,10 @@ class Work < Base
 
       { data: parse_item(item,
         # relation_types: RelationType.all,
-        resource_types: cached_resource_types,
-        data_centers: [data_center].compact,
-        members: cached_members), meta: meta }
+        # resource_types: cached_resource_types,
+        data_centers: [data_center].compact
+        # members: cached_members
+        ), meta: meta }
     else
       if options["work-id"].present?
         return { data: [], meta: [] } if result.blank?
@@ -209,9 +210,9 @@ class Work < Base
         query_url = get_query_url(options.merge(ids: related_doi_identifiers.join(",")))
         result = Maremma.get(query_url, options)
       end
-      # puts result.inspect
+
       result = result.to_h
-      items = result.fetch("data", {}).fetch('response', {}).fetch('docs', [])
+      items = result.fetch(:body, {}).fetch("data", {}).fetch("response", {}).fetch("docs", [])
 
       facets = result.fetch("data", {}).fetch("facet_counts", {})
 
@@ -236,9 +237,10 @@ class Work < Base
 
       { data: parse_items(items,
         # relation_types: RelationType.all,
-        resource_types: cached_resource_types,
-        data_centers: data_centers,
-        members: cached_members), meta: meta }
+        # resource_types: cached_resource_types,
+        data_centers: data_centers
+        # members: cached_members
+        ), meta: meta }
     end
   end
 

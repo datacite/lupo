@@ -6,23 +6,7 @@ class DatasetsController < ApplicationController
   # # # GET /datasets
   def index
 
-    works = Maremma.get("https://api.test.datacite.org/works")
-    # puts @works.inspect
-    # works = ActiveModelSerializers::Deserialization.jsonapi_parse(Maremma.get("https://api.test.datacite.org/works"))
-    # puts works.inspect
-    # render jsonapi: @works[:data], meta: @works[:meta], include: @include
-
-
-    # options = {
-    #   datacenter_id: params["data-center-id"],
-    #   member_id: params["member-id"],
-    #   year: params[:year]
-    # }
-    # params[:query] ||= "*"
-    # response = Dataset.search(params[:query], options)
-    #
-    #
-    # # pagination
+    # response = Dataset.get_all(params)
     # page = (params.dig(:page, :number) || 1).to_i
     # per_page =(params.dig(:page, :size) || 25).to_i
     # total = response[:response].size
@@ -46,8 +30,8 @@ class DatasetsController < ApplicationController
     #          clients: clients,
     #          years: response[:years]
     #         }
-
-    render jsonapi: works.to_h[:body]
+    #
+    # render jsonapi: @works[:data], meta: @works[:meta], include: @include
   end
   #
   # # # GET /datasets/1

@@ -29,6 +29,7 @@ gem "facets", require: false
 gem 'elasticsearch-model'
 gem 'elasticsearch-rails'
 gem 'sidekiq', '~> 5.0', '>= 5.0.4'
+gem 'bergamasco', '~> 0.3.10'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5', '>= 3.5.2'
