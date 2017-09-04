@@ -31,7 +31,7 @@ class DoisController < ApplicationController
 
   # # # GET /datasets/1
   def show
-    render jsonapi: @doi, include: @include
+    render jsonapi: @doi[:data], include: @include
   end
 
   protected
