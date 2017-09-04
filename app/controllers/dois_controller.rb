@@ -1,5 +1,6 @@
 class DoisController < ApplicationController
   before_action :set_doi, only: [:show, :update, :destroy]
+  before_action :set_include
   before_action :authenticate_user_from_token!
   load_and_authorize_resource :except => [:index, :show]
 
@@ -30,15 +31,25 @@ class DoisController < ApplicationController
 
   # # # GET /datasets/1
   def show
-    render jsonapi: @doi
+    render jsonapi: @doi, include: @include
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_doi
-      @doi = Dataset.where(doi: params[:id]).first
-      fail ActiveRecord::RecordNotFound unless @doi.present?
+  protected
+
+  # Use callbacks to share common setup or constraints between actions.
+  def set_doi
+    @doi = Dataset.where(doi: params[:id]).first
+    fail ActiveRecord::RecordNotFound unless @doi.present?
+  end
+
+  def set_include
+    if params[:include].present?
+      @include = params[:include].split(",").map { |i| i.downcase.underscore }.join(",")
+      @include = [@include]
+    else
+      @include = ["client,provider,resource-type"]
     end
+  end
 
 
   private

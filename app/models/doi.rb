@@ -1,5 +1,5 @@
 class Doi < Base
-  attr_reader :id, :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :client_id, :provider_id, :resource_type_id, :client, :provider, :registration_agency, :resource_type, :license, :version, :results, :related_identifiers, :schema_version, :xml, :media, :published, :registered, :updated_at
+  attr_reader :id, :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :client_id, :provider_id, :resource_type_id, :client, :provider, :resource_type, :license, :version, :results, :related_identifiers, :schema_version, :xml, :media, :published, :registered, :updated_at
 
   # include author methods
   include Authorable
@@ -35,7 +35,7 @@ class Doi < Base
 
     # get url registered in the handle system
     response = Maremma.head(@identifier, limit: 0)
-    @url = response.present? ? response["Location"] : nil
+    @url = response.headers.present? ? response.headers["location"] : nil
 
     @title = Doi.sanitize(attributes.fetch("title", []).first)
     @container_title = attributes.fetch("publisher", nil)
@@ -188,11 +188,10 @@ class Doi < Base
       client = client[:data] if client.present?
 
       { data: parse_item(item,
-        # relation_types: RelationType.all,
-        resource_types: cached_resource_types,
-        clients: [client].compact,
-        providers: cached_providers
-        ), meta: meta }
+          resource_types: cached_resource_types,
+          clients: [client].compact,
+          providers: cached_providers),
+        meta: meta }
     else
       if options["doi-id"].present?
         return { data: [], meta: [] } if result.blank?
@@ -211,27 +210,20 @@ class Doi < Base
         result = Maremma.get(query_url, options)
       end
 
-      result = result.to_h
-      items = result.fetch(:body, {}).fetch("data", {}).fetch("response", {}).fetch("docs", [])
+      items = result.body.fetch("data", {}).fetch("response", {}).fetch("docs", [])
 
-      facets = result.fetch(:body, {}).fetch("data", {}).fetch("facet_counts", {}).fetch("facet_fields", {})
-
-
-      # page = (options.dig(:page, :number) || 1).to_i
-      # per_page = (options.dig(:page, :size) || 25).to_i
-      # offset = (page - 1) * per_page
-
+      facets = result.body.fetch("data", {}).fetch("facet_counts", {})
 
       page = options[:page] || {}
       page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
       page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
-      total = result.fetch(:body, {}).fetch("data", {}).fetch("response", {}).fetch("numFound", 0)
+      total = result.body.fetch("data", {}).fetch("response", {}).fetch("numFound", 0)
       total_pages = (total.to_f / page[:size]).ceil
 
       meta = parse_facet_counts(facets, options)
       meta = meta.merge(total: total, total_pages: total_pages, page: page[:number])
 
-      clients = facets.fetch("datacentre_facet", [])
+      clients = facets.fetch("facet_fields", {}).fetch("datacentre_facet", [])
                        .each_slice(2)
                        .map do |p|
                               id, title = p.first.split(' - ', 2)
@@ -242,11 +234,11 @@ class Doi < Base
       end
 
       { data: parse_items(items,
-        # relation_types: RelationType.all,
-        resource_types: cached_resource_types,
-        clients: clients,
-        providers: cached_providers
-        ), meta: meta }
+          resource_types: cached_resource_types,
+          clients: clients,
+          providers: cached_providers
+          ),
+        meta: meta }
     end
   end
 
@@ -254,14 +246,14 @@ class Doi < Base
     resource_types = facets.fetch("resourceType_facet", [])
                            .each_slice(2)
                            .map { |k,v| { id: k.underscore.dasherize, title: k.underscore.humanize, count: v } }
-    years = facets.fetch("publicationYear", [])
+    years = facets.fetch("facet_fields", {}).fetch("publicationYear", [])
                   .each_slice(2)
                   .sort { |a, b| b.first <=> a.first }
                   .map { |i| { id: i[0], title: i[0], count: i[1] } }
-    # registered = facets.fetch("facet_ranges", {}).fetch("minted", {}).fetch("counts", [])
-    #               .each_slice(2)
-    #               .sort { |a, b| b.first <=> a.first }
-    #               .map { |i| { id: i[0][0..3], title: i[0][0..3], count: i[1] } }
+    registered = facets.fetch("facet_ranges", {}).fetch("minted", {}).fetch("counts", [])
+                  .each_slice(2)
+                  .sort { |a, b| b.first <=> a.first }
+                  .map { |i| { id: i[0][0..3], title: i[0][0..3], count: i[1] } }
     clients = facets.fetch("datacentre_facet", [])
                        .each_slice(2)
                        .map do |p|
@@ -280,14 +272,14 @@ class Doi < Base
 
     { "resource-types" => resource_types,
       "years" => years,
-      # "registered" => registered,
+      "registered" => registered,
       "clients" => clients,
       "schema-versions" => schema_versions }
   end
 
   def self.get_client_facets(clients, options={})
     response = Client.where(symbol: clients.keys.join(",").split(/\s*,\s*/))
-    
+
 
     response.map { |p| { id: p.uid.downcase, name: p.name, count: clients.fetch(p.uid.upcase, 0) } }
             .sort { |a, b| b[:count] <=> a[:count] }

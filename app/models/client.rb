@@ -5,10 +5,8 @@ class Client < ActiveRecord::Base
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
+  
   alias_attribute :uid, :symbol
-  # alias_attribute :provider_id, :allocator
-  # attribute :provider
-  attribute :provider_id
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
 
@@ -26,6 +24,8 @@ class Client < ActiveRecord::Base
   before_validation :set_defaults
 
   delegate :uid, to: :provider, prefix: true
+  delegate :symbol, to: :provider, prefix: true
+
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
@@ -84,7 +84,7 @@ class Client < ActiveRecord::Base
       years: years,
       providers: providers
     }
-end
+  end
 
   # def domains
   #   domains.to_s.split(/\s*,\s*/).presence

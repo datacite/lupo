@@ -22,7 +22,6 @@ module Cacheable
   end
 
   module ClassMethods
-
     def cached_providers
       Rails.cache.fetch("providers", expires_in: 1.day) do
         Provider.all.select(:id, :symbol, :name, :created)
@@ -34,7 +33,6 @@ module Cacheable
         ResourceType.all[:data]
       end
     end
-
 
     def cached_datasets
       Rails.cache.fetch("datasets", expires_in: 1.day) do
