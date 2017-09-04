@@ -177,10 +177,10 @@ class Work < Base
 
       meta = result[:meta]
 
-      # resource_type = nil
-      # resource_type_id = item.fetch("resourceTypeGeneral", nil)
-      # resource_type = ResourceType.where(id: resource_type_id.downcase.underscore.dasherize) if resource_type_id.present?
-      # resource_type = resource_type[:data] if resource_type.present?
+      resource_type = nil
+      resource_type_id = item.fetch("resourceTypeGeneral", nil)
+      resource_type = ResourceType.where(id: resource_type_id.downcase.underscore.dasherize) if resource_type_id.present?
+      resource_type = resource_type[:data] if resource_type.present?
 
       data_center = nil
       data_center_id = item.fetch("datacentre_symbol", nil)
@@ -189,7 +189,7 @@ class Work < Base
 
       { data: parse_item(item,
         # relation_types: RelationType.all,
-        # resource_types: cached_resource_types,
+        resource_types: cached_resource_types,
         data_centers: [data_center].compact,
         members: cached_members
         ), meta: meta }
@@ -214,19 +214,24 @@ class Work < Base
       result = result.to_h
       items = result.fetch(:body, {}).fetch("data", {}).fetch("response", {}).fetch("docs", [])
 
-      facets = result.fetch(:body, {}).fetch("data", {}).fetch("facet_counts", {})
+      facets = result.fetch(:body, {}).fetch("data", {}).fetch("facet_counts", {}).fetch("facet_fields", {})
 
 
-      page = (options.dig(:page, :number) || 1).to_i
-      per_page = (options.dig(:page, :size) || 25).to_i
-      offset = (page - 1) * per_page
+      # page = (options.dig(:page, :number) || 1).to_i
+      # per_page = (options.dig(:page, :size) || 25).to_i
+      # offset = (page - 1) * per_page
+
+
+      page = options[:page] || {}
+      page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
+      page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
       total = result.fetch(:body, {}).fetch("data", {}).fetch("response", {}).fetch("numFound", 0)
-      total_pages = (total.to_f / per_page).ceil
+      total_pages = (total.to_f / page[:size]).ceil
 
       meta = parse_facet_counts(facets, options)
-      meta = meta.merge(total: total, total_pages: total_pages, page: page)
+      meta = meta.merge(total: total, total_pages: total_pages, page: page[:number])
 
-      data_centers = facets.fetch("facet_fields", {}).fetch("datacentre_facet", [])
+      data_centers = facets.fetch("datacentre_facet", [])
                        .each_slice(2)
                        .map do |p|
                               id, title = p.first.split(' - ', 2)
@@ -238,7 +243,7 @@ class Work < Base
 
       { data: parse_items(items,
         # relation_types: RelationType.all,
-        # resource_types: cached_resource_types,
+        resource_types: cached_resource_types,
         data_centers: data_centers,
         members: cached_members
         ), meta: meta }
@@ -249,22 +254,22 @@ class Work < Base
     resource_types = facets.fetch("resourceType_facet", [])
                            .each_slice(2)
                            .map { |k,v| { id: k.underscore.dasherize, title: k.underscore.humanize, count: v } }
-    years = facets.fetch("facet_fields", {}).fetch("publicationYear", [])
+    years = facets.fetch("publicationYear", [])
                   .each_slice(2)
                   .sort { |a, b| b.first <=> a.first }
                   .map { |i| { id: i[0], title: i[0], count: i[1] } }
-    registered = facets.fetch("facet_ranges", {}).fetch("minted", {}).fetch("counts", [])
-                  .each_slice(2)
-                  .sort { |a, b| b.first <=> a.first }
-                  .map { |i| { id: i[0][0..3], title: i[0][0..3], count: i[1] } }
-    data_centers = facets.fetch("facet_fields", {}).fetch("datacentre_facet", [])
+    # registered = facets.fetch("facet_ranges", {}).fetch("minted", {}).fetch("counts", [])
+    #               .each_slice(2)
+    #               .sort { |a, b| b.first <=> a.first }
+    #               .map { |i| { id: i[0][0..3], title: i[0][0..3], count: i[1] } }
+    data_centers = facets.fetch("datacentre_facet", [])
                        .each_slice(2)
                        .map do |p|
                               id, title = p.first.split(' - ', 2)
                               [id, p.last]
                             end.to_h
     data_centers = get_data_center_facets(data_centers)
-    schema_versions = facets.fetch("facet_fields", {}).fetch("schema_version", [])
+    schema_versions = facets.fetch("schema_version", [])
                             .each_slice(2)
                             .sort { |a, b| b.first <=> a.first }
                             .map { |i| { id: i[0], title: "Schema #{i[0]}", count: i[1] } }
@@ -275,7 +280,7 @@ class Work < Base
 
     { "resource-types" => resource_types,
       "years" => years,
-      "registered" => registered,
+      # "registered" => registered,
       "data_centers" => data_centers,
       "schema-versions" => schema_versions }
   end
@@ -289,7 +294,7 @@ class Work < Base
   end
 
   def self.url
-    "https://search.test.datacite.org/api"
+    "#{ENV["SOLR_HOST"]}"
   end
 
   # find Creative Commons or OSI license in rightsURI array

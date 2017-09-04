@@ -23,7 +23,7 @@ class Datacenter < ActiveRecord::Base
   belongs_to :member, class_name: 'Member', foreign_key: :allocator
   has_many :datasets
 
-  before_validation :set_defaults, :set_allocator
+  before_validation :set_defaults
 
   delegate :uid, to: :member, prefix: true
   before_create { self.created = Time.zone.now.utc.iso8601 }
@@ -103,6 +103,7 @@ end
     self.role_name = "ROLE_DATACENTRE" unless role_name.present?
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
+    set_allocator unless allocator
   end
 
   def set_allocator

@@ -10,8 +10,7 @@ class Dataset < ActiveRecord::Base
   alias_attribute :uid, :doi
   attribute :datacenter_id
   attribute :datacenter_name
-  attribute :url
-  # alias_attribute :datacenter_id, :datacentre
+  # attr_accessor :url
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   belongs_to :datacenter, class_name: 'Datacenter', foreign_key: :datacentre
@@ -19,15 +18,15 @@ class Dataset < ActiveRecord::Base
   has_many :metadata, class_name: 'Metadata'
   self.table_name = "dataset"
 
-  validates_presence_of :doi, :datacentre
+  validates_presence_of :uid, :doi, :datacenter_id
   validates_format_of :doi, :with => /(10\.\d{4,5})\/.+\z/
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
   validates_numericality_of :version, if: :version?
 
-  before_create :add_url
-  before_create :is_quota_exceeded
-  before_validation :set_datacentre
-  after_create  :decrease_doi_quota
+  # before_create :add_url
+  # before_create :is_quota_exceeded
+  before_validation :set_defaults
+  # after_create  :decrease_doi_quota
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
@@ -50,30 +49,34 @@ class Dataset < ActiveRecord::Base
   end
 
 
-  def add_url
-    self.url = Maremma.head(doi_as_url(self.doi)).url
-  end
+  # def url
+  #   Maremma.head(doi_as_url(self.doi)).url
+  # end
 
   def minted
     self.created_at
   end
 
-  def datacenter_id
-    @datacenter_id = Datacenter.find(datacentre).uid.downcase if datacentre
-    @datacenter_id
-  end
+  # def datacenter_id
+  #   @datacenter_id = Datacenter.find(datacentre).uid.downcase if datacentre
+  #   @datacenter_id
+  # end
 
-  def is_quota_exceeded
-    datacenter = Datacenter.find(self.datacentre)
-    fail("You have excceded your DOI quota. You cannot mint DOIs anymore.") if datacenter[:doi_quota_allowed] < 0
-  end
-
-  def decrease_doi_quota
-    datacenter = Datacenter.find(self.datacentre)
-    fail("Something went wrong when decreasing your DOI quota") unless Datacenter.update(datacenter[:id], doi_quota_allowed: datacenter[:doi_quota_allowed] - 1)
-  end
+  # def is_quota_exceeded
+  #   datacenter = Datacenter.find(self.datacentre)
+  #   fail("You have excceded your DOI quota. You cannot mint DOIs anymore.") if datacenter[:doi_quota_allowed] < 0
+  # end
+  #
+  # def decrease_doi_quota
+  #   datacenter = Datacenter.find(self.datacentre)
+  #   fail("Something went wrong when decreasing your DOI quota") unless Datacenter.update(datacenter[:id], doi_quota_allowed: datacenter[:doi_quota_allowed] - 1)
+  # end
 
   private
+
+  def set_defaults
+   set_datacentre unless datacentre
+  end
 
   def set_datacentre
     r = Datacenter.find_by(symbol: datacenter_id)

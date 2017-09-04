@@ -4,5 +4,7 @@ FactoryGirl.define do
     prefix {  Faker::Code.unique.isbn  }
     version { Faker::Number.between(1, 10) }
     created {Faker::Time.backward(14, :evening)}
+
+    association :allocator, factory: :member, strategy: :create
   end
 end

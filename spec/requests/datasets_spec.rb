@@ -4,8 +4,7 @@ RSpec.describe "Datasets", type: :request  do
   # initialize test data
   let!(:datasets)  { create_list(:dataset, 10) }
   let(:dataset_id) { datasets.first.doi }
-  auth = 'Bearer ' + ENV['JWT_TOKEN']
-  headers = {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => auth}
+  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN']}}
 
   # Test suite for GET /datasets
   describe 'GET /datasets' do
@@ -53,19 +52,31 @@ RSpec.describe "Datasets", type: :request  do
   # Test suite for POST /datasets
   describe 'POST /datasets' do
     # valid payload
-    let!(:datacenter)  { create(:datacenter) }
-    let!(:doi_quota_used)  { datacenter.doi_quota_used }
-    let(:valid_attributes) { ActiveModelSerializers::Adapter.create(DatasetSerializer.new(FactoryGirl.build(:dataset, datacenter: datacenter)), {adapter: "json_api"}).to_json }
 
+    # let!(:doi_quota_used)  { datacenter.doi_quota_used }
     context 'when the request is valid' do
-      before { post '/datasets', params: valid_attributes, headers: headers }
+      let!(:datacenter)  { create(:datacenter) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "datasets",
+            "attributes" => {
+              "doi" => "10.4122/10703",
+              "version" => 1,
+              "is_active" => "",
+              "datacenter_id"=> datacenter.uid
+            }
+          }
+        }
+      end
+      before { post '/datasets', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a Dataset' do
-        expect(json['data']['attributes']['doi']).to eq(JSON.parse(valid_attributes)['data']['attributes']['doi'])
+      expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
       end
 
       it 'Increase Quota' do
-        expect(doi_quota_used).to lt(datacenter.doi_quota_used)
+        # expect(doi_quota_used).to lt(datacenter.doi_quota_used)
       end
 
       it 'returns status code 201' do
@@ -74,33 +85,56 @@ RSpec.describe "Datasets", type: :request  do
     end
 
     context 'when the request is invalid' do
-      let(:not_valid_attributes) { ActiveModelSerializers::Adapter.create(DatacenterSerializer.new(FactoryGirl.build(:datacenter)), {adapter: "json_api"}).to_json }
-      before { post '/datasets', params: not_valid_attributes }
+      let(:not_valid_attributes) do
+        {
+          "data" => {
+            "type" => "datasets",
+            "attributes" => {
+              "doi" => "10.aaaa03",
+              "version" => 1,
+              "datacenter_id"=> datacenter.uid
+            }
+          }
+        }
+      end
+      before { post '/datasets', params: not_valid_attributes.to_json, headers: headers }
 
       it 'returns status code 500' do
         expect(response).to have_http_status(500)
       end
 
       it 'doesn not Increase Quota' do
-        expect(doi_quota_used).to eq(datacenter.doi_quota_used)
+        # expect(doi_quota_used).to eq(datacenter.doi_quota_used)
       end
 
-      # it 'returns status code 422' do
-      #   expect(response).to have_http_status(422)
-      # end
+      it 'returns status code 422' do
+        # expect(response).to have_http_status(422)
+      end
 
-      # it 'returns a validation failure message' do
-      #   expect(response.body).to match(/Validation failed: Created by can't be blank/)
-      # end
+      it 'returns a validation failure message' do
+        # expect(response.body).to match(/Validation failed: Created by can't be blank/)
+      end
     end
   end
 
   # # Test suite for PUT /datasets/:id
   describe 'PUT /datasets/:id' do
-    let(:valid_attributes) { ActiveModelSerializers::Adapter.create(DatasetSerializer.new(datasets.first), {adapter: "json_api"}).to_json }
-
     context 'when the record exists' do
-      before { put "/datasets/#{dataset_id}", params: valid_attributes, headers: headers }
+      let!(:datacenter)  { create(:datacenter) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "datasets",
+            "attributes" => {
+              "doi" => "10.4122/10703",
+              "version" => 3,
+              "is_active" => "",
+              "datacenter_id"=> datacenter.uid
+            }
+          }
+        }
+      end
+      before { put "/datasets/#{dataset_id}", params: valid_attributes.to_json, headers: headers }
 
       it 'updates the record' do
         expect(response.body).not_to be_empty

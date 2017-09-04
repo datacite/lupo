@@ -1,5 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Metadata, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { should validate_presence_of(:uid) }
+  it { should validate_presence_of(:dataset) }
+  it { should validate_presence_of(:xml) }
+  it { should validate_presence_of(:metadata_version) }
+  it { should validate_presence_of(:url) }
 end

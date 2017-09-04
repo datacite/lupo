@@ -29,6 +29,13 @@ module Cacheable
       end
     end
 
+    def cached_resource_types
+      Rails.cache.fetch("resource_types", expires_in: 1.day) do
+        ResourceType.all[:data]
+      end
+    end
+
+
     def cached_datasets
       Rails.cache.fetch("datasets", expires_in: 1.day) do
         Dataset.all

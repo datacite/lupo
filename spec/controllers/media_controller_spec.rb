@@ -26,7 +26,7 @@ require 'rails_helper'
 RSpec.describe MediaController, type: :controller do
 
   # This should return the minimal set of attributes required to create a valid
-  # Medium. As you add validations to Medium, be sure to
+  # Media. As you add validations to Media, be sure to
   # adjust the attributes here as well.
   let(:valid_attributes) {
     skip("Add a hash of attributes valid for your model")
@@ -43,7 +43,7 @@ RSpec.describe MediaController, type: :controller do
 
   describe "GET #index" do
     it "returns a success response" do
-      medium = Medium.create! valid_attributes
+      media = Media.create! valid_attributes
       get :index, params: {}, session: valid_session
       expect(response).to be_success
     end
@@ -51,33 +51,33 @@ RSpec.describe MediaController, type: :controller do
 
   describe "GET #show" do
     it "returns a success response" do
-      medium = Medium.create! valid_attributes
-      get :show, params: {id: medium.to_param}, session: valid_session
+      media = Media.create! valid_attributes
+      get :show, params: {id: media.to_param}, session: valid_session
       expect(response).to be_success
     end
   end
 
   describe "POST #create" do
     context "with valid params" do
-      it "creates a new Medium" do
+      it "creates a new Media" do
         expect {
-          post :create, params: {medium: valid_attributes}, session: valid_session
-        }.to change(Medium, :count).by(1)
+          post :create, params: {media: valid_attributes}, session: valid_session
+        }.to change(Media, :count).by(1)
       end
 
-      it "renders a JSON response with the new medium" do
+      it "renders a JSON response with the new media" do
 
-        post :create, params: {medium: valid_attributes}, session: valid_session
+        post :create, params: {media: valid_attributes}, session: valid_session
         expect(response).to have_http_status(:created)
         expect(response.content_type).to eq('application/json')
-        expect(response.location).to eq(medium_url(Medium.last))
+        expect(response.location).to eq(media_url(Media.last))
       end
     end
 
     context "with invalid params" do
-      it "renders a JSON response with errors for the new medium" do
+      it "renders a JSON response with errors for the new media" do
 
-        post :create, params: {medium: invalid_attributes}, session: valid_session
+        post :create, params: {media: invalid_attributes}, session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -90,27 +90,27 @@ RSpec.describe MediaController, type: :controller do
         skip("Add a hash of attributes valid for your model")
       }
 
-      it "updates the requested medium" do
-        medium = Medium.create! valid_attributes
-        put :update, params: {id: medium.to_param, medium: new_attributes}, session: valid_session
-        medium.reload
+      it "updates the requested media" do
+        media = Media.create! valid_attributes
+        put :update, params: {id: media.to_param, media: new_attributes}, session: valid_session
+        media.reload
         skip("Add assertions for updated state")
       end
 
-      it "renders a JSON response with the medium" do
-        medium = Medium.create! valid_attributes
+      it "renders a JSON response with the media" do
+        media = Media.create! valid_attributes
 
-        put :update, params: {id: medium.to_param, medium: valid_attributes}, session: valid_session
+        put :update, params: {id: media.to_param, media: valid_attributes}, session: valid_session
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to eq('application/json')
       end
     end
 
     context "with invalid params" do
-      it "renders a JSON response with errors for the medium" do
-        medium = Medium.create! valid_attributes
+      it "renders a JSON response with errors for the media" do
+        media = Media.create! valid_attributes
 
-        put :update, params: {id: medium.to_param, medium: invalid_attributes}, session: valid_session
+        put :update, params: {id: media.to_param, media: invalid_attributes}, session: valid_session
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json')
       end
@@ -118,11 +118,11 @@ RSpec.describe MediaController, type: :controller do
   end
 
   describe "DELETE #destroy" do
-    it "destroys the requested medium" do
-      medium = Medium.create! valid_attributes
+    it "destroys the requested media" do
+      media = Media.create! valid_attributes
       expect {
-        delete :destroy, params: {id: medium.to_param}, session: valid_session
-      }.to change(Medium, :count).by(-1)
+        delete :destroy, params: {id: media.to_param}, session: valid_session
+      }.to change(Media, :count).by(-1)
     end
   end
 

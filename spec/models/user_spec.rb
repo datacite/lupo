@@ -14,7 +14,7 @@ RSpec.describe User, type: :model do
     subject { Ability.new(user) }
 
     context "when is a data centre admin" do
-      let(:role){ "datacenter_admin" }
+      let(:role){ "data_center_admin" }
 
       it{ is_expected.not_to be_able_to(:create, Member.new) }
       it{ is_expected.to be_able_to(:read, FactoryGirl.create(:datacenter)) }

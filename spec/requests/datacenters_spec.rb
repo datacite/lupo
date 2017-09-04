@@ -2,14 +2,14 @@ require 'rails_helper'
 
 RSpec.describe 'Datacenters', type: :request  do
   let!(:datacenters)  { create_list(:datacenter, 10) }
-  let(:member) { create(:member) }
-  let(:datacenter) { create(:datacenter) }
+  let!(:member) { create(:member) }
+  let!(:datacenter) { create(:datacenter) }
   let(:params) do
     { "data" => { "type" => "data-centers",
                   "attributes" => {
                     "uid" => "BL.IMPERIAL",
                     "name" => "Imperial College",
-                    "member_id" => member.id,
+                    "member_id" => member.uid,
                     "contact_email" => "bob@example.com" } } }
   end
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN']}}
@@ -20,7 +20,7 @@ RSpec.describe 'Datacenters', type: :request  do
 
     it 'returns datacenters' do
       expect(json).not_to be_empty
-      expect(json['data'].size).to eq(25)
+      expect(json['data'].size).to eq(11)
     end
 
     it 'returns status code 200' do
@@ -51,7 +51,7 @@ RSpec.describe 'Datacenters', type: :request  do
       end
 
       it 'returns a not found message' do
-        expect(response.body).to match(/RecordNotFound/)
+        expect(json["errors"].first).to eq("status"=>"404", "title"=>"The page you are looking for doesn't exist.")
       end
     end
   end
@@ -74,6 +74,7 @@ RSpec.describe 'Datacenters', type: :request  do
         { "data" => { "type" => "data-centers",
                       "attributes" => {
                         "name" => "Imperial College",
+                        "member_id" => member.uid,
                         "contact_email" => "bob@example.com" } } }
       end
 

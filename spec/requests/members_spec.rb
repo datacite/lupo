@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe "Members", type: :request  do
   # initialize test data
-  let(:members)  { create_list(:member, 25) }
-  let(:member) { members.first }
+  let!(:members)  { create_list(:member, 10) }
+  let!(:member) { members.first }
   let(:params) do
     { "data" => { "type" => "members",
                   "attributes" => {
@@ -21,7 +21,7 @@ RSpec.describe "Members", type: :request  do
 
     it 'returns members' do
       expect(json).not_to be_empty
-      expect(json['data'].size).to eq(25)
+      expect(json['data'].size).to eq(10)
     end
 
     it 'returns status code 200' do
@@ -36,7 +36,7 @@ RSpec.describe "Members", type: :request  do
     context 'when the record exists' do
       it 'returns the member' do
         expect(json).not_to be_empty
-        expect(json['data']['id'].to_i).to eq(member.id)
+        expect(json['data']['id']).to eq(member.uid.downcase)
       end
 
       it 'returns status code 200' do
@@ -52,7 +52,7 @@ RSpec.describe "Members", type: :request  do
       end
 
       it 'returns a not found message' do
-        expect(response.body).to eq(2)
+        expect(json["errors"].first).to eq("status"=>"404", "title"=>"The page you are looking for doesn't exist.")
       end
     end
   end

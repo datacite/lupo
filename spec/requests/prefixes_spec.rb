@@ -4,8 +4,7 @@ RSpec.describe "Prefixes", type: :request   do
   # initialize test data
   let!(:prefixes)  { create_list(:prefix, 10) }
   let(:prefix_id) { prefixes.first.prefix }
-  auth = 'Bearer ' + ENV['JWT_TOKEN']
-  headers = {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => auth}
+  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN']}}
 
   # Test suite for GET /prefixes
   describe 'GET /prefixes' do
@@ -38,28 +37,37 @@ RSpec.describe "Prefixes", type: :request   do
     end
 
     context 'when the record does not exist' do
-      let(:prefix_id) { 100 }
+      before { get "/prefix/xxx" , headers: headers}
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
       end
 
       it 'returns a not found message' do
-        # expect(response.body).to match(/Record not found/)
+        expect(json["errors"].first).to eq("status"=>"404", "title"=>"The page you are looking for doesn't exist.")
       end
     end
   end
 
   # Test suite for POST /prefixes
   describe 'POST /prefixes' do
-    # valid payload
-    let(:valid_attributes) { ActiveModelSerializers::Adapter.create(PrefixSerializer.new(FactoryGirl.build(:prefix)), {adapter: "json_api"}).to_json }
-
     context 'when the request is valid' do
-      before { post '/prefixes', params: valid_attributes, headers: headers }
+      let!(:member)  { create(:member) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+                    "type" => "prefixes",
+                    "attributes" => {
+                      "prefix" => "10.17177"
+                      }
+            }
+        }
+      end
+
+      before { post '/prefixes', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a prefix' do
-        expect(json['data']['attributes']['prefix']).to eq(JSON.parse(valid_attributes)['data']['attributes']['prefix'])
+        expect(json.dig('data', 'id')).to eq("10.17177")
       end
 
       it 'returns status code 201' do
@@ -68,7 +76,17 @@ RSpec.describe "Prefixes", type: :request   do
     end
 
     context 'when the request is invalid' do
-      let(:not_valid_attributes) { ActiveModelSerializers::Adapter.create(DatacenterSerializer.new(FactoryGirl.build(:datacenter)), {adapter: "json_api"}).to_json }
+      let!(:member)  { create(:member) }
+      let(:not_valid_attributes) do
+        {
+          "data" => {
+                    "type": "prefixes",
+                    "attributes": {
+                      "prefix": "ssssss"
+                    }
+            }
+        }
+      end
 
       before { post '/prefixes', params: not_valid_attributes }
 
@@ -87,10 +105,21 @@ RSpec.describe "Prefixes", type: :request   do
 
   # # Test suite for PUT /prefixes/:id
   describe 'PUT /prefixes/:id' do
-    let(:valid_attributes) {  ActiveModelSerializers::Adapter.create(PrefixSerializer.new(prefixes.first), {adapter: "json_api"}).to_json }
+    let!(:member)  { create(:member) }
+    let(:valid_attributes) do
+      {
+        "data" => {
+                  "id": "10.17177",
+                  "type": "prefixes",
+                  "attributes": {
+                    "prefix": "10.17177"
+                  }
+          }
+      }
+    end
 
     context 'when the record exists' do
-      before { put "/prefixes/#{prefix_id}", params: valid_attributes , headers: headers}
+      before { put "/prefixes/#{prefix_id}", params: valid_attributes.to_json , headers: headers}
 
       it 'updates the record' do
         expect(response.body).not_to be_empty

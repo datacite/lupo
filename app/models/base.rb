@@ -1,6 +1,7 @@
 require 'cgi'
 
 class Base
+  
   extend ActiveModel::Naming
   include ActiveModel::Serialization
 
@@ -35,7 +36,7 @@ class Base
   def self.parse_include(klass, params)
     klass.new(params)
   end
-  
+
   def self.sanitize(text, options={})
     Bergamasco::Sanitize.sanitize(text, options)
   end

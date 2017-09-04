@@ -1,6 +1,7 @@
 class MembersController < ApplicationController
   before_action :set_member, only: [:show, :update, :destroy]
   before_action :authenticate_user_from_token!
+  before_action :set_include
   load_and_authorize_resource :except => [:index, :show]
 
   def index
@@ -44,7 +45,7 @@ class MembersController < ApplicationController
 
     page = params[:page] || {}
     page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
-    page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 1000
+    page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
     total = collection.count
 
     @members = collection.order(:name).page(page[:number]).per(page[:size])
@@ -56,7 +57,7 @@ class MembersController < ApplicationController
              regions: regions,
              years: years }
 
-    render jsonapi: @members, meta: meta
+    render jsonapi: @members, meta: meta, include: @include
   end
 
   def show
@@ -106,6 +107,15 @@ class MembersController < ApplicationController
   end
 
   private
+
+  def set_include
+    if params[:include].present?
+      @include = params[:include].split(",").map { |i| i.downcase.underscore }.join(",")
+      @include = [@include]
+    else
+      @include = nil
+    end
+  end
 
   # Only allow a trusted parameter "white list" through.
   def safe_params
