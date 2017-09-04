@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe 'Datacenters', type: :request  do
-  let!(:datacenters)  { create_list(:datacenter, 10) }
+RSpec.describe 'Clients', type: :request  do
+  let!(:clients)  { create_list(:client, 10) }
   let!(:member) { create(:member) }
-  let!(:datacenter) { create(:datacenter) }
+  let!(:client) { create(:client) }
   let(:params) do
-    { "data" => { "type" => "data-centers",
+    { "data" => { "type" => "clients",
                   "attributes" => {
                     "uid" => "BL.IMPERIAL",
                     "name" => "Imperial College",
@@ -14,11 +14,11 @@ RSpec.describe 'Datacenters', type: :request  do
   end
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN']}}
 
-  # Test suite for GET /data-centers
-  describe 'GET /data-centers' do
-    before { get '/data-centers', headers: headers }
+  # Test suite for GET /clients
+  describe 'GET /clients' do
+    before { get '/clients', headers: headers }
 
-    it 'returns datacenters' do
+    it 'returns clients' do
       expect(json).not_to be_empty
       expect(json['data'].size).to eq(11)
     end
@@ -28,14 +28,14 @@ RSpec.describe 'Datacenters', type: :request  do
     end
   end
 
-  # Test suite for GET /data-centers/:id
-  describe 'GET /data-centers/:id' do
-    before { get "/data-centers/#{datacenter.uid}", headers: headers }
+  # Test suite for GET /clients/:id
+  describe 'GET /clients/:id' do
+    before { get "/clients/#{client.uid}", headers: headers }
 
     context 'when the record exists' do
-      it 'returns the datacenter' do
+      it 'returns the client' do
         expect(json).not_to be_empty
-        expect(json.dig('data', 'attributes', 'name')).to eq(datacenter.name)
+        expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
       end
 
       it 'returns status code 200' do
@@ -44,7 +44,7 @@ RSpec.describe 'Datacenters', type: :request  do
     end
 
     context 'when the record does not exist' do
-      before { get "/data-centers/xxx", headers: headers }
+      before { get "/clients/xxx", headers: headers }
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
@@ -56,11 +56,11 @@ RSpec.describe 'Datacenters', type: :request  do
     end
   end
 
-  # Test suite for POST /data-centers
-  describe 'POST /data-centers' do
+  # Test suite for POST /clients
+  describe 'POST /clients' do
     context 'when the request is valid' do
-      before { post '/data-centers', params: params.to_json, headers: headers }
-      it 'creates a datacenter' do
+      before { post '/clients', params: params.to_json, headers: headers }
+      it 'creates a client' do
         expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College")
       end
 
@@ -71,14 +71,14 @@ RSpec.describe 'Datacenters', type: :request  do
 
     context 'when the request is invalid' do
       let(:params) do
-        { "data" => { "type" => "data-centers",
+        { "data" => { "type" => "clients",
                       "attributes" => {
                         "name" => "Imperial College",
                         "member_id" => member.uid,
                         "contact_email" => "bob@example.com" } } }
       end
 
-      before { post '/data-centers', params: params.to_json, headers: headers }
+      before { post '/clients', params: params.to_json, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -90,10 +90,10 @@ RSpec.describe 'Datacenters', type: :request  do
     end
   end
 
-  # # Test suite for PUT /data-centers/:id
-  describe 'PUT /data-centers/:id' do
+  # # Test suite for PUT /clients/:id
+  describe 'PUT /clients/:id' do
     context 'when the record exists' do
-      before { put "/data-centers/#{datacenter.uid}", params: params.to_json, headers: headers }
+      before { put "/clients/#{client.uid}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College")
@@ -105,9 +105,9 @@ RSpec.describe 'Datacenters', type: :request  do
     end
   end
 
-  # Test suite for DELETE /data-centers/:id
-  describe 'DELETE /data-centers/:id' do
-    before { delete "/data-centers/#{datacenter.uid}", headers: headers }
+  # Test suite for DELETE /clients/:id
+  describe 'DELETE /clients/:id' do
+    before { delete "/clients/#{client.uid}", headers: headers }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

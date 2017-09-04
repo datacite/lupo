@@ -1,5 +1,5 @@
 FactoryGirl.define do
-  factory :datacenter do
+  factory :client do
     contact_email { Faker::Internet.email }
     uid { Faker::Code.asin + Faker::Code.isbn }
     name "My data center"

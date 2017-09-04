@@ -4,8 +4,8 @@ class PrefixSerializer < ActiveModel::Serializer
 
   attributes :registration_agency, :created, :updated
 
-  has_many :data_centers
-  has_many :members
+  has_many :clients
+  has_many :providers
 
   def id
     object.prefix

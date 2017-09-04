@@ -14,14 +14,14 @@ class DatasetsController < ApplicationController
     # collection = response[:response].page(page).per(per_page).order(created: :desc).to_a
     #
     # collection.each do |line|
-    #   dc = Datacenter.find(line[:datacentre])
-    #   line[:datacenter_id] = dc.uid.downcase
-    #   line[:datacenter_name] = dc.name
+    #   dc = Client.find(line[:datacentre])
+    #   line[:client_id] = dc.uid.downcase
+    #   line[:client_name] = dc.name
     # end
     #
     #
     # clients = nil
-    # clients = collection.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id],  name: doi[:datacenter_name] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: v.first[:name], count: v.count} }
+    # clients = collection.map{|doi| { id: doi[:id],  client_id: doi[:client_id],  name: doi[:client_name] }}.group_by { |d| d[:client_id] }.map{ |k, v| { id: k, title: v.first[:name], count: v.count} }
     #
     #
     # meta = { total: total,
@@ -85,19 +85,19 @@ class DatasetsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
     def safe_params
-      attributes = [:uid, :created, :doi, :is_active, :version, :datacenter_id]
+      attributes = [:uid, :created, :doi, :is_active, :version, :client_id]
       params.require(:data).permit(:id, :type, attributes: attributes)
     end
   #   # Only allow a trusted parameter "white list" through.
   # def dataset_params
   #   params.require(:data)
   #     .require(:attributes)
-  #     .permit(:created, :doi, :is_active, :is_ref_quality, :last_landing_page_status, :last_landing_page_status_check, :last_landing_page_status_check, :updated, :version, :datacenter_id, :minted)
+  #     .permit(:created, :doi, :is_active, :is_ref_quality, :last_landing_page_status, :last_landing_page_status_check, :last_landing_page_status_check, :updated, :version, :client_id, :minted)
   #
   #   ds_params= ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
   #
-  #   datacentre = Datacenter.find_by(symbol: ds_params["datacenter_id"])
-  #   fail("datacenter_id Not found") unless   datacentre.present?
+  #   datacentre = Client.find_by(symbol: ds_params["client_id"])
+  #   fail("client_id Not found") unless   datacentre.present?
   #   ds_params["datacentre"] = datacentre.id
   #   ds_params
   # end

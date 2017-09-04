@@ -1,5 +1,5 @@
 class Handle < Base
-  attr_reader :id, :prefix, :registration_agency, :data_centers, :members, :created, :updated_at
+  attr_reader :id, :prefix, :registration_agency, :clients, :providers, :created, :updated_at
 
   RA_HANDLES = {
     "10.SERV/CROSSREF" => "Crossref",

@@ -14,15 +14,15 @@ class PrefixesController < ApplicationController
       collection = collection.query(params[:query])
     end
 
-    # cache members for faster queries
-    if params["member-id"].present?
-      member = cached_member_response(params["member-id"].upcase)
-      collection = collection.includes(:members).where('allocator.id' => member.id)
+    # cache providers for faster queries
+    if params["provider-id"].present?
+      provider = cached_provider_response(params["provider-id"].upcase)
+      collection = collection.includes(:providers).where('allocator.id' => provider.id)
     end
 
-    if params["data-center-id"].present?
-      data_center = cached_data_center_response(params["data-center-id"].upcase)
-      collection = collection.includes(:datacenters).where('datacentre.id' => data_center.id)
+    if params["client-id"].present?
+      client = cached_client_response(params["client-id"].upcase)
+      collection = collection.includes(:clients).where('datacentre.id' => client.id)
     end
 
     collection = collection.where('YEAR(prefix.created) = ?', params[:year]) if params[:year].present?
@@ -37,18 +37,18 @@ class PrefixesController < ApplicationController
     end
 
     # calculate facet counts after filtering
-    # no faceting by data-center
-    if params["member-id"].present?
-      members = [{ id: params["member-id"],
-                   title: member.name,
-                   count: collection.includes(:members).where('allocator.id' => member.id).count }]
+    # no faceting by client
+    if params["provider-id"].present?
+      providers = [{ id: params["provider-id"],
+                   title: provider.name,
+                   count: collection.includes(:providers).where('allocator.id' => provider.id).count }]
     else
-      members = collection.includes(:members).where.not('allocator.id' => nil).group('allocator.id').count
-      members = members
+      providers = collection.includes(:providers).where.not('allocator.id' => nil).group('allocator.id').count
+      providers = providers
                   .sort { |a, b| b[1] <=> a[1] }
                   .map do |i|
-                         member = cached_members.find { |m| m.id == i[0] }
-                         { id: member.symbol.downcase, title: member.name, count: i[1] }
+                         provider = cached_providers.find { |m| m.id == i[0] }
+                         { id: provider.symbol.downcase, title: provider.name, count: i[1] }
                        end
     end
 
@@ -63,7 +63,7 @@ class PrefixesController < ApplicationController
     meta = { total: total,
              total_pages: @prefixes.total_pages,
              page: page[:number].to_i,
-             members: members,
+             providers: providers,
              years: years }
 
     render jsonapi: @prefixes, meta: meta, include: @include
@@ -116,7 +116,7 @@ class PrefixesController < ApplicationController
       @include = [@include]
     else
       # always include because Ember pagination doesn't (yet) understand include parameter
-      @include = ['data_centers','members']
+      @include = ['clients','providers']
     end
   end
 

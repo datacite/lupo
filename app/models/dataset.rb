@@ -8,17 +8,17 @@ class Dataset < ActiveRecord::Base
   include Cacheable
 
   alias_attribute :uid, :doi
-  attribute :datacenter_id
-  attribute :datacenter_name
+  attribute :client_id
+  attribute :client_name
   # attr_accessor :url
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-  belongs_to :datacenter, class_name: 'Datacenter', foreign_key: :datacentre
+  belongs_to :client, class_name: 'Client', foreign_key: :datacentre
   has_many :media, class_name: 'Media'
   has_many :metadata, class_name: 'Metadata'
   self.table_name = "dataset"
 
-  validates_presence_of :uid, :doi, :datacenter_id
+  validates_presence_of :uid, :doi, :client_id
   validates_format_of :doi, :with => /(10\.\d{4,5})\/.+\z/
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
   validates_numericality_of :version, if: :version?
@@ -38,7 +38,7 @@ class Dataset < ActiveRecord::Base
 
     collection = self
     collection = collection.where('extract(year  from created) = ?', options[:year]) if options[:year].present?
-    collection = collection.where(datacentre:  Datacenter.find_by(symbol: options[:datacenter_id]).id) if options[:datacenter_id].present?
+    collection = collection.where(datacentre:  Client.find_by(symbol: options[:client_id]).id) if options[:client_id].present?
     collection = collection.all unless options.values.include?([nil,nil])
 
     years = cached_years_response
@@ -57,19 +57,19 @@ class Dataset < ActiveRecord::Base
     self.created_at
   end
 
-  # def datacenter_id
-  #   @datacenter_id = Datacenter.find(datacentre).uid.downcase if datacentre
-  #   @datacenter_id
+  # def client_id
+  #   @client_id = Client.find(datacentre).uid.downcase if datacentre
+  #   @client_id
   # end
 
   # def is_quota_exceeded
-  #   datacenter = Datacenter.find(self.datacentre)
-  #   fail("You have excceded your DOI quota. You cannot mint DOIs anymore.") if datacenter[:doi_quota_allowed] < 0
+  #   client = Client.find(self.datacentre)
+  #   fail("You have excceded your DOI quota. You cannot mint DOIs anymore.") if client[:doi_quota_allowed] < 0
   # end
   #
   # def decrease_doi_quota
-  #   datacenter = Datacenter.find(self.datacentre)
-  #   fail("Something went wrong when decreasing your DOI quota") unless Datacenter.update(datacenter[:id], doi_quota_allowed: datacenter[:doi_quota_allowed] - 1)
+  #   client = Client.find(self.datacentre)
+  #   fail("Something went wrong when decreasing your DOI quota") unless Client.update(client[:id], doi_quota_allowed: client[:doi_quota_allowed] - 1)
   # end
 
   private
@@ -79,8 +79,8 @@ class Dataset < ActiveRecord::Base
   end
 
   def set_datacentre
-    r = Datacenter.find_by(symbol: datacenter_id)
-    fail("datacenter_id Not found") unless r.present?
+    r = Client.find_by(symbol: client_id)
+    fail("client_id Not found") unless r.present?
     write_attribute(:datacentre, r.id)
   end
 

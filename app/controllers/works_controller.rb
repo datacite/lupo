@@ -15,7 +15,7 @@ class WorksController < ApplicationController
     # meta = { total: total,
     #          total_pages: @works.total_pages,
     #          page: page[:number].to_i,
-    #          member_types: member_types,
+    #          provider_types: provider_types,
     #          regions: regions,
     #          years: years }
     # #
@@ -45,7 +45,7 @@ class WorksController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
     def safe_params
-      attributes = [:uid, :created, :doi, :is_active, :version, :datacenter_id]
+      attributes = [:uid, :created, :doi, :is_active, :version, :client_id]
       params.require(:data).permit(:id, :type, attributes: attributes)
     end
 end

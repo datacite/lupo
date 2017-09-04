@@ -1,7 +1,7 @@
 class MemberSerializer < ActiveModel::Serializer
-  cache key: 'member'
-  attributes :name, :description, :member_type, :region, :country, :year, :logo_url, :email, :website, :phone, :created, :updated
-  has_many :data_centers
+  cache key: 'provider'
+  attributes :name, :description, :provider_type, :region, :country, :year, :logo_url, :email, :website, :phone, :created, :updated
+  has_many :clients
   has_many :prefixes
 
   def id

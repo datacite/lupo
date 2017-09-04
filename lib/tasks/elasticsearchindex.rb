@@ -1,7 +1,7 @@
 # namespace :elasticsearch do
-#   task build_datacenter_index: :environment do
-#     (1..Datacenter.last.id).step(1000).each do |starting_index|
-#       ElasticsearchBulkIndexWorker.perform_async('datacenter', starting_index)
+#   task build_client_index: :environment do
+#     (1..Client.last.id).step(1000).each do |starting_index|
+#       ElasticsearchBulkIndexWorker.perform_async('client', starting_index)
 #     end
 #   end
 #

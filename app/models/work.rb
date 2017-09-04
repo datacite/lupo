@@ -1,5 +1,5 @@
 class Work < Base
-  attr_reader :id, :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :data_center_id, :member_id, :resource_type_id, :data_center, :member, :registration_agency, :resource_type, :license, :version, :results, :related_identifiers, :schema_version, :xml, :media, :published, :registered, :updated_at
+  attr_reader :id, :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :client_id, :provider_id, :resource_type_id, :client, :provider, :registration_agency, :resource_type, :license, :version, :results, :related_identifiers, :schema_version, :xml, :media, :published, :registered, :updated_at
 
   # include author methods
   include Authorable
@@ -61,18 +61,18 @@ class Work < Base
       sum
     end.map { |k,v| { id: k, title: k.underscore.humanize, count: v } }
       .sort { |a, b| b[:count] <=> a[:count] }
-    @data_center_id = attributes.fetch("datacentre_symbol", nil)
-    @data_center_id = @data_center_id.downcase if @data_center_id.present?
-    @member_id = attributes.fetch("allocator_symbol", nil)
-    @member_id = @member_id.downcase if @member_id.present?
-    @registration_agency_id = @member_id.present? ? "datacite" : attributes.fetch("registration_agency_id", nil)
+    @client_id = attributes.fetch("datacentre_symbol", nil)
+    @client_id = @client_id.downcase if @client_id.present?
+    @provider_id = attributes.fetch("allocator_symbol", nil)
+    @provider_id = @provider_id.downcase if @provider_id.present?
+    @registration_agency_id = @provider_id.present? ? "datacite" : attributes.fetch("registration_agency_id", nil)
     @registration_agency_id = @registration_agency_id.downcase if @registration_agency_id.present?
     @resource_type_id = attributes.fetch("resourceTypeGeneral", nil)
     @resource_type_id = @resource_type_id.underscore.dasherize if @resource_type_id.present?
 
     # associations
-    @data_center = Array(options[:data_centers]).find { |p| p.id == @data_center_id }
-    @member = Array(options[:members]).find { |r| r.id == @member_id }
+    @client = Array(options[:clients]).find { |p| p.id == @client_id }
+    @provider = Array(options[:providers]).find { |r| r.id == @provider_id }
     @resource_type = Array(options[:resource_types]).find { |r| r.id == @resource_type_id }
   end
 
@@ -123,8 +123,8 @@ class Work < Base
 
       fq = %w(has_metadata:true is_active:true)
       fq << "resourceTypeGeneral:#{options['resource-type-id'].underscore.camelize}" if options['resource-type-id'].present?
-      fq << "datacentre_symbol:#{options['data-center-id'].upcase}" if options['data-center-id'].present?
-      fq << "allocator_symbol:#{options['member-id'].upcase}" if options['member-id'].present?
+      fq << "datacentre_symbol:#{options['client-id'].upcase}" if options['client-id'].present?
+      fq << "allocator_symbol:#{options['provider-id'].upcase}" if options['provider-id'].present?
       fq << "nameIdentifier:ORCID\\:#{options['person-id']}" if options['person-id'].present?
       fq << "minted:#{created_date}" if created_date
       fq << "updated:#{update_date}" if update_date
@@ -158,7 +158,7 @@ class Work < Base
 
   def self.get_data(options={})
     # sometimes don't query DataCite MDS
-    return {} if (options["data-center-id"].present? && options["data-center-id"].exclude?("."))
+    return {} if (options["client-id"].present? && options["client-id"].exclude?("."))
 
     query_url = get_query_url(options)
     Maremma.get(query_url, options)
@@ -182,16 +182,16 @@ class Work < Base
       resource_type = ResourceType.where(id: resource_type_id.downcase.underscore.dasherize) if resource_type_id.present?
       resource_type = resource_type[:data] if resource_type.present?
 
-      data_center = nil
-      data_center_id = item.fetch("datacentre_symbol", nil)
-      data_center = Datacenter.where(id: data_center_id.downcase) if data_center_id.present?
-      data_center = data_center[:data] if data_center.present?
+      client = nil
+      client_id = item.fetch("datacentre_symbol", nil)
+      client = Client.where(id: client_id.downcase) if client_id.present?
+      client = client[:data] if client.present?
 
       { data: parse_item(item,
         # relation_types: RelationType.all,
         resource_types: cached_resource_types,
-        data_centers: [data_center].compact,
-        members: cached_members
+        clients: [client].compact,
+        providers: cached_providers
         ), meta: meta }
     else
       if options["work-id"].present?
@@ -231,21 +231,21 @@ class Work < Base
       meta = parse_facet_counts(facets, options)
       meta = meta.merge(total: total, total_pages: total_pages, page: page[:number])
 
-      data_centers = facets.fetch("datacentre_facet", [])
+      clients = facets.fetch("datacentre_facet", [])
                        .each_slice(2)
                        .map do |p|
                               id, title = p.first.split(' - ', 2)
-                              [Datacenter, { "id" => id, "name" => title }]
+                              [Client, { "id" => id, "name" => title }]
                             end
-      data_centers = Array(data_centers).map do |item|
+      clients = Array(clients).map do |item|
         parse_include(item.first, item.last)
       end
 
       { data: parse_items(items,
         # relation_types: RelationType.all,
         resource_types: cached_resource_types,
-        data_centers: data_centers,
-        members: cached_members
+        clients: clients,
+        providers: cached_providers
         ), meta: meta }
     end
   end
@@ -262,34 +262,34 @@ class Work < Base
     #               .each_slice(2)
     #               .sort { |a, b| b.first <=> a.first }
     #               .map { |i| { id: i[0][0..3], title: i[0][0..3], count: i[1] } }
-    data_centers = facets.fetch("datacentre_facet", [])
+    clients = facets.fetch("datacentre_facet", [])
                        .each_slice(2)
                        .map do |p|
                               id, title = p.first.split(' - ', 2)
                               [id, p.last]
                             end.to_h
-    data_centers = get_data_center_facets(data_centers)
+    clients = get_client_facets(clients)
     schema_versions = facets.fetch("schema_version", [])
                             .each_slice(2)
                             .sort { |a, b| b.first <=> a.first }
                             .map { |i| { id: i[0], title: "Schema #{i[0]}", count: i[1] } }
 
-    if options["data-center-id"].present? && data_centers.empty?
-      data_centers = { options["data-center-id"] => 0 }
+    if options["client-id"].present? && clients.empty?
+      clients = { options["client-id"] => 0 }
     end
 
     { "resource-types" => resource_types,
       "years" => years,
       # "registered" => registered,
-      "data_centers" => data_centers,
+      "clients" => clients,
       "schema-versions" => schema_versions }
   end
 
-  def self.get_data_center_facets(data_centers, options={})
-    response = Datacenter.where(symbol: data_centers.keys.join(",").split(/\s*,\s*/))
+  def self.get_client_facets(clients, options={})
+    response = Client.where(symbol: clients.keys.join(",").split(/\s*,\s*/))
     puts response.inspect
 
-    response.map { |p| { id: p.uid.downcase, name: p.name, count: data_centers.fetch(p.uid.upcase, 0) } }
+    response.map { |p| { id: p.uid.downcase, name: p.name, count: clients.fetch(p.uid.upcase, 0) } }
             .sort { |a, b| b[:count] <=> a[:count] }
   end
 

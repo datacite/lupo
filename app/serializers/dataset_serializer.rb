@@ -6,8 +6,8 @@ class DatasetSerializer < ActiveModel::Serializer
   # include metadata helper methods
   include Metadatable
 
-  attributes   :doi, :version, :datacenter_id, :is_active, :created, :minted, :updated
-  belongs_to :datacenter, serializer: DatacenterSerializer
+  attributes   :doi, :version, :client_id, :is_active, :created, :minted, :updated
+  belongs_to :client, serializer: ClientSerializer
   has_many :media
   has_many :metadata
 

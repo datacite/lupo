@@ -2,20 +2,20 @@ module Cacheable
   extend ActiveSupport::Concern
 
   included do
-    def cached_data_center_response(id, options={})
-      Rails.cache.fetch("data_center_response/#{id}", expires_in: 7.days) do
-        Datacenter.where(symbol: id).select(:id, :symbol, :name, :created).first
+    def cached_client_response(id, options={})
+      Rails.cache.fetch("client_response/#{id}", expires_in: 7.days) do
+        Client.where(symbol: id).select(:id, :symbol, :name, :created).first
       end
     end
 
-    def cached_members
-      Rails.cache.fetch("members", expires_in: 1.day) do
+    def cached_providers
+      Rails.cache.fetch("providers", expires_in: 1.day) do
         Member.all.select(:id, :symbol, :name, :created)
       end
     end
 
-    def cached_member_response(id, options={})
-      Rails.cache.fetch("member_response/#{id}", expires_in: 7.days) do
+    def cached_provider_response(id, options={})
+      Rails.cache.fetch("provider_response/#{id}", expires_in: 7.days) do
         Member.where(symbol: id).select(:id, :symbol, :name, :created).first
       end
     end
@@ -23,8 +23,8 @@ module Cacheable
 
   module ClassMethods
 
-    def cached_members
-      Rails.cache.fetch("members", expires_in: 1.day) do
+    def cached_providers
+      Rails.cache.fetch("providers", expires_in: 1.day) do
         Member.all.select(:id, :symbol, :name, :created)
       end
     end
@@ -47,39 +47,39 @@ module Cacheable
         collection = cached_datasets
         # collection = collection.all unless options.values.include?([nil,nil])
         collection = collection.where('extract(year  from created) = ?', options[:year]) if options[:year].present?
-        collection = collection.where(datacentre:  Datacenter.find_by(symbol: options[:datacenter_id]).id) if options[:datacenter_id].present?
+        collection = collection.where(datacentre:  Client.find_by(symbol: options[:client_id]).id) if options[:client_id].present?
         collection
       end
     end
 
-    def cached_datacenters
-      Rails.cache.fetch("datacenters", expires_in: 1.month) do
-        Datacenter.all
+    def cached_clients
+      Rails.cache.fetch("clients", expires_in: 1.month) do
+        Client.all
       end
     end
 
-    def cached_members_response(options={})
-      Rails.cache.fetch("member_response", expires_in: 1.day) do
+    def cached_providers_response(options={})
+      Rails.cache.fetch("provider_response", expires_in: 1.day) do
         Members.where(options)
       end
     end
 
-    def cached_datasets_datacenters_join(options={})
-      Rails.cache.fetch("datacenters", expires_in: 1.day) do
-        Dataset.joins(:datacenters).where("datacenter.symbol" => "dataset.allocator")
+    def cached_datasets_clients_join(options={})
+      Rails.cache.fetch("clients", expires_in: 1.day) do
+        Dataset.joins(:clients).where("client.symbol" => "dataset.allocator")
       end
     end
 
-    def cached_datacenters_response(options={})
-      Rails.cache.fetch("datacenters_response", expires_in: 1.day) do
-        # collection = cached_datasets_datacenters_joins
+    def cached_clients_response(options={})
+      Rails.cache.fetch("clients_response", expires_in: 1.day) do
+        # collection = cached_datasets_clients_joins
         collection.each do |line|
-          dc = Datacenter.find(line[:datacentre])
-          line[:datacenter_id] = dc.uid.downcase
-          line[:datacenter_name] = dc.name
+          dc = Client.find(line[:datacentre])
+          line[:client_id] = dc.uid.downcase
+          line[:client_name] = dc.name
         end
 
-        collection.map{|doi| { id: doi[:id],  datacenter_id: doi[:datacenter_id],  name: doi[:datacenter_name] }}.group_by { |d| d[:datacenter_id] }.map{ |k, v| { id: k, title: v.first[:name], count: v.count} }
+        collection.map{|doi| { id: doi[:id],  client_id: doi[:client_id],  name: doi[:client_name] }}.group_by { |d| d[:client_id] }.map{ |k, v| { id: k, title: v.first[:name], count: v.count} }
       end
     end
 
@@ -106,7 +106,7 @@ module Cacheable
       end
     end
 
-    def cached_years_by_member_response(id, options={})
+    def cached_years_by_provider_response(id, options={})
       Rails.cache.fetch("years_response", expires_in: 1.day) do
         query = self.ds.where(is_active: true, allocator: id)
         years = query.group_and_count(Sequel.extract(:year, :created)).all
@@ -119,20 +119,20 @@ module Cacheable
       Rails.cache.fetch("allocator_response", expires_in: 1.day) do
         query = self.ds.where{(is_active = true) & (allocator > 100)}
         allocators = query.group_and_count(:allocator).all.map { |a| { id: a[:allocator], count: a[:count] } }
-        members = cached_members_response
-        members = (allocators + members).group_by { |h| h[:id] }.map { |k,v| v.reduce(:merge) }.select { |h| h[:count].present? }
+        providers = cached_providers_response
+        providers = (allocators + providers).group_by { |h| h[:id] }.map { |k,v| v.reduce(:merge) }.select { |h| h[:count].present? }
       end
     end
 
-    def cached_data_centers_response(options={})
-      Rails.cache.fetch("data_center_response", expires_in: 1.day) do
+    def cached_clients_response(options={})
+      Rails.cache.fetch("client_response", expires_in: 1.day) do
         query = self.ds.where{(is_active = true) & (allocator > 100)}
         query.limit(25).offset(0).order(:name)
       end
     end
 
-    def cached_data_centers_by_member_response(id, options={})
-      Rails.cache.fetch("data_center_by_member_response/#{id}", expires_in: 1.day) do
+    def cached_clients_by_provider_response(id, options={})
+      Rails.cache.fetch("client_by_provider_response/#{id}", expires_in: 1.day) do
         query = self.ds.where(is_active: true, allocator: id)
         query.limit(25).offset(0).order(:name)
       end

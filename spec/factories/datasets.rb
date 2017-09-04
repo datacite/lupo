@@ -6,8 +6,8 @@ FactoryGirl.define do
     version 1
     is_active 1
     minted {Faker::Time.backward(15, :evening)}
-    datacenter_id  { datacentre.symbol }
+    client_id  { datacentre.symbol }
 
-    association :datacentre, factory: :datacenter, strategy: :create
+    association :datacentre, factory: :client, strategy: :create
   end
 end

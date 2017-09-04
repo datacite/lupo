@@ -14,19 +14,19 @@ RSpec.describe User, type: :model do
     subject { Ability.new(user) }
 
     context "when is a data centre admin" do
-      let(:role){ "data_center_admin" }
+      let(:role){ "client_admin" }
 
       it{ is_expected.not_to be_able_to(:create, Member.new) }
-      it{ is_expected.to be_able_to(:read, FactoryGirl.create(:datacenter)) }
+      it{ is_expected.to be_able_to(:read, FactoryGirl.create(:client)) }
       it{ is_expected.not_to be_able_to(:update, Member.new) }
       it{ is_expected.not_to be_able_to(:destroy, Member.new) }
     end
   #
   #   context "when is a data centre user" do
-  #     let(:role){ "datacenter_user" }
+  #     let(:role){ "client_user" }
   #
   #     it{ is_expected.not_to be_able_to(:create, Allocator.new) }
-  #     it{ is_expected.to be_able_to(:read, FactoryGirl.create(:datacenter)) }
+  #     it{ is_expected.to be_able_to(:read, FactoryGirl.create(:client)) }
   #     it{ is_expected.not_to be_able_to(:update, Allocator.new) }
   #     it{ is_expected.not_to be_able_to(:destroy, Allocator.new) }
   #   end
@@ -44,7 +44,7 @@ RSpec.describe User, type: :model do
   #     let(:role){ "member_admin" }
   #
   #     it{ is_expected.not_to be_able_to(:create, Allocator.new) }
-  #     it{ is_expected.to be_able_to(:read, FactoryGirl.create(:datacenter)) }
+  #     it{ is_expected.to be_able_to(:read, FactoryGirl.create(:client)) }
   #     it{ is_expected.not_to be_able_to(:update, Allocator.new) }
   #     it{ is_expected.not_to be_able_to(:destroy, Allocator.new) }
   #   end
@@ -53,7 +53,7 @@ RSpec.describe User, type: :model do
   #     let(:role) { "member_user" }
   #
   #     it{ is_expected.not_to be_able_to(:create, Allocator.new) }
-  #     it{ is_expected.to be_able_to(:read, FactoryGirl.create(:datacenter)) }
+  #     it{ is_expected.to be_able_to(:read, FactoryGirl.create(:client)) }
   #     it{ is_expected.not_to be_able_to(:update, Allocator.new) }
   #     it{ is_expected.not_to be_able_to(:destroy, Allocator.new) }
   #   end
@@ -62,7 +62,7 @@ RSpec.describe User, type: :model do
   #     let(:role) { "staff_admin" }
   #
   #     it{ is_expected.not_to be_able_to(:create, Allocator.new) }
-  #     it{ is_expected.to be_able_to(:read, FactoryGirl.create(:datacenter)) }
+  #     it{ is_expected.to be_able_to(:read, FactoryGirl.create(:client)) }
   #     it{ is_expected.not_to be_able_to(:update, Allocator.new) }
   #     it{ is_expected.not_to be_able_to(:destroy, Allocator.new) }
   #   end

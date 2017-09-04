@@ -53,7 +53,7 @@ RSpec.describe "Metadata", type: :request  do
   describe 'POST /metadata' do
     # valid payload
 
-    # let!(:doi_quota_used)  { datacenter.doi_quota_used }
+    # let!(:doi_quota_used)  { client.doi_quota_used }
     context 'when the request is valid' do
       let!(:dataset)  { create(:dataset) }
       let(:valid_attributes) do
@@ -77,7 +77,7 @@ RSpec.describe "Metadata", type: :request  do
       end
 
       it 'Increase Quota' do
-        # expect(doi_quota_used).to lt(datacenter.doi_quota_used)
+        # expect(doi_quota_used).to lt(client.doi_quota_used)
       end
 
       it 'returns status code 201' do

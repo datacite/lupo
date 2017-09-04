@@ -14,7 +14,7 @@ if File.exist?(env_json_file)
 end
 
 # default values for some ENV variables
-ENV['APPLICATION'] ||= "datacenter-api"
+ENV['APPLICATION'] ||= "client-api"
 ENV['HOSTNAME'] ||= "fabbrica.local"
 ENV['MEMCACHE_SERVERS'] ||= "memcached:11211"
 ENV['SITE_TITLE'] ||= "Data Center API"

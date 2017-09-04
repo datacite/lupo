@@ -53,9 +53,9 @@ RSpec.describe "Datasets", type: :request  do
   describe 'POST /datasets' do
     # valid payload
 
-    # let!(:doi_quota_used)  { datacenter.doi_quota_used }
+    # let!(:doi_quota_used)  { client.doi_quota_used }
     context 'when the request is valid' do
-      let!(:datacenter)  { create(:datacenter) }
+      let!(:client)  { create(:client) }
       let(:valid_attributes) do
         {
           "data" => {
@@ -64,7 +64,7 @@ RSpec.describe "Datasets", type: :request  do
               "doi" => "10.4122/10703",
               "version" => 1,
               "is_active" => "",
-              "datacenter_id"=> datacenter.uid
+              "client_id"=> client.uid
             }
           }
         }
@@ -76,7 +76,7 @@ RSpec.describe "Datasets", type: :request  do
       end
 
       it 'Increase Quota' do
-        # expect(doi_quota_used).to lt(datacenter.doi_quota_used)
+        # expect(doi_quota_used).to lt(client.doi_quota_used)
       end
 
       it 'returns status code 201' do
@@ -92,7 +92,7 @@ RSpec.describe "Datasets", type: :request  do
             "attributes" => {
               "doi" => "10.aaaa03",
               "version" => 1,
-              "datacenter_id"=> datacenter.uid
+              "client_id"=> client.uid
             }
           }
         }
@@ -104,7 +104,7 @@ RSpec.describe "Datasets", type: :request  do
       end
 
       it 'doesn not Increase Quota' do
-        # expect(doi_quota_used).to eq(datacenter.doi_quota_used)
+        # expect(doi_quota_used).to eq(client.doi_quota_used)
       end
 
       it 'returns status code 422' do
@@ -120,7 +120,7 @@ RSpec.describe "Datasets", type: :request  do
   # # Test suite for PUT /datasets/:id
   describe 'PUT /datasets/:id' do
     context 'when the record exists' do
-      let!(:datacenter)  { create(:datacenter) }
+      let!(:client)  { create(:client) }
       let(:valid_attributes) do
         {
           "data" => {
@@ -129,7 +129,7 @@ RSpec.describe "Datasets", type: :request  do
               "doi" => "10.4122/10703",
               "version" => 3,
               "is_active" => "",
-              "datacenter_id"=> datacenter.uid
+              "client_id"=> client.uid
             }
           }
         }

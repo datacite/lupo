@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   resources :index, path: '/', only: [:index]
   resources :status, only: [:index]
 
-  resources :datacenters, path: "/data-centers", constraints: { :id => /.+/ }
+  resources :clients, path: "/clients", constraints: { :id => /.+/ }
   resources :datasets, constraints: { :id => /.+/ }
   resources :works, path: "/works", constraints: { :id => /.+/ }
   resources :prefixes, constraints: { :id => /.+/ }

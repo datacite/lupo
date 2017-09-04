@@ -8,30 +8,30 @@ class Ability
     elsif user.role == "staff_user"
       can :read, :all
       can :update, :all
-    elsif user.role == "member_admin"
-      can [:update, :read], Member, :symbol => user.member_id
-      can [:create, :update, :read], Datacenter, :allocator => user.allocator
+    elsif user.role == "provider_admin"
+      can [:update, :read], Member, :symbol => user.provider_id
+      can [:create, :update, :read], Client, :allocator => user.allocator
       can [:create, :update, :read], Dataset, :datacentre => user.datacentre
-      # can [:update, :read], Prefix, :datacentre => user.datacenter_id
-      can [:create, :update, :read, :destroy], User, :member_id => user.member_id
-    elsif user.role == "member_user"
-      can [:read], Member, :symbol => user.member_id
-      can [:update, :read], Datacenter, :allocator => user.allocator
-      # can [:read], Prefix, :allocator => user.member_id
+      # can [:update, :read], Prefix, :datacentre => user.client_id
+      can [:create, :update, :read, :destroy], User, :provider_id => user.provider_id
+    elsif user.role == "provider_user"
+      can [:read], Member, :symbol => user.provider_id
+      can [:update, :read], Client, :allocator => user.allocator
+      # can [:read], Prefix, :allocator => user.provider_id
       can [:read], Dataset, :datacentre => user.datacentre
       can [:update, :read], User, :id => user.id
-    elsif user.role == "member_user" && Member.find_by(:symbol => user.member_id).member_type == "non_allocating"
-      can [:read], Member, :symbol => user.member_id
-      can [:read], Datacenter, :allocator => user.member_id
-      # can [:read], Prefix, :allocator => user.member_id
-      can [:read], Dataset, :datacentre => user.member_id
+    elsif user.role == "provider_user" && Member.find_by(:symbol => user.provider_id).provider_type == "non_allocating"
+      can [:read], Member, :symbol => user.provider_id
+      can [:read], Client, :allocator => user.provider_id
+      # can [:read], Prefix, :allocator => user.provider_id
+      can [:read], Dataset, :datacentre => user.provider_id
       can [:update, :read], User, :id => user.id
-    elsif user.role == "data_center_admin"
-      can [:read, :update], Datacenter, :symbol => user.datacenter_id
+    elsif user.role == "client_admin"
+      can [:read, :update], Client, :symbol => user.client_id
       can [:create, :update, :read], Dataset, :datacentre => user.datacentre
-      can [:create, :update, :read, :destroy], User, :datacenter_id => user.datacenter_id
-    elsif user.role == "data_center_user"
-      can [:read], Datacenter, :symbol => user.datacenter_id
+      can [:create, :update, :read, :destroy], User, :client_id => user.client_id
+    elsif user.role == "client_user"
+      can [:read], Client, :symbol => user.client_id
       can [:read], Dataset, :datacentre => user.datacentre
       can [:read], User, :id => user.id
     else

@@ -2,7 +2,7 @@ class User
   # include jwt encode and decode
   include Authenticable
 
-  attr_accessor :name, :uid, :email, :role, :jwt, :orcid, :member_id, :datacenter_id, :allocator, :datacentre
+  attr_accessor :name, :uid, :email, :role, :jwt, :orcid, :provider_id, :client_id, :allocator, :datacentre
 
   def initialize(token)
     if token.present?
@@ -13,8 +13,8 @@ class User
       @name = payload.fetch("name", nil)
       @email = payload.fetch("email", nil)
       @role = payload.fetch("role", nil)
-      @member_id = payload.fetch("member_id", nil)
-      @datacenter_id = payload.fetch("datacenter_id", nil)
+      @provider_id = payload.fetch("provider_id", nil)
+      @client_id = payload.fetch("client_id", nil)
     else
       @role = "anonymous"
     end
@@ -35,12 +35,12 @@ class User
 
   # Helper method to check for admin user
   def allocator
-    Member.find_by(symbol: @member_id).id if @member_id
+    Member.find_by(symbol: @provider_id).id if @provider_id
   end
 
   # Helper method to check for admin user
   def datacentre
-    Datacenter.find_by(symbol: @datacenter_id).id if @datacenter_id
+    Client.find_by(symbol: @client_id).id if @client_id
   end
 
   private
@@ -50,9 +50,9 @@ class User
       uid: "Faker::Code.unique.asin",
       name: "Faker::Name.name",
       email: "sasasasa",
-      member_id: "TIB",
-      datacenter_id: "TIB.PANGAEA",
-      role: "data_center_admin",
+      provider_id: "TIB",
+      client_id: "TIB.PANGAEA",
+      role: "client_admin",
       iat: Time.now.to_i,
       exp: Time.now.to_i + 50 * 24 * 3600
     }.compact
