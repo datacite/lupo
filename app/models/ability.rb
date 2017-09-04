@@ -20,12 +20,6 @@ class Ability
       # can [:read], Prefix, :allocator => user.provider_id
       can [:read], Dataset, :datacentre => user.datacentre
       can [:update, :read], User, :id => user.id
-    elsif user.role == "provider_user" && Provider.find_by(:symbol => user.provider_id).provider_type == "non_allocating"
-      can [:read], Provider, :symbol => user.provider_id
-      can [:read], Client, :allocator => user.provider_id
-      # can [:read], Prefix, :allocator => user.provider_id
-      can [:read], Dataset, :datacentre => user.provider_id
-      can [:update, :read], User, :id => user.id
     elsif user.role == "client_admin"
       can [:read, :update], Client, :symbol => user.client_id
       can [:create, :update, :read], Dataset, :datacentre => user.datacentre

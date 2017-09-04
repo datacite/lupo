@@ -20,6 +20,7 @@ class Dataset < ActiveRecord::Base
 
   validates_presence_of :uid, :doi, :client_id
   validates_format_of :doi, :with => /(10\.\d{4,5})\/.+\z/
+  validates_format_of :url, :with => /https?:\/\/[\S]+/ , if: :url?, message: "Website should be an url"
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
   validates_numericality_of :version, if: :version?
 

@@ -4,7 +4,7 @@ class Provider < ActiveRecord::Base
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "allocator"
-  attribute :provider_type
+  # attribute :provider_type
   alias_attribute :uid, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
@@ -22,7 +22,7 @@ class Provider < ActiveRecord::Base
 
   has_and_belongs_to_many :prefixes, class_name: 'Prefix', join_table: "allocator_prefixes", foreign_key: :prefixes, association_foreign_key: :allocator
 
-  before_validation :set_region, :set_defaults, :set_provider_type
+  before_validation :set_region, :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   accepts_nested_attributes_for :prefixes
@@ -64,14 +64,14 @@ class Provider < ActiveRecord::Base
     write_attribute(:region, r)
   end
 
-  def set_provider_type
-    if doi_quota_allowed != 0
-      r = "allocating"
-    else
-      r = "non_allocating"
-    end
-    write_attribute(:provider_type, r)
-  end
+  # def set_provider_type
+  #   if doi_quota_allowed != 0
+  #     r = "allocating"
+  #   else
+  #     r = "non_allocating"
+  #   end
+  #   write_attribute(:provider_type, r)
+  # end
 
   def set_defaults
     self.contact_name = "" unless contact_name.present?

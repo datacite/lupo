@@ -13,19 +13,19 @@ class ProvidersController < ApplicationController
       collection = collection.query(params[:query])
     end
 
-    collection = collection.where(provider_type: params['provider-type']) if params['provider-type'].present?
+    # collection = collection.where(provider_type: params['provider-type']) if params['provider-type'].present?
     collection = collection.where(region: params[:region]) if params[:region].present?
     collection = collection.where(year: params[:year]) if params[:year].present?
 
     # calculate facet counts after filtering
-    if params["provider-type"].present?
-      provider_types = [{ id: params["provider-type"],
-                        title: params["provider-type"].humanize,
-                        count: collection.where(provider_type: params["provider-type"]).count }]
-    else
-      provider_types = collection.where.not(provider_type: nil).group(:provider_type).count
-      provider_types = provider_types.map { |k,v| { id: k, title: k.humanize, count: v } }
-    end
+    # if params["provider-type"].present?
+    #   provider_types = [{ id: params["provider-type"],
+    #                     title: params["provider-type"].humanize,
+    #                     count: collection.where(provider_type: params["provider-type"]).count }]
+    # else
+    #   provider_types = collection.where.not(provider_type: nil).group(:provider_type).count
+    #   provider_types = provider_types.map { |k,v| { id: k, title: k.humanize, count: v } }
+    # end
     if params[:region].present?
       regions = [{ id: params[:region],
                    title: REGIONS[params[:region].upcase],
@@ -53,7 +53,7 @@ class ProvidersController < ApplicationController
     meta = { total: total,
              total_pages: @providers.total_pages,
              page: page[:number].to_i,
-             provider_types: provider_types,
+            #  provider_types: provider_types,
              regions: regions,
              years: years }
 

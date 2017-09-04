@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170904152559) do
+ActiveRecord::Schema.define(version: 20170904170626) do
 
   create_table "allocator", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "contact_email", null: false
@@ -33,7 +33,6 @@ ActiveRecord::Schema.define(version: 20170904152559) do
     t.string "country_code"
     t.string "website"
     t.string "phone"
-    t.string "provider_type"
     t.index ["symbol"], name: "symbol", unique: true
   end
 
@@ -84,6 +83,7 @@ ActiveRecord::Schema.define(version: 20170904152559) do
     t.integer "version"
     t.bigint "datacentre", null: false
     t.datetime "minted"
+    t.string "url"
     t.index ["datacentre"], name: "FK5605B47847B5F5FF"
     t.index ["doi"], name: "doi", unique: true
   end
@@ -108,7 +108,6 @@ ActiveRecord::Schema.define(version: 20170904152559) do
     t.binary "is_converted_by_mds", limit: 1
     t.string "namespace"
     t.index ["dataset", "metadata_version"], name: "dataset_version"
-    t.string "url"
     t.index ["dataset"], name: "FKE52D7B2F4D3D6B1B"
   end
 

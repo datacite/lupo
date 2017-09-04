@@ -15,7 +15,6 @@ FactoryGirl.define do
     version 1
     website { Faker::Internet.url }
     description { Faker::Lorem.paragraph(sentence_count = 1, supplemental = false, random_sentences_to_add = 1) }
-    provider_type {Faker::StarWars.droid}
     year { Faker::Number.number(4) }
     image { Faker::Internet.url }
     region { Faker::Address.country }

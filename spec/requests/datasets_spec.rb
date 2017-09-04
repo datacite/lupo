@@ -62,6 +62,7 @@ RSpec.describe "Datasets", type: :request  do
             "type" => "datasets",
             "attributes" => {
               "doi" => "10.4122/10703",
+              "url"=> "http://www.bl.uk/pdf/patspec.pdf",
               "version" => 1,
               "is_active" => "",
               "client_id"=> client.uid
@@ -72,6 +73,7 @@ RSpec.describe "Datasets", type: :request  do
       before { post '/datasets', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a Dataset' do
+      expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
       expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
       end
 
@@ -91,6 +93,7 @@ RSpec.describe "Datasets", type: :request  do
             "type" => "datasets",
             "attributes" => {
               "doi" => "10.aaaa03",
+              "url"=> "http://www.bl.uk/pdf/patspec.pdf",
               "version" => 1,
               "client_id"=> client.uid
             }
@@ -127,6 +130,7 @@ RSpec.describe "Datasets", type: :request  do
             "type" => "datasets",
             "attributes" => {
               "doi" => "10.4122/10703",
+              "url"=> "http://www.bl.uk/pdf/patspec.pdf",
               "version" => 3,
               "is_active" => "",
               "client_id"=> client.uid

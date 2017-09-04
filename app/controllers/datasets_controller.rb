@@ -85,7 +85,7 @@ class DatasetsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
     def safe_params
-      attributes = [:uid, :created, :doi, :is_active, :version, :client_id]
+      attributes = [:uid, :created, :doi, :is_active, :version, :client_id, :url]
       params.require(:data).permit(:id, :type, attributes: attributes)
     end
   #   # Only allow a trusted parameter "white list" through.
