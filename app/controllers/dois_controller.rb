@@ -1,5 +1,5 @@
-class WorksController < ApplicationController
-  before_action :set_dataset, only: [:show, :update, :destroy]
+class DoisController < ApplicationController
+  before_action :set_doi, only: [:show, :update, :destroy]
   before_action :authenticate_user_from_token!
   load_and_authorize_resource :except => [:index, :show]
 
@@ -11,33 +11,33 @@ class WorksController < ApplicationController
     # page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 1000
     # total = collection.count
     #
-    # @works = collection.order(:name).page(page[:number]).per(page[:size])
+    # @dois = collection.order(:name).page(page[:number]).per(page[:size])
     # meta = { total: total,
-    #          total_pages: @works.total_pages,
+    #          total_pages: @dois.total_pages,
     #          page: page[:number].to_i,
     #          provider_types: provider_types,
     #          regions: regions,
     #          years: years }
     # #
-    # render jsonapi: @works, meta: meta
+    # render jsonapi: @dois, meta: meta
 
-    @works = Work.where(params)
-    render jsonapi: @works[:data], meta: @works[:meta], include: @include, each_serializer: WorksSerializer
+    @dois = Doi.where(params)
+    render jsonapi: @dois[:data], meta: @dois[:meta], include: @include, each_serializer: DoisSerializer
 
-    # works = Maremma.get("https://api.test.datacite.org/works")
-    # render jsonapi: works.to_h[:body]
+    # dois = Maremma.get("https://api.test.datacite.org/dois")
+    # render jsonapi: dois.to_h[:body]
   end
 
   # # # GET /datasets/1
   def show
-    render jsonapi: @dataset
+    render jsonapi: @doi
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_dataset
-      @dataset = Dataset.where(doi: params[:id]).first
-      fail ActiveRecord::RecordNotFound unless @dataset.present?
+    def set_doi
+      @doi = Dataset.where(doi: params[:id]).first
+      fail ActiveRecord::RecordNotFound unless @doi.present?
     end
 
 

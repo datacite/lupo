@@ -31,7 +31,7 @@ class DatasetsController < ApplicationController
     #          years: response[:years]
     #         }
     #
-    # render jsonapi: @works[:data], meta: @works[:meta], include: @include
+    # render jsonapi: @dois[:data], meta: @dois[:meta], include: @include
   end
   #
   # # # GET /datasets/1

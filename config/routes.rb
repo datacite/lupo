@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   resources :clients, path: "/clients", constraints: { :id => /.+/ }
   resources :datasets, constraints: { :id => /.+/ }
-  resources :works, path: "/works", constraints: { :id => /.+/ }
+  resources :dois, path: "/dois", constraints: { :id => /.+/ }
   resources :prefixes, constraints: { :id => /.+/ }
   resources :providers, constraints: { :id => /.+/ }
 

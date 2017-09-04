@@ -1,4 +1,4 @@
-class Work < Base
+class Doi < Base
   attr_reader :id, :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :client_id, :provider_id, :resource_type_id, :client, :provider, :registration_agency, :resource_type, :license, :version, :results, :related_identifiers, :schema_version, :xml, :media, :published, :registered, :updated_at
 
   # include author methods
@@ -37,9 +37,9 @@ class Work < Base
     response = Maremma.head(@identifier, limit: 0)
     @url = response.present? ? response["Location"] : nil
 
-    @title = Work.sanitize(attributes.fetch("title", []).first)
+    @title = Doi.sanitize(attributes.fetch("title", []).first)
     @container_title = attributes.fetch("publisher", nil)
-    @description = Work.sanitize(attributes.fetch("description", []).first)
+    @description = Doi.sanitize(attributes.fetch("description", []).first)
     @published = attributes.fetch("publicationYear", nil)
     @registered = attributes.fetch("minted", nil)
     @updated_at = attributes.fetch("updated", nil)
@@ -82,8 +82,8 @@ class Work < Base
                  qf: "doi",
                  defType: "edismax",
                  wt: "json" }
-    elsif options["work-id"].present?
-      params = { q: options['work-id'],
+    elsif options["doi-id"].present?
+      params = { q: options['doi-id'],
                  qf: "doi",
                  fl: "doi,relatedIdentifier",
                  defType: "edismax",
@@ -194,7 +194,7 @@ class Work < Base
         providers: cached_providers
         ), meta: meta }
     else
-      if options["work-id"].present?
+      if options["doi-id"].present?
         return { data: [], meta: [] } if result.blank?
 
         items = result.fetch("data", {}).fetch('response', {}).fetch('docs', [])
@@ -206,7 +206,7 @@ class Work < Base
                                       .map { |i| i.split(':', 3).last.strip.upcase }
         return { data: [], meta: [] } if related_doi_identifiers.blank?
 
-        options = options.except("work-id")
+        options = options.except("doi-id")
         query_url = get_query_url(options.merge(ids: related_doi_identifiers.join(",")))
         result = Maremma.get(query_url, options)
       end
@@ -287,7 +287,7 @@ class Work < Base
 
   def self.get_client_facets(clients, options={})
     response = Client.where(symbol: clients.keys.join(",").split(/\s*,\s*/))
-    puts response.inspect
+    
 
     response.map { |p| { id: p.uid.downcase, name: p.name, count: clients.fetch(p.uid.upcase, 0) } }
             .sort { |a, b| b[:count] <=> a[:count] }
