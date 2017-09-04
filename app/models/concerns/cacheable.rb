@@ -122,10 +122,9 @@ module Cacheable
       end
     end
 
-    def cached_clients_response(options={})
-      Rails.cache.fetch("client_response", expires_in: 1.day) do
-        query = self.ds.where{(is_active = true) & (allocator > 100)}
-        query.limit(25).offset(0).order(:name)
+    def cached_client_response(id, options={})
+      Rails.cache.fetch("client_response/#{id}", expires_in: 7.days) do
+        Client.where(symbol: id).select(:id, :symbol, :name, :created).first
       end
     end
 

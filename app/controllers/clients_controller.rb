@@ -62,7 +62,7 @@ class ClientsController < ApplicationController
 
   # GET /clients/1
   def show
-    render jsonapi: @client
+    render jsonapi: @client, include: @include
   end
 
   # POST /clients

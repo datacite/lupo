@@ -23,7 +23,7 @@ class DoisController < ApplicationController
     # render jsonapi: @dois, meta: meta
 
     @dois = Doi.where(params)
-    render jsonapi: @dois[:data], meta: @dois[:meta], include: @include, each_serializer: DoisSerializer
+    render jsonapi: @dois[:data], meta: @dois[:meta], include: @include
 
     # dois = Maremma.get("https://api.test.datacite.org/dois")
     # render jsonapi: dois.to_h[:body]
@@ -38,7 +38,7 @@ class DoisController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_doi
-    @doi = Dataset.where(doi: params[:id]).first
+    @doi = Doi.where(params)
     fail ActiveRecord::RecordNotFound unless @doi.present?
   end
 

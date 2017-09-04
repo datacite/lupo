@@ -50,7 +50,7 @@ class Provider < ActiveRecord::Base
   end
 
   def logo_url
-    "#{ENV['CDN_URL']}/images/providers/#{uid.downcase}.png"
+    "#{ENV['CDN_URL']}/images/members/#{uid.downcase}.png"
   end
 
   private

@@ -170,7 +170,7 @@ class Doi < Base
     if options[:id].present?
       return nil if result.blank?
 
-      items = result.fetch("data", {}).fetch('response', {}).fetch('docs', [])
+      items = result.body.fetch("data", {}).fetch('response', {}).fetch('docs', [])
       return nil if items.blank?
 
       item = items.first
@@ -182,14 +182,12 @@ class Doi < Base
       resource_type = ResourceType.where(id: resource_type_id.downcase.underscore.dasherize) if resource_type_id.present?
       resource_type = resource_type[:data] if resource_type.present?
 
-      client = nil
       client_id = item.fetch("datacentre_symbol", nil)
-      client = Client.where(id: client_id.downcase) if client_id.present?
-      client = client[:data] if client.present?
+      client = cached_client_response(client_id)
 
       { data: parse_item(item,
           resource_types: cached_resource_types,
-          clients: [client].compact,
+          clients: [client],
           providers: cached_providers),
         meta: meta }
     else

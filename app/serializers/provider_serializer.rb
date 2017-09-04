@@ -1,5 +1,6 @@
 class ProviderSerializer < ActiveModel::Serializer
   cache key: 'provider'
+
   attributes :name, :description, :region, :country, :year, :logo_url, :email, :website, :phone, :created, :updated
   has_many :clients
   has_many :prefixes
