@@ -95,6 +95,7 @@ ActiveRecord::Schema.define(version: 20170904152559) do
     t.string "url", null: false
     t.integer "version"
     t.bigint "dataset", null: false
+    t.index ["dataset", "updated"], name: "dataset_updated"
     t.index ["dataset"], name: "FK62F6FE44D3D6B1B"
   end
 
@@ -106,6 +107,7 @@ ActiveRecord::Schema.define(version: 20170904152559) do
     t.bigint "dataset", null: false
     t.binary "is_converted_by_mds", limit: 1
     t.string "namespace"
+    t.index ["dataset", "metadata_version"], name: "dataset_version"
     t.string "url"
     t.index ["dataset"], name: "FKE52D7B2F4D3D6B1B"
   end
