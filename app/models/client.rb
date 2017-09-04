@@ -5,7 +5,7 @@ class Client < ActiveRecord::Base
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
-  
+
   alias_attribute :uid, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
@@ -90,11 +90,6 @@ class Client < ActiveRecord::Base
   #   domains.to_s.split(/\s*,\s*/).presence
   # end
 
-  # def provider_id
-  #   @provider_id = Provider.find(allocator).uid.downcase if allocator
-  #   @provider_id
-  # end
-
   private
 
 
@@ -103,12 +98,14 @@ class Client < ActiveRecord::Base
     self.role_name = "ROLE_DATACENTRE" unless role_name.present?
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
-    set_allocator unless allocator
+    self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
+    # set_allocator unless allocator
   end
 
-  def set_allocator
-    r = Provider.find_by(symbol: provider_id)
-    fail("provider_id Not found") unless r.present?
-    write_attribute(:allocator, r.id)
-  end
+  # def set_allocator
+  #   r = Provider.find_by(symbol: provider_id)
+  #   fail ActiveRecord::RecordNotFound unless r.present?
+  #
+  #   write_attribute(:allocator, r.id)
+  # end
 end
