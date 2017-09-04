@@ -127,7 +127,7 @@ class ClientsController < ApplicationController
   # # Only allow a trusted parameter "white list" through.
   # def client_params
   #   dc_params = ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
-  #   allocator = Member.find_by(symbol: dc_params["provider_id"])
+  #   allocator = Provider.find_by(symbol: dc_params["provider_id"])
   #   fail("provider_id Not found") unless allocator.present?
   #   dc_params["allocator"] = allocator.id
   #   dc_params["password"] = encrypt_password(dc_params["password"])

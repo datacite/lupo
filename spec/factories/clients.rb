@@ -4,8 +4,8 @@ FactoryGirl.define do
     uid { Faker::Code.asin + Faker::Code.isbn }
     name "My data center"
     role_name "ROLE_DATACENTRE"
-    member_id  { allocator.uid }
+    provider_id  { allocator.uid }
 
-    association :allocator, factory: :member, strategy: :create
+    association :allocator, factory: :provider, strategy: :create
   end
 end

@@ -20,7 +20,7 @@ class Client < ActiveRecord::Base
   validates_inclusion_of :role_name, :in => %w( ROLE_DATACENTRE ), :message => "Role %s is not included in the list"
 
   has_and_belongs_to_many :prefixes, class_name: 'Prefix', join_table: "datacentre_prefixes", foreign_key: :prefixes, association_foreign_key: :datacentre
-  belongs_to :provider, class_name: 'Member', foreign_key: :allocator
+  belongs_to :provider, class_name: 'Provider', foreign_key: :allocator
   has_many :datasets
 
   before_validation :set_defaults
@@ -91,7 +91,7 @@ end
   # end
 
   # def provider_id
-  #   @provider_id = Member.find(allocator).uid.downcase if allocator
+  #   @provider_id = Provider.find(allocator).uid.downcase if allocator
   #   @provider_id
   # end
 
@@ -107,7 +107,7 @@ end
   end
 
   def set_allocator
-    r = Member.find_by(symbol: provider_id)
+    r = Provider.find_by(symbol: provider_id)
     fail("provider_id Not found") unless r.present?
     write_attribute(:allocator, r.id)
   end

@@ -6,7 +6,7 @@ FactoryGirl.define do
     role "client_admin"
     jwt {Faker::Code.asin + Faker::Code.isbn}
     orcid {Faker::Code.asin + Faker::Code.isbn}
-    member_id  { ["TIB", "CDL", "GER", "MEX"].sample }
+    provider_id  { ["TIB", "CDL", "GER", "MEX"].sample }
     client_id { ["KIT-IMK", "DATACITE", "NYU", "UNAM"].sample }
   end
 end

@@ -10,13 +10,13 @@ module Cacheable
 
     def cached_providers
       Rails.cache.fetch("providers", expires_in: 1.day) do
-        Member.all.select(:id, :symbol, :name, :created)
+        Provider.all.select(:id, :symbol, :name, :created)
       end
     end
 
     def cached_provider_response(id, options={})
       Rails.cache.fetch("provider_response/#{id}", expires_in: 7.days) do
-        Member.where(symbol: id).select(:id, :symbol, :name, :created).first
+        Provider.where(symbol: id).select(:id, :symbol, :name, :created).first
       end
     end
   end
@@ -25,7 +25,7 @@ module Cacheable
 
     def cached_providers
       Rails.cache.fetch("providers", expires_in: 1.day) do
-        Member.all.select(:id, :symbol, :name, :created)
+        Provider.all.select(:id, :symbol, :name, :created)
       end
     end
 
@@ -60,7 +60,7 @@ module Cacheable
 
     def cached_providers_response(options={})
       Rails.cache.fetch("provider_response", expires_in: 1.day) do
-        Members.where(options)
+        Providers.where(options)
       end
     end
 

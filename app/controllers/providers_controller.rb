@@ -1,11 +1,11 @@
-class MembersController < ApplicationController
+class ProvidersController < ApplicationController
   before_action :set_provider, only: [:show, :update, :destroy]
   before_action :authenticate_user_from_token!
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show]
 
   def index
-    collection = Member
+    collection = Provider
 
     if params[:id].present?
       collection = collection.where(symbol: params[:id])
@@ -69,7 +69,7 @@ class MembersController < ApplicationController
     unless [:type, :attributes].all? { |k| safe_params.key? k }
       render jsonapi: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
     else
-      @provider = Member.new(safe_params.except(:type))
+      @provider = Provider.new(safe_params.except(:type))
       authorize! :create, @provider
 
       if @provider.save
@@ -102,7 +102,7 @@ class MembersController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_provider
-    @provider = Member.where(symbol: params[:id]).first
+    @provider = Provider.where(symbol: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @provider.present?
   end
 

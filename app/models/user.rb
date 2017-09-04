@@ -35,7 +35,7 @@ class User
 
   # Helper method to check for admin user
   def allocator
-    Member.find_by(symbol: @provider_id).id if @provider_id
+    Provider.find_by(symbol: @provider_id).id if @provider_id
   end
 
   # Helper method to check for admin user

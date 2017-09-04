@@ -52,7 +52,7 @@ RSpec.describe "Prefixes", type: :request   do
   # Test suite for POST /prefixes
   describe 'POST /prefixes' do
     context 'when the request is valid' do
-      let!(:member)  { create(:member) }
+      let!(:provider)  { create(:provider) }
       let(:valid_attributes) do
         {
           "data" => {
@@ -76,7 +76,7 @@ RSpec.describe "Prefixes", type: :request   do
     end
 
     context 'when the request is invalid' do
-      let!(:member)  { create(:member) }
+      let!(:provider)  { create(:provider) }
       let(:not_valid_attributes) do
         {
           "data" => {
@@ -105,7 +105,7 @@ RSpec.describe "Prefixes", type: :request   do
 
   # # Test suite for PUT /prefixes/:id
   describe 'PUT /prefixes/:id' do
-    let!(:member)  { create(:member) }
+    let!(:provider)  { create(:provider) }
     let(:valid_attributes) do
       {
         "data" => {

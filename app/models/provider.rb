@@ -1,6 +1,6 @@
 require "countries"
 
-class Member < ActiveRecord::Base
+class Provider < ActiveRecord::Base
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "allocator"

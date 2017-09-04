@@ -2,14 +2,14 @@ require 'rails_helper'
 
 RSpec.describe 'Clients', type: :request  do
   let!(:clients)  { create_list(:client, 10) }
-  let!(:member) { create(:member) }
+  let!(:provider) { create(:provider) }
   let!(:client) { create(:client) }
   let(:params) do
     { "data" => { "type" => "clients",
                   "attributes" => {
                     "uid" => "BL.IMPERIAL",
                     "name" => "Imperial College",
-                    "member_id" => member.uid,
+                    "provider_id" => provider.uid,
                     "contact_email" => "bob@example.com" } } }
   end
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN']}}
@@ -74,7 +74,7 @@ RSpec.describe 'Clients', type: :request  do
         { "data" => { "type" => "clients",
                       "attributes" => {
                         "name" => "Imperial College",
-                        "member_id" => member.uid,
+                        "provider_id" => provider.uid,
                         "contact_email" => "bob@example.com" } } }
       end
 

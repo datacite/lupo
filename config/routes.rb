@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   resources :datasets, constraints: { :id => /.+/ }
   resources :works, path: "/works", constraints: { :id => /.+/ }
   resources :prefixes, constraints: { :id => /.+/ }
-  resources :members, constraints: { :id => /.+/ }
+  resources :providers, constraints: { :id => /.+/ }
 
   # rescue routing errors
   # match "*path", to: "index#routing_error", via: :all

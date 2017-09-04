@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe "Members", type: :request  do
+RSpec.describe "Providers", type: :request  do
   # initialize test data
-  let!(:members)  { create_list(:member, 10) }
-  let!(:member) { members.first }
+  let!(:providers)  { create_list(:provider, 10) }
+  let!(:provider) { providers.first }
   let(:params) do
-    { "data" => { "type" => "members",
+    { "data" => { "type" => "providers",
                   "attributes" => {
                     "uid" => "BL",
                     "name" => "British Library",
@@ -14,12 +14,12 @@ RSpec.describe "Members", type: :request  do
   end
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN'] } }
 
-  # Test suite for GET /members
-  describe 'GET /members' do
+  # Test suite for GET /providers
+  describe 'GET /providers' do
     # make HTTP get request before each example
-    before { get '/members', headers: headers }
+    before { get '/providers', headers: headers }
 
-    it 'returns members' do
+    it 'returns providers' do
       expect(json).not_to be_empty
       expect(json['data'].size).to eq(10)
     end
@@ -29,14 +29,14 @@ RSpec.describe "Members", type: :request  do
     end
   end
 
-  # Test suite for GET /members/:id
-  describe 'GET /members/:id' do
-    before { get "/members/#{member.uid}" , headers: headers}
+  # Test suite for GET /providers/:id
+  describe 'GET /providers/:id' do
+    before { get "/providers/#{provider.uid}" , headers: headers}
 
     context 'when the record exists' do
-      it 'returns the member' do
+      it 'returns the provider' do
         expect(json).not_to be_empty
-        expect(json['data']['id']).to eq(member.uid.downcase)
+        expect(json['data']['id']).to eq(provider.uid.downcase)
       end
 
       it 'returns status code 200' do
@@ -45,7 +45,7 @@ RSpec.describe "Members", type: :request  do
     end
 
     context 'when the record does not exist' do
-      before { get "/members/xxx" , headers: headers}
+      before { get "/providers/xxx" , headers: headers}
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
@@ -57,12 +57,12 @@ RSpec.describe "Members", type: :request  do
     end
   end
 
-  # Test suite for POST /members
-  describe 'POST /members' do
+  # Test suite for POST /providers
+  describe 'POST /providers' do
     context 'when the request is valid' do
-      before { post '/members', params: params.to_json, headers: headers }
+      before { post '/providers', params: params.to_json, headers: headers }
 
-      it 'creates a member' do
+      it 'creates a provider' do
         expect(json.dig('data', 'attributes', 'region')).to eq("EMEA")
       end
 
@@ -73,14 +73,14 @@ RSpec.describe "Members", type: :request  do
 
     context 'when the request is missing a required attribute' do
       let(:params) do
-        { "data" => { "type" => "members",
+        { "data" => { "type" => "providers",
                       "attributes" => {
                         "uid" => "BL",
                         "name" => "British Library",
                         "country_code" => "GB" } } }
       end
 
-      before { post '/members', params: params.to_json, headers: headers }
+      before { post '/providers', params: params.to_json, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -93,14 +93,14 @@ RSpec.describe "Members", type: :request  do
 
     context 'when the request is missing a data object' do
       let(:params) do
-        { "type" => "members",
+        { "type" => "providers",
           "attributes" => {
             "uid" => "BL",
             "name" => "British Library",
             "country_code" => "GB" } }
       end
 
-      before { post '/members', params: params.to_json, headers: headers }
+      before { post '/providers', params: params.to_json, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -112,10 +112,10 @@ RSpec.describe "Members", type: :request  do
     end
   end
 
-  # # Test suite for PUT /members/:id
-  describe 'PUT /members/:id' do
+  # # Test suite for PUT /providers/:id
+  describe 'PUT /providers/:id' do
     context 'when the record exists' do
-      before { put "/members/#{member.uid}", params: params.to_json, headers: headers }
+      before { put "/providers/#{provider.uid}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'region')).to eq("EMEA")
@@ -127,9 +127,9 @@ RSpec.describe "Members", type: :request  do
     end
   end
 
-  # Test suite for DELETE /members/:id
-  describe 'DELETE /members/:id' do
-    before { delete "/members/#{member.uid}", headers: headers }
+  # Test suite for DELETE /providers/:id
+  describe 'DELETE /providers/:id' do
+    before { delete "/providers/#{provider.uid}", headers: headers }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

@@ -16,10 +16,10 @@ RSpec.describe User, type: :model do
     context "when is a data centre admin" do
       let(:role){ "client_admin" }
 
-      it{ is_expected.not_to be_able_to(:create, Member.new) }
+      it{ is_expected.not_to be_able_to(:create, Provider.new) }
       it{ is_expected.to be_able_to(:read, FactoryGirl.create(:client)) }
-      it{ is_expected.not_to be_able_to(:update, Member.new) }
-      it{ is_expected.not_to be_able_to(:destroy, Member.new) }
+      it{ is_expected.not_to be_able_to(:update, Provider.new) }
+      it{ is_expected.not_to be_able_to(:destroy, Provider.new) }
     end
   #
   #   context "when is a data centre user" do
@@ -40,8 +40,8 @@ RSpec.describe User, type: :model do
   #     it{ is_expected.not_to be_able_to(:destroy, Allocator.new) }
   #   end
   #
-  #   context "when is a member admin" do
-  #     let(:role){ "member_admin" }
+  #   context "when is a provider admin" do
+  #     let(:role){ "provider_admin" }
   #
   #     it{ is_expected.not_to be_able_to(:create, Allocator.new) }
   #     it{ is_expected.to be_able_to(:read, FactoryGirl.create(:client)) }
@@ -49,8 +49,8 @@ RSpec.describe User, type: :model do
   #     it{ is_expected.not_to be_able_to(:destroy, Allocator.new) }
   #   end
   #
-  #   context "when is a member user" do
-  #     let(:role) { "member_user" }
+  #   context "when is a provider user" do
+  #     let(:role) { "provider_user" }
   #
   #     it{ is_expected.not_to be_able_to(:create, Allocator.new) }
   #     it{ is_expected.to be_able_to(:read, FactoryGirl.create(:client)) }
