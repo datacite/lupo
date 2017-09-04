@@ -10,7 +10,7 @@ gem 'equivalent-xml', '~> 0.6.0'
 gem 'nokogiri', '~> 1.6', '>= 1.6.8'
 gem 'iso8601', '~> 0.9.0'
 gem 'maremma', '~> 3.5.11'
-gem 'bolognese', '~> 0.9'
+gem 'bolognese', '~> 0.9', '>= 0.9'
 gem "dalli", "~> 2.7.6"
 gem 'lograge', '~> 0.5'
 gem 'bugsnag', '~> 5.3'
