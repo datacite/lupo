@@ -25,6 +25,8 @@ class Provider < ActiveRecord::Base
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   accepts_nested_attributes_for :prefixes
 
+  default_scope { where(is_active: "\x01") }
+
   scope :query, ->(query) { where("symbol like ? OR name like ?", "%#{query}%", "%#{query}%") }
 
   def year
