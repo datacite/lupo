@@ -2,7 +2,7 @@ class User
   # include jwt encode and decode
   include Authenticable
 
-  attr_accessor :name, :uid, :email, :role, :jwt, :orcid, :provider_id, :client_id, :allocator, :datacentre
+  attr_accessor :name, :uid, :email, :role_id, :jwt, :orcid, :provider_id, :client_id, :allocator, :datacentre
 
   def initialize(token)
     if token.present?
@@ -12,7 +12,7 @@ class User
       @uid = payload.fetch("uid", nil)
       @name = payload.fetch("name", nil)
       @email = payload.fetch("email", nil)
-      @role = payload.fetch("role", nil)
+      @role_id = payload.fetch("role_id", nil)
       @provider_id = payload.fetch("provider_id", nil)
       @client_id = payload.fetch("client_id", nil)
     else
@@ -25,12 +25,12 @@ class User
 
   # Helper method to check for admin user
   def is_admin?
-    role == "staff_admin"
+    role_id == "staff_admin"
   end
 
   # Helper method to check for admin or staff user
   def is_admin_or_staff?
-    ["staff_admin", "staff_user"].include?(role)
+    ["staff_admin", "staff_user"].include?(role_id)
   end
 
   # Helper method to check for admin user
@@ -52,7 +52,7 @@ class User
       email: "sasasasa",
       provider_id: "TIB",
       client_id: "TIB.PANGAEA",
-      role: "client_admin",
+      role_id: "client_admin",
       iat: Time.now.to_i,
       exp: Time.now.to_i + 50 * 24 * 3600
     }.compact

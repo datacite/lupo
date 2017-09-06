@@ -51,7 +51,6 @@ class DoisController < ApplicationController
     end
   end
 
-
   private
 
   # Only allow a trusted parameter "white list" through.

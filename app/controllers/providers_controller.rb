@@ -66,36 +66,34 @@ class ProvidersController < ApplicationController
 
   # POST /providers
   def create
-    unless [:type, :attributes].all? { |k| safe_params.key? k }
-      render jsonapi: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
-    else
-      @provider = Provider.new(safe_params.except(:type))
-      authorize! :create, @provider
+    @provider = Provider.new(safe_params)
+    authorize! :create, @provider
 
-      if @provider.save
-        render jsonapi: @provider, status: :created, location: @provider
-      else
-        render jsonapi: serialize(@provider.errors), status: :unprocessable_entity
-      end
+    if @provider.save
+      render jsonapi: @provider, status: :created, location: @provider
+    else
+      render jsonapi: serialize(@provider.errors), status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /providers/1
   def update
-    unless [:type, :attributes].all? { |k| safe_params.key? k }
-      render jsonapi: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
+    if @provider.update_attributes(safe_params)
+      render jsonapi: @provider
     else
-      if @provider.update_attributes(safe_params.except(:type))
-        render jsonapi: @provider
-      else
-        render jsonapi: serialize(@provider.errors), status: :unprocessable_entity
-      end
+      Rails.logger.info @provider.errors.inspect
+      render jsonapi: serialize(@provider.errors), status: :unprocessable_entity
     end
   end
 
-  # DELETE /providers/1
+  # don't delete, but set is_active flag to false
   def destroy
-    @provider.destroy
+    if @provider.update_attributes(is_active: 0)
+      render jsonapi: @provider
+    else
+      Rails.logger.warn @provider.errors.inspect
+      render jsonapi: serialize(@provider.errors), status: :unprocessable_entity
+    end
   end
 
   protected
@@ -117,23 +115,10 @@ class ProvidersController < ApplicationController
     end
   end
 
-  # Only allow a trusted parameter "white list" through.
   def safe_params
-    attributes = [:uid, :name, :contact_email, :contact_name, :description, :year, :region, :country_code, :website, :doi_quota_allowed, :doi_quota_used, :is_active, :name, :password, :role_name, :provider_id, :version]
-    # ActiveModelSerializers::Deserialization.jsonapi_parse!(params.to_unsafe_h)[:prefixes_ids]
-    relationships = [:relationships, :prefixes]
-    params.require(:data).permit(:id, :type, attributes: attributes, prefixes_attributes: relationships)
-
+    ActiveModelSerializers::Deserialization.jsonapi_parse!(
+      params, only: [:name, :contact, :email, :country, :is_active],
+              keys: { contact: :contact_name, email: :contact_email, country: :country_code }
+    )
   end
-
-  # Only allow a trusted parameter "white list" through.
-  # def provider_params
-  #   params.require(:data)
-  #     .require(:attributes)
-  #     .permit(:uid, :name, :contact_email, :contact_name, :description, :year, :region, :country_code, :website, :doi_quota_allowed, :doi_quota_used, :is_active, :name, :password, :role_name, :provider_id, :version)
-  #
-  #   mb_params= ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
-  #   mb_params["password"] = encrypt_password(mb_params["password"])
-  #   mb_params
-  # end
 end

@@ -83,20 +83,22 @@ class ClientsController < ApplicationController
 
   # PATCH/PUT /clients/1
   def update
-    unless [:type, :attributes].all? { |k| safe_params.key? k }
-      render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
+    if @client.update_attributes(safe_params)
+      render jsonapi: @client
     else
-      if @client.update_attributes(safe_params.except(:type))
-        render jsonapi: @client
-      else
-        render json: serialize(@client.errors), status: :unprocessable_entity
-      end
+      Rails.logger.warn @client.errors.inspect
+      render json: serialize(@client.errors), status: :unprocessable_entity
     end
   end
 
-  # DELETE /clients/1
+  # don't delete, but set is_active flag to false
   def destroy
-    @client.destroy
+    if @client.update_attributes(is_active: 0)
+      render jsonapi: @client
+    else
+      Rails.logger.warn @client.errors.inspect
+      render json: serialize(@client.errors), status: :unprocessable_entity
+    end
   end
 
   protected
@@ -118,20 +120,10 @@ class ClientsController < ApplicationController
 
   private
 
-  # Only allow a trusted parameter "white list" through.
   def safe_params
-    attributes = [:uid, :name, :contact_email, :contact_name, :doi_quota_allowed, :doi_quota_used, :domains, :is_active, :password, :role_name, :version, :provider_id]
-    params.require(:data).permit(:id, :type, attributes: attributes)
+    ActiveModelSerializers::Deserialization.jsonapi_parse!(
+      params, only: [:name, :contact, :email, :domains, :provider, :is_active],
+              keys: { contact: :contact_name, email: :contact_email }
+    )
   end
-
-  # # Only allow a trusted parameter "white list" through.
-  # def client_params
-  #   dc_params = ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
-  #   allocator = Provider.find_by(symbol: dc_params["provider_id"])
-  #   fail("provider_id Not found") unless allocator.present?
-  #   dc_params["allocator"] = allocator.id
-  #   dc_params["password"] = encrypt_password(dc_params["password"])
-  #   dc_params["symbol"] = dc_params["client_id"]
-  #   dc_params
-  # end
 end
