@@ -55,7 +55,7 @@ RSpec.describe "Datasets", type: :request  do
 
     # let!(:doi_quota_used)  { client.doi_quota_used }
     context 'when the request is valid' do
-      let!(:client)  { create(:client) }
+      let!(:client)  { create(:client, doi_quota_used: 2, doi_quota_used: 1 ) }
       let(:valid_attributes) do
         {
           "data" => {
@@ -77,9 +77,10 @@ RSpec.describe "Datasets", type: :request  do
       expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
       end
 
-      it 'Increase Quota' do
-        # expect(doi_quota_used).to lt(client.doi_quota_used)
-      end
+      # it 'Increase Quota' do
+      #   expect(doi_quota_used).to gt(client.doi_quota_used)
+      #   expect(doi_quota_allowed).to lt(client.doi_quota_allowed)
+      # end
 
       it 'returns status code 201' do
         expect(response).to have_http_status(201)

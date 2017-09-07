@@ -10,7 +10,8 @@ class Dataset < ActiveRecord::Base
   alias_attribute :uid, :doi
   attribute :client_id
   attribute :client_name
-  # attr_accessor :url
+  attr_accessor :provider
+
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   belongs_to :client, class_name: 'Client', foreign_key: :datacentre
@@ -24,10 +25,10 @@ class Dataset < ActiveRecord::Base
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
   validates_numericality_of :version, if: :version?
 
-  # before_create :add_url
-  # before_create :is_quota_exceeded
+
   before_validation :set_defaults
-  # after_create  :decrease_doi_quota
+  after_create  :update_doi_quota
+  validate :doi_quota_exceeded
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
@@ -50,28 +51,30 @@ class Dataset < ActiveRecord::Base
   end
 
 
-  # def url
-  #   Maremma.head(doi_as_url(self.doi)).url
-  # end
-
   def minted
     self.created_at
   end
 
-  # def client_id
-  #   @client_id = Client.find(datacentre).uid.downcase if datacentre
-  #   @client_id
-  # end
+  def update_doi_quota
+    client = Client.find(self.datacentre)
+    fail("Something went wrong when decreasing your DOI quota") unless client
 
-  # def is_quota_exceeded
-  #   client = Client.find(self.datacentre)
-  #   fail("You have excceded your DOI quota. You cannot mint DOIs anymore.") if client[:doi_quota_allowed] < 0
-  # end
-  #
-  # def decrease_doi_quota
-  #   client = Client.find(self.datacentre)
-  #   fail("Something went wrong when decreasing your DOI quota") unless Client.update(client[:id], doi_quota_allowed: client[:doi_quota_allowed] - 1)
-  # end
+    Client.update(client[:id], :doi_quota_used => client[:doi_quota_used] + 1, :doi_quota_allowed => client[:doi_quota_allowed] - 1 )
+
+    provider = Provider.find(self.provider)
+    fail("Something went wrong when decreasing your DOI quota") unless provider
+
+    Provider.update(provider[:id],
+      :doi_quota_used => provider[:doi_quota_used] + 1,
+      :doi_quota_allowed => provider[:doi_quota_allowed] - 1
+    )
+  end
+
+  def doi_quota_exceeded
+    Client.find(self.datacentre).doi_quota_exceeded
+    Provider.find(self.provider).doi_quota_exceeded
+  end
+
 
   private
 
@@ -83,6 +86,7 @@ class Dataset < ActiveRecord::Base
     r = Client.find_by(symbol: client_id)
     fail("client_id Not found") unless r.present?
     write_attribute(:datacentre, r.id)
+    write_attribute(:provider, r.allocator)
   end
 
 end

@@ -40,6 +40,13 @@ class Client < ActiveRecord::Base
     created_at.year if created_at.present?
   end
 
+  def doi_quota_exceeded
+    unless doi_quota_allowed.to_i > 0
+      errors.add(:doi_quota, "You have excceded your DOI quota. You cannot mint DOIs anymore")
+    end
+  end
+
+
   private
 
   def set_defaults
