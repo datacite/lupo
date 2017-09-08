@@ -89,9 +89,10 @@ class ProvidersController < ApplicationController
   # don't delete, but set deleted_at timestamp
   # a provider with clients or prefixes can't be deleted
   def destroy
-    if @provider.clients || @provider.prefixes
+    if @provider.clients.present? || @provider.prefixes.present?
       message = "Can't delete provider that has clients or prefixes."
       status = 400
+      Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @provider.update_attributes(is_active: "\x00", deleted_at: Time.zone.now)
       head :no_content

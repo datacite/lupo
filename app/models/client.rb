@@ -22,7 +22,7 @@ class Client < ActiveRecord::Base
 
   has_and_belongs_to_many :prefixes, class_name: 'Prefix', join_table: "datacentre_prefixes", foreign_key: :prefixes, association_foreign_key: :datacentre
   belongs_to :provider, class_name: 'Provider', foreign_key: :allocator
-  has_many :datasets
+  has_many :datasets, foreign_key: :datacentre
 
   before_validation :set_defaults
 
