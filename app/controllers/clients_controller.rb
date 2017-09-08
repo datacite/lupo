@@ -91,13 +91,18 @@ class ClientsController < ApplicationController
     end
   end
 
-  # don't delete, but set is_active flag to false
+  # don't delete, but set deleted_at timestamp
+  # a client with dois or prefixes can't be deleted
   def destroy
-    if @client.update_attributes(is_active: 0)
-      render jsonapi: @client
+    if @client.datasets || @client.prefixes
+      message = "Can't delete client that has DOIs or prefixes."
+      status = 400
+      render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
+    elsif @client.update_attributes(is_active: "\x00", deleted_at: Time.zone.now)
+      head :no_content
     else
       Rails.logger.warn @client.errors.inspect
-      render json: serialize(@client.errors), status: :unprocessable_entity
+      render jsonapi: serialize(@client.errors), status: :unprocessable_entity
     end
   end
 

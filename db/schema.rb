@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170904170626) do
+ActiveRecord::Schema.define(version: 20170908050141) do
 
   create_table "allocator", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "contact_email", null: false
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(version: 20170904170626) do
     t.string "website"
     t.string "phone"
     t.string "provider_type"
+    t.datetime "deleted_at"
     t.index ["symbol"], name: "symbol", unique: true
   end
 
@@ -61,6 +62,7 @@ ActiveRecord::Schema.define(version: 20170904170626) do
     t.integer "version"
     t.bigint "allocator", null: false
     t.string "experiments"
+    t.datetime "deleted_at"
     t.index ["allocator"], name: "FK6695D60546EBD781"
     t.index ["symbol"], name: "symbol", unique: true
   end

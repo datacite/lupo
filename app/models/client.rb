@@ -32,7 +32,7 @@ class Client < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
-  default_scope { where(is_active: "\x01") }
+  default_scope { where(deleted_at: nil) }
 
   scope :query, ->(query) { where("symbol like ? OR name like ?", "%#{query}%", "%#{query}%") }
 

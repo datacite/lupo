@@ -86,10 +86,15 @@ class ProvidersController < ApplicationController
     end
   end
 
-  # don't delete, but set is_active flag to false
+  # don't delete, but set deleted_at timestamp
+  # a provider with clients or prefixes can't be deleted
   def destroy
-    if @provider.update_attributes(is_active: 0)
-      render jsonapi: @provider
+    if @provider.clients || @provider.prefixes
+      message = "Can't delete provider that has clients or prefixes."
+      status = 400
+      render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
+    elsif @provider.update_attributes(is_active: "\x00", deleted_at: Time.zone.now)
+      head :no_content
     else
       Rails.logger.warn @provider.errors.inspect
       render jsonapi: serialize(@provider.errors), status: :unprocessable_entity
