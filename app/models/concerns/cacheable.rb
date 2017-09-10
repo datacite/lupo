@@ -14,9 +14,15 @@ module Cacheable
       end
     end
 
-    def cached_provider_response(id, options={})
+    def cached_provider_response(symbol, options={})
+      Rails.cache.fetch("provider_response/#{symbol}", expires_in: 7.days) do
+        Provider.where(symbol: symbol).select(:id, :symbol, :name, :created).first
+      end
+    end
+
+    def cached_provider_response_by_id(id, options={})
       Rails.cache.fetch("provider_response/#{id}", expires_in: 7.days) do
-        Provider.where(symbol: id).select(:id, :symbol, :name, :created).first
+        Provider.where(id: id).select(:id, :symbol, :name, :created).first
       end
     end
   end
@@ -73,29 +79,13 @@ module Cacheable
         # collection = cached_datasets_clients_joins
         collection.each do |line|
           dc = Client.find(line[:datacentre])
-          line[:client_id] = dc.uid.downcase
+          line[:client_id] = dc.uid
           line[:client_name] = dc.name
         end
 
         collection.map{|doi| { id: doi[:id],  client_id: doi[:client_id],  name: doi[:client_name] }}.group_by { |d| d[:client_id] }.map{ |k, v| { id: k, title: v.first[:name], count: v.count} }
       end
     end
-
-    def cached_total_response(options={})
-      Rails.cache.fetch("total_response", expires_in: 1.day) do
-        query = self.ds.where{(is_active = true) & (allocator > 100)}
-        query.count
-      end
-    end
-
-    # def cached_years_response(options={})
-    #   Rails.cache.fetch("years_response", expires_in: 1.day) do
-    #     query = self.ds.where{(is_active = true) & (allocator > 100)}
-    #     years = query.group_and_count(Sequel.extract(:year, :created)).all
-    #     years.map { |y| { id: y.values.first.to_s, title: y.values.first.to_s, count: y.values.last } }
-    #          .sort { |a, b| b.fetch(:id) <=> a.fetch(:id) }
-    #   end
-    # end
 
     def cached_years_response
       Rails.cache.fetch("years_datasets", :expires_in => 1.hour) do
@@ -110,15 +100,6 @@ module Cacheable
         years = query.group_and_count(Sequel.extract(:year, :created)).all
         years.map { |y| { id: y.values.first.to_s, title: y.values.first.to_s, count: y.values.last } }
              .sort { |a, b| b.fetch(:id) <=> a.fetch(:id) }
-      end
-    end
-
-    def cached_allocators_response(options={})
-      Rails.cache.fetch("allocator_response", expires_in: 1.day) do
-        query = self.ds.where{(is_active = true) & (allocator > 100)}
-        allocators = query.group_and_count(:allocator).all.map { |a| { id: a[:allocator], count: a[:count] } }
-        providers = cached_providers_response
-        providers = (allocators + providers).group_by { |h| h[:id] }.map { |k,v| v.reduce(:merge) }.select { |h| h[:count].present? }
       end
     end
 

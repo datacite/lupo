@@ -1,21 +1,17 @@
 class ProviderSerializer < ActiveModel::Serializer
   cache key: 'provider'
 
-  attributes :name, :description, :region, :country, :year, :logo_url, :website, :created, :updated
-  attribute :contact, if: :can_read
-  attribute :email, if: :can_read
-  attribute :phone, if: :can_read
+  attributes :name, :year, :contact, :email, :logo_url, :is_active, :created, :updated
 
   has_many :clients
-  has_many :prefixes
-
-  def can_read
-    # `scope` is current ability
-    scope.can?(:read, object)
-  end
+  has_many :prefixes, join_table: "datacentre_prefixes"
 
   def id
-    object.uid.downcase
+    object.symbol.downcase
+  end
+
+  def is_active
+    object.is_active == "\u0001" ? true : false
   end
 
   def contact
@@ -24,9 +20,5 @@ class ProviderSerializer < ActiveModel::Serializer
 
   def email
     object.contact_email
-  end
-
-  def country
-    object.country_code
   end
 end

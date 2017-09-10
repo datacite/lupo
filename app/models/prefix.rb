@@ -2,13 +2,10 @@ class Prefix < ActiveRecord::Base
   self.table_name = "prefix"
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-  alias_attribute :uid, :prefix
 
   validates_presence_of :prefix
   validates_uniqueness_of :prefix
-
-  # validates_format_of :prefix, :with => /(10\.\d{4,5})\/.+\z/, :multiline => true
-  validates_numericality_of :version, if: :version?
+  validates_format_of :prefix, :with => /\A10\.d{4,5}\z/
 
   has_and_belongs_to_many :clients, join_table: "datacentre_prefixes", foreign_key: :prefixes, association_foreign_key: :datacentre, autosave: true
   has_and_belongs_to_many :providers, join_table: "allocator_prefixes", foreign_key: :prefixes, association_foreign_key: :allocator, autosave: true

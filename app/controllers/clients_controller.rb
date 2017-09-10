@@ -13,34 +13,21 @@ class ClientsController < ApplicationController
       collection = collection.query(params[:query])
     end
 
-    # cache providers for faster queries
-    if params["provider-id"].present?
-      provider = cached_provider_response(params["provider-id"].upcase)
-      collection = collection.where(allocator: provider.id)
-    end
+    collection = collection.joins(:provider).where('allocator.symbol = ?', params["provider-id"]) if params["provider-id"].present?
     collection = collection.where('YEAR(created) = ?', params[:year]) if params[:year].present?
 
     # calculate facet counts after filtering
-    if params["provider-id"].present?
-      providers = [{ id: params["provider-id"],
-                   title: provider.name,
-                   count: collection.where(allocator: provider.id).count }]
-    else
-      providers = collection.where.not(allocator: nil).group(:allocator).count
-      Rails.logger.info providers.inspect
-      providers = providers
-                  .sort { |a, b| b[1] <=> a[1] }
-                  .map do |i|
-                         provider = cached_providers.find { |m| m.id == i[0] }
-                         { id: provider.symbol.downcase, title: provider.name, count: i[1] }
-                       end
-    end
+
+    providers = collection.joins(:provider).select('allocator.symbol, allocator.name, count(allocator.id) as count').order('count DESC').group('datacentre.allocator')
+    # workaround, as selecting allocator.symbol as id doesn't work
+    providers = providers.map { |p| { id: p.symbol, title: p.name, count: p.count } }
+
     if params[:year].present?
       years = [{ id: params[:year],
                  title: params[:year],
                  count: collection.where('YEAR(created) = ?', params[:year]).count }]
     else
-      years = collection.where.not(created: nil).order("YEAR(created) DESC").group("YEAR(created)").count
+      years = collection.where.not(created: nil).order("YEAR(datacentre.created) DESC").group("YEAR(datacentre.created)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 
@@ -67,22 +54,20 @@ class ClientsController < ApplicationController
 
   # POST /clients
   def create
-    unless [:type, :attributes].all? { |k| safe_params.key? k }
-      render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
-    else
-      @client = Client.new(safe_params.except(:type))
-      authorize! :create, @client
+    @client = Client.new(safe_params)
+    authorize! :create, @client
 
-      if @client.save
-        render jsonapi: @client, status: :created, location: @client
-      else
-        render jsonapi: serialize(@client.errors), status: :unprocessable_entity
-      end
+    if @client.save
+      render jsonapi: @client, status: :created, location: @client
+    else
+      Rails.logger.warn @client.errors.inspect
+      render jsonapi: serialize(@client.errors), status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /clients/1
   def update
+    Rails.logger.warn safe_params.inspect
     if @client.update_attributes(safe_params)
       render jsonapi: @client
     else
@@ -128,8 +113,8 @@ class ClientsController < ApplicationController
 
   def safe_params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:name, :contact, :email, :domains, :provider, :is_active],
-              keys: { contact: :contact_name, email: :contact_email }
+      params, only: [:id, :name, :contact, :email, :domains, :provider, :is_active, :deleted_at],
+              keys: { id: :symbol, contact: :contact_name, email: :contact_email, provider_id: :provider_symbol }
     )
   end
 end

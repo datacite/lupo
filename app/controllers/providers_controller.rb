@@ -1,7 +1,6 @@
 class ProvidersController < ApplicationController
   before_action :set_provider, only: [:show, :update, :destroy]
-  before_action :authenticate_user_from_token!
-  before_action :set_include
+  before_action :set_include, :authenticate_user_from_token!
   load_and_authorize_resource :except => [:index, :show]
 
   def index
@@ -72,6 +71,7 @@ class ProvidersController < ApplicationController
     if @provider.save
       render jsonapi: @provider, status: :created, location: @provider
     else
+      Rails.logger.info @provider.errors.inspect
       render jsonapi: serialize(@provider.errors), status: :unprocessable_entity
     end
   end
@@ -79,6 +79,7 @@ class ProvidersController < ApplicationController
   # PATCH/PUT /providers/1
   def update
     if @provider.update_attributes(safe_params)
+      Rails.logger.warn safe_params.inspect
       render jsonapi: @provider
     else
       Rails.logger.info @provider.errors.inspect
@@ -123,8 +124,8 @@ class ProvidersController < ApplicationController
 
   def safe_params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:name, :contact, :email, :country, :is_active],
-              keys: { contact: :contact_name, email: :contact_email, country: :country_code }
+      params, only: [:id, :name, :contact, :email, :country, :is_active],
+              keys: { id: :symbol, contact: :contact_name, email: :contact_email, country: :country_code }
     )
   end
 end

@@ -1,22 +1,17 @@
 class ClientSerializer < ActiveModel::Serializer
-  type 'clients'
   cache key: 'client'
 
-  attributes :name, :provider_id, :year, :created, :updated
-  attribute :domains, if: :can_read
-  attribute :contact, if: :can_read
-  attribute :email, if: :can_read
+  attributes :name, :year, :contact, :email, :domains, :is_active, :created, :updated
 
-  has_many :prefixes
+  has_many :prefixes, join_table: "datacentre_prefixes"
   belongs_to :provider
 
-  def can_read
-    # `scope` is current ability
-    scope.can?(:read, object)
+  def id
+    object.symbol.downcase
   end
 
-  def id
-    object.uid.downcase
+  def is_active
+    object.is_active == "\u0001" ? true : false
   end
 
   def contact
@@ -28,7 +23,7 @@ class ClientSerializer < ActiveModel::Serializer
   end
 
   def provider_id
-    object.provider_symbol.downcase
+    object.provider_symbol
   end
 
   # def domains
