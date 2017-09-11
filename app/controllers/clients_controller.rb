@@ -36,7 +36,10 @@ class ClientsController < ApplicationController
     page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
     total = collection.count
 
-    @clients = collection.order(:name).page(page[:number]).per(page[:size])
+    params[:sort] = "-created" unless %w(name -name created -created).include?(params[:sort])
+    params[:sort] = "#{params[:sort][1..-1]} DESC" if params[:sort][0] == "-"
+
+    @clients = collection.order(params[:sort]).page(page[:number]).per(page[:size])
 
     meta = { total: total,
              total_pages: @clients.total_pages,
