@@ -38,7 +38,6 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
 
 COPY vendor/docker/webapp.conf /etc/nginx/sites-enabled/webapp.conf
 COPY vendor/docker/00_app_env.conf /etc/nginx/conf.d/00_app_env.conf
-COPY vendor/docker/70_templates.sh /etc/my_init.d/70_templates.sh
 
 # Use Amazon NTP servers
 COPY vendor/docker/ntp.conf /etc/ntp.conf
@@ -76,7 +75,6 @@ RUN mkdir -p /home/app/.handle \
 # Run additional scripts during container startup (i.e. not at build time)
 RUN mkdir -p /etc/my_init.d
 COPY vendor/docker/70_templates.sh /etc/my_init.d/70_templates.sh
-COPY vendor/docker/nginx.conf.tmpl /etc/nginx/nginx.conf
 COPY vendor/docker/80_flush_cache.sh /etc/my_init.d/80_flush_cache.sh
 COPY vendor/docker/90_migrate.sh /etc/my_init.d/90_migrate.sh
 
