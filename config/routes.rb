@@ -7,8 +7,10 @@ Rails.application.routes.draw do
   resources :index, path: '/', only: [:index]
   resources :status, only: [:index]
 
-  resources :clients do
+  resources :clients, constraints: { :id => /.+?(?=\/)/} do
+    member do
       get :getpassword
+    end
   end
 
   resources :clients, constraints: { :id => /.+/ }

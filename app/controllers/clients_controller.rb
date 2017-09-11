@@ -111,7 +111,7 @@ class ClientsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_client
-    params[:id] = params[:id][/.+?(?=\/)/]
+    # params[:id] = params[:id][/.+?(?=\/)/]
     @client = Client.where(symbol: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @client.present?
   end
