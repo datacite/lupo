@@ -95,7 +95,7 @@ class ClientsController < ApplicationController
   def getpassword
     phrase = Password.new(current_user, @client)
     response.headers['X-Consumer-Role'] = current_user && current_user.role_id || 'anonymous'
-    render json: { password: phrase.string }.to_json
+    render jsonapi: { password: phrase.string }, each_serializer: PasswordSerializer
   end
 
   protected

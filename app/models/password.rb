@@ -1,6 +1,6 @@
 require 'pwqgen'
 
-class Password
+class Password < Base
   include Authenticable
   attr_reader :string
 
