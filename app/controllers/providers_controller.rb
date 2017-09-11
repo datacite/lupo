@@ -102,11 +102,7 @@ class ProvidersController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_provider
-<<<<<<< HEAD
-    @provider = Provider.where(symbol: params[:provider_id]).first
-=======
     @provider = Provider.unscoped.where(symbol: params[:id]).first
->>>>>>> d4829faf62d0218740c95cfb3c626b4610691deb
     fail ActiveRecord::RecordNotFound unless @provider.present?
   end
 
