@@ -19,7 +19,9 @@ Rails.application.routes.draw do
 
 
   resources :providers do
+    member do
       get :getpassword
+    end
   end
   resources :providers, constraints: { :id => /.+/ }
 
