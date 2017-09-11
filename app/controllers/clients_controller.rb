@@ -18,7 +18,7 @@ class ClientsController < ApplicationController
 
     # calculate facet counts after filtering
 
-    providers = collection.joins(:provider).select('allocator.symbol, allocator.name, count(allocator.id) as count').order('count DESC').group('datacentre.allocator')
+    providers = collection.joins(:provider).select('allocator.symbol, allocator.name, count(allocator.id) as count').order('count DESC').group('allocator.id')
     # workaround, as selecting allocator.symbol as id doesn't work
     providers = providers.map { |p| { id: p.symbol, title: p.name, count: p.count } }
 
@@ -121,7 +121,7 @@ class ClientsController < ApplicationController
   def safe_params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params, only: [:id, :name, :contact, :email, :domains, :provider, :is_active, :deleted_at],
-              keys: { id: :symbol, contact: :contact_name, email: :contact_email, provider_id: :provider_symbol }
+              keys: { id: :symbol, contact: :contact_name, email: :contact_email }
     )
   end
 end

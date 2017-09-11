@@ -46,10 +46,13 @@ class PrefixesController < ApplicationController
       providers = collection.includes(:providers).where.not('allocator.id' => nil).group('allocator.id').count
       providers = providers
                   .sort { |a, b| b[1] <=> a[1] }
-                  .map do |i|
-                         provider = cached_providers.find { |m| m.id == i[0] }
-                         { id: provider.symbol.downcase, title: provider.name, count: i[1] }
-                       end
+                  .reduce([]) do |sum, i|
+                                if provider = cached_providers.find { |m| m.id == i[0] }
+                                  sum << { id: provider.symbol.downcase, title: provider.name, count: i[1] }
+                                end
+
+                                sum
+                              end
     end
 
     # pagination
@@ -76,30 +79,24 @@ class PrefixesController < ApplicationController
 
   # POST /prefixes
   def create
-    unless [:type, :attributes].all? { |k| safe_params.key? k }
-      render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
-    else
-      @prefix = Prefix.new(safe_params.except(:type))
-      authorize! :create, @prefix
+    @prefix = Prefix.new(safe_params)
+    authorize! :create, @prefix
 
-      if @prefix.save
-        render jsonapi: @prefix, status: :created, location: @prefix
-      else
-        render jsonapi: serialize(@prefix.errors), status: :unprocessable_entity
-      end
+    if @prefix.save
+      render jsonapi: @prefix, status: :created, location: @prefix
+    else
+      Rails.logger.warn @provider.errors.inspect
+      render jsonapi: serialize(@prefix.errors), status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /prefixes/1
   def update
-    unless [:type, :attributes].all? { |k| safe_params.key? k }
-      render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
+    if @prefix.update_attributes(safe_params)
+      render jsonapi: @prefix
     else
-      if @prefix.update_attributes(safe_params.except(:type))
-        render jsonapi: @prefix
-      else
-        render json: serialize(@prefix.errors), status: :unprocessable_entity
-      end
+      Rails.logger.warn @prefix.errors.inspect
+      render json: serialize(@prefix.errors), status: :unprocessable_entity
     end
   end
 
@@ -133,15 +130,9 @@ class PrefixesController < ApplicationController
   end
 
   def safe_params
-    attributes = [:uid, :prefix, :version]
-    params.require(:data).permit(:id, :type, attributes: attributes)
+    ActiveModelSerializers::Deserialization.jsonapi_parse!(
+      params, only: [:id, :clients, :providers, :created],
+              keys: { id: :prefix }
+    )
   end
-  # Only allow a trusted parameter "white list" through.
-  # def prefix_params
-  #   params.require(:data)
-  #     .require(:attributes)
-  #     .permit(:created, :prefix, :version)
-  #   pf_params = ActiveModelSerializers::Deserialization.jsonapi_parse(params).transform_keys!{ |key| key.to_s.snakecase }
-  #   pf_params
-  # end
 end

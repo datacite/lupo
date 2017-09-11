@@ -12,19 +12,9 @@ class ProvidersController < ApplicationController
       collection = collection.query(params[:query])
     end
 
-    # collection = collection.where(provider_type: params['provider-type']) if params['provider-type'].present?
     collection = collection.where(region: params[:region]) if params[:region].present?
     collection = collection.where(year: params[:year]) if params[:year].present?
 
-    # calculate facet counts after filtering
-    # if params["provider-type"].present?
-    #   provider_types = [{ id: params["provider-type"],
-    #                     title: params["provider-type"].humanize,
-    #                     count: collection.where(provider_type: params["provider-type"]).count }]
-    # else
-    #   provider_types = collection.where.not(provider_type: nil).group(:provider_type).count
-    #   provider_types = provider_types.map { |k,v| { id: k, title: k.humanize, count: v } }
-    # end
     if params[:region].present?
       regions = [{ id: params[:region],
                    title: REGIONS[params[:region].upcase],
@@ -52,7 +42,6 @@ class ProvidersController < ApplicationController
     meta = { total: total,
              total_pages: @providers.total_pages,
              page: page[:number].to_i,
-            #  provider_types: provider_types,
              regions: regions,
              years: years }
 
@@ -71,7 +60,7 @@ class ProvidersController < ApplicationController
     if @provider.save
       render jsonapi: @provider, status: :created, location: @provider
     else
-      Rails.logger.info @provider.errors.inspect
+      Rails.logger.warn @provider.errors.inspect
       render jsonapi: serialize(@provider.errors), status: :unprocessable_entity
     end
   end
@@ -79,10 +68,9 @@ class ProvidersController < ApplicationController
   # PATCH/PUT /providers/1
   def update
     if @provider.update_attributes(safe_params)
-      Rails.logger.warn safe_params.inspect
       render jsonapi: @provider
     else
-      Rails.logger.info @provider.errors.inspect
+      Rails.logger.warn @provider.errors.inspect
       render jsonapi: serialize(@provider.errors), status: :unprocessable_entity
     end
   end
@@ -114,7 +102,11 @@ class ProvidersController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_provider
+<<<<<<< HEAD
     @provider = Provider.where(symbol: params[:provider_id]).first
+=======
+    @provider = Provider.unscoped.where(symbol: params[:id]).first
+>>>>>>> d4829faf62d0218740c95cfb3c626b4610691deb
     fail ActiveRecord::RecordNotFound unless @provider.present?
   end
 
