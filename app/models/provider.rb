@@ -5,7 +5,6 @@ class Provider < ActiveRecord::Base
   # uid is used as unique identifier, mapped to id in serializer
 
   self.table_name = "allocator"
-  # attribute :provider_type
   alias_attribute :uid, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
@@ -26,8 +25,7 @@ class Provider < ActiveRecord::Base
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   accepts_nested_attributes_for :prefixes
 
-  default_scope { where("allocator.id > 100").where(deleted_at: nil) }
-
+  default_scope { where("allocator.role_name = 'ROLE_ALLOCATOR'").where(deleted_at: nil) }
   scope :query, ->(query) { where("symbol like ? OR name like ?", "%#{query}%", "%#{query}%") }
 
   def year
