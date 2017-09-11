@@ -26,7 +26,7 @@ class Provider < ActiveRecord::Base
   accepts_nested_attributes_for :prefixes
 
   default_scope { where("allocator.role_name = 'ROLE_ALLOCATOR'").where(deleted_at: nil) }
-  scope :query, ->(query) { where("symbol like ? OR name like ?", "%#{query}%", "%#{query}%") }
+  scope :query, ->(query) { where("allocator.symbol like ? OR allocator.name like ?", "%#{query}%", "%#{query}%") }
 
   def year
     created.year
