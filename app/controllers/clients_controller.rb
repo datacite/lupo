@@ -1,5 +1,5 @@
 class ClientsController < ApplicationController
-  before_action :set_client, only: [:show, :update, :destroy]
+  before_action :set_client, only: [:show, :update, :destroy, :getpassword]
   before_action :authenticate_user_from_token!
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show]
@@ -92,6 +92,12 @@ class ClientsController < ApplicationController
     end
   end
 
+  def getpassword
+    phrase = Password.new(current_user, @client)
+    response.headers['X-Consumer-Role'] = current_user && current_user.role_id || 'anonymous'
+    render json: { password: phrase.string }.to_json
+  end
+
   protected
 
   def set_include
@@ -105,6 +111,7 @@ class ClientsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_client
+    params[:id] = params[:id][/.+?(?=\/)/]
     @client = Client.where(symbol: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @client.present?
   end

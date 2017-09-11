@@ -1,5 +1,7 @@
-class Handle < Base
-  attr_reader :id, :prefix, :registration_agency, :clients, :providers, :created, :updated_at
+require 'handle_rest'
+
+class Handle
+  attr_reader :id, :prefix, :registration_agency, :clients, :providers, :created, :updated_at, :url
 
   RA_HANDLES = {
     "10.SERV/CROSSREF" => "Crossref",
@@ -17,10 +19,24 @@ class Handle < Base
   }
 
   def initialize(attributes, options={})
-    @id = attributes.fetch("id").underscore.dasherize
+    @id = attributes.fetch(:id).underscore.dasherize
     @prefix = @id
     @registration_agency = attributes.fetch("registration_agency", nil)
     @updated_at = attributes.fetch("updated_at", nil)
+
+    @service = HandleService.new(url: ENV['HS_REST_URL'],
+                            user: ENV['HS_USER'],
+                            password: ENV['HS_SECKEY']
+                            )
+
+    @url = attributes.fetch(:url, nil)
+
+    @handle = Handle.new(@id, url: @url)
+  end
+
+  def mint
+    @service.create(@handle)
+    return true if @service.get(@id)
   end
 
   def self.get_query_url(options={})

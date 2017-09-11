@@ -33,6 +33,11 @@ class User
     ["staff_admin", "staff_user"].include?(role_id)
   end
 
+  # Helper method to check for admin or staff user
+  def is_admin_or_staff?
+    ["staff_admin", "staff_user"].include?(role_id)
+  end
+
   # Helper method to check for admin user
   def allocator
     Provider.find_by(symbol: @provider_id).id if @provider_id
@@ -49,10 +54,10 @@ class User
     payload = {
       uid: "Faker::Code.unique.asin",
       name: "Faker::Name.name",
-      email: "sasasasa",
-      provider_id: "TIB",
-      client_id: "TIB.PANGAEA",
-      role_id: "client_admin",
+      email: "sasa@sasa",
+      provider_id: "",
+      client_id: "",
+      role_id: "staff_admin",
       iat: Time.now.to_i,
       exp: Time.now.to_i + 50 * 24 * 3600
     }.compact

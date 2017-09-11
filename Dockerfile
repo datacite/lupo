@@ -67,6 +67,12 @@ RUN gem update --system && \
 # RUN mkdir /etc/service/sidekiq
 # ADD vendor/docker/sidekiq.sh /etc/service/sidekiq/run
 
+# Configure handle client
+RUN mkdir -p /home/app/.handle \
+  && cp vendor/docker/siteinfo.json /home/app/.handle/resolver_site \
+  && sed -i 's/0.0.0.0/127.0.0.1/g' /home/app/.handle/resolver_site \
+  && echo "*" > /home/app/.handle/local_nas
+
 # Run additional scripts during container startup (i.e. not at build time)
 RUN mkdir -p /etc/my_init.d
 COPY vendor/docker/70_templates.sh /etc/my_init.d/70_templates.sh

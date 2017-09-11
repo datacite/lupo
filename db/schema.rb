@@ -33,7 +33,6 @@ ActiveRecord::Schema.define(version: 20170908050141) do
     t.string "country_code"
     t.string "website"
     t.string "phone"
-    t.string "provider_type"
     t.datetime "deleted_at"
     t.index ["symbol"], name: "symbol", unique: true
   end
@@ -98,7 +97,6 @@ ActiveRecord::Schema.define(version: 20170908050141) do
     t.string "url", null: false
     t.integer "version"
     t.bigint "dataset", null: false
-    t.index ["dataset", "updated"], name: "dataset_updated"
     t.index ["dataset"], name: "FK62F6FE44D3D6B1B"
   end
 
@@ -110,8 +108,6 @@ ActiveRecord::Schema.define(version: 20170908050141) do
     t.bigint "dataset", null: false
     t.binary "is_converted_by_mds", limit: 1
     t.string "namespace"
-    t.string "url"
-    t.index ["dataset", "metadata_version"], name: "dataset_version"
     t.index ["dataset"], name: "FKE52D7B2F4D3D6B1B"
   end
 

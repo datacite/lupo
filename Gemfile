@@ -30,6 +30,8 @@ gem 'elasticsearch-model'
 gem 'elasticsearch-rails'
 gem 'sidekiq', '~> 5.0', '>= 5.0.4'
 gem 'bergamasco', '~> 0.3.10'
+gem 'handle_rest', :github => 'mlibrary/handle_rest', :branch => 'master'
+gem 'pwqgen'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5', '>= 3.5.2'

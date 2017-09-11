@@ -1,5 +1,5 @@
 class ProvidersController < ApplicationController
-  before_action :set_provider, only: [:show, :update, :destroy]
+  before_action :set_provider, only: [:show, :update, :destroy, :getpassword]
   before_action :set_include, :authenticate_user_from_token!
   load_and_authorize_resource :except => [:index, :show]
 
@@ -103,11 +103,18 @@ class ProvidersController < ApplicationController
     end
   end
 
+  def getpassword
+    phrase = Password.new(current_user, @provider)
+    response.headers['X-Consumer-Role'] = current_user && current_user.role_id || 'anonymous'
+    render json: { password: phrase.string }.to_json
+  end
+
+
   protected
 
   # Use callbacks to share common setup or constraints between actions.
   def set_provider
-    @provider = Provider.where(symbol: params[:id]).first
+    @provider = Provider.where(symbol: params[:provider_id]).first
     fail ActiveRecord::RecordNotFound unless @provider.present?
   end
 
