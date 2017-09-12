@@ -8,6 +8,12 @@ module Cacheable
       end
     end
 
+    def cached_prefix_response(prefix, options={})
+      Rails.cache.fetch("prefix_response/#{prefix}", expires_in: 7.days) do
+        Prefix.where(prefix: prefix).select(:id, :prefix, :created).first
+      end
+    end
+
     def cached_providers
       Rails.cache.fetch("providers", expires_in: 1.day) do
         Provider.all.select(:id, :symbol, :name, :created)

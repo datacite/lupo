@@ -13,6 +13,12 @@ class ClientsController < ApplicationController
       collection = collection.query(params[:query])
     end
 
+    # cache prefixes for faster queries
+    if params["prefix"].present?
+      prefix = cached_prefix_response(params["prefix"])
+      collection = collection.includes(:prefixes).where('prefix.id' => prefix.id)
+    end
+
     collection = collection.joins(:provider).where('allocator.symbol = ?', params["provider-id"]) if params["provider-id"].present?
     collection = collection.where('YEAR(datacentre.created) = ?', params[:year]) if params[:year].present?
 
@@ -27,7 +33,7 @@ class ClientsController < ApplicationController
                  title: params[:year],
                  count: collection.where('YEAR(datacentre.created) = ?', params[:year]).count }]
     else
-      years = collection.where.not(created: nil).order("YEAR(datacentre.created) DESC").group("YEAR(datacentre.created)").count
+      years = collection.where.not('datacentre.created' => nil).order("YEAR(datacentre.created) DESC").group("YEAR(datacentre.created)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 
