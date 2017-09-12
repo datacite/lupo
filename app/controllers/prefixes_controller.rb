@@ -6,25 +6,23 @@ class PrefixesController < ApplicationController
 
   # GET /prefixes
   def index
-    collection = Prefix
+    # support nested routes
+    params["provider-id"] = params[:provider_id]
+    params["client-id"] = params[:client_id]
 
     if params[:id].present?
       collection = collection.where(prefix: params[:id])
-    elsif params[:query].present?
-      collection = collection.query(params[:query])
+    elsif params["provider-id"].present?
+      provider = Provider.where('allocator.symbol = ?', params["provider-id"]).first
+      collection = provider.present? ? provider.prefixes : Prefix.none
+    elsif params["client-id"].present?
+      client = Client.where('datacentre.symbol = ?', params["client-id"]).first
+      collection = client.present? ? client.prefixes : Prefix.none
+    else
+      collection = Prefix
     end
 
-    # cache providers for faster queries
-    if params["provider-id"].present?
-      provider = cached_provider_response(params["provider-id"].upcase)
-      collection = collection.includes(:providers).where('allocator.id' => provider.id)
-    end
-
-    if params["client-id"].present?
-      client = cached_client_response(params["client-id"].upcase)
-      collection = collection.includes(:clients).where('datacentre.id' => client.id)
-    end
-
+    collection = collection.query(params[:query]) if params[:query].present?
     collection = collection.where('YEAR(prefix.created) = ?', params[:year]) if params[:year].present?
 
     if params[:year].present?

@@ -13,7 +13,9 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :clients, constraints: { :id => /.+/ }
+  resources :clients, constraints: { :id => /.+/ } do
+    resources :prefixes, constraints: { :id => /.+/ }, shallow: true
+  end
 
   resources :datasets, constraints: { :id => /.+/ }
   resources :dois, path: "/dois", constraints: { :id => /.+/ }
@@ -22,6 +24,8 @@ Rails.application.routes.draw do
 
   resources :providers do
     resources :clients, constraints: { :id => /.+/ }, shallow: true
+    resources :prefixes, constraints: { :id => /.+/ }, shallow: true
+
     member do
       get :getpassword
     end
