@@ -6,10 +6,8 @@ class ClientsController < ApplicationController
 
   def index
     # support nested routes
-    params["provider-id"] = params[:provider_id]
-
-    if params["provider-id"].present?
-      provider = Provider.where('allocator.symbol = ?', params["provider-id"]).first
+    if params[:provider_id].present?
+      provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
       collection = provider.present? ? provider.clients : Client.none
     else
       collection = Client
@@ -22,8 +20,8 @@ class ClientsController < ApplicationController
     end
 
     # cache prefixes for faster queries
-    if params["prefix"].present?
-      prefix = cached_prefix_response(params["prefix"])
+    if params[:prefix].present?
+      prefix = cached_prefix_response(params[:prefix])
       collection = collection.includes(:prefixes).where('prefix.id' => prefix.id)
     end
 
@@ -49,10 +47,14 @@ class ClientsController < ApplicationController
     page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
     total = collection.count
 
-    params[:sort] = "-created" unless %w(name -name created -created).include?(params[:sort])
-    params[:sort] = "#{params[:sort][1..-1]} DESC" if params[:sort][0] == "-"
+    order = case params[:sort]
+            when "name" then "datacentre.name"
+            when "-name" then "datacentre.name DESC"
+            when "created" then "datacentre.created"
+            else "datacentre.created DESC"
+            end
 
-    @clients = collection.order(params[:sort]).page(page[:number]).per(page[:size])
+    @clients = collection.order(order).page(page[:number]).per(page[:size])
 
     meta = { total: total,
              total_pages: @clients.total_pages,
