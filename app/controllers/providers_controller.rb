@@ -12,6 +12,17 @@ class ProvidersController < ApplicationController
       collection = collection.query(params[:query])
     end
 
+    # cache prefixes for faster queries
+    if params["prefix"].present?
+      prefix = cached_prefix_response(params["prefix"])
+      collection = collection.includes(:prefixes).where('prefix.id' => prefix.id)
+    end
+
+    if params["client-id"].present?
+      client = cached_client_response(params["client-id"].upcase)
+      collection = collection.includes(:clients).where('datacentre.id' => client.id)
+    end
+
     collection = collection.where(region: params[:region]) if params[:region].present?
     collection = collection.where("YEAR(allocator.created) = ?", params[:year]) if params[:year].present?
 
@@ -28,7 +39,7 @@ class ProvidersController < ApplicationController
                  title: params[:year],
                  count: collection.where("YEAR(allocator.created) = ?", params[:year]).count }]
     else
-      years = collection.where.not(created: nil).order("YEAR(allocator.created) DESC").group("YEAR(created)").count
+      years = collection.where.not(created: nil).order("YEAR(allocator.created) DESC").group("YEAR(allocator.created)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 
@@ -37,10 +48,14 @@ class ProvidersController < ApplicationController
     page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
     total = collection.count
 
-    params[:sort] = "-created" unless %w(name -name created -created).include?(params[:sort])
-    params[:sort] = "#{params[:sort][1..-1]} DESC" if params[:sort][0] == "-"
+    order = case params[:sort]
+            when "name" then "allocator.name"
+            when "-name" then "allocator.name DESC"
+            when "created" then "allocator.created"
+            else "allocator.created DESC"
+            end
 
-    @providers = collection.order(params[:sort]).page(page[:number]).per(page[:size])
+    @providers = collection.order(order).page(page[:number]).per(page[:size])
 
     meta = { total: total,
              total_pages: @providers.total_pages,
