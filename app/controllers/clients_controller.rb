@@ -5,7 +5,15 @@ class ClientsController < ApplicationController
   load_and_authorize_resource :except => [:index, :show]
 
   def index
-    collection = Client
+    # support nested routes
+    params["provider-id"] = params[:provider_id]
+
+    if params["provider-id"].present?
+      provider = Provider.where('allocator.symbol = ?', params["provider-id"]).first
+      collection = provider.present? ? provider.clients : Client.none
+    else
+      collection = Client
+    end
 
     if params[:id].present?
       collection = collection.where(symbol: params[:id])
@@ -19,7 +27,6 @@ class ClientsController < ApplicationController
       collection = collection.includes(:prefixes).where('prefix.id' => prefix.id)
     end
 
-    collection = collection.joins(:provider).where('allocator.symbol = ?', params["provider-id"]) if params["provider-id"].present?
     collection = collection.where('YEAR(datacentre.created) = ?', params[:year]) if params[:year].present?
 
     # calculate facet counts after filtering

@@ -21,7 +21,7 @@ Rails.application.routes.draw do
 
 
   resources :providers do
-    # resources :clients, constraints: { :id => /.+/ }, shallow: true
+    resources :clients, constraints: { :id => /.+/ }, shallow: true
     member do
       get :getpassword
     end
