@@ -94,21 +94,23 @@ class Doi < Base
         options[:query] = options[:query].to_s + " " + ids.join(" ")
         options[:qf] = "doi"
         options[:rows] = ids.length
-        options[:sort] = "registered"
+        options[:sort] = "-created"
         options[:mm] = 1
       end
 
       if options[:sort].present?
         sort = case options[:sort]
-               when "registered" then "minted"
+               when "created" then "minted"
+               when "-created" then "minted desc"
                when "published" then "publicationYear"
+               when "-published" then "publicationYear desc"
                when "updated" then "updated"
-               else "score"
+               when "-updated" then "updated desc"
+               else "score desc"
                end
       else
-        sort = options[:query].present? ? "score" : "minted"
+        sort = options[:query].present? ? "score desc" : "minted desc"
       end
-      order = options[:order] == "asc" ? "asc" : "desc"
 
       page = (options.dig(:page, :number) || 1).to_i
       per_page = (options.dig(:page, :size) || 25).to_i
@@ -146,7 +148,7 @@ class Doi < Base
                  'f.minted.facet.range.start' => '2004-01-01T00:00:00Z',
                  'f.minted.facet.range.end' => '2024-01-01T00:00:00Z',
                  'f.minted.facet.range.gap' => '+1YEAR',
-                 sort: "#{sort} #{order}",
+                 sort: sort,
                  defType: "edismax",
                  bq: "updated:[NOW/DAY-1YEAR TO NOW/DAY]",
                  mm: options[:mm],

@@ -37,7 +37,7 @@ class Client < ActiveRecord::Base
 
   default_scope { where(deleted_at: nil) }
 
-  scope :query, ->(query) { where("symbol like ? OR name like ?", "%#{query}%", "%#{query}%") }
+  scope :query, ->(query) { where("datacentre.symbol like ? OR datacentre.name like ?", "%#{query}%", "%#{query}%") }
 
   def year
     created_at.year if created_at.present?

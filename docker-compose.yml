@@ -39,7 +39,7 @@ services:
     image: osul/handle
     ports:
       - "2641:2641"
-      - "8000:8000"
+      - "8005:8000"
     networks:
       - public
 

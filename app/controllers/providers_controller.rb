@@ -13,7 +13,7 @@ class ProvidersController < ApplicationController
     end
 
     collection = collection.where(region: params[:region]) if params[:region].present?
-    collection = collection.where(year: params[:year]) if params[:year].present?
+    collection = collection.where("YEAR(allocator.created) = ?", params[:year]) if params[:year].present?
 
     if params[:region].present?
       regions = [{ id: params[:region],
@@ -26,9 +26,9 @@ class ProvidersController < ApplicationController
     if params[:year].present?
       years = [{ id: params[:year],
                  title: params[:year],
-                 count: collection.where(year: params[:year]).count }]
+                 count: collection.where("YEAR(allocator.created) = ?", params[:year]).count }]
     else
-      years = collection.where.not(created: nil).order("YEAR(created) DESC").group("YEAR(created)").count
+      years = collection.where.not(created: nil).order("YEAR(allocator.created) DESC").group("YEAR(created)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 
@@ -37,7 +37,10 @@ class ProvidersController < ApplicationController
     page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
     total = collection.count
 
-    @providers = collection.order(:name).page(page[:number]).per(page[:size])
+    params[:sort] = "-created" unless %w(name -name created -created).include?(params[:sort])
+    params[:sort] = "#{params[:sort][1..-1]} DESC" if params[:sort][0] == "-"
+
+    @providers = collection.order(params[:sort]).page(page[:number]).per(page[:size])
 
     meta = { total: total,
              total_pages: @providers.total_pages,

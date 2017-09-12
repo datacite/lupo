@@ -14,7 +14,7 @@ class ClientsController < ApplicationController
     end
 
     collection = collection.joins(:provider).where('allocator.symbol = ?', params["provider-id"]) if params["provider-id"].present?
-    collection = collection.where('YEAR(created) = ?', params[:year]) if params[:year].present?
+    collection = collection.where('YEAR(datacentre.created) = ?', params[:year]) if params[:year].present?
 
     # calculate facet counts after filtering
 
@@ -25,7 +25,7 @@ class ClientsController < ApplicationController
     if params[:year].present?
       years = [{ id: params[:year],
                  title: params[:year],
-                 count: collection.where('YEAR(created) = ?', params[:year]).count }]
+                 count: collection.where('YEAR(datacentre.created) = ?', params[:year]).count }]
     else
       years = collection.where.not(created: nil).order("YEAR(datacentre.created) DESC").group("YEAR(datacentre.created)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
@@ -36,7 +36,10 @@ class ClientsController < ApplicationController
     page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
     total = collection.count
 
-    @clients = collection.order(:name).page(page[:number]).per(page[:size])
+    params[:sort] = "-created" unless %w(name -name created -created).include?(params[:sort])
+    params[:sort] = "#{params[:sort][1..-1]} DESC" if params[:sort][0] == "-"
+
+    @clients = collection.order(params[:sort]).page(page[:number]).per(page[:size])
 
     meta = { total: total,
              total_pages: @clients.total_pages,
