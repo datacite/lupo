@@ -21,14 +21,12 @@ Rails.application.routes.draw do
 
 
   resources :providers do
+    # resources :clients, constraints: { :id => /.+/ }, shallow: true
     member do
       get :getpassword
     end
   end
   resources :providers, constraints: { :id => /.+/ }
-
-
-
 
   # rescue routing errors
   # match "*path", to: "index#routing_error", via: :all

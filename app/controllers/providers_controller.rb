@@ -39,7 +39,7 @@ class ProvidersController < ApplicationController
                  title: params[:year],
                  count: collection.where("YEAR(allocator.created) = ?", params[:year]).count }]
     else
-      years = collection.where.not('allocator.created' => nil).order("YEAR(allocator.created) DESC").group("YEAR(allocator.created)").count
+      years = collection.where.not(created: nil).order("YEAR(allocator.created) DESC").group("YEAR(allocator.created)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 

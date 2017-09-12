@@ -33,7 +33,7 @@ class ClientsController < ApplicationController
                  title: params[:year],
                  count: collection.where('YEAR(datacentre.created) = ?', params[:year]).count }]
     else
-      years = collection.where.not('datacentre.created' => nil).order("YEAR(datacentre.created) DESC").group("YEAR(datacentre.created)").count
+      years = collection.where.not(created: nil).order("YEAR(datacentre.created) DESC").group("YEAR(datacentre.created)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 
