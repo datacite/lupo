@@ -14,7 +14,7 @@ class ClientsController < ApplicationController
     end
 
     collection = collection.joins(:provider).where('allocator.symbol = ?', params["provider-id"]) if params["provider-id"].present?
-    collection = collection.where('YEAR(created) = ?', params[:year]) if params[:year].present?
+    collection = collection.where('YEAR(datacentre.created) = ?', params[:year]) if params[:year].present?
 
     # calculate facet counts after filtering
 
@@ -25,7 +25,7 @@ class ClientsController < ApplicationController
     if params[:year].present?
       years = [{ id: params[:year],
                  title: params[:year],
-                 count: collection.where('YEAR(created) = ?', params[:year]).count }]
+                 count: collection.where('YEAR(datacentre.created) = ?', params[:year]).count }]
     else
       years = collection.where.not(created: nil).order("YEAR(datacentre.created) DESC").group("YEAR(datacentre.created)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
