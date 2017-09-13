@@ -116,23 +116,23 @@ class Doi < Base
       per_page = (options.dig(:page, :size) || 25).to_i
       offset = (page - 1) * per_page
 
-      created_date = options['from-created-date'].present? || options['until-created-date'].present?
-      created_date = get_solr_date_range(options['from-created-date'], options['until-created-date']) if created_date
+      created_date = options[:from_created_date].present? || options[:until_created_date].present?
+      created_date = get_solr_date_range(options[:from_created_date], options[:until_created_date]) if created_date
 
-      update_date = options["from-update-date"].present? || options["until-update-date"].present?
-      update_date = get_solr_date_range(options['from-update-date'], options['until-update-date']) if update_date
+      update_date = options[:from_update_date].present? || options[:until_update_date].present?
+      update_date = get_solr_date_range(options[:from_update_date], options[:until_update_date]) if update_date
       registered = get_solr_date_range(options[:registered], options[:registered]) if options[:registered].present?
 
       fq = %w(has_metadata:true is_active:true)
-      fq << "resourceTypeGeneral:#{options['resource-type-id'].underscore.camelize}" if options['resource-type-id'].present?
-      fq << "datacentre_symbol:#{options['client-id'].upcase}" if options['client-id'].present?
-      fq << "allocator_symbol:#{options['provider-id'].upcase}" if options['provider-id'].present?
-      fq << "nameIdentifier:ORCID\\:#{options['person-id']}" if options['person-id'].present?
+      fq << "resourceTypeGeneral:#{options[:resource_type_id].underscore.camelize}" if options[:resource_type_id].present?
+      fq << "datacentre_symbol:#{options[:client_id].upcase}" if options[:client_id].present?
+      fq << "allocator_symbol:#{options[:provider_id].upcase}" if options[:provider_id].present?
+      fq << "nameIdentifier:ORCID\\:#{options[:person_id]}" if options[:person_id].present?
       fq << "minted:#{created_date}" if created_date
       fq << "updated:#{update_date}" if update_date
       fq << "minted:#{registered}" if registered
       fq << "publicationYear:#{options[:year]}" if options[:year].present?
-      fq << "schema_version:#{options['schema-version']}" if options['schema-version'].present?
+      fq << "schema_version:#{options[:schema_version]}" if options[:schema_version].present?
 
       params = { q: options.fetch(:query, nil).presence || "*:*",
                  start: offset,
@@ -160,7 +160,7 @@ class Doi < Base
 
   def self.get_data(options={})
     # sometimes don't query DataCite MDS
-    return {} if (options["client-id"].present? && options["client-id"].exclude?("."))
+    return {} if (options[:client_id].present? && options[:client_id].exclude?("."))
 
     query_url = get_query_url(options)
     Maremma.get(query_url, options)
@@ -193,7 +193,7 @@ class Doi < Base
           providers: cached_providers),
         meta: meta }
     else
-      if options["doi-id"].present?
+      if options[:doi_id].present?
         return { data: [], meta: [] } if result.blank?
 
         items = result.fetch("data", {}).fetch('response', {}).fetch('docs', [])
@@ -205,7 +205,7 @@ class Doi < Base
                                       .map { |i| i.split(':', 3).last.strip.upcase }
         return { data: [], meta: [] } if related_doi_identifiers.blank?
 
-        options = options.except("doi-id")
+        options = options.except(:doi_id)
         query_url = get_query_url(options.merge(ids: related_doi_identifiers.join(",")))
         result = Maremma.get(query_url, options)
       end
@@ -266,8 +266,8 @@ class Doi < Base
                             .sort { |a, b| b.first <=> a.first }
                             .map { |i| { id: i[0], title: "Schema #{i[0]}", count: i[1] } }
 
-    if options["client-id"].present? && clients.empty?
-      clients = { options["client-id"] => 0 }
+    if options[:client_id].present? && clients.empty?
+      clients = { options[:client_id] => 0 }
     end
 
     { "resource-types" => resource_types,
