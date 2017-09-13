@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   resources :clients, constraints: { :id => /.+?(?=\/)/} do
     member do
-      get :getpassword
+      post :getpassword
     end
   end
 
@@ -27,7 +27,7 @@ Rails.application.routes.draw do
     resources :prefixes, constraints: { :id => /.+/ }, shallow: true
 
     member do
-      get :getpassword
+      post :getpassword
     end
   end
   resources :providers, constraints: { :id => /.+/ }
