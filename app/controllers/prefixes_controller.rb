@@ -7,16 +7,13 @@ class PrefixesController < ApplicationController
   # GET /prefixes
   def index
     # support nested routes
-    params["provider-id"] = params[:provider_id]
-    params["client-id"] = params[:client_id]
-
     if params[:id].present?
       collection = collection.where(prefix: params[:id])
-    elsif params["provider-id"].present?
-      provider = Provider.where('allocator.symbol = ?', params["provider-id"]).first
+    elsif params[:provider_id].present?
+      provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
       collection = provider.present? ? provider.prefixes : Prefix.none
-    elsif params["client-id"].present?
-      client = Client.where('datacentre.symbol = ?', params["client-id"]).first
+    elsif params[:client_id].present?
+      client = Client.where('datacentre.symbol = ?', params[:client_id]).first
       collection = client.present? ? client.prefixes : Prefix.none
     else
       collection = Prefix
@@ -36,8 +33,8 @@ class PrefixesController < ApplicationController
 
     # calculate facet counts after filtering
     # no faceting by client
-    if params["provider-id"].present?
-      providers = [{ id: params["provider-id"],
+    if params[:provider_id].present?
+      providers = [{ id: params[:provider_id],
                    title: provider.name,
                    count: collection.includes(:providers).where('allocator.id' => provider.id).count }]
     else

@@ -13,13 +13,13 @@ class ProvidersController < ApplicationController
     end
 
     # cache prefixes for faster queries
-    if params["prefix"].present?
-      prefix = cached_prefix_response(params["prefix"])
+    if params[:prefix].present?
+      prefix = cached_prefix_response(params[:prefix])
       collection = collection.includes(:prefixes).where('prefix.id' => prefix.id)
     end
 
-    if params["client-id"].present?
-      client = cached_client_response(params["client-id"].upcase)
+    if params[:client_id].present?
+      client = cached_client_response(params[:client_id].upcase)
       collection = collection.includes(:clients).where('datacentre.id' => client.id)
     end
 

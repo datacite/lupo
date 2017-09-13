@@ -12,7 +12,7 @@ class ApplicationController < ActionController::API
   # pass ability into serializer
   serialization_scope :current_ability
 
-  before_action :default_format_json
+  before_action :default_format_json, :transform_params
   after_action :set_jsonp_format, :set_consumer_header
 
   # from https://github.com/spree/spree/blob/master/api/app/controllers/spree/api/base_controller.rb
@@ -33,6 +33,12 @@ class ApplicationController < ActionController::API
 
   def default_format_json
     request.format = :json if request.format.html?
+  end
+
+  #convert parameters with hyphen to parameters with underscore.
+  # https://stackoverflow.com/questions/35812277/fields-parameters-with-hyphen-in-ruby-on-rails
+  def transform_params
+    params.transform_keys! { |key| key.tr('-', '_') }
   end
 
   def authenticate_user_from_token!
