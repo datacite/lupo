@@ -76,7 +76,7 @@ class ClientsController < ApplicationController
     authorize! :create, @client
 
     if @client.save
-      render jsonapi: @client, status: :created, location: @client
+      render jsonapi: @client, status: :created
     else
       Rails.logger.warn @client.errors.inspect
       render jsonapi: serialize(@client.errors), status: :unprocessable_entity
@@ -137,6 +137,7 @@ class ClientsController < ApplicationController
   private
 
   def safe_params
+    Rails.logger.warn params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params, only: [:id, :name, :contact, :email, :domains, :provider, :is_active, :deleted_at],
               keys: { id: :symbol, contact: :contact_name, email: :contact_email }
