@@ -17,6 +17,7 @@ class Client < ActiveRecord::Base
   validates_numericality_of :doi_quota_allowed, :doi_quota_used
   validates_numericality_of :version, if: :version?
   validates_inclusion_of :role_name, :in => %w( ROLE_DATACENTRE ), :message => "Role %s is not included in the list"
+  validate :check_id
 
   belongs_to :provider, foreign_key: :allocator
   has_many :datasets, foreign_key: :datacentre
@@ -46,6 +47,10 @@ class Client < ActiveRecord::Base
     unless doi_quota_allowed.to_i > 0
       errors.add(:doi_quota, "You have excceded your DOI quota. You cannot mint DOIs anymore")
     end
+  end
+
+  def check_id
+    errors.add(:symbol, "You ID must include the name of you provider.") if self.symbol.split(".")[0].downcase != self.provider.symbol.downcase
   end
 
   private
