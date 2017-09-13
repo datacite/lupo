@@ -1,3 +1,11 @@
+GIT
+  remote: git://github.com/mlibrary/handle_rest.git
+  revision: 72b4eb6f685a52b81e383a6a157cd200e2140020
+  branch: master
+  specs:
+    handle_rest (0.0.1)
+      faraday
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -99,6 +107,7 @@ GEM
       xpath (~> 2.0)
     case_transform (0.2)
       activesupport
+    choice (0.2.0)
     codeclimate-test-reporter (1.0.8)
       simplecov (<= 0.13)
     coderay (1.1.2)
@@ -167,6 +176,7 @@ GEM
       concurrent-ruby (~> 1.0)
     hashie (3.5.6)
     hetchy (1.0.0)
+    highline (1.7.8)
     htmlentities (4.3.4)
     i18n (0.8.6)
     i18n_data (0.8.0)
@@ -253,6 +263,9 @@ GEM
       nokogiri (>= 1.6.1, < 1.8)
       public_suffix (>= 2.0.0, < 2.1)
     public_suffix (2.0.5)
+    pwqgen (2.0.4)
+      highline (~> 1)
+      sysrandom (~> 1)
     rack (2.0.3)
     rack-protection (2.0.0)
       rack
@@ -273,6 +286,11 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
+    rails-erd (1.5.2)
+      activerecord (>= 3.2)
+      activesupport (>= 3.2)
+      choice (~> 0.2.0)
+      ruby-graphviz (~> 1.2)
     rails-html-sanitizer (1.0.3)
       loofah (~> 2.0)
     railties (5.1.3)
@@ -325,6 +343,7 @@ GEM
       rspec-mocks (~> 3.6.0)
       rspec-support (~> 3.6.0)
     rspec-support (3.6.0)
+    ruby-graphviz (1.2.3)
     ruby_dep (1.5.0)
     safe_yaml (1.0.4)
     shoulda-matchers (3.1.2)
@@ -357,6 +376,7 @@ GEM
       sprockets (>= 3.0.0)
     sxp (1.0.0)
       rdf (~> 2.0)
+    sysrandom (1.0.5)
     temple (0.8.0)
     thor (0.20.0)
     thread_safe (0.3.6)
@@ -404,6 +424,7 @@ DEPENDENCIES
   factory_girl_rails (~> 4.0)
   faker
   gender_detector (~> 0.1.2)
+  handle_rest!
   iso8601 (~> 0.9.0)
   json (~> 1.8, >= 1.8.5)
   jwt
@@ -416,7 +437,9 @@ DEPENDENCIES
   mysql2
   nokogiri (~> 1.6, >= 1.6.8)
   oj (~> 2.18, >= 2.18.1)
+  pwqgen
   rails (~> 5.1.1)
+  rails-erd
   rspec-rails (~> 3.5, >= 3.5.2)
   shoulda-matchers (~> 3.1)
   sidekiq (~> 5.0, >= 5.0.4)
