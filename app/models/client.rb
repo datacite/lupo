@@ -50,7 +50,7 @@ class Client < ActiveRecord::Base
   end
 
   def check_id
-    errors.add(:symbol, "You ID must include the name of you provider.") if self.symbol.split(".")[0].downcase != self.provider.symbol.downcase
+    errors.add(:id, ", Your Client ID must include the name of your provider. Separated by a dot '.' ") if self.symbol.split(".")[0].downcase != self.provider.symbol.downcase
   end
 
   private
