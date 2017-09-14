@@ -10,8 +10,12 @@ class Prefix < ActiveRecord::Base
   validates_uniqueness_of :prefix
   validates_format_of :prefix, :with => /\A10\.\d{4,5}\z/
 
-  has_and_belongs_to_many :clients, join_table: "datacentre_prefixes", foreign_key: :prefixes, association_foreign_key: :datacentre, autosave: true
-  has_and_belongs_to_many :providers, join_table: "allocator_prefixes", foreign_key: :prefixes, association_foreign_key: :allocator, autosave: true
+  has_many :client_prefixes, foreign_key: :prefixes
+  has_many :clients, through: :client_prefixes
+  has_many :provider_prefixes, foreign_key: :prefixes
+  has_many :providers, through: :provider_prefixes
+  #has_and_belongs_to_many :clients, join_table: "datacentre_prefixes", foreign_key: :prefixes, association_foreign_key: :datacentre, autosave: true
+  #has_and_belongs_to_many :providers, join_table: "allocator_prefixes", foreign_key: :prefixes, association_foreign_key: :allocator, autosave: true
 
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }

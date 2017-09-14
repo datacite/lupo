@@ -21,7 +21,9 @@ class Client < ActiveRecord::Base
 
   belongs_to :provider, foreign_key: :allocator
   has_many :datasets, foreign_key: :datacentre
-  has_and_belongs_to_many :prefixes, class_name: 'Prefix', join_table: "datacentre_prefixes", foreign_key: :datacentre, association_foreign_key: :prefixes
+  has_many :client_prefixes, foreign_key: :datacentre
+  has_many :prefixes, through: :client_prefixes
+  #has_and_belongs_to_many :prefixes, class_name: 'Prefix', join_table: "datacentre_prefixes", foreign_key: :datacentre, association_foreign_key: :prefixes
 
   before_validation :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }

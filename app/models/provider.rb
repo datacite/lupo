@@ -18,7 +18,9 @@ class Provider < ActiveRecord::Base
   validates_inclusion_of :role_name, :in => %w( ROLE_ALLOCATOR ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list", if: :role_name?
 
   has_many :clients, foreign_key: :allocator
-  has_and_belongs_to_many :prefixes, class_name: 'Prefix', join_table: "allocator_prefixes", foreign_key: :allocator, association_foreign_key: :prefixes
+  has_many :provider_prefixes, foreign_key: :allocator
+  has_many :prefixes, through: :provider_prefixes
+  #has_and_belongs_to_many :prefixes, class_name: 'Prefix', join_table: "allocator_prefixes", foreign_key: :allocator, association_foreign_key: :prefixes
 
   before_validation :set_region, :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }

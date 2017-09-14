@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170908050141) do
+ActiveRecord::Schema.define(version: 20170914055227) do
 
   create_table "allocator", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "contact_email", null: false
@@ -33,13 +33,16 @@ ActiveRecord::Schema.define(version: 20170908050141) do
     t.string "country_code"
     t.string "website"
     t.string "phone"
+    t.string "provider_type"
     t.datetime "deleted_at"
     t.index ["symbol"], name: "symbol", unique: true
   end
 
-  create_table "allocator_prefixes", primary_key: ["allocator", "prefixes"], force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "allocator_prefixes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "allocator", null: false
     t.bigint "prefixes", null: false
+    t.datetime "created"
+    t.datetime "updated"
     t.index ["allocator"], name: "FKE7FBD67446EBD781"
     t.index ["prefixes"], name: "FKE7FBD674AF86A1C7"
   end
@@ -66,9 +69,11 @@ ActiveRecord::Schema.define(version: 20170908050141) do
     t.index ["symbol"], name: "symbol", unique: true
   end
 
-  create_table "datacentre_prefixes", primary_key: ["datacentre", "prefixes"], force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "datacentre_prefixes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.bigint "datacentre", null: false
     t.bigint "prefixes", null: false
+    t.datetime "created"
+    t.datetime "updated"
     t.index ["datacentre"], name: "FK13A1B3BA47B5F5FF"
     t.index ["prefixes"], name: "FK13A1B3BAAF86A1C7"
   end
@@ -97,6 +102,7 @@ ActiveRecord::Schema.define(version: 20170908050141) do
     t.string "url", null: false
     t.integer "version"
     t.bigint "dataset", null: false
+    t.index ["dataset", "updated"], name: "dataset_updated"
     t.index ["dataset"], name: "FK62F6FE44D3D6B1B"
   end
 
@@ -108,6 +114,8 @@ ActiveRecord::Schema.define(version: 20170908050141) do
     t.bigint "dataset", null: false
     t.binary "is_converted_by_mds", limit: 1
     t.string "namespace"
+    t.string "url"
+    t.index ["dataset", "metadata_version"], name: "dataset_version"
     t.index ["dataset"], name: "FKE52D7B2F4D3D6B1B"
   end
 
