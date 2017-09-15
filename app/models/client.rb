@@ -18,7 +18,7 @@ class Client < ActiveRecord::Base
   validates_numericality_of :version, if: :version?
   validates_inclusion_of :role_name, :in => %w( ROLE_DATACENTRE ), :message => "Role %s is not included in the list"
   validate :check_id
-
+  validate :freeze_uid, :on => :update
   belongs_to :provider, foreign_key: :allocator
   has_many :datasets, foreign_key: :datacentre
   has_many :client_prefixes, foreign_key: :datacentre
@@ -48,6 +48,10 @@ class Client < ActiveRecord::Base
     unless doi_quota_allowed.to_i > 0
       errors.add(:doi_quota, "You have excceded your DOI quota. You cannot mint DOIs anymore")
     end
+  end
+
+  def freeze_uid
+    errors.add(:uid, "cannot be changed") if self.uid_changed? || self.symbol_changed?
   end
 
   def check_id

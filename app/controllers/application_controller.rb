@@ -6,6 +6,7 @@ class ApplicationController < ActionController::API
 
   # include helper module for caching infrequently changing resources
   include Cacheable
+  include Facetable
 
   attr_accessor :current_user
 

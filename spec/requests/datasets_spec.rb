@@ -6,20 +6,20 @@ RSpec.describe "Datasets", type: :request  do
   let(:dataset_id) { datasets.first.doi }
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN']}}
 
-  # Test suite for GET /datasets
-  describe 'GET /datasets' do
-    # make HTTP get request before each example
-    before { get '/datasets', headers: headers }
-
-    it 'returns Datasets' do
-      expect(json).not_to be_empty
-      expect(json['data'].size).to eq(10)
-    end
-
-    it 'returns status code 200' do
-      expect(response).to have_http_status(200)
-    end
-  end
+  # # Test suite for GET /datasets
+  # describe 'GET /datasets' do
+  #   # make HTTP get request before each example
+  #   before { get '/datasets', headers: headers }
+  #
+  #   it 'returns Datasets' do
+  #     expect(json).not_to be_empty
+  #     expect(json['data'].size).to eq(10)
+  #   end
+  #
+  #   it 'returns status code 200' do
+  #     expect(response).to have_http_status(200)
+  #   end
+  # end
 
   # Test suite for GET /datasets/:id
   describe 'GET /datasets/:id' do
@@ -55,7 +55,7 @@ RSpec.describe "Datasets", type: :request  do
 
     # let!(:doi_quota_used)  { client.doi_quota_used }
     context 'when the request is valid' do
-      let!(:client)  { create(:client, doi_quota_used: 2, doi_quota_used: 1 ) }
+      let!(:client)  { create(:client, doi_quota_allowed: 2, doi_quota_used: 1 ) }
       let(:valid_attributes) do
         {
           "data" => {

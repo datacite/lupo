@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   resources :clients, constraints: { :id => /.+?(?=\/)/} do
     member do
-      post :getpassword
+      get :getpassword
     end
   end
 

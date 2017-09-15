@@ -30,9 +30,9 @@ class MediaController < ApplicationController
 
   # POST /media
   def create
-    unless [:type, :attributes].all? { |k| safe_params.key? k }
-      render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
-    else
+    # unless [:type, :attributes].all? { |k| safe_params.key? k }
+    #   render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
+    # else
       @media = Media.new(safe_params.except(:type))
       authorize! :create, @media
 
@@ -41,20 +41,20 @@ class MediaController < ApplicationController
       else
         render json: serialize(@media.errors), status: :unprocessable_entity
       end
-    end
+    # end
   end
 
   # PATCH/PUT /media/1
   def update
-    unless [:type, :attributes].all? { |k| safe_params.key? k }
-      render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
-    else
+    # unless [:type, :attributes].all? { |k| safe_params.key? k }
+    #   render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
+    # else
       if @media.update_attributes(safe_params.except(:type))
         render json: @media
       else
         render json: serialize(@media.errors), status: :unprocessable_entity
       end
-    end
+    # end
   end
 
   # DELETE /media/1
@@ -71,7 +71,9 @@ class MediaController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def safe_params
-      attributes = [:created, :updated, :dataset_id, :version, :url, :media_type]
-      params.require(:data).permit(:id, :type, attributes: attributes)
+      fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
+      ActiveModelSerializers::Deserialization.jsonapi_parse!(
+        params, only: [ :created, :updated, :dataset, :version, :url, :media_type]
+      )
     end
 end

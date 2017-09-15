@@ -7,10 +7,18 @@ RSpec.describe 'Clients', type: :request  do
   let(:params) do
     { "data" => { "type" => "clients",
                   "attributes" => {
-                    "uid" => "BL.IMPERIAL",
+                    "id" => provider.uid+".IMPERIAL",
                     "name" => "Imperial College",
-                    "provider_id" => provider.uid,
-                    "contact_email" => "bob@example.com" } } }
+                    "contact" => "Madonna",
+                    "email" => "bob@example.com" },
+                    "relationships": {
+                			"provider": {
+                				"data":{
+                					"type":"providers",
+                					"id": provider.uid
+                				}
+                			}
+                		}} }
   end
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN']}}
 
@@ -73,9 +81,16 @@ RSpec.describe 'Clients', type: :request  do
       let(:params) do
         { "data" => { "type" => "clients",
                       "attributes" => {
-                        "name" => "Imperial College",
-                        "provider_id" => provider.uid,
-                        "contact_email" => "bob@example.com" } } }
+                        "id" => provider.uid+".IMPERIAL",
+                        "name" => "Imperial College"},
+                        "relationships": {
+                    			"provider": {
+                    				"data":{
+                    					"type":"providers",
+                    					"id": provider.uid
+                    				}
+                    			}
+                    		}} }
       end
 
       before { post '/clients', params: params.to_json, headers: headers }
@@ -85,7 +100,7 @@ RSpec.describe 'Clients', type: :request  do
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"].first).to eq("id"=>"uid", "title"=>"Uid can't be blank")
+        expect(json["errors"].first).to eq("id"=>"contact_email", "title"=>"Contact email can't be blank")
       end
     end
   end
@@ -93,14 +108,40 @@ RSpec.describe 'Clients', type: :request  do
   # # Test suite for PUT /clients/:id
   describe 'PUT /clients/:id' do
     context 'when the record exists' do
+      let(:params) do
+        { "data" => { "type" => "clients",
+                      "attributes" => {
+                        "email" => "bob@example.com",
+                        "name" => "Imperial College 2"}} }
+      end
       before { put "/clients/#{client.uid}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
-        expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College")
+        expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
+        expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
       end
 
       it 'returns status code 200' do
         expect(response).to have_http_status(200)
+      end
+    end
+    context 'when the request is invalid' do
+      let(:params) do
+        { "data" => { "type" => "clients",
+                      "attributes" => {
+                        "id" => client.uid+"MegaCLient",
+                        "email" => "bob@example.com",
+                        "name" => "Imperial College"}} }
+      end
+
+      before { put "/clients/#{client.uid}", params: params.to_json, headers: headers }
+
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'returns a validation failure message' do
+        expect(json["errors"].first).to eq("id"=>"uid", "title"=>"Uid cannot be changed")
       end
     end
   end
@@ -111,6 +152,17 @@ RSpec.describe 'Clients', type: :request  do
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)
+    end
+    context 'when the resources doesnt exist' do
+      before { delete '/clients/xxx', params: params.to_json, headers: headers }
+
+      it 'returns status code 404' do
+        expect(response).to have_http_status(404)
+      end
+
+      it 'returns a validation failure message' do
+        expect(json["errors"].first).to eq("status"=>"404", "title"=>"The page you are looking for doesn't exist.")
+      end
     end
   end
 end

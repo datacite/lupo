@@ -1,4 +1,4 @@
-require 'handle_rest'
+# require 'handle_rest'
 
 class Handle
   attr_reader :id, :prefix, :registration_agency, :clients, :providers, :created, :updated_at, :url
