@@ -7,7 +7,6 @@ class ClientPrefixesController < ApplicationController
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show]
 
-  # GET /prefixes
   def index
     # support nested routes
     if params[:id].present?
@@ -52,12 +51,10 @@ class ClientPrefixesController < ApplicationController
     render jsonapi: @client_prefixes, meta: meta, include: @include
   end
 
-  # GET /prefixes/1
   def show
     render jsonapi: @client_prefix, include: @include, serializer: ClientPrefixSerializer
   end
 
-  # POST /prefixes
   def create
     @client_prefix = ClientPrefix.new(safe_params)
     authorize! :create, @client_prefix
@@ -70,7 +67,6 @@ class ClientPrefixesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /prefixes/1
   def update
     if @client_prefix.update_attributes(safe_params)
       render jsonapi: @client_prefix
@@ -80,7 +76,6 @@ class ClientPrefixesController < ApplicationController
     end
   end
 
-  # DELETE /prefixes/1
   def destroy
     @client_prefix.destroy
     head :no_content
@@ -112,7 +107,7 @@ class ClientPrefixesController < ApplicationController
 
   def safe_params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:id, :client, :prefix, :created]
+      params, only: [:id, :client, :prefix]
     )
   end
 end

@@ -68,14 +68,12 @@ class ProviderPrefixesController < ApplicationController
     render jsonapi: @provider_prefixes, meta: meta, include: @include
   end
 
-  # GET /prefixes/1
   def show
     render jsonapi: @provider_prefix, include: @include, serializer: PrefixSerializer
   end
 
-  # POST /prefixes
   def create
-    @provider_prefix = Prefix.new(safe_params)
+    @provider_prefix = ProviderPrefix.new(safe_params)
     authorize! :create, @provider_prefix
 
     if @provider_prefix.save
@@ -86,7 +84,6 @@ class ProviderPrefixesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /prefixes/1
   def update
     if @provider_prefix.update_attributes(safe_params)
       render jsonapi: @provider_prefix
@@ -96,7 +93,6 @@ class ProviderPrefixesController < ApplicationController
     end
   end
 
-  # DELETE /prefixes/1
   def destroy
     @provider_prefix.destroy
     head :no_content
@@ -110,7 +106,7 @@ class ProviderPrefixesController < ApplicationController
       @include = [@include]
     else
       # always include because Ember pagination doesn't (yet) understand include parameter
-      @include = ['client', 'provider', 'prefix']
+      @include = ['clients', 'provider', 'prefix']
     end
   end
 
@@ -127,8 +123,7 @@ class ProviderPrefixesController < ApplicationController
 
   def safe_params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:id, :provider, :created, :updated],
-              keys: { id: :prefix }
+      params, only: [:id, :provider, :prefix]
     )
   end
 end

@@ -1,6 +1,9 @@
 require 'base32/crockford'
 
 class ProviderPrefix < ApplicationRecord
+  # include helper module for caching infrequently changing resources
+  include Cacheable
+
   self.table_name = "allocator_prefixes"
 
   belongs_to :provider, foreign_key: :allocator
@@ -18,6 +21,22 @@ class ProviderPrefix < ApplicationRecord
   # use base32-encode id as uid, with pretty formatting and checksum
   def uid
     Base32::Crockford.encode(id, split: 4, length: 16, checksum: true).downcase
+  end
+
+  # workaround for non-standard database column names and association
+  def provider_id=(value)
+    r = cached_provider_response(value)
+    fail ActiveRecord::RecordNotFound unless r.present?
+
+    self.allocator = r.id
+  end
+
+  # workaround for non-standard database column names and association
+  def prefix_id=(value)
+    r = cached_prefix_response(value)
+    fail ActiveRecord::RecordNotFound unless r.present?
+
+    self.prefixes = r.id
   end
 
   private

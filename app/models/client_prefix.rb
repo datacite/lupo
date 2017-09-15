@@ -1,6 +1,9 @@
 require 'base32/crockford'
 
 class ClientPrefix < ApplicationRecord
+  # include helper module for caching infrequently changing resources
+  include Cacheable
+
   self.table_name = "datacentre_prefixes"
 
   belongs_to :client, foreign_key: :datacentre
@@ -18,6 +21,22 @@ class ClientPrefix < ApplicationRecord
   # use base32-encode id as uid, with pretty formatting and checksum
   def uid
     Base32::Crockford.encode(id, split: 4, length: 16, checksum: true).downcase
+  end
+
+  # workaround for non-standard database column names and association
+  def client_id=(value)
+    r = cached_client_response(value)
+    fail ActiveRecord::RecordNotFound unless r.present?
+
+    self.datacentre = r.id
+  end
+
+  # workaround for non-standard database column names and association
+  def prefix_id=(value)
+    r = cached_prefix_response(value)
+    fail ActiveRecord::RecordNotFound unless r.present?
+
+    self.prefixes = r.id
   end
 
   def provider
