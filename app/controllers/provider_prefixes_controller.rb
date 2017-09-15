@@ -1,44 +1,40 @@
-class PrefixesController < ApplicationController
-  before_action :set_prefix, only: [:show, :update, :destroy]
+class ProviderPrefixesController < ApplicationController
+  before_action :set_provider_prefix, only: [:show, :update, :destroy]
   before_action :authenticate_user_from_token!
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show]
 
-  # GET /prefixes
   def index
     # support nested routes
     if params[:id].present?
-      collection = Prefix.where(prefix: params[:id])
+      collection = ProviderPrefix.where(id: params[:id])
     elsif params[:provider_id].present?
       provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
-      collection = provider.present? ? provider.prefixes : Prefix.none
-    elsif params[:client_id].present?
-      client = Client.where('datacentre.symbol = ?', params[:client_id]).first
-      collection = client.present? ? client.prefixes : Prefix.none
+      collection = provider.present? ? provider.provider_prefixes.joins(:prefix) : ProviderPrefix.none
     else
-      collection = Prefix
+      collection = ProviderPrefix.joins(:provider, :prefix)
     end
 
     collection = collection.query(params[:query]) if params[:query].present?
-    collection = collection.where('YEAR(prefix.created) = ?', params[:year]) if params[:year].present?
+    collection = collection.where('YEAR(allocator_prefixes.created) = ?', params[:year]) if params[:year].present?
 
     if params[:year].present?
       years = [{ id: params[:year],
                  title: params[:year],
-                 count: collection.where('YEAR(prefix.created) = ?', params[:year]).count }]
+                 count: collection.where('YEAR(allocator_prefixes.created) = ?', params[:year]).count }]
     else
-      years = collection.where.not(prefix: nil).order("prefix.created DESC").group("YEAR(prefix.created)").count
+      years = collection.where.not(prefixes: nil).order("allocator_prefixes.created DESC").group("YEAR(allocator_prefixes.created)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 
     # calculate facet counts after filtering
     # no faceting by client
-    if params[:provider_id].present?
+    if provider.present?
       providers = [{ id: params[:provider_id],
-                   title: provider.name,
-                   count: collection.includes(:providers).where('allocator.id' => provider.id).count }]
+                     title: provider.name,
+                     count: collection.where('allocator_prefixes.allocator' => provider.id).count }]
     else
-      providers = collection.includes(:providers).where.not('allocator.id' => nil).group('allocator.id').count
+      providers = collection.where.not('allocator_prefixes.allocator' => nil).group('allocator_prefixes.allocator').count
       providers = providers
                   .sort { |a, b| b[1] <=> a[1] }
                   .reduce([]) do |sum, i|
@@ -56,48 +52,48 @@ class PrefixesController < ApplicationController
     page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
     total = collection.count
 
-    @prefixes = collection.order(created: :desc).page(page[:number]).per(page[:size])
+    @provider_prefixes = collection.order(created: :desc).page(page[:number]).per(page[:size])
 
     meta = { total: total,
-             total_pages: @prefixes.total_pages,
+             total_pages: @provider_prefixes.total_pages,
              page: page[:number].to_i,
              providers: providers,
              years: years }
 
-    render jsonapi: @prefixes, meta: meta, include: @include
+    render jsonapi: @provider_prefixes, meta: meta, include: @include
   end
 
   # GET /prefixes/1
   def show
-    render jsonapi: @prefix, include: @include, serializer: PrefixSerializer
+    render jsonapi: @provider_prefix, include: @include, serializer: PrefixSerializer
   end
 
   # POST /prefixes
   def create
-    @prefix = Prefix.new(safe_params)
-    authorize! :create, @prefix
+    @provider_prefix = Prefix.new(safe_params)
+    authorize! :create, @provider_prefix
 
-    if @prefix.save
-      render jsonapi: @prefix, status: :created, location: @prefix
+    if @provider_prefix.save
+      render jsonapi: @provider_prefix, status: :created, location: @provider_prefix
     else
-      Rails.logger.warn @prefix.errors.inspect
-      render jsonapi: serialize(@prefix.errors), status: :unprocessable_entity
+      Rails.logger.warn @provider_prefix.errors.inspect
+      render jsonapi: serialize(@provider_prefix.errors), status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /prefixes/1
   def update
-    if @prefix.update_attributes(safe_params)
-      render jsonapi: @prefix
+    if @provider_prefix.update_attributes(safe_params)
+      render jsonapi: @provider_prefix
     else
-      Rails.logger.warn @prefix.errors.inspect
-      render json: serialize(@prefix.errors), status: :unprocessable_entity
+      Rails.logger.warn @provider_prefix.errors.inspect
+      render json: serialize(@provider_prefix.errors), status: :unprocessable_entity
     end
   end
 
   # DELETE /prefixes/1
   def destroy
-    @prefix.destroy
+    @provider_prefix.destroy
   end
 
   protected
@@ -108,25 +104,22 @@ class PrefixesController < ApplicationController
       @include = [@include]
     else
       # always include because Ember pagination doesn't (yet) understand include parameter
-      @include = ['clients','providers']
+      @include = ['provider','prefix']
     end
   end
 
   private
 
   # Use callbacks to share common setup or constraints between actions.
-  def set_prefix
-    @prefix = Prefix.where(prefix: params[:id]).first
+  def set_provider_prefix
+    @provider_prefix = ProviderPrefix.where(id: params[:id]).first
 
-    # fallback to call handle server, i.e. for prefixes not from DataCite
-    @prefix = Handle.where(id: params[:id]) unless @prefix.present?
-    Rails.logger.info @prefix.inspect
-    fail ActiveRecord::RecordNotFound unless @prefix.present?
+    fail ActiveRecord::RecordNotFound unless @provider_prefix.present?
   end
 
   def safe_params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:id, :clients, :providers, :created],
+      params, only: [:id, :provider, :created, :updated],
               keys: { id: :prefix }
     )
   end

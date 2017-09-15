@@ -15,16 +15,19 @@ Rails.application.routes.draw do
 
   resources :clients, constraints: { :id => /.+/ } do
     resources :prefixes, constraints: { :id => /.+/ }, shallow: true
+    resources :client_prefixes, path: 'client-prefixes'
   end
 
+  resources :client_prefixes, path: 'client-prefixes'
   resources :datasets, constraints: { :id => /.+/ }
   resources :dois, path: "/dois", constraints: { :id => /.+/ }
   resources :prefixes, constraints: { :id => /.+/ }
-
+  resources :provider_prefixes, path: 'provider-prefixes'
 
   resources :providers do
     resources :clients, constraints: { :id => /.+/ }, shallow: true
     resources :prefixes, constraints: { :id => /.+/ }, shallow: true
+    resources :provider_prefixes, path: 'provider-prefixes'
 
     member do
       post :getpassword
