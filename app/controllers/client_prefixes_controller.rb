@@ -1,5 +1,8 @@
+require 'base32/crockford'
+require 'uri'
+
 class ClientPrefixesController < ApplicationController
-  before_action :set_prefix, only: [:show, :update, :destroy]
+  before_action :set_client_prefix, only: [:show, :update, :destroy]
   before_action :authenticate_user_from_token!
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show]
@@ -46,7 +49,7 @@ class ClientPrefixesController < ApplicationController
 
   # GET /prefixes/1
   def show
-    render jsonapi: @client_prefix, include: @include, serializer: PrefixSerializer
+    render jsonapi: @client_prefix, include: @include, serializer: ClientPrefixSerializer
   end
 
   # POST /prefixes
@@ -75,6 +78,7 @@ class ClientPrefixesController < ApplicationController
   # DELETE /prefixes/1
   def destroy
     @client_prefix.destroy
+    head :no_content
   end
 
   protected
@@ -92,16 +96,18 @@ class ClientPrefixesController < ApplicationController
   private
 
   # Use callbacks to share common setup or constraints between actions.
-  def set_prefix
-    @client_prefix = ProviderPrefix.where(prefix: params[:id]).first
+  def set_client_prefix
+    id = Base32::Crockford.decode(URI.decode(params[:id]).upcase, checksum: true)
+    fail ActiveRecord::RecordNotFound unless id.present?
+
+    @client_prefix = ClientPrefix.where(id: id.to_i).first
 
     fail ActiveRecord::RecordNotFound unless @client_prefix.present?
   end
 
   def safe_params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:id, :clients, :providers, :created],
-              keys: { id: :prefix }
+      params, only: [:id, :client, :prefix, :created]
     )
   end
 end
