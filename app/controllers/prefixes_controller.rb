@@ -19,6 +19,7 @@ class PrefixesController < ApplicationController
       collection = Prefix
     end
 
+    collection = collection.state(params[:state]) if params[:state].present?
     collection = collection.query(params[:query]) if params[:query].present?
     collection = collection.where('YEAR(prefix.created) = ?', params[:year]) if params[:year].present?
 
@@ -50,6 +51,22 @@ class PrefixesController < ApplicationController
                               end
     end
 
+    if params[:state].present?
+      states = [{ id: params[:state],
+                  title: params[:state].humanize,
+                  count: collection.count }]
+    else
+      states = [{ id: "unassigned",
+                  title: "Unassigned",
+                  count: collection.state("unassigned").count },
+                { id: "without-client",
+                  title: "Without Client",
+                  count: collection.state("without-client").count },
+                { id: "with-client",
+                  title: "With Client",
+                  count: collection.state("with-client").count }]
+    end
+
     # pagination
     page = params[:page] || {}
     page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
@@ -61,6 +78,7 @@ class PrefixesController < ApplicationController
     meta = { total: total,
              total_pages: @prefixes.total_pages,
              page: page[:number].to_i,
+             states: states,
              providers: providers,
              years: years }
 

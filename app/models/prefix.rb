@@ -35,4 +35,12 @@ class Prefix < ActiveRecord::Base
     ids = Provider.where(symbol: values).pluck(:id)
     association(:providers).ids_writer ids
   end
+
+  def self.state(state)
+    case state
+    when "unassigned" then where.not(id: ProviderPrefix.pluck(:prefixes))
+    when "without-client" then joins(:providers).where.not(id: ClientPrefix.pluck(:prefixes)).distinct
+    when "with-client" then joins(:clients).distinct
+    end
+  end
 end
