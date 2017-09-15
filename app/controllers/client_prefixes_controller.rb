@@ -12,9 +12,14 @@ class ClientPrefixesController < ApplicationController
     # support nested routes
     if params[:id].present?
       collection = ClientPrefix.where(id: params[:id])
+    elsif params[:client_id].present? && params[:prefix_id].present?
+      collection = ClientPrefix.joins(:client, :prefix).where('datacentre.symbol = ?', params[:client_id]).where('prefix.prefix = ?', params[:prefix_id])
     elsif params[:client_id].present?
-      client = Client.where('datacentre.symbol = ?', params[:client_id]).first
+      client = Client.joins(:provider).where('datacentre.symbol = ?', params[:client_id]).first
       collection = client.present? ? client.client_prefixes.joins(:prefix) : ClientPrefix.none
+    elsif params[:prefix_id].present?
+      prefix = Prefix.where('prefix.prefix = ?', params[:prefix_id]).first
+      collection = prefix.present? ? prefix.client_prefixes.joins(:client) : ClientPrefix.none
     else
       collection = ClientPrefix.joins(:client, :prefix)
     end
@@ -89,7 +94,7 @@ class ClientPrefixesController < ApplicationController
       @include = [@include]
     else
       # always include because Ember pagination doesn't (yet) understand include parameter
-      @include = ['client','prefix']
+      @include = ['client', 'prefix', 'provider']
     end
   end
 

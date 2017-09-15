@@ -5,6 +5,7 @@ class ClientPrefixSerializer < ActiveModel::Serializer
   attributes :created, :updated
 
   belongs_to :client
+  belongs_to :provider
   belongs_to :prefix
 
   def id

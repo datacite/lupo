@@ -53,17 +53,17 @@ class PrefixesController < ApplicationController
 
     if params[:state].present?
       states = [{ id: params[:state],
-                  title: params[:state].humanize,
+                  title: params[:state].underscore.humanize,
                   count: collection.count }]
     else
       states = [{ id: "unassigned",
                   title: "Unassigned",
                   count: collection.state("unassigned").count },
                 { id: "without-client",
-                  title: "Without Client",
+                  title: "Without client",
                   count: collection.state("without-client").count },
                 { id: "with-client",
-                  title: "With Client",
+                  title: "With client",
                   count: collection.state("with-client").count }]
     end
 

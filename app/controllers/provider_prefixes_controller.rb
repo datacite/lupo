@@ -8,9 +8,14 @@ class ProviderPrefixesController < ApplicationController
     # support nested routes
     if params[:id].present?
       collection = ProviderPrefix.where(id: params[:id])
+    elsif params[:provider_id].present? && params[:prefix_id].present?
+      collection = ProviderPrefix.joins(:provider, :prefix).where('allocator.symbol = ?', params[:provider_id]).where('prefix.prefix = ?', params[:prefix_id])
     elsif params[:provider_id].present?
       provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
       collection = provider.present? ? provider.provider_prefixes.joins(:prefix) : ProviderPrefix.none
+    elsif params[:prefix_id].present?
+      prefix = Prefix.where('prefix.prefix = ?', params[:prefix_id]).first
+      collection = prefix.present? ? prefix.provider_prefixes.joins(:provider) : ProviderPrefix.none
     else
       collection = ProviderPrefix.joins(:provider, :prefix)
     end
@@ -94,6 +99,7 @@ class ProviderPrefixesController < ApplicationController
   # DELETE /prefixes/1
   def destroy
     @provider_prefix.destroy
+    head :no_content
   end
 
   protected
@@ -104,7 +110,7 @@ class ProviderPrefixesController < ApplicationController
       @include = [@include]
     else
       # always include because Ember pagination doesn't (yet) understand include parameter
-      @include = ['provider','prefix']
+      @include = ['client', 'provider', 'prefix']
     end
   end
 
@@ -112,8 +118,10 @@ class ProviderPrefixesController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_provider_prefix
-    @provider_prefix = ProviderPrefix.where(id: params[:id]).first
+    id = Base32::Crockford.decode(URI.decode(params[:id]).upcase, checksum: true)
+    fail ActiveRecord::RecordNotFound unless id.present?
 
+    @provider_prefix = ProviderPrefix.where(id: id.to_i).first
     fail ActiveRecord::RecordNotFound unless @provider_prefix.present?
   end
 

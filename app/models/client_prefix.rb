@@ -20,6 +20,10 @@ class ClientPrefix < ApplicationRecord
     Base32::Crockford.encode(id, split: 4, length: 16, checksum: true).downcase
   end
 
+  def provider
+    client.provider
+  end
+
   private
 
   # random number that fits into MySQL bigint field (8 bytes)
