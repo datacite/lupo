@@ -34,9 +34,7 @@ class ClientsController < ApplicationController
     providers = providers.map { |p| { id: p.symbol, title: p.name, count: p.count } }
 
     if params[:year].present?
-      years = [{ id: params[:year],
-                 title: params[:year],
-                 count: collection.where('YEAR(datacentre.created) = ?', params[:year]).count }]
+      years = client_year_facet
     else
       years = collection.where.not(created: nil).order("YEAR(datacentre.created) DESC").group("YEAR(datacentre.created)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
@@ -113,7 +111,8 @@ class ClientsController < ApplicationController
   def getpassword
     phrase = Password.new(current_user, @client)
     response.headers['X-Consumer-Role'] = current_user && current_user.role_id || 'anonymous'
-    render jsonapi: { password: phrase.string }, each_serializer: PasswordSerializer
+    r = {password: phrase.string }
+    render jsonapi: @client, meta: r , include: @include
   end
 
   protected

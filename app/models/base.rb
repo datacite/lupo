@@ -1,7 +1,7 @@
 require 'cgi'
 
 class Base
-  
+
   extend ActiveModel::Naming
   include ActiveModel::Serialization
 

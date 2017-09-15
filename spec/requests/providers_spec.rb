@@ -32,7 +32,6 @@ RSpec.describe "Providers", type: :request  do
   # Test suite for GET /providers/:id
   describe 'GET /providers/:id' do
     before { get "/providers/#{provider.uid}" , headers: headers}
-
     context 'when the record exists' do
       it 'returns the provider' do
         expect(json).not_to be_empty
@@ -60,10 +59,20 @@ RSpec.describe "Providers", type: :request  do
   # Test suite for POST /providers
   describe 'POST /providers' do
     context 'when the request is valid' do
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "id" => "BL",
+                        "name" => "British Library",
+                        "region" => "EMEA",
+                        "email" => "doe@joe.joe",
+                        "contact" => "timAus",
+                        "country_code" => "GB" } } }
+      end
       before { post '/providers', params: params.to_json, headers: headers }
 
       it 'creates a provider' do
-        expect(json.dig('data', 'attributes', 'region')).to eq("EMEA")
+        expect(json.dig('data', 'attributes', 'email')).to eq("doe@joe.joe")
       end
 
       it 'returns status code 201' do
@@ -75,8 +84,9 @@ RSpec.describe "Providers", type: :request  do
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
-                        "uid" => "BL",
+                        "id" => "BL",
                         "name" => "British Library",
+                        "contact" => "timAus",
                         "country_code" => "GB" } } }
       end
 
@@ -95,34 +105,64 @@ RSpec.describe "Providers", type: :request  do
       let(:params) do
         { "type" => "providers",
           "attributes" => {
-            "uid" => "BL",
+            "id" => "BL",
+            "contact" => "timAus",
             "name" => "British Library",
             "country_code" => "GB" } }
       end
 
       before { post '/providers', params: params.to_json, headers: headers }
 
-      it 'returns status code 422' do
-        expect(response).to have_http_status(422)
+      it 'returns status code 500' do
+        expect(response).to have_http_status(500)
       end
 
-      it 'returns a validation failure message' do
-        expect(json["errors"].first).to eq("id"=>"contact_email", "title"=>"Contact email can't be blank")
-      end
+      # it 'returns a validation failure message' do
+      #   puts json
+      #   expect(response["exception"]).to eq("#<JSON::ParserError: You need to provide a payload following the JSONAPI spec>")
+      # end
     end
   end
 
   # # Test suite for PUT /providers/:id
   describe 'PUT /providers/:id' do
     context 'when the record exists' do
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "name" => "British Library",
+                        "region" => "Americas",
+                        "email" => "Pepe@mdm.cod",
+                        "contact" => "timAus",
+                        "country_code" => "GB" } } }
+      end
       before { put "/providers/#{provider.uid}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
-        expect(json.dig('data', 'attributes', 'region')).to eq("EMEA")
+        expect(json.dig('data', 'attributes', 'contact')).to eq("timAus")
+        expect(json.dig('data', 'attributes', 'contact')).not_to eq(provider.contact_email)
       end
 
       it 'returns status code 200' do
         expect(response).to have_http_status(200)
+      end
+
+      context 'when the resources doesnt exist' do
+        let(:params) do
+          { "data" => { "type" => "providers",
+                        "attributes" => {
+                          "name" => "British Library",
+                          "region" => "Americas",
+                          "email" => "Pepe@mdm.cod",
+                          "contact" => "timAus",
+                          "country_code" => "GB" } } }
+        end
+
+        before { put '/providers/xxx', params: params.to_json, headers: headers }
+
+        it 'returns status code 404' do
+          expect(response).to have_http_status(404)
+        end
       end
     end
   end
@@ -133,6 +173,17 @@ RSpec.describe "Providers", type: :request  do
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)
+    end
+    context 'when the resources doesnt exist' do
+      before { delete '/providers/xxx', params: params.to_json, headers: headers }
+
+      it 'returns status code 404' do
+        expect(response).to have_http_status(404)
+      end
+
+      it 'returns a validation failure message' do
+        expect(json["errors"].first).to eq("status"=>"404", "title"=>"The page you are looking for doesn't exist.")
+      end
     end
   end
 end

@@ -4,7 +4,7 @@ module Cacheable
   included do
     def cached_client_response(id, options={})
       Rails.cache.fetch("client_response/#{id}", expires_in: 7.days) do
-        Client.where(symbol: id).select(:id, :symbol, :name, :created).first
+        Client.where(symbol: id).select(:id, :symbol, :name, :allocator, :created).first
       end
     end
 

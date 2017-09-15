@@ -8,8 +8,8 @@ class Dataset < ActiveRecord::Base
   include Cacheable
 
   alias_attribute :uid, :doi
-  attribute :client_id
   attribute :client_name
+  attribute :client_id
   attr_accessor :provider
 
   alias_attribute :created_at, :created
@@ -19,7 +19,7 @@ class Dataset < ActiveRecord::Base
   has_many :metadata, class_name: 'Metadata'
   self.table_name = "dataset"
 
-  validates_presence_of :uid, :doi, :client_id
+  validates_presence_of :uid, :doi
   validates_format_of :doi, :with => /(10\.\d{4,5})\/.+\z/
   validates_format_of :url, :with => /https?:\/\/[\S]+/ , if: :url?, message: "Website should be an url"
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
@@ -27,13 +27,26 @@ class Dataset < ActiveRecord::Base
 
 
   before_validation :set_defaults
-  after_create  :update_doi_quota
-  validate :doi_quota_exceeded
+  # after_create  :update_doi_quota
+  # validate :doi_quota_exceeded
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
   scope :query, ->(query) { where("doi like ? OR title like ?", "%#{query}%", "%#{query}%") }
 
+  def client_id=(value)
+    r = cached_client_response(value)
+    fail ActiveRecord::RecordNotFound unless r.present?
+
+    write_attribute(:datacentre, r.id)
+  end
+
+  # def provider
+  #   r = cached_client_response(client_id)
+  #   fail ActiveRecord::RecordNotFound unless r.present?
+  #
+  #   r.allocator
+  # end
 
   # Elasticsearch custom search
   def self.get_all(query, options={})
@@ -82,11 +95,6 @@ class Dataset < ActiveRecord::Base
    set_datacentre unless datacentre
   end
 
-  def set_datacentre
-    r = Client.find_by(symbol: client_id)
-    fail("client_id Not found") unless r.present?
-    write_attribute(:datacentre, r.id)
-    write_attribute(:provider, r.allocator)
-  end
+
 
 end

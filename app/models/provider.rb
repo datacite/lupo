@@ -16,6 +16,7 @@ class Provider < ActiveRecord::Base
   validates_numericality_of :doi_quota_allowed, :doi_quota_used
   validates_numericality_of :version, if: :version?
   validates_inclusion_of :role_name, :in => %w( ROLE_ALLOCATOR ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list", if: :role_name?
+  validate :freeze_uid, :on => :update
 
   has_many :clients, foreign_key: :allocator
   has_many :provider_prefixes, foreign_key: :allocator
@@ -53,6 +54,11 @@ class Provider < ActiveRecord::Base
   def logo_url
     "#{ENV['CDN_URL']}/images/members/#{uid.downcase}.png"
   end
+
+  def freeze_uid
+    errors.add(:uid, "cannot be changed") if self.uid_changed? || self.symbol_changed?
+  end
+
 
   private
 

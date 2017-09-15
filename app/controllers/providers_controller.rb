@@ -112,7 +112,8 @@ class ProvidersController < ApplicationController
   def getpassword
     phrase = Password.new(current_user, @provider)
     response.headers['X-Consumer-Role'] = current_user && current_user.role_id || 'anonymous'
-    render json: { password: phrase.string }.to_json
+    r = {password: phrase.string }
+    render jsonapi: @client, meta: r , include: @include
   end
 
 
@@ -136,6 +137,7 @@ class ProvidersController < ApplicationController
   end
 
   def safe_params
+    fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params, only: [:id, :name, :contact, :email, :country, :is_active],
               keys: { id: :symbol, contact: :contact_name, email: :contact_email, country: :country_code }
