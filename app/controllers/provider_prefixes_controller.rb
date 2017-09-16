@@ -57,7 +57,14 @@ class ProviderPrefixesController < ApplicationController
     page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
     total = collection.count
 
-    @provider_prefixes = collection.order(created: :desc).page(page[:number]).per(page[:size])
+    order = case params[:sort]
+            when "name" then "prefix.prefix"
+            when "-name" then "prefix.prefix DESC"
+            when "created" then "allocator_prefixes.created"
+            else "allocator_prefixes.created DESC"
+            end
+
+    @provider_prefixes = collection.order(order).page(page[:number]).per(page[:size])
 
     meta = { total: total,
              total_pages: @provider_prefixes.total_pages,

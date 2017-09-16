@@ -73,7 +73,14 @@ class PrefixesController < ApplicationController
     page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
     total = collection.count
 
-    @prefixes = collection.order(created: :desc).page(page[:number]).per(page[:size])
+    order = case params[:sort]
+            when "name" then "prefix.prefix"
+            when "-name" then "prefix.prefix DESC"
+            when "created" then "prefix.created"
+            else "prefix.created DESC"
+            end
+
+    @prefixes = collection.order(order).page(page[:number]).per(page[:size])
 
     meta = { total: total,
              total_pages: @prefixes.total_pages,
