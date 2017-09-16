@@ -13,6 +13,14 @@ namespace :client_prefix do
       cp.update_column(:created, cp.prefix.created)
     end
   end
+
+  desc 'Set provider_prefix association'
+  task :set_provider => :environment do
+    ClientPrefix.find_each do |cp|
+      cp.send(:set_allocator_prefixes)
+      cp.save
+    end
+  end
 end
 
 namespace :provider_prefix do

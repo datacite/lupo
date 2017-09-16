@@ -24,14 +24,14 @@ class ClientPrefixesController < ApplicationController
     end
 
     collection = collection.query(params[:query]) if params[:query].present?
-    collection = collection.where('YEAR(datacentre_prefixes.created) = ?', params[:year]) if params[:year].present?
+    collection = collection.where('YEAR(datacentre_prefixes.created_at) = ?', params[:year]) if params[:year].present?
 
     if params[:year].present?
       years = [{ id: params[:year],
                  title: params[:year],
-                 count: collection.where('YEAR(datacentre_prefixes.created) = ?', params[:year]).count }]
+                 count: collection.where('YEAR(datacentre_prefixes.created_at) = ?', params[:year]).count }]
     else
-      years = collection.where.not(prefixes: nil).order("datacentre_prefixes.created DESC").group("YEAR(datacentre_prefixes.created)").count
+      years = collection.where.not(prefixes: nil).order("datacentre_prefixes.created_at DESC").group("YEAR(datacentre_prefixes.created_at)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 
@@ -44,8 +44,8 @@ class ClientPrefixesController < ApplicationController
     order = case params[:sort]
             when "name" then "prefix.prefix"
             when "-name" then "prefix.prefix DESC"
-            when "created" then "datacentre_prefixes.created"
-            else "datacentre_prefixes.created DESC"
+            when "created" then "datacentre_prefixes.created_at"
+            else "datacentre_prefixes.created_at DESC"
             end
 
     @client_prefixes = collection.order(order).page(page[:number]).per(page[:size])

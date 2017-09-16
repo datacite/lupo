@@ -12,6 +12,10 @@ class ClientPrefixSerializer < ActiveModel::Serializer
     object.uid
   end
 
+  def created
+    object.created_at
+  end
+
   def updated
     object.updated_at
   end

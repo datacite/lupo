@@ -20,15 +20,16 @@ class ProviderPrefixesController < ApplicationController
       collection = ProviderPrefix.joins(:provider, :prefix)
     end
 
+    collection = collection.state(params[:state]) if params[:state].present?
     collection = collection.query(params[:query]) if params[:query].present?
-    collection = collection.where('YEAR(allocator_prefixes.created) = ?', params[:year]) if params[:year].present?
+    collection = collection.where('YEAR(allocator_prefixes.created_at) = ?', params[:year]) if params[:year].present?
 
     if params[:year].present?
       years = [{ id: params[:year],
                  title: params[:year],
-                 count: collection.where('YEAR(allocator_prefixes.created) = ?', params[:year]).count }]
+                 count: collection.where('YEAR(allocator_prefixes.created_at) = ?', params[:year]).count }]
     else
-      years = collection.where.not(prefixes: nil).order("allocator_prefixes.created DESC").group("YEAR(allocator_prefixes.created)").count
+      years = collection.where.not(prefixes: nil).order("allocator_prefixes.created_at DESC").group("YEAR(allocator_prefixes.created_at)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 
@@ -51,6 +52,19 @@ class ProviderPrefixesController < ApplicationController
                               end
     end
 
+    if params[:state].present?
+      states = [{ id: params[:state],
+                  title: params[:state].underscore.humanize,
+                  count: collection.count }]
+    else
+      states = [{ id: "without-client",
+                  title: "Without client",
+                  count: collection.state("without-client").count },
+                { id: "with-client",
+                  title: "With client",
+                  count: collection.state("with-client").count }]
+    end
+
     # pagination
     page = params[:page] || {}
     page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
@@ -60,8 +74,8 @@ class ProviderPrefixesController < ApplicationController
     order = case params[:sort]
             when "name" then "prefix.prefix"
             when "-name" then "prefix.prefix DESC"
-            when "created" then "allocator_prefixes.created"
-            else "allocator_prefixes.created DESC"
+            when "created" then "allocator_prefixes.created_at"
+            else "allocator_prefixes.created_at DESC"
             end
 
     @provider_prefixes = collection.order(order).page(page[:number]).per(page[:size])
@@ -69,6 +83,7 @@ class ProviderPrefixesController < ApplicationController
     meta = { total: total,
              total_pages: @provider_prefixes.total_pages,
              page: page[:number].to_i,
+             states: states,
              providers: providers,
              years: years }
 

@@ -8,13 +8,12 @@ class ClientPrefix < ApplicationRecord
 
   belongs_to :client, foreign_key: :datacentre
   belongs_to :prefix, foreign_key: :prefixes
-
-  alias_attribute :created_at, :created
-  alias_attribute :updated_at, :updated
+  belongs_to :provider_prefix, foreign_key: :allocator_prefixes
 
   before_create :set_id
-  before_create { self.created = Time.zone.now.utc.iso8601 }
-  before_save { self.updated = Time.zone.now.utc.iso8601 }
+  before_create { self.created_at = Time.zone.now.utc.iso8601 }
+  before_save { self.updated_at = Time.zone.now.utc.iso8601 }
+  before_save :set_allocator_prefixes
 
   scope :query, ->(query) { includes(:prefix).where("prefix.prefix like ?", "%#{query}%") }
 
@@ -48,5 +47,11 @@ class ClientPrefix < ApplicationRecord
   # random number that fits into MySQL bigint field (8 bytes)
   def set_id
     self.id = SecureRandom.random_number(9223372036854775807)
+  end
+
+  def set_allocator_prefixes
+    symbol = client.symbol.split('.').first
+    r = ProviderPrefix.joins(:provider).where('allocator.symbol = ?', symbol).where(prefixes: prefixes).first
+    self.allocator_prefixes = r.id if r.present?
   end
 end

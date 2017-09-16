@@ -8,13 +8,12 @@ class ProviderPrefix < ApplicationRecord
 
   belongs_to :provider, foreign_key: :allocator
   belongs_to :prefix, foreign_key: :prefixes
-
-  alias_attribute :created_at, :created
-  alias_attribute :updated_at, :updated
+  has_many :client_prefixes, foreign_key: :allocator_prefixes, dependent: :destroy
+  has_many :clients, through: :client_prefixes
 
   before_create :set_id
-  before_create { self.created = Time.zone.now.utc.iso8601 }
-  before_save { self.updated = Time.zone.now.utc.iso8601 }
+  before_create { self.created_at = Time.zone.now.utc.iso8601 }
+  before_save { self.updated_at = Time.zone.now.utc.iso8601 }
 
   scope :query, ->(query) { where("prefix.prefix like ?", "%#{query}%") }
 
@@ -37,6 +36,13 @@ class ProviderPrefix < ApplicationRecord
     fail ActiveRecord::RecordNotFound unless r.present?
 
     self.prefixes = r.id
+  end
+
+  def self.state(state)
+    case state
+    when "without-client" then where.not(prefixes: ClientPrefix.pluck(:prefixes)).distinct
+    when "with-client" then joins(:client_prefixes).distinct
+    end
   end
 
   private
