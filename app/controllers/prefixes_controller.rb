@@ -110,16 +110,6 @@ class PrefixesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /prefixes/1
-  def update
-    if @prefix.update_attributes(safe_params)
-      render jsonapi: @prefix
-    else
-      Rails.logger.warn @prefix.errors.inspect
-      render json: serialize(@prefix.errors), status: :unprocessable_entity
-    end
-  end
-
   # DELETE /prefixes/1
   def destroy
     @prefix.destroy
@@ -151,7 +141,7 @@ class PrefixesController < ApplicationController
 
   def safe_params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:id, :clients, :providers, :created],
+      params, only: [:id, :created],
               keys: { id: :prefix }
     )
   end

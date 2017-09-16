@@ -106,15 +106,6 @@ class ProviderPrefixesController < ApplicationController
     end
   end
 
-  def update
-    if @provider_prefix.update_attributes(safe_params)
-      render jsonapi: @provider_prefix
-    else
-      Rails.logger.warn @provider_prefix.errors.inspect
-      render json: serialize(@provider_prefix.errors), status: :unprocessable_entity
-    end
-  end
-
   def destroy
     @provider_prefix.destroy
     head :no_content

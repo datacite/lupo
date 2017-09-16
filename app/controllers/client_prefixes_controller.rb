@@ -74,15 +74,6 @@ class ClientPrefixesController < ApplicationController
     end
   end
 
-  def update
-    if @client_prefix.update_attributes(safe_params)
-      render jsonapi: @client_prefix
-    else
-      Rails.logger.warn @client_prefix.errors.inspect
-      render json: serialize(@client_prefix.errors), status: :unprocessable_entity
-    end
-  end
-
   def destroy
     @client_prefix.destroy
     head :no_content
