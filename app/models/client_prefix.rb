@@ -13,7 +13,7 @@ class ClientPrefix < ApplicationRecord
   before_create :set_id
   before_create { self.created_at = Time.zone.now.utc.iso8601 }
   before_save { self.updated_at = Time.zone.now.utc.iso8601 }
-  before_save :set_allocator_prefixes
+  before_validation :set_allocator_prefixes
 
   scope :query, ->(query) { includes(:prefix).where("prefix.prefix like ?", "%#{query}%") }
 

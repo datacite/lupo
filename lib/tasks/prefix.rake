@@ -39,3 +39,23 @@ namespace :provider_prefix do
     end
   end
 end
+
+namespace :client do
+  desc 'Set test prefix'
+  task :set_test_prefix => :environment do
+    Client.find_each do |c|
+      c.send(:set_test_prefix)
+      c.save
+    end
+  end
+end
+
+namespace :provider do
+  desc 'Set test prefix'
+  task :set_test_prefix => :environment do
+    Provider.find_each do |p|
+      p.send(:set_test_prefix)
+      p.save
+    end
+  end
+end

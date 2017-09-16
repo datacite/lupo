@@ -1,6 +1,9 @@
 require "countries"
 
 class Provider < ActiveRecord::Base
+  # include helper module for caching infrequently changing resources
+  include Cacheable
+
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
 
@@ -21,8 +24,9 @@ class Provider < ActiveRecord::Base
   has_many :clients, foreign_key: :allocator
   has_many :provider_prefixes, foreign_key: :allocator
   has_many :prefixes, through: :provider_prefixes
-  
+
   before_validation :set_region, :set_defaults
+  before_create :set_test_prefix
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   accepts_nested_attributes_for :prefixes
@@ -58,7 +62,6 @@ class Provider < ActiveRecord::Base
     errors.add(:uid, "cannot be changed") if self.uid_changed? || self.symbol_changed?
   end
 
-
   private
 
   def set_region
@@ -78,6 +81,12 @@ class Provider < ActiveRecord::Base
   #   end
   #   write_attribute(:provider_type, r)
   # end
+
+  def set_test_prefix
+    return if prefixes.where(prefix: "10.5072").first
+
+    prefixes << cached_prefix_response("10.5072")
+  end
 
   def set_defaults
     self.symbol = symbol.upcase

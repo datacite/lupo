@@ -17,7 +17,7 @@ class Client < ActiveRecord::Base
   validates_numericality_of :doi_quota_allowed, :doi_quota_used
   validates_numericality_of :version, if: :version?
   validates_inclusion_of :role_name, :in => %w( ROLE_DATACENTRE ), :message => "Role %s is not included in the list"
-  validate :check_id
+  validate :check_id, :on => :create
   validate :freeze_uid, :on => :update
   belongs_to :provider, foreign_key: :allocator
   has_many :datasets, foreign_key: :datacentre
@@ -25,6 +25,7 @@ class Client < ActiveRecord::Base
   has_many :prefixes, through: :client_prefixes
 
   before_validation :set_defaults
+  before_create :set_test_prefix
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
@@ -59,6 +60,12 @@ class Client < ActiveRecord::Base
   end
 
   private
+
+  def set_test_prefix
+    return if prefixes.where(prefix: "10.5072").first
+
+    prefixes << cached_prefix_response("10.5072")
+  end
 
   def set_defaults
     self.contact_name = "" unless contact_name.present?
