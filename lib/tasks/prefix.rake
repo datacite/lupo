@@ -10,7 +10,7 @@ namespace :client_prefix do
   desc 'Set created date from prefix'
   task :created => :environment do
     ClientPrefix.find_each do |cp|
-      cp.update_column(:created, cp.prefix.created)
+      cp.update_column(:created_at, cp.prefix.created)
     end
   end
 
@@ -35,7 +35,7 @@ namespace :provider_prefix do
   desc 'Set created date from prefix'
   task :created => :environment do
     ProviderPrefix.find_each do |pp|
-      pp.update_column(:created, pp.prefix.created)
+      pp.update_column(:created_at, pp.prefix.created)
     end
   end
 end

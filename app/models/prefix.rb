@@ -15,6 +15,7 @@ class Prefix < ActiveRecord::Base
   has_many :provider_prefixes, foreign_key: :prefixes
   has_many :providers, through: :provider_prefixes
 
+  before_validation :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
@@ -35,6 +36,10 @@ class Prefix < ActiveRecord::Base
   #   ids = Provider.where(symbol: values).pluck(:id)
   #   association(:providers).ids_writer ids
   # end
+
+  def set_defaults
+    self.version = 0
+  end
 
   def self.state(state)
     case state
