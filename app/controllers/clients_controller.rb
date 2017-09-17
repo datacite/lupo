@@ -65,7 +65,9 @@ class ClientsController < ApplicationController
 
   # GET /clients/1
   def show
-    render jsonapi: @client, include: @include
+    meta = { prefixes: @client.prefixes.count }
+
+    render jsonapi: @client, meta: meta, include: @include
   end
 
   # POST /clients

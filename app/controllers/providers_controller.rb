@@ -67,7 +67,10 @@ class ProvidersController < ApplicationController
   end
 
   def show
-    render jsonapi: @provider
+    meta = { clients: @provider.clients.count,
+             prefixes: @provider.prefixes.count }
+
+    render jsonapi: @provider, meta: meta, include: @include
   end
 
   # POST /providers
