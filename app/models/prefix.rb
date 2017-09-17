@@ -24,17 +24,17 @@ class Prefix < ActiveRecord::Base
     "DataCite"
   end
 
-  # workaround for non-standard database column names and association
-  def client_ids=(values)
-    ids = Client.where(symbol: values).pluck(:id)
-    association(:clients).ids_writer ids
-  end
-
-  # workaround for non-standard database column names and association
-  def provider_ids=(values)
-    ids = Provider.where(symbol: values).pluck(:id)
-    association(:providers).ids_writer ids
-  end
+  # # workaround for non-standard database column names and association
+  # def client_ids=(values)
+  #   ids = Client.where(symbol: values).pluck(:id)
+  #   association(:clients).ids_writer ids
+  # end
+  #
+  # # workaround for non-standard database column names and association
+  # def provider_ids=(values)
+  #   ids = Provider.where(symbol: values).pluck(:id)
+  #   association(:providers).ids_writer ids
+  # end
 
   def self.state(state)
     case state
