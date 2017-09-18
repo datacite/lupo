@@ -12,7 +12,9 @@ class Ability
       can [:update, :read], Provider, :symbol => user.provider_id
       can [:create, :update, :read], Client, :allocator => user.allocator
       can [:create, :update, :read], Dataset, :datacentre => user.datacentre
-      # can [:update, :read], Prefix, :datacentre => user.client_id
+      can [:update, :read], Prefix #, :datacentre => user.client_id
+      can [:create, :update, :read], ClientPrefix #, :datacentre => user.client_id
+      can [:read], ProviderPrefix #, :datacentre => user.client_id
       can [:create, :update, :read, :destroy], User, :provider_id => user.provider_id
     elsif user.role_id == "provider_user"
       can [:read], Provider, :symbol => user.provider_id
