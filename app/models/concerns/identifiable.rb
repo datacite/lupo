@@ -45,7 +45,14 @@ module Identifiable
     end
 
     def doi_as_url(doi)
-      Addressable::URI.encode("https://doi.org/#{clean_doi(doi)}") if doi.present?
+      return nil unless doi.present?
+
+      # use test handle server unless production environment
+      doi_resolver = Rails.env.production? ? "https://doi.org/" : "https://handle.test.datacite.org/"
+
+      # remove non-printing whitespace and downcase
+      doi = doi.delete("\u200B").downcase
+      doi_resolver + Addressable::URI.encode(doi)
     end
 
     def pmid_as_url(pmid)
