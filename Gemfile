@@ -30,7 +30,6 @@ gem 'elasticsearch-model'
 gem 'elasticsearch-rails'
 gem 'sidekiq', '~> 5.0', '>= 5.0.4'
 gem 'bergamasco', '~> 0.3.10'
-# gem 'handle_rest', :github => 'mlibrary/handle_rest', :branch => 'master'
 gem 'pwqgen'
 gem 'base32-crockford-checksum', '~> 0.2.3'
 
