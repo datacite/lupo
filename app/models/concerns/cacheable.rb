@@ -4,7 +4,7 @@ module Cacheable
   included do
     def cached_client_response(id, options={})
       Rails.cache.fetch("client_response/#{id}", expires_in: 7.days) do
-        Client.where(symbol: id).select(:id, :symbol, :name, :allocator, :created).first
+        Client.where(symbol: id).select(:id, :symbol, :name, :allocator, :contact_name, :contact_email, :domains, :is_active, :created, :updated).first
       end
     end
 
@@ -22,7 +22,13 @@ module Cacheable
 
     def cached_provider_response(symbol, options={})
       Rails.cache.fetch("provider_response/#{symbol}", expires_in: 7.days) do
-        Provider.where(symbol: symbol).select(:id, :symbol, :name, :created).first
+        Provider.where(symbol: symbol).select(:id, :symbol, :name, :contact_name, :contact_email, :is_active, :created, :updated).first
+      end
+    end
+
+    def cached_resource_type_response(id, options={})
+      Rails.cache.fetch("resource_type_response/#{id}", expires_in: 1.month) do
+        ResourceType.where(id: id)
       end
     end
 
@@ -69,8 +75,8 @@ module Cacheable
     end
 
     def cached_clients
-      Rails.cache.fetch("clients", expires_in: 1.month) do
-        Client.all
+      Rails.cache.fetch("clients", expires_in: 1.day) do
+        Client.all.select(:id, :symbol, :name, :created)
       end
     end
 

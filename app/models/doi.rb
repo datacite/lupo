@@ -69,9 +69,9 @@ class Doi < Base
     @resource_type_id = @resource_type_id.underscore.dasherize if @resource_type_id.present?
 
     # associations
-    @client = Array(options[:clients]).find { |p| p.id == @client_id }
-    @provider = Array(options[:providers]).find { |r| r.id == @provider_id }
-    @resource_type = Array(options[:resource_types]).find { |r| r.id == @resource_type_id }
+    @client = cached_client_response(@client_id.to_s.upcase)
+    @provider = cached_provider_response(@provider_id.to_s.upcase)
+    @resource_type = cached_resource_type_response(@resource_type_id.to_s.upcase)
   end
 
   def self.get_query_url(options={})
@@ -185,11 +185,7 @@ class Doi < Base
       client_id = item.fetch("datacentre_symbol", nil)
       client = cached_client_response(client_id)
 
-      { data: parse_item(item,
-          resource_types: cached_resource_types,
-          clients: [client],
-          providers: cached_providers),
-        meta: meta }
+      { data: parse_item(item), meta: meta }
     else
       if options[:doi_id].present?
         return { data: [], meta: [] } if result.blank?
@@ -229,12 +225,7 @@ class Doi < Base
                             end
       clients = Array(clients).map { |item| parse_include(item.first, item.last) }
 
-      { data: parse_items(items,
-          resource_types: cached_resource_types,
-          clients: clients,
-          providers: cached_providers
-          ),
-        meta: meta }
+      { data: parse_items(items), meta: meta }
     end
   end
 
