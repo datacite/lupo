@@ -46,9 +46,9 @@ class MetadataController < ApplicationController
 
   # POST /metadata
   def create
-    unless [:type, :attributes].all? { |k| safe_params.key? k }
-      render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
-    else
+    # unless [:type, :attributes].all? { |k| safe_params.key? k }
+    #   render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
+    # else
       @metadata = Metadata.new(safe_params.except(:type))
       authorize! :create, @metadata
 
@@ -57,20 +57,20 @@ class MetadataController < ApplicationController
       else
         render json: serialize(@metadata.errors), status: :unprocessable_entity
       end
-    end
+    # end
   end
 
   # PATCH/PUT /metadata/1
   def update
-    unless [:type, :attributes].all? { |k| safe_params.key? k }
-      render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
-    else
+    # unless [:type, :attributes].all? { |k| safe_params.key? k }
+    #   render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
+    # else
       if @metadata.update_attributes(safe_params.except(:type))
         render json: @metadata
       else
         render json: serialize(@metadata.errors), status: :unprocessable_entity
       end
-    end
+    # end
   end
 
   # DELETE /metadata/1
@@ -87,7 +87,9 @@ class MetadataController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def safe_params
-      attributes = [:created, :version, :metadata_version, :dataset_id, :is_converted_by_mds, :namespace, :xml]
-      params.require(:data).permit(:id, :type, attributes: attributes)
+    fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
+    ActiveModelSerializers::Deserialization.jsonapi_parse!(
+      params, only: [:created, :version, :metadata_version, :dataset, :is_converted_by_mds, :namespace, :xml]
+    )
     end
 end

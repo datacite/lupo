@@ -13,7 +13,6 @@ class Media < ActiveRecord::Base
 
   validate :freeze_uid, :on => :update
   belongs_to :dataset, class_name: 'Dataset', foreign_key: :dataset
-  # before_validation :set_dataset
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
@@ -59,10 +58,4 @@ class Media < ActiveRecord::Base
 
   private
 
-  # def set_dataset
-  #   r = Dataset.where(doi: dataset_id).first
-  #   fail("dataset_id Not found") unless r.present?
-  #   write_attribute(:dataset, r.id)
-  # end
-  #
 end

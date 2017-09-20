@@ -98,11 +98,11 @@ RSpec.describe "Media", type: :request  do
         			"url"=> "kjsdkjsdkjsd",
         			"media_type"=> "application/pdf"
         		},
-            "relationships": {
-              "dataset": {
-                "data":{
-                  "type":"datasets",
-                  "id": dataset.uid
+            "relationships"=> {
+              "dataset"=> {
+                "data"=>{
+                  "type"=>"datasets",
+                  "id"=> dataset.uid
                 }
               }
             }} }

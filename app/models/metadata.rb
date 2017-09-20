@@ -5,7 +5,6 @@ class Metadata < ActiveRecord::Base
   include Bolognese::Utils
   include Bolognese::DoiUtils
 
-  attribute :dataset_id
   alias_attribute :uid, :id
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
@@ -13,21 +12,28 @@ class Metadata < ActiveRecord::Base
   validates_uniqueness_of :uid, message: "This name has already been taken"
   validates_numericality_of :version, if: :version?
   validates :xml, metadata: true
+  validate :freeze_uid, :on => :update
   # validates_inclusion_of :metadata_version, :in => %w( 1 2 3 4 ), :message => "Metadata version is not included in the list", if: :metadata_version?
 
   belongs_to :dataset, class_name: 'Dataset', foreign_key: :dataset
-  before_validation :set_dataset
 
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
 
   scope :query, ->(query) { where("symbol like ? OR name like ?", "%#{query}%", "%#{query}%") }
 
-  private
 
-  def set_dataset
-    r = Dataset.where(doi: dataset_id).first
-    fail("dataset_id Not found") unless r.present?
+  def freeze_uid
+    errors.add(:uid, "cannot be changed") if self.uid_changed? || self.id_changed?
+  end
+
+
+
+  def dataset_id=(value)
+    r = Dataset.where(doi: value).select(:id, :doi, :datacentre, :created).first
+    fail ActiveRecord::RecordNotFound unless r.present?
+
     write_attribute(:dataset, r.id)
   end
+
 end
