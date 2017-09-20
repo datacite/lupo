@@ -43,7 +43,7 @@ class Doi < Base
     @published = attributes.fetch("publicationYear", nil)
     @registered = attributes.fetch("minted", nil)
     @updated_at = attributes.fetch("updated", nil)
-    @resource_type_subtype = attributes.fetch("resourceType", nil).presence || nil
+    @resource_type_subtype = attributes.fetch("resourceType", nil)
     @license = normalize_license(attributes.fetch("rightsURI", []))
     @version = attributes.fetch("version", nil)
     @schema_version = attributes.fetch("schema_version", nil)
