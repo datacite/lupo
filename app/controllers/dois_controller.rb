@@ -47,7 +47,7 @@ class DoisController < ApplicationController
       @include = params[:include].split(",").map { |i| i.downcase.underscore }.join(",")
       @include = [@include]
     else
-      @include = ["client,provider,resource-type"]
+      @include = ["client,provider,resource_type"]
     end
   end
 

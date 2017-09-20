@@ -227,9 +227,7 @@ class Doi < Base
                               id, title = p.first.split(' - ', 2)
                               [Client, { "id" => id, "name" => title }]
                             end
-      clients = Array(clients).map do |item|
-        parse_include(item.first, item.last)
-      end
+      clients = Array(clients).map { |item| parse_include(item.first, item.last) }
 
       { data: parse_items(items,
           resource_types: cached_resource_types,
@@ -241,7 +239,7 @@ class Doi < Base
   end
 
   def self.parse_facet_counts(facets, options={})
-    resource_types = facets.fetch("resourceType_facet", [])
+    resource_types = facets.fetch("facet_fields", {}).fetch("resourceType_facet", [])
                            .each_slice(2)
                            .map { |k,v| { id: k.underscore.dasherize, title: k.underscore.humanize, count: v } }
     years = facets.fetch("facet_fields", {}).fetch("publicationYear", [])
@@ -252,14 +250,14 @@ class Doi < Base
                   .each_slice(2)
                   .sort { |a, b| b.first <=> a.first }
                   .map { |i| { id: i[0][0..3], title: i[0][0..3], count: i[1] } }
-    clients = facets.fetch("datacentre_facet", [])
+    clients = facets.fetch("facet_fields", {}).fetch("datacentre_facet", [])
                        .each_slice(2)
                        .map do |p|
                               id, title = p.first.split(' - ', 2)
                               [id, p.last]
                             end.to_h
     clients = get_client_facets(clients)
-    schema_versions = facets.fetch("schema_version", [])
+    schema_versions = facets.fetch("facet_fields", {}).fetch("schema_version", [])
                             .each_slice(2)
                             .sort { |a, b| b.first <=> a.first }
                             .map { |i| { id: i[0], title: "Schema #{i[0]}", count: i[1] } }
