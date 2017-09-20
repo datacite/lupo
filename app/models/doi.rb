@@ -65,8 +65,6 @@ class Doi < Base
     @client_id = @client_id.downcase if @client_id.present?
     @provider_id = attributes.fetch("allocator_symbol", nil)
     @provider_id = @provider_id.downcase if @provider_id.present?
-    @registration_agency_id = @provider_id.present? ? "datacite" : attributes.fetch("registration_agency_id", nil)
-    @registration_agency_id = @registration_agency_id.downcase if @registration_agency_id.present?
     @resource_type_id = attributes.fetch("resourceTypeGeneral", nil)
     @resource_type_id = @resource_type_id.underscore.dasherize if @resource_type_id.present?
 
