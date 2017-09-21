@@ -121,7 +121,7 @@ class Doi < Base
       update_date = get_solr_date_range(options[:from_update_date], options[:until_update_date]) if update_date
       registered = get_solr_date_range(options[:registered], options[:registered]) if options[:registered].present?
 
-      fq = %w(has_metadata:true is_active:true)
+      fq = []
       fq << "resourceTypeGeneral:#{options[:resource_type_id].underscore.camelize}" if options[:resource_type_id].present?
       fq << "datacentre_symbol:#{options[:client_id].upcase}" if options[:client_id].present?
       fq << "allocator_symbol:#{options[:provider_id].upcase}" if options[:provider_id].present?

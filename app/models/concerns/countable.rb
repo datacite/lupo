@@ -15,7 +15,7 @@ module Countable
                  'f.minted.facet.range.gap' => '+1YEAR',
                  wt: "json" }.compact
 
-      url = ENV["SOLR_HOST"] + "?" + URI.encode_www_form(params)
+      url = ENV["SOLR_URL"] + "?" + URI.encode_www_form(params)
       result = Maremma.get url
       facets = result.body.fetch("data", {}).fetch("facet_counts", {})
       facets.fetch("facet_ranges", {}).fetch("minted", {}).fetch("counts", [])
