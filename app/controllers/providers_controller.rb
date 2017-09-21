@@ -67,8 +67,8 @@ class ProvidersController < ApplicationController
   end
 
   def show
-    meta = { clients: @provider.clients.count,
-             prefixes: @provider.prefixes.count }
+    meta = { clients: @provider.client_count,
+             dois: @provider.doi_count }
 
     render jsonapi: @provider, meta: meta, include: @include
   end

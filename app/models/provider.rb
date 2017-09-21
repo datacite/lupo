@@ -4,6 +4,9 @@ class Provider < ActiveRecord::Base
   # include helper module for caching infrequently changing resources
   include Cacheable
 
+  # include helper module for counting registered DOIs
+  include Countable
+
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
 
@@ -56,6 +59,25 @@ class Provider < ActiveRecord::Base
 
   def logo_url
     "#{ENV['CDN_URL']}/images/members/#{uid.downcase}.png"
+  end
+
+  def query_filter
+    "allocator_symbol:#{symbol}"
+  end
+
+  # cumulative count deleted clients in the previous year
+  def client_count
+    clients.unscoped.where("datacentre.allocator = ?", id)
+      .pluck(:symbol, :created, :deleted_at)
+      .group_by { |c| c[2].present? ? c[2].year - 1 : c[1].year }
+      .sort { |a, b| a.first <=> b.first }
+      .reduce([]) do |sum, c|
+        deleted = c[1].select { |s| s[2].present? }.count
+        count = c[1].count + sum.last.to_h["count"].to_i - sum.last.to_h["deleted"].to_i
+        sum << { "id" => c[0], "title" => c[0], "count" => count, "deleted" => deleted }
+        sum
+      end
+      .map { |c| c.except("deleted") }
   end
 
   def freeze_uid

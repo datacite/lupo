@@ -3,6 +3,9 @@ class Client < ActiveRecord::Base
   # include helper module for caching infrequently changing resources
   include Cacheable
 
+  # include helper module for counting registered DOIs
+  include Countable
+
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
@@ -43,6 +46,10 @@ class Client < ActiveRecord::Base
 
   def year
     created_at.year if created_at.present?
+  end
+
+  def query_filter
+    "datacentre_symbol:#{symbol}"
   end
 
   def doi_quota_exceeded
