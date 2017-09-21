@@ -273,7 +273,7 @@ class Doi < Base
   end
 
   def self.url
-    "#{ENV["SOLR_HOST"]}"
+    "#{ENV["SOLR_URL"]}"
   end
 
   # find Creative Commons or OSI license in rightsURI array
