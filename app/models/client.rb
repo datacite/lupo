@@ -10,9 +10,10 @@ class Client < ActiveRecord::Base
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
 
-  alias_attribute :uid, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
+
+  delegate :symbol, to: :provider, prefix: true
 
   validates_presence_of :symbol, :name, :contact_email
   validates_uniqueness_of :symbol, message: "This Client ID has already been taken"
@@ -36,12 +37,26 @@ class Client < ActiveRecord::Base
 
   scope :query, ->(query) { where("datacentre.symbol like ? OR datacentre.name like ?", "%#{query}%", "%#{query}%") }
 
+  def uid
+    symbol.downcase
+  end
+
   # workaround for non-standard database column names and association
+  def provider_id
+    provider_symbol.downcase
+  end
+
   def provider_id=(value)
     r = cached_provider_response(value)
     fail ActiveRecord::RecordNotFound unless r.present?
 
     write_attribute(:allocator, r.id)
+  end
+
+  # backwards compatibility
+  def member
+    m = cached_member_response(provider_id)
+    m[:data] if m.present?
   end
 
   def year

@@ -26,6 +26,14 @@ class ClientSerializer < ActiveModel::Serializer
     object.provider_symbol
   end
 
+  def created
+    object.created.iso8601
+  end
+
+  def updated
+    object.updated.iso8601
+  end
+
   # def domains
   #   object.domains.to_s.split(/\s*,\s*/).presence
   # end

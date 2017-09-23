@@ -74,6 +74,17 @@ class Doi < Base
     @resource_type = cached_resource_type_response(@resource_type_id.to_s.upcase)
   end
 
+  # backwards compatibility
+  def data_center
+    client
+  end
+
+  # backwards compatibility
+  def member
+    m = cached_member_response(provider_id.to_s.upcase)
+    m[:data] if m.present?
+  end
+
   def self.get_query_url(options={})
     if options[:id].present?
       params = { q: options[:id],

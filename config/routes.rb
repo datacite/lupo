@@ -35,6 +35,11 @@ Rails.application.routes.draw do
   end
   resources :providers, constraints: { :id => /.+/ }
 
+  # support for legacy routes
+  resources :members, only: [:show, :index]
+  resources :data_centers, only: [:show, :index], constraints: { :id => /.+/ }, path: "/data-centers"
+  resources :works, only: [:show, :index], constraints: { :id => /.+/ }
+
   # rescue routing errors
-  # match "*path", to: "index#routing_error", via: :all
+  match "*path", to: "index#routing_error", via: :all
 end
