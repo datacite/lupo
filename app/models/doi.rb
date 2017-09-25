@@ -1,5 +1,5 @@
 class Doi < Base
-  attr_reader :id, :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :client_id, :provider_id, :resource_type_id, :client, :provider, :resource_type, :license, :version, :results, :related_identifiers, :schema_version, :xml, :media, :published, :registered, :updated_at
+  attr_reader :id, :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :client_id, :provider_id, :resource_type_id, :client, :provider, :resource_type, :license, :version, :results, :related_identifiers, :schema_version, :xml, :media, :state, :published, :registered, :updated_at
 
   # include author methods
   include Authorable
@@ -23,6 +23,7 @@ class Doi < Base
 
     @xml = attributes.fetch('xml', "PGhzaD48L2hzaD4=\n")
     @media = attributes.fetch('media', nil)
+    @state = attributes.fetch("is_active", nil) ? "searchable" : "hidden"
 
     @author = attributes.fetch("author", nil)
     if author.nil?
@@ -121,6 +122,8 @@ class Doi < Base
         sort = options[:query].present? ? "score desc" : "minted desc"
       end
 
+
+
       page = (options.dig(:page, :number) || 1).to_i
       per_page = (options.dig(:page, :size) || 25).to_i
       offset = (page - 1) * per_page
@@ -141,16 +144,19 @@ class Doi < Base
       fq << "updated:#{update_date}" if update_date
       fq << "minted:#{registered}" if registered
       fq << "publicationYear:#{options[:year]}" if options[:year].present?
+      fq << "is_active:false" if options[:state] == "hidden"
+      fq << "is_active:true" if options[:state] == "searchable"
+      fq << "has_metadata:#{options[:has_metadata]}" if options[:has_metadata].present?
       fq << "schema_version:#{options[:schema_version]}" if options[:schema_version].present?
 
       params = { q: options.fetch(:query, nil).presence || "*:*",
                  start: offset,
                  rows: per_page,
-                 fl: "doi,title,description,publisher,publicationYear,resourceType,resourceTypeGeneral,rightsURI,version,datacentre_symbol,allocator_symbol,schema_version,xml,media,minted,updated",
+                 fl: "doi,title,description,publisher,publicationYear,resourceType,resourceTypeGeneral,rightsURI,version,datacentre_symbol,allocator_symbol,schema_version,xml,is_active,has_metadata,media,minted,updated",
                  qf: options[:qf],
                  fq: fq.join(" AND "),
                  facet: "true",
-                 'facet.field' => %w(publicationYear datacentre_facet resourceType_facet schema_version minted),
+                 'facet.field' => %w(publicationYear datacentre_facet resourceType_facet schema_version is_active minted),
                  'facet.limit' => 15,
                  'facet.mincount' => 1,
                  'facet.range' => 'minted',
@@ -263,6 +269,12 @@ class Doi < Base
                             .each_slice(2)
                             .sort { |a, b| b.first <=> a.first }
                             .map { |i| { id: i[0], title: "Schema #{i[0]}", count: i[1] } }
+    states = facets.fetch("facet_fields", {}).fetch("is_active", [])
+                           .each_slice(2)
+                           .map do |k,v|
+                             id = (k == "true") ? "searchable" : "hidden"
+                             { id: id, title: id.humanize, count: v }
+                           end
 
     if options[:client_id].present? && clients.empty?
       clients = { options[:client_id] => 0 }
@@ -272,7 +284,8 @@ class Doi < Base
       "years" => years,
       "registered" => registered,
       "clients" => clients,
-      "schema-versions" => schema_versions }
+      "schema-versions" => schema_versions,
+      "states" => states }
   end
 
   def self.get_client_facets(clients, options={})

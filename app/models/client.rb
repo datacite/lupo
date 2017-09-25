@@ -74,11 +74,11 @@ class Client < ActiveRecord::Base
   end
 
   def freeze_uid
-    errors.add(:uid, "cannot be changed") if self.uid_changed? || self.symbol_changed?
+    errors.add(:symbol, "cannot be changed") if self.symbol_changed?
   end
 
   def check_id
-    errors.add(:id, ", Your Client ID must include the name of your provider. Separated by a dot '.' ") if self.symbol.split(".")[0].downcase != self.provider.symbol.downcase
+    errors.add(:symbol, ", Your Client ID must include the name of your provider. Separated by a dot '.' ") if self.symbol.split(".")[0].downcase != self.provider.symbol.downcase
   end
 
   private

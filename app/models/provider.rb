@@ -81,7 +81,7 @@ class Provider < ActiveRecord::Base
   end
 
   def freeze_uid
-    errors.add(:uid, "cannot be changed") if self.uid_changed? || self.symbol_changed?
+    errors.add(:symbol, "cannot be changed") if self.symbol_changed?
   end
 
   private
