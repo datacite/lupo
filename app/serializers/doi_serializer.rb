@@ -10,7 +10,11 @@ class DoiSerializer < ActiveModel::Serializer
   has_many :media, serializer: MediaSerializer
 
   def id
-    object.doi
+    object.doi.downcase
+  end
+
+  def doi
+    object.doi.downcase
   end
 
   def resource_type
