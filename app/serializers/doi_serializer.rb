@@ -1,17 +1,39 @@
 class DoiSerializer < ActiveModel::Serializer
   #cache key: 'doi'
+  type 'dois'
 
-  attributes :doi, :identifier, :url, :xml, :media, :author, :title, :container_title, :description, :resource_type_subtype, :license, :version, :results, :related_identifiers, :schema_version, :state, :has_metadata, :published, :registered, :updated
+  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_general, :resource_type, :license, :version, :related_identifier, :schema_version, :state, :xml, :published, :registered, :updated
 
   belongs_to :client, serializer: ClientSerializer
   belongs_to :provider, serializer: ProviderSerializer
-  belongs_to :resource_type, serializer: ResourceTypeSerializer
+  #belongs_to :resource_type, serializer: ResourceTypeSerializer
+  has_many :media, serializer: MediaSerializer
 
-  def updated
-    object.updated_at
+  def id
+    object.doi
   end
 
-  def has_metadata
-    object.xml != "PGhzaD48L2hzaD4=\n"
+  def resource_type
+    object.additional_type
+  end
+
+  def container_title
+    object.container_title || object.publisher
+  end
+
+  def updated
+    object.date_updated
+  end
+
+  def published
+    object.date_published
+  end
+
+  def registered
+    object.date_registered
+  end
+
+  def license
+    Array.wrap(object.license).map { |l| l["id"] }.compact.unwrap
   end
 end

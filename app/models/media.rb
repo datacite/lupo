@@ -12,7 +12,8 @@ class Media < ActiveRecord::Base
   # validates_inclusion_of :media_type, :in => %w( ROLE_ALLOCATOR ROLE_ADMIN ROLE_DEV ), :message => "Media %s is not included in the list", if: :role_name?
 
   validate :freeze_uid, :on => :update
-  belongs_to :dataset, class_name: 'Dataset', foreign_key: :dataset
+  
+  belongs_to :doi, class_name: 'Dataset', foreign_key: :dataset
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 

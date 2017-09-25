@@ -1,7 +1,9 @@
 require 'pwqgen'
 
-class Password < Base
+class Password
+  include Searchable
   include Authenticable
+
   attr_reader :string
 
   def initialize(user, client)

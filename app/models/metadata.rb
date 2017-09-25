@@ -15,25 +15,18 @@ class Metadata < ActiveRecord::Base
   validate :freeze_uid, :on => :update
   # validates_inclusion_of :metadata_version, :in => %w( 1 2 3 4 ), :message => "Metadata version is not included in the list", if: :metadata_version?
 
-  belongs_to :dataset, class_name: 'Dataset', foreign_key: :dataset
+  belongs_to :doi, foreign_key: :dataset
 
   before_create { self.created = Time.zone.now.utc.iso8601 }
-
-
-  scope :query, ->(query) { where("symbol like ? OR name like ?", "%#{query}%", "%#{query}%") }
-
 
   def freeze_uid
     errors.add(:uid, "cannot be changed") if self.uid_changed? || self.id_changed?
   end
 
-
-
-  def dataset_id=(value)
-    r = Dataset.where(doi: value).select(:id, :doi, :datacentre, :created).first
-    fail ActiveRecord::RecordNotFound unless r.present?
-
-    write_attribute(:dataset, r.id)
-  end
-
+  # def dataset_id=(value)
+  #   r = Dataset.where(doi: value).select(:id, :doi, :datacentre, :created).first
+  #   fail ActiveRecord::RecordNotFound unless r.present?
+  #
+  #   write_attribute(:dataset, r.id)
+  # end
 end

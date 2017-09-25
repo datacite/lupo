@@ -1,4 +1,6 @@
-class ResourceType < Base
+class ResourceType
+  include Searchable
+
   attr_reader :id, :title, :updated_at
 
   def initialize(attributes, options={})
