@@ -63,8 +63,8 @@ RUN gem update --system && \
     /sbin/setuser app bundle install --path vendor/bundle
 
 # Add Runit script for sidekiq workers
-# RUN mkdir /etc/service/sidekiq
-# ADD vendor/docker/sidekiq.sh /etc/service/sidekiq/run
+RUN mkdir /etc/service/sidekiq
+ADD vendor/docker/sidekiq.sh /etc/service/sidekiq/run
 
 # Configure handle client
 RUN mkdir -p /home/app/.handle \

@@ -26,6 +26,7 @@ class Doi < ActiveRecord::Base
   before_validation :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
+  after_save { UrlJob.perform_later(self) }
 
   def client_id=(value)
     r = cached_client_response(value)
@@ -80,6 +81,14 @@ class Doi < ActiveRecord::Base
   end
 
   private
+
+  def set_url
+    response = Maremma.head(identifier, limit: 0)
+    if response.headers.present?
+      update_column(:url, response.headers["location"])
+      Rails.logger.debug "Set URL #{response.headers["location"]} for DOI #{doi}"
+    end
+  end
 
   # def set_defaults
   #  set_datacentre unless datacentre
