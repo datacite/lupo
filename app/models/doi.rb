@@ -66,7 +66,7 @@ class Doi < ActiveRecord::Base
 
   delegate :author, :title, :container_title, :description, :resource_type_general,
     :additional_type, :license, :version, :related_identifier, :schema_version,
-    :date_published, :publisher, :xml, to: :doi_metadata
+    :date_published, :date_accepted, :date_available, :publisher, :xml, to: :doi_metadata
 
   def date_registered
     minted

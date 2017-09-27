@@ -67,7 +67,11 @@ class ProvidersController < ApplicationController
   end
 
   def show
-    render jsonapi: @provider, include: @include
+    meta = { providers: @provider.provider_count,
+             clients: @provider.client_count,
+             dois: @provider.doi_count }.compact
+
+    render jsonapi: @provider, meta: meta, include: @include
   end
 
   # POST /providers
@@ -116,7 +120,6 @@ class ProvidersController < ApplicationController
     render jsonapi: @client, meta: r , include: @include
   end
 
-
   protected
 
   # Use callbacks to share common setup or constraints between actions.
@@ -139,8 +142,8 @@ class ProvidersController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:id, :name, :contact, :email, :country, :is_active],
-              keys: { id: :symbol, contact: :contact_name, email: :contact_email, country: :country_code }
+      params, only: [:id, :name, :contact_name, :contact_email, :country, :is_active],
+              keys: { id: :symbol, country: :country_code }
     )
   end
 end

@@ -61,23 +61,41 @@ class Provider < ActiveRecord::Base
     "#{ENV['CDN_URL']}/images/members/#{uid.downcase}.png"
   end
 
+  # show all dois for admin
   def query_filter
-    "allocator_symbol:#{symbol}"
+    "allocator_symbol:#{symbol}" if symbol != "ADMIN"
   end
 
-  # cumulative count deleted clients in the previous year
+  # cumulative count clients that have not been deleted
+  # show all clients for admin
   def client_count
-    clients.unscoped.where("datacentre.allocator = ?", id)
-      .pluck(:symbol, :created, :deleted_at)
-      .group_by { |c| c[2].present? ? c[2].year - 1 : c[1].year }
-      .sort { |a, b| a.first <=> b.first }
-      .reduce([]) do |sum, c|
-        deleted = c[1].select { |s| s[2].present? }.count
-        count = c[1].count + sum.last.to_h["count"].to_i - sum.last.to_h["deleted"].to_i
-        sum << { "id" => c[0], "title" => c[0], "count" => count, "deleted" => deleted }
-        sum
-      end
-      .map { |c| c.except("deleted") }
+    c = clients.unscoped
+    c = c.where("datacentre.allocator = ?", id) if symbol != "ADMIN"
+    c.pluck(:symbol, :created, :deleted_at)
+    .group_by { |c| c[2].present? ? c[2].year - 1 : c[1].year }
+    .sort { |a, b| a.first <=> b.first }
+    .reduce([]) do |sum, c|
+      deleted = c[1].select { |s| s[2].present? }.count
+      count = sum.last.to_h["count"].to_i + c[1].count - deleted
+      sum << { "id" => c[0], "title" => c[0], "count" => count }
+      sum
+    end
+  end
+
+  # show provider count for admin
+  def provider_count
+    return nil if symbol != "ADMIN"
+
+    p = Provider.unscoped.where("allocator.role_name = 'ROLE_ALLOCATOR'")
+    p.pluck(:symbol, :created, :deleted_at)
+    .group_by { |c| c[2].present? ? c[2].year - 1 : c[1].year }
+    .sort { |a, b| a.first <=> b.first }
+    .reduce([]) do |sum, c|
+      deleted = c[1].select { |s| s[2].present? }.count
+      count = sum.last.to_h["count"].to_i + c[1].count - deleted
+      sum << { "id" => c[0], "title" => c[0], "count" => count }
+      sum
+    end
   end
 
   def freeze_uid

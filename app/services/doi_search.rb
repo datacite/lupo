@@ -110,7 +110,7 @@ class DoiSearch < Bolognese::Metadata
       params = { q: options.fetch(:query, nil).presence || "*:*",
                  start: offset,
                  rows: per_page,
-                 fl: "doi,datacentre_symbol,allocator_symbol,xml,is_active,has_metadata,media,minted,updated",
+                 fl: "doi,url,datacentre_symbol,allocator_symbol,xml,is_active,has_metadata,media,minted,updated",
                  qf: options[:qf],
                  fq: fq.join(" AND "),
                  facet: "true",

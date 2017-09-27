@@ -65,7 +65,9 @@ class ClientsController < ApplicationController
 
   # GET /clients/1
   def show
-    render jsonapi: @client, include: @include
+    meta = { dois: @client.doi_count }
+
+    render jsonapi: @client, meta: meta, include: @include
   end
 
   # POST /clients
@@ -138,8 +140,8 @@ class ClientsController < ApplicationController
   def safe_params
     Rails.logger.warn params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:id, :name, :contact, :email, :domains, :provider, :is_active, :deleted_at],
-              keys: { id: :symbol, contact: :contact_name, email: :contact_email }
+      params, only: [:id, :name, :contact_name, :contact_email, :domains, :provider, :is_active, :deleted_at],
+              keys: { id: :symbol }
     )
   end
 end
