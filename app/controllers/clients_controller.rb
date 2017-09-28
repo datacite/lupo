@@ -140,7 +140,7 @@ class ClientsController < ApplicationController
   def safe_params
     Rails.logger.warn params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:id, :name, :contact_name, :contact_email, :domains, :provider, :is_active, :deleted_at],
+      params, only: [:id, :name, :contact_name, :contact_email, :domains, :re3data, :provider, :is_active, :deleted_at],
               keys: { id: :symbol }
     )
   end
