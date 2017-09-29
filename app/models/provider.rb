@@ -22,7 +22,7 @@ class Provider < ActiveRecord::Base
   validates_numericality_of :doi_quota_allowed, :doi_quota_used
   validates_numericality_of :version, if: :version?
   validates_inclusion_of :role_name, :in => %w( ROLE_ALLOCATOR ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list", if: :role_name?
-  validate :freeze_uid, :on => :update
+  validate :freeze_symbol, :on => :update
 
   has_many :clients, foreign_key: :allocator
   has_many :provider_prefixes, foreign_key: :allocator
@@ -58,7 +58,7 @@ class Provider < ActiveRecord::Base
   end
 
   def logo_url
-    "#{ENV['CDN_URL']}/images/members/#{uid.downcase}.png"
+    "#{ENV['CDN_URL']}/images/members/#{symbol.downcase}.png"
   end
 
   # show all dois for admin
@@ -98,7 +98,7 @@ class Provider < ActiveRecord::Base
     end
   end
 
-  def freeze_uid
+  def freeze_symbol
     errors.add(:symbol, "cannot be changed") if self.symbol_changed?
   end
 
