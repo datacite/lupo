@@ -35,6 +35,9 @@ Rails.application.routes.draw do
   end
   resources :providers, constraints: { :id => /.+/ }
 
+  # re3data
+  resources :repositories, only: [:show, :index]
+
   # support for legacy routes
   resources :members, only: [:show, :index]
   resources :data_centers, only: [:show, :index], constraints: { :id => /.+/ }, path: "/data-centers"

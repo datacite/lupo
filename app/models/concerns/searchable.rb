@@ -33,6 +33,10 @@ module Searchable
       end
     end
 
+    def parse_item(item, options={})
+      self.new(item, options)
+    end
+
     def parse_include(klass, params)
       klass.new(params)
     end
