@@ -50,16 +50,12 @@ class Client < ActiveRecord::Base
   end
 
   def repository_id=(value)
-    #r = cached_provider_response(value)
-    #fail ActiveRecord::RecordNotFound unless r.present?
-
     write_attribute(:re3data, value)
   end
 
   def repository
     return nil unless re3data.present?
     r = cached_repository_response(re3data)
-    Rails.logger.info r.inspect
     r[:data] if r.present?
   end
 
