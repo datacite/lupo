@@ -37,6 +37,7 @@ Rails.application.routes.draw do
 
   # re3data
   resources :repositories, only: [:show, :index]
+  get "/repositories/:id/badge", to: "repositories#badge", format: :svg
 
   # support for legacy routes
   resources :members, only: [:show, :index]

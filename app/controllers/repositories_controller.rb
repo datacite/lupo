@@ -10,4 +10,10 @@ class RepositoriesController < ApplicationController
 
     render jsonapi: @repository[:data]
   end
+
+  def badge
+    id = "http://www.re3data.org/public/badges/s/light/" + params[:id][3..-1]
+    result = Maremma.get(id, accept: "image/svg+xml", raw: true)
+    render body: result.body.fetch("data", nil), content_type: "image/svg+xml"
+  end
 end
