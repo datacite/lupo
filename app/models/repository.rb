@@ -13,11 +13,11 @@ class Repository
     @description = parse_attributes(item.fetch("description", nil))
     @repository_url = item.fetch("repositoryURL", nil)
     @repository_contact = item.fetch("repositoryContact", nil)
-    @subject = parse_attributes(item.fetch("subject", [])).map do |s|
+    @repository_software = item.dig("software", "softwareName")
+    @subject = Array.wrap(parse_attributes(item.fetch("subject", []))).map do |s|
       k, v = s.split(" ", 2)
       { "id" => k.to_i, "name" => v }
-    end.sort { |a, b| a.fetch("id") <=> b.fetch("id") }
-    @repository_software = item.dig("software", "softwareName")
+    end.sort { |a, b| a.fetch("id") <=> b.fetch("id") }.presence
     @created_at = item.fetch("entryDate", nil).present? ? item.fetch("entryDate") + "T00:00:00Z" : nil
     @updated_at = (item.fetch("lastUpdate", nil) || RE3DATA_DATE) + "T00:00:00Z"
   end
