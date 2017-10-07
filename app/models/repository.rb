@@ -1,14 +1,18 @@
 class Repository
   include Searchable
+  include Bolognese::Utils
 
   RE3DATA_DATE = "2017-10-07"
 
-  attr_reader :id, :name, :updated_at
+  attr_reader :id, :name, :description, :repository_url, :created_at, :updated_at
 
   def initialize(item, options={})
-    @id = item.fetch("id", nil)
-    @name = item.fetch("name", nil)
-    @updated_at = RE3DATA_DATE + "T00:00:00Z"
+    @id = item.fetch("id", nil) || item.fetch("re3data.orgIdentifier", nil)
+    @name = item.fetch("name", nil) || parse_attributes(item.fetch("repositoryName", nil))
+    @description = parse_attributes(item.fetch("description", nil))
+    @repository_url = item.fetch("repositoryURL", nil)
+    @created_at = item.fetch("entryDate", nil).present? ? item.fetch("entryDate") + "T00:00:00Z" : nil
+    @updated_at = (item.fetch("lastUpdate", nil) || RE3DATA_DATE) + "T00:00:00Z"
   end
 
   def self.get_query_url(options={})
@@ -26,9 +30,9 @@ class Repository
     Rails.logger.info result.inspect
 
     if options[:id].present?
-      item = result.body.fetch("data", {})
-      return nil unless item.present?
-
+      item = result.body.fetch("data", {}).fetch("re3data", {}).fetch("repository", [])
+      #return nil unless item.present?
+      Rails.logger.info item.inspect
       { data: parse_item(item) }
     else
       items = Array.wrap(result.body.fetch("data", []).fetch("list", {}).fetch("repository", []))
