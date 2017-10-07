@@ -4,13 +4,20 @@ class Repository
 
   RE3DATA_DATE = "2017-10-07"
 
-  attr_reader :id, :name, :description, :repository_url, :created_at, :updated_at
+  attr_reader :id, :name, :additional_name, :description, :repository_url, :repository_contact, :subject, :repository_software, :created_at, :updated_at
 
   def initialize(item, options={})
     @id = item.fetch("id", nil) || item.fetch("re3data.orgIdentifier", nil)
     @name = item.fetch("name", nil) || parse_attributes(item.fetch("repositoryName", nil))
+    @additional_name = parse_attributes(item.fetch("additionalName", nil))
     @description = parse_attributes(item.fetch("description", nil))
     @repository_url = item.fetch("repositoryURL", nil)
+    @repository_contact = item.fetch("repositoryContact", nil)
+    @subject = parse_attributes(item.fetch("subject", [])).map do |s|
+      k, v = s.split(" ", 2)
+      { "id" => k.to_i, "name" => v }
+    end.sort { |a, b| a.fetch("id") <=> b.fetch("id") }
+    @repository_software = item.dig("software", "softwareName")
     @created_at = item.fetch("entryDate", nil).present? ? item.fetch("entryDate") + "T00:00:00Z" : nil
     @updated_at = (item.fetch("lastUpdate", nil) || RE3DATA_DATE) + "T00:00:00Z"
   end
@@ -26,8 +33,6 @@ class Repository
 
   def self.parse_data(result, options={})
     return nil if result.blank? || result['errors']
-
-    Rails.logger.info result.inspect
 
     if options[:id].present?
       item = result.body.fetch("data", {}).fetch("re3data", {}).fetch("repository", [])
