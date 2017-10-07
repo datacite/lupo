@@ -12,7 +12,7 @@ class Repository
     @additional_name = parse_attributes(item.fetch("additionalName", nil))
     @description = parse_attributes(item.fetch("description", nil))
     @repository_url = item.fetch("repositoryURL", nil)
-    @repository_contact = item.fetch("repositoryContact", nil)
+    @repository_contact = Array.wrap(item.fetch("repositoryContact", nil)).first
     @repository_software = item.dig("software", "softwareName")
     @subject = Array.wrap(parse_attributes(item.fetch("subject", []))).map do |s|
       k, v = s.split(" ", 2)
