@@ -37,6 +37,12 @@ module Cacheable
         ResourceType.where(id: id)
       end
     end
+
+    def cached_repository_response(id, options={})
+      Rails.cache.fetch("repository_response/#{id}", expires_in: 7.days) do
+        Repository.where(id: id)
+      end
+    end
   end
 
   module ClassMethods

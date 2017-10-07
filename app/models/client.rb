@@ -15,7 +15,7 @@ class Client < ActiveRecord::Base
 
   delegate :symbol, to: :provider, prefix: true
 
-  validates_presence_of :symbol, :name, :contact_email
+  validates_presence_of :symbol, :name, :contact_name, :contact_email
   validates_uniqueness_of :symbol, message: "This Client ID has already been taken"
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
   validates_numericality_of :doi_quota_allowed, :doi_quota_used
@@ -47,6 +47,20 @@ class Client < ActiveRecord::Base
     fail ActiveRecord::RecordNotFound unless r.present?
 
     write_attribute(:allocator, r.id)
+  end
+
+  def repository_id=(value)
+    #r = cached_provider_response(value)
+    #fail ActiveRecord::RecordNotFound unless r.present?
+
+    write_attribute(:re3data, value)
+  end
+
+  def repository
+    return nil unless re3data.present?
+    r = cached_repository_response(re3data)
+    Rails.logger.info r.inspect
+    r[:data] if r.present?
   end
 
   # backwards compatibility
@@ -86,7 +100,6 @@ class Client < ActiveRecord::Base
   end
 
   def set_defaults
-    self.contact_name = "" unless contact_name.present?
     self.is_active = is_active? ? "\x01" : "\x00"
     self.role_name = "ROLE_DATACENTRE" unless role_name.present?
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
