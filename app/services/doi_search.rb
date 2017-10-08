@@ -199,6 +199,7 @@ class DoiSearch < Bolognese::Metadata
   def self.parse_item(item, options={})
     self.new(input: Base64.decode64(item.fetch("xml", "PGhzaD48L2hzaD4=\n")),
              from: "datacite",
+             doi: item.fetch("doi", nil),
              sandbox: !Rails.env.production?,
              date_registered: item.fetch("minted", nil),
              date_updated: item.fetch("updated", nil),

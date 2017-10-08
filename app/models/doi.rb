@@ -61,6 +61,7 @@ class Doi < ActiveRecord::Base
 
     DoiSearch.new(input: current_metadata.xml,
                   from: "datacite",
+                  doi: doi,
                   sandbox: !Rails.env.production?)
   end
 
