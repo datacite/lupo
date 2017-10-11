@@ -7,7 +7,7 @@ RSpec.describe "Providers", type: :request  do
   let(:params) do
     { "data" => { "type" => "providers",
                   "attributes" => {
-                    "uid" => "BL",
+                    "symbol" => "BL",
                     "name" => "British Library",
                     "contact_email" => "bob@example.com",
                     "country_code" => "GB" } } }
@@ -31,11 +31,11 @@ RSpec.describe "Providers", type: :request  do
 
   # Test suite for GET /providers/:id
   describe 'GET /providers/:id' do
-    before { get "/providers/#{provider.uid}" , headers: headers}
+    before { get "/providers/#{provider.symbol}" , headers: headers}
     context 'when the record exists' do
       it 'returns the provider' do
         expect(json).not_to be_empty
-        expect(json['data']['id']).to eq(provider.uid.downcase)
+        expect(json['data']['id']).to eq(provider.symbol.downcase)
       end
 
       it 'returns status code 200' do
@@ -136,7 +136,7 @@ RSpec.describe "Providers", type: :request  do
                         "contact" => "timAus",
                         "country_code" => "GB" } } }
       end
-      before { put "/providers/#{provider.uid}", params: params.to_json, headers: headers }
+      before { put "/providers/#{provider.symbol}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'contact')).to eq("timAus")
@@ -169,7 +169,7 @@ RSpec.describe "Providers", type: :request  do
 
   # Test suite for DELETE /providers/:id
   describe 'DELETE /providers/:id' do
-    before { delete "/providers/#{provider.uid}", headers: headers }
+    before { delete "/providers/#{provider.symbol}", headers: headers }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)
