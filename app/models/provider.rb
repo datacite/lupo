@@ -29,12 +29,11 @@ class Provider < ActiveRecord::Base
   has_many :prefixes, through: :provider_prefixes
 
   before_validation :set_region, :set_defaults
-  before_create :set_test_prefix
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   accepts_nested_attributes_for :prefixes
 
-  default_scope { where("allocator.role_name = 'ROLE_ALLOCATOR'").where(deleted_at: nil) }
+  default_scope { where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')").where(deleted_at: nil) }
   scope :query, ->(query) { where("allocator.symbol like ? OR allocator.name like ?", "%#{query}%", "%#{query}%") }
 
   def year
@@ -86,7 +85,7 @@ class Provider < ActiveRecord::Base
   def provider_count
     return nil if symbol != "ADMIN"
 
-    p = Provider.unscoped.where("allocator.role_name = 'ROLE_ALLOCATOR'")
+    p = Provider.unscoped.where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')")
     p.pluck(:symbol, :created, :deleted_at)
     .group_by { |c| c[2].present? ? c[2].year - 1 : c[1].year }
     .sort { |a, b| a.first <=> b.first }
@@ -121,12 +120,6 @@ class Provider < ActiveRecord::Base
   #   end
   #   write_attribute(:provider_type, r)
   # end
-
-  def set_test_prefix
-    return if prefixes.where(prefix: "10.5072").first
-
-    prefixes << cached_prefix_response("10.5072")
-  end
 
   def set_defaults
     self.symbol = symbol.upcase
