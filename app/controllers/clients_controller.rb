@@ -99,8 +99,8 @@ class ClientsController < ApplicationController
   # don't delete, but set deleted_at timestamp
   # a client with dois or prefixes can't be deleted
   def destroy
-    if @client.datasets.present? || @client.prefixes.present?
-      message = "Can't delete client that has DOIs or prefixes."
+    if @client.datasets.present?
+      message = "Can't delete client that has DOIs."
       status = 400
       Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
