@@ -37,6 +37,8 @@ class Client < ActiveRecord::Base
 
   scope :query, ->(query) { where("datacentre.symbol like ? OR datacentre.name like ?", "%#{query}%", "%#{query}%") }
 
+  attr_accessor :target_id
+
   # workaround for non-standard database column names and association
   def provider_id
     provider_symbol.downcase
@@ -57,6 +59,11 @@ class Client < ActiveRecord::Base
     return nil unless re3data.present?
     r = cached_repository_response(re3data)
     r[:data] if r.present?
+  end
+
+  def target_id=(value)
+    c = Client.where(symbol: value).first
+    doi.update_all(datacentre: c.id) if c.present?
   end
 
   # backwards compatibility

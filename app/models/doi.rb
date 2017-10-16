@@ -23,7 +23,6 @@ class Doi < ActiveRecord::Base
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
   validates_numericality_of :version, if: :version?
 
-  before_validation :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   after_save { UrlJob.perform_later(self) }
@@ -90,8 +89,4 @@ class Doi < ActiveRecord::Base
       Rails.logger.debug "Set URL #{response.headers["location"]} for DOI #{doi}"
     end
   end
-
-  # def set_defaults
-  #  set_datacentre unless datacentre
-  # end
 end
