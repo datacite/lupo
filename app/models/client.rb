@@ -24,7 +24,7 @@ class Client < ActiveRecord::Base
   validate :check_id, :on => :create
   validate :freeze_symbol, :on => :update
   belongs_to :provider, foreign_key: :allocator
-  has_many :datasets, foreign_key: :datacentre
+  has_many :dois, foreign_key: :datacentre
   has_many :client_prefixes, foreign_key: :datacentre
   has_many :prefixes, through: :client_prefixes
 
