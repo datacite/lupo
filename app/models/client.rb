@@ -63,7 +63,7 @@ class Client < ActiveRecord::Base
 
   def target_id=(value)
     c = Client.where(symbol: value).first
-    doi.update_all(datacentre: c.id) if c.present?
+    dois.update_all(datacentre: c.id) if c.present?
   end
 
   # backwards compatibility

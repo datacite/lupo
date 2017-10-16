@@ -1,7 +1,7 @@
 class ClientSerializer < ActiveModel::Serializer
   cache key: 'client'
 
-  attributes :name, :symbol, :year, :contact_name, :contact_email, :domains, :is_active, :target_id, :created, :updated
+  attributes :name, :symbol, :year, :contact_name, :contact_email, :domains, :is_active, :created, :updated
 
   has_many :prefixes, join_table: "datacentre_prefixes"
   belongs_to :provider

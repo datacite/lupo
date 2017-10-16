@@ -141,9 +141,8 @@ class ClientsController < ApplicationController
 
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
-    Rails.logger.warn params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:symbol, :name, :contact_name, :contact_email, :domains, :provider, :repository, :target, :is_active, :deleted_at]
+      params, only: [:symbol, :name, :contact_name, :contact_email, :domains, :provider, :repository, :target_id, :is_active, :deleted_at]
     )
   end
 end
