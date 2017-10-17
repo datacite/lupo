@@ -3,6 +3,8 @@ require "base64"
 class DoiSearch < Bolognese::Metadata
   include Searchable
 
+  include Cacheable
+
   def identifier
     doi_as_url(doi)
   end
@@ -32,6 +34,14 @@ class DoiSearch < Bolognese::Metadata
 
   def updated_at
 
+  end
+
+  def created
+    date_created
+  end
+
+  def metadata_version
+    schema_version
   end
 
   def state

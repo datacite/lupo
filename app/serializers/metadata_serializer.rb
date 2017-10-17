@@ -3,6 +3,14 @@ class MetadataSerializer < ActiveModel::Serializer
   belongs_to :dataset, serializer: DatasetSerializer
 
   def dataset_id
-    object.dataset.uid
+    object.try(:dataset) && object.dataset.uid
+  end
+
+  def is_converted_by_mds
+    object.try(:is_converted_by_mds)
+  end
+
+  def namespace
+    object.try(:namespace)
   end
 end
