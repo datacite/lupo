@@ -106,6 +106,7 @@ class ProvidersController < ApplicationController
       Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @provider.update_attributes(is_active: "\x00", deleted_at: Time.zone.now)
+      @provider.remove_users(id: "provider_id", jwt: current_user.jwt)
       head :no_content
     else
       Rails.logger.warn @provider.errors.inspect

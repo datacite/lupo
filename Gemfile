@@ -9,7 +9,7 @@ gem 'oj', '~> 2.18', '>= 2.18.1'
 gem 'equivalent-xml', '~> 0.6.0'
 gem 'nokogiri', '~> 1.6', '>= 1.6.8'
 gem 'iso8601', '~> 0.9.0'
-gem 'maremma', '~> 3.5.11'
+gem 'maremma', '~> 3.5'
 gem 'bolognese', '~> 0.9', '>= 0.9'
 gem "dalli", "~> 2.7.6"
 gem 'lograge', '~> 0.5'

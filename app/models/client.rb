@@ -6,6 +6,9 @@ class Client < ActiveRecord::Base
   # include helper module for counting registered DOIs
   include Countable
 
+  # include helper module for managing associated users
+  include Userable
+
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
@@ -25,7 +28,7 @@ class Client < ActiveRecord::Base
   validate :freeze_symbol, :on => :update
   belongs_to :provider, foreign_key: :allocator
   has_many :dois, foreign_key: :datacentre
-  has_many :client_prefixes, foreign_key: :datacentre
+  has_many :client_prefixes, foreign_key: :datacentre, dependent: :destroy
   has_many :prefixes, through: :client_prefixes
 
   before_validation :set_defaults
@@ -92,6 +95,10 @@ class Client < ActiveRecord::Base
 
   def check_id
     errors.add(:symbol, ", Your Client ID must include the name of your provider. Separated by a dot '.' ") if self.symbol.split(".")[0].downcase != self.provider.symbol.downcase
+  end
+
+  def user_url
+    ENV["VOLPINO_URL"] + "/users?client-id=" + symbol.downcase
   end
 
   private

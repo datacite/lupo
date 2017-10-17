@@ -7,6 +7,9 @@ class Provider < ActiveRecord::Base
   # include helper module for counting registered DOIs
   include Countable
 
+  # include helper module for managing associated users
+  include Userable
+
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
 
@@ -25,7 +28,7 @@ class Provider < ActiveRecord::Base
   validate :freeze_symbol, :on => :update
 
   has_many :clients, foreign_key: :allocator
-  has_many :provider_prefixes, foreign_key: :allocator
+  has_many :provider_prefixes, foreign_key: :allocator, dependent: :destroy
   has_many :prefixes, through: :provider_prefixes
 
   before_validation :set_region, :set_defaults
@@ -99,6 +102,10 @@ class Provider < ActiveRecord::Base
 
   def freeze_symbol
     errors.add(:symbol, "cannot be changed") if self.symbol_changed?
+  end
+
+  def user_url
+    ENV["VOLPINO_URL"] + "/users?provider-id=" + symbol.downcase
   end
 
   private
