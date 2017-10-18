@@ -73,15 +73,15 @@ class Provider < ActiveRecord::Base
   def client_count
     c = clients.unscoped
     c = c.where("datacentre.allocator = ?", id) if symbol != "ADMIN"
-    c.pluck(:symbol, :created, :deleted_at)
-    .group_by { |c| c[2].present? ? c[2].year - 1 : c[1].year }
-    .sort { |a, b| a.first <=> b.first }
-    .reduce([]) do |sum, c|
-      deleted = c[1].select { |s| s[2].present? }.count
-      count = sum.last.to_h["count"].to_i + c[1].count - deleted
-      sum << { "id" => c[0], "title" => c[0], "count" => count }
-      sum
-    end
+    c = c.pluck(:created, :deleted_at).map { |c| c[1].present? ? c[1].year - 1 : c[0].year }
+    c += (c.min..Date.today.year).to_a
+    c.group_by { |a| a }
+     .sort { |a, b| a.first <=> b.first }
+     .reduce([]) do |sum, a|
+       count = sum.last.to_h["count"].to_i + a[1].count - 1
+       sum << { "id" => a[0], "title" => a[0], "count" => count }
+       sum
+     end
   end
 
   # show provider count for admin
@@ -89,15 +89,15 @@ class Provider < ActiveRecord::Base
     return nil if symbol != "ADMIN"
 
     p = Provider.unscoped.where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')")
-    p.pluck(:symbol, :created, :deleted_at)
-    .group_by { |c| c[2].present? ? c[2].year - 1 : c[1].year }
-    .sort { |a, b| a.first <=> b.first }
-    .reduce([]) do |sum, c|
-      deleted = c[1].select { |s| s[2].present? }.count
-      count = sum.last.to_h["count"].to_i + c[1].count - deleted
-      sum << { "id" => c[0], "title" => c[0], "count" => count }
-      sum
-    end
+    p = p.pluck(:created, :deleted_at).map { |p| p[1].present? ? p[1].year - 1 : p[0].year }
+    p += (p.min..Date.today.year).to_a
+    p.group_by { |a| a }
+     .sort { |a, b| a.first <=> b.first }
+     .reduce([]) do |sum, a|
+       count = sum.last.to_h["count"].to_i + a[1].count - 1
+       sum << { "id" => a[0], "title" => a[0], "count" => count }
+       sum
+     end
   end
 
   def freeze_symbol
