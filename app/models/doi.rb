@@ -18,11 +18,14 @@ class Doi < ActiveRecord::Base
   delegate :provider, to: :client
 
   validates_presence_of :uid, :doi
-  validates_format_of :doi, :with => /(10\.\d{4,5})\/.+\z/
+
+  # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
+  validates_format_of :doi, :with => /^10.\d{4,9}/[-._;()/:A-Z0-9]+$/
   validates_format_of :url, :with => /https?:\/\/[\S]+/ , if: :url?, message: "Website should be an url"
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
   validates_numericality_of :version, if: :version?
 
+  before_validation :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   after_save { UrlJob.perform_later(self) }
@@ -81,6 +84,10 @@ class Doi < ActiveRecord::Base
   end
 
   private
+
+  def set_defaults
+    self.doi = doi.upcase
+  end
 
   def set_url
     response = Maremma.head(identifier, limit: 0)
