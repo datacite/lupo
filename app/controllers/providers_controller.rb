@@ -12,6 +12,8 @@ class ProvidersController < ApplicationController
       collection = collection.query(params[:query])
     end
 
+    puts collection
+
     # cache prefixes for faster queries
     if params[:prefix].present?
       prefix = cached_prefix_response(params[:prefix])
@@ -61,7 +63,8 @@ class ProvidersController < ApplicationController
              total_pages: @providers.total_pages,
              page: page[:number].to_i,
              regions: regions,
-             years: years }
+             years: years
+           }
 
     render jsonapi: @providers, meta: meta, include: @include
   end

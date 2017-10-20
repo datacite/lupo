@@ -5,9 +5,16 @@ RSpec.describe ProvidersController, type: :controller do
   # This should return the minimal set of attributes required to create a valid
   # Provider. As you add validations to Provider, be sure to
   # adjust the attributes here as well.
-  let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
-  }
+  let!(:prefix) { create(:prefix, prefix: "10.5072") }
+  let(:valid_attributes) do
+    {
+                    "symbol" => "BL",
+                    "name" => "British Library",
+                    "contact_email" => "bob@example.com",
+                    "contact_name" => "bob@example.com",
+                    "country_code" => "GB"
+    }
+  end
 
   let(:invalid_attributes) {
     skip("Add a hash of attributes invalid for your model")
@@ -22,6 +29,7 @@ RSpec.describe ProvidersController, type: :controller do
     it "returns a success response" do
       provider = Provider.create! valid_attributes
       get :index, params: {}, session: valid_session
+      # let{ :providers  json['data'].size }
       expect(response).to be_success
     end
   end
@@ -33,6 +41,17 @@ RSpec.describe ProvidersController, type: :controller do
       expect(response).to be_success
     end
   end
+
+  describe "GET #query" do
+    it "returns a success response" do
+      provider = Provider.create! valid_attributes
+      get :index, params: { query: "*" }, session: valid_session
+
+      expect(response).to be_success
+      expect(json['data'].size).to eq(providers)
+    end
+  end
+
 
   describe "POST #create" do
     context "with valid params" do
