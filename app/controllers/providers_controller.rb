@@ -12,8 +12,6 @@ class ProvidersController < ApplicationController
       collection = collection.query(params[:query])
     end
 
-    puts collection
-
     # cache prefixes for faster queries
     if params[:prefix].present?
       prefix = cached_prefix_response(params[:prefix])
