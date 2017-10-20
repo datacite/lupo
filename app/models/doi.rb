@@ -20,7 +20,7 @@ class Doi < ActiveRecord::Base
   validates_presence_of :uid, :doi
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
-  validates_format_of :doi, :with => /^10.\d{4,9}/[-._;()/:A-Z0-9]+$/
+  validates_format_of :doi, :with => /\A10\.\d{4,5}\/[-\._;()\/:A-Z0-9]+\z/
   validates_format_of :url, :with => /https?:\/\/[\S]+/ , if: :url?, message: "Website should be an url"
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
   validates_numericality_of :version, if: :version?
