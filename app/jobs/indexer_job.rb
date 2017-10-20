@@ -9,13 +9,13 @@ class IndexerJob < ActiveJob::Base
     operation = options[:operation] || "index"
     Rails.logger.debug [operation, "ID: #{record}"]
 
-    client = Elasticsearch::Client.new
+    es_client = Elasticsearch::Client.new host: ENV['ES_HOST']
 
     case operation
       when "index"
-        client.index index: record.index, type: record.type, id: record.id, body: record.__elasticsearch__.as_indexed_json
+        es_client.index index: record.index, type: record.type, id: record.id, body: record.__elasticsearch__.as_indexed_json
       when "delete"
-        client.delete index: record.index, type: record.type, id: record_id
+        es_client.delete index: record.index, type: record.type, id: record_id
       else raise ArgumentError, "Unknown operation '#{operation}'"
     end
   end

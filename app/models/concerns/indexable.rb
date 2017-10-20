@@ -5,7 +5,16 @@ module Indexable
     include Elasticsearch::Model
     include Elasticsearch::Model::Callbacks
 
-    after_save { IndexerJob.perform_later(self, operation: "index") }
-    after_destroy { IndexerJob.perform_later(self, operation: "delete") }
+    after_save { IndexerJob.perform_later(self.id, operation: "index") }
+    after_destroy { IndexerJob.perform_later(self.id, operation: "delete") }
   end
+
+    def all
+      query
+    end
+
+    def where(options={})
+      query(options)
+    end
+
 end
