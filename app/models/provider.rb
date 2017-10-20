@@ -7,6 +7,9 @@ class Provider < ActiveRecord::Base
   # include helper module for counting registered DOIs
   include Countable
 
+  # include helper module for managing associated users
+  include Userable
+
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
 
@@ -25,16 +28,15 @@ class Provider < ActiveRecord::Base
   validate :freeze_symbol, :on => :update
 
   has_many :clients, foreign_key: :allocator
-  has_many :provider_prefixes, foreign_key: :allocator
+  has_many :provider_prefixes, foreign_key: :allocator, dependent: :destroy
   has_many :prefixes, through: :provider_prefixes
 
   before_validation :set_region, :set_defaults
-  before_create :set_test_prefix
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   accepts_nested_attributes_for :prefixes
 
-  default_scope { where("allocator.role_name = 'ROLE_ALLOCATOR'").where(deleted_at: nil) }
+  default_scope { where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')").where(deleted_at: nil) }
   scope :query, ->(query) { where("allocator.symbol like ? OR allocator.name like ?", "%#{query}%", "%#{query}%") }
 
   def year
@@ -71,35 +73,39 @@ class Provider < ActiveRecord::Base
   def client_count
     c = clients.unscoped
     c = c.where("datacentre.allocator = ?", id) if symbol != "ADMIN"
-    c.pluck(:symbol, :created, :deleted_at)
-    .group_by { |c| c[2].present? ? c[2].year - 1 : c[1].year }
-    .sort { |a, b| a.first <=> b.first }
-    .reduce([]) do |sum, c|
-      deleted = c[1].select { |s| s[2].present? }.count
-      count = sum.last.to_h["count"].to_i + c[1].count - deleted
-      sum << { "id" => c[0], "title" => c[0], "count" => count }
-      sum
-    end
+    c = c.pluck(:created, :deleted_at).map { |c| c[1].present? ? c[1].year - 1 : c[0].year }
+    c += (c.min..Date.today.year).to_a
+    c.group_by { |a| a }
+     .sort { |a, b| a.first <=> b.first }
+     .reduce([]) do |sum, a|
+       count = sum.last.to_h["count"].to_i + a[1].count - 1
+       sum << { "id" => a[0], "title" => a[0], "count" => count }
+       sum
+     end
   end
 
   # show provider count for admin
   def provider_count
     return nil if symbol != "ADMIN"
 
-    p = Provider.unscoped.where("allocator.role_name = 'ROLE_ALLOCATOR'")
-    p.pluck(:symbol, :created, :deleted_at)
-    .group_by { |c| c[2].present? ? c[2].year - 1 : c[1].year }
-    .sort { |a, b| a.first <=> b.first }
-    .reduce([]) do |sum, c|
-      deleted = c[1].select { |s| s[2].present? }.count
-      count = sum.last.to_h["count"].to_i + c[1].count - deleted
-      sum << { "id" => c[0], "title" => c[0], "count" => count }
-      sum
-    end
+    p = Provider.unscoped.where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')")
+    p = p.pluck(:created, :deleted_at).map { |p| p[1].present? ? p[1].year - 1 : p[0].year }
+    p += (p.min..Date.today.year).to_a
+    p.group_by { |a| a }
+     .sort { |a, b| a.first <=> b.first }
+     .reduce([]) do |sum, a|
+       count = sum.last.to_h["count"].to_i + a[1].count - 1
+       sum << { "id" => a[0], "title" => a[0], "count" => count }
+       sum
+     end
   end
 
   def freeze_symbol
     errors.add(:symbol, "cannot be changed") if self.symbol_changed?
+  end
+
+  def user_url
+    ENV["VOLPINO_URL"] + "/users?provider-id=" + symbol.downcase
   end
 
   private
@@ -121,12 +127,6 @@ class Provider < ActiveRecord::Base
   #   end
   #   write_attribute(:provider_type, r)
   # end
-
-  def set_test_prefix
-    return if prefixes.where(prefix: "10.5072").first
-
-    prefixes << cached_prefix_response("10.5072")
-  end
 
   def set_defaults
     self.symbol = symbol.upcase

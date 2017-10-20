@@ -20,7 +20,7 @@ Rails.application.routes.draw do
 
   resources :client_prefixes, path: 'client-prefixes'
   resources :datasets, constraints: { :id => /.+/ }
-  resources :dois, path: "/dois", constraints: { :id => /.+/ }
+  resources :dois, constraints: { :id => /.+/ }
   resources :prefixes, constraints: { :id => /.+/ }
   resources :provider_prefixes, path: 'provider-prefixes'
 

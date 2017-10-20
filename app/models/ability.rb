@@ -31,6 +31,7 @@ class Ability
       can [:read], Doi, :datacentre => user.datacentre
       can [:read], User, :id => user.id
     else
+      can [:manage], Client, :provider_id => "SANDBOX"
       can [:read], Doi
     end
   end

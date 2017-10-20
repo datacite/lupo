@@ -99,12 +99,13 @@ class ClientsController < ApplicationController
   # don't delete, but set deleted_at timestamp
   # a client with dois or prefixes can't be deleted
   def destroy
-    if @client.datasets.present? || @client.prefixes.present?
-      message = "Can't delete client that has DOIs or prefixes."
+    if @client.doi_count.present?
+      message = "Can't delete client that has DOIs."
       status = 400
       Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @client.update_attributes(is_active: "\x00", deleted_at: Time.zone.now)
+      @client.remove_users(id: "client_id", jwt: current_user.jwt)
       head :no_content
     else
       Rails.logger.warn @client.errors.inspect
@@ -141,9 +142,8 @@ class ClientsController < ApplicationController
 
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
-    Rails.logger.warn params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:symbol, :name, :contact_name, :contact_email, :domains, :provider, :repository, :is_active, :deleted_at]
+      params, only: [:symbol, :name, :contact_name, :contact_email, :domains, :provider, :repository, :target_id, :is_active, :deleted_at]
     )
   end
 end

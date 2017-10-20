@@ -6,6 +6,9 @@ class Client < ActiveRecord::Base
   # include helper module for counting registered DOIs
   include Countable
 
+  # include helper module for managing associated users
+  include Userable
+
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
@@ -24,18 +27,20 @@ class Client < ActiveRecord::Base
   validate :check_id, :on => :create
   validate :freeze_symbol, :on => :update
   belongs_to :provider, foreign_key: :allocator
-  has_many :datasets, foreign_key: :datacentre
-  has_many :client_prefixes, foreign_key: :datacentre
+  has_many :dois, foreign_key: :datacentre
+  has_many :client_prefixes, foreign_key: :datacentre, dependent: :destroy
   has_many :prefixes, through: :client_prefixes
 
   before_validation :set_defaults
-  before_create :set_test_prefix
+  before_create :set_test_prefix, if: Proc.new { |client| client.provider_symbol == "SANDBOX" }
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
   default_scope { where(deleted_at: nil) }
 
   scope :query, ->(query) { where("datacentre.symbol like ? OR datacentre.name like ?", "%#{query}%", "%#{query}%") }
+
+  attr_accessor :target_id
 
   # workaround for non-standard database column names and association
   def provider_id
@@ -57,6 +62,11 @@ class Client < ActiveRecord::Base
     return nil unless re3data.present?
     r = cached_repository_response(re3data)
     r[:data] if r.present?
+  end
+
+  def target_id=(value)
+    c = Client.where(symbol: value).first
+    dois.update_all(datacentre: c.id) if c.present?
   end
 
   # backwards compatibility
@@ -87,6 +97,10 @@ class Client < ActiveRecord::Base
     errors.add(:symbol, ", Your Client ID must include the name of your provider. Separated by a dot '.' ") if self.symbol.split(".")[0].downcase != self.provider.symbol.downcase
   end
 
+  def user_url
+    ENV["VOLPINO_URL"] + "/users?client-id=" + symbol.downcase
+  end
+
   private
 
   def set_test_prefix
@@ -97,6 +111,7 @@ class Client < ActiveRecord::Base
 
   def set_defaults
     self.contact_name = "" unless contact_name.present?
+    self.domains = "*" unless domains.present?
     self.is_active = is_active? ? "\x01" : "\x00"
     self.role_name = "ROLE_DATACENTRE" unless role_name.present?
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0

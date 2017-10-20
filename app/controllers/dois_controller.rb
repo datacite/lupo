@@ -1,3 +1,5 @@
+require 'uri'
+
 class DoisController < ApplicationController
   before_action :set_doi, only: [:show, :update, :destroy]
   before_action :set_include
@@ -62,9 +64,11 @@ class DoisController < ApplicationController
 
   private
 
-  # Only allow a trusted parameter "white list" through.
-    def safe_params
-      attributes = [:uid, :created, :doi, :is_active, :version, :client_id]
-      params.require(:data).permit(:id, :type, attributes: attributes)
-    end
+  def safe_params
+    fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
+    Rails.logger.warn params
+    ActiveModelSerializers::Deserialization.jsonapi_parse!(
+      params, only: [:uid, :created, :doi, :is_active, :version, :client]
+    )
+  end
 end

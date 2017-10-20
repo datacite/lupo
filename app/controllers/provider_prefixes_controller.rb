@@ -91,7 +91,7 @@ class ProviderPrefixesController < ApplicationController
   end
 
   def show
-    render jsonapi: @provider_prefix, include: @include, serializer: PrefixSerializer
+    render jsonapi: @provider_prefix, include: @include, serializer: ProviderPrefixSerializer
   end
 
   def create
