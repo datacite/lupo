@@ -1,7 +1,7 @@
 module ErrorSerializable
   extend ActiveSupport::Concern
 
-  # include do
+  included do
     def serialize(errors)
       return if errors.nil?
 
@@ -14,6 +14,5 @@ module ErrorSerializable
       json[:errors] = new_hash
       json
     end
-  # end
-
+  end
 end

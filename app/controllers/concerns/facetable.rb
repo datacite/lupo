@@ -1,7 +1,7 @@
 module Facetable
   extend ActiveSupport::Concern
 
-  include do
+  included do
     def client_year_facet(params, collection)
       [{ id: params[:year],
          title: params[:year],
