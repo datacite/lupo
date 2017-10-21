@@ -6,7 +6,7 @@ class DataCenterSerializer < ActiveModel::Serializer
   belongs_to :member, serializer: MemberSerializer
 
   def id
-    object.uid
+    object.symbol.downcase
   end
 
   def title
