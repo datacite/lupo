@@ -1,4 +1,4 @@
-FROM phusion/passenger-full:0.9.20
+FROM phusion/passenger-full:0.9.22
 MAINTAINER Kristian Garza "kgarza@datacite.org"
 
 # Set correct environment variables.
@@ -12,11 +12,11 @@ RUN usermod -a -G docker_env app
 CMD ["/sbin/my_init"]
 
 # Install Ruby 2.3.3
-RUN bash -lc 'rvm --default use ruby-2.3.3'
+RUN bash -lc 'rvm --default use ruby-2.4.1'
 
 # Update installed APT packages
 RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold" && \
-    apt-get install ntp wget -y && \
+    apt-get install ntp wget tzdata -y && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # install dockerize
