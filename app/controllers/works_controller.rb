@@ -14,7 +14,7 @@ class WorksController < ApplicationController
   end
 
   def show
-    render jsonapi: @doi[:data].first, include: @include, serializer: WorkSerializer
+    render jsonapi: @doi[:data], include: @include, serializer: WorkSerializer
   end
 
   protected
