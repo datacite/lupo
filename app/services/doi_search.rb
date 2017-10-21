@@ -45,6 +45,10 @@ class DoiSearch < Bolognese::Metadata
     date_created
   end
 
+  def registered
+    date_registered
+  end
+
   def metadata_version
     schema_version
   end
@@ -59,6 +63,20 @@ class DoiSearch < Bolognese::Metadata
 
   def provider
 
+  end
+
+  def results
+    related_identifiers.reduce({}) do |sum, i|
+      k = i["relation-type-id"]
+      v = sum[k].to_i + 1
+      sum[k] = v
+      sum
+    end.map { |k,v| { id: k, title: k.underscore.humanize, count: v } }
+      .sort { |a, b| b[:count] <=> a[:count] }
+  end
+
+  def related_identifiers
+    []
   end
 
   def self.get_query_url(options={})

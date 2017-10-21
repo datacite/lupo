@@ -3,7 +3,10 @@ class WorksController < ApplicationController
   before_action :set_include
 
   def index
-    @dois = Doi.where(params)
+    params[:client_id] = params.delete(:data_center_id)
+    params[:provider_id] = params.delete(:member_id)
+
+    @dois = DoiSearch.where(params)
     @dois[:meta]["data-centers"] = @dois[:meta].delete("clients")
     render jsonapi: @dois[:data], meta: @dois[:meta], include: @include, each_serializer: WorkSerializer
   end
@@ -15,7 +18,10 @@ class WorksController < ApplicationController
   protected
 
   def set_doi
-    @doi = Doi.where(params)
+    params[:client_id] = params.delete(:data_center_id)
+    params[:provider_id] = params.delete(:member_id)
+    
+    @doi = DoiSearch.where(id: params[:id])
     fail ActiveRecord::RecordNotFound unless @doi.present?
   end
 
