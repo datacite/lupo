@@ -79,6 +79,9 @@ module Lupo
     # raise error with unpermitted parameters
     config.action_controller.action_on_unpermitted_parameters = :raise
 
+    config.action_view.sanitized_allowed_tags = %w(strong em b i code pre sub sup br)
+    config.action_view.sanitized_allowed_attributes = []
+
     # compress responses with deflate or gzip
     config.middleware.use Rack::Deflater
 
@@ -86,7 +89,7 @@ module Lupo
     config.active_job.queue_adapter = :sidekiq
 
     config.generators do |g|
-      g.fixture_replacement :factory_girl
+      g.fixture_replacement :factory_bot
     end
   end
 end

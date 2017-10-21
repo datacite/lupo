@@ -40,9 +40,5 @@ module Searchable
     def parse_include(klass, params)
       klass.new(params)
     end
-
-    def self.sanitize(text, options={})
-      Bergamasco::Sanitize.sanitize(text, options)
-    end
   end
 end

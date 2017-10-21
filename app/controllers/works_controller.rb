@@ -8,6 +8,8 @@ class WorksController < ApplicationController
 
     @dois = DoiSearch.where(params)
     @dois[:meta]["data-centers"] = @dois[:meta].delete("clients")
+    @dois[:meta] = @dois[:meta].except("states")
+    
     render jsonapi: @dois[:data], meta: @dois[:meta], include: @include, each_serializer: WorkSerializer
   end
 
@@ -20,7 +22,7 @@ class WorksController < ApplicationController
   def set_doi
     params[:client_id] = params.delete(:data_center_id)
     params[:provider_id] = params.delete(:member_id)
-    
+
     @doi = DoiSearch.where(id: params[:id])
     fail ActiveRecord::RecordNotFound unless @doi.present?
   end
