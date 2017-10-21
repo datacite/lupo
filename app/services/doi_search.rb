@@ -1,9 +1,14 @@
 require "base64"
+require "benchmark"
 
 class DoiSearch < Bolognese::Metadata
   include Searchable
 
   include Cacheable
+
+  def self.cache_key(item)
+    "dois/#{item.fetch('doi')}-{item.fetch('updated').utc.to_s(:number)}"
+  end
 
   def identifier
     doi_as_url(doi)
@@ -33,7 +38,7 @@ class DoiSearch < Bolognese::Metadata
   end
 
   def updated_at
-
+    date_updated
   end
 
   def created
@@ -207,15 +212,12 @@ class DoiSearch < Bolognese::Metadata
   end
 
   def self.parse_item(item, options={})
-    self.new(input: Base64.decode64(item.fetch("xml", "PGhzaD48L2hzaD4=\n")),
-             from: "datacite",
-             doi: item.fetch("doi", nil),
-             sandbox: !Rails.env.production?,
-             date_registered: item.fetch("minted", nil),
-             date_updated: item.fetch("updated", nil),
-             provider_id: item.fetch("allocator_symbol", nil),
-             client_id: item.fetch("datacentre_symbol", nil),
-             url: item.fetch("url", nil))
+    time = Benchmark.realtime do
+      id = self.cache_key(item)
+      item = self.cached_doi_response(id: id, item: item)
+    end
+    Rails.logger.debug "Created metadata in #{time*1000} milliseconds"
+    item
   end
 
   def self.parse_facet_counts(facets, options={})

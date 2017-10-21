@@ -1,5 +1,5 @@
 class DoiSerializer < ActiveModel::Serializer
-  #cache key: 'doi'
+  # cache key: 'doi', disabled as caching is done in the DoiSearch service
   type 'dois'
 
   attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_general, :resource_type, :license, :version, :related_identifier, :schema_version, :state, :xml, :published, :registered, :updated
@@ -26,7 +26,7 @@ class DoiSerializer < ActiveModel::Serializer
   end
 
   def updated
-    object.date_updated
+    object.updated_at
   end
 
   def published
