@@ -9,12 +9,12 @@ class WorksController < ApplicationController
     @dois = DoiSearch.where(params)
     @dois[:meta]["data-centers"] = @dois[:meta].delete("clients")
     @dois[:meta] = @dois[:meta].except("states")
-    
+
     render jsonapi: @dois[:data], meta: @dois[:meta], include: @include, each_serializer: WorkSerializer
   end
 
   def show
-    render jsonapi: @doi[:data], include: @include, serializer: WorkSerializer
+    render jsonapi: @doi[:data].first, include: @include, serializer: WorkSerializer
   end
 
   protected
