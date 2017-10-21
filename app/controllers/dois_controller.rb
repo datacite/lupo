@@ -49,7 +49,7 @@ class DoisController < ApplicationController
   protected
 
   def set_doi
-    @doi = Doi.where(doi: params[:id]).first
+    @doi = DoiSearch.where(id: params[:id])[:data]
     fail ActiveRecord::RecordNotFound unless @doi.present?
   end
 

@@ -46,6 +46,20 @@ module Cacheable
   end
 
   module ClassMethods
+    def cached_doi_response(id: nil, item: nil, **options)
+      Rails.cache.fetch(id) do
+        DoiSearch.new(input: Base64.decode64(item.fetch("xml", "PGhzaD48L2hzaD4=\n")),
+                      from: "datacite",
+                      doi: item.fetch("doi", nil),
+                      sandbox: !Rails.env.production?,
+                      date_registered: item.fetch("minted", nil),
+                      date_updated: item.fetch("updated", nil),
+                      provider_id: item.fetch("allocator_symbol", nil),
+                      client_id: item.fetch("datacentre_symbol", nil),
+                      url: item.fetch("url", nil))
+      end
+    end
+
     def cached_providers
       Rails.cache.fetch("providers", expires_in: 1.day) do
         Provider.all.select(:id, :symbol, :name, :created)
