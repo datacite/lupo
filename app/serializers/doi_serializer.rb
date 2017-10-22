@@ -1,12 +1,12 @@
 class DoiSerializer < ActiveModel::Serializer
-  # cache key: 'doi', disabled as caching is done in the DoiSearch service
+  cache key: 'doi'
   type 'dois'
 
-  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_general, :resource_type, :license, :version, :related_identifier, :schema_version, :state, :xml, :published, :registered, :updated
+  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :license, :version, :related_identifier, :schema_version, :state, :xml, :published, :registered, :updated
 
   belongs_to :client, serializer: ClientSerializer
   belongs_to :provider, serializer: ProviderSerializer
-  #belongs_to :resource_type, serializer: ResourceTypeSerializer
+  belongs_to :resource_type, serializer: ResourceTypeSerializer
   has_many :media, serializer: MediaSerializer
 
   def id
@@ -17,7 +17,7 @@ class DoiSerializer < ActiveModel::Serializer
     object.doi.downcase
   end
 
-  def resource_type
+  def resource_type_subtype
     object.additional_type
   end
 

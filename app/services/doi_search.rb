@@ -7,7 +7,7 @@ class DoiSearch < Bolognese::Metadata
   include Cacheable
 
   def self.cache_key(item)
-    "dois/#{item.fetch('doi')}-{item.fetch('updated').utc.to_s(:number)}"
+    "doi_search/#{item.fetch('doi')}-{item.fetch('updated').utc.to_s(:number)}"
   end
 
   def identifier
@@ -18,15 +18,29 @@ class DoiSearch < Bolognese::Metadata
     Base64.encode64(raw)
   end
 
+  def client
+    cached_client_response(client_id.to_s.upcase)
+  end
+
   # backwards compatibility
   def data_center
     client
+  end
+
+  def provider
+    cached_provider_response(provider_id.to_s.upcase)
   end
 
   # backwards compatibility
   def member
     m = cached_member_response(provider_id.to_s.upcase)
     m[:data] if m.present?
+  end
+
+  def resource_type
+    return nil unless resource_type_general.present?
+    r = cached_resource_type_response(resource_type_general.downcase.underscore.dasherize)
+    r[:data] if r.present?
   end
 
   def media
@@ -41,28 +55,12 @@ class DoiSearch < Bolognese::Metadata
     date_updated
   end
 
-  def created
-    date_created
-  end
-
-  def registered
-    date_registered
-  end
-
   def metadata_version
     schema_version
   end
 
   def state
     is_active == "\x01" ? "searchable" : "hidden"
-  end
-
-  def client
-
-  end
-
-  def provider
-
   end
 
   def results
@@ -177,14 +175,6 @@ class DoiSearch < Bolognese::Metadata
 
       meta = result[:meta]
 
-      resource_type = nil
-      resource_type_id = item.fetch("resourceTypeGeneral", nil)
-      resource_type = ResourceType.where(id: resource_type_id.downcase.underscore.dasherize) if resource_type_id.present?
-      resource_type = resource_type[:data] if resource_type.present?
-
-      client_id = item.fetch("datacentre_symbol", nil)
-      client = cached_client_response(client_id)
-
       { data: parse_item(item), meta: meta }
     else
       if options[:doi_id].present?
@@ -217,14 +207,6 @@ class DoiSearch < Bolognese::Metadata
       meta = parse_facet_counts(facets, options)
       meta = meta.merge(total: total, total_pages: total_pages, page: page[:number])
 
-      clients = facets.fetch("facet_fields", {}).fetch("datacentre_facet", [])
-                       .each_slice(2)
-                       .map do |p|
-                              id, title = p.first.split(' - ', 2)
-                              [Client, { "id" => id, "name" => title }]
-                            end
-      clients = Array(clients).map { |item| parse_include(item.first, item.last) }
-
       { data: parse_items(items), meta: meta }
     end
   end
@@ -253,10 +235,10 @@ class DoiSearch < Bolognese::Metadata
     clients = facets.fetch("facet_fields", {}).fetch("datacentre_facet", [])
                        .each_slice(2)
                        .map do |p|
-                              id, title = p.first.split(' - ', 2)
-                              [id, p.last]
-                            end.to_h
-    #clients = get_client_facets(clients)
+                          id, title = p.first.split(' - ', 2)
+                          c = cached_client_response(id)
+                          { "id" => id.downcase, "title" => c.name, "count" => p.last }
+                        end
     schema_versions = facets.fetch("facet_fields", {}).fetch("schema_version", [])
                             .each_slice(2)
                             .sort { |a, b| b.first <=> a.first }
@@ -275,18 +257,10 @@ class DoiSearch < Bolognese::Metadata
     { "resource-types" => resource_types,
       "years" => years,
       "registered" => registered,
-      # clients" => clients,
+      "clients" => clients,
       "schema-versions" => schema_versions,
       "states" => states }
   end
-
-  # def self.get_client_facets(clients, options={})
-  #   response = Client.where(symbol: clients.keys.join(",").split(/\s*,\s*/))
-  #
-  #
-  #   response.map { |p| { id: p.uid.downcase, name: p.name, count: clients.fetch(p.uid.upcase, 0) } }
-  #           .sort { |a, b| b[:count] <=> a[:count] }
-  # end
 
   def self.url
     "#{ENV["SOLR_URL"]}"

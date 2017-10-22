@@ -2,7 +2,7 @@ class WorkSerializer < ActiveModel::Serializer
   include Bolognese::Utils
   include Bolognese::DoiUtils
 
-  #cache key: 'work'
+  cache key: 'work'
   type 'works'
   attributes :doi, :url, :author, :title, :container_title, :description, :resource_type_subtype, :data_center_id, :member_id, :resource_type_id, :version, :license, :schema_version, :results, :related_identifiers, :published, :registered, :updated, :media, :xml
 
@@ -44,6 +44,10 @@ class WorkSerializer < ActiveModel::Serializer
 
   def updated
     object.updated_at
+  end
+
+  def created
+    date_created
   end
 
   def published

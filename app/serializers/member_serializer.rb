@@ -2,6 +2,10 @@ class MemberSerializer < ActiveModel::Serializer
   cache key: 'member'
   attributes :title, :description, :member_type, :region, :country, :year, :logo_url, :email, :website, :phone, :created, :updated
 
+  def id
+    object.id.downcase
+  end
+
   def created
     object.created_at
   end
