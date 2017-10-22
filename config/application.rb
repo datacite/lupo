@@ -7,7 +7,6 @@ require "active_job/railtie"
 require "active_record/railtie"
 require "action_controller/railtie"
 require "rails/test_unit/railtie"
-require 'syslog/logger'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -64,17 +63,17 @@ module Lupo
     # secret_key_base is not used by Rails API, as there are no sessions
     config.secret_key_base = 'blipblapblup'
 
-    # See everything in the log (default is :info)
-    config.log_level = ENV['LOG_LEVEL'].to_sym
-
-    # Use a different logger for distributed setups
+    # configure logging
+    logger = ActiveSupport::Logger.new(STDOUT)
+    logger.formatter = config.log_formatter
+    config.logger = ActiveSupport::TaggedLogging.new(logger)
     config.lograge.enabled = true
-    config.logger = Syslog::Logger.new(ENV['APPLICATION'])
+    config.log_level = ENV['LOG_LEVEL'].to_sym
 
     # add elasticsearch instrumentation to logs
     require 'elasticsearch/rails/lograge'
 
-    config.cache_store = :dalli_store, nil, { :namespace => ENV['APPLICATION'], :compress => true }
+    config.cache_store = :dalli_store, nil, { :namespace => "api" }
 
     # raise error with unpermitted parameters
     config.action_controller.action_on_unpermitted_parameters = :raise

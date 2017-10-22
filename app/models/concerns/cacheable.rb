@@ -20,21 +20,15 @@ module Cacheable
       end
     end
 
-    def cached_provider_response(symbol, options={})
+    def cached_provider_response(symbol)
       Rails.cache.fetch("provider_response/#{symbol}", expires_in: 1.day) do
         Provider.where(symbol: symbol).first
       end
     end
 
-    def cached_member_response(id, options={})
+    def cached_member_response(id)
       Rails.cache.fetch("member_response/#{id}", expires_in: 1.day) do
         Member.where(id: id)
-      end
-    end
-
-    def cached_resource_type_response(id, options={})
-      Rails.cache.fetch("resource_type_response/#{id}", expires_in: 1.month) do
-        ResourceType.where(id: id)
       end
     end
 
@@ -46,7 +40,8 @@ module Cacheable
   end
 
   module ClassMethods
-    def cached_doi_response(id: nil, item: nil, **options)
+    def cached_doi_response(id: nil, item: nil)
+      Rails.logger.debug "cached_doi_response for #{id}: " + Rails.cache.exist?(id).inspect
       Rails.cache.fetch(id) do
         DoiSearch.new(input: Base64.decode64(item.fetch("xml", "PGhzaD48L2hzaD4=\n")),
                       from: "datacite",
@@ -71,12 +66,6 @@ module Cacheable
     #     Client.all.select(:id, :symbol, :name, :updated)
     #   end
     # end
-
-    def cached_resource_types
-      Rails.cache.fetch("resource_types", expires_in: 1.day) do
-        ResourceType.all[:data]
-      end
-    end
 
     def cached_datasets
       Rails.cache.fetch("datasets", expires_in: 1.day) do

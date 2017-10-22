@@ -12,9 +12,26 @@ module Searchable
       collect_data(options)
     end
 
+    def debug
+      true
+    end
+
     def collect_data(options = {})
-      data = get_data(options)
-      parse_data(data, options)
+      if ENV["LOG_LEVEL"] == "debug" && self.debug
+        data = nil
+        time = Benchmark.realtime do
+          data = get_data(options)
+        end
+        Rails.logger.debug "Got #{self.name} data for #{options.inspect} in #{time*1000} milliseconds"
+        time = Benchmark.realtime do
+          data = parse_data(data, options)
+        end
+        Rails.logger.debug "Parsed #{self.name} data for #{options.inspect} in #{time*1000} milliseconds"
+        data
+      else
+        data = get_data(options)
+        parse_data(data, options)
+      end
     end
 
     def get_data(options={})

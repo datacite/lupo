@@ -9,20 +9,80 @@ class ResourceType
     @updated_at = DATACITE_SCHEMA_DATE + "T00:00:00Z"
   end
 
-  def self.get_query_url(options={})
-    "http://schema.test.datacite.org/meta/kernel-#{DATACITE_VERSION}/include/datacite-resourceType-v#{DATACITE_VERSION}.xsd"
+  def cache_key
+    "resource_type/#{id}-#{updated_at}"
   end
 
-  def self.parse_data(result, options={})
-    return nil if result.blank? || result['errors']
-    result = result.to_h
-    items = result.fetch(:body, {}).fetch("data", {}).fetch("schema", {}).fetch("simpleType", {}).fetch('restriction', {}).fetch('enumeration', [])
-    items = items.map do |item|
-      id = item.fetch("value").underscore.dasherize
+  def self.debug
+    false
+  end
 
-      { "id" => id, "title" => id.underscore.humanize }
-    end
+  def self.get_data(options = {})
+    [
+        {
+            'id' => 'audiovisual',
+            'title' => 'Audiovisual'
+        },
+        {
+            'id' => 'collection',
+            'title' => 'Collection'
+        },
+        {
+            'id' => 'data-paper',
+            'title' => 'DataPaper'
+        },
+        {
+            'id' => 'dataset',
+            'title' => 'Dataset'
+        },
+        {
+            'id' => 'event',
+            'title' => 'Event'
+        },
+        {
+            'id' => 'image',
+            'title' => 'Image'
+        },
+        {
+            'id' => 'interactive-resource',
+            'title' => 'InteractiveResource'
+        },
+        {
+            'id' => 'model',
+            'title' => 'Model'
+        },
+        {
+            'id' => 'physical-object',
+            'title' => 'PhysicalObject'
+        },
+        {
+            'id' => 'service',
+            'title' => 'Service'
+        },
+        {
+            'id' => 'software',
+            'title' => 'Software'
+        },
+        {
+            'id' => 'sound',
+            'title' => 'Sound'
+        },
+        {
+            'id' => 'text',
+            'title' => 'Text'
+        },
+        {
+            'id' => 'workflow',
+            'title' => 'Workflow'
+        },
+        {
+            'id' => 'other',
+            'title' => 'Other'
+        }
+    ]
+  end
 
+  def self.parse_data(items, options={})
     if options[:id]
       item = items.find { |i| i["id"] == options[:id] }
       return nil if item.nil?

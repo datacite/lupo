@@ -7,7 +7,7 @@ class DoiSearch < Bolognese::Metadata
   include Cacheable
 
   def self.cache_key(item)
-    "doi_search/#{item.fetch('doi')}-{item.fetch('updated').utc.to_s(:number)}"
+    "doi_search/#{item.fetch('doi')}-#{item.fetch('updated')}"
   end
 
   def identifier
@@ -39,7 +39,7 @@ class DoiSearch < Bolognese::Metadata
 
   def resource_type
     return nil unless resource_type_general.present?
-    r = cached_resource_type_response(resource_type_general.downcase.underscore.dasherize)
+    r = ResourceType.where(id: resource_type_general.downcase.underscore.dasherize)
     r[:data] if r.present?
   end
 
@@ -110,7 +110,7 @@ class DoiSearch < Bolognese::Metadata
                else "score desc"
                end
       else
-        sort = options[:query].present? ? "score desc" : "minted desc"
+        sort = options[:query].present? ? "score desc" : "updated desc"
       end
 
       page = (options.dig(:page, :number) || 1).to_i
@@ -166,16 +166,14 @@ class DoiSearch < Bolognese::Metadata
     return result if result['errors']
 
     if options[:id].present?
-      return nil if result.blank?
+      return {} if result.blank?
 
       items = result.body.fetch("data", {}).fetch('response', {}).fetch('docs', [])
-      return [] if items.blank?
+      return {} if items.blank?
 
       item = items.first
 
-      meta = result[:meta]
-
-      { data: parse_item(item), meta: meta }
+      { data: parse_item(item) }
     else
       if options[:doi_id].present?
         return { data: [], meta: [] } if result.blank?
@@ -212,12 +210,18 @@ class DoiSearch < Bolognese::Metadata
   end
 
   def self.parse_item(item, options={})
-    time = Benchmark.realtime do
+    if ENV["LOG_LEVEL"] == "debug"
+      id = nil
+      time = Benchmark.realtime do
+        id = self.cache_key(item)
+        item = self.cached_doi_response(id: id, item: item)
+      end
+      Rails.logger.debug "Created metadata for #{id} in #{time*1000} milliseconds"
+      item
+    else
       id = self.cache_key(item)
       item = self.cached_doi_response(id: id, item: item)
     end
-    Rails.logger.debug "Created metadata in #{time*1000} milliseconds"
-    item
   end
 
   def self.parse_facet_counts(facets, options={})
@@ -236,8 +240,7 @@ class DoiSearch < Bolognese::Metadata
                        .each_slice(2)
                        .map do |p|
                           id, title = p.first.split(' - ', 2)
-                          c = cached_client_response(id)
-                          { "id" => id.downcase, "title" => c.name, "count" => p.last }
+                          { "id" => id.downcase, "title" => title, "count" => p.last }
                         end
     schema_versions = facets.fetch("facet_fields", {}).fetch("schema_version", [])
                             .each_slice(2)
