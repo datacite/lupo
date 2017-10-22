@@ -15,7 +15,14 @@ class WorkSerializer < ActiveModel::Serializer
   end
 
   def author
-    Array.wrap(object.author)
+    Array.wrap(object.author).map do |a|
+      literal = a.fetch("familyName", nil).present? || a.fetch("givenName", nil).present? ? nil : a.fetch("name", nil)
+
+      { "literal" => literal,
+        "given" => a.fetch("givenName", nil),
+        "family" => a.fetch("familyName", nil),
+        "orcid" => a.fetch("id", nil) }.compact
+    end
   end
 
   def doi
