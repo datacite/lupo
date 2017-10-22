@@ -14,6 +14,10 @@ class WorkSerializer < ActiveModel::Serializer
     object.media.present? ? object.media.map { |m| { media_type: m.split(":", 2).first, url: m.split(":", 2).last }} : nil
   end
 
+  def author
+    Array.wrap(object.author)
+  end
+
   def doi
     object.doi.downcase
   end

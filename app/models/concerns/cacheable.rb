@@ -41,7 +41,6 @@ module Cacheable
 
   module ClassMethods
     def cached_doi_response(id: nil, item: nil)
-      Rails.logger.debug "cached_doi_response for #{id}: " + Rails.cache.exist?(id).inspect
       Rails.cache.fetch(id) do
         DoiSearch.new(input: Base64.decode64(item.fetch("xml", "PGhzaD48L2hzaD4=\n")),
                       from: "datacite",
