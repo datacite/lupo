@@ -22,12 +22,20 @@ class WorkSerializer < ActiveModel::Serializer
     object.doi.downcase
   end
 
+  def title
+    parse_attributes(object.title, content: "text", first: true)
+  end
+
   def container_title
     object.container_title || object.publisher
   end
 
   def description
     parse_attributes(object.description, content: "text", first: true)
+  end
+
+  def license
+    parse_attributes(object.license, content: "id", first: true)
   end
 
   def resource_type_id
