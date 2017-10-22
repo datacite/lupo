@@ -5,6 +5,7 @@ class WorksController < ApplicationController
   def index
     params[:client_id] = params.delete(:data_center_id)
     params[:provider_id] = params.delete(:member_id)
+    params[:doi_id] = params.delete(:work_id)
 
     @dois = DoiSearch.where(params)
     @dois[:meta]["data-centers"] = @dois[:meta].delete("clients")

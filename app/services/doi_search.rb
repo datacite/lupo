@@ -166,26 +166,26 @@ class DoiSearch < Bolognese::Metadata
     return result if result['errors']
 
     if options[:id].present?
-      return {} if result.blank?
+      return { data: {}, meta: {} } if result.blank?
 
       items = result.body.fetch("data", {}).fetch('response', {}).fetch('docs', [])
-      return {} if items.blank?
+      return { data: {}, meta: {} } if items.blank?
 
       item = items.first
 
       { data: parse_item(item) }
     else
       if options[:doi_id].present?
-        return { data: [], meta: [] } if result.blank?
+        return { data: [], meta: {} } if result.blank?
 
-        items = result.fetch("data", {}).fetch('response', {}).fetch('docs', [])
-        return { data: [], meta: [] } if items.blank?
+        items = result.body.fetch("data", {}).fetch('response', {}).fetch('docs', [])
+        return { data: [], meta: {} } if items.blank?
 
         item = items.first
         related_doi_identifiers = item.fetch('relatedIdentifier', [])
                                       .select { |id| id =~ /:DOI:.+/ }
                                       .map { |i| i.split(':', 3).last.strip.upcase }
-        return { data: [], meta: [] } if related_doi_identifiers.blank?
+        return { data: [], meta: {} } if related_doi_identifiers.blank?
 
         options = options.except(:doi_id)
         query_url = get_query_url(options.merge(ids: related_doi_identifiers.join(",")))
