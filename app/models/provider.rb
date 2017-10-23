@@ -104,18 +104,18 @@ class Provider < ActiveRecord::Base
    end
 
    # Elasticsearch custom search
-   def self.query(query, options={})
-     __elasticsearch__.search(
-       {
-         query: {
-           query_string: {
-             query: query,
-             fields: ['symbol^10', 'name^10', 'contact_email', 'region']
-           }
-         }
-       }
-     ).records
-   end
+  #  def self.query(query, options={})
+  #    __elasticsearch__.search(
+  #      {
+  #        query: {
+  #          query_string: {
+  #            query: query,
+  #            fields: ['symbol^10', 'name^10', 'contact_email', 'region']
+  #          }
+  #        }
+  #      }
+  #    ).records
+  #  end
 
   # show all dois for admin
   def query_filter
