@@ -37,8 +37,6 @@ class Member
   def self.parse_data(result, options={})
     return nil if result.blank? || result['errors']
 
-    Rails.logger.info result.inspect
-
     if options[:id].present?
       item = result.body.fetch("data", {})
       return nil unless item.present?

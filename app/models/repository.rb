@@ -37,7 +37,7 @@ class Repository
     if options[:id].present?
       item = result.body.fetch("data", {}).fetch("re3data", {}).fetch("repository", [])
       #return nil unless item.present?
-      Rails.logger.info item.inspect
+
       { data: parse_item(item) }
     else
       items = Array.wrap(result.body.fetch("data", []).fetch("list", {}).fetch("repository", []))
