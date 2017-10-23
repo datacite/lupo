@@ -1,5 +1,4 @@
 require "base64"
-require "benchmark"
 
 class DoiSearch < Bolognese::Metadata
   include Searchable
@@ -162,18 +161,38 @@ class DoiSearch < Bolognese::Metadata
     url + "?" + URI.encode_www_form(params)
   end
 
+  def get_data(options={})
+    query_url = get_query_url(options)
+
+    # log level debug or info
+    if Rails.logger.level < 2
+      Librato.timing "doi.get_data" do
+        Maremma.get(query_url, options)
+      end
+    else
+      Maremma.get(query_url, options)
+    end
+  end
+
   def self.parse_data(result, options={})
     return result if result['errors']
+    data = nil
 
     if options[:id].present?
-      return { data: {}, meta: {} } if result.blank?
+      return { data: {} } if result.blank?
 
       items = result.body.fetch("data", {}).fetch('response', {}).fetch('docs', [])
-      return { data: {}, meta: {} } if items.blank?
+      return { data: {} } if items.blank?
 
-      item = items.first
+      if Rails.logger.level < 2
+        Librato.timing "doi.parse_item" do
+          data = parse_items(items)
+        end
+      else
+        data = parse_items(items)
+      end
 
-      { data: parse_item(item) }
+      { data: data }
     else
       if options[:doi_id].present?
         return { data: [], meta: {} } if result.blank?
@@ -205,23 +224,21 @@ class DoiSearch < Bolognese::Metadata
       meta = parse_facet_counts(facets, options)
       meta = meta.merge(total: total, total_pages: total_pages, page: page[:number])
 
-      { data: parse_items(items), meta: meta }
+      if Rails.logger.level < 2
+        Librato.timing "doi.parse_items" do
+          data = parse_items(items)
+        end
+      else
+        data = parse_items(items)
+      end
+
+      { data: data, meta: meta }
     end
   end
 
   def self.parse_item(item, options={})
-    if ENV["LOG_LEVEL"] == "debug"
-      id = nil
-      time = Benchmark.realtime do
-        id = self.cache_key(item)
-        item = self.cached_doi_response(id: id, item: item)
-      end
-      Rails.logger.debug "Created metadata for #{id} in #{time*1000} milliseconds"
-      item
-    else
-      id = self.cache_key(item)
-      item = self.cached_doi_response(id: id, item: item)
-    end
+    id = self.cache_key(item)
+    item = self.cached_doi_response(id: id, item: item)
   end
 
   def self.parse_facet_counts(facets, options={})
