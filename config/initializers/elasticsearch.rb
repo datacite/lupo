@@ -16,8 +16,8 @@ end
 
 Elasticsearch::Model.client = Elasticsearch::Client.new(host: ENV['ES_HOST'], port: '443') do |f|
   f.request :aws_signers_v4,
-    credentials: Aws::Credentials.new(ENV['AWS_ACCESS_KEY'], ENV['AWS_SECRET_ACCESS_KEY']),
-    service_name: ENV['ES_NAME'],
+    credentials: Aws::Credentials.new(ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY']),
+    service_name: 'es',
     region: ENV['AWS_REGION']
 
   f.response :logger
