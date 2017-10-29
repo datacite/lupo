@@ -1,7 +1,7 @@
 class DoiSerializer < ActiveModel::Serializer
   include Bolognese::Utils
   include Bolognese::DoiUtils
-  
+
   cache key: 'doi'
   type 'dois'
 
@@ -21,7 +21,8 @@ class DoiSerializer < ActiveModel::Serializer
   end
 
   def title
-    parse_attributes(object.title, content: "text", first: true).truncate(255)
+    t = parse_attributes(object.title, content: "text", first: true)
+    t.truncate(255) if t.is_a?(String)
   end
 
   def resource_type_subtype
