@@ -189,7 +189,7 @@ class DoiSearch < Bolognese::Metadata
           data = parse_items(items)
         end
       else
-        data = parse_items(items)
+        data = parse_item(items.first)
       end
 
       { data: data }

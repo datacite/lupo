@@ -15,7 +15,7 @@ class WorksController < ApplicationController
   end
 
   def show
-    render jsonapi: @doi[:data], include: @include, serializer: WorkSerializer
+    render jsonapi: @doi, include: @include, serializer: WorkSerializer
   end
 
   protected
@@ -24,7 +24,7 @@ class WorksController < ApplicationController
     params[:client_id] = params.delete(:data_center_id)
     params[:provider_id] = params.delete(:member_id)
 
-    @doi = DoiSearch.where(id: params[:id])
+    @doi = DoiSearch.where(id: params[:id])[:data].first
     fail ActiveRecord::RecordNotFound unless @doi.present?
   end
 

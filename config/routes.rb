@@ -39,6 +39,8 @@ Rails.application.routes.draw do
   resources :repositories, only: [:show, :index]
   get "/repositories/:id/badge", to: "repositories#badge", format: :svg
 
+  resources :resource_types, path: 'resource-types', only: [:show, :index]
+  
   # support for legacy routes
   resources :members, only: [:show, :index]
   resources :data_centers, only: [:show, :index], constraints: { :id => /.+/ }, path: "/data-centers"
