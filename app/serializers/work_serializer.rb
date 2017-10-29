@@ -30,7 +30,7 @@ class WorkSerializer < ActiveModel::Serializer
   end
 
   def title
-    parse_attributes(object.title, content: "text", first: true)
+    parse_attributes(object.title, content: "text", first: true).truncate(255)
   end
 
   def container_title

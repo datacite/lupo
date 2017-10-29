@@ -1,4 +1,7 @@
 class DoiSerializer < ActiveModel::Serializer
+  include Bolognese::Utils
+  include Bolognese::DoiUtils
+  
   cache key: 'doi'
   type 'dois'
 
@@ -15,6 +18,10 @@ class DoiSerializer < ActiveModel::Serializer
 
   def doi
     object.doi.downcase
+  end
+
+  def title
+    parse_attributes(object.title, content: "text", first: true).truncate(255)
   end
 
   def resource_type_subtype
