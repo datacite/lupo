@@ -55,7 +55,7 @@ RSpec.describe "Media", type: :request  do
 
     # let!(:doi_quota_used)  { client.doi_quota_used }
     context 'when the request is valid' do
-      let!(:dataset)  { create(:dataset) }
+      let!(:doi)  { create(:doi) }
       let(:doi)  { dataset.doi }
       let(:valid_attributes) do
         {
@@ -88,7 +88,7 @@ RSpec.describe "Media", type: :request  do
     end
 
     context 'when the request is invalid' do
-      let!(:dataset)  { create(:dataset) }
+      let!(:doi)  { create(:doi) }
       let(:not_valid_attributes) do
         {
           "data" => {

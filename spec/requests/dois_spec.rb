@@ -28,7 +28,7 @@ RSpec.describe "dois", type: :request  do
     context 'when the record exists' do
       it 'returns the Doi' do
         expect(json).not_to be_empty
-        expect(json['data']['attributes']['doi']).to eq(dataset_id)
+        expect(json['data']['attributes']['doi']).to eq(doi_id)
       end
 
       it 'returns status code 200' do
@@ -37,7 +37,7 @@ RSpec.describe "dois", type: :request  do
     end
 
     context 'when the record does not exist' do
-      let(:dataset_id) { 100 }
+      let(:doi_id) { 100 }
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
@@ -49,7 +49,7 @@ RSpec.describe "dois", type: :request  do
     end
   end
 
-  # Test suite for POST /datasets
+  # Test suite for POST /dois
   describe 'POST /dois' do
     # valid payload
 
@@ -91,7 +91,7 @@ RSpec.describe "dois", type: :request  do
       let(:not_valid_attributes) do
         {
           "data" => {
-            "type" => "datasets",
+            "type" => "dois",
             "attributes" => {
               "doi" => "10.aaaa03",
               "url"=> "http://www.bl.uk/pdf/patspec.pdf",
@@ -117,7 +117,7 @@ RSpec.describe "dois", type: :request  do
     end
   end
 
-  # # Test suite for PUT /datasets/:id
+  # # Test suite for PUT /dois/:id
   describe 'PUT /dois/:id' do
     context 'when the record exists' do
       let!(:client)  { create(:client) }
@@ -147,7 +147,7 @@ RSpec.describe "dois", type: :request  do
     end
   end
 
-  # Test suite for DELETE /datasets/:id
+  # Test suite for DELETE /dois/:id
   describe 'DELETE /dois/:id' do
     before { delete "/dois/#{doi_id}", headers: headers }
 

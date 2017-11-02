@@ -51,7 +51,7 @@ RSpec.describe "Metadata", type: :request  do
   # Test suite for POST /metadata
   describe 'POST /metadata' do
     context 'when the request is valid' do
-      let!(:dataset)  { create(:dataset) }
+      let!(:doi)  { create(:doi) }
       let(:doi)  { dataset.doi }
       let(:valid_attributes) do
         {
@@ -84,7 +84,7 @@ RSpec.describe "Metadata", type: :request  do
     end
 
     context 'when the request is invalid' do
-      let!(:dataset)  { create(:dataset) }
+      let!(:doi)  { create(:doi) }
       let(:not_valid_attributes) do
         {
           "data" => {
