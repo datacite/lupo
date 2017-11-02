@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe "Datasets", type: :request  do
+RSpec.describe "Dois", type: :request  do
   # initialize test data
-  let!(:datasets)  { create_list(:dataset, 10) }
-  let(:dataset_id) { datasets.first.doi }
+  let!(:dois)  { create_list(:doi, 10) }
+  let(:doi_id) { dois.first.doi }
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN']}}
 
   # # Test suite for GET /datasets
@@ -22,11 +22,11 @@ RSpec.describe "Datasets", type: :request  do
   # end
 
   # Test suite for GET /datasets/:id
-  describe 'GET /datasets/:id' do
-    before { get "/datasets/#{dataset_id}", headers: headers }
+  describe 'GET /dois/:id' do
+    before { get "/dois/#{doi_id}", headers: headers }
 
     context 'when the record exists' do
-      it 'returns the Dataset' do
+      it 'returns the Doi' do
         expect(json).not_to be_empty
         expect(json['data']['attributes']['doi']).to eq(dataset_id)
       end
@@ -50,7 +50,7 @@ RSpec.describe "Datasets", type: :request  do
   end
 
   # Test suite for POST /datasets
-  describe 'POST /datasets' do
+  describe 'POST /dois' do
     # valid payload
 
     # let!(:doi_quota_used)  { client.doi_quota_used }
@@ -59,7 +59,7 @@ RSpec.describe "Datasets", type: :request  do
       let(:valid_attributes) do
         {
           "data" => {
-            "type" => "datasets",
+            "type" => "dois",
             "attributes" => {
               "doi" => "10.4122/10703",
               "url"=> "http://www.bl.uk/pdf/patspec.pdf",
@@ -70,9 +70,9 @@ RSpec.describe "Datasets", type: :request  do
           }
         }
       end
-      before { post '/datasets', params: valid_attributes.to_json, headers: headers }
+      before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
-      it 'creates a Dataset' do
+      it 'creates a Doi' do
       expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
       expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
       end
@@ -101,14 +101,10 @@ RSpec.describe "Datasets", type: :request  do
           }
         }
       end
-      before { post '/datasets', params: not_valid_attributes.to_json, headers: headers }
+      before { post '/dois', params: not_valid_attributes.to_json, headers: headers }
 
       it 'returns status code 500' do
         expect(response).to have_http_status(500)
-      end
-
-      it 'doesn not Increase Quota' do
-        # expect(doi_quota_used).to eq(client.doi_quota_used)
       end
 
       it 'returns status code 422' do
@@ -122,13 +118,13 @@ RSpec.describe "Datasets", type: :request  do
   end
 
   # # Test suite for PUT /datasets/:id
-  describe 'PUT /datasets/:id' do
+  describe 'PUT /dois/:id' do
     context 'when the record exists' do
       let!(:client)  { create(:client) }
       let(:valid_attributes) do
         {
           "data" => {
-            "type" => "datasets",
+            "type" => "dois",
             "attributes" => {
               "doi" => "10.4122/10703",
               "url"=> "http://www.bl.uk/pdf/patspec.pdf",
@@ -139,7 +135,7 @@ RSpec.describe "Datasets", type: :request  do
           }
         }
       end
-      before { put "/datasets/#{dataset_id}", params: valid_attributes.to_json, headers: headers }
+      before { put "/dois/#{doi_id}", params: valid_attributes.to_json, headers: headers }
 
       it 'updates the record' do
         expect(response.body).not_to be_empty
@@ -152,8 +148,8 @@ RSpec.describe "Datasets", type: :request  do
   end
 
   # Test suite for DELETE /datasets/:id
-  describe 'DELETE /datasets/:id' do
-    before { delete "/datasets/#{dataset_id}", headers: headers }
+  describe 'DELETE /dois/:id' do
+    before { delete "/dois/#{doi_id}", headers: headers }
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

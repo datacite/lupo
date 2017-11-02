@@ -32,8 +32,8 @@ Shoulda::Matchers.configure do |config|
 end
 
 RSpec.configure do |config|
-  # add `FactoryGirl` methods
-  config.include FactoryGirl::Syntax::Methods
+  # add `FactoryBot` methods
+  config.include FactoryBot::Syntax::Methods
 
   # don't use transactions, use database_clear gem via support file
   config.use_transactional_fixtures = false

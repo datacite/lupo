@@ -46,7 +46,7 @@ class Provider < ActiveRecord::Base
   def self.find_each
     super
   end
-  
+
   def year
     created.year
   end
@@ -188,7 +188,7 @@ class Provider < ActiveRecord::Base
   # end
 
   def set_test_prefix
-    return if prefixes.where(prefix: "10.5072").first
+    return if Rails.env.test? || prefixes.where(prefix: "10.5072").first
 
     prefixes << cached_prefix_response("10.5072")
   end

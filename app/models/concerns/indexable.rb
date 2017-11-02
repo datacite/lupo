@@ -5,7 +5,7 @@ module Indexable
     include Elasticsearch::Model
     include Elasticsearch::Model::Callbacks
 
-    unless Rails.env.production?
+    if Rails.env.development? || Rails.env.stage?
       after_save { IndexerJob.perform_later(self, operation: "index") }
       after_destroy { IndexerJob.perform_later(self, operation: "delete") }
     end

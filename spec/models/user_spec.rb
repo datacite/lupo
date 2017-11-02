@@ -17,7 +17,7 @@ RSpec.describe User, type: :model do
       let(:role){ "client_admin" }
 
       it{ is_expected.not_to be_able_to(:create, Provider.new) }
-      it{ is_expected.to be_able_to(:read, FactoryGirl.create(:client)) }
+      it{ is_expected.to be_able_to(:read, FactoryBot.create(:client)) }
       it{ is_expected.not_to be_able_to(:update, Provider.new) }
       it{ is_expected.not_to be_able_to(:destroy, Provider.new) }
     end

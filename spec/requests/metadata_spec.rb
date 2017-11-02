@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Metadata", type: :request  do
   # initialize test data
-  let!(:metadata)  { create_list(:metadata, 5) }
+  let(:metadata)  { create_list(:metadata, 5) }
   let(:metadata_id) { metadata.first.id }
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN']}}
 

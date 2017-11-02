@@ -177,6 +177,7 @@ GEM
       tilt
     hamster (3.0.0)
       concurrent-ruby (~> 1.0)
+    hashdiff (0.3.7)
     hashie (3.5.6)
     hetchy (1.0.0)
     highline (1.7.8)
@@ -383,9 +384,10 @@ GEM
     unicode (0.4.4.4)
     unicode_utils (1.4.0)
     vcr (3.0.3)
-    webmock (1.20.4)
+    webmock (3.1.0)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
+      hashdiff
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
@@ -445,7 +447,7 @@ DEPENDENCIES
   spring-watcher-listen (~> 2.0.0)
   tzinfo-data
   vcr (~> 3.0.3)
-  webmock (~> 1.20.0)
+  webmock (~> 3.1)
 
 BUNDLED WITH
    1.15.4

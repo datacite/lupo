@@ -13,9 +13,9 @@ class IndexerJob < ActiveJob::Base
 
     case operation
       when "index"
-        es_client.index index: record.index_name, type: record.type, id: record.id, body: record.__elasticsearch__.as_indexed_json
+        es_client.index index: record.index, type: record.type, id: record.id, body: record.__elasticsearch__.as_indexed_json
       when "delete"
-        es_client.delete index: record.index_name, type: record.type, id: record.id
+        es_client.delete index: record.index, type: record.type, id: record.id
       else raise ArgumentError, "Unknown operation '#{operation}'"
     end
   end
