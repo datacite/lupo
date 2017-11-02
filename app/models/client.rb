@@ -45,6 +45,10 @@ class Client < ActiveRecord::Base
 
   attr_accessor :target_id
 
+  def self.find_each
+    super
+  end
+
   # workaround for non-standard database column names and association
   def provider_id
     provider_symbol.downcase

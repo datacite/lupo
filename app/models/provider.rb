@@ -43,6 +43,10 @@ class Provider < ActiveRecord::Base
   default_scope { where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')").where(deleted_at: nil) }
   scope :query, ->(query) { where("allocator.symbol like ? OR allocator.name like ?", "%#{query}%", "%#{query}%") }
 
+  def self.find_each
+    super
+  end
+  
   def year
     created.year
   end
