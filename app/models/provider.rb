@@ -35,6 +35,7 @@ class Provider < ActiveRecord::Base
   has_many :prefixes, through: :provider_prefixes
 
   before_validation :set_region, :set_defaults
+  before_create :set_test_prefix
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   accepts_nested_attributes_for :prefixes
@@ -181,6 +182,12 @@ class Provider < ActiveRecord::Base
   #   end
   #   write_attribute(:provider_type, r)
   # end
+
+  def set_test_prefix
+    return if prefixes.where(prefix: "10.5072").first
+
+    prefixes << cached_prefix_response("10.5072")
+  end
 
   def set_defaults
     self.symbol = symbol.upcase

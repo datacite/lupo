@@ -87,7 +87,6 @@ class ClientsController < ApplicationController
 
   # PATCH/PUT /clients/1
   def update
-    Rails.logger.warn safe_params.inspect
     if @client.update_attributes(safe_params)
       render jsonapi: @client
     else

@@ -35,7 +35,7 @@ class Client < ActiveRecord::Base
   has_many :prefixes, through: :client_prefixes
 
   before_validation :set_defaults
-  before_create :set_test_prefix, if: Proc.new { |client| client.provider_symbol == "SANDBOX" }
+  before_create :set_test_prefix #, if: Proc.new { |client| client.provider_symbol == "SANDBOX" }
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
