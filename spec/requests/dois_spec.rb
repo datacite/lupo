@@ -1,27 +1,27 @@
 require 'rails_helper'
 
-RSpec.describe "Dois", type: :request  do
+RSpec.describe "dois", type: :request  do
   # initialize test data
   let!(:dois)  { create_list(:doi, 10) }
   let(:doi_id) { dois.first.doi }
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN']}}
 
-  # # Test suite for GET /datasets
-  # describe 'GET /datasets' do
-  #   # make HTTP get request before each example
-  #   before { get '/datasets', headers: headers }
-  #
-  #   it 'returns Datasets' do
-  #     expect(json).not_to be_empty
-  #     expect(json['data'].size).to eq(10)
-  #   end
-  #
-  #   it 'returns status code 200' do
-  #     expect(response).to have_http_status(200)
-  #   end
-  # end
+  # Test suite for GET /dois
+  describe 'GET /dois' do
+    # make HTTP get request before each example
+    before { get '/dois', headers: headers }
 
-  # Test suite for GET /datasets/:id
+    it 'returns dois' do
+      expect(json).not_to be_empty
+      expect(json['data'].size).to eq(10)
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
+  # Test suite for GET /dois/:id
   describe 'GET /dois/:id' do
     before { get "/dois/#{doi_id}", headers: headers }
 
