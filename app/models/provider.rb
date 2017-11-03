@@ -67,25 +67,25 @@ class Provider < ActiveRecord::Base
     "#{ENV['CDN_URL']}/images/members/#{symbol.downcase}.png"
   end
 
-  # Elasticsearch indexing
-   mappings dynamic: 'false' do
-     indexes :symbol, type: 'text'
-     indexes :name, type: 'text'
-     indexes :description, type: 'text'
-     indexes :contact_email, type: 'text'
-     indexes :country_code, type: 'text'
-     indexes :country_name, type: 'text'
-     indexes :region, type: 'text'
-     indexes :region_name, type: 'text'
-     indexes :year, type: 'integer'
-    #  indexes :website, type: 'text'
-    #  indexes :phone, type: 'text'
-     indexes :logo_url, type: 'text'
-     indexes :is_active, type: 'boolean'
-     indexes :created_at, type: 'date'
-     indexes :role_name, type: 'text'
-     indexes :updated_at, type: 'date'
-   end
+  # # Elasticsearch indexing
+  #  mappings dynamic: 'false' do
+  #    indexes :symbol, type: 'text'
+  #    indexes :name, type: 'text'
+  #    indexes :description, type: 'text'
+  #    indexes :contact_email, type: 'text'
+  #    indexes :country_code, type: 'text'
+  #    indexes :country_name, type: 'text'
+  #    indexes :region, type: 'text'
+  #    indexes :region_name, type: 'text'
+  #    indexes :year, type: 'integer'
+  #   #  indexes :website, type: 'text'
+  #   #  indexes :phone, type: 'text'
+  #    indexes :logo_url, type: 'text'
+  #    indexes :is_active, type: 'boolean'
+  #    indexes :created_at, type: 'date'
+  #    indexes :role_name, type: 'text'
+  #    indexes :updated_at, type: 'date'
+  #  end
 
    def as_indexed_json(options={})
      {
