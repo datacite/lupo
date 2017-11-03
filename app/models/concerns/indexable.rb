@@ -10,13 +10,13 @@ module Indexable
       after_destroy { IndexerJob.perform_later(self, operation: "delete") }
     end
   end
-
-    def all
-      query
-    end
-
-    def where(options={})
-      query(options)
-    end
+    #
+    # def all
+    #   query
+    # end
+    #
+    # def where(options={})
+    #   query(options)
+    # end
 
 end

@@ -59,3 +59,14 @@ namespace :provider do
     end
   end
 end
+
+namespace :prefix do
+  desc 'Create test prefix'
+  task :create_test_prefix => :environment do
+    unless Prefix.where(prefix: "10.5072").first
+      Prefix.new(prefix: "10.5072") do |p|
+        p.save
+      end
+    end
+  end
+end

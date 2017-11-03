@@ -105,18 +105,21 @@ class Provider < ActiveRecord::Base
    end
 
    # Elasticsearch custom search
-  #  def self.query(query, options={})
-  #    __elasticsearch__.search(
-  #      {
-  #        query: {
-  #          query_string: {
-  #            query: query,
-  #            fields: ['symbol^10', 'name^10', 'contact_email', 'region']
-  #          }
-  #        }
-  #      }
-  #    ).records
-  #  end
+   def self.query(query, options={})
+     __elasticsearch__.search(
+       {
+         query: {
+           query_string: {
+             query: query,
+             fields: ['symbol^10', 'name^10', 'contact_email', 'region'],
+             filter: {
+              terms: { 'symbol' => options[:loca]}
+             }
+           }
+         }
+       }
+     ).records
+   end
 
   # show all dois for admin
   def query_filter
@@ -184,7 +187,7 @@ class Provider < ActiveRecord::Base
   # end
 
   def set_test_prefix
-    return if Rails.env.test? || prefixes.where(prefix: "10.5072").first
+    return if Rails.env.test? || prefixes.where(prefix: "10.5072").first
 
     prefixes << cached_prefix_response("10.5072")
   end
