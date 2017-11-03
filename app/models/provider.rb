@@ -1,8 +1,8 @@
 require "countries"
 
 class Provider < ActiveRecord::Base
-
-  include Indexable
+  # index in Elasticsearch
+  include Indexable unless Rails.env.production?
 
   # include helper module for caching infrequently changing resources
   include Cacheable
@@ -42,10 +42,6 @@ class Provider < ActiveRecord::Base
 
   default_scope { where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')").where(deleted_at: nil) }
   scope :query, ->(query) { where("allocator.symbol like ? OR allocator.name like ?", "%#{query}%", "%#{query}%") }
-
-  def self.find_each
-    super
-  end
 
   def year
     created.year

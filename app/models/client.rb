@@ -1,7 +1,7 @@
 class Client < ActiveRecord::Base
 
   # index in Elasticsearch
-  include Indexable
+  include Indexable unless Rails.env.production?
 
   # include helper module for caching infrequently changing resources
   include Cacheable
@@ -45,10 +45,6 @@ class Client < ActiveRecord::Base
   scope :query, ->(query) { where("datacentre.symbol like ? OR datacentre.name like ?", "%#{query}%", "%#{query}%") }
 
   attr_accessor :target_id
-
-  def self.find_each
-    super
-  end
 
   # workaround for non-standard database column names and association
   def provider_id
