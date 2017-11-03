@@ -9,7 +9,7 @@ class ProvidersController < ApplicationController
     if params[:id].present?
       collection = collection.where(symbol: params[:id])
     elsif params[:query].present?
-      collection = collection.where(params[:query])
+      collection = collection.query(params[:query])
     end
 
     # cache prefixes for faster queries
