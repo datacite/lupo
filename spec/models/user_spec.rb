@@ -1,7 +1,7 @@
 require 'rails_helper'
 require "cancan/matchers"
 
-RSpec.describe User, type: :model do
+describe User, type: :model do
   let(:user) { User.new(ENV['JWT_TOKEN']) }
 
   describe 'User attributes', :order => :defined do

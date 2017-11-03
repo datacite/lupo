@@ -190,7 +190,7 @@ class Provider < ActiveRecord::Base
   end
 
   def set_defaults
-    self.symbol = symbol.upcase
+    self.symbol = symbol.upcase if symbol.present?
     self.is_active = is_active ? "\x01" : "\x00"
     self.contact_name = "" unless contact_name.present?
     self.role_name = "ROLE_ALLOCATOR" unless role_name.present?
