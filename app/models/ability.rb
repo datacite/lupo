@@ -10,7 +10,7 @@ class Ability
       can :update, :all
     elsif user.role_id == "provider_admin"
       can [:update, :read], Provider, :symbol => user.provider_id
-      can [:create, :update, :read], Client, :allocator => user.allocator
+      can [:manage], Client, :allocator => user.allocator
       can [:create, :update, :read], Doi, :datacentre => user.datacentre
       can [:update, :read], Prefix #, :datacentre => user.client_id
       can [:create, :update, :read], ClientPrefix #, :datacentre => user.client_id
