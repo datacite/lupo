@@ -2,7 +2,7 @@ require "countries"
 
 class Provider < ActiveRecord::Base
   # index in Elasticsearch
-  include Indexable unless Rails.env.production?
+  # include Indexable
 
   # include helper module for caching infrequently changing resources
   include Cacheable
