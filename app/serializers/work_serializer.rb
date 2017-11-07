@@ -30,7 +30,8 @@ class WorkSerializer < ActiveModel::Serializer
   end
 
   def title
-    parse_attributes(object.title, content: "text", first: true).truncate(255)
+    t = parse_attributes(object.title, content: "text", first: true)
+    t.truncate(255) if t.present?
   end
 
   def container_title
