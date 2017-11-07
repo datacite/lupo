@@ -40,12 +40,18 @@ class User
 
   # Helper method to check for admin user
   def allocator
-    Provider.find_by(symbol: @provider_id).id if @provider_id
+    return nil unless @provider_id.present?
+
+    p = Provider.where(symbol: @provider_id)
+    p.id if p.present?
   end
 
   # Helper method to check for admin user
   def datacentre
-    Client.find_by(symbol: @client_id).id if @client_id
+    return nil unless @client_id.present?
+
+    c = Client.where(symbol: @client_id)
+    c.id if c.present?
   end
 
   private
