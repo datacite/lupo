@@ -38,23 +38,22 @@ class User
     ["staff_admin", "staff_user"].include?(role_id)
   end
 
-  # Helper method to check for admin user
   def allocator
-    return nil unless @provider_id.present?
+    return nil unless provider_id.present?
 
-    p = Provider.where(symbol: @provider_id)
+    p = Provider.where(symbol: provider_id)
     p.id if p.present?
   end
 
-  # Helper method to check for admin user
   def datacentre
-    return nil unless @client_id.present?
+    return nil unless client_id.present?
 
-    c = Client.where(symbol: @client_id)
+    c = Client.where(symbol: client_id)
     c.id if c.present?
   end
 
   private
+
   def generate_token
     # @jwt
     payload = {
