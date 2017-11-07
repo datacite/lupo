@@ -41,14 +41,14 @@ class User
   def allocator
     return nil unless provider_id.present?
 
-    p = Provider.where(symbol: provider_id)
+    p = Provider.where(symbol: provider_id).first
     p.id if p.present?
   end
 
   def datacentre
     return nil unless client_id.present?
 
-    c = Client.where(symbol: client_id)
+    c = Client.where(symbol: client_id).first
     c.id if c.present?
   end
 
