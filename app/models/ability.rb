@@ -9,21 +9,21 @@ class Ability
       can :read, :all
       can :update, :all
     elsif user.role_id == "provider_admin"
-      can [:update, :read], Provider, :symbol => user.provider_id
+      can [:update, :read], Provider, :symbol => user.provider_id.upcase
       can [:manage], Client, :allocator => user.allocator
       can [:create, :update, :read], Doi, :datacentre => user.datacentre
-      can [:update, :read], Prefix #, :datacentre => user.client_id
+      can [:update, :read], Prefix #, :datacentre => user.datacentre
       can [:create, :update, :read], ClientPrefix #, :datacentre => user.client_id
       can [:read], ProviderPrefix #, :datacentre => user.client_id
       can [:create, :update, :read, :destroy], User, :provider_id => user.provider_id
     elsif user.role_id == "provider_user"
       can [:read], Provider, :symbol => user.provider_id
       can [:update, :read], Client, :allocator => user.allocator
-      # can [:read], Prefix, :allocator => user.provider_id
+      # can [:read], Prefix, :allocator => user.allocator
       can [:read], Doi, :datacentre => user.datacentre
       can [:update, :read], User, :id => user.id
     elsif user.role_id == "client_admin"
-      can [:read, :update], Client, :symbol => user.client_id
+      can [:read, :update], Client, :symbol => user.client_id.upcase
       can [:create, :update, :read], Doi, :datacentre => user.datacentre
       can [:create, :update, :read, :destroy], User, :client_id => user.client_id
     elsif user.role_id == "client_user"
