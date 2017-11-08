@@ -1,3 +1,4 @@
+require 'faker'
 class User
   # include jwt encode and decode
   include Authenticable
@@ -52,8 +53,8 @@ class User
   def generate_token
     # @jwt
     payload = {
-      uid: "Faker::Code.unique.asin",
-      name: "Faker::Name.name",
+      uid:  Faker::Code.unique.asin,
+      name: Faker::TheThickOfIt.character,
       email: "sasa@sasa",
       provider_id: "",
       client_id: "",

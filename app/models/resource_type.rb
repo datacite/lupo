@@ -1,5 +1,5 @@
 class ResourceType
-  include Searchable
+  include Searchable 
 
   attr_reader :id, :title, :updated_at
 

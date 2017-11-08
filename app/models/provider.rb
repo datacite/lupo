@@ -2,7 +2,7 @@ require "countries"
 
 class Provider < ActiveRecord::Base
   # index in Elasticsearch
-  include Indexable unless Rails.env.production?
+  include Indexable unless Rails.env.production? || Rails.env.test?
 
   # include helper module for caching infrequently changing resources
   include Cacheable
@@ -20,6 +20,7 @@ class Provider < ActiveRecord::Base
   alias_attribute :uid, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
+  attr_readonly :uid, :symbol
 
   validates_presence_of :symbol, :name, :contact_name, :contact_email
   validates_uniqueness_of :symbol, message: "This name has already been taken"
@@ -41,10 +42,17 @@ class Provider < ActiveRecord::Base
   accepts_nested_attributes_for :prefixes
 
   default_scope { where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')").where(deleted_at: nil) }
-  scope :query, ->(query) { where("allocator.symbol like ? OR allocator.name like ?", "%#{query}%", "%#{query}%") }
+
+  unless Rails.env.production? || Rails.env.test?
+    scope :query, ->(query) { where("allocator.symbol like ? OR allocator.name like ?", "%#{query}%", "%#{query}%") }
+  end
 
   def year
     created.year
+  end
+
+  def es_fields
+    ['symbol^10', 'name^10', 'contact_email', 'region']
   end
 
   def country_name
@@ -68,58 +76,41 @@ class Provider < ActiveRecord::Base
   end
 
   # Elasticsearch indexing
-   mappings dynamic: 'false' do
-     indexes :symbol, type: 'text'
-     indexes :name, type: 'text'
-     indexes :description, type: 'text'
-     indexes :contact_email, type: 'text'
-     indexes :country_code, type: 'text'
-     indexes :country_name, type: 'text'
-     indexes :region, type: 'text'
-     indexes :region_name, type: 'text'
-     indexes :year, type: 'integer'
-    #  indexes :website, type: 'text'
-    #  indexes :phone, type: 'text'
-     indexes :logo_url, type: 'text'
-     indexes :is_active, type: 'boolean'
-     indexes :created_at, type: 'date'
-     indexes :role_name, type: 'text'
-     indexes :updated_at, type: 'date'
-   end
+  mappings dynamic: 'false' do
+    indexes :symbol, type: 'text'
+    indexes :name, type: 'text'
+    indexes :description, type: 'text'
+    indexes :contact_email, type: 'text'
+    indexes :country_code, type: 'text'
+    indexes :country_name, type: 'text'
+    indexes :region, type: 'text'
+    indexes :region_name, type: 'text'
+    indexes :year, type: 'integer'
+   #  indexes :website, type: 'text'
+   #  indexes :phone, type: 'text'
+    indexes :logo_url, type: 'text'
+    indexes :is_active, type: 'boolean'
+    indexes :created_at, type: 'date'
+    indexes :role_name, type: 'text'
+    indexes :updated_at, type: 'date'
+  end unless Rails.env.production? || Rails.env.test?
 
-   def as_indexed_json(options={})
-     {
-       "symbol" => uid.downcase,
-       "name" => name,
-       "description" => description,
-       "region" => region_name,
-       "country" => country_name,
-       "year" => year,
-       "logo_url" => logo_url,
-       "is_active" => is_active,
-       "contact_email" => contact_email,
-      #  "website" => website,
-      #  "phone" => phone,
-       "created" => created_at.iso8601,
-       "updated" => updated_at.iso8601 }
-   end
-
-   # Elasticsearch custom search
-   def self.query(query, options={})
-     __elasticsearch__.search(
-       {
-         query: {
-           query_string: {
-             query: query,
-             fields: ['symbol^10', 'name^10', 'contact_email', 'region'],
-             filter: {
-              terms: { 'symbol' => options[:loca]}
-             }
-           }
-         }
-       }
-     ).records
-   end
+  #  def as_indexed_json(options={})
+  #    {
+  #      "symbol" => uid.downcase,
+  #      "name" => name,
+  #      "description" => description,
+  #      "region" => region_name,
+  #      "country" => country_name,
+  #      "year" => year,
+  #      "logo_url" => logo_url,
+  #      "is_active" => is_active,
+  #      "contact_email" => contact_email,
+  #     #  "website" => website,
+  #     #  "phone" => phone,
+  #      "created" => created_at.iso8601,
+  #      "updated" => updated_at.iso8601 }
+  #  end
 
   # show all dois for admin
   def query_filter
@@ -132,6 +123,7 @@ class Provider < ActiveRecord::Base
     c = clients.unscoped
     c = c.where("datacentre.allocator = ?", id) if symbol != "ADMIN"
     c = c.pluck(:created, :deleted_at).map { |c| c[1].present? ? c[1].year - 1 : c[0].year }
+    return nil if c.empty?
     c += (c.min..Date.today.year).to_a
     c.group_by { |a| a }
      .sort { |a, b| a.first <=> b.first }
@@ -193,7 +185,7 @@ class Provider < ActiveRecord::Base
   end
 
   def set_defaults
-    self.symbol = symbol.upcase
+    self.symbol = symbol.upcase if symbol?
     self.is_active = is_active ? "\x01" : "\x00"
     self.contact_name = "" unless contact_name.present?
     self.role_name = "ROLE_ALLOCATOR" unless role_name.present?

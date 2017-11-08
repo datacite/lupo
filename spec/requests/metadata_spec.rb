@@ -4,6 +4,14 @@ RSpec.describe "Metadata", type: :request  do
   # initialize test data
   let(:metadata)  { create_list(:metadata, 5) }
   let(:metadata_id) { metadata.first.id }
+  let(:params) do
+    { "data" => { "type" => "providers",
+                  "attributes" => {
+                    "symbol" => "BL",
+                    "name" => "British Library",
+                    "contact_email" => "bob@example.com",
+                    "country_code" => "GB" } } }
+  end
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN']}}
 
   # Test suite for GET /metadata
@@ -65,7 +73,7 @@ RSpec.describe "Metadata", type: :request  do
               "dataset"=>  {
                 "data"=> {
                   "type"=> "datasets",
-                  "id"=>  doi
+                  "doi"=>  doi
                 }
               }
             }
@@ -97,7 +105,7 @@ RSpec.describe "Metadata", type: :request  do
               "dataset"=>  {
                 "data"=> {
                   "type"=> "datasets",
-                  "id"=>  dataset.doi
+                  "doi"=>  dataset.doi
                 }
               }
             }

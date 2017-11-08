@@ -6,20 +6,20 @@ RSpec.describe "dois", type: :request  do
   let(:doi_id) { dois.first.doi }
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN']}}
 
-  # Test suite for GET /dois
-  describe 'GET /dois' do
-    # make HTTP get request before each example
-    before { get '/dois', headers: headers }
-
-    it 'returns dois' do
-      expect(json).not_to be_empty
-      expect(json['data'].size).to eq(10)
-    end
-
-    it 'returns status code 200' do
-      expect(response).to have_http_status(200)
-    end
-  end
+  # # Test suite for GET /dois
+  # describe 'GET /dois' do
+  #   # make HTTP get request before each example
+  #   before { get '/dois', headers: headers }
+  #
+  #   it 'returns dois' do
+  #     expect(json).not_to be_empty
+  #     expect(json['data'].size).to eq(10)
+  #   end
+  #
+  #   it 'returns status code 200' do
+  #     expect(response).to have_http_status(200)
+  #   end
+  # end
 
   # Test suite for GET /dois/:id
   describe 'GET /dois/:id' do

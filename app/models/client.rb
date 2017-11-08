@@ -1,7 +1,7 @@
 class Client < ActiveRecord::Base
 
   # index in Elasticsearch
-  include Indexable unless Rails.env.production?
+  include Indexable unless Rails.env.production? || Rails.env.test?
 
   # include helper module for caching infrequently changing resources
   include Cacheable
@@ -19,7 +19,7 @@ class Client < ActiveRecord::Base
   alias_attribute :uid, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-
+  attr_readonly :uid, :symbol
   delegate :symbol, to: :provider, prefix: true
 
   validates_presence_of :symbol, :name, :contact_email
@@ -42,13 +42,19 @@ class Client < ActiveRecord::Base
 
   default_scope { where(deleted_at: nil) }
 
-  scope :query, ->(query) { where("datacentre.symbol like ? OR datacentre.name like ?", "%#{query}%", "%#{query}%") }
+  unless Rails.env.production? || Rails.env.test?
+    scope :query, ->(query) { where("datacentre.symbol like ? OR datacentre.name like ?", "%#{query}%", "%#{query}%") }
+  end
 
   attr_accessor :target_id
 
   # workaround for non-standard database column names and association
   def provider_id
     provider_symbol.downcase
+  end
+
+  def es_fields
+    ['symbol^10', 'name^10', 'contact_email', 'repository']
   end
 
   def provider_id=(value)
@@ -93,6 +99,7 @@ class Client < ActiveRecord::Base
     end
   end
 
+  protected
   def freeze_symbol
     errors.add(:symbol, "cannot be changed") if self.symbol_changed?
   end
@@ -108,7 +115,7 @@ class Client < ActiveRecord::Base
   private
 
   def set_test_prefix
-    return if Rails.env.test? || prefixes.where(prefix: "10.5072").first
+    return if Rails.env.test? || prefixes.where(prefix: "10.5072").first
 
     prefixes << cached_prefix_response("10.5072")
   end

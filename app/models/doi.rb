@@ -68,7 +68,7 @@ class Doi < ActiveRecord::Base
   end
 
   delegate :author, :title, :container_title, :description, :resource_type_general,
-    :additional_type, :license, :version, :related_identifier, :schema_version,
+    :additional_type, :license, :related_identifier, :schema_version,
     :date_published, :date_accepted, :date_available, :publisher, :xml, to: :doi_metadata
 
   def date_registered
