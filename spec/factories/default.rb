@@ -2,7 +2,7 @@ require 'faker'
 
 FactoryBot.define do
   factory :client do
-    association :provider
+    association :provider, factory: :provider, strategy: :create
 
     contact_email { Faker::Internet.email }
     contact_name { Faker::Name.name }
@@ -13,7 +13,7 @@ FactoryBot.define do
   end
 
   factory :doi do
-    association :client
+    association :client, factory: :client, strategy: :create
 
     created {Faker::Time.backward(14, :evening)}
     doi { "10.4122/" + Faker::Internet.password(8) }
@@ -37,14 +37,13 @@ FactoryBot.define do
   end
 
   factory :media do
-    association :doi
+    association :doi, factory: :doi, strategy: :create
 
-    created {Faker::Time.backward(14, :evening)}
-    updated {Faker::Time.backward(14, :evening)}
     version 1
     url {Faker::Internet.url }
     media_type "MyString"
-    dataset_id  { dataset.doi }
+    doi  { doi.doi }
+    dataset  { doi.doi }
   end
 
   factory :prefix do
@@ -55,7 +54,7 @@ FactoryBot.define do
   factory :provider do
     contact_email { Faker::Internet.email }
     contact_name { Faker::Name.name }
-    symbol { Faker::Code.unique.asin + Faker::Code.asin }
+    symbol { Faker::Code.asin + Faker::Code.asin }
     name "My provider"
     country_code { Faker::Address.country_code }
 

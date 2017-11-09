@@ -172,7 +172,6 @@ RSpec.describe "Providers", type: :request  do
     before { delete "/providers/#{provider.symbol}", headers: headers }
 
     it 'returns status code 204' do
-      puts provider.symbol
       expect(response).to have_http_status(204)
     end
     context 'when the resources doesnt exist' do

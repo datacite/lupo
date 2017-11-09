@@ -34,7 +34,7 @@ RSpec.describe Provider, type: :model do
 
     it "should not update the symbol" do
       provider.update_attributes :symbol => provider.symbol+'foo.bar'
-      provider.reload.symbol.should eql provider.symbol
+      expect(provider.reload.symbol).to eq(provider.symbol)
     end
 
     # it "providers with where sort by role_name" do

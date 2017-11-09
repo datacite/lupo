@@ -3,7 +3,7 @@ require 'rails_helper'
 describe ResourceType, type: :model, vcr: true do
   it "all" do
     resource_types = ResourceType.all[:data]
-    expect(resource_types.length).to eq(14)
+    expect(resource_types.length).to eq(15)
     resource_type = resource_types.first
     expect(resource_type.title).to eq("Audiovisual")
   end
