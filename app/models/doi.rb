@@ -6,6 +6,32 @@ class Doi < ActiveRecord::Base
   include Cacheable
   include Licensable
 
+  # include state machine
+  include AASM
+
+  aasm do
+    # default state for new DOIs is draft
+    state :draft, :initial => true
+    state :tombstoned, :registered, :public, :flagged, :broken
+
+    event :register do
+      # can't register test prefix
+      transitions :from => :draft, :to => :registered, :unless => :is_test_prefix?
+    end
+
+    event :publish do
+      transitions :from => [:draft, :tombstoned, :registered], :to => :public
+    end
+
+    event :flag do
+      transitions :from => [:registered, :public], :to => :flagged
+    end
+
+    event :link_check do
+      transitions :from => [:draft, :tombstoned, :registered, :public, :flagged], :to => :broken
+    end
+  end
+
   self.table_name = "dataset"
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
@@ -51,6 +77,14 @@ class Doi < ActiveRecord::Base
   #
   #   r.allocator
   # end
+
+  def prefix
+    doi.split('/', 2).first
+  end
+
+  def is_test_prefix?
+    prefix == "10.5072"
+  end
 
   def identifier
     doi_as_url(doi)
