@@ -26,6 +26,10 @@ before_script:
   - sleep 10
   - bundle exec rake db:setup RAILS_ENV=test
   - memcached -p 11211 &
+  - cp .env.travis .env
+  - npm install
+  - cd ../ && npm install -g istanbul codeclimate-test-reporter
+  - bundle exec sidekiq -d -e production --config config/sidekiq.yml -L log/sidekiq.log
 
 script:
   - bundle exec rspec spec
