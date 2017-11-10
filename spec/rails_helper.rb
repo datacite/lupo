@@ -14,6 +14,7 @@ require "webmock/rspec"
 require "rack/test"
 require "colorize"
 require "database_cleaner"
+require 'aasm/rspec'
 
 # Checks for pending migration and applies them before tests are run.
 ActiveRecord::Migration.maintain_test_schema!

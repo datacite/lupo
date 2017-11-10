@@ -6,10 +6,10 @@ FactoryBot.define do
 
     contact_email { Faker::Internet.email }
     contact_name { Faker::Name.name }
-    uid { allocator.uid + "." + Faker::Code.asin + Faker::Code.isbn }
+    uid { provider.uid + "." + Faker::Code.asin + Faker::Code.isbn }
     name "My data center"
     role_name "ROLE_DATACENTRE"
-    provider_id  { allocator.symbol }
+    provider_id  { provider.symbol }
   end
 
   factory :doi do
@@ -22,7 +22,9 @@ FactoryBot.define do
     url {Faker::Internet.url }
     is_active 1
     minted {Faker::Time.backward(15, :evening)}
-    client_id  { datacentre.symbol }
+    client_id  { client.symbol }
+
+    initialize_with { Doi.where(doi: doi).first_or_initialize }
   end
 
   factory :metadata do
@@ -52,7 +54,6 @@ FactoryBot.define do
     association :provider
 
     prefix {  Faker::Code.unique.isbn  }
-    version { Faker::Number.between(1, 10) }
     created {Faker::Time.backward(14, :evening)}
   end
 

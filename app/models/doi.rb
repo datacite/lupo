@@ -9,7 +9,7 @@ class Doi < ActiveRecord::Base
   # include state machine
   include AASM
 
-  aasm do
+  aasm :column => 'state', :whiny_transitions => false do
     # default state for new DOIs is draft
     state :draft, :initial => true
     state :tombstoned, :registered, :findable, :flagged, :broken
@@ -20,7 +20,7 @@ class Doi < ActiveRecord::Base
     end
 
     event :publish do
-      transitions :from => [:draft, :tombstoned, :registered], :to => :findable
+      transitions :from => [:draft, :tombstoned, :registered], :to => :findable, :unless => :is_test_prefix?
     end
 
     event :flag do
@@ -28,7 +28,7 @@ class Doi < ActiveRecord::Base
     end
 
     event :link_check do
-      transitions :from => [:draft, :tombstoned, :registered, :findable, :flagged], :to => :broken
+      transitions :from => [:tombstoned, :registered, :findable, :flagged], :to => :broken
     end
   end
 
@@ -43,15 +43,15 @@ class Doi < ActiveRecord::Base
 
   delegate :provider, to: :client
 
-  validates_presence_of :uid, :doi
+  validates_presence_of :doi
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
-  validates_format_of :doi, :with => /\A10\.\d{4,5}\/[-\._;()\/:A-Z0-9]+\z/
+  validates_format_of :doi, :with => /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9]+\z/
   validates_format_of :url, :with => /https?:\/\/[\S]+/ , if: :url?, message: "Website should be an url"
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
   validates_numericality_of :version, if: :version?
 
-  before_validation :set_defaults
+  before_save :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   after_save { UrlJob.perform_later(self) }
@@ -102,7 +102,7 @@ class Doi < ActiveRecord::Base
   end
 
   delegate :author, :title, :container_title, :description, :resource_type_general,
-    :additional_type, :license, :version, :related_identifier, :schema_version,
+    :additional_type, :license, :related_identifier, :schema_version,
     :date_published, :date_accepted, :date_available, :publisher, :xml, to: :doi_metadata
 
   def date_registered
@@ -113,8 +113,15 @@ class Doi < ActiveRecord::Base
     updated
   end
 
-  def state
-    is_active == "\x01" ? "searchable" : "hidden"
+  # def state
+  #   is_active == "\x01" ? "searchable" : "hidden"
+  # end
+
+  # update state for all DOIs starting from from_date
+  def self.set_state(from_date)
+    Doi.where("updated >= ?", from_date).where(minted: nil).update_all(state: "draft")
+    Doi.where(state: "draft").where("updated >= ?", from_date).where(is_active: "\x00").where.not(minted: nil).update_all(state: "registered")
+    Doi.where(state: "draft").where("updated >= ?", from_date).where(is_active: "\x01").where.not(minted: nil).update_all(state: "findable")
   end
 
   private
