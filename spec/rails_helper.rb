@@ -41,3 +41,11 @@ RSpec.configure do |config|
   # add custom json method
   config.include RequestSpecHelper, type: :request
 end
+
+VCR.configure do |c|
+  c.cassette_library_dir = "spec/fixtures/vcr_cassettes"
+  c.hook_into :webmock
+  c.ignore_localhost = true
+  c.ignore_hosts "codeclimate.com"
+  c.configure_rspec_metadata!
+end

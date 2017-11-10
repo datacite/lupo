@@ -32,7 +32,7 @@ before_script:
   - bundle exec rake db:setup RAILS_ENV=test
   - memcached -p 11211 &
   - bundle exec sidekiq -d -e production --config config/sidekiq.yml -L log/sidekiq.log
-  - cd ../ && npm install -g istanbul codeclimate-test-reporter
+  - npm install -g istanbul codeclimate-test-reporter
 
 
 script:
