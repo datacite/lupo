@@ -12,7 +12,7 @@ class Doi < ActiveRecord::Base
   aasm do
     # default state for new DOIs is draft
     state :draft, :initial => true
-    state :tombstoned, :registered, :public, :flagged, :broken
+    state :tombstoned, :registered, :findable, :flagged, :broken
 
     event :register do
       # can't register test prefix
@@ -20,15 +20,15 @@ class Doi < ActiveRecord::Base
     end
 
     event :publish do
-      transitions :from => [:draft, :tombstoned, :registered], :to => :public
+      transitions :from => [:draft, :tombstoned, :registered], :to => :findable
     end
 
     event :flag do
-      transitions :from => [:registered, :public], :to => :flagged
+      transitions :from => [:registered, :findable], :to => :flagged
     end
 
     event :link_check do
-      transitions :from => [:draft, :tombstoned, :registered, :public, :flagged], :to => :broken
+      transitions :from => [:draft, :tombstoned, :registered, :findable, :flagged], :to => :broken
     end
   end
 
