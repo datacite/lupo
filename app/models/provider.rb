@@ -2,11 +2,8 @@ require "countries"
 
 class Provider < ActiveRecord::Base
   # index in Elasticsearch
-<<<<<<< HEAD
-  # include Indexable
-=======
   include Indexable unless Rails.env.production? || Rails.env.test?
->>>>>>> elasticsearch
+
 
   # include helper module for caching infrequently changing resources
   include Cacheable
@@ -79,57 +76,6 @@ class Provider < ActiveRecord::Base
     "#{ENV['CDN_URL']}/images/members/#{symbol.downcase}.png"
   end
 
-<<<<<<< HEAD
-  # # Elasticsearch indexing
-  #  mappings dynamic: 'false' do
-  #    indexes :symbol, type: 'text'
-  #    indexes :name, type: 'text'
-  #    indexes :description, type: 'text'
-  #    indexes :contact_email, type: 'text'
-  #    indexes :country_code, type: 'text'
-  #    indexes :country_name, type: 'text'
-  #    indexes :region, type: 'text'
-  #    indexes :region_name, type: 'text'
-  #    indexes :year, type: 'integer'
-  #   #  indexes :website, type: 'text'
-  #   #  indexes :phone, type: 'text'
-  #    indexes :logo_url, type: 'text'
-  #    indexes :is_active, type: 'boolean'
-  #    indexes :created_at, type: 'date'
-  #    indexes :role_name, type: 'text'
-  #    indexes :updated_at, type: 'date'
-  #  end
-
-   def as_indexed_json(options={})
-     {
-       "symbol" => uid.downcase,
-       "name" => name,
-       "description" => description,
-       "region" => region_name,
-       "country" => country_name,
-       "year" => year,
-       "logo_url" => logo_url,
-       "is_active" => is_active,
-       "contact_email" => contact_email,
-      #  "website" => website,
-      #  "phone" => phone,
-       "created" => created_at.iso8601,
-       "updated" => updated_at.iso8601 }
-   end
-
-   # Elasticsearch custom search
-  #  def self.query(query, options={})
-  #    __elasticsearch__.search(
-  #      {
-  #        query: {
-  #          query_string: {
-  #            query: query,
-  #            fields: ['symbol^10', 'name^10', 'contact_email', 'region']
-  #          }
-  #        }
-  #      }
-  #    ).records
-=======
   # Elasticsearch indexing
   mappings dynamic: 'false' do
     indexes :symbol, type: 'text'
@@ -165,7 +111,6 @@ class Provider < ActiveRecord::Base
   #     #  "phone" => phone,
   #      "created" => created_at.iso8601,
   #      "updated" => updated_at.iso8601 }
->>>>>>> elasticsearch
   #  end
 
   # show all dois for admin
@@ -241,11 +186,7 @@ class Provider < ActiveRecord::Base
   end
 
   def set_defaults
-<<<<<<< HEAD
     self.symbol = symbol.upcase if symbol.present?
-=======
-    self.symbol = symbol.upcase if symbol?
->>>>>>> elasticsearch
     self.is_active = is_active ? "\x01" : "\x00"
     self.contact_name = "" unless contact_name.present?
     self.role_name = "ROLE_ALLOCATOR" unless role_name.present?

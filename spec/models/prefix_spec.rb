@@ -1,9 +1,5 @@
 require 'rails_helper'
 
-<<<<<<< HEAD
-describe Prefix, type: :model do
-  it { should validate_presence_of(:prefix) }
-=======
 RSpec.describe Prefix, type: :model do
   let!(:prefixes)  { create_list(:prefix, 10) }
   let!(:prefix) { prefixes.first }
@@ -63,5 +59,4 @@ RSpec.describe Prefix, type: :model do
     end
 
   end
->>>>>>> elasticsearch
 end

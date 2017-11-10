@@ -1,12 +1,5 @@
 require 'rails_helper'
 
-<<<<<<< HEAD
-describe Provider, type: :model do
-  describe "validations" do
-    it { should validate_presence_of(:symbol) }
-    it { should validate_presence_of(:name) }
-    it { should validate_presence_of(:contact_email) }
-=======
 RSpec.describe Provider, type: :model do
   let!(:providers_factory)  { create_list(:provider, 25) }
   let!(:provider) { providers_factory.first }
@@ -80,6 +73,5 @@ RSpec.describe Provider, type: :model do
       expect(single.doi_quota_allowed).to be_truthy
       expect(single.doi_quota_used).to be_truthy
     end
->>>>>>> elasticsearch
   end
 end

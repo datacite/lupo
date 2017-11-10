@@ -1,11 +1,5 @@
 require 'rails_helper'
 
-<<<<<<< HEAD
-describe Client, type: :model do
-  it { should validate_presence_of(:uid) }
-  it { should validate_presence_of(:name) }
-  it { should validate_presence_of(:contact_email) }
-=======
 RSpec.describe Client, type: :model do
   let!(:clients)  { create_list(:client, 10) }
   let!(:client) { clients.first }
@@ -93,5 +87,4 @@ RSpec.describe Client, type: :model do
       expect(single.doi_quota_used).to be_truthy
     end
   end
->>>>>>> elasticsearch
 end

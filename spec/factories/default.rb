@@ -23,6 +23,8 @@ FactoryBot.define do
     is_active 1
     minted {Faker::Time.backward(15, :evening)}
     client_id  { client.symbol }
+
+    initialize_with { Doi.where(doi: doi).first_or_initialize }
   end
 
   factory :metadata do

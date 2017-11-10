@@ -14,6 +14,7 @@ require "webmock/rspec"
 require "rack/test"
 require "colorize"
 require "database_cleaner"
+require 'aasm/rspec'
 require "sidekiq/testing"
 
 # Checks for pending migration and applies them before tests are run.
