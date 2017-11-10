@@ -14,6 +14,7 @@ require "webmock/rspec"
 require "rack/test"
 require "colorize"
 require "database_cleaner"
+require "sidekiq/testing"
 
 # Checks for pending migration and applies them before tests are run.
 ActiveRecord::Migration.maintain_test_schema!
@@ -40,4 +41,12 @@ RSpec.configure do |config|
 
   # add custom json method
   config.include RequestSpecHelper, type: :request
+end
+
+VCR.configure do |c|
+  c.cassette_library_dir = "spec/fixtures/vcr_cassettes"
+  c.hook_into :webmock
+  c.ignore_localhost = true
+  c.ignore_hosts "codeclimate.com"
+  c.configure_rspec_metadata!
 end

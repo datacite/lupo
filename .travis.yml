@@ -6,6 +6,8 @@ sudo: required
 services:
   - mysql
   - docker
+  - memcached
+  - elasticsearch
   - redis-server
 
 addons:
@@ -19,20 +21,22 @@ before_install:
   - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.1.1.deb
   - sudo dpkg -i --force-confnew elasticsearch-5.1.1.deb
   - sudo service elasticsearch start
+  - mysql -e 'CREATE DATABASE lupo_test;'
 
 install:
   - travis_retry bundle install
 
 before_script:
   - npm install
+  - memcached -p 11211 &
   - cp .env.travis .env
   - mkdir -p tmp/pids
   - mkdir -p log
-  - cd ../ && npm install -g istanbul codeclimate-test-reporter
+  - bundle exec sidekiq -d -e production --config config/sidekiq.yml -L log/sidekiq.log
   - sleep 10
   - bundle exec rake db:setup RAILS_ENV=test
-  - memcached -p 11211 &
-  - bundle exec sidekiq -d -e production --config config/sidekiq.yml -L log/sidekiq.log
+  - npm install -g istanbul codeclimate-test-reporter
+
 
 script:
   - bundle exec rspec spec
