@@ -6,4 +6,10 @@ namespace :doi do
       UrlJob.perform_later(doi)
     end
   end
+
+  desc 'Set state'
+  task :set_state => :environment do
+    from_date = ENV['FROM_DATE'] || Time.zone.now - 1.day
+    Doi.set_state(from_date)
+  end
 end
