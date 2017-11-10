@@ -25,13 +25,13 @@ install:
 
 before_script:
   - npm install
+  - memcached -p 11211 &
   - cp .env.travis .env
   - mkdir -p tmp/pids
   - mkdir -p log
+  - bundle exec sidekiq -d -e production --config config/sidekiq.yml -L log/sidekiq.log
   - sleep 10
   - bundle exec rake db:setup RAILS_ENV=test
-  - memcached -p 11211 &
-  - bundle exec sidekiq -d -e production --config config/sidekiq.yml -L log/sidekiq.log
   - npm install -g istanbul codeclimate-test-reporter
 
 
