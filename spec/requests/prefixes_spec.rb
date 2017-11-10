@@ -37,7 +37,7 @@ RSpec.describe "Prefixes", type: :request   do
     end
 
     context 'when the record does not exist' do
-      before { get "/prefix/xxx" , headers: headers}
+      before { get "/prefixes/xxx" , headers: headers}
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
@@ -58,7 +58,8 @@ RSpec.describe "Prefixes", type: :request   do
           "data" => {
                     "type" => "prefixes",
                     "attributes" => {
-                      "prefix" => "10.17177"
+                      "prefix" => "10.17177",
+                      "id" => "10.17177"
                       }
             }
         }
@@ -80,56 +81,54 @@ RSpec.describe "Prefixes", type: :request   do
       let(:not_valid_attributes) do
         {
           "data" => {
-                    "type": "prefixes",
-                    "attributes": {
-                      "prefix": "ssssss"
+                    "type" => "prefixes",
+                    "attributes" => {
+                      "prefix" => "dsds10.33342"
                     }
             }
         }
       end
 
-      before { post '/prefixes', params: not_valid_attributes }
+      before { post '/prefixes', params: not_valid_attributes.to_json, headers: headers }
 
-      it 'returns status code 500' do
-        expect(response).to have_http_status(500)
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
       end
-      # it 'returns status code 422' do
-      #   expect(response).to have_http_status(422)
-      # end
 
-      # it 'returns a validation failure message' do
-      #   expect(response.body).to match(/Validation failed: Created by can't be blank/)
-      # end
+      it 'returns a validation failure message' do
+        expect(json["errors"].first).to eq("id"=>"prefix", "title"=>"Prefix can't be blank")
+      end
     end
   end
 
   # # Test suite for PUT /prefixes/:id
-  describe 'PUT /prefixes/:id' do
-    let!(:provider)  { create(:provider) }
-    let(:valid_attributes) do
-      {
-        "data" => {
-                  "id": "10.17177",
-                  "type": "prefixes",
-                  "attributes": {
-                    "prefix": "10.17177"
-                  }
-          }
-      }
-    end
-
-    context 'when the record exists' do
-      before { put "/prefixes/#{prefix_id}", params: valid_attributes.to_json , headers: headers}
-
-      it 'updates the record' do
-        expect(response.body).not_to be_empty
-      end
-
-      it 'returns status code 204' do
-        expect(response).to have_http_status(200)
-      end
-    end
-  end
+  # Prefixes have no updates
+  # describe 'PUT /prefixes/:id' do
+  #   let!(:provider)  { create(:provider) }
+  #   let(:valid_attributes) do
+  #     {
+  #       "data" => {
+  #                 "id": "10.17177",
+  #                 "type": "prefixes",
+  #                 "attributes": {
+  #                   "prefix": "10.17177"
+  #                 }
+  #         }
+  #     }
+  #   end
+  #
+  #   context 'when the record exists' do
+  #     before { put "/prefixes/#{prefix_id}", params: valid_attributes.to_json , headers: headers}
+  #
+  #     it 'updates the record' do
+  #       expect(response.body).not_to be_empty
+  #     end
+  #
+  #     it 'returns status code 204' do
+  #       expect(response).to have_http_status(200)
+  #     end
+  #   end
+  # end
 
   # Test suite for DELETE /prefixes/:id
   describe 'DELETE /prefixes/:id' do

@@ -36,7 +36,7 @@ class Repository
 
     if options[:id].present?
       item = result.body.fetch("data", {}).fetch("re3data", {}).fetch("repository", [])
-      #return nil unless item.present?
+      return nil unless item.present?
 
       { data: parse_item(item) }
     else

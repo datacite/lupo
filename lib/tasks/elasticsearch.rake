@@ -15,4 +15,12 @@ namespace :elasticsearch do
       end
     end
   end
+
+  namespace :create_index do
+    desc "Create indexes"
+    task :all => :environment do
+      Provider.__elasticsearch__.create_index! force: true
+      Client.__elasticsearch__.create_index! force: true
+    end
+  end
 end

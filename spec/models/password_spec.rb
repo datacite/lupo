@@ -8,7 +8,7 @@ describe Password do
         name: "Kris",
         email: "sasa@sasa",
         provider_id: "",
-        client_id: "tib.pangaea",
+        client_id: client.symbol,
         datacentre: 10012,
         role_id: "client_admin",
         iat: Time.now.to_i,
@@ -18,19 +18,21 @@ describe Password do
 
   describe '#initialize' do
       it "has a valid factory" do
-        client = Factory.create(:client)
-        client.should be_valid
+        expect(client).to be_valid
       end
 
       it 'can generate a password' do
-      puts client.inspect
       expect { Password.new(user, client) }.not_to raise_exception
     end
 
     it 'can pass a save password' do
+      Password.new(user, client)
+      oldpass = Client.where(symbol: client.symbol).first.password
       password = Password.new(user, client)
-      puts password.inspect
-      expect(password).to eq("sdsds")
+      newpass = Client.where(symbol: client.symbol).first.password
+
+      expect(password.string).to be_truthy
+      expect(oldpass).not_to eq(newpass)
     end
   end
 

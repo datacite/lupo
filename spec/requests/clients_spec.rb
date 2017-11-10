@@ -7,20 +7,21 @@ RSpec.describe 'Clients', type: :request  do
   let(:params) do
     { "data" => { "type" => "clients",
                   "attributes" => {
-                    "id" => provider.uid+".IMPERIAL",
+                    "symbol" => provider.symbol+".IMPERIAL",
                     "name" => "Imperial College",
-                    "contact" => "Madonna",
-                    "email" => "bob@example.com" },
+                    "contact_name" => "Madonna",
+                    "contact_email" => "bob@example.com" },
                     "relationships": {
                 			"provider": {
                 				"data":{
                 					"type":"providers",
-                					"id": provider.uid
+                					"id": provider.symbol
                 				}
                 			}
                 		}} }
   end
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN']}}
+  let(:query) { "jamon"}
 
   # Test suite for GET /clients
   describe 'GET /clients' do
@@ -35,6 +36,20 @@ RSpec.describe 'Clients', type: :request  do
       expect(response).to have_http_status(200)
     end
   end
+
+  # # Test suite for GET /clients
+  # describe 'GET /clients query' do
+  #   before { get "/clients?query=#{query}", headers: headers }
+  #
+  #   it 'returns clients' do
+  #     expect(json).not_to be_empty
+  #     expect(json['data'].size).to eq(11)
+  #   end
+  #
+  #   it 'returns status code 200' do
+  #     expect(response).to have_http_status(200)
+  #   end
+  # end
 
   # Test suite for GET /clients/:id
   describe 'GET /clients/:id' do
@@ -81,13 +96,14 @@ RSpec.describe 'Clients', type: :request  do
       let(:params) do
         { "data" => { "type" => "clients",
                       "attributes" => {
-                        "id" => provider.uid+".IMPERIAL",
+                        "symbol" => provider.symbol+".IMPERIAL",
                         "name" => "Imperial College"},
+                        "contact_name" => "Madonna",
                         "relationships": {
                     			"provider": {
                     				"data":{
                     					"type":"providers",
-                    					"id": provider.uid
+                    					"id": provider.symbol
                     				}
                     			}
                     		}} }
@@ -114,7 +130,7 @@ RSpec.describe 'Clients', type: :request  do
                         "email" => "bob@example.com",
                         "name" => "Imperial College 2"}} }
       end
-      before { put "/clients/#{client.uid}", params: params.to_json, headers: headers }
+      before { put "/clients/#{client.symbol}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
@@ -129,19 +145,19 @@ RSpec.describe 'Clients', type: :request  do
       let(:params) do
         { "data" => { "type" => "clients",
                       "attributes" => {
-                        "id" => client.uid+"MegaCLient",
+                        "symbol" => client.symbol+"MegaCLient",
                         "email" => "bob@example.com",
                         "name" => "Imperial College"}} }
       end
 
-      before { put "/clients/#{client.uid}", params: params.to_json, headers: headers }
+      before { put "/clients/#{client.symbol}", params: params.to_json, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"].first).to eq("id"=>"uid", "title"=>"Uid cannot be changed")
+        expect(json["errors"].first).to eq("id"=>"symbol", "title"=>"Symbol cannot be changed")
       end
     end
   end

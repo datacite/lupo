@@ -70,7 +70,8 @@ class ProvidersController < ApplicationController
   def show
     meta = { providers: @provider.provider_count,
              clients: @provider.client_count,
-             dois: @provider.doi_count }.compact
+             dois: @provider.doi_count
+            }.compact
 
     render jsonapi: @provider, meta: meta, include: @include
   end
@@ -107,7 +108,7 @@ class ProvidersController < ApplicationController
       Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @provider.update_attributes(is_active: "\x00", deleted_at: Time.zone.now)
-      @provider.remove_users(id: "provider_id", jwt: current_user.jwt)
+      @provider.remove_users(id: "provider_id", jwt: current_user.jwt) unless Rails.env.test?
       head :no_content
     else
       Rails.logger.warn @provider.errors.inspect

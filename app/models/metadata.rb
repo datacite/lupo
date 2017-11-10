@@ -6,6 +6,7 @@ class Metadata < ActiveRecord::Base
   include Bolognese::DoiUtils
 
   alias_attribute :uid, :id
+  attr_readonly :uid
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   validates_presence_of :dataset, :metadata_version
@@ -13,7 +14,8 @@ class Metadata < ActiveRecord::Base
   validates_numericality_of :version, if: :version?
   validates :xml, metadata: true
   validate :freeze_uid, :on => :update
-  # validates_inclusion_of :metadata_version, :in => %w( 1 2 3 4 ), :message => "Metadata version is not included in the list", if: :metadata_version?
+  validates_numericality_of :metadata_version, if: :metadata_version?
+
 
   belongs_to :doi, foreign_key: :dataset
 

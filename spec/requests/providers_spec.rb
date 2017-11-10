@@ -12,7 +12,7 @@ RSpec.describe "Providers", type: :request  do
                     "contact_email" => "bob@example.com",
                     "country_code" => "GB" } } }
   end
-  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN'] } }
+  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' +  ENV['JWT_TOKEN'] } }
 
   # Test suite for GET /providers
   describe 'GET /providers' do
@@ -21,7 +21,7 @@ RSpec.describe "Providers", type: :request  do
 
     it 'returns providers' do
       expect(json).not_to be_empty
-      expect(json['data'].size).to eq(25)
+      expect(json['data'].size).to eq(10)
     end
 
     it 'returns status code 200' do
@@ -62,17 +62,17 @@ RSpec.describe "Providers", type: :request  do
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
-                        "id" => "BL",
+                        "symbol" => "BL",
                         "name" => "British Library",
                         "region" => "EMEA",
-                        "email" => "doe@joe.joe",
-                        "contact" => "timAus",
+                        "contact_email" => "doe@joe.joe",
+                        "contact_name" => "timAus",
                         "country_code" => "GB" } } }
       end
       before { post '/providers', params: params.to_json, headers: headers }
 
       it 'creates a provider' do
-        expect(json.dig('data', 'attributes', 'email')).to eq("doe@joe.joe")
+        expect(json.dig('data', 'attributes', 'contact-email')).to eq("doe@joe.joe")
       end
 
       it 'returns status code 201' do
@@ -84,9 +84,9 @@ RSpec.describe "Providers", type: :request  do
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
-                        "id" => "BL",
+                        "symbol" => "BL",
                         "name" => "British Library",
-                        "contact" => "timAus",
+                        "contact_name" => "timAus",
                         "country_code" => "GB" } } }
       end
 
@@ -105,8 +105,8 @@ RSpec.describe "Providers", type: :request  do
       let(:params) do
         { "type" => "providers",
           "attributes" => {
-            "id" => "BL",
-            "contact" => "timAus",
+            "symbol" => "BL",
+            "contact_name" => "timAus",
             "name" => "British Library",
             "country_code" => "GB" } }
       end
@@ -132,15 +132,15 @@ RSpec.describe "Providers", type: :request  do
                       "attributes" => {
                         "name" => "British Library",
                         "region" => "Americas",
-                        "email" => "Pepe@mdm.cod",
-                        "contact" => "timAus",
+                        "contact_email" => "Pepe@mdm.cod",
+                        "contact_name" => "timAus",
                         "country_code" => "GB" } } }
       end
       before { put "/providers/#{provider.symbol}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
-        expect(json.dig('data', 'attributes', 'contact')).to eq("timAus")
-        expect(json.dig('data', 'attributes', 'contact')).not_to eq(provider.contact_email)
+        expect(json.dig('data', 'attributes', 'contact-name')).to eq("timAus")
+        expect(json.dig('data', 'attributes', 'contact-email')).not_to eq(provider.contact_email)
       end
 
       it 'returns status code 200' do
@@ -153,8 +153,8 @@ RSpec.describe "Providers", type: :request  do
                         "attributes" => {
                           "name" => "British Library",
                           "region" => "Americas",
-                          "email" => "Pepe@mdm.cod",
-                          "contact" => "timAus",
+                          "contact_email" => "Pepe@mdm.cod",
+                          "contact_name" => "timAus",
                           "country_code" => "GB" } } }
         end
 

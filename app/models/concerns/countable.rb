@@ -3,6 +3,7 @@ module Countable
 
   included do
     def doi_count
+      return nil if Rails.env.test?
       params = { q: "*:*",
                  fq: query_filter,
                  rows: 0,
