@@ -249,16 +249,21 @@ class DoiSearch < Bolognese::Metadata
     clients = facets.fetch("facet_fields", {}).fetch("datacentre_facet", [])
                        .each_slice(2)
                        .map do |p|
-                          id, title = p.first.split(' - ', 2)
-                          { "id" => id.downcase, "title" => title, "count" => p.last }
-                        end
+                         id, title = p.first.split(' - ', 2)
+                         { id: id.downcase, title: title, count: p.last }
+                       end
     schema_versions = facets.fetch("facet_fields", {}).fetch("schema_version", [])
                             .each_slice(2)
                             .sort { |a, b| b.first <=> a.first }
                             .map { |i| { id: i[0], title: "Schema #{i[0]}", count: i[1] } }
-    states = facets.fetch("facet_fields", {}).fetch("state", [])
-                           .each_slice(2)
-                           .map { |i| { id: i[0], title: i[0].humanize, count: i[1] } }
+
+    states_hsh = facets.fetch("facet_fields", {}).fetch("state", []).each_slice(2).to_h
+    states = [{ "new" => 0 }, { "draft" => 0 }, { "registered" => 0 }, { "findable" => 0 }]
+               .reduce([]) do |sum, s|
+                 k = s.keys[0]
+                 sum << { id: k, title: k.humanize, count: s[k] + states_hsh[k].to_i } if states_hsh[k]
+                 sum
+               end
 
     if options[:client_id].present? && clients.empty?
       clients = { options[:client_id] => 0 }
