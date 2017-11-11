@@ -257,6 +257,7 @@ class DoiSearch < Bolognese::Metadata
                             .sort { |a, b| b.first <=> a.first }
                             .map { |i| { id: i[0], title: "Schema #{i[0]}", count: i[1] } }
 
+    # sort states in correct order
     states_hsh = facets.fetch("facet_fields", {}).fetch("state", []).each_slice(2).to_h
     states = [{ "new" => 0 }, { "draft" => 0 }, { "registered" => 0 }, { "findable" => 0 }]
                .reduce([]) do |sum, s|
