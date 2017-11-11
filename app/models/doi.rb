@@ -113,16 +113,18 @@ class Doi < ActiveRecord::Base
     updated
   end
 
-  # def state
-  #   is_active == "\x01" ? "searchable" : "hidden"
-  # end
-
   # update state for all DOIs starting from from_date
   def self.set_state(from_date)
     Doi.where("updated >= ?", from_date).where(minted: nil).update_all(state: "draft")
     Doi.where(state: "draft").where("updated >= ?", from_date).where(is_active: "\x00").where.not(minted: nil).update_all(state: "registered")
     Doi.where(state: "draft").where("updated >= ?", from_date).where(is_active: "\x01").where.not(minted: nil).update_all(state: "findable")
     Doi.where("updated >= ?", from_date).where("doi LIKE ?", "10.5072%").update_all(state: "draft")
+  end
+
+  # delete all DOIs with test prefix 10.5072 older than from_date
+  # we need to use destroy_all to also delete has_many associations for metadata and media
+  def self.delete_test_doid(from_date)
+    Doi.where("updated >= ?", from_date).where("doi LIKE ?", "10.5072%").destroy_all
   end
 
   private
