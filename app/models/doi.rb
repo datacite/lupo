@@ -122,6 +122,7 @@ class Doi < ActiveRecord::Base
     Doi.where("updated >= ?", from_date).where(minted: nil).update_all(state: "draft")
     Doi.where(state: "draft").where("updated >= ?", from_date).where(is_active: "\x00").where.not(minted: nil).update_all(state: "registered")
     Doi.where(state: "draft").where("updated >= ?", from_date).where(is_active: "\x01").where.not(minted: nil).update_all(state: "findable")
+    Doi.where("updated >= ?", from_date).where("doi LIKE ?", "10.5072%").update_all(state: "draft")
   end
 
   private
