@@ -5,6 +5,8 @@ class DoiSearch < Bolognese::Metadata
 
   include Cacheable
 
+  include Dateable
+
   def self.cache_key(item)
     "doi_search/#{item.fetch('doi')}-#{item.fetch('updated')}"
   end
@@ -44,10 +46,6 @@ class DoiSearch < Bolognese::Metadata
 
   def media
 
-  end
-
-  def is_active
-    "\x01"
   end
 
   def updated_at
