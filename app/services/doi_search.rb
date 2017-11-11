@@ -58,10 +58,6 @@ class DoiSearch < Bolognese::Metadata
     schema_version
   end
 
-  def state
-    is_active == "\x01" ? "searchable" : "hidden"
-  end
-
   def results
     related_identifiers.reduce({}) do |sum, i|
       k = i["relation-type-id"]
@@ -132,19 +128,18 @@ class DoiSearch < Bolognese::Metadata
       fq << "updated:#{update_date}" if update_date
       fq << "minted:#{registered}" if registered
       fq << "publicationYear:#{options[:year]}" if options[:year].present?
-      fq << "is_active:false" if options[:state] == "hidden"
-      fq << "is_active:true" if options[:state] == "searchable"
+      fq << "state:#{options[:state]}" if options[:state].present?
       fq << "has_metadata:#{options[:has_metadata]}" if options[:has_metadata].present?
       fq << "schema_version:#{options[:schema_version]}" if options[:schema_version].present?
 
       params = { q: options.fetch(:query, nil).presence || "*:*",
                  start: offset,
                  rows: per_page,
-                 fl: "doi,url,datacentre_symbol,allocator_symbol,xml,is_active,has_metadata,media,minted,updated",
+                 fl: "doi,url,datacentre_symbol,allocator_symbol,xml,state,has_metadata,media,minted,updated",
                  qf: options[:qf],
                  fq: fq.join(" AND "),
                  facet: "true",
-                 'facet.field' => %w(publicationYear datacentre_facet resourceType_facet schema_version is_active minted),
+                 'facet.field' => %w(publicationYear datacentre_facet resourceType_facet schema_version state minted),
                  'facet.limit' => 15,
                  'facet.mincount' => 1,
                  'facet.range' => 'minted',
@@ -263,12 +258,9 @@ class DoiSearch < Bolognese::Metadata
                             .each_slice(2)
                             .sort { |a, b| b.first <=> a.first }
                             .map { |i| { id: i[0], title: "Schema #{i[0]}", count: i[1] } }
-    states = facets.fetch("facet_fields", {}).fetch("is_active", [])
+    states = facets.fetch("facet_fields", {}).fetch("state", [])
                            .each_slice(2)
-                           .map do |k,v|
-                             id = (k == "true") ? "searchable" : "hidden"
-                             { id: id, title: id.humanize, count: v }
-                           end
+                           .map { |i| { id: i[0], title: i[0].humanize, count: i[1] } }
 
     if options[:client_id].present? && clients.empty?
       clients = { options[:client_id] => 0 }
