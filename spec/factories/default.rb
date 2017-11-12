@@ -9,20 +9,26 @@ FactoryBot.define do
     symbol { provider.symbol + "." + Faker::Code.asin + Faker::Code.isbn }
     name "My data center"
     role_name "ROLE_DATACENTRE"
-    provider_id  { provider.symbol }
+    provider_id  { provider.symbol.downcase }
+  end
+
+  factory :client_prefix do
+    association :prefix, factory: :prefix, strategy: :create
+    association :provider_prefix, factory: :provider_prefix, strategy: :create
+    association :client, factory: :client, strategy: :create
   end
 
   factory :doi do
     association :client, factory: :client, strategy: :create
 
     created {Faker::Time.backward(14, :evening)}
-    doi { "10.4122/" + Faker::Internet.password(8) }
+    doi { ("10.4122/" + Faker::Internet.password(8)).downcase }
     updated {Faker::Time.backward(5, :evening)}
     version 1
     url {Faker::Internet.url }
     is_active 1
     minted {Faker::Time.backward(15, :evening)}
-    client_id  { client.symbol }
+    client_id  { client.symbol.upcase }
 
     initialize_with { Doi.where(doi: doi).first_or_initialize }
   end
@@ -49,7 +55,6 @@ FactoryBot.define do
   end
 
   factory :prefix do
-
     prefix {  "10."+Faker::Number.number(4)  }
   end
 
@@ -61,5 +66,10 @@ FactoryBot.define do
     country_code { Faker::Address.country_code }
 
     initialize_with { Provider.where(symbol: symbol).first_or_initialize }
+  end
+
+  factory :provider_prefix do
+    association :prefix, factory: :prefix, strategy: :create
+    association :provider, factory: :provider, strategy: :create
   end
 end

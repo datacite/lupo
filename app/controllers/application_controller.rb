@@ -70,7 +70,7 @@ class ApplicationController < ActionController::API
                end
 
       if status == 404
-        message = "The page you are looking for doesn't exist."
+        message = "The resource you are looking for doesn't exist."
       elsif status == 401
         message = "You are not authorized to access this page."
       else

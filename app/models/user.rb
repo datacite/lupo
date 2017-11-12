@@ -16,7 +16,7 @@ class User
       @provider_id = payload.fetch("provider_id", nil)
       @client_id = payload.fetch("client_id", nil)
     else
-      @role = "anonymous"
+      @role_id = "anonymous"
     end
   end
 
@@ -50,23 +50,5 @@ class User
 
     c = Client.where(symbol: client_id).first
     c.id if c.present?
-  end
-
-  private
-
-  def generate_token
-    # @jwt
-    payload = {
-      uid:  "Faker::Code.unique.asin",
-      name: "Faker::TheThickOfIt.character",
-      email: "sasa@sasa",
-      provider_id: "",
-      client_id: "",
-      role_id: "staff_admin",
-      iat: Time.now.to_i,
-      exp: Time.now.to_i + 50 * 24 * 3600
-    }.compact
-
-    encode_token(payload)
   end
 end

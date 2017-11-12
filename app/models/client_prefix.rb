@@ -10,6 +10,8 @@ class ClientPrefix < ApplicationRecord
   belongs_to :prefix, foreign_key: :prefixes
   belongs_to :provider_prefix, foreign_key: :allocator_prefixes
 
+  delegate :symbol, to: :client, prefix: true
+
   before_create :set_id
   before_create { self.created_at = Time.zone.now.utc.iso8601 }
   before_save { self.updated_at = Time.zone.now.utc.iso8601 }
@@ -20,6 +22,11 @@ class ClientPrefix < ApplicationRecord
   # use base32-encode id as uid, with pretty formatting and checksum
   def uid
     Base32::Crockford.encode(id, split: 4, length: 16, checksum: true).downcase
+  end
+
+  # workaround for non-standard database column names and association
+  def client_id
+    client_symbol.downcase
   end
 
   # workaround for non-standard database column names and association

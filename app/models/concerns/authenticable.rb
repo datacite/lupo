@@ -33,4 +33,29 @@ module Authenticable
       Digest::SHA256.hexdigest password + "{" + ENV["SESSION_ENCRYPTED_COOKIE_SALT"] + "}" if password.present?
     end
   end
+
+  module ClassMethods
+    # encode token using SHA-256 hash algorithm
+    def encode_token(payload)
+      # replace newline characters with actual newlines
+      private_key = OpenSSL::PKey::RSA.new(ENV['JWT_PRIVATE_KEY'].to_s.gsub('\n', "\n"))
+      JWT.encode(payload, private_key, 'RS256')
+    end
+
+    # generate JWT token
+    def generate_token(attributes={})      
+      payload = {
+        uid:  attributes.fetch(:uid, "0000-0001-5489-3594"),
+        name: attributes.fetch(:name, "Josiah Carberry"),
+        email: attributes.fetch(:email, nil),
+        provider_id: attributes.fetch(:provider_id, nil),
+        client_id: attributes.fetch(:client_id, nil),
+        role_id: attributes.fetch(:role_id, "staff_admin"),
+        iat: Time.now.to_i,
+        exp: Time.now.to_i + attributes.fetch(:exp, 30 * 24 * 3600)
+      }.compact
+
+      encode_token(payload)
+    end
+  end
 end

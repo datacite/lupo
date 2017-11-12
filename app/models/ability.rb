@@ -7,32 +7,32 @@ class Ability
       can :manage, :all
     elsif user.role_id == "staff_user"
       can :read, :all
-      can :update, :all
-    elsif user.role_id == "provider_admin"
+    elsif user.role_id == "provider_admin" && user.provider_id.present?
       can [:update, :read], Provider, :symbol => user.provider_id.upcase
-      can [:manage], Client, :allocator => user.allocator
-      can [:create, :update, :read], Doi, :datacentre => user.datacentre
-      can [:update, :read], Prefix #, :datacentre => user.datacentre
-      can [:create, :update, :read], ClientPrefix #, :datacentre => user.client_id
-      can [:read], ProviderPrefix #, :datacentre => user.client_id
-      can [:create, :update, :read, :destroy], User, :provider_id => user.provider_id
-    elsif user.role_id == "provider_user"
-      can [:read], Provider, :symbol => user.provider_id
-      can [:update, :read], Client, :allocator => user.allocator
-      # can [:read], Prefix, :allocator => user.allocator
-      can [:read], Doi, :datacentre => user.datacentre
-      can [:update, :read], User, :id => user.id
-    elsif user.role_id == "client_admin"
+      can [:manage], Client,:provider_id => user.provider_id
+      can [:manage], ProviderPrefix, :provider_id => user.provider_id
+      can [:manage], Doi, :provider_id => user.provider_id.upcase
+      can [:read], User
+    elsif user.role_id == "provider_user" && user.provider_id.present?
+      can [:read], Provider, :symbol => user.provider_id.upcase
+      can [:read], Client, :provider_id => user.provider_id
+      can [:read], ProviderPrefix, :provider_id => user.provider_id
+      can [:read], Doi, :provider_id => user.provider_id.upcase
+      can [:read], User
+    elsif user.role_id == "client_admin" && user.client_id.present?
       can [:read, :update], Client, :symbol => user.client_id.upcase
-      can [:create, :update, :read], Doi, :datacentre => user.datacentre
-      can [:create, :update, :read, :destroy], User, :client_id => user.client_id
-    elsif user.role_id == "client_user"
-      can [:read], Client, :symbol => user.client_id
-      can [:read], Doi, :datacentre => user.datacentre
-      can [:read], User, :id => user.id
-    else
-      can [:manage], Client, :provider_id => "SANDBOX"
+      can [:read], ClientPrefix, :client_id => user.client_id
+      can [:manage], Doi, :client_id => user.client_id
+      can [:read], User
+    elsif user.role_id == "client_user" && user.client_id.present?
+      can [:read], Client, :symbol => user.client_id.upcase
+      can [:read], ClientPrefix, :client_id => user.client_id
+      can [:read], Doi, :client_id => user.client_id
+      can [:read], User
+    elsif user.role_id == "user"
+      can [:read], Client, :provider_id => "SANDBOX"
       can [:read], Doi
+      can [:read], User, :id => user.id
     end
   end
 end

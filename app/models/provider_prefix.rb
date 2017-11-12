@@ -11,6 +11,8 @@ class ProviderPrefix < ApplicationRecord
   has_many :client_prefixes, foreign_key: :allocator_prefixes, dependent: :destroy
   has_many :clients, through: :client_prefixes
 
+  delegate :symbol, to: :provider, prefix: true
+
   before_create :set_id
   before_create { self.created_at = Time.zone.now.utc.iso8601 }
   before_save { self.updated_at = Time.zone.now.utc.iso8601 }
@@ -20,6 +22,11 @@ class ProviderPrefix < ApplicationRecord
   # use base32-encode id as uid, with pretty formatting and checksum
   def uid
     Base32::Crockford.encode(id, split: 4, length: 16, checksum: true).downcase
+  end
+
+  # workaround for non-standard database column names and association
+  def provider_id
+    provider_symbol.downcase
   end
 
   # workaround for non-standard database column names and association
