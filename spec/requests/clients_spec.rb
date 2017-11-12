@@ -74,7 +74,7 @@ RSpec.describe 'Clients', type: :request  do
       end
 
       it 'returns a not found message' do
-        expect(json["errors"].first).to eq("status"=>"404", "title"=>"The page you are looking for doesn't exist.")
+        expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
       end
     end
   end
@@ -177,7 +177,7 @@ RSpec.describe 'Clients', type: :request  do
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"].first).to eq("status"=>"404", "title"=>"The page you are looking for doesn't exist.")
+        expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
       end
     end
   end
