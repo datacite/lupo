@@ -14,7 +14,7 @@ class Doi < ActiveRecord::Base
     # outside of this application (i.e. the MDS API)
     state :new, :initial => true
     state :draft
-    state :tombstoned, :registered, :findable, :flagged, :broken
+    state :tombstoned, :registered, :findable, :flagged, :broken, :deleted
 
     event :register do
       # can't register test prefix
@@ -32,6 +32,15 @@ class Doi < ActiveRecord::Base
     event :link_check do
       transitions :from => [:tombstoned, :registered, :findable, :flagged], :to => :broken
     end
+
+    # can only delete if state is :draft
+    event :delete do
+      transitions :from => [:draft], :to => :deleted
+
+      after do
+        destroy
+      end
+    end
   end
 
   self.table_name = "dataset"
@@ -40,8 +49,8 @@ class Doi < ActiveRecord::Base
   alias_attribute :uid, :doi
 
   belongs_to :client, foreign_key: :datacentre
-  has_many :media, foreign_key: :dataset
-  has_many :metadata, foreign_key: :dataset
+  has_many :media, foreign_key: :dataset, dependent: :destroy
+  has_many :metadata, foreign_key: :dataset, dependent: :destroy
 
   delegate :provider, to: :client
 
@@ -92,10 +101,18 @@ class Doi < ActiveRecord::Base
     doi_as_url(doi)
   end
 
+  def resource_type
+    return nil unless resource_type_general.present?
+    r = ResourceType.where(id: resource_type_general.downcase.underscore.dasherize)
+    r[:data] if r.present?
+  end
+
   # parse metadata using bolognese library
   def doi_metadata
     current_metadata = metadata.order('metadata.created DESC').first
-    return nil unless current_metadata
+
+    # return OpenStruct if no metadata record is found to handle delegate
+    return OpenStruct.new unless current_metadata
 
     DoiSearch.new(input: current_metadata.xml,
                   from: "datacite",
@@ -135,6 +152,7 @@ class Doi < ActiveRecord::Base
 
   def set_defaults
     self.doi = doi.upcase
+    self.is_active = is_active? ? "\x01" : "\x00"
   end
 
   def set_url

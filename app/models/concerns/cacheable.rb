@@ -46,6 +46,7 @@ module Cacheable
                       from: "datacite",
                       doi: item.fetch("doi", nil),
                       sandbox: !Rails.env.production?,
+                      state: item.fetch("state", nil),
                       date_registered: item.fetch("minted", nil),
                       date_updated: item.fetch("updated", nil),
                       provider_id: item.fetch("allocator_symbol", "").downcase,

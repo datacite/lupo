@@ -36,9 +36,8 @@ class DoisController < ApplicationController
     end
   end
 
-  # don't delete, but set deleted_at timestamp
   def destroy
-    if @doi.update_attributes(is_active: "\x00", deleted_at: Time.zone.now)
+    if @doi.delete
       head :no_content
     else
       Rails.logger.warn @doi.errors.inspect
@@ -46,10 +45,18 @@ class DoisController < ApplicationController
     end
   end
 
+  def set_state
+
+  end
+
+  def delete_test_dois
+
+  end
+
   protected
 
   def set_doi
-    @doi = DoiSearch.where(id: params[:id])[:data].first
+    @doi = Doi.where(doi: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @doi.present?
   end
 
@@ -68,7 +75,7 @@ class DoisController < ApplicationController
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     Rails.logger.warn params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:uid, :created, :doi, :is_active, :version, :client]
+      params, only: [:uid, :created, :doi, :url, :version, :client]
     )
   end
 end
