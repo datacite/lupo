@@ -27,7 +27,6 @@ install:
   - travis_retry bundle install
 
 before_script:
-  - npm install
   - memcached -p 11211 &
   - cp .env.travis .env
   - mkdir -p tmp/pids
@@ -35,8 +34,6 @@ before_script:
   - bundle exec sidekiq -d -e production --config config/sidekiq.yml -L log/sidekiq.log
   - sleep 10
   - bundle exec rake db:setup RAILS_ENV=test
-  - npm install -g istanbul codeclimate-test-reporter
-
 
 script:
   - bundle exec rspec spec
