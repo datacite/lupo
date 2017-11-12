@@ -43,7 +43,7 @@ module Authenticable
     end
 
     # generate JWT token
-    def generate_token(attributes={})      
+    def generate_token(attributes={})
       payload = {
         uid:  attributes.fetch(:uid, "0000-0001-5489-3594"),
         name: attributes.fetch(:name, "Josiah Carberry"),
@@ -52,7 +52,7 @@ module Authenticable
         client_id: attributes.fetch(:client_id, nil),
         role_id: attributes.fetch(:role_id, "staff_admin"),
         iat: Time.now.to_i,
-        exp: Time.now.to_i + attributes.fetch(:exp, 30 * 24 * 3600)
+        exp: Time.now.to_i + attributes.fetch(:exp, 30)
       }.compact
 
       encode_token(payload)
