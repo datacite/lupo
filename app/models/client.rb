@@ -59,7 +59,7 @@ class Client < ActiveRecord::Base
 
   def provider_id=(value)
     r = cached_provider_response(value)
-    fail ActiveRecord::RecordNotFound unless r.present?
+    return nil unless r.present?
 
     write_attribute(:allocator, r.id)
   end
@@ -100,12 +100,13 @@ class Client < ActiveRecord::Base
   end
 
   protected
+
   def freeze_symbol
     errors.add(:symbol, "cannot be changed") if self.symbol_changed?
   end
 
   def check_id
-    errors.add(:symbol, ", Your Client ID must include the name of your provider. Separated by a dot '.' ") if self.symbol.split(".")[0].downcase != self.provider.symbol.downcase
+    errors.add(:symbol, ", Your Client ID must include the name of your provider. Separated by a dot '.' ") if self.symbol.split(".").first.downcase != self.provider.symbol.downcase
   end
 
   def user_url

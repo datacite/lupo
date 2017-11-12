@@ -13,16 +13,19 @@ class Doi < ActiveRecord::Base
     # new is default state for new DOIs. This is needed to handle DOIs created
     # outside of this application (i.e. the MDS API)
     state :new, :initial => true
-    state :draft
-    state :tombstoned, :registered, :findable, :flagged, :broken, :deleted
+    state :draft, :tombstoned, :registered, :findable, :flagged, :broken, :deleted
+
+    event :draft do
+      transitions :from => :new, :to => :draft
+    end
 
     event :register do
       # can't register test prefix
-      transitions :from => :draft, :to => :registered, :unless => :is_test_prefix?
+      transitions :from => [:new, :draft], :to => :registered, :unless => :is_test_prefix?
     end
 
     event :publish do
-      transitions :from => [:draft, :tombstoned, :registered], :to => :findable, :unless => :is_test_prefix?
+      transitions :from => [:new, :draft, :tombstoned, :registered], :to => :findable, :unless => :is_test_prefix?
     end
 
     event :flag do
@@ -34,12 +37,12 @@ class Doi < ActiveRecord::Base
     end
 
     # can only delete if state is :draft
-    event :delete do
-      transitions :from => [:draft], :to => :deleted
-
+    event :remove do
       after do
         destroy
       end
+
+      transitions :from => [:draft], :to => :deleted
     end
   end
 
@@ -67,6 +70,10 @@ class Doi < ActiveRecord::Base
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   after_save { UrlJob.perform_later(self) }
 
+  def client_id
+    client.symbol.downcase
+  end
+
   def client_id=(value)
     r = cached_client_response(value)
     fail ActiveRecord::RecordNotFound unless r.present?
@@ -74,13 +81,9 @@ class Doi < ActiveRecord::Base
     write_attribute(:datacentre, r.id)
   end
 
-  # def client_id
-  #
-  # end
-  #
-  # def provider_id
-  #
-  # end
+  def provider_id
+    provider.symbol.downcase
+  end
 
   # def provider
   #   r = cached_client_response(client_id)

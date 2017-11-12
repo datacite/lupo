@@ -6,9 +6,9 @@ describe Doi, type: :model, vcr: true do
   describe "state" do
     subject { FactoryBot.create(:doi) }
 
-    describe "draft" do
-      it "defaults to draft" do
-        expect(subject).to have_state(:draft)
+    describe "new" do
+      it "defaults to new" do
+        expect(subject).to have_state(:new)
       end
     end
 
