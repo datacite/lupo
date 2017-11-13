@@ -44,9 +44,7 @@ class Provider < ActiveRecord::Base
 
   default_scope { where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')").where(deleted_at: nil) }
 
-  unless Rails.env.production? || Rails.env.test?
-    scope :query, ->(query) { where("allocator.symbol like ? OR allocator.name like ?", "%#{query}%", "%#{query}%") }
-  end
+  scope :query, ->(query) { where("allocator.symbol like ? OR allocator.name like ?", "%#{query}%", "%#{query}%") }
 
   def year
     created.year

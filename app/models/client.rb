@@ -42,9 +42,7 @@ class Client < ActiveRecord::Base
 
   default_scope { where(deleted_at: nil) }
 
-  unless Rails.env.production? || Rails.env.test?
-    scope :query, ->(query) { where("datacentre.symbol like ? OR datacentre.name like ?", "%#{query}%", "%#{query}%") }
-  end
+  scope :query, ->(query) { where("datacentre.symbol like ? OR datacentre.name like ?", "%#{query}%", "%#{query}%") }
 
   attr_accessor :target_id
 
