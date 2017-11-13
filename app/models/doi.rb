@@ -135,6 +135,14 @@ class Doi < ActiveRecord::Base
     updated
   end
 
+  def state
+    if Rails.env.production?
+      is_active == "\x01" ? "findable" : "registered"
+    else
+      @state
+    end
+  end
+
   # update state for all DOIs starting from from_date
   def self.set_state(from_date)
     from_date ||= Time.zone.now - 1.day

@@ -57,7 +57,11 @@ class DoiSearch < Bolognese::Metadata
   end
 
   def state
-    @state ||= is_active == "\x01" ? "findable" : "registered"
+    if Rails.env.production?
+      is_active == "\x01" ? "findable" : "registered"
+    else
+      @state
+    end
   end
 
   def results
@@ -137,6 +141,7 @@ class DoiSearch < Bolognese::Metadata
       else
         fq << "state:#{options[:state]}" if options[:state].present?
       end
+
       fq << "has_metadata:#{options[:has_metadata]}" if options[:has_metadata].present?
       fq << "schema_version:#{options[:schema_version]}" if options[:schema_version].present?
 
