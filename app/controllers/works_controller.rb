@@ -24,6 +24,7 @@ class WorksController < ApplicationController
   def set_doi
     params[:client_id] = params.delete(:data_center_id)
     params[:provider_id] = params.delete(:member_id)
+    params[:state] = "findable"
 
     @doi = DoiSearch.where(id: params[:id])[:data].first
     fail ActiveRecord::RecordNotFound unless @doi.present?
