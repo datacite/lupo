@@ -56,6 +56,10 @@ class DoiSearch < Bolognese::Metadata
     schema_version
   end
 
+  def state
+    @state ||= is_active == "\x01" ? "findable" : "registered"
+  end
+
   def results
     related_identifiers.reduce({}) do |sum, i|
       k = i["relation-type-id"]
@@ -126,14 +130,20 @@ class DoiSearch < Bolognese::Metadata
       fq << "updated:#{update_date}" if update_date
       fq << "minted:#{registered}" if registered
       fq << "publicationYear:#{options[:year]}" if options[:year].present?
-      fq << "state:#{options[:state]}" if options[:state].present?
+
+      if Rails.env.production?
+        fq << "is_active:false" if options[:state] == "registered"
+        fq << "is_active:true" if options[:state] == "findable"
+      else
+        fq << "state:#{options[:state]}" if options[:state].present?
+      end
       fq << "has_metadata:#{options[:has_metadata]}" if options[:has_metadata].present?
       fq << "schema_version:#{options[:schema_version]}" if options[:schema_version].present?
 
       params = { q: options.fetch(:query, nil).presence || "*:*",
                  start: offset,
                  rows: per_page,
-                 fl: "doi,url,datacentre_symbol,allocator_symbol,xml,state,has_metadata,media,minted,updated",
+                 fl: "doi,url,datacentre_symbol,allocator_symbol,xml,state,is_active,has_metadata,media,minted,updated",
                  qf: options[:qf],
                  fq: fq.join(" AND "),
                  facet: "true",
