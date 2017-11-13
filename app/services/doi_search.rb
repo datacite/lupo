@@ -56,14 +56,6 @@ class DoiSearch < Bolognese::Metadata
     schema_version
   end
 
-  def state
-    if Rails.env.production?
-      is_active == "\x01" ? "findable" : "registered"
-    else
-      @state
-    end
-  end
-
   def results
     related_identifiers.reduce({}) do |sum, i|
       k = i["relation-type-id"]
@@ -134,16 +126,11 @@ class DoiSearch < Bolognese::Metadata
       fq << "updated:#{update_date}" if update_date
       fq << "minted:#{registered}" if registered
       fq << "publicationYear:#{options[:year]}" if options[:year].present?
-
-      if Rails.env.production?
-        fq << "is_active:false" if options[:state] == "registered"
-        fq << "is_active:true" if options[:state] == "findable"
-      else
-        fq << "state:#{options[:state]}" if options[:state].present?
-      end
-
+      fq << "state:#{options[:state]}" if options[:state].present?
       fq << "has_metadata:#{options[:has_metadata]}" if options[:has_metadata].present?
       fq << "schema_version:#{options[:schema_version]}" if options[:schema_version].present?
+
+      facet_field = Rails.env.production? ? %w(publicationYear datacentre_facet resourceType_facet schema_version minted) : %w(publicationYear datacentre_facet resourceType_facet state schema_version minted)
 
       params = { q: options.fetch(:query, nil).presence || "*:*",
                  start: offset,
@@ -152,7 +139,7 @@ class DoiSearch < Bolognese::Metadata
                  qf: options[:qf],
                  fq: fq.join(" AND "),
                  facet: "true",
-                 'facet.field' => %w(publicationYear datacentre_facet resourceType_facet schema_version state minted),
+                 'facet.field' => facet_field,
                  'facet.limit' => 15,
                  'facet.mincount' => 1,
                  'facet.range' => 'minted',
@@ -183,7 +170,7 @@ class DoiSearch < Bolognese::Metadata
   end
 
   def self.parse_data(result, options={})
-    return result if result['errors']
+    return { data: nil, errors: result } if result['errors']
     data = nil
 
     if options[:id].present?
