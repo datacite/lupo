@@ -148,7 +148,7 @@ class Doi < ActiveRecord::Base
   # we need to use destroy_all to also delete has_many associations for metadata and media
   def self.delete_test_dois(from_date)
     from_date ||= Time.zone.now - 1.month
-    Doi.where("updated <= ?", from_date).where("doi LIKE ?", "10.5072%").destroy_all
+    Doi.where("updated <= ?", from_date).where("doi LIKE ?", "10.5072%").find_each { |d| d.destroy }
   end
 
   private
