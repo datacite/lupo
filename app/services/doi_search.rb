@@ -130,8 +130,6 @@ class DoiSearch < Bolognese::Metadata
       fq << "has_metadata:#{options[:has_metadata]}" if options[:has_metadata].present?
       fq << "schema_version:#{options[:schema_version]}" if options[:schema_version].present?
 
-      facet_field = Rails.env.production? ? %w(publicationYear datacentre_facet resourceType_facet schema_version minted) : %w(publicationYear datacentre_facet resourceType_facet state schema_version minted)
-
       params = { q: options.fetch(:query, nil).presence || "*:*",
                  start: offset,
                  rows: per_page,
@@ -139,7 +137,7 @@ class DoiSearch < Bolognese::Metadata
                  qf: options[:qf],
                  fq: fq.join(" AND "),
                  facet: "true",
-                 'facet.field' => facet_field,
+                 'facet.field' => %w(publicationYear datacentre_facet resourceType_facet state schema_version minted),
                  'facet.limit' => 15,
                  'facet.mincount' => 1,
                  'facet.range' => 'minted',
