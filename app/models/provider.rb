@@ -116,21 +116,23 @@ class Provider < ActiveRecord::Base
     "allocator_symbol:#{symbol}" if symbol != "ADMIN"
   end
 
-  # cumulative count clients that have not been deleted
+  # cumulative count clients by year
+  # count until the previous year if client has been deleted
   # show all clients for admin
   def client_count
     c = clients.unscoped
     c = c.where("datacentre.allocator = ?", id) if symbol != "ADMIN"
-    c = c.pluck(:created, :deleted_at).map { |c| c[1].present? ? c[1].year - 1 : c[0].year }
+    c = c.pluck(:created, :deleted_at).reduce([]) do |sum, a|
+      from = a[0].year
+      to = a[1] ? a[1].year : Date.today.year + 1
+      sum += (from...to).to_a
+    end
     return nil if c.empty?
+
     c += (c.min..Date.today.year).to_a
     c.group_by { |a| a }
      .sort { |a, b| a.first <=> b.first }
-     .reduce([]) do |sum, a|
-       count = sum.last.to_h["count"].to_i + a[1].count - 1
-       sum << { "id" => a[0], "title" => a[0], "count" => count }
-       sum
-     end
+     .map { |a| { "id" => a[0], "title" => a[0], "count" => a[1].count - 1 } }
   end
 
   # show provider count for admin
@@ -138,15 +140,15 @@ class Provider < ActiveRecord::Base
     return nil if symbol != "ADMIN"
 
     p = Provider.unscoped.where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')")
-    p = p.pluck(:created, :deleted_at).map { |p| p[1].present? ? p[1].year - 1 : p[0].year }
+    p = p.pluck(:created, :deleted_at).reduce([]) do |sum, a|
+      from = a[0].year
+      to = a[1] ? a[1].year : Date.today.year + 1
+      sum += (from...to).to_a
+    end
     p += (p.min..Date.today.year).to_a
     p.group_by { |a| a }
      .sort { |a, b| a.first <=> b.first }
-     .reduce([]) do |sum, a|
-       count = sum.last.to_h["count"].to_i + a[1].count - 1
-       sum << { "id" => a[0], "title" => a[0], "count" => count }
-       sum
-     end
+     .map { |a| { "id" => a[0], "title" => a[0], "count" => a[1].count - 1 } } 
   end
 
   def freeze_symbol
