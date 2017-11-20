@@ -14,7 +14,7 @@ class ClientPrefixesController < ApplicationController
     elsif params[:client_id].present? && params[:prefix_id].present?
       collection = ClientPrefix.joins(:client, :prefix).where('datacentre.symbol = ?', params[:client_id]).where('prefix.prefix = ?', params[:prefix_id])
     elsif params[:client_id].present?
-      client = Client.joins(:provider).where('datacentre.symbol = ?', params[:client_id]).first
+      client = Client.where('datacentre.symbol = ?', params[:client_id]).first
       collection = client.present? ? client.client_prefixes.joins(:prefix) : ClientPrefix.none
     elsif params[:prefix_id].present?
       prefix = Prefix.where('prefix.prefix = ?', params[:prefix_id]).first
@@ -87,7 +87,7 @@ class ClientPrefixesController < ApplicationController
       @include = [@include]
     else
       # always include because Ember pagination doesn't (yet) understand include parameter
-      @include = ['client', 'prefix', 'provider']
+      @include = ['client', 'prefix', 'provider_prefix', 'provider']
     end
   end
 
@@ -105,7 +105,7 @@ class ClientPrefixesController < ApplicationController
 
   def safe_params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:id, :client, :prefix]
+      params, only: [:id, :client, :prefix, :provider_prefix]
     )
   end
 end

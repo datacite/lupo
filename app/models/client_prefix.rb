@@ -45,9 +45,14 @@ class ClientPrefix < ApplicationRecord
     self.prefixes = r.id
   end
 
-  def provider
-    client.provider
-  end
+  # def provider_prefix_id=(value)
+  #   r = ProviderPrefix.where(id: value).first
+  #   self.allocator_prefixes = r.id if r.present?
+  # end
+  #
+  # def provider_prefix_id
+  #   client.symbol.split('.').first if client.present?
+  # end
 
   private
 
@@ -57,8 +62,8 @@ class ClientPrefix < ApplicationRecord
   end
 
   def set_allocator_prefixes
-    symbol = client.symbol.split('.').first
-    r = ProviderPrefix.joins(:provider).where('allocator.symbol = ?', symbol).where(prefixes: prefixes).first
+    provider_symbol = client.symbol.split('.').first
+    r = ProviderPrefix.joins(:provider).where('allocator.symbol = ?', provider_symbol).where(prefixes: prefixes).first
     self.allocator_prefixes = r.id if r.present?
   end
 end

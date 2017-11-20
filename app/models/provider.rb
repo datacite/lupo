@@ -4,7 +4,6 @@ class Provider < ActiveRecord::Base
   # index in Elasticsearch
   # include Indexable
 
-
   # include helper module for caching infrequently changing resources
   include Cacheable
 

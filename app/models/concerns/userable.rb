@@ -5,7 +5,7 @@ module Userable
     def remove_users(id: nil, jwt: nil)
       result = Maremma.get user_url
       Rails.logger.info result.inspect
-      result.body["data"].each do |user|
+      Array.wrap(result.body["data"]).each do |user|
         url = ENV["VOLPINO_URL"] + "/users/" + user.fetch("id")
         data = { "data" => { "attributes" => { id => nil },
                              "type" => "users" } }

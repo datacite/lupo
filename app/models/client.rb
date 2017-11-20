@@ -34,6 +34,7 @@ class Client < ActiveRecord::Base
   has_many :dois, foreign_key: :datacentre
   has_many :client_prefixes, foreign_key: :datacentre, dependent: :destroy
   has_many :prefixes, through: :client_prefixes
+  has_many :provider_prefixes, through: :client_prefixes
 
   before_validation :set_defaults
   before_create :set_test_prefix #, if: Proc.new { |client| client.provider_symbol == "SANDBOX" }
