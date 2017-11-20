@@ -9,8 +9,9 @@ class Ability
       can :read, :all
     elsif user.role_id == "provider_admin" && user.provider_id.present?
       can [:update, :read], Provider, :symbol => user.provider_id.upcase
+      can [:read], ProviderPrefix, :provider_id => user.provider_id
       can [:manage], Client,:provider_id => user.provider_id
-      can [:manage], ProviderPrefix, :provider_id => user.provider_id
+      can [:manage], ClientPrefix, :provider_id => user.provider_id
       can [:manage], Doi, :provider_id => user.provider_id.upcase
       can [:read], User
     elsif user.role_id == "provider_user" && user.provider_id.present?
