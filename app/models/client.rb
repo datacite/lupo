@@ -1,7 +1,7 @@
 class Client < ActiveRecord::Base
 
   # index in Elasticsearch
-  include Indexable unless Rails.env.production? || Rails.env.test?
+  # include Indexable
 
   # include helper module for caching infrequently changing resources
   include Cacheable

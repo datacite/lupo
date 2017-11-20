@@ -2,7 +2,7 @@ require "countries"
 
 class Provider < ActiveRecord::Base
   # index in Elasticsearch
-  include Indexable unless Rails.env.production? || Rails.env.test?
+  # include Indexable
 
 
   # include helper module for caching infrequently changing resources
@@ -75,24 +75,24 @@ class Provider < ActiveRecord::Base
   end
 
   # Elasticsearch indexing
-  mappings dynamic: 'false' do
-    indexes :symbol, type: 'text'
-    indexes :name, type: 'text'
-    indexes :description, type: 'text'
-    indexes :contact_email, type: 'text'
-    indexes :country_code, type: 'text'
-    indexes :country_name, type: 'text'
-    indexes :region, type: 'text'
-    indexes :region_name, type: 'text'
-    indexes :year, type: 'integer'
-   #  indexes :website, type: 'text'
-   #  indexes :phone, type: 'text'
-    indexes :logo_url, type: 'text'
-    indexes :is_active, type: 'boolean'
-    indexes :created_at, type: 'date'
-    indexes :role_name, type: 'text'
-    indexes :updated_at, type: 'date'
-  end unless Rails.env.production? || Rails.env.test?
+  # mappings dynamic: 'false' do
+  #   indexes :symbol, type: 'text'
+  #   indexes :name, type: 'text'
+  #   indexes :description, type: 'text'
+  #   indexes :contact_email, type: 'text'
+  #   indexes :country_code, type: 'text'
+  #   indexes :country_name, type: 'text'
+  #   indexes :region, type: 'text'
+  #   indexes :region_name, type: 'text'
+  #   indexes :year, type: 'integer'
+  #  #  indexes :website, type: 'text'
+  #  #  indexes :phone, type: 'text'
+  #   indexes :logo_url, type: 'text'
+  #   indexes :is_active, type: 'boolean'
+  #   indexes :created_at, type: 'date'
+  #   indexes :role_name, type: 'text'
+  #   indexes :updated_at, type: 'date'
+  # end
 
   #  def as_indexed_json(options={})
   #    {
@@ -148,7 +148,7 @@ class Provider < ActiveRecord::Base
     p += (p.min..Date.today.year).to_a
     p.group_by { |a| a }
      .sort { |a, b| a.first <=> b.first }
-     .map { |a| { "id" => a[0], "title" => a[0], "count" => a[1].count - 1 } } 
+     .map { |a| { "id" => a[0], "title" => a[0], "count" => a[1].count - 1 } }
   end
 
   def freeze_symbol
