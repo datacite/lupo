@@ -6,10 +6,15 @@ class ClientPrefixSerializer < ActiveModel::Serializer
 
   belongs_to :client
   belongs_to :provider
+  belongs_to :provider_prefix
   belongs_to :prefix
 
   def id
     object.uid
+  end
+
+  def provider
+    object.client.provider
   end
 
   def created
