@@ -31,7 +31,6 @@ gem 'elasticsearch-model'
 gem 'elasticsearch-rails'
 gem 'sidekiq', '~> 5.0', '>= 5.0.4'
 gem 'bergamasco', '~> 0.3.10'
-gem 'httplog', '~> 1.0'
 gem 'pwqgen'
 gem 'base32-crockford-checksum', '~> 0.2.3'
 gem 'faraday_middleware-aws-signers-v4'
@@ -47,6 +46,7 @@ group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'httplog', '~> 1.0'
 end
 
 group :test do
