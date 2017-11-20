@@ -37,3 +37,7 @@ Rails.application.configure do
 end
 
 BetterErrors::Middleware.allow_ip! ENV['TRUSTED_IP']
+
+HttpLog.configure do |config|
+  config.logger = Rails.logger
+end
