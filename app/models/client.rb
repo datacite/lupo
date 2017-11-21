@@ -6,9 +6,6 @@ class Client < ActiveRecord::Base
   # include helper module for caching infrequently changing resources
   include Cacheable
 
-  # include helper module for counting registered DOIs
-  include Countable
-
   # include helper module for managing associated users
   include Userable
 
@@ -86,10 +83,6 @@ class Client < ActiveRecord::Base
 
   def year
     created_at.year if created_at.present?
-  end
-
-  def query_filter
-    "datacentre_symbol:#{symbol}"
   end
 
   def doi_quota_exceeded

@@ -7,9 +7,6 @@ class Provider < ActiveRecord::Base
   # include helper module for caching infrequently changing resources
   include Cacheable
 
-  # include helper module for counting registered DOIs
-  include Countable
-
   # include helper module for managing associated users
   include Userable
 
@@ -110,11 +107,6 @@ class Provider < ActiveRecord::Base
   #      "created" => created_at.iso8601,
   #      "updated" => updated_at.iso8601 }
   #  end
-
-  # show all dois for admin
-  def query_filter
-    "allocator_symbol:#{symbol}" if symbol != "ADMIN"
-  end
 
   # cumulative count clients by year
   # count until the previous year if client has been deleted

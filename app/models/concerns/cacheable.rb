@@ -2,6 +2,23 @@ module Cacheable
   extend ActiveSupport::Concern
 
   included do
+    def cached_doi_count
+      Rails.cache.fetch("cached_doi_count/#{id}", expires_in: 24.hours) do
+        return nil if Rails.env.test?
+
+        if self.class.name == "Provider" && symbol != "ADMIN"
+          collection = Doi.joins(:client).where("datacentre.allocator = ?", id)
+        elsif self.class.name == "Client"
+          collection = Doi.where(datacentre: id)
+        else
+          collection = Doi
+        end
+
+        years = collection.order("YEAR(dataset.created)").group("YEAR(dataset.created)").count
+        years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
+      end
+    end
+
     def cached_client_response(id, options={})
       Rails.cache.fetch("client_response/#{id}", expires_in: 1.day) do
         Client.where(symbol: id).first

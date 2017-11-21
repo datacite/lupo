@@ -67,7 +67,7 @@ class ClientsController < ApplicationController
 
   # GET /clients/1
   def show
-    meta = { dois: @client.doi_count }
+    meta = { dois: @client.cached_doi_count }
 
     render jsonapi: @client, meta: meta, include: @include
   end
@@ -98,7 +98,7 @@ class ClientsController < ApplicationController
   # don't delete, but set deleted_at timestamp
   # a client with dois or prefixes can't be deleted
   def destroy
-    if @client.doi_count.present?
+    if @client.dois.present?
       message = "Can't delete client that has DOIs."
       status = 400
       Rails.logger.warn message

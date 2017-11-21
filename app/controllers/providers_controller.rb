@@ -70,7 +70,7 @@ class ProvidersController < ApplicationController
   def show
     meta = { providers: @provider.provider_count,
              clients: @provider.client_count,
-             dois: @provider.doi_count
+             dois: @provider.cached_doi_count
             }.compact
 
     render jsonapi: @provider, meta: meta, include: @include
