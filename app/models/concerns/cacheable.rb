@@ -3,7 +3,7 @@ module Cacheable
 
   included do
     def cached_doi_count
-      Rails.cache.fetch("cached_doi_count/#{id}", expires_in: 24.hours) do
+      Rails.cache.fetch("cached_doi_count/#{id}", expires_in: 6.hours) do
         return nil if Rails.env.test?
 
         if self.class.name == "Provider" && symbol != "ADMIN"
@@ -15,7 +15,7 @@ module Cacheable
         end
 
         years = collection.order("YEAR(dataset.created)").group("YEAR(dataset.created)").count
-        years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
+        years = years.map { |k,v| { id: k, title: k, count: v } }
       end
     end
 
