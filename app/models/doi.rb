@@ -70,6 +70,8 @@ class Doi < ActiveRecord::Base
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   after_save { UrlJob.perform_later(self) }
 
+  scope :query, ->(query) { where("dataset.doi = ?", query) }
+
   def client_id
     client.symbol.downcase
   end

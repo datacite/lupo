@@ -32,6 +32,7 @@ class Provider < ActiveRecord::Base
   validate :freeze_symbol, :on => :update
 
   has_many :clients, foreign_key: :allocator
+  has_many :dois, through: :clients
   has_many :provider_prefixes, foreign_key: :allocator, dependent: :destroy
   has_many :prefixes, through: :provider_prefixes
 
