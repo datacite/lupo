@@ -142,8 +142,8 @@ class ClientsController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:symbol, :name, "contact-name", "contact-email", :domains, :provider, :repository, :target_id, "is-active", :deleted_at],
-              keys: { "contact-name" => :contact_name, "contact-email" => :contact_email, "is-active" => :is_active }
+      params, only: [:symbol, :name, "contact-name", "contact-email", :domains, :provider, :repository, "target-id", "is-active", "deleted-at"],
+              keys: { "contact-name" => :contact_name, "contact-email" => :contact_email, "target-id" => :target_id, "is-active" => :is_active, "deleted-at" => :deleted_at }
     )
   end
 end

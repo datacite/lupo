@@ -2,8 +2,8 @@ module Cacheable
   extend ActiveSupport::Concern
 
   included do
-    def cached_doi_count
-      Rails.cache.fetch("cached_doi_count/#{id}", expires_in: 6.hours) do
+    def cached_doi_count(options={})
+      Rails.cache.fetch("cached_doi_count/#{id}", expires_in: 6.hours, force: options[:force]) do
         return [] if Rails.env.test?
 
         if self.class.name == "Provider" && symbol != "ADMIN"

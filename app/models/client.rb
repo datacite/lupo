@@ -72,7 +72,13 @@ class Client < ActiveRecord::Base
 
   def target_id=(value)
     c = Client.where(symbol: value).first
-    dois.update_all(datacentre: c.id) if c.present?
+    return nil unless c.present?
+
+    dois.update_all(datacentre: c.id)
+
+    # update DOI count for source and target client
+    cached_doi_count(force: true)
+    c.cached_doi_count(force: true)
   end
 
   # backwards compatibility

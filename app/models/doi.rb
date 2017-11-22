@@ -65,6 +65,11 @@ class Doi < ActiveRecord::Base
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
   validates_numericality_of :version, if: :version?
 
+  # update cached doi count for client
+  before_destroy :update_doi_count
+  after_create :update_doi_count
+  after_update :update_doi_count, if: :datacentre_changed?
+
   before_save :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
@@ -166,6 +171,10 @@ class Doi < ActiveRecord::Base
   def set_defaults
     self.doi = doi.upcase
     self.is_active = is_active? ? "\x01" : "\x00"
+  end
+
+  def update_doi_count
+    Rails.cache.delete("cached_doi_count/#{datacentre}")
   end
 
   def set_url
