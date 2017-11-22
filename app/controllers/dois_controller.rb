@@ -18,14 +18,16 @@ class DoisController < ApplicationController
       total = provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
     elsif params[:id].present?
       collection = Doi.where(doi: params[:id])
-      total=  collection.all.size
-    elsif params[:query].present?
-      collection = Doi.query(params[:query])
       total = collection.all.size
     else
       provider = Provider.unscoped.where('allocator.symbol = ?', "ADMIN").first
       collection = Doi
       total = provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
+    end
+
+    if params[:query].present?
+      collection = Doi.query(params[:query])
+      total = collection.all.size
     end
 
     page = params[:page] || {}
