@@ -11,22 +11,27 @@ class DoisController < ApplicationController
     if params[:client_id].present?
       client = Client.where('datacentre.symbol = ?', params[:client_id]).first
       collection = client.present? ? client.dois : Doi.none
+      total = client.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
     elsif params[:provider_id].present?
       provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
       collection = provider.present? ? Doi.joins(:client).where("datacentre.allocator = ?", provider.id) : Doi.none
+      total = provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
     elsif params[:id].present?
       collection = Doi.where(doi: params[:id])
-    else
-      collection = Doi
-    end
-
-    if params[:query].present?
+      total=  collection.all.size
+    elsif params[:query].present?
       collection = Doi.query(params[:query])
+      total = collection.all.size
+    else
+      provider = Provider.unscoped.where('allocator.symbol = ?', "ADMIN").first
+      collection = Doi
+      total = provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
     end
 
     page = params[:page] || {}
     page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
     page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
+    total_pages = (total.to_f / page[:size]).ceil
 
     order = case params[:sort]
             when "name" then "dataset.name"
@@ -37,7 +42,9 @@ class DoisController < ApplicationController
 
     @dois = collection.order(order).page(page[:number]).per(page[:size]).without_count
 
-    meta = { page: page[:number].to_i }
+    meta = { total: total,
+             total_pages: total_pages,
+             page: page[:number].to_i }
 
     render jsonapi: @dois, meta: meta, each_serializer: DoiSerializer
   end

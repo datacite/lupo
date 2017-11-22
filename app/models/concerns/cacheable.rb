@@ -4,7 +4,7 @@ module Cacheable
   included do
     def cached_doi_count
       Rails.cache.fetch("cached_doi_count/#{id}", expires_in: 6.hours) do
-        return nil if Rails.env.test?
+        return [] if Rails.env.test?
 
         if self.class.name == "Provider" && symbol != "ADMIN"
           collection = Doi.joins(:client).where("datacentre.allocator = ?", id)
