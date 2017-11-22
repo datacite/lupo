@@ -36,8 +36,8 @@ class DoisController < ApplicationController
     total_pages = (total.to_f / page[:size]).ceil
 
     order = case params[:sort]
-            when "name" then "dataset.name"
-            when "-name" then "dataset.name DESC"
+    when "name" then "dataset.doi"
+            when "-name" then "dataset.doi DESC"
             when "created" then "dataset.created"
             else "dataset.created DESC"
             end
