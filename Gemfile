@@ -13,7 +13,7 @@ gem 'maremma', '~> 3.5'
 gem 'bolognese', '~> 0.9', '>= 0.9'
 gem "dalli", "~> 2.7.6"
 gem 'lograge', '~> 0.5'
-gem 'bugsnag', '~> 5.3'
+gem 'bugsnag', '~> 6.1', '>= 6.1.1'
 gem 'librato-rails', '~> 1.4.2'
 gem 'gender_detector', '~> 0.1.2'
 gem 'active_model_serializers', '~> 0.10.0'
