@@ -48,10 +48,10 @@ class ClientsController < ApplicationController
     total = collection.count
 
     order = case params[:sort]
-            when "name" then "datacentre.name"
             when "-name" then "datacentre.name DESC"
             when "created" then "datacentre.created"
-            else "datacentre.created DESC"
+            when "-created" then "datacentre.created DESC"
+            else "datacentre.name"
             end
 
     @clients = collection.order(order).page(page[:number]).per(page[:size])

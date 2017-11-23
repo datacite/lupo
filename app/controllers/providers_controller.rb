@@ -49,10 +49,10 @@ class ProvidersController < ApplicationController
     total = collection.count
 
     order = case params[:sort]
-            when "name" then "allocator.name"
             when "-name" then "allocator.name DESC"
             when "created" then "allocator.created"
-            else "allocator.created DESC"
+            when "-created" then "allocator.created DESC"
+            else "allocator.name"
             end
 
     @providers = collection.order(order).page(page[:number]).per(page[:size])
