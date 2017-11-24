@@ -119,7 +119,7 @@ class Provider < ActiveRecord::Base
       to = a[1] ? a[1].year : Date.today.year + 1
       sum += (from...to).to_a
     end
-    return nil if c.empty?
+    return [] if c.empty?
 
     c += (c.min..Date.today.year).to_a
     c.group_by { |a| a }
