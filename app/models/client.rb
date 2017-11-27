@@ -131,5 +131,8 @@ class Client < ActiveRecord::Base
     self.role_name = "ROLE_DATACENTRE" unless role_name.present?
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
+
+    new_password = set_password == true ? encrypt_password(password) : nil
+    self.password = new_password if new_password.present?
   end
 end

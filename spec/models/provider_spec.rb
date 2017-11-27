@@ -75,4 +75,38 @@ RSpec.describe Provider, type: :model do
       expect(single.doi_quota_used).to be_truthy
     end
   end
+
+  # describe "password" do
+  #   it "should not update the password" do
+  #     password = "Credible=Hangover8tighten"
+  #     subject = create(:provider, set_password: false, password: password)
+  #     expect(subject.password).to be_nil
+  #   end
+  #
+  #   it "should update the password when set_password is true" do
+  #     password = "Credible=Hangover8tighten"
+  #     subject = create(:provider, set_password: true, password: password)
+  #     expect(subject.password).to be_present
+  #     expect(subject.password).not_to eq(password)
+  #   end
+  #
+  #   it "should not update the password when password is blank" do
+  #     password = ""
+  #     subject = create(:provider, set_password: true, password: password)
+  #     expect(subject.reload.password).to be_nil
+  #   end
+  #
+  #   # API shows password as either "yes" or "not set"
+  #   it "should not update the password when password is blank" do
+  #     password = "yes"
+  #     subject = create(:provider, set_password: true, password: password)
+  #     expect(subject.password).to be_nil
+  #   end
+  #
+  #   it "should not update the password when password is blank" do
+  #     password = "not set"
+  #     subject = create(:provider, set_password: true, password: password)
+  #     expect(subject.password).to be_nil
+  #   end
+  # end
 end
