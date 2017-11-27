@@ -1,5 +1,5 @@
 class ClientsController < ApplicationController
-  before_action :set_client, only: [:show, :update, :destroy, :getpassword]
+  before_action :set_client, only: [:show, :update, :destroy]
   before_action :authenticate_user_from_token!
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show]
@@ -112,13 +112,6 @@ class ClientsController < ApplicationController
     end
   end
 
-  def getpassword
-    phrase = Password.new(current_user, @client)
-    response.headers['X-Consumer-Role'] = current_user && current_user.role_id || 'anonymous'
-    r = {password: phrase.string }
-    render jsonapi: @client, meta: r , include: @include
-  end
-
   protected
 
   def set_include
@@ -142,8 +135,8 @@ class ClientsController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:symbol, :name, "contact-name", "contact-email", :domains, :provider, :repository, "target-id", "is-active", "deleted-at"],
-              keys: { "contact-name" => :contact_name, "contact-email" => :contact_email, "target-id" => :target_id, "is-active" => :is_active, "deleted-at" => :deleted_at }
+      params, only: [:symbol, :name, "contact-name", "contact-email", :domains, :provider, :repository, "target-id", "is-active", :password, "set-password"],
+              keys: { "contact-name" => :contact_name, "contact-email" => :contact_email, "target-id" => :target_id, "is-active" => :is_active, "set-password" => :set_password }
     )
   end
 end

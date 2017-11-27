@@ -10,6 +10,9 @@ class Provider < ActiveRecord::Base
   # include helper module for managing associated users
   include Userable
 
+  # include helper module for setting password
+  include Passwordable
+
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
 
@@ -18,6 +21,7 @@ class Provider < ActiveRecord::Base
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   attr_readonly :uid, :symbol
+  attr_accessor :set_password
 
   validates_presence_of :symbol, :name, :contact_name, :contact_email
   validates_uniqueness_of :symbol, message: "This name has already been taken"

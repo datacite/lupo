@@ -9,6 +9,9 @@ class Client < ActiveRecord::Base
   # include helper module for managing associated users
   include Userable
 
+  # include helper module for setting password
+  include Passwordable
+
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
@@ -18,6 +21,7 @@ class Client < ActiveRecord::Base
   alias_attribute :updated_at, :updated
   attr_readonly :uid, :symbol
   delegate :symbol, to: :provider, prefix: true
+  attr_accessor :set_password
 
   validates_presence_of :symbol, :name, :contact_email
   validates_uniqueness_of :symbol, message: "This Client ID has already been taken"
@@ -27,6 +31,7 @@ class Client < ActiveRecord::Base
   validates_inclusion_of :role_name, :in => %w( ROLE_DATACENTRE ), :message => "Role %s is not included in the list"
   validate :check_id, :on => :create
   validate :freeze_symbol, :on => :update
+
   belongs_to :provider, foreign_key: :allocator
   has_many :dois, foreign_key: :datacentre
   has_many :client_prefixes, foreign_key: :datacentre, dependent: :destroy

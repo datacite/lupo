@@ -28,10 +28,6 @@ module Authenticable
       Rails.logger.error "OpenSSL::PKey::RSAError: " + error.message + " for " + public_key
       return {}
     end
-
-    def encrypt_password(password)
-      Digest::SHA256.hexdigest password + "{" + ENV["SESSION_ENCRYPTED_COOKIE_SALT"] + "}" if password.present?
-    end
   end
 
   module ClassMethods
