@@ -1,20 +1,20 @@
 require 'rails_helper'
 
 RSpec.describe "dois", type: :request do
+  let!(:dois) { create_list(:doi, 10) }
   let(:doi) { create(:doi) }
   let(:client)  { create(:client) }
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
 
   # Test suite for GET /dois
-  # This is using DoiSearch model
   describe 'GET /dois', vcr: true do
     # make HTTP get request before each example
     before { get '/dois', headers: headers }
 
     it 'returns dois' do
       expect(json).not_to be_empty
-      expect(json['data'].size).to eq(25)
+      expect(json['data'].size).to eq(10)
     end
 
     it 'returns status code 200' do

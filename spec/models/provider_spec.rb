@@ -3,11 +3,12 @@ require 'rails_helper'
 RSpec.describe Provider, type: :model do
   let!(:providers_factory)  { create_list(:provider, 25) }
   let!(:provider) { providers_factory.first }
-  describe "Validations" do
-    # it { should validate_presence_of(:symbol) }
-    # it { should validate_presence_of(:name) }
-    # it { should validate_presence_of(:contact_email) }
-    # it { should validate_presence_of(:contact_name) }
+
+  describe "validations" do
+    it { should validate_presence_of(:symbol) }
+    it { should validate_presence_of(:name) }
+    it { should validate_presence_of(:contact_email) }
+    it { should validate_presence_of(:contact_name) }
   end
 
   describe "methods" do
@@ -33,7 +34,7 @@ RSpec.describe Provider, type: :model do
     end
 
     it "should not update the symbol" do
-      provider.update_attributes :symbol => provider.symbol+'foo.bar'
+      provider.update_attributes :symbol => provider.symbol + 'foo.bar'
       expect(provider.reload.symbol).to eq(provider.symbol)
     end
 
