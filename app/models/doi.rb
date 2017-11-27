@@ -73,7 +73,11 @@ class Doi < ActiveRecord::Base
   before_save :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
-  after_save { UrlJob.perform_later(self) }
+  after_save do
+    unless Rails.env.test?
+      UrlJob.perform_later(self)
+    end
+  end
 
   scope :query, ->(query) { where("dataset.doi = ?", query) }
 
