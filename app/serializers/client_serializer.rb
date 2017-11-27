@@ -16,7 +16,7 @@ class ClientSerializer < ActiveModel::Serializer
   end
 
   def password
-    object.password.present? ? "yes" : "not set"
+    object.password.present? ? "yes" : nil
   end
 
   def provider_id
