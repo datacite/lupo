@@ -15,7 +15,7 @@ class Doi < ActiveRecord::Base
     state :new, :initial => true
     state :draft, :tombstoned, :registered, :findable, :flagged, :broken, :deleted
 
-    event :draft do
+    event :start do
       transitions :from => :new, :to => :draft
     end
 
@@ -173,7 +173,7 @@ class Doi < ActiveRecord::Base
   private
 
   def set_defaults
-    self.doi = doi.upcase
+    self.doi = doi.upcase if doi.present?
     self.is_active = is_active? ? "\x01" : "\x00"
   end
 

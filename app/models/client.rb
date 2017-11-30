@@ -23,13 +23,14 @@ class Client < ActiveRecord::Base
   delegate :symbol, to: :provider, prefix: true
   attr_accessor :set_password
 
-  validates_presence_of :symbol, :name, :contact_email
+  validates_presence_of :symbol, :name, :contact_name, :contact_email
   validates_uniqueness_of :symbol, message: "This Client ID has already been taken"
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
   validates_numericality_of :doi_quota_allowed, :doi_quota_used
   validates_numericality_of :version, if: :version?
   validates_inclusion_of :role_name, :in => %w( ROLE_DATACENTRE ), :message => "Role %s is not included in the list"
-  validate :check_id, :on => :create
+  validates_associated :provider
+  # validate :check_id, :on => :create
   validate :freeze_symbol, :on => :update
 
   belongs_to :provider, foreign_key: :allocator
@@ -109,7 +110,9 @@ class Client < ActiveRecord::Base
   end
 
   def check_id
-    errors.add(:symbol, ", Your Client ID must include the name of your provider. Separated by a dot '.' ") if self.symbol.split(".").first.downcase != self.provider.symbol.downcase
+    if symbol.split(".").first != provider.symbol
+      errors.add(:symbol, ", Your Client ID must include the name of your provider. Separated by a dot '.' ")
+    end
   end
 
   def user_url

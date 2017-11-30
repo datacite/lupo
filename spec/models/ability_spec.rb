@@ -5,8 +5,8 @@ describe User, type: :model do
   let(:token) { User.generate_token }
   let(:user) { User.new(token) }
   let(:provider) { create(:provider) }
-  let(:client) { create(:client, provider_id: provider.symbol) }
-  let(:doi) { create(:doi, client_id: client.symbol) }
+  let(:client) { create(:client, provider: provider) }
+  let(:doi) { create(:doi, client: client) }
   let(:prefix) { create(:prefix) }
   let(:client_prefix) { create(:client_prefix, client: client) }
   let(:provider_prefix) { create(:provider_prefix, provider: provider) }

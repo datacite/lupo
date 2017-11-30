@@ -4,7 +4,7 @@ describe Doi, type: :model, vcr: true do
   it { should validate_presence_of(:doi) }
 
   describe "state" do
-    subject { FactoryBot.create(:doi) }
+    subject { create(:doi) }
 
     describe "new" do
       it "defaults to new" do
@@ -19,7 +19,7 @@ describe Doi, type: :model, vcr: true do
       end
 
       it "can't register with test prefix" do
-        subject = FactoryBot.create(:doi, doi: "10.5072/x")
+        subject = create(:doi, doi: "10.5072/x")
         subject.register
         expect(subject).to have_state(:draft)
       end
@@ -32,7 +32,7 @@ describe Doi, type: :model, vcr: true do
       end
 
       it "can't register with test prefix" do
-        subject = FactoryBot.create(:doi, doi: "10.5072/x")
+        subject = create(:doi, doi: "10.5072/x")
         subject.publish
         expect(subject).to have_state(:draft)
       end
