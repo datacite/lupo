@@ -48,7 +48,7 @@ class DoisController < ApplicationController
              total_pages: total_pages,
              page: page[:number].to_i }
 
-    render jsonapi: @dois, meta: meta, each_serializer: DoiSerializer
+    render jsonapi: @dois, meta: meta, include: @include, each_serializer: DoiSerializer
   end
 
   def show
