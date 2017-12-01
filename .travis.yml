@@ -37,9 +37,9 @@ after_success:
   - if [ "${TRAVIS_TAG?}" ]; then
       docker build -f Dockerfile -t $REPO:$TRAVIS_TAG .;
       docker push $REPO:$TRAVIS_TAG;
-    elif [ "$TRAVIS_BRANCH" == "no-solr" ]; then
-      docker build -f Dockerfile -t $REPO:no-solr .;
-      docker push $REPO:no-solr;
+    else
+      docker build -f Dockerfile -t $REPO:$TRAVIS_BRANCH .;
+      docker push $REPO:$TRAVIS_BRANCH;
     fi
 
 notifications:
