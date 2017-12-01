@@ -56,7 +56,7 @@ FactoryBot.define do
   end
 
   factory :prefix do
-    prefix {  "10."+Faker::Number.number(4)  }
+    sequence(:prefix) { |n| "10.507#{n}" }
   end
 
   factory :provider do
