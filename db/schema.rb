@@ -99,10 +99,10 @@ ActiveRecord::Schema.define(version: 20171109120529) do
     t.string "url"
     t.string "last_landing_page"
     t.string "last_landing_page_content_type"
-    t.string "state", default: "draft"
+    t.string "aasm_state"
+    t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
     t.index ["datacentre"], name: "FK5605B47847B5F5FF"
     t.index ["doi"], name: "doi", unique: true
-    t.index ["state"], name: "index_dataset_on_state"
     t.index ["url"], name: "index_dataset_on_url"
   end
 

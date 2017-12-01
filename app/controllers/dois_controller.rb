@@ -77,7 +77,7 @@ class DoisController < ApplicationController
   end
 
   def destroy
-    if @doi.remove
+    if @doi.destroy
       head :no_content
     else
       Rails.logger.warn @doi.errors.inspect

@@ -9,23 +9,23 @@ class Doi < ActiveRecord::Base
   # include state machine
   include AASM
 
-  aasm :column => 'state', :whiny_transitions => false do
-    # new is default state for new DOIs. This is needed to handle DOIs created
+  aasm :whiny_transitions => false do
+    # initial is default state for new DOIs. This is needed to handle DOIs created
     # outside of this application (i.e. the MDS API)
-    state :new, :initial => true
+    state :inactive, :initial => true
     state :draft, :tombstoned, :registered, :findable, :flagged, :broken, :deleted
 
     event :start do
-      transitions :from => :new, :to => :draft
+      transitions :from => :inactive, :to => :draft
     end
 
     event :register do
       # can't register test prefix
-      transitions :from => [:new, :draft], :to => :registered, :unless => :is_test_prefix?
+      transitions :from => [:inactive, :draft], :to => :registered, :unless => :is_test_prefix?
     end
 
     event :publish do
-      transitions :from => [:new, :draft, :tombstoned, :registered], :to => :findable, :unless => :is_test_prefix?
+      transitions :from => [:inactive, :draft, :tombstoned, :registered], :to => :findable, :unless => :is_test_prefix?
     end
 
     event :flag do
@@ -37,13 +37,13 @@ class Doi < ActiveRecord::Base
     end
 
     # can only delete if state is :draft
-    event :remove do
-      after do
-        destroy
-      end
-
-      transitions :from => [:draft], :to => :deleted
-    end
+    # event :remove do
+    #   after do
+    #     destroy
+    #   end
+    #
+    #   transitions :from => :draft, :to => :deleted
+    # end
   end
 
   self.table_name = "dataset"
@@ -158,8 +158,8 @@ class Doi < ActiveRecord::Base
   def self.set_state(from_date)
     from_date ||= Time.zone.now - 1.day
     Doi.where("updated >= ?", from_date).where(minted: nil).update_all(state: "draft")
-    Doi.where(state: "new").where("updated >= ?", from_date).where(is_active: "\x00").where.not(minted: nil).update_all(state: "registered")
-    Doi.where(state: "new").where("updated >= ?", from_date).where(is_active: "\x01").where.not(minted: nil).update_all(state: "findable")
+    Doi.where(state: "initial").where("updated >= ?", from_date).where(is_active: "\x00").where.not(minted: nil).update_all(state: "registered")
+    Doi.where(state: "initial").where("updated >= ?", from_date).where(is_active: "\x01").where.not(minted: nil).update_all(state: "findable")
     Doi.where("updated >= ?", from_date).where("doi LIKE ?", "10.5072%").update_all(state: "draft")
   end
 

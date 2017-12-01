@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :client do
     provider
 
-    contact_email { Faker::Internet.email }
+    contact_email "josiah@example.org"
     contact_name "Josiah Carberry"
     sequence(:symbol) { |n| provider.symbol + ".TEST#{n}" }
     name "My data center"
@@ -14,21 +14,22 @@ FactoryBot.define do
   end
 
   factory :client_prefix do
-    association :prefix, factory: :prefix, strategy: :create
-    association :provider_prefix, factory: :provider_prefix, strategy: :create
-    association :client, factory: :client, strategy: :create
+    prefix
+    provider_prefix
+    client
   end
 
   factory :doi do
     client
 
-    created {Faker::Time.backward(14, :evening)}
     doi { ("10.4122/" + Faker::Internet.password(8)).downcase }
-    updated {Faker::Time.backward(5, :evening)}
+
     version 1
     url {Faker::Internet.url }
     is_active 1
+    created {Faker::Time.backward(14, :evening)}
     minted {Faker::Time.backward(15, :evening)}
+    updated {Faker::Time.backward(5, :evening)}
 
     initialize_with { Doi.where(doi: doi).first_or_initialize }
   end
@@ -59,11 +60,11 @@ FactoryBot.define do
   end
 
   factory :provider do
-    contact_email { Faker::Internet.email }
+    contact_email "josiah@example.org"
     contact_name "Josiah Carberry"
-    symbol "TEST"
+    sequence(:symbol) { |n| "TEST#{n}" }
     name "My provider"
-    country_code { Faker::Address.country_code }
+    country_code "DE"
 
     initialize_with { Provider.where(symbol: symbol).first_or_initialize }
   end

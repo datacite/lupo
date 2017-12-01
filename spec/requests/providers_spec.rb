@@ -10,8 +10,8 @@ RSpec.describe "Providers", type: :request  do
                   "attributes" => {
                     "symbol" => "BL",
                     "name" => "British Library",
-                    "contact_email" => "bob@example.com",
-                    "country_code" => "GB" } } }
+                    "contact-email" => "bob@example.com",
+                    "country-code" => "GB" } } }
   end
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + token } }
 
@@ -21,7 +21,6 @@ RSpec.describe "Providers", type: :request  do
     before { get '/providers', headers: headers }
 
     it 'returns providers' do
-      expect(json).not_to be_empty
       expect(json['data'].size).to eq(10)
     end
 
@@ -66,9 +65,9 @@ RSpec.describe "Providers", type: :request  do
                         "symbol" => "BL",
                         "name" => "British Library",
                         "region" => "EMEA",
-                        "contact_email" => "doe@joe.joe",
-                        "contact_name" => "timAus",
-                        "country_code" => "GB" } } }
+                        "contact-email" => "doe@joe.joe",
+                        "contact-name" => "timAus",
+                        "country-code" => "GB" } } }
       end
       before { post '/providers', params: params.to_json, headers: headers }
 
@@ -87,8 +86,8 @@ RSpec.describe "Providers", type: :request  do
                       "attributes" => {
                         "symbol" => "BL",
                         "name" => "British Library",
-                        "contact_name" => "timAus",
-                        "country_code" => "GB" } } }
+                        "contact-name" => "timAus",
+                        "country-code" => "GB" } } }
       end
 
       before { post '/providers', params: params.to_json, headers: headers }
@@ -98,7 +97,7 @@ RSpec.describe "Providers", type: :request  do
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"].first).to eq("id"=>"contact_name", "title"=>"Contact name can't be blank")
+        expect(json["errors"].first).to eq("id"=>"contact_email", "title"=>"Contact email can't be blank")
       end
     end
 
@@ -107,9 +106,9 @@ RSpec.describe "Providers", type: :request  do
         { "type" => "providers",
           "attributes" => {
             "symbol" => "BL",
-            "contact_name" => "timAus",
+            "contact-name" => "timAus",
             "name" => "British Library",
-            "country_code" => "GB" } }
+            "country-code" => "GB" } }
       end
 
       before { post '/providers', params: params.to_json, headers: headers }
@@ -133,15 +132,14 @@ RSpec.describe "Providers", type: :request  do
                       "attributes" => {
                         "name" => "British Library",
                         "region" => "Americas",
-                        "contact_email" => "Pepe@mdm.cod",
-                        "contact_name" => "timAus",
-                        "country_code" => "GB" } } }
+                        "contact-email" => "Pepe@mdm.cod",
+                        "contact-name" => "timAus",
+                        "country-code" => "GB" } } }
       end
       before { put "/providers/#{provider.symbol}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
-        expect(json.dig('data', 'attributes', 'contact-name')).to eq("Josiah Carberry")
-        expect(json.dig('data', 'attributes', 'contact-email')).not_to eq(provider.contact_email)
+        expect(json.dig('data', 'attributes', 'contact-name')).to eq("timAus")
       end
 
       it 'returns status code 200' do
@@ -154,9 +152,9 @@ RSpec.describe "Providers", type: :request  do
                         "attributes" => {
                           "name" => "British Library",
                           "region" => "Americas",
-                          "contact_email" => "Pepe@mdm.cod",
-                          "contact_name" => "timAus",
-                          "country_code" => "GB" } } }
+                          "contact-email" => "Pepe@mdm.cod",
+                          "contact-name" => "timAus",
+                          "country-code" => "GB" } } }
         end
 
         before { put '/providers/xxx', params: params.to_json, headers: headers }

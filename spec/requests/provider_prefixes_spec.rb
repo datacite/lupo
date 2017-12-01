@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Provider Prefixes", type: :request   do
   let!(:provider_prefixes)  { create_list(:provider_prefix, 5) }
-  let(:provider_prefix) { provider_prefixes.first }
+  let(:provider_prefix) { create(:provider_prefix) }
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer }}
 
