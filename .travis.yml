@@ -7,20 +7,13 @@ services:
   - mysql
   - docker
   - memcached
-  - elasticsearch
   - redis-server
 
 addons:
   code_climate:
     repo_token: $CODECLIMATE_REPO_TOKEN
-  apt:
-    packages:
-      - oracle-java8-set-default
 
 before_install:
-  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.1.1.deb
-  - sudo dpkg -i --force-confnew elasticsearch-5.1.1.deb
-  - sudo service elasticsearch start
   - mysql -e 'CREATE DATABASE lupo_test;'
 
 install:
@@ -32,7 +25,6 @@ before_script:
   - mkdir -p tmp/pids
   - mkdir -p log
   - bundle exec sidekiq -d -e production --config config/sidekiq.yml -L log/sidekiq.log
-  - sleep 10
   - bundle exec rake db:setup RAILS_ENV=test
 
 script:

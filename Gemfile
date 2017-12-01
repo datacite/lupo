@@ -27,11 +27,8 @@ gem 'country_select', '~> 3.1'
 gem 'countries', '~> 2.1', '>= 2.1.2'
 gem 'aasm', '~> 4.12', '>= 4.12.3'
 gem "facets", require: false
-gem 'elasticsearch-model'
-gem 'elasticsearch-rails'
 gem 'sidekiq', '~> 5.0', '>= 5.0.4'
 gem 'bergamasco', '~> 0.3.10'
-gem 'pwqgen'
 gem 'base32-crockford-checksum', '~> 0.2.3'
 gem 'faraday_middleware-aws-signers-v4'
 

@@ -1,8 +1,6 @@
 require "countries"
 
 class Provider < ActiveRecord::Base
-  # index in Elasticsearch
-  # include Indexable
 
   # include helper module for caching infrequently changing resources
   include Cacheable
@@ -74,43 +72,6 @@ class Provider < ActiveRecord::Base
   def logo_url
     "#{ENV['CDN_URL']}/images/members/#{symbol.downcase}.png"
   end
-
-  # Elasticsearch indexing
-  # mappings dynamic: 'false' do
-  #   indexes :symbol, type: 'text'
-  #   indexes :name, type: 'text'
-  #   indexes :description, type: 'text'
-  #   indexes :contact_email, type: 'text'
-  #   indexes :country_code, type: 'text'
-  #   indexes :country_name, type: 'text'
-  #   indexes :region, type: 'text'
-  #   indexes :region_name, type: 'text'
-  #   indexes :year, type: 'integer'
-  #  #  indexes :website, type: 'text'
-  #  #  indexes :phone, type: 'text'
-  #   indexes :logo_url, type: 'text'
-  #   indexes :is_active, type: 'boolean'
-  #   indexes :created_at, type: 'date'
-  #   indexes :role_name, type: 'text'
-  #   indexes :updated_at, type: 'date'
-  # end
-
-  #  def as_indexed_json(options={})
-  #    {
-  #      "symbol" => uid.downcase,
-  #      "name" => name,
-  #      "description" => description,
-  #      "region" => region_name,
-  #      "country" => country_name,
-  #      "year" => year,
-  #      "logo_url" => logo_url,
-  #      "is_active" => is_active,
-  #      "contact_email" => contact_email,
-  #     #  "website" => website,
-  #     #  "phone" => phone,
-  #      "created" => created_at.iso8601,
-  #      "updated" => updated_at.iso8601 }
-  #  end
 
   # cumulative count clients by year
   # count until the previous year if client has been deleted

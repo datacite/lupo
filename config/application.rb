@@ -34,9 +34,6 @@ ENV['MEMCACHE_SERVERS'] ||= "memcached:11211"
 ENV['SITE_TITLE'] ||= "Data Center API"
 ENV['LOG_LEVEL'] ||= "info"
 ENV['REDIS_URL'] ||= "redis://redis:6379/8"
-ENV['ES_HOST'] ||= "elasticsearch:9200"
-ENV['ES_NAME'] ||= "elasticsearch"
-ENV['SOLR_URL'] ||= "https://search.test.datacite.org/api"
 ENV['CONCURRENCY'] ||= "25"
 ENV['CDN_URL'] ||= "https://assets.datacite.org"
 ENV['GITHUB_URL'] ||= "https://github.com/datacite/lupo"
@@ -70,9 +67,6 @@ module Lupo
     config.logger = ActiveSupport::TaggedLogging.new(logger)
     config.lograge.enabled = true
     config.log_level = ENV['LOG_LEVEL'].to_sym
-
-    # add elasticsearch instrumentation to logs
-    require 'elasticsearch/rails/lograge'
 
     config.cache_store = :dalli_store, nil, { :namespace => "api" }
 
