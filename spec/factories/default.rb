@@ -5,8 +5,8 @@ FactoryBot.define do
     provider
 
     contact_email { Faker::Internet.email }
-    contact_name { Faker::Name.name }
-    symbol { provider.symbol + ".TEST" }
+    contact_name "Josiah Carberry"
+    sequence(:symbol) { |n| provider.symbol + ".TEST#{n}" }
     name "My data center"
     role_name "ROLE_DATACENTRE"
 
@@ -60,7 +60,7 @@ FactoryBot.define do
 
   factory :provider do
     contact_email { Faker::Internet.email }
-    contact_name { Faker::Name.name }
+    contact_name "Josiah Carberry"
     symbol "TEST"
     name "My provider"
     country_code { Faker::Address.country_code }

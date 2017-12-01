@@ -2,25 +2,26 @@ require 'rails_helper'
 
 RSpec.describe 'Clients', type: :request  do
   let!(:clients)  { create_list(:client, 10) }
-  let!(:provider) { create(:provider) }
-  let!(:client) { create(:client) }
+  let(:bearer) { User.generate_token }
+  let(:provider) { create(:provider) }
+  let!(:client) { create(:client, provider: provider) }
   let(:params) do
     { "data" => { "type" => "clients",
                   "attributes" => {
-                    "symbol" => provider.symbol+".IMPERIAL",
+                    "symbol" => provider.symbol + ".IMPERIAL",
                     "name" => "Imperial College",
                     "contact_name" => "Madonna",
                     "contact_email" => "bob@example.com" },
                     "relationships": {
                 			"provider": {
                 				"data":{
-                					"type":"providers",
+                					"type": "providers",
                 					"id": provider.symbol
                 				}
                 			}
                 		}} }
   end
-  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN']}}
+  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
   let(:query) { "jamon"}
 
   # Test suite for GET /clients
@@ -83,8 +84,10 @@ RSpec.describe 'Clients', type: :request  do
   describe 'POST /clients' do
     context 'when the request is valid' do
       before { post '/clients', params: params.to_json, headers: headers }
+
       it 'creates a client' do
-        expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College")
+        expect(response.inspect).to eq(2)
+        expect(json.dig('data', 'attributes')).to eq("Imperial College")
       end
 
       it 'returns status code 201' do
@@ -116,7 +119,7 @@ RSpec.describe 'Clients', type: :request  do
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"].first).to eq("id"=>"contact_email", "title"=>"Contact email can't be blank")
+        expect(json["errors"].first).to eq("id"=>"contact_name", "title"=>"Contact name can't be blank")
       end
     end
   end

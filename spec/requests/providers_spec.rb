@@ -4,6 +4,7 @@ RSpec.describe "Providers", type: :request  do
   # initialize test data
   let!(:providers)  { create_list(:provider, 10) }
   let!(:provider) { providers.first }
+  let(:token) { User.generate_token }
   let(:params) do
     { "data" => { "type" => "providers",
                   "attributes" => {
@@ -12,7 +13,7 @@ RSpec.describe "Providers", type: :request  do
                     "contact_email" => "bob@example.com",
                     "country_code" => "GB" } } }
   end
-  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' +  ENV['JWT_TOKEN'] } }
+  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + token } }
 
   # Test suite for GET /providers
   describe 'GET /providers' do
@@ -97,7 +98,7 @@ RSpec.describe "Providers", type: :request  do
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"].first).to eq("id"=>"contact_email", "title"=>"Contact email can't be blank")
+        expect(json["errors"].first).to eq("id"=>"contact_name", "title"=>"Contact name can't be blank")
       end
     end
 
@@ -139,7 +140,7 @@ RSpec.describe "Providers", type: :request  do
       before { put "/providers/#{provider.symbol}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
-        expect(json.dig('data', 'attributes', 'contact-name')).to eq("timAus")
+        expect(json.dig('data', 'attributes', 'contact-name')).to eq("Josiah Carberry")
         expect(json.dig('data', 'attributes', 'contact-email')).not_to eq(provider.contact_email)
       end
 
