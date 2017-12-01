@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Client, type: :model do
-  let(:client)  { create(:client) }
-  let(:target) { create(:client, symbol: "TARGET") }
+  let(:provider)  { create(:provider) }
+  let(:client)  { create(:client, provider: provider) }
+  let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET") }
   let!(:dois) {  create_list(:doi, 5, client: client) }
 
   describe "Validations" do

@@ -1,8 +1,5 @@
 class Client < ActiveRecord::Base
 
-  # index in Elasticsearch
-  # include Indexable
-
   # include helper module for caching infrequently changing resources
   include Cacheable
 
@@ -30,7 +27,7 @@ class Client < ActiveRecord::Base
   validates_numericality_of :version, if: :version?
   validates_inclusion_of :role_name, :in => %w( ROLE_DATACENTRE ), :message => "Role %s is not included in the list"
   validates_associated :provider
-  # validate :check_id, :on => :create
+  validate :check_id, :on => :create
   validate :freeze_symbol, :on => :update
 
   belongs_to :provider, foreign_key: :allocator
@@ -53,10 +50,6 @@ class Client < ActiveRecord::Base
   # workaround for non-standard database column names and association
   def provider_id
     provider_symbol.downcase
-  end
-
-  def es_fields
-    ['symbol^10', 'name^10', 'contact_email', 'repository']
   end
 
   def provider_id=(value)
@@ -106,11 +99,11 @@ class Client < ActiveRecord::Base
   protected
 
   def freeze_symbol
-    errors.add(:symbol, "cannot be changed") if self.symbol_changed?
+    errors.add(:symbol, "cannot be changed") if symbol_changed?
   end
 
   def check_id
-    if symbol.split(".").first != provider.symbol
+    if symbol && symbol.split(".").first != provider.symbol
       errors.add(:symbol, ", Your Client ID must include the name of your provider. Separated by a dot '.' ")
     end
   end

@@ -28,8 +28,8 @@ class ClientsController < ApplicationController
     collection = collection.where('YEAR(datacentre.created) = ?', params[:year]) if params[:year].present?
 
     # calculate facet counts after filtering
-
     providers = collection.joins(:provider).select('allocator.symbol, allocator.name, count(allocator.id) as count').order('count DESC').group('allocator.id')
+
     # workaround, as selecting allocator.symbol as id doesn't work
     providers = providers.map { |p| { id: p.symbol, title: p.name, count: p.count } }
 
@@ -74,6 +74,7 @@ class ClientsController < ApplicationController
 
   # POST /clients
   def create
+
     @client = Client.new(safe_params)
     authorize! :create, @client
 
