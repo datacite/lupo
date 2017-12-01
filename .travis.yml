@@ -37,9 +37,11 @@ after_success:
   - if [ "${TRAVIS_TAG?}" ]; then
       docker build -f Dockerfile -t $REPO:$TRAVIS_TAG .;
       docker push $REPO:$TRAVIS_TAG;
+      echo "Pushed to" $REPO:$TRAVIS_TAG;
     else
       docker build -f Dockerfile -t $REPO:$TRAVIS_BRANCH .;
       docker push $REPO:$TRAVIS_BRANCH;
+      echo "Pushed to" $REPO:$TRAVIS_BRANCH;
     fi
 
 notifications:
