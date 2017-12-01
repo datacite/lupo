@@ -21,7 +21,7 @@ class ClientPrefix < ApplicationRecord
 
   # use base32-encode id as uid, with pretty formatting and checksum
   def uid
-    Base32::Crockford.encode(id, split: 4, length: 16, checksum: true).downcase
+    Base32::Crockford.encode(id, split: 4, length: 16).downcase
   end
 
   # workaround for non-standard database column names and association
