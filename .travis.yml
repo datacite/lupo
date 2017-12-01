@@ -32,7 +32,7 @@ script:
   - bundle exec codeclimate-test-reporter
 
 after_success:
-  - docker login -u="$DOCKER_USER" -p="$DOCKER_PASS";
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
   - export REPO=datacite/lupo;
   - if [ "${TRAVIS_TAG?}" ]; then
       docker build -f Dockerfile -t $REPO:$TRAVIS_TAG .;
