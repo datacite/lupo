@@ -28,7 +28,6 @@ RSpec.describe "dois", type: :request do
       before { get "/dois/#{doi.doi}", headers: headers }
 
       it 'returns the Doi' do
-        puts doi.inspect
         expect(json).not_to be_empty
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       end

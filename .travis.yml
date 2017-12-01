@@ -32,11 +32,11 @@ script:
   - bundle exec codeclimate-test-reporter
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+  - if [ "$TRAVIS_BRANCH" == "no-solr" ]; then
     docker login -u="$DOCKER_USER" -p="$DOCKER_PASS";
     export REPO=datacite/lupo;
     docker build -f Dockerfile -t $REPO:$COMMIT .;
-    docker push $REPO:$COMMIT;
+    docker push datacite/lupo:no-solr;
     fi
 
 notifications:

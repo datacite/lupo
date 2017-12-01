@@ -118,7 +118,6 @@ RSpec.describe "Providers", type: :request  do
       end
 
       # it 'returns a validation failure message' do
-      #   puts json
       #   expect(response["exception"]).to eq("#<JSON::ParserError: You need to provide a payload following the JSONAPI spec>")
       # end
     end

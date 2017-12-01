@@ -12,7 +12,6 @@
 #
 #     it 'can pass a url' do
 #       handle = Handler.new({id: 'myhandle', url: TEST_URL})
-#       puts handle.inspect
 #       expect(handle.url).to eq(TEST_URL)
 #     end
 #   end
