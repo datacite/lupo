@@ -70,9 +70,18 @@ describe Doi, type: :model, vcr: true do
 
       it "can't link_check if draft" do
         subject.start
+
         subject.link_check
         expect(subject).to have_state(:draft)
       end
+    end
+  end
+
+  describe "url" do
+    it "can handle long urls" do
+      url = "http://core.tdar.org/document/365177/new-york-african-burial-ground-skeletal-biology-final-report-volume-1-chapter-5-origins-of-the-new-york-african-burial-ground-population-biological-evidence-of-geographical-and-macroethnic-affiliations-using-craniometrics-dental-morphology-and-preliminary-genetic-analysis"
+      subject = create(:doi, url: url)
+      expect(subject.url).to eq(url)
     end
   end
 end
