@@ -146,21 +146,13 @@ class Doi < ActiveRecord::Base
     updated
   end
 
-  def state
-    if Rails.env.production?
-      is_active == "\x01" ? "findable" : "registered"
-    else
-      @state
-    end
-  end
-
   # update state for all DOIs starting from from_date
   def self.set_state(from_date)
     from_date ||= Time.zone.now - 1.day
-    Doi.where("updated >= ?", from_date).where(minted: nil).update_all(state: "draft")
-    Doi.where(state: "initial").where("updated >= ?", from_date).where(is_active: "\x00").where.not(minted: nil).update_all(state: "registered")
-    Doi.where(state: "initial").where("updated >= ?", from_date).where(is_active: "\x01").where.not(minted: nil).update_all(state: "findable")
-    Doi.where("updated >= ?", from_date).where("doi LIKE ?", "10.5072%").update_all(state: "draft")
+    Doi.where("updated >= ?", from_date).where(minted: nil).update_all(aasm_state: "draft")
+    Doi.where(aasm_state: nil).where("updated >= ?", from_date).where(is_active: "\x00").where.not(minted: nil).update_all(aasm_state: "registered")
+    Doi.where(aasm_state: nil).where("updated >= ?", from_date).where(is_active: "\x01").where.not(minted: nil).update_all(aasm_state: "findable")
+    Doi.where("updated >= ?", from_date).where("doi LIKE ?", "10.5072%").update_all(aasm_state: "draft")
   end
 
   # delete all DOIs with test prefix 10.5072 older than from_date

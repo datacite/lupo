@@ -33,6 +33,10 @@ class DoiSerializer < ActiveModel::Serializer
     object.container_title || object.publisher
   end
 
+  def state
+    object.aasm_state
+  end
+
   def updated
     object.updated_at
   end
