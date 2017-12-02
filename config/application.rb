@@ -40,6 +40,11 @@ ENV['GITHUB_URL'] ||= "https://github.com/datacite/lupo"
 ENV['SEARCH_URL'] ||= "https://search.datacite.org/"
 ENV['VOLPINO_URL'] ||= "https://profiles.datacite.org/api"
 ENV['RE3DATA_URL'] ||= "https://www.re3data.org/api/beta"
+ENV['MYSQL_DATABASE'] ||= "lupo"
+ENV['MYSQL_USER'] ||= "root"
+ENV['MYSQL_PASSWORD'] ||= ""
+ENV['MYSQL_HOST'] ||= "mysql"
+ENV['MYSQL_PORT'] ||= "3306"
 ENV['TRUSTED_IP'] ||= "10.0.40.1"
 
 module Lupo
