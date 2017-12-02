@@ -7,20 +7,13 @@ services:
   - mysql
   - docker
   - memcached
-  - elasticsearch
   - redis-server
 
 addons:
   code_climate:
     repo_token: $CODECLIMATE_REPO_TOKEN
-  apt:
-    packages:
-      - oracle-java8-set-default
 
 before_install:
-  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.1.1.deb
-  - sudo dpkg -i --force-confnew elasticsearch-5.1.1.deb
-  - sudo service elasticsearch start
   - mysql -e 'CREATE DATABASE lupo_test;'
 
 install:
@@ -32,7 +25,6 @@ before_script:
   - mkdir -p tmp/pids
   - mkdir -p log
   - bundle exec sidekiq -d -e production --config config/sidekiq.yml -L log/sidekiq.log
-  - sleep 10
   - bundle exec rake db:setup RAILS_ENV=test
 
 script:
@@ -40,11 +32,20 @@ script:
   - bundle exec codeclimate-test-reporter
 
 after_success:
-  - if [ "$TRAVIS_BRANCH" == "master" ]; then
-    docker login -u="$DOCKER_USER" -p="$DOCKER_PASS";
-    export REPO=datacite/lupo;
-    docker build -f Dockerfile -t $REPO:$COMMIT .;
-    docker push $REPO:$COMMIT;
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
+  - export REPO=datacite/lupo;
+  - if [ "${TRAVIS_TAG?}" ]; then
+      docker build -f Dockerfile -t $REPO:$TRAVIS_TAG .;
+      docker push $REPO:$TRAVIS_TAG;
+      echo "Pushed to" $REPO:$TRAVIS_TAG;
+    elif [ "$TRAVIS_BRANCH" == "master" ]; then
+      docker build -f Dockerfile -t $REPO .;
+      docker push $REPO;
+      echo "Pushed to" $REPO;
+    else
+      docker build -f Dockerfile -t $REPO:$TRAVIS_BRANCH .;
+      docker push $REPO:$TRAVIS_BRANCH;
+      echo "Pushed to" $REPO:$TRAVIS_BRANCH;
     fi
 
 notifications:

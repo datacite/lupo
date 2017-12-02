@@ -1,20 +1,20 @@
 require 'rails_helper'
 
 RSpec.describe "dois", type: :request do
-  let(:doi) { create(:doi) }
-  let(:client)  { create(:client) }
+  let(:provider)  { create(:provider, symbol: "ADMIN") }
+  let(:client)  { create(:client, provider: provider) }
+  let!(:dois) { create_list(:doi, 10, client: client) }
+  let(:doi) { create(:doi, client: client) }
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
 
   # Test suite for GET /dois
-  # This is using DoiSearch model
-  describe 'GET /dois', vcr: true do
+  describe 'GET /dois' do
     # make HTTP get request before each example
     before { get '/dois', headers: headers }
 
     it 'returns dois' do
-      expect(json).not_to be_empty
-      expect(json['data'].size).to eq(25)
+      expect(json['data'].size).to eq(10)
     end
 
     it 'returns status code 200' do
@@ -23,12 +23,11 @@ RSpec.describe "dois", type: :request do
   end
 
   # Test suite for GET /dois/:id
-  describe 'GET /dois/:id', vcr: true do
+  describe 'GET /dois/:id' do
     context 'when the record exists' do
       before { get "/dois/#{doi.doi}", headers: headers }
 
       it 'returns the Doi' do
-        puts doi.inspect
         expect(json).not_to be_empty
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       end
@@ -69,7 +68,7 @@ RSpec.describe "dois", type: :request do
               "client"=>  {
                 "data"=> {
                   "type"=> "clients",
-                  "id"=>  client.symbol
+                  "id"=> client.symbol.downcase
                 }
               }
             }
@@ -102,7 +101,7 @@ RSpec.describe "dois", type: :request do
               "client"=>  {
                 "data"=> {
                   "type"=> "clients",
-                  "id"=>  client.symbol
+                  "id"=> client.symbol.downcase
                 }
               }
             }
@@ -151,7 +150,10 @@ RSpec.describe "dois", type: :request do
 
   # Test suite for DELETE /dois/:id
   describe 'DELETE /dois/:id' do
-    before { delete "/dois/#{doi.doi}", headers: headers }
+    before do
+      doi.start
+      delete "/dois/#{doi.doi}", headers: headers
+    end
 
     it 'returns status code 204' do
       expect(response).to have_http_status(204)

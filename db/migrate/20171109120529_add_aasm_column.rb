@@ -1,6 +1,6 @@
 class AddAasmColumn < ActiveRecord::Migration[5.1]
   def self.up
-    add_column :dataset, :state, :string, default: "new"
+    add_column :dataset, :state, :string, default: "draft"
     add_index :dataset, [:state]
   end
 

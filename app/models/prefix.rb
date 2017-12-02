@@ -8,7 +8,7 @@ class Prefix < ActiveRecord::Base
 
   validates_presence_of :prefix
   validates_uniqueness_of :prefix
-  validates_format_of :prefix, :with => /\A10\.\d{4,5}\z/
+  validates_format_of :prefix, :with => /\A10\.\d{4,9}\z/
 
   has_many :client_prefixes, foreign_key: :prefixes
   has_many :clients, through: :client_prefixes

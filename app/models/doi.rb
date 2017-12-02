@@ -9,23 +9,23 @@ class Doi < ActiveRecord::Base
   # include state machine
   include AASM
 
-  aasm :column => 'state', :whiny_transitions => false do
-    # new is default state for new DOIs. This is needed to handle DOIs created
+  aasm :whiny_transitions => false do
+    # initial is default state for new DOIs. This is needed to handle DOIs created
     # outside of this application (i.e. the MDS API)
-    state :new, :initial => true
+    state :inactive, :initial => true
     state :draft, :tombstoned, :registered, :findable, :flagged, :broken, :deleted
 
-    event :draft do
-      transitions :from => :new, :to => :draft
+    event :start do
+      transitions :from => :inactive, :to => :draft
     end
 
     event :register do
       # can't register test prefix
-      transitions :from => [:new, :draft], :to => :registered, :unless => :is_test_prefix?
+      transitions :from => [:inactive, :draft], :to => :registered, :unless => :is_test_prefix?
     end
 
     event :publish do
-      transitions :from => [:new, :draft, :tombstoned, :registered], :to => :findable, :unless => :is_test_prefix?
+      transitions :from => [:inactive, :draft, :tombstoned, :registered], :to => :findable, :unless => :is_test_prefix?
     end
 
     event :flag do
@@ -37,13 +37,13 @@ class Doi < ActiveRecord::Base
     end
 
     # can only delete if state is :draft
-    event :remove do
-      after do
-        destroy
-      end
-
-      transitions :from => [:draft], :to => :deleted
-    end
+    # event :remove do
+    #   after do
+    #     destroy
+    #   end
+    #
+    #   transitions :from => :draft, :to => :deleted
+    # end
   end
 
   self.table_name = "dataset"
@@ -65,10 +65,21 @@ class Doi < ActiveRecord::Base
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
   validates_numericality_of :version, if: :version?
 
+  # update cached doi count for client
+  before_destroy :update_doi_count
+  after_create :update_doi_count
+  after_update :update_doi_count, if: :datacentre_changed?
+
   before_save :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
-  after_save { UrlJob.perform_later(self) }
+  after_save do
+    unless Rails.env.test?
+      UrlJob.perform_later(self)
+    end
+  end
+
+  scope :query, ->(query) { where("dataset.doi = ?", query) }
 
   def client_id
     client.symbol.downcase
@@ -147,8 +158,8 @@ class Doi < ActiveRecord::Base
   def self.set_state(from_date)
     from_date ||= Time.zone.now - 1.day
     Doi.where("updated >= ?", from_date).where(minted: nil).update_all(state: "draft")
-    Doi.where(state: "new").where("updated >= ?", from_date).where(is_active: "\x00").where.not(minted: nil).update_all(state: "registered")
-    Doi.where(state: "new").where("updated >= ?", from_date).where(is_active: "\x01").where.not(minted: nil).update_all(state: "findable")
+    Doi.where(state: "initial").where("updated >= ?", from_date).where(is_active: "\x00").where.not(minted: nil).update_all(state: "registered")
+    Doi.where(state: "initial").where("updated >= ?", from_date).where(is_active: "\x01").where.not(minted: nil).update_all(state: "findable")
     Doi.where("updated >= ?", from_date).where("doi LIKE ?", "10.5072%").update_all(state: "draft")
   end
 
@@ -162,8 +173,12 @@ class Doi < ActiveRecord::Base
   private
 
   def set_defaults
-    self.doi = doi.upcase
+    self.doi = doi.upcase if doi.present?
     self.is_active = is_active? ? "\x01" : "\x00"
+  end
+
+  def update_doi_count
+    Rails.cache.delete("cached_doi_count/#{datacentre}")
   end
 
   def set_url

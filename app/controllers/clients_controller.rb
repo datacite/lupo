@@ -1,5 +1,5 @@
 class ClientsController < ApplicationController
-  before_action :set_client, only: [:show, :update, :destroy, :getpassword]
+  before_action :set_client, only: [:show, :update, :destroy]
   before_action :authenticate_user_from_token!
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show]
@@ -28,8 +28,8 @@ class ClientsController < ApplicationController
     collection = collection.where('YEAR(datacentre.created) = ?', params[:year]) if params[:year].present?
 
     # calculate facet counts after filtering
-
     providers = collection.joins(:provider).select('allocator.symbol, allocator.name, count(allocator.id) as count').order('count DESC').group('allocator.id')
+
     # workaround, as selecting allocator.symbol as id doesn't work
     providers = providers.map { |p| { id: p.symbol, title: p.name, count: p.count } }
 
@@ -48,10 +48,10 @@ class ClientsController < ApplicationController
     total = collection.count
 
     order = case params[:sort]
-            when "name" then "datacentre.name"
             when "-name" then "datacentre.name DESC"
             when "created" then "datacentre.created"
-            else "datacentre.created DESC"
+            when "-created" then "datacentre.created DESC"
+            else "datacentre.name"
             end
 
     @clients = collection.order(order).page(page[:number]).per(page[:size])
@@ -67,13 +67,14 @@ class ClientsController < ApplicationController
 
   # GET /clients/1
   def show
-    meta = { dois: @client.doi_count }
+    meta = { dois: @client.cached_doi_count }
 
     render jsonapi: @client, meta: meta, include: @include
   end
 
   # POST /clients
   def create
+
     @client = Client.new(safe_params)
     authorize! :create, @client
 
@@ -98,7 +99,7 @@ class ClientsController < ApplicationController
   # don't delete, but set deleted_at timestamp
   # a client with dois or prefixes can't be deleted
   def destroy
-    if @client.doi_count.present?
+    if @client.dois.present?
       message = "Can't delete client that has DOIs."
       status = 400
       Rails.logger.warn message
@@ -110,13 +111,6 @@ class ClientsController < ApplicationController
       Rails.logger.warn @client.errors.inspect
       render jsonapi: serialize(@client.errors), status: :unprocessable_entity
     end
-  end
-
-  def getpassword
-    phrase = Password.new(current_user, @client)
-    response.headers['X-Consumer-Role'] = current_user && current_user.role_id || 'anonymous'
-    r = {password: phrase.string }
-    render jsonapi: @client, meta: r , include: @include
   end
 
   protected
@@ -142,8 +136,8 @@ class ClientsController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:symbol, :name, "contact-name", "contact-email", :domains, :provider, :repository, :target_id, "is-active", :deleted_at],
-              keys: { "contact-name" => :contact_name, "contact-email" => :contact_email, "is-active" => :is_active }
+      params, only: [:symbol, :name, "contact-name", "contact-email", :domains, :provider, :repository, "target-id", "is-active", :password, "set-password"],
+              keys: { "contact-name" => :contact_name, "contact-email" => :contact_email, "target-id" => :target_id, "is-active" => :is_active, "set-password" => :set_password }
     )
   end
 end

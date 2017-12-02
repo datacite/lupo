@@ -4,11 +4,18 @@ describe Doi, type: :model, vcr: true do
   it { should validate_presence_of(:doi) }
 
   describe "state" do
-    subject { FactoryBot.create(:doi) }
+    subject { create(:doi) }
 
-    describe "new" do
-      it "defaults to new" do
-        expect(subject).to have_state(:new)
+    describe "inactive" do
+      it "defaults to inactive" do
+        expect(subject).to have_state(:inactive)
+      end
+    end
+
+    describe "start" do
+      it "can start" do
+        subject.start
+        expect(subject).to have_state(:draft)
       end
     end
 
@@ -19,7 +26,8 @@ describe Doi, type: :model, vcr: true do
       end
 
       it "can't register with test prefix" do
-        subject = FactoryBot.create(:doi, doi: "10.5072/x")
+        subject = create(:doi, doi: "10.5072/x")
+        subject.start
         subject.register
         expect(subject).to have_state(:draft)
       end
@@ -32,7 +40,8 @@ describe Doi, type: :model, vcr: true do
       end
 
       it "can't register with test prefix" do
-        subject = FactoryBot.create(:doi, doi: "10.5072/x")
+        subject = create(:doi, doi: "10.5072/x")
+        subject.start
         subject.publish
         expect(subject).to have_state(:draft)
       end
@@ -46,6 +55,7 @@ describe Doi, type: :model, vcr: true do
       end
 
       it "can't flag if draft" do
+        subject.start
         subject.flag
         expect(subject).to have_state(:draft)
       end
@@ -59,6 +69,7 @@ describe Doi, type: :model, vcr: true do
       end
 
       it "can't link_check if draft" do
+        subject.start
         subject.link_check
         expect(subject).to have_state(:draft)
       end

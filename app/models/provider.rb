@@ -1,17 +1,15 @@
 require "countries"
 
 class Provider < ActiveRecord::Base
-  # index in Elasticsearch
-  # include Indexable
 
   # include helper module for caching infrequently changing resources
   include Cacheable
 
-  # include helper module for counting registered DOIs
-  include Countable
-
   # include helper module for managing associated users
   include Userable
+
+  # include helper module for setting password
+  include Passwordable
 
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
@@ -21,6 +19,7 @@ class Provider < ActiveRecord::Base
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   attr_readonly :uid, :symbol
+  attr_accessor :set_password
 
   validates_presence_of :symbol, :name, :contact_name, :contact_email
   validates_uniqueness_of :symbol, message: "This name has already been taken"
@@ -32,6 +31,7 @@ class Provider < ActiveRecord::Base
   validate :freeze_symbol, :on => :update
 
   has_many :clients, foreign_key: :allocator
+  has_many :dois, through: :clients
   has_many :provider_prefixes, foreign_key: :allocator, dependent: :destroy
   has_many :prefixes, through: :provider_prefixes
 
@@ -73,48 +73,6 @@ class Provider < ActiveRecord::Base
     "#{ENV['CDN_URL']}/images/members/#{symbol.downcase}.png"
   end
 
-  # Elasticsearch indexing
-  # mappings dynamic: 'false' do
-  #   indexes :symbol, type: 'text'
-  #   indexes :name, type: 'text'
-  #   indexes :description, type: 'text'
-  #   indexes :contact_email, type: 'text'
-  #   indexes :country_code, type: 'text'
-  #   indexes :country_name, type: 'text'
-  #   indexes :region, type: 'text'
-  #   indexes :region_name, type: 'text'
-  #   indexes :year, type: 'integer'
-  #  #  indexes :website, type: 'text'
-  #  #  indexes :phone, type: 'text'
-  #   indexes :logo_url, type: 'text'
-  #   indexes :is_active, type: 'boolean'
-  #   indexes :created_at, type: 'date'
-  #   indexes :role_name, type: 'text'
-  #   indexes :updated_at, type: 'date'
-  # end
-
-  #  def as_indexed_json(options={})
-  #    {
-  #      "symbol" => uid.downcase,
-  #      "name" => name,
-  #      "description" => description,
-  #      "region" => region_name,
-  #      "country" => country_name,
-  #      "year" => year,
-  #      "logo_url" => logo_url,
-  #      "is_active" => is_active,
-  #      "contact_email" => contact_email,
-  #     #  "website" => website,
-  #     #  "phone" => phone,
-  #      "created" => created_at.iso8601,
-  #      "updated" => updated_at.iso8601 }
-  #  end
-
-  # show all dois for admin
-  def query_filter
-    "allocator_symbol:#{symbol}" if symbol != "ADMIN"
-  end
-
   # cumulative count clients by year
   # count until the previous year if client has been deleted
   # show all clients for admin
@@ -126,7 +84,7 @@ class Provider < ActiveRecord::Base
       to = a[1] ? a[1].year : Date.today.year + 1
       sum += (from...to).to_a
     end
-    return nil if c.empty?
+    return [] if c.empty?
 
     c += (c.min..Date.today.year).to_a
     c.group_by { |a| a }
@@ -191,5 +149,8 @@ class Provider < ActiveRecord::Base
     self.role_name = "ROLE_ALLOCATOR" unless role_name.present?
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
+
+    new_password = set_password == true ? encrypt_password(password) : nil
+    self.password = new_password if new_password.present?
   end
 end

@@ -3,8 +3,9 @@ require 'rails_helper'
 RSpec.describe "Prefixes", type: :request   do
   # initialize test data
   let!(:prefixes)  { create_list(:prefix, 10) }
+  let(:bearer) { User.generate_token }
   let(:prefix_id) { prefixes.first.prefix }
-  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + ENV['JWT_TOKEN']}}
+  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer }}
 
   # Test suite for GET /prefixes
   describe 'GET /prefixes' do

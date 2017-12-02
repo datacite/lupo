@@ -4,15 +4,16 @@ RSpec.describe "Providers", type: :request  do
   # initialize test data
   let!(:providers)  { create_list(:provider, 10) }
   let!(:provider) { providers.first }
+  let(:token) { User.generate_token }
   let(:params) do
     { "data" => { "type" => "providers",
                   "attributes" => {
                     "symbol" => "BL",
                     "name" => "British Library",
-                    "contact_email" => "bob@example.com",
-                    "country_code" => "GB" } } }
+                    "contact-email" => "bob@example.com",
+                    "country-code" => "GB" } } }
   end
-  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' +  ENV['JWT_TOKEN'] } }
+  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + token } }
 
   # Test suite for GET /providers
   describe 'GET /providers' do
@@ -20,7 +21,6 @@ RSpec.describe "Providers", type: :request  do
     before { get '/providers', headers: headers }
 
     it 'returns providers' do
-      expect(json).not_to be_empty
       expect(json['data'].size).to eq(10)
     end
 
@@ -65,9 +65,9 @@ RSpec.describe "Providers", type: :request  do
                         "symbol" => "BL",
                         "name" => "British Library",
                         "region" => "EMEA",
-                        "contact_email" => "doe@joe.joe",
-                        "contact_name" => "timAus",
-                        "country_code" => "GB" } } }
+                        "contact-email" => "doe@joe.joe",
+                        "contact-name" => "timAus",
+                        "country-code" => "GB" } } }
       end
       before { post '/providers', params: params.to_json, headers: headers }
 
@@ -86,8 +86,8 @@ RSpec.describe "Providers", type: :request  do
                       "attributes" => {
                         "symbol" => "BL",
                         "name" => "British Library",
-                        "contact_name" => "timAus",
-                        "country_code" => "GB" } } }
+                        "contact-name" => "timAus",
+                        "country-code" => "GB" } } }
       end
 
       before { post '/providers', params: params.to_json, headers: headers }
@@ -106,9 +106,9 @@ RSpec.describe "Providers", type: :request  do
         { "type" => "providers",
           "attributes" => {
             "symbol" => "BL",
-            "contact_name" => "timAus",
+            "contact-name" => "timAus",
             "name" => "British Library",
-            "country_code" => "GB" } }
+            "country-code" => "GB" } }
       end
 
       before { post '/providers', params: params.to_json, headers: headers }
@@ -118,7 +118,6 @@ RSpec.describe "Providers", type: :request  do
       end
 
       # it 'returns a validation failure message' do
-      #   puts json
       #   expect(response["exception"]).to eq("#<JSON::ParserError: You need to provide a payload following the JSONAPI spec>")
       # end
     end
@@ -132,15 +131,14 @@ RSpec.describe "Providers", type: :request  do
                       "attributes" => {
                         "name" => "British Library",
                         "region" => "Americas",
-                        "contact_email" => "Pepe@mdm.cod",
-                        "contact_name" => "timAus",
-                        "country_code" => "GB" } } }
+                        "contact-email" => "Pepe@mdm.cod",
+                        "contact-name" => "timAus",
+                        "country-code" => "GB" } } }
       end
       before { put "/providers/#{provider.symbol}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'contact-name')).to eq("timAus")
-        expect(json.dig('data', 'attributes', 'contact-email')).not_to eq(provider.contact_email)
       end
 
       it 'returns status code 200' do
@@ -153,9 +151,9 @@ RSpec.describe "Providers", type: :request  do
                         "attributes" => {
                           "name" => "British Library",
                           "region" => "Americas",
-                          "contact_email" => "Pepe@mdm.cod",
-                          "contact_name" => "timAus",
-                          "country_code" => "GB" } } }
+                          "contact-email" => "Pepe@mdm.cod",
+                          "contact-name" => "timAus",
+                          "country-code" => "GB" } } }
         end
 
         before { put '/providers/xxx', params: params.to_json, headers: headers }

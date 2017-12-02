@@ -2,33 +2,34 @@ require 'faker'
 
 FactoryBot.define do
   factory :client do
-    association :provider, factory: :provider, strategy: :create
+    provider
 
-    contact_email { Faker::Internet.email }
-    contact_name { Faker::Name.name }
-    symbol { provider.symbol + "." + Faker::Code.asin + Faker::Code.isbn }
+    contact_email "josiah@example.org"
+    contact_name "Josiah Carberry"
+    sequence(:symbol) { |n| provider.symbol + ".TEST#{n}" }
     name "My data center"
     role_name "ROLE_DATACENTRE"
-    provider_id  { provider.symbol.downcase }
+
+    initialize_with { Client.where(symbol: symbol).first_or_initialize }
   end
 
   factory :client_prefix do
-    association :prefix, factory: :prefix, strategy: :create
-    association :provider_prefix, factory: :provider_prefix, strategy: :create
-    association :client, factory: :client, strategy: :create
+    prefix
+    provider_prefix
+    client
   end
 
   factory :doi do
-    association :client, factory: :client, strategy: :create
+    client
 
-    created {Faker::Time.backward(14, :evening)}
     doi { ("10.4122/" + Faker::Internet.password(8)).downcase }
-    updated {Faker::Time.backward(5, :evening)}
+
     version 1
     url {Faker::Internet.url }
     is_active 1
+    created {Faker::Time.backward(14, :evening)}
     minted {Faker::Time.backward(15, :evening)}
-    client_id  { client.symbol.upcase }
+    updated {Faker::Time.backward(5, :evening)}
 
     initialize_with { Doi.where(doi: doi).first_or_initialize }
   end
@@ -55,15 +56,15 @@ FactoryBot.define do
   end
 
   factory :prefix do
-    prefix {  "10."+Faker::Number.number(4)  }
+    sequence(:prefix) { |n| "10.507#{n}" }
   end
 
   factory :provider do
-    contact_email { Faker::Internet.email }
-    contact_name { Faker::Name.name }
-    symbol { Faker::Code.asin + Faker::Code.asin }
+    contact_email "josiah@example.org"
+    contact_name "Josiah Carberry"
+    sequence(:symbol) { |n| "TEST#{n}" }
     name "My provider"
-    country_code { Faker::Address.country_code }
+    country_code "DE"
 
     initialize_with { Provider.where(symbol: symbol).first_or_initialize }
   end

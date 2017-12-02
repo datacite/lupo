@@ -1,5 +1,5 @@
 class ProvidersController < ApplicationController
-  before_action :set_provider, only: [:show, :update, :destroy, :getpassword]
+  before_action :set_provider, only: [:show, :update, :destroy]
   before_action :set_include, :authenticate_user_from_token!
   load_and_authorize_resource :except => [:index, :show]
 
@@ -49,10 +49,10 @@ class ProvidersController < ApplicationController
     total = collection.count
 
     order = case params[:sort]
-            when "name" then "allocator.name"
             when "-name" then "allocator.name DESC"
             when "created" then "allocator.created"
-            else "allocator.created DESC"
+            when "-created" then "allocator.created DESC"
+            else "allocator.name"
             end
 
     @providers = collection.order(order).page(page[:number]).per(page[:size])
@@ -70,7 +70,7 @@ class ProvidersController < ApplicationController
   def show
     meta = { providers: @provider.provider_count,
              clients: @provider.client_count,
-             dois: @provider.doi_count
+             dois: @provider.cached_doi_count
             }.compact
 
     render jsonapi: @provider, meta: meta, include: @include
@@ -116,13 +116,6 @@ class ProvidersController < ApplicationController
     end
   end
 
-  def getpassword
-    phrase = Password.new(current_user, @provider)
-    response.headers['X-Consumer-Role'] = current_user && current_user.role_id || 'anonymous'
-    r = {password: phrase.string }
-    render jsonapi: @client, meta: r , include: @include
-  end
-
   protected
 
   # Use callbacks to share common setup or constraints between actions.
@@ -145,8 +138,8 @@ class ProvidersController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:name, :symbol, :contact_name, :contact_email, :country, :is_active],
-              keys: { country: :country_code }
+      params, only: [:name, :symbol, "contact-name", "contact-email", :country, "is_active", :password, "set-password"],
+              keys: { country: :country_code, "contact-name" => :contact_name, "contact-email" => :contact_email, "is-active" => :is_active, "set-password" => :set_password }
     )
   end
 end
