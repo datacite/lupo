@@ -4,7 +4,7 @@ class DoisController < ApplicationController
   before_action :set_doi, only: [:show, :update, :destroy]
   before_action :set_include
   before_action :authenticate_user_from_token!
-  load_and_authorize_resource :except => [:index, :show]
+  authorize_resource :except => [:index, :show]
 
   def index
     # support nested routes
@@ -21,8 +21,8 @@ class DoisController < ApplicationController
       total = collection.all.size
     else
       provider = Provider.unscoped.where('allocator.symbol = ?', "ADMIN").first
+      total = provider.present? ? provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i } : 0
       collection = Doi
-      total = provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
     end
 
     if params[:query].present?
@@ -77,11 +77,16 @@ class DoisController < ApplicationController
   end
 
   def destroy
-    if @doi.destroy
-      head :no_content
+    if Flipper[:delete_doi].enabled?(current_user)
+      if @doi.destroy
+        head :no_content
+      else
+        Rails.logger.warn @doi.errors.inspect
+        render jsonapi: serialize(@doi.errors), status: :unprocessable_entity
+      end
     else
-      Rails.logger.warn @doi.errors.inspect
-      render jsonapi: serialize(@doi.errors), status: :unprocessable_entity
+      response.headers['Allow'] = 'GET, POST, PATCH, PUT, OPTIONS'
+      render json: { errors: [{ status: "405", title: "Method not allowed" }] }.to_json, status: :method_not_allowed
     end
   end
 

@@ -12,6 +12,8 @@ require "rails/test_unit/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+require 'flipper/middleware/memoizer'
+
 # load ENV variables from .env file if it exists
 env_file = File.expand_path("../../.env", __FILE__)
 if File.exist?(env_file)
@@ -40,7 +42,7 @@ ENV['GITHUB_URL'] ||= "https://github.com/datacite/lupo"
 ENV['SEARCH_URL'] ||= "https://search.datacite.org/"
 ENV['VOLPINO_URL'] ||= "https://profiles.datacite.org/api"
 ENV['RE3DATA_URL'] ||= "https://www.re3data.org/api/beta"
-ENV['MYSQL_DATABASE'] ||= "lupo"
+ENV['MYSQL_DATABASE'] ||= "mds"
 ENV['MYSQL_USER'] ||= "root"
 ENV['MYSQL_PASSWORD'] ||= ""
 ENV['MYSQL_HOST'] ||= "mysql"
@@ -90,5 +92,7 @@ module Lupo
     config.generators do |g|
       g.fixture_replacement :factory_bot
     end
+
+    config.middleware.use Flipper::Middleware::Memoizer
   end
 end

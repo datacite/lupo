@@ -31,6 +31,8 @@ gem 'sidekiq', '~> 5.0', '>= 5.0.4'
 gem 'bergamasco', '~> 0.3.10'
 gem 'base32-crockford-checksum', '~> 0.2.3'
 gem 'faraday_middleware-aws-signers-v4'
+gem 'flipper', '~> 0.11.0'
+gem 'flipper-active_support_cache_store'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5', '>= 3.5.2'
