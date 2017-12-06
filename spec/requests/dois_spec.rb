@@ -159,7 +159,7 @@ RSpec.describe "dois", type: :request do
       expect(response).to have_http_status(204)
     end
 
-    it 'updates the record' do
+    it 'deletes the record' do
       expect(response.body).to be_empty
     end
   end

@@ -49,5 +49,6 @@ VCR.configure do |c|
   c.hook_into :webmock
   c.ignore_localhost = true
   c.ignore_hosts "codeclimate.com"
+  c.filter_sensitive_data("<VOLPINO_TOKEN>") { ENV["VOLPINO_TOKEN"] }
   c.configure_rspec_metadata!
 end

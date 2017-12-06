@@ -17,7 +17,7 @@ describe User, type: :model do
     end
   end
 
-  describe "abilities" do
+  describe "abilities", vcr: true do
     subject { Ability.new(user) }
 
     context "when is a user" do
@@ -65,6 +65,11 @@ describe User, type: :model do
       it{ is_expected.not_to be_able_to(:create, client_prefix) }
       it{ is_expected.not_to be_able_to(:update, client_prefix) }
       it{ is_expected.not_to be_able_to(:destroy, client_prefix) }
+
+      it{ is_expected.to be_able_to(:read, doi) }
+      it{ is_expected.not_to be_able_to(:create, doi) }
+      it{ is_expected.to be_able_to(:update, doi) }
+      it{ is_expected.not_to be_able_to(:destroy, doi) }
     end
 
     context "when is a client user" do
@@ -117,6 +122,11 @@ describe User, type: :model do
       it{ is_expected.to be_able_to(:create, provider_prefix) }
       it{ is_expected.to be_able_to(:update, provider_prefix) }
       it{ is_expected.to be_able_to(:destroy, provider_prefix) }
+
+      it{ is_expected.to be_able_to(:read, doi) }
+      it{ is_expected.not_to be_able_to(:create, doi) }
+      it{ is_expected.to be_able_to(:update, doi) }
+      it{ is_expected.not_to be_able_to(:destroy, doi) }
     end
 
     context "when is a provider user" do
