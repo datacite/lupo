@@ -16,7 +16,13 @@ class Ability
       can [:manage], ProviderPrefix, :provider_id => user.provider_id
       can [:manage], Client,:provider_id => user.provider_id
       can [:manage], ClientPrefix#, :client_id => user.provider_id
-      can [:manage], Doi, :provider_id => user.provider_id
+
+      if Flipper[:delete_doi].enabled?(user)
+        can [:manage], Doi, :provider_id => user.provider_id
+      else
+        can [:read, :update], Doi, :provider_id => user.provider_id
+      end
+
       can [:read], User
     elsif user.role_id == "provider_user" && user.provider_id.present?
       can [:read], Provider, :symbol => user.provider_id.upcase
@@ -28,7 +34,13 @@ class Ability
     elsif user.role_id == "client_admin" && user.client_id.present?
       can [:read, :update], Client, :symbol => user.client_id.upcase
       can [:read], ClientPrefix, :client_id => user.client_id
-      can [:manage], Doi, :client_id => user.client_id
+
+      if Flipper[:delete_doi].enabled?(user)
+        can [:manage], Doi, :client_id => user.client_id
+      else
+        can [:read, :update], Doi, :client_id => user.client_id
+      end
+
       can [:read], User
     elsif user.role_id == "client_user" && user.client_id.present?
       can [:read], Client, :symbol => user.client_id.upcase

@@ -8,11 +8,13 @@ Flipper.configure do |config|
   config.default do
     configuration = {
       url: ENV['VOLPINO_URL'] + "/flipper",
-      headers: { "Authorization" => "Bearer " + User.generate_token(exp: 3600 * 30) }
+      headers: { "Authorization" => "Bearer " + ENV['VOLPINO_TOKEN'] }
     }
-    http_adapter = Flipper::Adapters::Http.new(configuration)
-    cache = ActiveSupport::Cache::MemCacheStore.new(ENV['MEMCACHE_SERVERS'])
-    adapter = Flipper::Adapters::ActiveSupportCacheStore.new(http_adapter, cache, expires_in: 1.hour)
+    adapter = Flipper::Adapters::Http.new(configuration)
+    unless Rails.env.test?
+      cache = ActiveSupport::Cache::MemCacheStore.new(ENV['MEMCACHE_SERVERS'])
+      adapter = Flipper::Adapters::ActiveSupportCacheStore.new(adapter, cache, expires_in: 1.hour)
+    end
     flipper = Flipper.new(adapter, instrumenter: ActiveSupport::Notifications)
   end
 end

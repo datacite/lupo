@@ -77,16 +77,11 @@ class DoisController < ApplicationController
   end
 
   def destroy
-    if Flipper[:delete_doi].enabled?(current_user)
-      if @doi.destroy
-        head :no_content
-      else
-        Rails.logger.warn @doi.errors.inspect
-        render jsonapi: serialize(@doi.errors), status: :unprocessable_entity
-      end
+    if @doi.destroy
+      head :no_content
     else
-      response.headers['Allow'] = 'GET, POST, PATCH, PUT, OPTIONS'
-      render json: { errors: [{ status: "405", title: "Method not allowed" }] }.to_json, status: :method_not_allowed
+      Rails.logger.warn @doi.errors.inspect
+      render jsonapi: serialize(@doi.errors), status: :unprocessable_entity
     end
   end
 

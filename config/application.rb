@@ -12,8 +12,6 @@ require "rails/test_unit/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-require 'flipper/middleware/memoizer'
-
 # load ENV variables from .env file if it exists
 env_file = File.expand_path("../../.env", __FILE__)
 if File.exist?(env_file)
@@ -92,7 +90,5 @@ module Lupo
     config.generators do |g|
       g.fixture_replacement :factory_bot
     end
-
-    config.middleware.use Flipper::Middleware::Memoizer
   end
 end
