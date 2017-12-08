@@ -77,11 +77,16 @@ class DoisController < ApplicationController
   end
 
   def destroy
-    if @doi.destroy
-      head :no_content
+    if @doi.draft?
+      if @doi.destroy
+        head :no_content
+      else
+        Rails.logger.warn @doi.errors.inspect
+        render jsonapi: serialize(@doi.errors), status: :unprocessable_entity
+      end
     else
-      Rails.logger.warn @doi.errors.inspect
-      render jsonapi: serialize(@doi.errors), status: :unprocessable_entity
+      response.headers["Allow"] = "HEAD, GET, POST, PATCH, PUT, OPTIONS"
+      render json: { errors: [{ status: "405", title: "Method not allowed" }] }.to_json, status: :method_not_allowed
     end
   end
 
