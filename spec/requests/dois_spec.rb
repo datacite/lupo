@@ -151,7 +151,7 @@ RSpec.describe "dois", type: :request do
   # Test suite for DELETE /dois/:id
   describe 'DELETE /dois/:id' do
     before do
-      doi.start
+      doi = create(:doi, client: client, aasm_state: "draft")
       delete "/dois/#{doi.doi}", headers: headers
     end
 
@@ -161,6 +161,21 @@ RSpec.describe "dois", type: :request do
 
     it 'deletes the record' do
       expect(response.body).to be_empty
+    end
+  end
+
+  describe 'DELETE /dois/:id findable state' do
+    before do
+      doi = create(:doi, client: client, aasm_state: "findable")
+      delete "/dois/#{doi.doi}", headers: headers
+    end
+
+    it 'returns status code 405' do
+      expect(response).to have_http_status(405)
+    end
+
+    it 'deletes the record' do
+      expect(json["errors"]).to eq([{"status"=>"405", "title"=>"Method not allowed"}])
     end
   end
 end
