@@ -63,8 +63,8 @@ after_success:
       git remote;
       git config user.email ${DOCKER_EMAIL};
       git config user.name ${DOCKER_USERNAME};
-      git add _volpino.auto.tfvars;
-      git commit -m "Adding volpino git variables for latest commit";
+      git add _lupo.auto.tfvars;
+      git commit -m "Adding lupo git variables for latest commit";
       git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/${TERRAFORM_REPO}.git" master;
     fi
 
