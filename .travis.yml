@@ -59,7 +59,7 @@ after_success:
       export GIT_SHA=$(git rev-parse --short HEAD);
       export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1));
       git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/${TERRAFORM_REPO}.git";
-      ./dockerize -template vendor/docker/_volpino.auto.tfvars.tmpl:${TERRAFORM_REPO}/_volpino.auto.tfvars;
+      ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:${TERRAFORM_REPO}/_lupo.auto.tfvars;
       cd ${TERRAFORM_REPO};
       git remote;
       git config user.email ${DOCKER_EMAIL};
