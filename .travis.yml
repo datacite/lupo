@@ -32,7 +32,6 @@ script:
   - bundle exec codeclimate-test-reporter
 
 after_success:
-  - set -e
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
   - REPO=datacite/lupo;
   - AUTO_DEPLOY=false;
