@@ -32,20 +32,41 @@ script:
   - bundle exec codeclimate-test-reporter
 
 after_success:
+  - set -e
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD";
-  - export REPO=datacite/lupo;
+  - REPO=datacite/lupo;
+  - AUTO_DEPLOY=false;
   - if [ "${TRAVIS_TAG?}" ]; then
       docker build -f Dockerfile -t $REPO:$TRAVIS_TAG .;
       docker push $REPO:$TRAVIS_TAG;
       echo "Pushed to" $REPO:$TRAVIS_TAG;
+      AUTO_DEPLOY=true;
     elif [ "$TRAVIS_BRANCH" == "master" ]; then
       docker build -f Dockerfile -t $REPO .;
       docker push $REPO;
       echo "Pushed to" $REPO;
+      AUTO_DEPLOY=true;
     else
       docker build -f Dockerfile -t $REPO:$TRAVIS_BRANCH .;
       docker push $REPO:$TRAVIS_BRANCH;
       echo "Pushed to" $REPO:$TRAVIS_BRANCH;
+    fi
+
+  - if [ "$AUTO_DEPLOY" == "true" ]; then
+      wget https://github.com/jwilder/dockerize/releases/download/v0.6.0/dockerize-linux-amd64-v0.6.0.tar.gz;
+      tar -xzvf dockerize-linux-amd64-v0.6.0.tar.gz;
+      rm dockerize-linux-amd64-v0.6.0.tar.gz;
+      export GIT_SHA=$(git rev-parse --short HEAD);
+      export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1));
+      git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/${TERRAFORM_REPO}.git";
+      ./dockerize -template vendor/docker/_volpino.auto.tfvars.tmpl:${TERRAFORM_REPO}/_volpino.auto.tfvars;
+      cd ${TERRAFORM_REPO};
+      git remote;
+      git config user.email ${DOCKER_EMAIL};
+      git config user.name ${DOCKER_USERNAME};
+      git add _volpino.auto.tfvars;
+      git commit -m "Adding volpino git variables for latest commit";
+      git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/${TERRAFORM_REPO}.git" master;
     fi
 
 notifications:
