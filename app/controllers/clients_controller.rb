@@ -15,6 +15,8 @@ class ClientsController < ApplicationController
 
     if params[:id].present?
       collection = collection.where(symbol: params[:id])
+    elsif params[:ids].present?
+      collection = collection.where(symbol: params[:ids].split(","))
     elsif params[:query].present?
       collection = collection.query(params[:query])
     end

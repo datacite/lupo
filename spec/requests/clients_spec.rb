@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Clients', type: :request  do
   let!(:clients)  { create_list(:client, 10) }
+  let(:ids) { clients.map { |c| c.uid }.join(",") }
   let(:bearer) { User.generate_token }
   let(:provider) { create(:provider) }
   let!(:client) { create(:client, provider: provider) }
@@ -52,6 +53,19 @@ RSpec.describe 'Clients', type: :request  do
   #     expect(response).to have_http_status(200)
   #   end
   # end
+
+  describe 'GET /clients?ids=' do
+    before { get "/clients?ids=#{ids}", headers: headers }
+
+    it 'returns clients' do
+      expect(json).not_to be_empty
+      expect(json['data'].size).to eq(10)
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
 
   # Test suite for GET /clients/:id
   describe 'GET /clients/:id' do
@@ -172,7 +186,7 @@ RSpec.describe 'Clients', type: :request  do
     it 'returns status code 204' do
       expect(response).to have_http_status(204)
     end
-    
+
     context 'when the resources doesnt exist' do
       before { delete '/clients/xxx', params: params.to_json, headers: headers }
 
