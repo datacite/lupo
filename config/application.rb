@@ -73,7 +73,8 @@ module Lupo
     config.lograge.enabled = true
     config.log_level = ENV['LOG_LEVEL'].to_sym
 
-    config.cache_store = :dalli_store, nil, { :namespace => "api" }
+    # configure caching
+    config.cache_store = :dalli_store, nil, { :namespace => ENV['APPLICATION'] }
 
     # raise error with unpermitted parameters
     config.action_controller.action_on_unpermitted_parameters = :raise
