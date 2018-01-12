@@ -3,7 +3,7 @@ MAINTAINER Kristian Garza "kgarza@datacite.org"
 
 # Set correct environment variables.
 ENV HOME /home/app
-ENV DOCKERIZE_VERSION v0.2.0
+ENV DOCKERIZE_VERSION v0.6.0
 
 # Allow app user to read /etc/container_environment
 RUN usermod -a -G docker_env app
@@ -29,8 +29,9 @@ RUN rm -rf /etc/service/sshd /etc/my_init.d/00_regen_ssh_host_keys.sh
 # Enable Passenger and Nginx and remove the default site
 # Preserve env variables for nginx
 RUN rm -f /etc/service/nginx/down && \
-    rm /etc/nginx/sites-enabled/default && \
-    rm /etc/nginx/nginx.conf
+    rm /etc/nginx/sites-enabled/default
+COPY vendor/docker/webapp.conf /etc/nginx/sites-enabled/webapp.conf
+COPY vendor/docker/00_app_env.conf /etc/nginx/conf.d/00_app_env.conf
 
 # send logs to STDOUT and STDERR
 RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
@@ -74,7 +75,6 @@ RUN mkdir -p /home/app/.handle \
 
 # Run additional scripts during container startup (i.e. not at build time)
 RUN mkdir -p /etc/my_init.d
-COPY vendor/docker/70_templates.sh /etc/my_init.d/70_templates.sh
 COPY vendor/docker/80_flush_cache.sh /etc/my_init.d/80_flush_cache.sh
 COPY vendor/docker/90_migrate.sh /etc/my_init.d/90_migrate.sh
 
