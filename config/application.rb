@@ -29,7 +29,7 @@ end
 
 # default values for some ENV variables
 ENV['APPLICATION'] ||= "client-api"
-ENV['HOSTNAME'] ||= "fabbrica.local"
+ENV['HOSTNAME'] ||= "lupo"
 ENV['MEMCACHE_SERVERS'] ||= "memcached:11211"
 ENV['SITE_TITLE'] ||= "Data Center API"
 ENV['LOG_LEVEL'] ||= "info"
@@ -40,7 +40,7 @@ ENV['GITHUB_URL'] ||= "https://github.com/datacite/lupo"
 ENV['SEARCH_URL'] ||= "https://search.datacite.org/"
 ENV['VOLPINO_URL'] ||= "https://profiles.datacite.org/api"
 ENV['RE3DATA_URL'] ||= "https://www.re3data.org/api/beta"
-ENV['MYSQL_DATABASE'] ||= "mds"
+ENV['MYSQL_DATABASE'] ||= "lupo"
 ENV['MYSQL_USER'] ||= "root"
 ENV['MYSQL_PASSWORD'] ||= ""
 ENV['MYSQL_HOST'] ||= "mysql"
