@@ -32,7 +32,7 @@ class DataCentersController < ApplicationController
     providers = providers.map { |p| { id: p.symbol, title: p.name, count: p.count } }
 
     if params[:year].present?
-      years = client_year_facet
+      years = client_year_facet params, collection
     else
       years = collection.where.not(created: nil).order("YEAR(datacentre.created) DESC").group("YEAR(datacentre.created)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
