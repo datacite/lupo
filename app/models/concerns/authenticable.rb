@@ -36,6 +36,10 @@ module Authenticable
       # replace newline characters with actual newlines
       private_key = OpenSSL::PKey::RSA.new(ENV['JWT_PRIVATE_KEY'].to_s.gsub('\n', "\n"))
       JWT.encode(payload, private_key, 'RS256')
+    rescue OpenSSL::PKey::RSAError => e
+      Rails.logger.error e.inspect
+      
+      nil
     end
 
     # generate JWT token
