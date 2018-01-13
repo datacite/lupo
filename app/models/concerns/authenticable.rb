@@ -53,6 +53,11 @@ module Authenticable
       return {} unless user && secure_compare(user.password, encrypt_password_sha256(password))
 
       uid = username.downcase
+
+      get_payload(uid: uid, user: user)
+    end
+
+    def get_payload(uid: nil, user: nil)
       roles = {
         "ROLE_ADMIN" => "staff_admin",
         "ROLE_ALLOCATOR" => "provider_admin",
