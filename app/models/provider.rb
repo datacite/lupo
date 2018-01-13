@@ -11,6 +11,9 @@ class Provider < ActiveRecord::Base
   # include helper module for setting password
   include Passwordable
 
+  # include helper module for authentication
+  include Authenticable
+
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
 
@@ -19,7 +22,7 @@ class Provider < ActiveRecord::Base
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   attr_readonly :uid, :symbol
-  attr_accessor :set_password
+  attr_accessor :password_input
 
   validates_presence_of :symbol, :name, :contact_name, :contact_email
   validates_uniqueness_of :symbol, message: "This name has already been taken"
@@ -27,7 +30,7 @@ class Provider < ActiveRecord::Base
   validates_format_of :website, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be an url"
   validates_numericality_of :doi_quota_allowed, :doi_quota_used
   validates_numericality_of :version, if: :version?
-  validates_inclusion_of :role_name, :in => %w( ROLE_ALLOCATOR ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list", if: :role_name?
+  validates_inclusion_of :role_name, :in => %w( ROLE_ALLOCATOR ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
   validate :freeze_symbol, :on => :update
 
   has_many :clients, foreign_key: :allocator
@@ -150,7 +153,6 @@ class Provider < ActiveRecord::Base
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
 
-    new_password = set_password == true ? encrypt_password(password) : nil
-    self.password = new_password if new_password.present?
+    self.password = encrypt_password_sha256(password_input) if password_input.present?
   end
 end

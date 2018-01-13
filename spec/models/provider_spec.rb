@@ -1,9 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Provider, type: :model do
-  # let!(:providers_factory)  { create_list(:provider, 25) }
-  # let!(:provider) { providers_factory.first }
-
+describe Provider, type: :model do
   describe "validations" do
     it { should validate_presence_of(:symbol) }
     it { should validate_presence_of(:name) }
@@ -11,102 +8,26 @@ RSpec.describe Provider, type: :model do
     it { should validate_presence_of(:contact_name) }
   end
 
-  describe "methods" do
+  describe "admin" do
+    subject { create(:provider, role_name: "ROLE_ADMIN", name: "Admin", symbol: "ADMIN") }
 
-    # it "providers all" do
-    #   collection = Provider.all
-    #   expect(collection.length).to eq(providers_factory.length)
-    #   single = collection.first
-    #   expect(single.name).to eq(provider.name)
-    #   expect(single.role_name).to eq(provider.role_name)
-    #   # meta = providers[:meta]
-    #   # expect(meta["resource-types"]).not_to be_empty
-    #   # expect(meta["years"]).not_to be_empty
-    #   # expect(meta).not_to be_empty
-    # end
-    #
-    # it "providers with where year" do
-    #   collection = Provider.where("YEAR(allocator.created) = ?", provider.created)
-    #   single = collection.first
-    #   expect(single.year).to eq(provider.created.year)
-    #   expect(single.name).to eq(provider.name)
-    #   expect(single.symbol).to eq(provider.symbol)
-    # end
-    #
-    # it "should not update the symbol" do
-    #   provider.update_attributes :symbol => provider.symbol + 'foo.bar'
-    #   expect(provider.reload.symbol).to eq(provider.symbol)
-    # end
-
-    # it "providers with where sort by role_name" do
-    #   collection = Provider.where(name: "australia", sort: "role_name")
-    #   expect(collection.length).to eq(1)
-    #   provider = collection.first
-    #   expect(provider.name).to eq("Australian National Data Service")
-    #   expect(provider.symbol).to eq("ands")
-    # end
-    #
-    # it "providers with where and resource-type-id" do
-    #   collection = Provider.where(where: "cancer", "resource-type-id" => "dataset")
-    #   expect(collection[:data].length).to eq(3)
-    #   provider = collection[:data].first
-    #   expect(provider.title).to eq("Landings of European lobster (Homarus gammarus) and edible crab (Cancer pagurus) in 2011, Helgoland, North Sea")
-    #   expect(provider.resource_type.title).to eq("Dataset")
-    # end
-    #
-    # it "providers with where and resource-type-id and data-center-id" do
-    #   collection = Provider.where(where: "cancer", "resource-type-id" => "dataset", "data-center-id" => "FIGSHARE.ARS")
-    #   expect(collection[:data].length).to eq(25)
-    #   provider = collection[:data].first
-    #   expect(provider.title).to eq("Achilles_v3.3.7_README.txt")
-    #   expect(provider.resource_type.title).to eq("Dataset")
-    # end
-
-    # it "provider" do
-    #   single = Provider.where(symbol: provider.symbol).first
-    #   expect(single.name).to eq(provider.name)
-    #   expect(single.symbol).to eq(provider.symbol)
-    #   expect(single.role_name).to eq(provider.role_name)
-    #   expect(single.created).to be_truthy
-    #   expect(single.updated).to be_truthy
-    #   expect(single.region).to be_truthy
-    #   expect(single.is_active).to be_truthy
-    #   expect(single.doi_quota_allowed).to be_truthy
-    #   expect(single.doi_quota_used).to be_truthy
-    # end
+    it "works" do
+      expect(subject.role_name).to eq("ROLE_ADMIN")
+    end
   end
 
-  # describe "password" do
-  #   it "should not update the password" do
-  #     password = "Credible=Hangover8tighten"
-  #     subject = create(:provider, set_password: false, password: password)
-  #     expect(subject.password).to be_nil
-  #   end
-  #
-  #   it "should update the password when set_password is true" do
-  #     password = "Credible=Hangover8tighten"
-  #     subject = create(:provider, set_password: true, password: password)
-  #     expect(subject.password).to be_present
-  #     expect(subject.password).not_to eq(password)
-  #   end
-  #
-  #   it "should not update the password when password is blank" do
-  #     password = ""
-  #     subject = create(:provider, set_password: true, password: password)
-  #     expect(subject.reload.password).to be_nil
-  #   end
-  #
-  #   # API shows password as either "yes" or "not set"
-  #   it "should not update the password when password is blank" do
-  #     password = "yes"
-  #     subject = create(:provider, set_password: true, password: password)
-  #     expect(subject.password).to be_nil
-  #   end
-  #
-  #   it "should not update the password when password is blank" do
-  #     password = "not set"
-  #     subject = create(:provider, set_password: true, password: password)
-  #     expect(subject.password).to be_nil
-  #   end
-  # end
+  describe "password" do
+    let(:password_input) { "Credible=Hangover8tighten" }
+    subject { create(:provider, password_input: password_input) }
+
+    it "should use password_input" do
+      expect(subject.password).to eq(subject.encrypt_password_sha256(password_input))
+    end
+
+    it "should not use password_input when it is blank" do
+      password_input = ""
+      subject = create(:provider, password_input: password_input)
+      expect(subject.password).to be_nil
+    end
+  end
 end

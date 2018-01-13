@@ -1,0 +1,63 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://profiles.test.datacite.org/api/flipper/features/delete_doi
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      Accept:
+      - application/json
+      User-Agent:
+      - Flipper HTTP Adapter v0.11.0
+      Authorization:
+      - Bearer <VOLPINO_TOKEN>
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 13 Jan 2018 12:40:47 GMT
+      Content-Type:
+      - application/json
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - AWSALB=wkFikpkIWX2V58JrN5QpzyFw/8HGEMrHrIQ72l9jIg2WxdQQvlpcIdGkHParh0wSp5Jwkbk54kqHlW9U38OwnOzkkBlCMMBaClYseXvqN6JsOb6dybZYM5RJGkGc;
+        Expires=Sat, 20 Jan 2018 12:40:47 GMT; Path=/
+      Status:
+      - 200 OK
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Accept-Encoding
+      X-Request-Id:
+      - 62d0838d-e315-47be-ad12-77f5402553a2
+      Etag:
+      - W/"1a819802b061706cd3cdd8e2847d7e04"
+      X-Runtime:
+      - '0.002837'
+      X-Powered-By:
+      - Phusion Passenger 5.1.12
+      Server:
+      - nginx/1.12.2 + Phusion Passenger 5.1.12
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Methods:
+      - GET, POST, PUT, DELETE, OPTIONS
+      Access-Control-Allow-Headers:
+      - DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range,Authorization
+      Access-Control-Expose-Headers:
+      - DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range,Authorization
+    body:
+      encoding: UTF-8
+      string: '{"key":"delete_doi","state":"conditional","gates":[{"key":"boolean","name":"boolean","value":null},{"key":"groups","name":"group","value":["staff"]},{"key":"actors","name":"actor","value":[]},{"key":"percentage_of_actors","name":"percentage_of_actors","value":null},{"key":"percentage_of_time","name":"percentage_of_time","value":null}]}'
+    http_version: 
+  recorded_at: Sat, 13 Jan 2018 12:41:06 GMT
+recorded_with: VCR 3.0.3

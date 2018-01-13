@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Client, type: :model do
+describe Client, type: :model do
   let(:provider)  { create(:provider) }
   let(:client)  { create(:client, provider: provider) }
   let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET") }
@@ -19,7 +19,7 @@ RSpec.describe Client, type: :model do
       expect(client.reload.symbol).to eq(client.symbol)
     end
 
-    it "transfer all DOIS" do
+    it "transfer all DOIs" do
       original_dois = Doi.where(client: client.symbol)
       expect(Doi.where(datacentre: client.id).count).to eq(5)
       expect(Doi.where(datacentre: target.id).count).to eq(0)

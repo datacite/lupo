@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ProvidersController, type: :routing do
+describe ProvidersController, type: :routing do
   describe "routing" do
 
     it "routes to #index" do

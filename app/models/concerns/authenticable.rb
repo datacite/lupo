@@ -2,16 +2,20 @@ module Authenticable
   extend ActiveSupport::Concern
 
   require 'jwt'
+  require "base64"
 
   included do
-    # encode token using SHA-256 hash algorithm
+    # encode JWT token using SHA-256 hash algorithm
     def encode_token(payload)
       # replace newline characters with actual newlines
       private_key = OpenSSL::PKey::RSA.new(ENV['JWT_PRIVATE_KEY'].to_s.gsub('\n', "\n"))
       JWT.encode(payload, private_key, 'RS256')
+    rescue JSON::GeneratorError => error
+      Rails.logger.error "JSON::GeneratorError: " + error.message + " for " + payload
+      return nil
     end
 
-    # decode token using SHA-256 hash algorithm
+    # decode JWT token using SHA-256 hash algorithm
     def decode_token(token)
       public_key = OpenSSL::PKey::RSA.new(ENV['JWT_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
       payload = (JWT.decode token, public_key, true, { :algorithm => 'RS256' }).first
@@ -28,6 +32,68 @@ module Authenticable
       Rails.logger.error "OpenSSL::PKey::RSAError: " + error.message + " for " + public_key
       return {}
     end
+
+    # basic auth
+    def encode_auth_param(username: nil, password: nil)
+      return nil unless username.present? && password.present?
+
+      ::Base64.strict_encode64("#{username}:#{password}")
+    end
+
+    # basic auth
+    def decode_auth_param(credentials)
+      username, password = ::Base64.decode64(credentials).split(":", 2)
+
+      if username.include?(".")
+        user = Client.where(symbol: username.upcase).first
+      else
+        user = Provider.unscoped.where(symbol: username.upcase).first
+      end
+
+      return {} unless user && secure_compare(user.password, encrypt_password_sha256(password))
+
+      uid = username.downcase
+
+      get_payload(uid: uid, user: user)
+    end
+
+    def get_payload(uid: nil, user: nil)
+      roles = {
+        "ROLE_ADMIN" => "staff_admin",
+        "ROLE_ALLOCATOR" => "provider_admin",
+        "ROLE_DATACENTRE" => "client_admin"
+      }
+      payload = {
+        "uid" => uid,
+        "role_id" => roles.fetch(user.role_name, "user"),
+        "name" => user.contact_name,
+        "email" => user.contact_email
+      }
+
+      if uid.include? "."
+        payload.merge!({
+          "provider_id" => uid.split(".", 2).first,
+          "client_id" => uid
+        })
+      elsif uid != "admin"
+        payload.merge!({
+          "provider_id" => uid
+        })
+      end
+
+      payload
+    end
+
+    # constant-time comparison algorithm to prevent timing attacks
+    # from Devise
+    def secure_compare(a, b)
+      return false if a.blank? || b.blank? || a.bytesize != b.bytesize
+      l = a.unpack "C#{a.bytesize}"
+
+      res = 0
+      b.each_byte { |byte| res |= byte ^ l.shift }
+      res == 0
+    end
   end
 
   module ClassMethods
@@ -38,7 +104,7 @@ module Authenticable
       JWT.encode(payload, private_key, 'RS256')
     rescue OpenSSL::PKey::RSAError => e
       Rails.logger.error e.inspect
-      
+
       nil
     end
 

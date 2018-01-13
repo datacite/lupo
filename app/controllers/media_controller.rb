@@ -1,6 +1,6 @@
 class MediaController < ApplicationController
   before_action :set_media, only: [:show, :update, :destroy]
-  before_action :authenticate_user_from_token!
+  before_action :authenticate_user!
   load_and_authorize_resource :except => [:index, :show]
   # GET /media
   def index

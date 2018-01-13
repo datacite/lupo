@@ -2,13 +2,20 @@ class User
   # include jwt encode and decode
   include Authenticable
 
+  # include helper module for setting password
+  include Passwordable
+
   attr_accessor :name, :uid, :email, :role_id, :jwt, :orcid, :provider_id, :client_id, :beta_tester, :allocator, :datacentre
 
-  def initialize(token)
-    if token.present?
-      payload = decode_token(token)
+  def initialize(credentials, options={})
+    if credentials.present? && options.fetch(:type, "").downcase == "basic"
+      payload = decode_auth_param(credentials)
+    elsif credentials.present?
+      payload = decode_token(credentials)
+      @jwt = credentials
+    end
 
-      @jwt = token
+    if payload.present?
       @uid = payload.fetch("uid", nil)
       @name = payload.fetch("name", nil)
       @email = payload.fetch("email", nil)

@@ -1,6 +1,6 @@
 class PrefixesController < ApplicationController
   before_action :set_prefix, only: [:show, :update, :destroy]
-  before_action :authenticate_user_from_token!
+  before_action :authenticate_user!
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show]
 

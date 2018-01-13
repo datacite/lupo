@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe 'Clients', type: :request  do
+describe 'Clients', type: :request  do
   let!(:clients)  { create_list(:client, 10) }
   let(:ids) { clients.map { |c| c.uid }.join(",") }
   let(:bearer) { User.generate_token }
-  let(:provider) { create(:provider) }
+  let(:provider) { create(:provider, password_input: "12345") }
   let!(:client) { create(:client, provider: provider) }
   let(:params) do
     { "data" => { "type" => "clients",
@@ -138,7 +138,6 @@ RSpec.describe 'Clients', type: :request  do
     end
   end
 
-  # # Test suite for PUT /clients/:id
   describe 'PUT /clients/:id' do
     context 'when the record exists' do
       let(:params) do
@@ -146,6 +145,27 @@ RSpec.describe 'Clients', type: :request  do
                       "attributes" => {
                         "name" => "Imperial College 2"}} }
       end
+      before { put "/clients/#{client.symbol}", params: params.to_json, headers: headers }
+
+      it 'updates the record' do
+        expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
+        expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context 'using basic auth', vcr: true do
+      let(:params) do
+        { "data" => { "type" => "clients",
+                      "attributes" => {
+                        "name" => "Imperial College 2"}} }
+      end
+      let(:credentials) { provider.encode_auth_param(username: provider.symbol.downcase, password: "12345") }
+      let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Basic ' + credentials } }
+
       before { put "/clients/#{client.symbol}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
