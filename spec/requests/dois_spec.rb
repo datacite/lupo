@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "dois", type: :request do
+describe "dois", type: :request do
   let(:provider)  { create(:provider, symbol: "ADMIN") }
   let(:client)  { create(:client, provider: provider) }
   let!(:dois) { create_list(:doi, 10, client: client) }

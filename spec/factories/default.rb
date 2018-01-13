@@ -9,6 +9,8 @@ FactoryBot.define do
     sequence(:symbol) { |n| provider.symbol + ".TEST#{n}" }
     name "My data center"
     role_name "ROLE_DATACENTRE"
+    password_input "12345"
+    is_active true
 
     initialize_with { Client.where(symbol: symbol).first_or_initialize }
   end
@@ -65,6 +67,8 @@ FactoryBot.define do
     sequence(:symbol) { |n| "TEST#{n}" }
     name "My provider"
     country_code "DE"
+    password_input "12345"
+    is_active true
 
     initialize_with { Provider.where(symbol: symbol).first_or_initialize }
   end

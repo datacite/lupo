@@ -3,7 +3,7 @@ require 'uri'
 class DoisController < ApplicationController
   before_action :set_doi, only: [:show, :update, :destroy]
   before_action :set_include
-  before_action :authenticate_user_from_token!
+  before_action :authenticate_user!
   authorize_resource :except => [:index, :show]
 
   def index

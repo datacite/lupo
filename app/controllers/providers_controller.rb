@@ -1,6 +1,6 @@
 class ProvidersController < ApplicationController
   before_action :set_provider, only: [:show, :update, :destroy]
-  before_action :set_include, :authenticate_user_from_token!
+  before_action :set_include, :authenticate_user!
   load_and_authorize_resource :except => [:index, :show]
 
   def index
@@ -138,8 +138,8 @@ class ProvidersController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:name, :symbol, "contact-name", "contact-email", :country, "is_active", :password, "set-password"],
-              keys: { country: :country_code, "contact-name" => :contact_name, "contact-email" => :contact_email, "is-active" => :is_active, "set-password" => :set_password }
+      params, only: [:name, :symbol, "contact-name", "contact-email", :country, "is_active", "password-input"],
+              keys: { country: :country_code, "contact-name" => :contact_name, "contact-email" => :contact_email, "is-active" => :is_active, "password-input" => :password_input }
     )
   end
 end

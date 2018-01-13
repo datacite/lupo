@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe PrefixesController, type: :routing do
+describe PrefixesController, type: :routing do
   describe "routing" do
 
     it "routes to #index" do

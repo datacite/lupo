@@ -9,6 +9,9 @@ class Client < ActiveRecord::Base
   # include helper module for setting password
   include Passwordable
 
+  # include helper module for authentication
+  include Authenticable
+
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
@@ -18,7 +21,7 @@ class Client < ActiveRecord::Base
   alias_attribute :updated_at, :updated
   attr_readonly :uid, :symbol
   delegate :symbol, to: :provider, prefix: true
-  attr_accessor :set_password
+  attr_accessor :password_input
 
   validates_presence_of :symbol, :name, :contact_name, :contact_email
   validates_uniqueness_of :symbol, message: "This Client ID has already been taken"
@@ -102,6 +105,10 @@ class Client < ActiveRecord::Base
     errors.add(:symbol, "cannot be changed") if symbol_changed?
   end
 
+  def freeze_symbol
+    errors.add(:symbol, "cannot be changed") if symbol_changed?
+  end
+
   def check_id
     if symbol && symbol.split(".").first != provider.symbol
       errors.add(:symbol, ", Your Client ID must include the name of your provider. Separated by a dot '.' ")
@@ -128,7 +135,6 @@ class Client < ActiveRecord::Base
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
 
-    new_password = set_password == true ? encrypt_password(password) : nil
-    self.password = new_password if new_password.present?
+    self.password = encrypt_password_sha256(password_input) if password_input.present?
   end
 end

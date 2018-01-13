@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Providers", type: :request  do
+describe "Providers", type: :request  do
   # initialize test data
   let!(:providers)  { create_list(:provider, 10) }
   let!(:provider) { providers.first }
@@ -56,9 +56,8 @@ RSpec.describe "Providers", type: :request  do
     end
   end
 
-  # Test suite for POST /providers
   describe 'POST /providers' do
-    context 'when the request is valid' do
+    context 'request is valid' do
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
@@ -69,6 +68,57 @@ RSpec.describe "Providers", type: :request  do
                         "contact-name" => "timAus",
                         "country-code" => "GB" } } }
       end
+
+      before { post '/providers', params: params.to_json, headers: headers }
+
+      it 'creates a provider' do
+        expect(json.dig('data', 'attributes', 'contact-email')).to eq("doe@joe.joe")
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+    end
+
+    context 'request for admin provider' do
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "symbol" => "ADMIN",
+                        "name" => "Admin",
+                        "region" => "EMEA",
+                        "role_name" => "ROLE_ADMIN",
+                        "contact-email" => "doe@joe.joe",
+                        "contact-name" => "timAus",
+                        "country-code" => "GB" } } }
+      end
+
+      before { post '/providers', params: params.to_json, headers: headers }
+
+      it 'creates a provider' do
+        expect(json.dig('data', 'attributes', 'contact-email')).to eq("doe@joe.joe")
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+    end
+
+    context 'request uses basic auth' do
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "symbol" => "BL",
+                        "name" => "British Library",
+                        "region" => "EMEA",
+                        "contact-email" => "doe@joe.joe",
+                        "contact-name" => "timAus",
+                        "country-code" => "GB" } } }
+      end
+      let(:admin) { create(:provider, symbol: "ADMIN", role_name: "ROLE_ADMIN", password_input: "12345") }
+      let(:credentials) { admin.encode_auth_param(username: "ADMIN", password: "12345") }
+      let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Basic ' + credentials } }
+
       before { post '/providers', params: params.to_json, headers: headers }
 
       it 'creates a provider' do
@@ -123,7 +173,6 @@ RSpec.describe "Providers", type: :request  do
     end
   end
 
-  # # Test suite for PUT /providers/:id
   describe 'PUT /providers/:id' do
     context 'when the record exists' do
       let(:params) do
@@ -144,23 +193,48 @@ RSpec.describe "Providers", type: :request  do
       it 'returns status code 200' do
         expect(response).to have_http_status(200)
       end
+    end
 
-      context 'when the resources doesnt exist' do
-        let(:params) do
-          { "data" => { "type" => "providers",
-                        "attributes" => {
-                          "name" => "British Library",
-                          "region" => "Americas",
-                          "contact-email" => "Pepe@mdm.cod",
-                          "contact-name" => "timAus",
-                          "country-code" => "GB" } } }
-        end
+    context 'using basic auth' do
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "name" => "British Library",
+                        "region" => "Americas",
+                        "contact-email" => "Pepe@mdm.cod",
+                        "contact-name" => "timAus",
+                        "country-code" => "GB" } } }
+      end
+      let(:admin) { create(:provider, symbol: "ADMIN", role_name: "ROLE_ADMIN", password_input: "12345") }
+      let(:credentials) { admin.encode_auth_param(username: "ADMIN", password: "12345") }
+      let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Basic ' + credentials } }
 
-        before { put '/providers/xxx', params: params.to_json, headers: headers }
+      before { put "/providers/#{provider.symbol}", params: params.to_json, headers: headers }
 
-        it 'returns status code 404' do
-          expect(response).to have_http_status(404)
-        end
+      it 'updates the record' do
+        expect(json.dig('data', 'attributes', 'contact-name')).to eq("timAus")
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context 'when the resource doesn\'t exist' do
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "name" => "British Library",
+                        "region" => "Americas",
+                        "contact-email" => "Pepe@mdm.cod",
+                        "contact-name" => "timAus",
+                        "country-code" => "GB" } } }
+      end
+
+      before { put '/providers/xxx', params: params.to_json, headers: headers }
+
+      it 'returns status code 404' do
+        expect(response).to have_http_status(404)
       end
     end
   end

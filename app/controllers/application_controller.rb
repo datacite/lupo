@@ -42,21 +42,21 @@ class ApplicationController < ActionController::API
     params.transform_keys! { |key| key.tr('-', '_') }
   end
 
-  def authenticate_user_from_token!
-    token = token_from_request_headers
-    return false unless token.present?
+  def authenticate_user!
+    type, credentials = type_and_credentials_from_request_headers
+    return false unless credentials.present?
 
-    @current_user = User.new(token)
+    @current_user = User.new(credentials, type: type)
   end
 
   def current_ability
     @current_ability ||= Ability.new(current_user)
   end
 
-  # from https://github.com/nsarno/knock/blob/master/lib/knock/authenticable.rb
-  def token_from_request_headers
+  # based on https://github.com/nsarno/knock/blob/master/lib/knock/authenticable.rb
+  def type_and_credentials_from_request_headers
     unless request.headers['Authorization'].nil?
-      request.headers['Authorization'].split.last
+      request.headers['Authorization'].split
     end
   end
 
