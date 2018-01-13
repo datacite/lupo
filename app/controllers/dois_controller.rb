@@ -91,14 +91,6 @@ class DoisController < ApplicationController
     end
   end
 
-  def set_state
-
-  end
-
-  def delete_test_dois
-
-  end
-
   protected
 
   def set_doi
@@ -121,7 +113,7 @@ class DoisController < ApplicationController
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     Rails.logger.warn params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:uid, :created, :doi, :url, :event, :version, :client]
+      params, only: [:uid, :created, :doi, :url, :version, :event, :client]
     )
   end
 end

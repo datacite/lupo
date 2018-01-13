@@ -63,6 +63,46 @@ describe "dois", type: :request do
               "doi" => "10.4122/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "version" => 1,
+              "event" => "register"
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+      
+      before { post '/dois', params: valid_attributes.to_json, headers: headers }
+
+      it 'creates a Doi' do
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'sets state to registered' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("registered")
+      end
+    end
+
+    context 'state change with test prefix' do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.5072/10704",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "version" => 1,
+              "event" => "register"
             },
             "relationships"=> {
               "client"=>  {
@@ -78,12 +118,16 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a Doi' do
-      expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
-      expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.5072/10704")
       end
 
       it 'returns status code 201' do
         expect(response).to have_http_status(201)
+      end
+
+      it 'sets state to draft' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("draft")
       end
     end
 
@@ -120,7 +164,6 @@ describe "dois", type: :request do
     end
   end
 
-  # # Test suite for PUT /dois/:id
   describe 'PATCH /dois/:id' do
     context 'when the record exists' do
       let(:valid_attributes) do
@@ -129,9 +172,17 @@ describe "dois", type: :request do
             "type" => "dois",
             "attributes" => {
               "doi" => "10.4122/10703",
-              "url"=> "http://www.bl.uk/pdf/patspec.pdf",
+              "url"=> "http://www.bl.uk/pdf/pat.pdf",
               "version" => 3,
-              "client_id"=> client.symbol
+              "event" => "register"
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> client.symbol.downcase
+                }
+              }
             }
           }
         }
@@ -139,16 +190,20 @@ describe "dois", type: :request do
       before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
 
       it 'updates the record' do
-        expect(response.body).not_to be_empty
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
       end
 
       it 'returns status code 200' do
         expect(response).to have_http_status(200)
       end
+
+      it 'sets state to registered' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("registered")
+      end
     end
   end
 
-  # Test suite for DELETE /dois/:id
   describe 'DELETE /dois/:id' do
     before do
       doi = create(:doi, client: client, aasm_state: "draft")

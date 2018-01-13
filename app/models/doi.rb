@@ -137,6 +137,10 @@ class Doi < ActiveRecord::Base
     updated
   end
 
+  def event=(value)
+    self.send(value) if %w(start register publish).include?(value)
+  end
+
   # update state for all DOIs starting from from_date
   def self.set_state(from_date)
     from_date ||= Time.zone.now - 1.day
