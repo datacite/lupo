@@ -35,15 +35,6 @@ class Doi < ActiveRecord::Base
     event :link_check do
       transitions :from => [:tombstoned, :registered, :findable, :flagged], :to => :broken
     end
-
-    # can only delete if state is :draft
-    # event :remove do
-    #   after do
-    #     destroy
-    #   end
-    #
-    #   transitions :from => :draft, :to => :deleted
-    # end
   end
 
   self.table_name = "dataset"
@@ -73,11 +64,11 @@ class Doi < ActiveRecord::Base
   before_save :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
-  after_save do
-    unless Rails.env.test?
-      UrlJob.perform_later(self)
-    end
-  end
+  # after_save do
+  #   unless Rails.env.test?
+  #     UrlJob.perform_later(self)
+  #   end
+  # end
 
   scope :query, ->(query) { where("dataset.doi = ?", query) }
 

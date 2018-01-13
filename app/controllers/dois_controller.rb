@@ -60,6 +60,7 @@ class DoisController < ApplicationController
     authorize! :create, @doi
 
     if @doi.save
+      @doi.start
       render jsonapi: @doi, status: :created, location: @doi
     else
       Rails.logger.warn @doi.errors.inspect
@@ -69,7 +70,7 @@ class DoisController < ApplicationController
 
   def update
     if @doi.update_attributes(safe_params)
-      render jsonapi: @provider
+      render jsonapi: @doi
     else
       Rails.logger.warn @doi.errors.inspect
       render jsonapi: serialize(@doi.errors), status: :unprocessable_entity
@@ -120,7 +121,7 @@ class DoisController < ApplicationController
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     Rails.logger.warn params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:uid, :created, :doi, :url, :version, :client]
+      params, only: [:uid, :created, :doi, :url, :event, :version, :client]
     )
   end
 end
