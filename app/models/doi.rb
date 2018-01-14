@@ -22,10 +22,15 @@ class Doi < ActiveRecord::Base
     event :register do
       # can't register test prefix
       transitions :from => [:inactive, :draft], :to => :registered, :unless => :is_test_prefix?
+
+      transitions :from => :inactive, :to => :draft
     end
 
     event :publish do
-      transitions :from => [:inactive, :draft, :tombstoned, :registered], :to => :findable, :unless => :is_test_prefix?
+      # can't index test prefix
+      transitions :from => [:inactive, :draft, :registered], :to => :findable, :unless => :is_test_prefix?
+
+      transitions :from => :inactive, :to => :draft
     end
 
     event :flag do
