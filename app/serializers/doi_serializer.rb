@@ -5,7 +5,7 @@ class DoiSerializer < ActiveModel::Serializer
   cache key: 'doi'
   type 'dois'
 
-  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :license, :version, :related_identifier, :schema_version, :state, :is_active, :xml, :published, :registered, :updated
+  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :license, :version, :related_identifier, :schema_version, :state, :xml, :published, :registered, :updated
 
   belongs_to :client, serializer: ClientSerializer
   belongs_to :provider, serializer: ProviderSerializer
@@ -51,9 +51,5 @@ class DoiSerializer < ActiveModel::Serializer
 
   def license
     Array.wrap(object.license).map { |l| l["id"] }.compact.unwrap
-  end
-
-  def is_active
-    object.is_active == "\u0001" ? true : false
   end
 end
