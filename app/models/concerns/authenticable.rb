@@ -42,6 +42,8 @@ module Authenticable
 
     # basic auth
     def decode_auth_param(credentials)
+      return {} unless credentials.present?
+      
       username, password = ::Base64.decode64(credentials).split(":", 2)
 
       if username.include?(".")
