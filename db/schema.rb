@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171202090754) do
+ActiveRecord::Schema.define(version: 20180116230054) do
 
   create_table "allocator", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string "contact_email", null: false
@@ -66,9 +66,11 @@ ActiveRecord::Schema.define(version: 20171202090754) do
     t.string "experiments"
     t.datetime "deleted_at"
     t.string "re3data"
+    t.text "url"
     t.index ["allocator"], name: "FK6695D60546EBD781"
     t.index ["re3data"], name: "index_datacentre_on_re3data"
     t.index ["symbol"], name: "symbol", unique: true
+    t.index ["url"], name: "index_datacentre_on_url", length: { url: 100 }
   end
 
   create_table "datacentre_prefixes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
