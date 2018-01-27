@@ -34,14 +34,6 @@ services:
       - "6379:6379"
     networks:
       - public
-  handle:
-    env_file: .env
-    image: osul/handle
-    ports:
-      - "2641:2641"
-      - "8005:8000"
-    networks:
-      - public
 networks:
   public:
     driver: bridge
