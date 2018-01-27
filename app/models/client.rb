@@ -83,6 +83,10 @@ class Client < ActiveRecord::Base
     c.cached_doi_count(force: true)
   end
 
+  def password_input=(value)
+    write_attribute(:password, encrypt_password_sha256(value)) if value.present?
+  end
+
   # backwards compatibility
   def member
     m = cached_member_response(provider_id)
@@ -134,7 +138,5 @@ class Client < ActiveRecord::Base
     self.role_name = "ROLE_DATACENTRE" unless role_name.present?
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
-
-    self.password = encrypt_password_sha256(password_input) if password_input.present?
   end
 end

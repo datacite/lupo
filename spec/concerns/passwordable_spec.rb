@@ -5,10 +5,10 @@ describe Provider, type: :model do
 
   describe "encrypt_password_sha256" do
     it "should encrypt the password" do
-      password = "Credible=Hangover8tighten"
-      encrypted_password = subject.encrypt_password_sha256(password)
-      expect(encrypted_password).to be_present
-      expect(subject.password).not_to eq(password)
+      password_input = "Credible=Hangover8tighten"
+      password = subject.encrypt_password_sha256(password_input)
+      subject.password_input = password_input
+      expect(subject.password).to eq(password)
     end
   end
 end

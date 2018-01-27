@@ -52,10 +52,6 @@ class Provider < ActiveRecord::Base
     created.year
   end
 
-  def es_fields
-    ['symbol^10', 'name^10', 'contact_email', 'region']
-  end
-
   def country_name
     return nil unless country_code.present?
 
@@ -74,6 +70,10 @@ class Provider < ActiveRecord::Base
 
   def logo_url
     "#{ENV['CDN_URL']}/images/members/#{symbol.downcase}.png"
+  end
+
+  def password_input=(value)
+    write_attribute(:password, encrypt_password_sha256(value)) if value.present?
   end
 
   # cumulative count clients by year
@@ -152,7 +152,5 @@ class Provider < ActiveRecord::Base
     self.role_name = "ROLE_ALLOCATOR" unless role_name.present?
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
-
-    self.password = encrypt_password_sha256(password_input) if password_input.present?
   end
 end
