@@ -1,7 +1,7 @@
 class ClientSerializer < ActiveModel::Serializer
   cache key: 'client'
 
-  attributes :name, :symbol, :year, :contact_name, :contact_email, :domains, :url, :is_active, :password, :created, :updated
+  attributes :name, :symbol, :year, :contact_name, :contact_email, :domains, :url, :is_active, :has_password, :created, :updated
 
   has_many :prefixes, join_table: "datacentre_prefixes"
   belongs_to :provider
@@ -15,8 +15,8 @@ class ClientSerializer < ActiveModel::Serializer
     object.is_active == "\u0001" ? true : false
   end
 
-  def password
-    object.password.present? ? "yes" : nil
+  def has_password
+    object.password.present?
   end
 
   def provider_id

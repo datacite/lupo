@@ -2,7 +2,7 @@ class ProviderSerializer < ActiveModel::Serializer
   cache key: 'provider'
   # type 'providers'
 
-  attributes :name, :symbol, :year, :contact_name, :contact_email, :logo_url, :is_active, :password, :created, :updated
+  attributes :name, :symbol, :year, :contact_name, :contact_email, :logo_url, :is_active, :has_password, :created, :updated
 
   has_many :clients
   has_many :prefixes, join_table: "datacentre_prefixes"
@@ -11,8 +11,8 @@ class ProviderSerializer < ActiveModel::Serializer
     object.symbol.downcase
   end
 
-  def password
-    object.password.present? ? "yes" : nil
+  def has_password
+    object.password.present?
   end
 
   def is_active
