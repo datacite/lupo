@@ -21,7 +21,7 @@ module Authenticable
       payload = (JWT.decode token, public_key, true, { :algorithm => 'RS256' }).first
 
       # check whether token has expired
-      return {} unless Time.now.to_i < payload["exp"]
+      return {} unless Time.now.to_i < payload["exp"].to_i
 
       payload
     rescue JWT::DecodeError => error
@@ -41,10 +41,8 @@ module Authenticable
     end
 
     # basic auth
-    def decode_auth_param(credentials)
-      return {} unless credentials.present?
-      
-      username, password = ::Base64.decode64(credentials).split(":", 2)
+    def decode_auth_param(username: nil, password: nil)
+      return {} unless username.present? && password.present?
 
       if username.include?(".")
         user = Client.where(symbol: username.upcase).first
@@ -108,6 +106,13 @@ module Authenticable
       Rails.logger.error e.inspect
 
       nil
+    end
+
+    # basic auth
+    def encode_auth_param(username: nil, password: nil)
+      return nil unless username.present? && password.present?
+
+      ::Base64.strict_encode64("#{username}:#{password}")
     end
 
     # generate JWT token

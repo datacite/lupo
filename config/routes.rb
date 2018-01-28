@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   resources :media
   root :to => 'index#index'
 
+  # authentication
+  post 'token', :to => 'sessions#create'
+
   resources :heartbeat, only: [:index]
   resources :index, path: '/', only: [:index]
   resources :status, only: [:index]

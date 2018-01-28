@@ -78,7 +78,6 @@ class ClientsController < ApplicationController
 
   # POST /clients
   def create
-
     @client = Client.new(safe_params)
     authorize! :create, @client
 
