@@ -39,7 +39,7 @@ describe "Provider session", type: :request  do
     before { post '/token', params: params, headers: nil }
 
     it 'returns an error' do
-      expect(json.fetch('errors', {})).to eq([{"status"=>"400", "title"=>"Missing account or password."}])
+      expect(json.fetch('errors', {})).to eq([{"status"=>"400", "title"=>"Missing account ID or password."}])
     end
 
     it 'returns status code 400' do
@@ -53,7 +53,7 @@ describe "Provider session", type: :request  do
     before { post '/token', params: params, headers: nil }
 
     it 'returns an error' do
-      expect(json.fetch('errors', {})).to eq([{"status"=>"400", "title"=>"Wrong account or password."}])
+      expect(json.fetch('errors', {})).to eq([{"status"=>"400", "title"=>"Wrong account ID or password."}])
     end
 
     it 'returns status code 400' do
