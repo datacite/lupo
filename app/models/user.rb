@@ -9,7 +9,9 @@ class User
 
   def initialize(credentials, options={})
     if credentials.present? && options.fetch(:type, "").downcase == "basic"
-      payload = decode_auth_param(credentials)
+      username, password = ::Base64.decode64(credentials).split(":", 2)
+      payload = decode_auth_param(username: username, password: password)
+      @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30))
     elsif credentials.present?
       payload = decode_token(credentials)
       @jwt = credentials
