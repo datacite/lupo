@@ -12,7 +12,7 @@ class DoisController < ApplicationController
       client = Client.where('datacentre.symbol = ?', params[:client_id]).first
       collection = client.present? ? client.dois : Doi.none
       total = client.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
-    elsif params[:provider_id].present?
+    elsif params[:provider_id].present? && params[:provider_id] != "admin"
       provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
       collection = provider.present? ? Doi.joins(:client).where("datacentre.allocator = ?", provider.id) : Doi.none
       total = provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }

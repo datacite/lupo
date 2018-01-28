@@ -66,7 +66,7 @@ module Authenticable
       payload = {
         "uid" => uid,
         "role_id" => roles.fetch(user.role_name, "user"),
-        "name" => user.contact_name,
+        "name" => user.name,
         "email" => user.contact_email
       }
 

@@ -31,7 +31,7 @@ describe User, type: :model do
       end
 
       it "has name" do
-        expect(user.name).to eq("Josiah Carberry")
+        expect(user.name).to eq("My provider")
       end
     end
   end
@@ -51,7 +51,7 @@ describe User, type: :model do
       end
 
       it "has name" do
-        expect(user.name).to eq("Josiah Carberry")
+        expect(user.name).to eq("My provider")
       end
     end
   end
@@ -75,7 +75,7 @@ describe User, type: :model do
       end
 
       it "has name" do
-        expect(user.name).to eq("Josiah Carberry")
+        expect(user.name).to eq("My data center")
       end
     end
   end

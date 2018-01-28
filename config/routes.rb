@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   resources :dois, constraints: { :id => /.+/ }
   resources :prefixes, constraints: { :id => /.+/ }
   resources :provider_prefixes, path: 'provider-prefixes'
+  resources :random, only: [:index]
 
   resources :providers do
     resources :clients, constraints: { :id => /.+/ }, shallow: true

@@ -6,9 +6,9 @@ module Passwordable
   included do
     # "yes", "not set" (used in serializer) and a blank value are not allowed for new password
     def encrypt_password_sha256(password)
-      return nil unless ENV["SESSION_ENCRYPTED_COOKIE_SALT"].present? && password.present? && !["yes", "not set"].include?(password)
+      return nil unless ENV["SESSION_ENCRYPTED_COOKIE_SALT"].present? && password.present?
 
-      Digest::SHA256.hexdigest "#{password}{#{ENV["SESSION_ENCRYPTED_COOKIE_SALT"]}}"
+      Digest::SHA256.hexdigest password.to_s + "{" + ENV["SESSION_ENCRYPTED_COOKIE_SALT"] + "}"
     end
 
     def authenticate_sha256(unencrypted_password)

@@ -11,7 +11,7 @@ describe "Provider session", type: :request  do
     it 'creates a provider token' do
       payload = provider.decode_token(json.fetch('access_token', {}))
       expect(payload["role_id"]).to eq("provider_admin")
-      expect(payload["name"]).to eq(provider.contact_name)
+      expect(payload["name"]).to eq(provider.name)
     end
 
     it 'returns status code 200' do
@@ -39,7 +39,7 @@ describe "Provider session", type: :request  do
     before { post '/token', params: params, headers: nil }
 
     it 'returns an error' do
-      expect(json.fetch('errors', {})).to eq([{"status"=>"400", "title"=>"Missing username or password."}])
+      expect(json.fetch('errors', {})).to eq([{"status"=>"400", "title"=>"Missing account or password."}])
     end
 
     it 'returns status code 400' do
@@ -53,7 +53,7 @@ describe "Provider session", type: :request  do
     before { post '/token', params: params, headers: nil }
 
     it 'returns an error' do
-      expect(json.fetch('errors', {})).to eq([{"status"=>"400", "title"=>"Wrong username or password."}])
+      expect(json.fetch('errors', {})).to eq([{"status"=>"400", "title"=>"Wrong account or password."}])
     end
 
     it 'returns status code 400' do
@@ -73,7 +73,7 @@ describe "Admin session", type: :request  do
     it 'creates a provider token' do
       payload = provider.decode_token(json.fetch('access_token', {}))
       expect(payload["role_id"]).to eq("staff_admin")
-      expect(payload["name"]).to eq(provider.contact_name)
+      expect(payload["name"]).to eq(provider.name)
     end
 
     it 'returns status code 200' do
@@ -93,7 +93,7 @@ describe "Client session", type: :request  do
     it 'creates a client token' do
       payload = client.decode_token(json.fetch('access_token', {}))
       expect(payload["role_id"]).to eq("client_admin")
-      expect(payload["name"]).to eq(client.contact_name)
+      expect(payload["name"]).to eq(client.name)
     end
 
     it 'returns status code 200' do
