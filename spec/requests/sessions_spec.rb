@@ -11,6 +11,7 @@ describe "Provider session", type: :request  do
     it 'creates a provider token' do
       payload = provider.decode_token(json.fetch('access_token', {}))
       expect(payload["role_id"]).to eq("provider_admin")
+      expect(payload["provider_id"]).to eq(provider.symbol.downcase)
       expect(payload["name"]).to eq(provider.name)
     end
 
@@ -93,6 +94,7 @@ describe "Client session", type: :request  do
     it 'creates a client token' do
       payload = client.decode_token(json.fetch('access_token', {}))
       expect(payload["role_id"]).to eq("client_admin")
+      expect(payload["client_id"]).to eq(client.symbol.downcase)
       expect(payload["name"]).to eq(client.name)
     end
 
