@@ -10,7 +10,7 @@ namespace :elasticsearch do
     end
 
     data = Client.all
-
+    
     data.each do |client|      
       params = { "data" => { "type" => "clients", "attributes" => client.attributes } }
       params["data"]["attributes"]["contact-email"]= params["data"]["attributes"]["contact_email"]
