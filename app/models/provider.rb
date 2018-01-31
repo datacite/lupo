@@ -123,8 +123,7 @@ class Provider < ActiveRecord::Base
   end
 
   def self.push_to_index
-    data = self.all
-    data.each do |provider|    
+    self.find_each do |provider|    
       params = { "data" => { "type" => "providers", "attributes" => provider.attributes } }
       params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
       params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s

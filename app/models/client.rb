@@ -124,8 +124,7 @@ class Client < ActiveRecord::Base
   end
 
   def self.push_to_index
-    data = self.all
-    data.each do |client|      
+    self.find_each do |client|      
       params = { "data" => { "type" => "clients", "attributes" => client.attributes } }
       params["data"]["attributes"]["contact-email"]= params["data"]["attributes"]["contact_email"]
       params["data"]["attributes"]["contact-name"]= params["data"]["attributes"]["contact_name"]
