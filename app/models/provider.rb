@@ -122,7 +122,7 @@ class Provider < ActiveRecord::Base
     ENV["VOLPINO_URL"] + "/users?provider-id=" + symbol.downcase
   end
 
-  def self.push_index
+  def self.push_to_index
     data = self.all
     data.each do |provider|    
       params = { "data" => { "type" => "providers", "attributes" => provider.attributes } }
