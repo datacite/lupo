@@ -16,21 +16,25 @@ class Doi < ActiveRecord::Base
     state :draft, :tombstoned, :registered, :findable, :flagged, :broken, :deleted
 
     event :start do
-      transitions :from => :inactive, :to => :draft
+      transitions :from => :inactive, :to => :draft, :after => Proc.new { set_to_inactive }
     end
 
     event :register do
       # can't register test prefix
-      transitions :from => [:inactive, :draft], :to => :registered, :unless => :is_test_prefix?
+      transitions :from => [:inactive, :draft], :to => :registered, :unless => :is_test_prefix?, :after => Proc.new { set_to_inactive }
 
-      transitions :from => :inactive, :to => :draft
+      transitions :from => :inactive, :to => :draft, :after => Proc.new { set_to_inactive }
     end
 
     event :publish do
       # can't index test prefix
-      transitions :from => [:inactive, :draft, :registered], :to => :findable, :unless => :is_test_prefix?
+      transitions :from => [:inactive, :draft, :registered], :to => :findable, :unless => :is_test_prefix?, :after => Proc.new { set_to_active }
 
-      transitions :from => :inactive, :to => :draft
+      transitions :from => :inactive, :to => :draft, :after => Proc.new { set_to_inactive }
+    end
+
+    event :hide do
+      transitions :from => [:findable], :to => :registered, :after => Proc.new { set_to_inactive }
     end
 
     event :flag do
@@ -143,7 +147,7 @@ class Doi < ActiveRecord::Base
   end
 
   def event=(value)
-    self.send(value) if %w(start register publish).include?(value)
+    self.send(value) if %w(start register publish hide).include?(value)
   end
 
   # update state for all DOIs starting from from_date
@@ -162,12 +166,23 @@ class Doi < ActiveRecord::Base
     Doi.where("updated <= ?", from_date).where("doi LIKE ?", "10.5072%").find_each { |d| d.destroy }
   end
 
-  private
-
   def set_defaults
-    self.doi = doi.upcase if doi.present?
-    self.is_active = is_active? ? "\x01" : "\x00"
+    self.is_active = is_active ? "\x01" : "\x00"
   end
+
+  def set_to_active
+    self.is_active = "\x01"
+  end
+
+  def set_to_inactive
+    self.is_active = "\x00"
+  end
+
+  def doi=(value)
+    write_attribute(:doi, value.upcase) if value.present?
+  end
+
+  private
 
   def update_doi_count
     Rails.cache.delete("cached_doi_count/#{datacentre}")

@@ -134,7 +134,7 @@ class Client < ActiveRecord::Base
   def set_defaults
     self.contact_name = "" unless contact_name.present?
     self.domains = "*" unless domains.present?
-    self.is_active = is_active? ? "\x01" : "\x00"
+    self.is_active = is_active ? "\x01" : "\x00"
     self.role_name = "ROLE_DATACENTRE" unless role_name.present?
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
