@@ -1,4 +1,4 @@
-require 'base32/crockford'
+require 'base32/url'
 require 'uri'
 
 class ClientPrefixesController < ApplicationController
@@ -95,7 +95,7 @@ class ClientPrefixesController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_client_prefix
-    id = Base32::Crockford.decode(URI.decode(params[:id]).upcase)
+    id = Base32::URL.decode(URI.decode(params[:id]))
     fail ActiveRecord::RecordNotFound unless id.present?
 
     @client_prefix = ClientPrefix.where(id: id.to_i).first
