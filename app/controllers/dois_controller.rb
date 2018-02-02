@@ -113,7 +113,7 @@ class DoisController < ApplicationController
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     Rails.logger.warn params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:uid, :created, :doi, :url, :version, :event, :client]
+      params, only: [:uid, :created, :doi, :url, :version, :reason, :event, :client, :metadata]
     )
   end
 end
