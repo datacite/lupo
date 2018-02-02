@@ -5,7 +5,7 @@ class DoiSerializer < ActiveModel::Serializer
   cache key: 'doi'
   type 'dois'
 
-  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :license, :version, :related_identifier, :schema_version, :state, :xml, :published, :registered, :updated
+  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :license, :version, :related_identifier, :schema_version, :state, :reason, :xml, :published, :registered, :updated
 
   belongs_to :client, serializer: ClientSerializer
   belongs_to :provider, serializer: ProviderSerializer
