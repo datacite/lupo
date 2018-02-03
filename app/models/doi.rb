@@ -9,8 +9,6 @@ class Doi < ActiveRecord::Base
   # include state machine
   include AASM
 
-  attr_reader :xml
-
   aasm :whiny_transitions => false do
     # initial is default state for new DOIs. This is needed to handle DOIs created
     # outside of this application (i.e. the MDS API)
@@ -124,6 +122,10 @@ class Doi < ActiveRecord::Base
 
   def xml=(value)
     metadata.build(xml: value, doi: self)
+  end
+
+  def xml
+    current_metadata && ::Base64.strict_encode64(current_metadata.xml)
   end
 
   def current_metadata
