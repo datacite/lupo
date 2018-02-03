@@ -8,9 +8,7 @@ describe "dois", type: :request do
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
 
-  # Test suite for GET /dois
   describe 'GET /dois' do
-    # make HTTP get request before each example
     before { get '/dois', headers: headers }
 
     it 'returns dois' do
@@ -22,7 +20,6 @@ describe "dois", type: :request do
     end
   end
 
-  # Test suite for GET /dois/:id
   describe 'GET /dois/:id' do
     context 'when the record exists' do
       before { get "/dois/#{doi.doi}", headers: headers }
@@ -50,10 +47,7 @@ describe "dois", type: :request do
     end
   end
 
-  # Test suite for POST /dois
   describe 'POST /dois' do
-    # valid payload
-
     context 'when the request is valid' do
       let(:valid_attributes) do
         {
@@ -76,7 +70,7 @@ describe "dois", type: :request do
           }
         }
       end
-      
+
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a Doi' do

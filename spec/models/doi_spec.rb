@@ -6,12 +6,6 @@ describe Doi, type: :model, vcr: true do
   describe "state" do
     subject { create(:doi) }
 
-    describe "inactive" do
-      it "defaults to inactive" do
-        expect(subject).to have_state(:inactive)
-      end
-    end
-
     describe "start" do
       it "can start" do
         subject.start

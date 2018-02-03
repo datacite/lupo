@@ -1,16 +1,16 @@
 class MetadataSerializer < ActiveModel::Serializer
-  attributes :id, :created, :version, :metadata_version, :dataset_id, :is_converted_by_mds, :namespace, :xml
+  attributes :version, :namespace, :xml, :created
   belongs_to :doi, serializer: DoiSerializer
 
-  def dataset_id
-    object.try(:dataset) && object.dataset.uid
+  def id
+    object.uid
   end
 
-  def is_converted_by_mds
-    object.try(:is_converted_by_mds)
+  def xml
+    Base64.strict_encode64(object.xml)
   end
 
-  def namespace
-    object.try(:namespace)
+  def version
+    object.metadata_version
   end
 end
