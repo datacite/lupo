@@ -19,6 +19,21 @@ module Cacheable
       end
     end
 
+    def cached_metadata_count(options={})
+      Rails.cache.fetch("cached_metadata_count/#{id}", expires_in: 6.hours, force: options[:force]) do
+        return [] if Rails.env.test?
+
+        if self.class.name == "Doi"
+          collection = Metadata.where(dataset: id)
+        else
+          collection = Metadata
+        end
+
+        years = collection.order("YEAR(metadata.created)").group("YEAR(metadata.created)").count
+        years = years.map { |k,v| { id: k, title: k, count: v } }
+      end
+    end
+
     def cached_client_response(id, options={})
       Rails.cache.fetch("client_response/#{id}", expires_in: 1.day) do
         Client.where(symbol: id).first
@@ -75,6 +90,15 @@ module Cacheable
     def cached_providers
       Rails.cache.fetch("providers", expires_in: 1.day) do
         Provider.all.select(:id, :symbol, :name, :updated)
+      end
+    end
+
+    def cached_metadata_count
+      Rails.cache.fetch("cached_metadata_count", expires_in: 6.hours) do
+        return [] if Rails.env.test?
+
+        years = Metadata.order("YEAR(metadata.created)").group("YEAR(metadata.created)").count
+        years = years.map { |k,v| { id: k, title: k, count: v } }
       end
     end
 
