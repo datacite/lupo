@@ -9,11 +9,13 @@ class Doi < ActiveRecord::Base
   # include state machine
   include AASM
 
+  attr_accessor :xml
+
   aasm :whiny_transitions => false do
     # initial is default state for new DOIs. This is needed to handle DOIs created
     # outside of this application (i.e. the MDS API)
     state :inactive, :initial => true
-    state :draft, :tombstoned, :registered, :findable, :flagged, :broken, :deleted
+    state :draft, :tombstoned, :registered, :findable, :flagged, :broken
 
     event :start do
       transitions :from => :inactive, :to => :draft, :after => Proc.new { set_to_inactive }
@@ -61,9 +63,8 @@ class Doi < ActiveRecord::Base
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, :with => /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9]+\z/
-  validates_format_of :url, :with => /https?:\/\/[\S]+/ , if: :url?, message: "Website should be an url"
+  validates_format_of :url, :with => /https?:\/\/[\S]+/ , if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
-  validates_numericality_of :version, if: :version?
 
   # update cached doi count for client
   before_destroy :update_doi_count
@@ -121,10 +122,16 @@ class Doi < ActiveRecord::Base
     r[:data] if r.present?
   end
 
+  def xml=(value)
+    metadata.build(xml: value, doi: self)
+  end
+
+  def current_metadata
+    metadata.order('metadata.created DESC').first
+  end
+
   # parse metadata using bolognese library
   def doi_metadata
-    current_metadata = metadata.order('metadata.created DESC').first
-
     # return OpenStruct if no metadata record is found to handle delegate
     return OpenStruct.new unless current_metadata
 
@@ -136,7 +143,7 @@ class Doi < ActiveRecord::Base
 
   delegate :author, :title, :container_title, :description, :resource_type_general,
     :additional_type, :license, :related_identifier, :schema_version,
-    :date_published, :date_accepted, :date_available, :publisher, :xml, to: :doi_metadata
+    :date_published, :date_accepted, :date_available, :publisher, to: :doi_metadata
 
   def date_registered
     minted
@@ -168,6 +175,7 @@ class Doi < ActiveRecord::Base
 
   def set_defaults
     self.is_active = is_active ? "\x01" : "\x00"
+    self.version = version.present? ? version + 1 : 0
   end
 
   def set_to_active

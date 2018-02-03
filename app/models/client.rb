@@ -109,10 +109,6 @@ class Client < ActiveRecord::Base
     errors.add(:symbol, "cannot be changed") if symbol_changed?
   end
 
-  def freeze_symbol
-    errors.add(:symbol, "cannot be changed") if symbol_changed?
-  end
-
   def check_id
     if symbol && symbol.split(".").first != provider.symbol
       errors.add(:symbol, ", Your Client ID must include the name of your provider. Separated by a dot '.' ")
