@@ -26,10 +26,10 @@ class MetadataController < ApplicationController
             else "metadata.created DESC"
             end
 
-    @metadata = collection.order(:created).page(page[:number]).per(page[:size])
+    @metadata = collection.order(order).page(page[:number]).per(page[:size])
 
     meta = { total: total,
-             total_pages: @metadata.total_pages,
+             total_pages: total_pages,
              page: page[:number].to_i }
 
     render jsonapi: @metadata, meta: meta, include: @include

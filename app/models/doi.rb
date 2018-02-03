@@ -9,7 +9,7 @@ class Doi < ActiveRecord::Base
   # include state machine
   include AASM
 
-  attr_accessor :xml
+  attr_reader :xml
 
   aasm :whiny_transitions => false do
     # initial is default state for new DOIs. This is needed to handle DOIs created
