@@ -27,7 +27,7 @@ describe Metadata, type: :model, vcr: true do
     end
 
     it "creates metadata_version" do
-      expect(subject.metadata_version).to eq(0)
+      expect(subject.metadata_version).to eq(1)
     end
 
     it "creates doi association" do
