@@ -6,6 +6,9 @@ Rails.application.routes.draw do
   # authentication
   post 'token', :to => 'sessions#create'
 
+  # send authentication link
+  post 'send-link', :to => 'sessions#send_link'
+
   resources :heartbeat, only: [:index]
   resources :index, path: '/', only: [:index]
   resources :status, only: [:index]

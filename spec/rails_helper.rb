@@ -45,10 +45,13 @@ RSpec.configure do |config|
 end
 
 VCR.configure do |c|
+  mailgun_token = Base64.strict_encode64("api:#{ENV['MAILGUN_API_KEY']}")
+
   c.cassette_library_dir = "spec/fixtures/vcr_cassettes"
   c.hook_into :webmock
   c.ignore_localhost = true
   c.ignore_hosts "codeclimate.com"
+  c.filter_sensitive_data("<MAILGUN_TOKEN>") { mailgun_token }
   c.filter_sensitive_data("<VOLPINO_TOKEN>") { ENV["VOLPINO_TOKEN"] }
   c.configure_rspec_metadata!
 end

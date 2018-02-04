@@ -36,6 +36,7 @@ ENV['LOG_LEVEL'] ||= "info"
 ENV['REDIS_URL'] ||= "redis://redis:6379/8"
 ENV['CONCURRENCY'] ||= "25"
 ENV['CDN_URL'] ||= "https://assets.datacite.org"
+ENV['DOI_URL'] ||= "https://doi.datacite.org"
 ENV['GITHUB_URL'] ||= "https://github.com/datacite/lupo"
 ENV['SEARCH_URL'] ||= "https://search.datacite.org/"
 ENV['VOLPINO_URL'] ||= "https://profiles.datacite.org/api"
@@ -46,6 +47,8 @@ ENV['MYSQL_PASSWORD'] ||= ""
 ENV['MYSQL_HOST'] ||= "mysql"
 ENV['MYSQL_PORT'] ||= "3306"
 ENV['TRUSTED_IP'] ||= "10.0.40.1"
+ENV['MG_FROM'] ||= "support@datacite.org"
+ENV['MG_DOMAIN'] ||= "mg.datacite.org"
 
 module Lupo
   class Application < Rails::Application

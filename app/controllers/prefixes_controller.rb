@@ -135,7 +135,6 @@ class PrefixesController < ApplicationController
 
     # fallback to call handle server, i.e. for prefixes not from DataCite
     @prefix = Handle.where(id: params[:id]) unless @prefix.present? ||  Rails.env.test?
-    Rails.logger.info @prefix.inspect
     fail ActiveRecord::RecordNotFound unless @prefix.present?
   end
 

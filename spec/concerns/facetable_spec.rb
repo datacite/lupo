@@ -1,7 +1,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'DataCenters', type: :controller do
+describe 'DataCenters', type: :controller do
   let(:provider) { create(:provider) }
   let(:model) { DataCentersController.new }
   let!(:clients)  { create_list(:client, 5, provider: provider) }

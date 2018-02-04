@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "random", type: :request  do
+describe "random", type: :request do
   let(:token) { User.generate_token }
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + token } }
 

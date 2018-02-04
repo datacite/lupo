@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "Provider session", type: :request  do
+describe "Provider session", type: :request do
   let!(:provider) { create(:provider, password_input: "12345") }
 
   context 'request is valid' do

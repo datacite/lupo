@@ -5,6 +5,9 @@ class User
   # include helper module for setting password
   include Passwordable
 
+  # include helper module for setting emails via Mailgun API
+  include Mailable
+
   attr_accessor :name, :uid, :email, :role_id, :jwt, :orcid, :provider_id, :client_id, :beta_tester, :allocator, :datacentre
 
   def initialize(credentials, options={})
@@ -61,5 +64,43 @@ class User
 
     c = Client.where(symbol: client_id).first
     c.id if c.present?
+  end
+
+  def self.send_link(username)
+    uid = username.downcase
+
+    if uid.include?(".")
+      user = Client.where(symbol: uid.upcase).first
+    elsif uid == "admin"
+      user = Provider.unscoped.where(symbol: uid.upcase).first
+    else
+      user = Provider.where(symbol: uid.upcase).first
+    end
+
+    return {} unless user.present?
+
+    payload = get_payload(uid: uid, user: user)
+    jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 48))
+    url = ENV['DOI_URL'] + "/link?" + jwt
+
+    to = user.contact_email
+    subject = "DataCite DOI Fabrica: Login Link Request"
+    text = <<~BODY
+      Dear #{user.contact_name},
+
+      Someone has requested a login link for the DataCite DOI Fabrica '#{username.upcase}' account.
+
+      You can change your password via the following link:
+
+      #{url}
+
+      This link is valid for 48 hours.
+
+      King regards,
+
+      DataCite Support
+    BODY
+
+    self.send_message(name: user.contact_name, email: user.contact_email, subject: subject, text: text)
   end
 end
