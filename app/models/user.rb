@@ -81,7 +81,7 @@ class User
 
     payload = get_payload(uid: uid, user: user)
     jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 48))
-    url = ENV['DOI_URL'] + "/link?" + jwt
+    url = ENV['DOI_URL'] + "?jwt=" + jwt
 
     to = user.contact_email
     subject = "DataCite DOI Fabrica: Login Link Request"
@@ -90,11 +90,13 @@ class User
 
       Someone has requested a login link for the DataCite DOI Fabrica '#{username.upcase}' account.
 
-      You can change your password via the following link:
+      You can login via the following link:
 
       #{url}
 
       This link is valid for 48 hours.
+
+      You can change the password in the settings after logging in.
 
       King regards,
 
