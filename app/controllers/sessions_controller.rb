@@ -14,6 +14,7 @@ class SessionsController < ApplicationController
   end
 
   def send_link
+    Rails.logger.info safe_params.inspect
     error_response("Missing account ID.") && return if safe_params[:username].blank?
 
     response = User.send_link(safe_params[:username])

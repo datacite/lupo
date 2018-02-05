@@ -50,7 +50,7 @@ VCR.configure do |c|
   c.cassette_library_dir = "spec/fixtures/vcr_cassettes"
   c.hook_into :webmock
   c.ignore_localhost = true
-  c.ignore_hosts "codeclimate.com"
+  c.ignore_hosts "codeclimate.com", "api.mailgun.net"
   c.filter_sensitive_data("<MAILGUN_TOKEN>") { mailgun_token }
   c.filter_sensitive_data("<VOLPINO_TOKEN>") { ENV["VOLPINO_TOKEN"] }
   c.configure_rspec_metadata!
