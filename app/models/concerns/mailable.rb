@@ -5,17 +5,17 @@ module Mailable
   require 'premailer'
 
   module ClassMethods
-    def format_message_text(template: nil, contact_name: nil, name: nil, url: nil)
+    def format_message_text(template: nil, title: nil, contact_name: nil, name: nil, url: nil)
       ActionController::Base.render(
-        assigns: { contact_name: contact_name, name: name, url: url },
+        assigns: { title: title, contact_name: contact_name, name: name, url: url },
         template: template,
         layout: false
       )
     end
 
-    def format_message_html(template: nil, contact_name: nil, name: nil, url: nil)
+    def format_message_html(template: nil, title: nil, contact_name: nil, name: nil, url: nil)
       input = ActionController::Base.render(
-        assigns: { contact_name: contact_name, name: name, url: url },
+        assigns: { title: title, contact_name: contact_name, name: name, url: url },
         template: template,
         layout: "application"
       )

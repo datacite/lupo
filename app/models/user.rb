@@ -83,9 +83,10 @@ class User
     jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 48))
     url = ENV['DOI_URL'] + "?jwt=" + jwt
 
-    subject = "DataCite DOI Fabrica: Password Reset Request"
-    text = User.format_message_text(template: "users/reset.text.erb", contact_name: user.contact_name, name: user.symbol, url: url)
-    html = User.format_message_html(template: "users/reset.html.erb", contact_name: user.contact_name, name: user.symbol, url: url)
+    title = Rails.env.stage? ? "DataCite DOI Fabrica Test" : "DataCite DOI Fabrica"
+    subject = "#{title}: Password Reset Request"
+    text = User.format_message_text(template: "users/reset.text.erb", title: title, contact_name: user.contact_name, name: user.symbol, url: url)
+    html = User.format_message_html(template: "users/reset.html.erb", title: title, contact_name: user.contact_name, name: user.symbol, url: url)
 
     self.send_message(name: user.contact_name, email: user.contact_email, subject: subject, text: text, html: html)
   end
