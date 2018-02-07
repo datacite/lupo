@@ -13,11 +13,11 @@ class SessionsController < ApplicationController
     render json: { "access_token" => user.jwt, "expires_in" => 3600 * 24 * 30 }.to_json, status: 200
   end
 
-  def send_link
+  def reset
     Rails.logger.info safe_params.inspect
     error_response("Missing account ID.") && return if safe_params[:username].blank?
 
-    response = User.send_link(safe_params[:username])
+    response = User.reset(safe_params[:username])
     error_response("Account not found.") && return unless response[:status] == 200
 
     render json: { "message" => response[:message] }.to_json, status: response[:status]

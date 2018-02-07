@@ -80,12 +80,12 @@ describe User, type: :model do
     end
   end
 
-  describe "send_link client", vcr: true do
+  describe "reset client password", vcr: true do
     let(:provider) { create(:provider, symbol: "DATACITE", password_input: "12345") }
     let(:client) { create(:client, provider: provider, symbol: "DATACITE.DATACITE", contact_email: "support@datacite.org") }
 
     it "sends message" do
-      response = User.send_link(client.symbol)
+      response = User.reset(client.symbol)
       expect(response[:status]).to eq(200)
       expect(response[:message]).to eq("Queued. Thank you.")
     end

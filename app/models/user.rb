@@ -8,7 +8,7 @@ class User
   # include helper module for setting emails via Mailgun API
   include Mailable
 
-  attr_accessor :name, :uid, :email, :role_id, :jwt, :orcid, :provider_id, :client_id, :beta_tester, :allocator, :datacentre
+  attr_accessor :name, :uid, :email, :role_id, :jwt, :provider_id, :client_id, :beta_tester
 
   def initialize(credentials, options={})
     if credentials.present? && options.fetch(:type, "").downcase == "basic"
@@ -66,7 +66,7 @@ class User
     c.id if c.present?
   end
 
-  def self.send_link(username)
+  def self.reset(username)
     uid = username.downcase
 
     if uid.include?(".")
@@ -83,26 +83,10 @@ class User
     jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 48))
     url = ENV['DOI_URL'] + "?jwt=" + jwt
 
-    to = user.contact_email
-    subject = "DataCite DOI Fabrica: Login Link Request"
-    text = <<~BODY
-      Dear #{user.contact_name},
+    subject = "DataCite DOI Fabrica: Password Reset Request"
+    text = User.format_message_text(template: "users/reset.text.erb", contact_name: user.contact_name, name: user.symbol, url: url)
+    html = User.format_message_html(template: "users/reset.html.erb", contact_name: user.contact_name, name: user.symbol, url: url)
 
-      Someone has requested a login link for the DataCite DOI Fabrica '#{username.upcase}' account.
-
-      You can login via the following link:
-
-      #{url}
-
-      This link is valid for 48 hours.
-
-      You can change the password in the settings after logging in.
-
-      King regards,
-
-      DataCite Support
-    BODY
-
-    self.send_message(name: user.contact_name, email: user.contact_email, subject: subject, text: text)
+    self.send_message(name: user.contact_name, email: user.contact_email, subject: subject, text: text, html: html)
   end
 end
