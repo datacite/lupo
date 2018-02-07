@@ -71,16 +71,24 @@ class User
 
     if uid.include?(".")
       user = Client.where(symbol: uid.upcase).first
+      role_id = "client_user"
     elsif uid == "admin"
       user = Provider.unscoped.where(symbol: uid.upcase).first
+      role_id = "staff_user"
     else
       user = Provider.where(symbol: uid.upcase).first
+      role_id = "provider_user"
     end
 
     return {} unless user.present?
 
-    payload = get_payload(uid: uid, user: user)
-    jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 48))
+    payload = {
+      "uid" => uid,
+      "role_id" => role_id,
+      "name" => user.name
+    }
+
+    jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24))
     url = ENV['DOI_URL'] + "?jwt=" + jwt
 
     title = Rails.env.stage? ? "DataCite DOI Fabrica Test" : "DataCite DOI Fabrica"
