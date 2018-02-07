@@ -1,0 +1,79 @@
+<span class="preheader">Use this link to reset your password. The link is only valid for 24 hours.</span>
+<table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td align="center">
+          <table class="email-content" width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td class="email-masthead">
+                <a href="<%= ENV['DOI_URL'] %>" class="email-masthead_name">DataCite DOI Fabrica</a>
+              </td>
+            </tr>
+            <!-- Email Body -->
+            <tr>
+              <td class="email-body" width="100%" cellpadding="0" cellspacing="0">
+                <table class="email-body_inner" align="center" width="570" cellpadding="0" cellspacing="0">
+                  <!-- Body content -->
+                  <tr>
+                    <td class="content-cell">
+                      <h1>Dear <%= @contact_name %>,</h1>
+                      <p>You requested to reset the password for the DataCite DOI Fabrica <%= @name %> account. Use the button below to reset it. <strong>This password reset is only valid for the next 24 hours.</strong></p>
+                      <!-- Action -->
+                      <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td align="center">
+                            <!-- Border based button
+                       https://litmus.com/blog/a-guide-to-bulletproof-buttons-in-email-design -->
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                              <tr>
+                                <td align="center">
+                                  <table border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                      <td>
+                                        <a href="<%= @url %>" class="button button--green" target="_blank">Reset your password</a>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                      <p>If you did not request a password reset, please ignore this email, or contact <a href="mailto:support@datacite.org">DataCite Support</a> if you have questions.</p>
+                      <p>Thanks,</p>
+                      <p>The DataCite Support Team</p>
+                      <!-- Sub copy -->
+                      <table class="body-sub">
+                        <tr>
+                          <td>
+                            <p class="sub">If you’re having trouble with the button above, copy and paste the URL below into your web browser.</p>
+                            <p class="sub"><%= @url %></p>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <table class="email-footer" align="center" width="570" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="content-cell" align="center">
+                      <p class="sub align-center">
+                        DataCite
+                        <br>Am Welfengarten 1B
+                        <br>30167 Hannover
+                        <br>Germany
+                        <br><a href="mailto:support@datacite.org">support@datacite.org</a>
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
