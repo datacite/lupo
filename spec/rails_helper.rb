@@ -42,6 +42,9 @@ RSpec.configure do |config|
 
   # add custom json method
   config.include RequestSpecHelper, type: :request
+
+  ActiveJob::Base.queue_adapter = :test
+
 end
 
 VCR.configure do |c|

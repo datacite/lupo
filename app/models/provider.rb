@@ -14,6 +14,9 @@ class Provider < ActiveRecord::Base
   # include helper module for authentication
   include Authenticable
 
+  # include helper module for Elasticsearch 
+  # include Indexable
+
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
 
@@ -117,6 +120,15 @@ class Provider < ActiveRecord::Base
 
   def user_url
     ENV["VOLPINO_URL"] + "/users?provider-id=" + symbol.downcase
+  end
+
+  def self.push_to_index
+    self.find_each do |provider|
+      params = { "data" => { "type" => "providers", "attributes" => provider.attributes } }
+      params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
+      params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
+      ElasticsearchJob.perform_later(params, "index")
+    end
   end
 
   private
