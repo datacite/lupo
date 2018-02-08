@@ -6,6 +6,9 @@ Rails.application.routes.draw do
   # authentication
   post 'token', :to => 'sessions#create'
 
+  # send reset link
+  post 'reset', :to => 'sessions#reset'
+
   resources :heartbeat, only: [:index]
   resources :index, path: '/', only: [:index]
   resources :status, only: [:index]

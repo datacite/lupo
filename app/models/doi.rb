@@ -13,24 +13,28 @@ class Doi < ActiveRecord::Base
     # initial is default state for new DOIs. This is needed to handle DOIs created
     # outside of this application (i.e. the MDS API)
     state :inactive, :initial => true
-    state :draft, :tombstoned, :registered, :findable, :flagged, :broken, :deleted
+    state :draft, :tombstoned, :registered, :findable, :flagged, :broken
 
     event :start do
-      transitions :from => :inactive, :to => :draft
+      transitions :from => :inactive, :to => :draft, :after => Proc.new { set_to_inactive }
     end
 
     event :register do
       # can't register test prefix
-      transitions :from => [:inactive, :draft], :to => :registered, :unless => :is_test_prefix?
+      transitions :from => [:inactive, :draft], :to => :registered, :unless => :is_test_prefix?, :after => Proc.new { set_to_inactive }
 
-      transitions :from => :inactive, :to => :draft
+      transitions :from => :inactive, :to => :draft, :after => Proc.new { set_to_inactive }
     end
 
     event :publish do
       # can't index test prefix
-      transitions :from => [:inactive, :draft, :registered], :to => :findable, :unless => :is_test_prefix?
+      transitions :from => [:inactive, :draft, :registered], :to => :findable, :unless => :is_test_prefix?, :after => Proc.new { set_to_active }
 
-      transitions :from => :inactive, :to => :draft
+      transitions :from => :inactive, :to => :draft, :after => Proc.new { set_to_inactive }
+    end
+
+    event :hide do
+      transitions :from => [:findable], :to => :registered, :after => Proc.new { set_to_inactive }
     end
 
     event :flag do
@@ -57,9 +61,8 @@ class Doi < ActiveRecord::Base
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, :with => /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9]+\z/
-  validates_format_of :url, :with => /https?:\/\/[\S]+/ , if: :url?, message: "Website should be an url"
+  validates_format_of :url, :with => /https?:\/\/[\S]+/ , if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
-  validates_numericality_of :version, if: :version?
 
   # update cached doi count for client
   before_destroy :update_doi_count
@@ -117,10 +120,20 @@ class Doi < ActiveRecord::Base
     r[:data] if r.present?
   end
 
+  def xml=(value)
+    metadata.build(xml: value, doi: self)
+  end
+
+  def xml
+    current_metadata && ::Base64.strict_encode64(current_metadata.xml)
+  end
+
+  def current_metadata
+    metadata.order('metadata.created DESC').first
+  end
+
   # parse metadata using bolognese library
   def doi_metadata
-    current_metadata = metadata.order('metadata.created DESC').first
-
     # return OpenStruct if no metadata record is found to handle delegate
     return OpenStruct.new unless current_metadata
 
@@ -132,7 +145,7 @@ class Doi < ActiveRecord::Base
 
   delegate :author, :title, :container_title, :description, :resource_type_general,
     :additional_type, :license, :related_identifier, :schema_version,
-    :date_published, :date_accepted, :date_available, :publisher, :xml, to: :doi_metadata
+    :date_published, :date_accepted, :date_available, :publisher, to: :doi_metadata
 
   def date_registered
     minted
@@ -143,7 +156,7 @@ class Doi < ActiveRecord::Base
   end
 
   def event=(value)
-    self.send(value) if %w(start register publish).include?(value)
+    self.send(value) if %w(start register publish hide).include?(value)
   end
 
   # update state for all DOIs starting from from_date
@@ -162,12 +175,24 @@ class Doi < ActiveRecord::Base
     Doi.where("updated <= ?", from_date).where("doi LIKE ?", "10.5072%").find_each { |d| d.destroy }
   end
 
-  private
-
   def set_defaults
-    self.doi = doi.upcase if doi.present?
-    self.is_active = is_active? ? "\x01" : "\x00"
+    self.is_active = is_active ? "\x01" : "\x00"
+    self.version = version.present? ? version + 1 : 0
   end
+
+  def set_to_active
+    self.is_active = "\x01"
+  end
+
+  def set_to_inactive
+    self.is_active = "\x00"
+  end
+
+  def doi=(value)
+    write_attribute(:doi, value.upcase) if value.present?
+  end
+
+  private
 
   def update_doi_count
     Rails.cache.delete("cached_doi_count/#{datacentre}")

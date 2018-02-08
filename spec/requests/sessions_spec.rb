@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "Provider session", type: :request  do
+describe "Provider session", type: :request do
   let!(:provider) { create(:provider, password_input: "12345") }
 
   context 'request is valid' do
@@ -100,6 +100,52 @@ describe "Client session", type: :request  do
 
     it 'returns status code 200' do
       expect(response).to have_http_status(200)
+    end
+  end
+end
+
+describe "reset", type: :request do
+  let!(:client) { create(:client, password_input: "12345") }
+
+  context 'account exists' do
+    let(:params) { "username=#{client.symbol}" }
+
+    before { post '/reset', params: params, headers: nil }
+
+    it 'sends an email' do
+      expect(json["message"]).to eq("Queued. Thank you.")
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
+  context 'account is missing' do
+    let(:params) { "username=a" }
+
+    before { post '/reset', params: params, headers: nil }
+
+    it 'sends an email' do
+      expect(json["errors"]).to eq([{"status"=>"400", "title"=>"Account not found."}])
+    end
+
+    it 'returns status code 400' do
+      expect(response).to have_http_status(400)
+    end
+  end
+
+  context 'account ID not provided' do
+    let(:params) { "username=" }
+
+    before { post '/reset', params: params, headers: nil }
+
+    it 'sends an email' do
+      expect(json["errors"]).to eq([{"status"=>"400", "title"=>"Missing account ID."}])
+    end
+
+    it 'returns status code 400' do
+      expect(response).to have_http_status(400)
     end
   end
 end

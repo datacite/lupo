@@ -1,6 +1,5 @@
 class SessionsController < ApplicationController
   def create
-    Rails.logger.info safe_params.inspect
     error_response("Wrong grant type.") && return if safe_params[:grant_type] != "password"
     error_response("Missing account ID or password.") && return if
       safe_params[:username].blank? || safe_params[:username] == "undefined" ||
@@ -12,6 +11,16 @@ class SessionsController < ApplicationController
     error_response("Wrong account ID or password.") && return if user.role_id == "anonymous"
 
     render json: { "access_token" => user.jwt, "expires_in" => 3600 * 24 * 30 }.to_json, status: 200
+  end
+
+  def reset
+    Rails.logger.info safe_params.inspect
+    error_response("Missing account ID.") && return if safe_params[:username].blank?
+
+    response = User.reset(safe_params[:username])
+    error_response("Account not found.") && return unless response[:status] == 200
+
+    render json: { "message" => response[:message] }.to_json, status: response[:status]
   end
 
   private

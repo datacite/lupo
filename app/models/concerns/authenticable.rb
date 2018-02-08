@@ -130,5 +130,32 @@ module Authenticable
 
       encode_token(payload)
     end
+
+    def get_payload(uid: nil, user: nil)
+      roles = {
+        "ROLE_ADMIN" => "staff_admin",
+        "ROLE_ALLOCATOR" => "provider_admin",
+        "ROLE_DATACENTRE" => "client_admin"
+      }
+      payload = {
+        "uid" => uid,
+        "role_id" => roles.fetch(user.role_name, "user"),
+        "name" => user.name,
+        "email" => user.contact_email
+      }
+
+      if uid.include? "."
+        payload.merge!({
+          "provider_id" => uid.split(".", 2).first,
+          "client_id" => uid
+        })
+      elsif uid != "admin"
+        payload.merge!({
+          "provider_id" => uid
+        })
+      end
+
+      payload
+    end
   end
 end

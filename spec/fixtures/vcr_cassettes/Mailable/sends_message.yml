@@ -1,0 +1,56 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.mailgun.net/v3/mg.datacite.org/messages
+    body:
+      encoding: UTF-8
+      string: from[]=%27DataCite+Support%27+%3Csupport%40datacite.org%3E&to[]=%27Josiah+Carberry%27+%3Csupport%40datacite.org%3E&subject[]=DataCite+DOI+Fabrica%3A+Login+Link+Request&text[]=Dear+Josiah+Carberry%2C%0A%0ASomeone+has+requested+a+login+link+for+the+DataCite+DOI+Fabrica+%27DATACITE.DATACITE%27+account.%0A%0AYou+can+change+your+password+with+the+following+link%3A%0A%0ATEST%0A%0AThis+link+is+valid+for+48+hours.%0A%0AKing+regards%2C%0A%0ADataCite+Support%0A
+    headers:
+      Accept:
+      - "*/*"
+      Accept-Encoding:
+      - gzip, deflate
+      User-Agent:
+      - rest-client/2.0.2 (linux-gnu x86_64) ruby/2.4.1p111
+      Content-Length:
+      - '455'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Authorization:
+      - Basic <MAILGUN_TOKEN>
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Access-Control-Allow-Headers:
+      - Content-Type, x-requested-with
+      Access-Control-Allow-Methods:
+      - GET, POST, PUT, DELETE, OPTIONS
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Max-Age:
+      - '600'
+      Content-Disposition:
+      - inline
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 04 Feb 2018 12:06:25 GMT
+      Server:
+      - nginx
+      Content-Length:
+      - '100'
+      Connection:
+      - keep-alive
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "id": "<20180204120625.1.87B636FB253F1AD1@mg.datacite.org>",
+          "message": "Queued. Thank you."
+        }
+    http_version: 
+  recorded_at: Sun, 04 Feb 2018 12:06:33 GMT
+recorded_with: VCR 3.0.3

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "Providers", type: :request  do
+describe "Providers", type: :request do
   # initialize test data
   let!(:providers)  { create_list(:provider, 10) }
   let!(:provider) { providers.first }

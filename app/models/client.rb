@@ -109,10 +109,6 @@ class Client < ActiveRecord::Base
     errors.add(:symbol, "cannot be changed") if symbol_changed?
   end
 
-  def freeze_symbol
-    errors.add(:symbol, "cannot be changed") if symbol_changed?
-  end
-
   def check_id
     if symbol && symbol.split(".").first != provider.symbol
       errors.add(:symbol, ", Your Client ID must include the name of your provider. Separated by a dot '.' ")
@@ -145,7 +141,7 @@ class Client < ActiveRecord::Base
   def set_defaults
     self.contact_name = "" unless contact_name.present?
     self.domains = "*" unless domains.present?
-    self.is_active = is_active? ? "\x01" : "\x00"
+    self.is_active = is_active ? "\x01" : "\x00"
     self.role_name = "ROLE_DATACENTRE" unless role_name.present?
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0

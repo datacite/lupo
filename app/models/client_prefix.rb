@@ -1,4 +1,4 @@
-require 'base32/crockford'
+require 'base32/url'
 
 class ClientPrefix < ApplicationRecord
   # include helper module for caching infrequently changing resources
@@ -21,7 +21,7 @@ class ClientPrefix < ApplicationRecord
 
   # use base32-encode id as uid, with pretty formatting and checksum
   def uid
-    Base32::Crockford.encode(id, split: 4, length: 16).downcase
+    Base32::URL.encode(id, split: 4, length: 16)
   end
 
   # workaround for non-standard database column names and association

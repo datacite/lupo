@@ -5,7 +5,10 @@ class User
   # include helper module for setting password
   include Passwordable
 
-  attr_accessor :name, :uid, :email, :role_id, :jwt, :orcid, :provider_id, :client_id, :beta_tester, :allocator, :datacentre
+  # include helper module for setting emails via Mailgun API
+  include Mailable
+
+  attr_accessor :name, :uid, :email, :role_id, :jwt, :provider_id, :client_id, :beta_tester
 
   def initialize(credentials, options={})
     if credentials.present? && options.fetch(:type, "").downcase == "basic"
@@ -61,5 +64,38 @@ class User
 
     c = Client.where(symbol: client_id).first
     c.id if c.present?
+  end
+
+  def self.reset(username)
+    uid = username.downcase
+
+    if uid.include?(".")
+      user = Client.where(symbol: uid.upcase).first
+      role_id = "client_user"
+    elsif uid == "admin"
+      user = Provider.unscoped.where(symbol: uid.upcase).first
+      role_id = "staff_user"
+    else
+      user = Provider.where(symbol: uid.upcase).first
+      role_id = "provider_user"
+    end
+
+    return {} unless user.present?
+
+    payload = {
+      "uid" => uid,
+      "role_id" => role_id,
+      "name" => user.name
+    }
+
+    jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24))
+    url = ENV['DOI_URL'] + "?jwt=" + jwt
+
+    title = Rails.env.stage? ? "DataCite DOI Fabrica Test" : "DataCite DOI Fabrica"
+    subject = "#{title}: Password Reset Request"
+    text = User.format_message_text(template: "users/reset.text.erb", title: title, contact_name: user.contact_name, name: user.symbol, url: url)
+    html = User.format_message_html(template: "users/reset.html.erb", title: title, contact_name: user.contact_name, name: user.symbol, url: url)
+
+    self.send_message(name: user.contact_name, email: user.contact_email, subject: subject, text: text, html: html)
   end
 end

@@ -125,9 +125,8 @@ class ProviderPrefixesController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_provider_prefix
-    id = Base32::Crockford.decode(URI.decode(params[:id]).upcase)
+    id = Base32::URL.decode(URI.decode(params[:id]))
     fail ActiveRecord::RecordNotFound unless id.present?
 
     @provider_prefix = ProviderPrefix.where(id: id.to_i).first
