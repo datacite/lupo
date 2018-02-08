@@ -71,22 +71,23 @@ class User
 
     if uid.include?(".")
       user = Client.where(symbol: uid.upcase).first
-      role_id = "client_user"
+      client_id = uid
     elsif uid == "admin"
       user = Provider.unscoped.where(symbol: uid.upcase).first
-      role_id = "staff_user"
     else
       user = Provider.where(symbol: uid.upcase).first
-      role_id = "provider_user"
+      provider_id = uid
     end
 
     return {} unless user.present?
 
     payload = {
       "uid" => uid,
-      "role_id" => role_id,
-      "name" => user.name
-    }
+      "role_id" => "user",
+      "name" => user.name,
+      "client_id" => client_id,
+      "provider_id" => provider_id
+    }.compact
 
     jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24))
     url = ENV['DOI_URL'] + "?jwt=" + jwt
