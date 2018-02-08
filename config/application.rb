@@ -49,6 +49,7 @@ ENV['MYSQL_PORT'] ||= "3306"
 ENV['TRUSTED_IP'] ||= "10.0.40.1"
 ENV['MG_FROM'] ||= "support@datacite.org"
 ENV['MG_DOMAIN'] ||= "mg.datacite.org"
+ENV['LEVRIERO_URL'] ||= "https://api.datacite.org"
 
 module Lupo
   class Application < Rails::Application

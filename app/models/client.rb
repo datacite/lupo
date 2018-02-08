@@ -119,6 +119,17 @@ class Client < ActiveRecord::Base
     ENV["VOLPINO_URL"] + "/users?client-id=" + symbol.downcase
   end
 
+  def self.push_to_index
+    self.find_each do |client|   
+      attributes = client.attributes
+      attributes.transform_keys! { |key| key.tr('_', '-') }
+      params = { "data" => { "type" => "clients", "attributes" => attributes } }
+      params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
+      params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
+      ElasticsearchJob.perform_later(params, "index")
+    end
+  end
+
   private
 
   def set_test_prefix
