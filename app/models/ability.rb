@@ -54,9 +54,11 @@ class Ability
       can [:read], User
       can [:read], Phrase
     elsif user.role_id == "user"
-      can [:read], Client, :provider_id => "SANDBOX"
+      can [:read, :update], Provider, :symbol => user.provider_id.upcase if user.provider_id.present?
+      can [:read, :update], Client, :symbol => user.client_id.upcase if user.client_id.present?
       can [:read], Doi
       can [:read], User, :id => user.id
+      can [:read], Phrase
     end
   end
 end
