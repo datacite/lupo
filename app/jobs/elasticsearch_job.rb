@@ -16,7 +16,7 @@ class ElasticsearchJob < ActiveJob::Base
           result =  Maremma.post(url, content_type: options[:content_type], accept: options[:accept], bearer: options[:bearer], data: data.to_json)
           Rails.logger.info result.inspect
         when "delete"
-          result =  Maremma.delete(url, content_type: options[:content_type], accept: options[:accept], bearer: options[:bearer], data: data.id)
+          result =  Maremma.delete(url+"/"+data["data"]["id"], content_type: options[:content_type], accept: options[:accept], bearer: options[:bearer])
           Rails.logger.info result.inspect
         else raise ArgumentError, "Unknown operation '#{operation}'"
       end

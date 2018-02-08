@@ -12,6 +12,10 @@ class Client < ActiveRecord::Base
   # include helper module for authentication
   include Authenticable
 
+   # include helper module for Elasticsearch 
+   include Indexable
+
+
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
@@ -129,6 +133,15 @@ class Client < ActiveRecord::Base
       ElasticsearchJob.perform_later(params, "index")
     end
   end
+
+  def to_jsoapi
+    attributes = self.attributes
+    attributes.transform_keys! { |key| key.tr('_', '-') }
+    params = { "data" => { "type" => "clients", "attributes" => attributes } }
+    params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
+    params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
+    params
+end
 
   private
 

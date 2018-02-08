@@ -15,7 +15,7 @@ class Provider < ActiveRecord::Base
   include Authenticable
 
   # include helper module for Elasticsearch 
-  # include Indexable
+  include Indexable
 
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
@@ -129,6 +129,13 @@ class Provider < ActiveRecord::Base
       params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
       ElasticsearchJob.perform_later(params, "index")
     end
+  end
+
+  def to_jsoapi
+      params = { "data" => { "type" => "providers", "attributes" => self.attributes } }
+      params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
+      params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
+      params
   end
 
   private
