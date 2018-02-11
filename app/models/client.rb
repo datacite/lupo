@@ -120,7 +120,7 @@ class Client < ActiveRecord::Base
   end
 
   def self.push_to_index
-    self.find_each do |client|   
+    self.find_each do |client|
       attributes = client.attributes
       attributes.transform_keys! { |key| key.tr('_', '-') }
       params = { "data" => { "type" => "clients", "attributes" => attributes } }
@@ -134,7 +134,7 @@ class Client < ActiveRecord::Base
   private
 
   def set_test_prefix
-    return if Rails.env.test? || prefixes.where(prefix: "10.5072").first
+    return if Rails.env.test? || prefixes.where(prefix: "10.5072").first || provider.prefixes.where(prefix: "10.5072").first.blank?
 
     prefixes << cached_prefix_response("10.5072")
   end

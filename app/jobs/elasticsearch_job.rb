@@ -8,7 +8,7 @@ class ElasticsearchJob < ActiveJob::Base
     def perform(data, operation)
       options = { content_type: 'application/vnd.api+json', accept: 'application/vnd.api+json', bearer: User.generate_token }
       controller = data["data"]["type"]
-      url = "#{ENV["LEVRIERO_URL"]}/"+controller
+      url = "#{ENV["LEVRIERO_URL"]}/#{controller}"
       Rails.logger.debug "Ingest into ElasticSearch #{url}"
 
       case operation
@@ -22,8 +22,3 @@ class ElasticsearchJob < ActiveJob::Base
       end
     end
 end
-  
-
-
-
-
