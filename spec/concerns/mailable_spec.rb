@@ -5,6 +5,12 @@ describe "Mailable", type: :model, vcr: true do
   let(:client) { create(:client, name: "DATACITE.DATACITE", contact_email: "support@datacite.org") }
   let(:title) { "DataCite DOI Fabrica" }
 
+  it "send_welcome_email" do
+    response = client.send_welcome_email
+    expect(response[:status]).to eq(200)
+    expect(response[:message]).to eq("Queued. Thank you.")
+  end
+
   it "format_message_text" do
     template = "users/reset.text.erb"
     text = User.format_message_text(template: template, title: title, contact_name: client.contact_name, name: client.symbol, url: token)

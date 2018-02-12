@@ -14,7 +14,10 @@ class Provider < ActiveRecord::Base
   # include helper module for authentication
   include Authenticable
 
-  # include helper module for Elasticsearch 
+  # include helper module for sending emails
+  include Mailable
+
+  # include helper module for Elasticsearch
   # include Indexable
 
   # define table and attribute names
@@ -45,6 +48,8 @@ class Provider < ActiveRecord::Base
   before_create :set_test_prefix
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
+  after_create :send_welcome_email, unless: Proc.new { Rails.env.test? }
+
   accepts_nested_attributes_for :prefixes
 
   default_scope { where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')").where(deleted_at: nil) }
