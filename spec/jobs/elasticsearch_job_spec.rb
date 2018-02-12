@@ -21,7 +21,7 @@ RSpec.describe ElasticsearchJob, type: :job do
               			}
                   }} }
   end
-  subject(:job) { ElasticsearchJob.perform_later(params, "index") }
+  subject(:job) { ElasticsearchJob.perform_later(params) }
 
   it 'queues the job' do
     expect { job }.to have_enqueued_job(ElasticsearchJob)

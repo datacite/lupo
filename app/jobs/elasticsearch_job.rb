@@ -5,18 +5,21 @@ class ElasticsearchJob < ActiveJob::Base
         retry_job wait: 5.minutes, queue: :default
     end
 
-    def perform(data, operation)
+    def perform(data)
       options = { content_type: 'application/vnd.api+json', accept: 'application/vnd.api+json', bearer: User.generate_token }
-      controller = data["data"]["type"]
+      controller = data.dig("data", "type")
+      id = data.dig("data", "attributes","symbol")
       url = "#{ENV["LEVRIERO_URL"]}/#{controller}"
       Rails.logger.debug "Ingest into ElasticSearch #{url}"
+
+      data.dig("data", "attributes", "deleted_at").present? ? operation = "delete" : operation = "index" 
 
       case operation
         when "index"
           result =  Maremma.post(url, content_type: options[:content_type], accept: options[:accept], bearer: options[:bearer], data: data.to_json)
           Rails.logger.info result.inspect
         when "delete"
-          result =  Maremma.delete(url, content_type: options[:content_type], accept: options[:accept], bearer: options[:bearer], data: data.id)
+          result =  Maremma.delete(url + "/" + id, content_type: options[:content_type], accept: options[:accept], bearer: options[:bearer])
           Rails.logger.info result.inspect
         else raise ArgumentError, "Unknown operation '#{operation}'"
       end

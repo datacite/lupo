@@ -12,8 +12,12 @@ class Client < ActiveRecord::Base
   # include helper module for authentication
   include Authenticable
 
+  # include helper module for Elasticsearch 
+  include Indexable
+
   # include helper module for sending emails
   include Mailable
+
 
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
@@ -107,6 +111,19 @@ class Client < ActiveRecord::Base
     end
   end
 
+  def to_jsonapi
+    attributes = self.attributes
+    attributes["deleted_at"]= attributes["deleted_at"].to_s if attributes["deleted_at"].class.name
+    attributes.transform_keys! { |key| key.tr('_', '-') }
+    attributes["updated"]= attributes["updated"].iso8601
+    attributes["created"]= attributes["created"].iso8601
+    attributes["prefixes"] = self.prefixes.map {|p| p.prefix }.join(', ')
+    attributes["provider-id"]= self.provider_id if self.provider_id.present?
+    attributes["deleted_at"]= attributes["deleted-at"] if attributes["deleted-at"].class.name
+    params = { "data" => { "type" => "clients", "attributes" => attributes } }
+    params
+  end
+
   protected
 
   def freeze_symbol
@@ -124,14 +141,8 @@ class Client < ActiveRecord::Base
   end
 
   def self.push_to_index
-    self.find_each do |client|
-      attributes = client.attributes
-      attributes.transform_keys! { |key| key.tr('_', '-') }
-      params = { "data" => { "type" => "clients", "attributes" => attributes } }
-      params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
-      params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
-      params["data"]["attributes"]["provider-id"]= client.provider_id if client.provider_id.present?
-      ElasticsearchJob.perform_later(params, "index")
+    self.find_each do |client|   
+      ElasticsearchJob.perform_later(client.to_jsonapi)
     end
   end
 

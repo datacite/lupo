@@ -16,6 +16,16 @@ describe Provider, type: :model do
     end
   end
 
+  describe "to_jsonapi" do
+    subject { create(:provider, role_name: "ROLE_ADMIN", name: "Admin", symbol: "ADMIN") }
+
+    it "works" do
+      params = subject.to_jsonapi
+      expect(params.dig("data","attributes","symbol")).to eq("ADMIN")
+      expect(params.dig("data","attributes","prefixes")).not_to be_nil
+    end
+  end
+
   describe "password" do
     let(:password_input) { "Credible=Hangover8tighten" }
     subject { create(:provider, password_input: password_input) }

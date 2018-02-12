@@ -14,11 +14,12 @@ class Provider < ActiveRecord::Base
   # include helper module for authentication
   include Authenticable
 
+
+  # include helper module for Elasticsearch 
+  include Indexable
+
   # include helper module for sending emails
   include Mailable
-
-  # include helper module for Elasticsearch
-  # include Indexable
 
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
@@ -129,11 +130,18 @@ class Provider < ActiveRecord::Base
 
   def self.push_to_index
     self.find_each do |provider|
-      params = { "data" => { "type" => "providers", "attributes" => provider.attributes } }
-      params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
-      params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
-      ElasticsearchJob.perform_later(params, "index")
+      ElasticsearchJob.perform_later(provider.to_jsonapi)
     end
+  end
+
+  def to_jsonapi
+    attributes = self.attributes
+    attributes["updated"]= attributes["updated"].iso8601
+    attributes["created"]= attributes["created"].iso8601
+    attributes["deleted_at"]= attributes["deleted_at"].to_s if attributes["deleted_at"].class.name
+    attributes["prefixes"] = self.prefixes.map {|p| p.prefix }.join(', ')
+    params = { "data" => { "type" => "providers", "attributes" => attributes } }
+    params
   end
 
   private
