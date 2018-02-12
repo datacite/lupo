@@ -9,7 +9,7 @@ class ElasticsearchJob < ActiveJob::Base
       options = { content_type: 'application/vnd.api+json', accept: 'application/vnd.api+json', bearer: User.generate_token }
       controller = data.dig("data", "type")
       id = data.dig("data", "id")
-      url = "#{ENV["LEVRIERO_URL"]}/#{controller}""
+      url = "#{ENV["LEVRIERO_URL"]}/#{controller}"
       Rails.logger.debug "Ingest into ElasticSearch #{url}"
 
       case operation
