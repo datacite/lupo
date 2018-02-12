@@ -12,6 +12,9 @@ class Client < ActiveRecord::Base
   # include helper module for authentication
   include Authenticable
 
+  # include helper module for sending emails
+  include Mailable
+
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
@@ -43,6 +46,7 @@ class Client < ActiveRecord::Base
   before_create :set_test_prefix #, if: Proc.new { |client| client.provider_symbol == "SANDBOX" }
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
+  after_create :send_welcome_email, unless: Proc.new { Rails.env.test? }
 
   default_scope { where(deleted_at: nil) }
 
