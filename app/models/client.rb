@@ -50,7 +50,7 @@ class Client < ActiveRecord::Base
   before_create :set_test_prefix #, if: Proc.new { |client| client.provider_symbol == "SANDBOX" }
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
-  after_create :send_welcome_email, unless: Proc.new { Rails.env.test? }
+  # after_create :send_welcome_email, unless: Proc.new { Rails.env.test? }
 
   default_scope { where(deleted_at: nil) }
 
@@ -113,10 +113,13 @@ class Client < ActiveRecord::Base
 
   def to_jsonapi
     attributes = self.attributes
+    attributes["deleted_at"]= attributes["deleted_at"].to_s if attributes["deleted_at"].class.name
     attributes.transform_keys! { |key| key.tr('_', '-') }
     attributes["updated"]= attributes["updated"].iso8601
     attributes["created"]= attributes["created"].iso8601
     attributes["prefixes"] = self.prefixes.map {|p| p.prefix }.join(', ')
+    attributes["provider-id"]= self.provider_id if self.provider_id.present?
+    attributes["deleted_at"]= attributes["deleted-at"] if attributes["deleted-at"].class.name
     params = { "data" => { "type" => "clients", "attributes" => attributes } }
     params
   end
@@ -139,7 +142,7 @@ class Client < ActiveRecord::Base
 
   def self.push_to_index
     self.find_each do |client|   
-      ElasticsearchJob.perform_later(client.to_jsonapi, "index")
+      ElasticsearchJob.perform_later(client.to_jsonapi)
     end
   end
 

@@ -49,7 +49,7 @@ class Provider < ActiveRecord::Base
   before_create :set_test_prefix
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
-  after_create :send_welcome_email, unless: Proc.new { Rails.env.test? }
+  # after_create :send_welcome_email, unless: Proc.new { Rails.env.test? }
 
   accepts_nested_attributes_for :prefixes
 
@@ -130,7 +130,7 @@ class Provider < ActiveRecord::Base
 
   def self.push_to_index
     self.find_each do |provider|
-      ElasticsearchJob.perform_later(provider.to_jsonapi, "index")
+      ElasticsearchJob.perform_later(provider.to_jsonapi)
     end
   end
 
@@ -138,6 +138,7 @@ class Provider < ActiveRecord::Base
     attributes = self.attributes
     attributes["updated"]= attributes["updated"].iso8601
     attributes["created"]= attributes["created"].iso8601
+    attributes["deleted_at"]= attributes["deleted_at"].to_s if attributes["deleted_at"].class.name
     attributes["prefixes"] = self.prefixes.map {|p| p.prefix }.join(', ')
     params = { "data" => { "type" => "providers", "attributes" => attributes } }
     params

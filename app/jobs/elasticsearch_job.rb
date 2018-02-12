@@ -5,12 +5,14 @@ class ElasticsearchJob < ActiveJob::Base
         retry_job wait: 5.minutes, queue: :default
     end
 
-    def perform(data, operation)
+    def perform(data)
       options = { content_type: 'application/vnd.api+json', accept: 'application/vnd.api+json', bearer: User.generate_token }
       controller = data.dig("data", "type")
-      id = data.dig("data", "id")
+      id = data.dig("data", "attributes","symbol")
       url = "#{ENV["LEVRIERO_URL"]}/#{controller}"
       Rails.logger.debug "Ingest into ElasticSearch #{url}"
+
+      data.dig("data", "attributes", "deleted_at").present? ? operation = "delete" : operation = "index" 
 
       case operation
         when "index"
