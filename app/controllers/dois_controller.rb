@@ -91,6 +91,18 @@ class DoisController < ApplicationController
     end
   end
 
+  def set_state
+    authorize! :update, Doi
+    Doi.set_state
+    render json: { message: "DOI state updated." }.to_json, status: :ok
+  end
+
+  def delete_test_dois
+    authorize! :delete, Doi
+    Doi.delete_test_dois
+    render json: { message: "Test DOIs deleted." }.to_json, status: :ok
+  end
+
   protected
 
   def set_doi

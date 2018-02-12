@@ -226,4 +226,28 @@ describe "dois", type: :request do
       expect(json["errors"]).to eq([{"status"=>"405", "title"=>"Method not allowed"}])
     end
   end
+
+  describe 'POST /dois/set-state' do
+    before { post '/dois/set-state', headers: headers }
+
+    it 'returns dois' do
+      expect(json['message']).to eq("DOI state updated.")
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
+  describe 'POST /dois/delete-test-dois' do
+    before { post '/dois/delete-test-dois', headers: headers }
+
+    it 'returns dois' do
+      expect(json['message']).to eq("Test DOIs deleted.")
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
 end

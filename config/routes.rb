@@ -9,6 +9,10 @@ Rails.application.routes.draw do
   # send reset link
   post 'reset', :to => 'sessions#reset'
 
+  # manage DOIs
+  post 'dois/set-state', :to => 'dois#set_state'
+  post 'dois/delete-test-dois', :to => 'dois#delete_test_dois'
+
   resources :heartbeat, only: [:index]
   resources :index, path: '/', only: [:index]
   resources :status, only: [:index]
