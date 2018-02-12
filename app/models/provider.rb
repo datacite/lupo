@@ -124,20 +124,17 @@ class Provider < ActiveRecord::Base
 
   def self.push_to_index
     self.find_each do |provider|
-      params = { "data" => { "type" => "providers", "attributes" => provider.attributes } }
-      params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
-      params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
-      params["data"]["attributes"]["prefixes"]= Provider.find_by(symbol: provider.symbol).prefixes.map {|p| p.prefix }.join(', ')
-      ElasticsearchJob.perform_later(params, "index")
+      ElasticsearchJob.perform_later(provider.to_jsonapi, "index")
     end
   end
 
-  def to_jsoapi
-      params = { "data" => { "type" => "providers", "attributes" => self.attributes } }
-      params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
-      params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
-      params["data"]["attributes"]["prefixes"]= self.find_by(symbol: provider.symbol).prefixes.map {|p| p.prefix }.join(', ')
-      params
+  def to_jsonapi
+    attributes = self.attributes
+    attributes["updated"]= attributes["updated"].iso8601
+    attributes["created"]= attributes["created"].iso8601
+    attributes["prefixes"] = self.prefixes.map {|p| p.prefix }.join(', ')
+    params = { "data" => { "type" => "providers", "attributes" => attributes } }
+    params
   end
 
   private

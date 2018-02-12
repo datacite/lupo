@@ -3,9 +3,9 @@ module Indexable
   
     included do
 
-      after_save    {ElasticsearchJob.perform_later( self.to_jsoapi, "index")}
+      after_save    {ElasticsearchJob.perform_later( self.to_jsonapi, "index")}
 
-      after_destroy {ElasticsearchJob.perform_later( self.to_jsoapi, "delete")}
+      after_destroy {ElasticsearchJob.perform_later( self.to_jsonapi, "delete")}
 
     end
   end

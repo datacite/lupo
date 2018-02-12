@@ -7,8 +7,9 @@ class ElasticsearchJob < ActiveJob::Base
 
     def perform(data, operation)
       options = { content_type: 'application/vnd.api+json', accept: 'application/vnd.api+json', bearer: User.generate_token }
-      controller = data["data"]["type"]
-      url = "#{ENV["LEVRIERO_URL"]}/"+controller
+      controller = data.dig("data", "type")
+      id = data.dig("data", "id")
+      url = "#{ENV["LEVRIERO_URL"]}/" + controller
       Rails.logger.debug "Ingest into ElasticSearch #{url}"
 
       case operation
@@ -16,7 +17,7 @@ class ElasticsearchJob < ActiveJob::Base
           result =  Maremma.post(url, content_type: options[:content_type], accept: options[:accept], bearer: options[:bearer], data: data.to_json)
           Rails.logger.info result.inspect
         when "delete"
-          result =  Maremma.delete(url+"/"+data["data"]["id"], content_type: options[:content_type], accept: options[:accept], bearer: options[:bearer])
+          result =  Maremma.delete(url + "/" + id, content_type: options[:content_type], accept: options[:accept], bearer: options[:bearer])
           Rails.logger.info result.inspect
         else raise ArgumentError, "Unknown operation '#{operation}'"
       end

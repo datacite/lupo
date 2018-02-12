@@ -107,6 +107,16 @@ class Client < ActiveRecord::Base
     end
   end
 
+  def to_jsonapi
+    attributes = self.attributes
+    attributes.transform_keys! { |key| key.tr('_', '-') }
+    attributes["updated"]= attributes["updated"].iso8601
+    attributes["created"]= attributes["created"].iso8601
+    attributes["prefixes"] = self.prefixes.map {|p| p.prefix }.join(', ')
+    params = { "data" => { "type" => "clients", "attributes" => attributes } }
+    params
+  end
+
   protected
 
   def freeze_symbol
@@ -125,25 +135,9 @@ class Client < ActiveRecord::Base
 
   def self.push_to_index
     self.find_each do |client|   
-      attributes = client.attributes
-      attributes.transform_keys! { |key| key.tr('_', '-') }
-      params = { "data" => { "type" => "clients", "attributes" => attributes } }
-      params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
-      params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
-      params["data"]["attributes"]["prefixes"]= self.find_by(symbol: client.symbol).prefixes.map {|p| p.prefix }.join(', ')
-      ElasticsearchJob.perform_later(params, "index")
+      ElasticsearchJob.perform_later(client.to_jsonapi, "index")
     end
   end
-
-  def to_jsoapi
-    attributes = self.attributes
-    attributes.transform_keys! { |key| key.tr('_', '-') }
-    params = { "data" => { "type" => "clients", "attributes" => attributes } }
-    params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
-    params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
-    params["data"]["attributes"]["prefixes"]= self.find_by(symbol: client.symbol).prefixes.map {|p| p.prefix }.join(', ')
-    params
-end
 
   private
 
