@@ -131,6 +131,7 @@ class Client < ActiveRecord::Base
       params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
       params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
       params["data"]["attributes"]["provider-id"]= client.provider_id if client.provider_id.present?
+      params["data"]["attributes"]["prefixes"]= self.find_by(symbol: client.symbol).prefixes.map {|p| p.prefix }.join(', ')
       ElasticsearchJob.perform_later(params, "index")
     end
   end
