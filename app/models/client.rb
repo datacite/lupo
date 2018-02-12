@@ -130,6 +130,7 @@ class Client < ActiveRecord::Base
       params = { "data" => { "type" => "clients", "attributes" => attributes } }
       params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
       params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
+      params["data"]["attributes"]["prefixes"]= self.find_by(symbol: client.symbol).prefixes.map {|p| p.prefix }.join(', ')
       ElasticsearchJob.perform_later(params, "index")
     end
   end
@@ -140,6 +141,7 @@ class Client < ActiveRecord::Base
     params = { "data" => { "type" => "clients", "attributes" => attributes } }
     params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
     params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
+    params["data"]["attributes"]["prefixes"]= self.find_by(symbol: client.symbol).prefixes.map {|p| p.prefix }.join(', ')
     params
 end
 

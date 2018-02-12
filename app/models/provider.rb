@@ -127,6 +127,7 @@ class Provider < ActiveRecord::Base
       params = { "data" => { "type" => "providers", "attributes" => provider.attributes } }
       params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
       params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
+      params["data"]["attributes"]["prefixes"]= Provider.find_by(symbol: provider.symbol).prefixes.map {|p| p.prefix }.join(', ')
       ElasticsearchJob.perform_later(params, "index")
     end
   end
@@ -135,6 +136,7 @@ class Provider < ActiveRecord::Base
       params = { "data" => { "type" => "providers", "attributes" => self.attributes } }
       params["data"]["attributes"]["updated"]= params["data"]["attributes"]["updated"].to_s
       params["data"]["attributes"]["created"]= params["data"]["attributes"]["created"].to_s
+      params["data"]["attributes"]["prefixes"]= self.find_by(symbol: provider.symbol).prefixes.map {|p| p.prefix }.join(', ')
       params
   end
 
