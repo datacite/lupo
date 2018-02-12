@@ -23,8 +23,3 @@ class ElasticsearchJob < ActiveJob::Base
       end
     end
 end
-  
-
-
-
-
