@@ -16,7 +16,7 @@ class Provider < ActiveRecord::Base
 
 
   # include helper module for Elasticsearch 
-  include Indexable
+  include Indexable if Rails.env.test? 
 
   # include helper module for sending emails
   include Mailable
