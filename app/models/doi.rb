@@ -175,6 +175,15 @@ class Doi < ActiveRecord::Base
     Doi.where("updated <= ?", from_date).where("doi LIKE ?", "10.5072%").find_each { |d| d.destroy }
   end
 
+  # set minted date for DOIs have been registered in the handle system externally for ETHZ
+  def self.set_minted(from_date: nil)
+    from_date ||= Time.zone.now - 1.day
+    p = cached_provider_response("ETHZ")
+    return nil unless p.present?
+
+    Doi.joins(:client).where("datacentre.allocator = ?", p.id).where("dataset.updated >= ?", from_date).where("dataset.is_active = ?", "\x01").where(minted: nil).update_all(("minted = dataset.updated"))
+  end
+
   def set_defaults
     self.is_active = is_active ? "\x01" : "\x00"
     self.version = version.present? ? version + 1 : 0

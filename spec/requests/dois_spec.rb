@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "dois", type: :request do
+describe "dois", type: :request, :order => :defined do
   let(:provider)  { create(:provider, symbol: "ADMIN") }
   let(:client)  { create(:client, provider: provider) }
   let!(:dois) { create_list(:doi, 10, client: client) }
@@ -43,6 +43,45 @@ describe "dois", type: :request do
 
       it 'returns a not found message' do
         expect(json).to eq("errors"=>[{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
+      end
+    end
+  end
+
+  describe 'PATCH /dois/:id' do
+    context 'when the record exists' do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.4122/10703",
+              "url"=> "http://www.bl.uk/pdf/pat.pdf",
+              "event" => "register"
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+      before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+
+      it 'updates the record' do
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'sets state to registered' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("registered")
       end
     end
   end
@@ -158,45 +197,6 @@ describe "dois", type: :request do
     end
   end
 
-  describe 'PATCH /dois/:id' do
-    context 'when the record exists' do
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "doi" => "10.4122/10703",
-              "url"=> "http://www.bl.uk/pdf/pat.pdf",
-              "event" => "register"
-            },
-            "relationships"=> {
-              "client"=>  {
-                "data"=> {
-                  "type"=> "clients",
-                  "id"=> client.symbol.downcase
-                }
-              }
-            }
-          }
-        }
-      end
-      before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
-
-      it 'updates the record' do
-        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-      end
-
-      it 'returns status code 200' do
-        expect(response).to have_http_status(200)
-      end
-
-      it 'sets state to registered' do
-        expect(json.dig('data', 'attributes', 'state')).to eq("registered")
-      end
-    end
-  end
-
   describe 'DELETE /dois/:id' do
     before do
       doi = create(:doi, client: client, aasm_state: "draft")
@@ -232,6 +232,22 @@ describe "dois", type: :request do
 
     it 'returns dois' do
       expect(json['message']).to eq("DOI state updated.")
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
+  describe 'POST /dois/set-minted' do
+    let(:provider)  { create(:provider, symbol: "ETHZ") }
+    let(:client)  { create(:client, provider: provider) }
+    let!(:dois) { create_list(:doi, 10, client: client) }
+
+    before { post '/dois/set-minted', headers: headers }
+
+    it 'returns dois' do
+      expect(json['message']).to eq("DOI minted timestamp added.")
     end
 
     it 'returns status code 200' do

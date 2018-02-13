@@ -1,7 +1,7 @@
 module Indexable
     extend ActiveSupport::Concern
-  
+
     included do
-      after_save    {ElasticsearchJob.perform_later( self.to_jsonapi)}
+      after_save { ElasticsearchJob.perform_later( self.to_jsonapi) } unless Rails.env.test?
     end
 end

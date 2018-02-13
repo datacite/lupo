@@ -11,6 +11,7 @@ Rails.application.routes.draw do
 
   # manage DOIs
   post 'dois/set-state', :to => 'dois#set_state'
+  post 'dois/set-minted', :to => 'dois#set_minted'
   post 'dois/delete-test-dois', :to => 'dois#delete_test_dois'
 
   resources :heartbeat, only: [:index]

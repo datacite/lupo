@@ -97,6 +97,12 @@ class DoisController < ApplicationController
     render json: { message: "DOI state updated." }.to_json, status: :ok
   end
 
+  def set_minted
+    authorize! :update, Doi
+    Doi.set_minted
+    render json: { message: "DOI minted timestamp added." }.to_json, status: :ok
+  end
+
   def delete_test_dois
     authorize! :delete, Doi
     Doi.delete_test_dois

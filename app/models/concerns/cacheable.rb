@@ -130,6 +130,12 @@ module Cacheable
       end
     end
 
+    def cached_provider_response(symbol)
+      Rails.cache.fetch("provider_response/#{symbol}", expires_in: 1.day) do
+        Provider.where(symbol: symbol).first
+      end
+    end
+
     def cached_datasets_clients_join(options={})
       Rails.cache.fetch("clients", expires_in: 1.day) do
         Dataset.joins(:clients).where("client.symbol" => "dataset.allocator")
