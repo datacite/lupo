@@ -13,7 +13,7 @@ class Client < ActiveRecord::Base
   include Authenticable
 
   # include helper module for Elasticsearch 
-  include Indexable
+  include Indexable if Rails.env.test? 
 
   # include helper module for sending emails
   include Mailable
