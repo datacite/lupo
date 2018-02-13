@@ -181,7 +181,7 @@ class Doi < ActiveRecord::Base
     p = cached_provider_response("ETHZ")
     return nil unless p.present?
 
-    Doi.joins(:client).where("datacentre.allocator = ?", p.id).where("dataset.updated >= ?", from_date).where("dataset.is_active = ?", "\x01").where(minted: nil).update_all(("minted = dataset.updated"))
+    Doi.where("datacentre in (SELECT id from datacentre where allocator = ?)", p.id).where("updated >= ?", from_date).where(is_active: "\x01").where(minted: nil).update_all(("minted = updated"))
   end
 
   def set_defaults
