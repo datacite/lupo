@@ -5,7 +5,7 @@ class ClientPrefixesController < ApplicationController
   before_action :set_client_prefix, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
-  load_and_authorize_resource :except => [:index, :show]
+  load_and_authorize_resource :except => [:index, :show, :set_created, :set_provider]
 
   def index
     # support nested routes
@@ -77,6 +77,23 @@ class ClientPrefixesController < ApplicationController
   def destroy
     @client_prefix.destroy
     head :no_content
+  end
+
+  def set_created
+    authorize! :update, ClientPrefix
+    ClientPrefix.where(created_at: nil).find_each do |cp|
+      cp.update_column(:created_at, cp.prefix.created)
+    end
+    render json: { message: "Client prefix created timestamp added." }.to_json, status: :ok
+  end
+
+  def set_provider
+    authorize! :update, ClientPrefix
+    ClientPrefix.where(allocator_prefixes: nil).find_each do |cp|
+      cp.send(:set_allocator_prefixes)
+      cp.save
+    end
+    render json: { message: "Client prefix associated provider prefix added." }.to_json, status: :ok
   end
 
   protected

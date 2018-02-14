@@ -1,7 +1,7 @@
 class ProvidersController < ApplicationController
   before_action :set_provider, only: [:show, :update, :destroy]
   before_action :set_include, :authenticate_user!
-  load_and_authorize_resource :except => [:index, :show]
+  load_and_authorize_resource :except => [:index, :show, :set_test_prefix]
 
   def index
     collection = Provider
@@ -114,6 +114,15 @@ class ProvidersController < ApplicationController
       Rails.logger.warn @provider.errors.inspect
       render jsonapi: serialize(@provider.errors), status: :unprocessable_entity
     end
+  end
+
+  def set_test_prefix
+    authorize! :update, Provider
+    Provider.find_each do |p|
+      p.send(:set_test_prefix)
+      p.save
+    end
+    render json: { message: "Test prefix added." }.to_json, status: :ok
   end
 
   protected

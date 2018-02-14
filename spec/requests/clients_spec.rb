@@ -219,4 +219,16 @@ describe 'Clients', type: :request do
       end
     end
   end
+
+  describe 'POST /clients/set-test-prefix' do
+    before { post '/clients/set-test-prefix', headers: headers }
+
+    it 'returns success' do
+      expect(json['message']).to eq("Test prefix added.")
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
 end
