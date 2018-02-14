@@ -255,6 +255,20 @@ describe "dois", type: :request, :order => :defined do
     end
   end
 
+  describe 'POST /dois/set-url' do
+    let!(:dois) { create_list(:doi, 10, client: client, url: nil) }
+
+    before { post '/dois/set-url', headers: headers }
+
+    it 'returns dois' do
+      expect(json['message']).to eq("Adding missing URLs queued.")
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
   describe 'POST /dois/delete-test-dois' do
     before { post '/dois/delete-test-dois', headers: headers }
 
