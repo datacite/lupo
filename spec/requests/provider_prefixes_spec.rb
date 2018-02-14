@@ -43,4 +43,16 @@ describe "Provider Prefixes", type: :request   do
       end
     end
   end
+
+  describe 'POST /provider-prefixes/set-created' do
+    before { post '/provider-prefixes/set-created', headers: headers }
+
+    it 'returns success' do
+      expect(json['message']).to eq("Provider prefix created timestamp added.")
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
 end

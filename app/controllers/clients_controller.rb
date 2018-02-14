@@ -2,7 +2,7 @@ class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
-  load_and_authorize_resource :except => [:index, :show]
+  load_and_authorize_resource :except => [:index, :show, :set_test_prefix]
 
   def index
     # support nested routes
@@ -114,6 +114,15 @@ class ClientsController < ApplicationController
       Rails.logger.warn @client.errors.inspect
       render jsonapi: serialize(@client.errors), status: :unprocessable_entity
     end
+  end
+
+  def set_test_prefix
+    authorize! :update, Client
+    Client.find_each do |c|
+      c.send(:set_test_prefix)
+      c.save
+    end
+    render json: { message: "Test prefix added." }.to_json, status: :ok
   end
 
   protected
