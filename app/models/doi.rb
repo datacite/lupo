@@ -163,8 +163,8 @@ class Doi < ActiveRecord::Base
   def self.set_state(from_date: nil)
     from_date ||= Time.zone.now - 1.day
     Doi.where("updated >= ?", from_date).where(minted: nil).update_all(aasm_state: "draft")
-    Doi.where(aasm_state: nil).where("updated >= ?", from_date).where(is_active: "\x00").where.not(minted: nil).update_all(aasm_state: "registered")
-    Doi.where(aasm_state: nil).where("updated >= ?", from_date).where(is_active: "\x01").where.not(minted: nil).update_all(aasm_state: "findable")
+    Doi.where("updated >= ?", from_date).where(is_active: "\x00").where.not(minted: nil).update_all(aasm_state: "registered")
+    Doi.where("updated >= ?", from_date).where(is_active: "\x01").where.not(minted: nil).update_all(aasm_state: "findable")
     Doi.where("updated >= ?", from_date).where("doi LIKE ?", "10.5072%").update_all(aasm_state: "draft")
   end
 
