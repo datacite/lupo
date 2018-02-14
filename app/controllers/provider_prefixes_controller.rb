@@ -112,7 +112,7 @@ class ProviderPrefixesController < ApplicationController
   end
 
   def set_created
-    authorize! :update, ClientPrefix
+    authorize! :update, ProviderPrefix
     ProviderPrefix.where(created_at: nil).find_each do |pp|
       pp.update_column(:created_at, pp.prefix.created)
     end
