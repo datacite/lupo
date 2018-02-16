@@ -15,8 +15,8 @@ class Provider < ActiveRecord::Base
   include Authenticable
 
 
-  # include helper module for Elasticsearch 
-  include Indexable if Rails.env.test? 
+  # include helper module for Elasticsearch
+  include Indexable if Rails.env.test?
 
   # include helper module for sending emails
   include Mailable
@@ -26,6 +26,7 @@ class Provider < ActiveRecord::Base
 
   self.table_name = "allocator"
   alias_attribute :uid, :symbol
+  alias_attribute :flipper_id, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   attr_readonly :uid, :symbol

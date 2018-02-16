@@ -34,6 +34,21 @@ module Cacheable
       end
     end
 
+    def cached_media_count(options={})
+      Rails.cache.fetch("cached_media_count/#{id}", expires_in: 6.hours, force: options[:force]) do
+        return [] if Rails.env.test?
+
+        if self.class.name == "Doi"
+          collection = Media.where(dataset: id)
+        else
+          collection = Media
+        end
+
+        years = collection.order("YEAR(media.created)").group("YEAR(media.created)").count
+        years = years.map { |k,v| { id: k, title: k, count: v } }
+      end
+    end
+
     def cached_client_response(id, options={})
       Rails.cache.fetch("client_response/#{id}", expires_in: 1.day) do
         Client.where(symbol: id).first
@@ -98,6 +113,15 @@ module Cacheable
         return [] if Rails.env.test?
 
         years = Metadata.order("YEAR(metadata.created)").group("YEAR(metadata.created)").count
+        years = years.map { |k,v| { id: k, title: k, count: v } }
+      end
+    end
+
+    def cached_media_count
+      Rails.cache.fetch("cached_media_count", expires_in: 6.hours) do
+        return [] if Rails.env.test?
+
+        years = Media.order("YEAR(media.created)").group("YEAR(media.created)").count
         years = years.map { |k,v| { id: k, title: k, count: v } }
       end
     end

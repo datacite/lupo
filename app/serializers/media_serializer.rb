@@ -1,10 +1,10 @@
 class MediaSerializer < ActiveModel::Serializer
   cache key: 'media'
 
-  attributes :id, :created, :updated, :dataset_id, :version, :url, :media_type
+  attributes :version, :url, :media_type, :created, :updated
   belongs_to :doi, serializer: DoiSerializer
 
-  def dataset_id
-    object.dataset.uid
+  def id
+    object.uid
   end
 end

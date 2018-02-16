@@ -12,8 +12,8 @@ class Client < ActiveRecord::Base
   # include helper module for authentication
   include Authenticable
 
-  # include helper module for Elasticsearch 
-  include Indexable if Rails.env.test? 
+  # include helper module for Elasticsearch
+  include Indexable if Rails.env.test?
 
   # include helper module for sending emails
   include Mailable
@@ -24,6 +24,7 @@ class Client < ActiveRecord::Base
   self.table_name = "datacentre"
 
   alias_attribute :uid, :symbol
+  alias_attribute :flipper_id, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   attr_readonly :uid, :symbol
@@ -141,7 +142,7 @@ class Client < ActiveRecord::Base
   end
 
   def self.push_to_index
-    self.find_each do |client|   
+    self.find_each do |client|
       ElasticsearchJob.perform_later(client.to_jsonapi)
     end
   end

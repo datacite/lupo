@@ -1,79 +1,104 @@
 class MediaController < ApplicationController
   before_action :set_media, only: [:show, :update, :destroy]
+  before_action :set_include
   before_action :authenticate_user!
   load_and_authorize_resource :except => [:index, :show]
-  # GET /media
-  def index
 
-    response = Media.get_all(params)
+  def index
+    if params[:doi_id].present?
+      doi = Doi.where(doi: params[:doi_id]).first
+      collection = doi.present? ? doi.media : Media.none
+      total = doi.cached_media_count.reduce(0) { |sum, d| sum + d[:count].to_i }
+    else
+      collection = Media.joins(:doi)
+      total = Media.cached_media_count.reduce(0) { |sum, d| sum + d[:count].to_i }
+    end
 
     page = params[:page] || {}
     page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
     page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
-    total = response[:collection].count
+    total_pages = (total.to_f / page[:size]).ceil
 
-    @media = response[:collection].order(:created).page(page[:number]).per(page[:size])
+    order = case params[:sort]
+            when "name" then "dataset.doi"
+            when "-name" then "dataset.doi DESC"
+            when "created" then "media.created"
+            else "media.created DESC"
+            end
+
+    @media = collection.order(order).page(page[:number]).per(page[:size])
 
     meta = { total: total,
-             total_pages: @media.total_pages,
-             page: page[:number].to_i,
-             media_types: response[:media_types],
-             years: response[:years] }
+             total_pages: total_pages,
+             page: page[:number].to_i }
 
-    render jsonapi: @media, meta: meta, include: ["dataset"]
+    render jsonapi: @media, meta: meta, include: @include
   end
 
-  # GET /media/1
   def show
     render jsonapi: @media, include: @include
   end
 
-  # POST /media
   def create
-    # unless [:type, :attributes].all? { |k| safe_params.key? k }
-    #   render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
-    # else
-      @media = Media.new(safe_params.except(:type))
-      authorize! :create, @media
+    @media = Media.new(safe_params)
+    authorize! :create, @media
 
-      if @media.save
-        render json: @media, status: :created, location: @media
-      else
-        render json: serialize(@media.errors), status: :unprocessable_entity
-      end
-    # end
+    if @media.save
+      render jsonapi: @media, status: :created
+    else
+      Rails.logger.warn @media.errors.inspect
+      render jsonapi: serialize(@media.errors), status: :unprocessable_entity
+    end
   end
 
-  # PATCH/PUT /media/1
   def update
-    # unless [:type, :attributes].all? { |k| safe_params.key? k }
-    #   render json: { errors: [{ status: 422, title: "Missing attribute: type."}] }, status: :unprocessable_entity
-    # else
-      if @media.update_attributes(safe_params.except(:type))
-        render json: @media
-      else
-        render json: serialize(@media.errors), status: :unprocessable_entity
-      end
-    # end
+    if @media.update_attributes(safe_params)
+      render jsonapi: @media
+    else
+      Rails.logger.warn @media.errors.inspect
+      render jsonapi: serialize(@media.errors), status: :unprocessable_entity
+    end
   end
 
-  # DELETE /media/1
   def destroy
-    @media.destroy
+    if @media.doi.draft?
+      if @media.destroy
+        head :no_content
+      else
+        Rails.logger.warn @media.errors.inspect
+        render jsonapi: serialize(@media.errors), status: :unprocessable_entity
+      end
+    else
+      response.headers["Allow"] = "HEAD, GET, POST, PATCH, PUT, OPTIONS"
+      render json: { errors: [{ status: "405", title: "Method not allowed" }] }.to_json, status: :method_not_allowed
+    end
+  end
+
+  protected
+
+  def set_media
+    id = Base32::URL.decode(URI.decode(params[:id]))
+    fail ActiveRecord::RecordNotFound unless id.present?
+
+    @media = Media.where(id: id.to_i).first
+    fail ActiveRecord::RecordNotFound unless @media.present?
+  end
+
+  def set_include
+    if params[:include].present?
+      @include = params[:include].split(",").map { |i| i.downcase.underscore }.join(",")
+      @include = [@include]
+    else
+      @include = []
+    end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_media
-      @media = Media.where(id: params[:id]).first
-      fail ActiveRecord::RecordNotFound unless @media.present?
-    end
 
-    # Only allow a trusted parameter "white list" through.
-    def safe_params
-      fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
-      ActiveModelSerializers::Deserialization.jsonapi_parse!(
-        params, only: [ :created, :updated, :dataset, :version, :url, :media_type]
-      )
-    end
+  def safe_params
+    fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
+    ActiveModelSerializers::Deserialization.jsonapi_parse!(
+      params, only: [:media_type, :url, :doi]
+    )
+  end
 end
