@@ -1,5 +1,5 @@
 class MetadataController < ApplicationController
-  before_action :set_metadata, only: [:show, :update, :destroy]
+  before_action :set_metadata, only: [:show, :destroy]
   before_action :set_include
   before_action :authenticate_user!
   load_and_authorize_resource :except => [:index, :show]

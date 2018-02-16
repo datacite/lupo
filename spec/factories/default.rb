@@ -43,13 +43,10 @@ FactoryBot.define do
   end
 
   factory :media do
-    association :doi, factory: :doi, strategy: :create
+    doi
 
-    version 1
     url {Faker::Internet.url }
-    media_type "MyString"
-    doi  { doi.doi }
-    dataset  { doi.doi }
+    media_type "application/json"
   end
 
   factory :prefix do

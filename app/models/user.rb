@@ -33,9 +33,9 @@ class User
     end
   end
 
-  alias_method :orcid, :uid
-  alias_method :id, :uid
-  alias_method :flipper_id, :uid
+  alias_attribute :orcid, :uid
+  alias_attribute :id, :uid
+  alias_attribute :flipper_id, :uid
 
   # Helper method to check for admin user
   def is_admin?
