@@ -13,7 +13,7 @@ class Client < ActiveRecord::Base
   include Authenticable
 
   # include helper module for Elasticsearch
-  include Indexable if Rails.env.test?
+  include Indexable 
 
   # include helper module for sending emails
   include Mailable
@@ -115,13 +115,13 @@ class Client < ActiveRecord::Base
 
   def to_jsonapi
     attributes = self.attributes
-    attributes["deleted_at"]= attributes["deleted_at"].to_s if attributes["deleted_at"].class.name
+    # attributes["deleted_at"]= attributes["deleted_at"].to_s if attributes["deleted_at"].class.name
     attributes.transform_keys! { |key| key.tr('_', '-') }
     attributes["updated"]= attributes["updated"].iso8601
     attributes["created"]= attributes["created"].iso8601
     attributes["prefixes"] = self.prefixes.map {|p| p.prefix }.join(', ')
     attributes["provider-id"]= self.provider_id if self.provider_id.present?
-    attributes["deleted_at"]= attributes["deleted-at"] if attributes["deleted-at"].class.name
+    attributes["deleted-at"]= attributes["deleted-at"].to_s if attributes["deleted-at"].class.name
     params = { "data" => { "type" => "clients", "attributes" => attributes } }
     params
   end

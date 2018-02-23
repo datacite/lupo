@@ -12,7 +12,7 @@ class ElasticsearchJob < ActiveJob::Base
       url = "#{ENV["LEVRIERO_URL"]}/#{controller}"
       Rails.logger.debug "Ingest into ElasticSearch #{url}"
 
-      data.dig("data", "attributes", "deleted_at").present? ? operation = "delete" : operation = "index" 
+      data.dig("data", "attributes", "deleted-at").present? ? operation = "delete" : operation = "index" 
 
       case operation
         when "index"

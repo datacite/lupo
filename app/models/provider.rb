@@ -16,7 +16,7 @@ class Provider < ActiveRecord::Base
 
 
   # include helper module for Elasticsearch
-  include Indexable if Rails.env.test?
+  include Indexable 
 
   # include helper module for sending emails
   include Mailable
@@ -140,7 +140,7 @@ class Provider < ActiveRecord::Base
     attributes = self.attributes
     attributes["updated"]= attributes["updated"].iso8601
     attributes["created"]= attributes["created"].iso8601
-    attributes["deleted_at"]= attributes["deleted_at"].to_s if attributes["deleted_at"].class.name
+    attributes["deleted-at"]= attributes["deleted_at"].to_s if attributes["deleted_at"].class.name
     attributes["prefixes"] = self.prefixes.map {|p| p.prefix }.join(', ')
     params = { "data" => { "type" => "providers", "attributes" => attributes } }
     params
