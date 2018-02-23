@@ -37,6 +37,7 @@ gem 'faraday_middleware-aws-signers-v4'
 gem 'flipper', '~> 0.11.0'
 gem 'flipper-active_support_cache_store'
 gem 'rack-cors', '~> 1.0', '>= 1.0.2', :require => 'rack/cors'
+gem "strip_attributes"
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5', '>= 3.5.2'

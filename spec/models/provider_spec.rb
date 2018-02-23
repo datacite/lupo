@@ -6,6 +6,7 @@ describe Provider, type: :model do
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:contact_email) }
     it { should validate_presence_of(:contact_name) }
+    it { is_expected.to strip_attribute(:name) }
   end
 
   describe "admin" do
