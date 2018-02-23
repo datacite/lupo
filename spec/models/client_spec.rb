@@ -7,14 +7,12 @@ describe Client, type: :model do
   let!(:dois) {  create_list(:doi, 5, client: client) }
   let!(:pony)  {  create(:provider, symbol: "LITTLE") }
 
-
   describe "Validations" do
     it { should validate_presence_of(:symbol) }
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:contact_email) }
     it { should validate_presence_of(:contact_name) }
   end
-
 
   describe "to_jsonapi" do
     subject { create(:client, name: "Rainbow Dash", provider: pony, symbol: pony.symbol + ".PONY") }
@@ -26,7 +24,6 @@ describe Client, type: :model do
       expect(params.dig("data","attributes","prefixes")).not_to be_nil
     end
   end
-
 
   describe "methods" do
     it "should not update the symbol" do

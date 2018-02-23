@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "Media", type: :request  do
+describe "Media", type: :request, :order => :defined do
   let(:provider)  { create(:provider, symbol: "ADMIN") }
   let(:client)  { create(:client, provider: provider) }
   let(:doi) { create(:doi, client: client) }
@@ -17,6 +17,32 @@ describe "Media", type: :request  do
     it 'returns media' do
       expect(json).not_to be_empty
       expect(json['data'].size).to eq(6)
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
+  describe 'GET /media query by doi' do
+    before { get "/media?doi-id=#{doi.doi}", headers: headers }
+
+    it 'returns media' do
+      expect(json).not_to be_empty
+      expect(json['data'].size).to eq(6)
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
+  describe 'GET /media query by doi not found' do
+    before { get "/media?doi-id=xxx", headers: headers }
+
+    it 'returns media' do
+      expect(json).not_to be_empty
+      expect(json['data'].size).to eq(0)
     end
 
     it 'returns status code 200' do

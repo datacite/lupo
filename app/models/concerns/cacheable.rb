@@ -40,6 +40,7 @@ module Cacheable
 
         if self.class.name == "Doi"
           collection = Media.where(dataset: id)
+          return [] if collection.blank?
         else
           collection = Media
         end

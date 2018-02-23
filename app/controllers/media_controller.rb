@@ -7,8 +7,13 @@ class MediaController < ApplicationController
   def index
     if params[:doi_id].present?
       doi = Doi.where(doi: params[:doi_id]).first
-      collection = doi.present? ? doi.media : Media.none
-      total = doi.cached_media_count.reduce(0) { |sum, d| sum + d[:count].to_i }
+      if doi.present?
+        collection = doi.media
+        total = doi.cached_media_count.reduce(0) { |sum, d| sum + d[:count].to_i }
+      else
+        collection = Media.none
+        total = 0
+      end
     else
       collection = Media.joins(:doi)
       total = Media.cached_media_count.reduce(0) { |sum, d| sum + d[:count].to_i }
