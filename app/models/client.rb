@@ -40,6 +40,7 @@ class Client < ActiveRecord::Base
   validates_associated :provider
   validate :check_id, :on => :create
   validate :freeze_symbol, :on => :update
+  strip_attributes
 
   belongs_to :provider, foreign_key: :allocator
   has_many :dois, foreign_key: :datacentre

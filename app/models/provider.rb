@@ -40,6 +40,7 @@ class Provider < ActiveRecord::Base
   validates_numericality_of :version, if: :version?
   validates_inclusion_of :role_name, :in => %w( ROLE_ALLOCATOR ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
   validate :freeze_symbol, :on => :update
+  strip_attributes
 
   has_many :clients, foreign_key: :allocator
   has_many :dois, through: :clients

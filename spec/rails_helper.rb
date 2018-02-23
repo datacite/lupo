@@ -16,6 +16,7 @@ require "colorize"
 require "database_cleaner"
 require 'aasm/rspec'
 require "sidekiq/testing"
+require "strip_attributes/matchers"
 
 # Checks for pending migration and applies them before tests are run.
 ActiveRecord::Migration.maintain_test_schema!
@@ -36,7 +37,7 @@ end
 RSpec.configure do |config|
   # add `FactoryBot` methods
   config.include FactoryBot::Syntax::Methods
-
+  config.include StripAttributes::Matchers
   # don't use transactions, use database_clear gem via support file
   config.use_transactional_fixtures = false
 
