@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-describe "dois", type: :request, :order => :defined do
+describe "dois", type: :request do
   let(:provider)  { create(:provider, symbol: "ADMIN") }
   let(:client)  { create(:client, provider: provider) }
-  let!(:dois) { create_list(:doi, 10, client: client) }
+  let!(:dois) { create_list(:doi, 3, client: client) }
   let(:doi) { create(:doi, client: client) }
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
@@ -12,7 +12,7 @@ describe "dois", type: :request, :order => :defined do
     before { get '/dois', headers: headers }
 
     it 'returns dois' do
-      expect(json['data'].size).to eq(10)
+      expect(json['data'].size).to eq(3)
     end
 
     it 'returns status code 200' do
@@ -256,7 +256,7 @@ describe "dois", type: :request, :order => :defined do
   end
 
   describe 'POST /dois/set-url' do
-    let!(:dois) { create_list(:doi, 10, client: client, url: nil) }
+    let!(:dois) { create_list(:doi, 3, client: client, url: nil) }
 
     before { post '/dois/set-url', headers: headers }
 
