@@ -33,8 +33,6 @@ class Client < ActiveRecord::Base
   validates_presence_of :symbol, :name, :contact_name, :contact_email
   validates_uniqueness_of :symbol, message: "This Client ID has already been taken"
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
-  validates_numericality_of :doi_quota_allowed, :doi_quota_used
-  validates_numericality_of :version, if: :version?
   validates_inclusion_of :role_name, :in => %w( ROLE_DATACENTRE ), :message => "Role %s is not included in the list"
   validates_associated :provider
   validate :check_id, :on => :create
@@ -106,23 +104,24 @@ class Client < ActiveRecord::Base
     created_at.year if created_at.present?
   end
 
-  def doi_quota_exceeded
-    unless doi_quota_allowed.to_i > 0
-      errors.add(:doi_quota, "You have excceded your DOI quota. You cannot mint DOIs anymore")
-    end
-  end
-
+  # attributes to be sent to elasticsearch index
   def to_jsonapi
-    attributes = self.attributes
-    # attributes["deleted_at"]= attributes["deleted_at"].to_s if attributes["deleted_at"].class.name
-    attributes.transform_keys! { |key| key.tr('_', '-') }
-    attributes["updated"]= attributes["updated"].iso8601
-    attributes["created"]= attributes["created"].iso8601
-    attributes["prefixes"] = self.prefixes.map {|p| p.prefix }.join(', ')
-    attributes["provider-id"]= self.provider_id if self.provider_id.present?
-    attributes["deleted-at"]= attributes["deleted-at"].to_s if attributes["deleted-at"].class.name
-    params = { "data" => { "type" => "clients", "attributes" => attributes } }
-    params
+    attributes = {
+      "symbol" => symbol,
+      "name" => name,
+      "contact-name" => contact_name,
+      "contact-email" => contact_email,
+      "url" => url,
+      "re3data" => re3data,
+      "domains" => domains,
+      "provider-id" => provider_id,
+      "prefixes" => prefixes.map { |p| p.prefix },
+      "is-active" => is_active == "\x01",
+      "version" => version,
+      "created" => created.iso8601,
+      "updated" => updated.iso8601 }
+
+    { "data" => { "type" => "clients", "attributes" => attributes } }
   end
 
   protected
@@ -141,12 +140,6 @@ class Client < ActiveRecord::Base
     ENV["VOLPINO_URL"] + "/users?client-id=" + symbol.downcase
   end
 
-  def self.push_to_index
-    self.find_each do |client|
-      IndexJob.perform_later(client.to_jsonapi)
-    end
-  end
-
   private
 
   def set_test_prefix
@@ -159,6 +152,7 @@ class Client < ActiveRecord::Base
     self.contact_name = "" unless contact_name.present?
     self.domains = "*" unless domains.present?
     self.is_active = is_active ? "\x01" : "\x00"
+    self.version = version.present? ? version + 1 : 0
     self.role_name = "ROLE_DATACENTRE" unless role_name.present?
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0

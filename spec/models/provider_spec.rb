@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 describe Provider, type: :model do
+  let(:provider)  { create(:provider) }
+
   describe "validations" do
     it { should validate_presence_of(:symbol) }
     it { should validate_presence_of(:name) }
@@ -18,12 +20,11 @@ describe Provider, type: :model do
   end
 
   describe "to_jsonapi" do
-    subject { create(:provider, role_name: "ROLE_ADMIN", name: "Admin", symbol: "ADMIN") }
-
     it "works" do
-      params = subject.to_jsonapi
-      expect(params.dig("data","attributes","symbol")).to eq("ADMIN")
-      expect(params.dig("data","attributes","prefixes")).not_to be_nil
+      params = provider.to_jsonapi
+      expect(params.dig("data","attributes","symbol")).to eq(provider.symbol)
+      expect(params.dig("data","attributes","contact-email")).to eq(provider.contact_email)
+      expect(params.dig("data","attributes","is-active")).to be true
     end
   end
 

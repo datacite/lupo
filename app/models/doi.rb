@@ -120,6 +120,30 @@ class Doi < ActiveRecord::Base
     r[:data] if r.present?
   end
 
+  # attributes to be sent to elasticsearch index
+  def to_jsonapi
+    attributes = {
+      "doi" => doi,
+      "identifier" => identifier,
+      "url" => url,
+      "author" => author,
+      "container-title" => container_title,
+      "resource-type-general" => resource_type_general,
+      "additional-type" => additional_type,
+      "version" => version,
+      "schema-version" => schema_version,
+      "xml" => xml,
+      "client-id" => client_id,
+      "provider-id" => provider_id,
+      "state" => aasm_state,
+      "is-active" => is_active == "\x01",
+      "published" => date_published,
+      "registered" => date_registered,
+      "updated" => date_updated }
+
+    { "data" => { "type" => "dois", "attributes" => attributes } }
+  end
+
   def xml=(value)
     metadata.build(xml: value, doi: self)
   end

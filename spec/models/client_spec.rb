@@ -4,8 +4,6 @@ describe Client, type: :model do
   let(:provider)  { create(:provider) }
   let(:client)  { create(:client, provider: provider) }
   let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET") }
-  let!(:dois) {  create_list(:doi, 5, client: client) }
-  let!(:pony)  {  create(:provider, symbol: "LITTLE") }
 
   describe "Validations" do
     it { should validate_presence_of(:symbol) }
@@ -17,13 +15,12 @@ describe Client, type: :model do
   end
 
   describe "to_jsonapi" do
-    subject { create(:client, name: "Rainbow Dash", provider: pony, symbol: pony.symbol + ".PONY") }
-
     it "works" do
-      params = subject.to_jsonapi
-      expect(params.dig("data","attributes","contact-email")).not_to be_nil
-      expect(params.dig("data","attributes","symbol")).to eq("LITTLE.PONY")
-      expect(params.dig("data","attributes","prefixes")).not_to be_nil
+      params = client.to_jsonapi
+      expect(params.dig("data","attributes","symbol")).to eq(client.symbol)
+      expect(params.dig("data","attributes","contact-email")).to eq(client.contact_email)
+      expect(params.dig("data","attributes","provider-id")).to eq(client.provider_id)
+      expect(params.dig("data","attributes","is-active")).to be true
     end
   end
 
@@ -32,6 +29,10 @@ describe Client, type: :model do
       client.update_attributes :symbol => client.symbol+'foo.bar'
       expect(client.reload.symbol).to eq(client.symbol)
     end
+  end
+
+  describe "doi transfer" do
+    let!(:dois) {  create_list(:doi, 5, client: client) }
 
     it "transfer all DOIs" do
       original_dois = Doi.where(client: client.symbol)

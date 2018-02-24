@@ -1,7 +1,9 @@
 require 'rails_helper'
 
 describe Doi, type: :model, vcr: true do
-  it { should validate_presence_of(:doi) }
+  describe "validations" do
+    it { should validate_presence_of(:doi) }
+  end
 
   describe "state" do
     subject { create(:doi) }
@@ -94,6 +96,20 @@ describe Doi, type: :model, vcr: true do
 
     it "schema_version" do
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-3")
+    end
+  end
+
+  describe "to_jsonapi" do
+    let(:provider)  { create(:provider, symbol: "ADMIN") }
+    let(:client)  { create(:client, provider: provider) }
+    let(:doi) { create(:doi, client: client) }
+    
+    it "works" do
+      params = doi.to_jsonapi
+      expect(params.dig("data","attributes","url")).to eq(doi.url)
+      expect(params.dig("data","attributes","resource-type-general")).to eq("Text")
+      expect(params.dig("data","attributes","schema-version")).to eq("http://datacite.org/schema/kernel-3")
+      expect(params.dig("data","attributes","is-active")).to be true
     end
   end
 end
