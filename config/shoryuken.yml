@@ -1,0 +1,5 @@
+concurrency: 25
+delay: 30
+pidfile: tmp/pids/shoryuken.pid
+queues:
+  - lupo

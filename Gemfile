@@ -11,7 +11,7 @@ gem 'nokogiri', '~> 1.8.1'
 gem 'iso8601', '~> 0.9.0'
 gem 'maremma', '~> 3.5'
 gem 'bolognese', '~> 0.9', '>= 0.9'
-gem "dalli", "~> 2.7.6"
+gem 'dalli', '~> 2.7', '>= 2.7.6'
 gem 'lograge', '~> 0.5'
 gem 'bugsnag', '~> 6.1', '>= 6.1.1'
 gem 'librato-rails', '~> 1.4.2'
@@ -28,16 +28,16 @@ gem 'country_select', '~> 3.1'
 gem 'countries', '~> 2.1', '>= 2.1.2'
 gem 'aasm', '~> 4.12', '>= 4.12.3'
 gem "facets", require: false
-gem 'sidekiq', '~> 5.0', '>= 5.0.4'
+gem 'shoryuken', '~> 3.2', '>= 3.2.2'
+gem 'aws-sdk-sqs', '~> 1.3'
 gem 'bergamasco', '~> 0.3.10'
 gem 'base32-url', '~> 0.3'
 gem 'mailgun-ruby', '~> 1.1', '>= 1.1.8'
 gem 'premailer', '~> 1.11', '>= 1.11.1'
-gem 'faraday_middleware-aws-signers-v4'
 gem 'flipper', '~> 0.11.0'
 gem 'flipper-active_support_cache_store'
 gem 'rack-cors', '~> 1.0', '>= 1.0.2', :require => 'rack/cors'
-gem "strip_attributes"
+gem 'strip_attributes', '~> 1.8'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5', '>= 3.5.2'
@@ -65,6 +65,3 @@ group :test do
   gem 'faker'
   gem 'database_cleaner'
 end
-
-# Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
