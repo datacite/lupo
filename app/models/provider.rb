@@ -14,9 +14,8 @@ class Provider < ActiveRecord::Base
   # include helper module for authentication
   include Authenticable
 
-
   # include helper module for Elasticsearch
-  include Indexable 
+  include Indexable if ENV["AWS_REGION"]
 
   # include helper module for sending emails
   include Mailable

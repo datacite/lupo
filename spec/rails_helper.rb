@@ -15,7 +15,6 @@ require "rack/test"
 require "colorize"
 require "database_cleaner"
 require 'aasm/rspec'
-require "sidekiq/testing"
 require "strip_attributes/matchers"
 
 # Checks for pending migration and applies them before tests are run.

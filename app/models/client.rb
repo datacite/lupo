@@ -13,11 +13,10 @@ class Client < ActiveRecord::Base
   include Authenticable
 
   # include helper module for Elasticsearch
-  include Indexable 
+  include Indexable if ENV["AWS_REGION"]
 
   # include helper module for sending emails
   include Mailable
-
 
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
@@ -144,7 +143,7 @@ class Client < ActiveRecord::Base
 
   def self.push_to_index
     self.find_each do |client|
-      ElasticsearchJob.perform_later(client.to_jsonapi)
+      IndexJob.perform_later(client.to_jsonapi)
     end
   end
 
