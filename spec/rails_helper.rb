@@ -49,11 +49,12 @@ end
 
 VCR.configure do |c|
   mailgun_token = Base64.strict_encode64("api:#{ENV['MAILGUN_API_KEY']}")
+  sqs_host = "sqs.#{ENV['AWS_REGION'].to_s}.amazonaws.com"
 
   c.cassette_library_dir = "spec/fixtures/vcr_cassettes"
   c.hook_into :webmock
   c.ignore_localhost = true
-  c.ignore_hosts "codeclimate.com", "api.mailgun.net"
+  c.ignore_hosts "codeclimate.com", "api.mailgun.net", sqs_host
   c.filter_sensitive_data("<MAILGUN_TOKEN>") { mailgun_token }
   c.filter_sensitive_data("<VOLPINO_TOKEN>") { ENV["VOLPINO_TOKEN"] }
   c.configure_rspec_metadata!
