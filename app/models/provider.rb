@@ -14,9 +14,8 @@ class Provider < ActiveRecord::Base
   # include helper module for authentication
   include Authenticable
 
-
   # include helper module for Elasticsearch
-  include Indexable 
+  include Indexable if ENV["AWS_REGION"]
 
   # include helper module for sending emails
   include Mailable
@@ -36,8 +35,6 @@ class Provider < ActiveRecord::Base
   validates_uniqueness_of :symbol, message: "This name has already been taken"
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, message: "contact_email should be an email"
   validates_format_of :website, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be an url"
-  validates_numericality_of :doi_quota_allowed, :doi_quota_used
-  validates_numericality_of :version, if: :version?
   validates_inclusion_of :role_name, :in => %w( ROLE_ALLOCATOR ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
   validate :freeze_symbol, :on => :update
   strip_attributes
@@ -130,20 +127,21 @@ class Provider < ActiveRecord::Base
     ENV["VOLPINO_URL"] + "/users?provider-id=" + symbol.downcase
   end
 
-  def self.push_to_index
-    self.find_each do |provider|
-      ElasticsearchJob.perform_later(provider.to_jsonapi)
-    end
-  end
-
+  # attributes to be sent to elasticsearch index
   def to_jsonapi
-    attributes = self.attributes
-    attributes["updated"]= attributes["updated"].iso8601
-    attributes["created"]= attributes["created"].iso8601
-    attributes["deleted-at"]= attributes["deleted_at"].to_s if attributes["deleted_at"].class.name
-    attributes["prefixes"] = self.prefixes.map {|p| p.prefix }.join(', ')
-    params = { "data" => { "type" => "providers", "attributes" => attributes } }
-    params
+    attributes = {
+      "symbol" => symbol,
+      "name" => name,
+      "contact-name" => contact_name,
+      "contact-email" => contact_email,
+      "prefixes" => prefixes.map { |p| p.prefix },
+      "country-code" => country_code,
+      "is-active" => is_active == "\x01",
+      "version" => version,
+      "created" => created.iso8601,
+      "updated" => updated.iso8601 }
+
+    { "data" => { "type" => "providers", "attributes" => attributes } }
   end
 
   private
@@ -175,6 +173,7 @@ class Provider < ActiveRecord::Base
   def set_defaults
     self.symbol = symbol.upcase if symbol.present?
     self.is_active = is_active ? "\x01" : "\x00"
+    self.version = version.present? ? version + 1 : 0
     self.contact_name = "" unless contact_name.present?
     self.role_name = "ROLE_ALLOCATOR" unless role_name.present?
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0

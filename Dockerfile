@@ -63,9 +63,9 @@ RUN gem update --system && \
     gem install bundler && \
     /sbin/setuser app bundle install --path vendor/bundle
 
-# Add Runit script for sidekiq workers
-RUN mkdir /etc/service/sidekiq
-ADD vendor/docker/sidekiq.sh /etc/service/sidekiq/run
+# Add Runit script for shoryuken workers
+RUN mkdir /etc/service/shoryuken
+ADD vendor/docker/shoryuken.sh /etc/service/shoryuken/run
 
 # Run additional scripts during container startup (i.e. not at build time)
 RUN mkdir -p /etc/my_init.d

@@ -31,12 +31,12 @@ end
 ENV['APPLICATION'] ||= "client-api"
 ENV['HOSTNAME'] ||= "lupo"
 ENV['MEMCACHE_SERVERS'] ||= "memcached:11211"
-ENV['SITE_TITLE'] ||= "Data Center API"
+ENV['SITE_TITLE'] ||= "REST API"
 ENV['LOG_LEVEL'] ||= "info"
-ENV['REDIS_URL'] ||= "redis://redis:6379/8"
 ENV['CONCURRENCY'] ||= "25"
 ENV['CDN_URL'] ||= "https://assets.datacite.org"
 ENV['DOI_URL'] ||= "https://doi.datacite.org"
+ENV['LEVRIERO_URL'] ||= "https://api.datacite.org"
 ENV['GITHUB_URL'] ||= "https://github.com/datacite/lupo"
 ENV['SEARCH_URL'] ||= "https://search.datacite.org/"
 ENV['VOLPINO_URL'] ||= "https://profiles.datacite.org/api"
@@ -49,7 +49,6 @@ ENV['MYSQL_PORT'] ||= "3306"
 ENV['TRUSTED_IP'] ||= "10.0.40.1"
 ENV['MG_FROM'] ||= "support@datacite.org"
 ENV['MG_DOMAIN'] ||= "mg.datacite.org"
-ENV['LEVRIERO_URL'] ||= "https://api.datacite.org"
 
 module Lupo
   class Application < Rails::Application
@@ -90,7 +89,8 @@ module Lupo
     config.middleware.use Rack::Deflater
 
     # set Active Job queueing backend
-    config.active_job.queue_adapter = :sidekiq
+    config.active_job.queue_adapter = :shoryuken
+    config.active_job.queue_name_prefix = Rails.env
 
     config.generators do |g|
       g.fixture_replacement :factory_bot

@@ -28,12 +28,6 @@ services:
       - "3309:3306"
     networks:
       - public
-  redis:
-    image: redis
-    ports:
-      - "6379:6379"
-    networks:
-      - public
 networks:
   public:
     driver: bridge
