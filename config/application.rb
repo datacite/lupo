@@ -89,7 +89,11 @@ module Lupo
     config.middleware.use Rack::Deflater
 
     # set Active Job queueing backend
-    config.active_job.queue_adapter = :shoryuken
+    if ENV['AWS_REGION']
+      config.active_job.queue_adapter = :shoryuken
+    else
+      config.active_job.queue_adapter = :inline
+    end
     config.active_job.queue_name_prefix = Rails.env
 
     config.generators do |g|
