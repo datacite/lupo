@@ -14,7 +14,7 @@ class Heartbeat
   end
 
   def services_up?
-    [memcached_up?, sidekiq_up?].all?
+    [memcached_up?].all?
   end
 
   def memcached_up?
@@ -22,13 +22,6 @@ class Heartbeat
     memcached_client = Dalli::Client.new("#{host}:11211")
     memcached_client.alive!
     true
-  rescue
-    false
-  end
-
-  def sidekiq_up?
-    sidekiq_client = Sidekiq::ProcessSet.new
-    sidekiq_client.size > 0
   rescue
     false
   end
