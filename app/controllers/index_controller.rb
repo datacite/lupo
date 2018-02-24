@@ -3,7 +3,7 @@ class IndexController < ApplicationController
     render plain: ENV['SITE_TITLE']
   end
 
-  # def routing_error
-  #   fail ActionController::RoutingError
-  # end
+  def routing_error
+    fail ActionController::RoutingError
+  end
 end
