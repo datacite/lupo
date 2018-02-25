@@ -1,7 +1,4 @@
 class ProviderPrefixSerializer < ActiveModel::Serializer
-  cache key: 'provider_prefix'
-  type 'provider_prefixes'
-
   attributes :created, :updated
 
   belongs_to :provider

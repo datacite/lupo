@@ -1,5 +1,6 @@
 class MetadataSerializer < ActiveModel::Serializer
   attributes :version, :namespace, :xml, :created
+
   belongs_to :doi, serializer: DoiSerializer
 
   def id

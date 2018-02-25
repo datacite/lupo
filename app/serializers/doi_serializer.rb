@@ -2,9 +2,6 @@ class DoiSerializer < ActiveModel::Serializer
   include Bolognese::Utils
   include Bolognese::DoiUtils
 
-  cache key: 'doi'
-  type 'dois'
-
   attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :license, :version, :related_identifier, :schema_version, :state, :reason, :xml, :published, :registered, :updated
 
   belongs_to :client, serializer: ClientSerializer
