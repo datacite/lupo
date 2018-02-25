@@ -141,7 +141,7 @@ class Provider < ActiveRecord::Base
       "created" => created.iso8601,
       "updated" => updated.iso8601 }
 
-    { "data" => { "type" => "providers", "attributes" => attributes } }
+    { "id" => symbol.downcase, "type" => "providers", "attributes" => attributes }
   end
 
   private

@@ -121,7 +121,7 @@ class Client < ActiveRecord::Base
       "created" => created.iso8601,
       "updated" => updated.iso8601 }
 
-    { "data" => { "type" => "clients", "attributes" => attributes } }
+    { "id" => symbol.downcase, "type" => "clients", "attributes" => attributes }
   end
 
   protected

@@ -17,10 +17,11 @@ describe Client, type: :model do
   describe "to_jsonapi" do
     it "works" do
       params = client.to_jsonapi
-      expect(params.dig("data","attributes","symbol")).to eq(client.symbol)
-      expect(params.dig("data","attributes","contact-email")).to eq(client.contact_email)
-      expect(params.dig("data","attributes","provider-id")).to eq(client.provider_id)
-      expect(params.dig("data","attributes","is-active")).to be true
+      expect(params.dig("id")).to eq(client.symbol.downcase)
+      expect(params.dig("attributes","symbol")).to eq(client.symbol)
+      expect(params.dig("attributes","contact-email")).to eq(client.contact_email)
+      expect(params.dig("attributes","provider-id")).to eq(client.provider_id)
+      expect(params.dig("attributes","is-active")).to be true
     end
   end
 

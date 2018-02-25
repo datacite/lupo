@@ -141,7 +141,7 @@ class Doi < ActiveRecord::Base
       "registered" => date_registered,
       "updated" => date_updated }
 
-    { "data" => { "type" => "dois", "attributes" => attributes } }
+    { "id" => doi, "type" => "dois", "attributes" => attributes }
   end
 
   def xml=(value)

@@ -22,9 +22,10 @@ describe Provider, type: :model do
   describe "to_jsonapi" do
     it "works" do
       params = provider.to_jsonapi
-      expect(params.dig("data","attributes","symbol")).to eq(provider.symbol)
-      expect(params.dig("data","attributes","contact-email")).to eq(provider.contact_email)
-      expect(params.dig("data","attributes","is-active")).to be true
+      expect(params.dig("id")).to eq(provider.symbol.downcase)
+      expect(params.dig("attributes","symbol")).to eq(provider.symbol)
+      expect(params.dig("attributes","contact-email")).to eq(provider.contact_email)
+      expect(params.dig("attributes","is-active")).to be true
     end
   end
 

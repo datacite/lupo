@@ -103,13 +103,14 @@ describe Doi, type: :model, vcr: true do
     let(:provider)  { create(:provider, symbol: "ADMIN") }
     let(:client)  { create(:client, provider: provider) }
     let(:doi) { create(:doi, client: client) }
-    
+
     it "works" do
       params = doi.to_jsonapi
-      expect(params.dig("data","attributes","url")).to eq(doi.url)
-      expect(params.dig("data","attributes","resource-type-general")).to eq("Text")
-      expect(params.dig("data","attributes","schema-version")).to eq("http://datacite.org/schema/kernel-3")
-      expect(params.dig("data","attributes","is-active")).to be true
+      expect(params.dig("id")).to eq(doi.doi)
+      expect(params.dig("attributes","url")).to eq(doi.url)
+      expect(params.dig("attributes","resource-type-general")).to eq("Text")
+      expect(params.dig("attributes","schema-version")).to eq("http://datacite.org/schema/kernel-3")
+      expect(params.dig("attributes","is-active")).to be true
     end
   end
 end
