@@ -17,7 +17,7 @@ Rails.application.configure do
   config.perform_caching = true
 
   # Disable/enable fragment and page caching in ActionController
-  config.action_controller.perform_caching = false
+  config.action_controller.perform_caching = true
 
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
