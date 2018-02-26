@@ -280,4 +280,45 @@ describe "dois", type: :request do
       expect(response).to have_http_status(200)
     end
   end
+
+  describe 'GET /dois/random' do
+    before { get '/dois/random', headers: headers }
+
+    it 'returns random doi' do
+      expect(json['doi']).to start_with("10.5072")
+      expect(response).to have_http_status(200)
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
+  describe 'GET /dois/random?prefix' do
+    let(:prefix) { "10.5438" }
+
+    before { get "/dois/random?prefix=#{prefix}", headers: headers }
+
+    it 'returns random doi with prefix' do
+      expect(json['doi']).to start_with(prefix)
+      expect(response).to have_http_status(200)
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
+  describe 'GET /dois/random?number' do
+    let(:number) { 122149076 }
+    before { get "/dois/random?number=#{number}", headers: headers }
+
+    it 'returns predictable doi' do
+      expect(json['doi']).to eq("10.5072/3mfp-6m52")
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
 end
