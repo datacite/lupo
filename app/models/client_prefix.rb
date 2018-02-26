@@ -1,6 +1,6 @@
 require 'base32/url'
 
-class ClientPrefix < ApplicationRecord
+class ClientPrefix < ActiveRecord::Base
   # include helper module for caching infrequently changing resources
   include Cacheable
 
