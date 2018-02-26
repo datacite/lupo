@@ -4,7 +4,7 @@ class DoisController < ApplicationController
   before_action :set_doi, only: [:show, :update, :destroy]
   before_action :set_include
   before_action :authenticate_user!
-  authorize_resource :except => [:index, :show]
+  authorize_resource :except => [:index, :show, :random]
 
   def index
     # support nested routes
