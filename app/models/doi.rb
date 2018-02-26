@@ -1,10 +1,13 @@
 require 'maremma'
 
 class Doi < ActiveRecord::Base
-  include Identifiable
+  include Helpable
   include Metadatable
   include Cacheable
   include Licensable
+
+  # include helper module for generating random DOI suffixes
+  include Helpable
 
   # include state machine
   include AASM

@@ -91,6 +91,13 @@ class DoisController < ApplicationController
     end
   end
 
+  def random
+    prefix = params[:prefix].presence || "10.5072"
+    doi = generate_random_doi(prefix, number: params[:number])
+
+    render json: { doi: doi }.to_json
+  end
+
   def set_state
     authorize! :update, Doi
     Doi.set_state

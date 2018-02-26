@@ -8,6 +8,9 @@ class ApplicationController < ActionController::API
   include Cacheable
   include Facetable
 
+  # include helper module for generating random DOI suffixes
+  include Helpable
+
   attr_accessor :current_user
 
   # pass ability into serializer
