@@ -148,7 +148,7 @@ class Doi < ActiveRecord::Base
   end
 
   def xml=(value)
-    metadata.build(xml: value, doi: self)
+    metadata.build(xml: value, doi: self) if value.present?
   end
 
   def xml
