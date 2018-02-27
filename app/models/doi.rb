@@ -147,8 +147,9 @@ class Doi < ActiveRecord::Base
     { "id" => doi, "type" => "dois", "attributes" => attributes }
   end
 
+  # we use "PGhzaD48L2hzaD4=", i.e. "<hsh></hsh>", as base64 balks on nil
   def xml=(value)
-    metadata.build(xml: value, doi: self) if value.present?
+    metadata.build(xml: value, doi: self) if value.present? && value != "PGhzaD48L2hzaD4="
   end
 
   def xml
