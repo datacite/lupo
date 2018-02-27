@@ -81,7 +81,7 @@ describe Metadata, type: :model, vcr: true do
     end
 
     it "validates xml" do
-      expect(subject.errors[:xml]).to eq(["4:0: ERROR: Element '{http://datacite.org/schema/kernel-4}creators': Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator )."])
+      expect(subject.errors[:creators]).to eq(["Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator )."])
     end
   end
 end

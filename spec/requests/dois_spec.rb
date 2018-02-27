@@ -192,7 +192,7 @@ describe "dois", type: :request do
       end
 
       it 'returns a validation failure message' do
-        expect(json).to eq("errors"=>[{"id"=>"doi", "title"=>"Doi is invalid"}])
+        expect(json["errors"]).to eq([{"source"=>"doi", "title"=>"Doi is invalid"}])
       end
     end
   end
