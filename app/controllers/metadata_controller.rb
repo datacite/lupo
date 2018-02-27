@@ -2,7 +2,7 @@ class MetadataController < ApplicationController
   before_action :set_metadata, only: [:show, :destroy]
   before_action :set_include
   before_action :authenticate_user!
-  load_and_authorize_resource :except => [:index, :show, :validate]
+  load_and_authorize_resource :except => [:index, :show]
 
   def index
     if params[:doi_id].present?
@@ -68,11 +68,11 @@ class MetadataController < ApplicationController
   def validate
     @metadata = Metadata.new(safe_params)
 
-    if @metadata.valid?
-      render jsonapi: @metadata, status: :ok
+    if @metadata.validation_errors?
+      Rails.logger.warn @metadata.validation_errors.inspect
+      render jsonapi: { "errors" => @metadata.validation_errors }.to_json, status: :unprocessable_entity
     else
-      Rails.logger.warn @metadata.errors.inspect
-      render jsonapi: serialize(@metadata.errors), status: :unprocessable_entity
+      render jsonapi: @metadata, status: :ok
     end
   end
 

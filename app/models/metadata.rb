@@ -38,11 +38,15 @@ class Metadata < ActiveRecord::Base
     return nil if doi && doi.draft?
     return nil unless xml.present?
 
+    validation_errors
+  end
+
+  def validation_errors
     doc = Nokogiri::XML(xml, nil, 'UTF-8', &:noblanks)
     return nil unless doc.present?
 
     # load XSD from bolognese gem
-    namespace = doc.namespaces["xmlns"]
+    self.namespace = doc.namespaces["xmlns"]
     errors.add(:xml, "XML has no namespace.") && return unless namespace.present?
 
     kernel = namespace.to_s.split("/").last
@@ -55,6 +59,10 @@ class Metadata < ActiveRecord::Base
       sum << { source: source, title: title }
       sum
     end
+  end
+
+  def validation_errors?
+    validation_errors.present?
   end
 
   def set_metadata_version
