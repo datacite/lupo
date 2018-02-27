@@ -15,7 +15,7 @@ class Metadata < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
   def uid
-    Base32::URL.encode(id, split: 4, length: 16)
+    Base32::URL.encode(id, split: 4, length: 16) if id.present?
   end
 
   def xml=(value)
@@ -48,8 +48,13 @@ class Metadata < ActiveRecord::Base
     kernel = namespace.to_s.split("/").last
     filepath = Bundler.rubygems.find_name('bolognese').first.full_gem_path + "/resources/#{kernel}/metadata.xsd"
     schema = Nokogiri::XML::Schema(open(filepath))
-    err = schema.validate(doc).map { |error| error.to_s }.unwrap
-    errors.add(:xml, err) if err.present?
+    schema.validate(doc).reduce([]) do |sum, error|
+      _, _, source, title = error.to_s.split(': ').map(&:strip)
+      source = source.split("}").last[0..-2]
+      errors.add(source.to_sym, title)
+      sum << { source: source, title: title }
+      sum
+    end
   end
 
   def set_metadata_version

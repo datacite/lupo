@@ -147,7 +147,7 @@ describe "Providers", type: :request do
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"].first).to eq("id"=>"contact_email", "title"=>"Contact email can't be blank")
+        expect(json["errors"].first).to eq("source"=>"contact_email", "title"=>"Contact email can't be blank")
       end
     end
 

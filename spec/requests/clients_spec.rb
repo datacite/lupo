@@ -194,7 +194,7 @@ describe 'Clients', type: :request do
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"].first).to eq("id"=>"symbol", "title"=>"Symbol cannot be changed")
+        expect(json["errors"].first).to eq("source"=>"symbol", "title"=>"Symbol cannot be changed")
       end
     end
   end

@@ -2,7 +2,7 @@ class MetadataController < ApplicationController
   before_action :set_metadata, only: [:show, :destroy]
   before_action :set_include
   before_action :authenticate_user!
-  load_and_authorize_resource :except => [:index, :show]
+  load_and_authorize_resource :except => [:index, :show, :validate]
 
   def index
     if params[:doi_id].present?
@@ -62,6 +62,17 @@ class MetadataController < ApplicationController
     else
       response.headers["Allow"] = "HEAD, GET, POST, PATCH, PUT, OPTIONS"
       render json: { errors: [{ status: "405", title: "Method not allowed" }] }.to_json, status: :method_not_allowed
+    end
+  end
+
+  def validate
+    @metadata = Metadata.new(safe_params)
+
+    if @metadata.valid?
+      render jsonapi: @metadata, status: :ok
+    else
+      Rails.logger.warn @metadata.errors.inspect
+      render jsonapi: serialize(@metadata.errors), status: :unprocessable_entity
     end
   end
 
