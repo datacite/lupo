@@ -2,7 +2,7 @@ class DoiSerializer < ActiveModel::Serializer
   include Bolognese::Utils
   include Bolognese::DoiUtils
 
-  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :license, :version, :related_identifier, :schema_version, :state, :reason, :xml, :published, :registered, :updated
+  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :license, :version, :related_identifier, :schema_version, :state, :is_active, :reason, :xml, :published, :registered, :updated
 
   belongs_to :client, serializer: ClientSerializer
   belongs_to :provider, serializer: ProviderSerializer
@@ -28,6 +28,10 @@ class DoiSerializer < ActiveModel::Serializer
 
   def container_title
     object.container_title || object.publisher
+  end
+
+  def is_active
+    object.is_active == "\u0001" ? true : false
   end
 
   def state
