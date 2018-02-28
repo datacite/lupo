@@ -123,9 +123,9 @@ class Doi < ActiveRecord::Base
 
   # update URL in handle system, don't do that for draft state
   def update_url
-    return nil if draft? || Rails.env.test?
+    return nil if draft? || password.blank?
 
-    HandleJob.perform_later(doi, url: url,
+    HandleJob.perform_later(self, url: url,
                        username: username,
                        password: password,
                        sandbox: !Rails.env.production?)
