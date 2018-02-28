@@ -11,13 +11,13 @@ module Helpable
 
     attr_accessor :username, :password
 
-    def register_url
-      return OpenStruct.new(body: { "errors" => [{ "title" => "Username or password missing" }] }) unless username.present? && password.present?
+    def register_url(options={})
+      return OpenStruct.new(body: { "errors" => [{ "title" => "Username or password missing" }] }) unless options[:username].present? && options[:password].present?
 
-      response = put_doi(doi, url: url,
-                         username: username,
-                         password: password,
-                         sandbox: !Rails.env.production?)
+      response = put_doi(doi, url: options[:url],
+                              username: options[:username],
+                              password: options[:password],
+                              sandbox: !Rails.env.production?)
 
       if response.status == 201
         Rails.logger.info "[Handle] Updated to URL " + url + " for DOI " + doi + "."

@@ -125,7 +125,10 @@ class Doi < ActiveRecord::Base
   def update_url
     return nil if draft? || Rails.env.test?
 
-    register_url
+    HandleJob.perform_later(doi, url: url,
+                       username: username,
+                       password: password,
+                       sandbox: !Rails.env.production?)
   end
 
   # attributes to be sent to elasticsearch index
