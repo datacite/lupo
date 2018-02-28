@@ -44,7 +44,6 @@ class Ability
       #   can [:read, :update], Doi, :client_id => user.client_id
       # end
       can [:manage, :register_url], Doi, :client_id => user.client_id
-
       can [:read], User
       can [:read], Phrase
     elsif user.role_id == "client_user" && user.client_id.present?

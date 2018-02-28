@@ -2,7 +2,7 @@ class MetadataController < ApplicationController
   before_action :set_metadata, only: [:show, :destroy]
   before_action :set_include
   before_action :authenticate_user!
-  load_and_authorize_resource :except => [:index, :show]
+  load_and_authorize_resource :except => [:index, :show, :validate]
 
   def index
     if params[:doi_id].present?

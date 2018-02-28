@@ -136,7 +136,7 @@ class DoisController < ApplicationController
   # capture username and password for client_admins for reuse in the handle system
   def set_user_hash
     if current_user.role_id == "client_admin"
-      @user_hash = { username: current_user.uid, password: current_user.password, role_id: current_user.role_id }
+      @user_hash = { username: current_user.uid, password: current_user.password }
     else
       @user_hash = {}
     end
