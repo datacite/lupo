@@ -7,6 +7,27 @@ module Helpable
   included do
     include Bolognese::DoiUtils
     include Cirneco::Utils
+    include Cirneco::Api
+
+    attr_accessor :username, :password
+
+    def register_url
+      return OpenStruct.new(body: { "errors" => [{ "title" => "Username or password missing" }] }) unless username.present? && password.present?
+
+      response = put_doi(doi, url: url,
+                         username: username,
+                         password: password,
+                         sandbox: !Rails.env.production?)
+
+      if response.status == 201
+        Rails.logger.info "[Handle] Updated to URL " + url + " for DOI " + doi + "."
+        response
+      else
+        Rails.logger.info "[Handle] Error updating URL " + url + " for DOI " + doi + "."
+        Rails.logger.info response.body["errors"].inspect
+        response
+      end
+    end
 
     def generate_random_doi(str, options={})
       prefix = validate_prefix(str)

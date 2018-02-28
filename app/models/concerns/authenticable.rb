@@ -54,10 +54,10 @@ module Authenticable
 
       uid = username.downcase
 
-      get_payload(uid: uid, user: user)
+      get_payload(uid: uid, user: user, password: password.to_s)
     end
 
-    def get_payload(uid: nil, user: nil)
+    def get_payload(uid: nil, user: nil, password: nil)
       roles = {
         "ROLE_ADMIN" => "staff_admin",
         "ROLE_ALLOCATOR" => "provider_admin",
@@ -70,10 +70,12 @@ module Authenticable
         "email" => user.contact_email
       }
 
+      # we only need password for clients registering DOIs in the handle system
       if uid.include? "."
         payload.merge!({
           "provider_id" => uid.split(".", 2).first,
-          "client_id" => uid
+          "client_id" => uid,
+          "password" => password
         })
       elsif uid != "admin"
         payload.merge!({
@@ -131,7 +133,7 @@ module Authenticable
       encode_token(payload)
     end
 
-    def get_payload(uid: nil, user: nil)
+    def get_payload(uid: nil, user: nil, password: nil)
       roles = {
         "ROLE_ADMIN" => "staff_admin",
         "ROLE_ALLOCATOR" => "provider_admin",
@@ -144,10 +146,12 @@ module Authenticable
         "email" => user.contact_email
       }
 
+      # we only need password for clients registering DOIs in the handle system
       if uid.include? "."
         payload.merge!({
           "provider_id" => uid.split(".", 2).first,
-          "client_id" => uid
+          "client_id" => uid,
+          "password" => password
         })
       elsif uid != "admin"
         payload.merge!({

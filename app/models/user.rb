@@ -8,7 +8,7 @@ class User
   # include helper module for setting emails via Mailgun API
   include Mailable
 
-  attr_accessor :name, :uid, :email, :role_id, :jwt, :provider_id, :client_id, :beta_tester
+  attr_accessor :name, :uid, :email, :role_id, :jwt, :password, :provider_id, :client_id, :beta_tester
 
   def initialize(credentials, options={})
     if credentials.present? && options.fetch(:type, "").downcase == "basic"
@@ -24,6 +24,7 @@ class User
       @uid = payload.fetch("uid", nil)
       @name = payload.fetch("name", nil)
       @email = payload.fetch("email", nil)
+      @password = payload.fetch("password", nil)
       @role_id = payload.fetch("role_id", nil)
       @provider_id = payload.fetch("provider_id", nil)
       @client_id = payload.fetch("client_id", nil)
