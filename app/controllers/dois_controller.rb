@@ -1,9 +1,10 @@
 require 'uri'
 
 class DoisController < ApplicationController
+  prepend_before_action :authenticate_user!
   before_action :set_doi, only: [:show, :update, :destroy]
+  before_action :set_user_hash, only: [:create, :update, :destroy]
   before_action :set_include
-  before_action :authenticate_user!
   authorize_resource :except => [:index, :show, :random]
 
   def index
@@ -56,7 +57,7 @@ class DoisController < ApplicationController
   end
 
   def create
-    @doi = Doi.new(safe_params)
+    @doi = Doi.new(safe_params.merge(@user_hash))
     authorize! :create, @doi
 
     if @doi.save
@@ -69,7 +70,7 @@ class DoisController < ApplicationController
   end
 
   def update
-    if @doi.update_attributes(safe_params)
+    if @doi.update_attributes(safe_params.merge(@user_hash))
       render jsonapi: @doi
     else
       Rails.logger.warn @doi.errors.inspect
@@ -130,6 +131,15 @@ class DoisController < ApplicationController
   def set_doi
     @doi = Doi.where(doi: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @doi.present?
+  end
+
+  # capture username and password for client_admins for reuse in the handle system
+  def set_user_hash
+    if current_user.role_id == "client_admin"
+      @user_hash = { username: current_user.uid, password: current_user.password, role_id: current_user.role_id }
+    else
+      @user_hash = {}
+    end
   end
 
   def set_include

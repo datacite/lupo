@@ -70,16 +70,14 @@ class Doi < ActiveRecord::Base
   # update cached doi count for client
   before_destroy :update_doi_count
   after_create :update_doi_count
-  after_update :update_doi_count, if: :datacentre_changed?
+  after_update :update_doi_count, if: :saved_change_to_datacentre?
+
+  # update url in handle system
+  after_save :update_url, if: :saved_change_to_url?
 
   before_save :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
-  # after_save do
-  #   unless Rails.env.test?
-  #     UrlJob.perform_later(self)
-  #   end
-  # end
 
   scope :query, ->(query) { where("dataset.doi = ?", query) }
 
@@ -121,6 +119,16 @@ class Doi < ActiveRecord::Base
     return nil unless resource_type_general.present?
     r = ResourceType.where(id: resource_type_general.downcase.underscore.dasherize)
     r[:data] if r.present?
+  end
+
+  # update URL in handle system, don't do that for draft state
+  def update_url
+    return nil if draft? || Rails.env.test?
+
+    HandleJob.perform_later(doi, url: url,
+                       username: username,
+                       password: password,
+                       sandbox: !Rails.env.production?)
   end
 
   # attributes to be sent to elasticsearch index

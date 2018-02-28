@@ -43,7 +43,7 @@ class Ability
       # else
       #   can [:read, :update], Doi, :client_id => user.client_id
       # end
-      can [:manage], Doi, :client_id => user.client_id
+      can [:manage, :register_url], Doi, :client_id => user.client_id
 
       can [:read], User
       can [:read], Phrase
