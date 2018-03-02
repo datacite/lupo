@@ -14,13 +14,20 @@ class Metadata < ActiveRecord::Base
   before_validation :set_metadata_version, :set_namespace
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
+  attr_accessor :regenerate
+
   def uid
     Base32::URL.encode(id, split: 4, length: 16) if id.present?
   end
 
   def xml=(value)
-    xml = value.present? ? Base64.decode64(value) : nil
-    write_attribute(:xml, xml)
+    if value.blank?
+      write_attribute(:xml, nil)
+    else
+      input = Base64.decode64(value)
+      crosscite = Bolognese::Metadata.new(input: input, regenerate: regenerate)
+      write_attribute(:xml, crosscite.datacite)
+    end
   end
 
   def doi_id
