@@ -2,7 +2,7 @@ class DoiSerializer < ActiveModel::Serializer
   include Bolognese::Utils
   include Bolognese::DoiUtils
 
-  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :landing_page, :license, :version, :related_identifier, :schema_version, :state, :is_active, :reason, :xml, :published, :registered, :updated
+  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :landing_page, :license, :related_identifier, :version, :metadata_version, :schema_version, :state, :is_active, :reason, :xml, :published, :registered, :updated
 
   belongs_to :client, serializer: ClientSerializer
   belongs_to :provider, serializer: ProviderSerializer
@@ -58,5 +58,13 @@ class DoiSerializer < ActiveModel::Serializer
 
   def license
     Array.wrap(object.license).map { |l| l["id"] }.compact.unwrap
+  end
+
+  def version
+    object.doi_metadata && object.doi_metadata.version
+  end
+
+  def metadata_version
+    object.current_metadata && object.current_metadata.metadata_version
   end
 end
