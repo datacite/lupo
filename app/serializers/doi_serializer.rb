@@ -2,7 +2,7 @@ class DoiSerializer < ActiveModel::Serializer
   include Bolognese::Utils
   include Bolognese::DoiUtils
 
-  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :license, :version, :related_identifier, :schema_version, :state, :is_active, :reason, :xml, :published, :registered, :updated
+  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :landing_page, :license, :version, :related_identifier, :schema_version, :state, :is_active, :reason, :xml, :published, :registered, :updated
 
   belongs_to :client, serializer: ClientSerializer
   belongs_to :provider, serializer: ProviderSerializer
@@ -48,6 +48,12 @@ class DoiSerializer < ActiveModel::Serializer
 
   def registered
     object.date_registered
+  end
+
+  def landing_page
+    { status: object.last_landing_page_status,
+      content_type: object.last_landing_page_content_type,
+      checked: object.last_landing_page_status_check }
   end
 
   def license

@@ -321,4 +321,34 @@ describe "dois", type: :request do
       expect(response).to have_http_status(200)
     end
   end
+
+  describe 'POST /dois/status', vcr: true do
+    let(:doi) { create(:doi, url: "https://blog.datacite.org/re3data-science-europe/") }
+
+    before { post "/dois/status?id=#{doi.doi}", headers: headers }
+
+    it 'returns landing page status' do
+      expect(json['status']).to eq(200)
+      expect(json['content-type']).to eq("text/html")
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
+  describe 'POST /dois/status pdf', vcr: true do
+    let(:doi) { create(:doi, url: "https://schema.datacite.org/meta/kernel-4.1/doc/DataCite-MetadataKernel_v4.1.pdf") }
+
+    before { post "/dois/status?id=#{doi.doi}", headers: headers }
+
+    it 'returns landing page status' do
+      expect(json['status']).to eq(200)
+      expect(json['content-type']).to eq("application/pdf")
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
 end
