@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   post 'reset', :to => 'sessions#reset'
 
   # manage DOIs
+  post 'dois/status', :to => 'dois#status'
   post 'dois/set-state', :to => 'dois#set_state'
   post 'dois/set-minted', :to => 'dois#set_minted'
   post 'dois/set-url', :to => 'dois#set_url'

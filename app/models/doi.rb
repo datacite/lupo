@@ -1,13 +1,15 @@
 require 'maremma'
 
 class Doi < ActiveRecord::Base
-  include Helpable
   include Metadatable
   include Cacheable
   include Licensable
 
   # include helper module for generating random DOI suffixes
   include Helpable
+
+  # include helper module for link checking
+  include Checkable
 
   # include state machine
   include AASM
@@ -112,7 +114,7 @@ class Doi < ActiveRecord::Base
   end
 
   def identifier
-    doi_as_url(doi)
+    normalize_doi(doi, sandbox: !Rails.env.production?)
   end
 
   def resource_type

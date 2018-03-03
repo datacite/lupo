@@ -2,7 +2,7 @@ require 'uri'
 
 class DoisController < ApplicationController
   prepend_before_action :authenticate_user!
-  before_action :set_doi, only: [:show, :update, :destroy]
+  before_action :set_doi, only: [:show, :update, :destroy, :status]
   before_action :set_user_hash, only: [:create, :update, :destroy]
   before_action :set_include
   authorize_resource :except => [:index, :show, :random]
@@ -90,6 +90,10 @@ class DoisController < ApplicationController
       response.headers["Allow"] = "HEAD, GET, POST, PATCH, PUT, OPTIONS"
       render json: { errors: [{ status: "405", title: "Method not allowed" }] }.to_json, status: :method_not_allowed
     end
+  end
+
+  def status
+    render json: @doi.get_landing_page_info.to_json, status: :ok
   end
 
   def random
