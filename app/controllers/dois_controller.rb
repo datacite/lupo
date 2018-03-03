@@ -2,7 +2,7 @@ require 'uri'
 
 class DoisController < ApplicationController
   prepend_before_action :authenticate_user!
-  before_action :set_doi, only: [:show, :update, :destroy, :status]
+  before_action :set_doi, only: [:show, :update, :destroy]
   before_action :set_user_hash, only: [:create, :update, :destroy]
   before_action :set_include
   authorize_resource :except => [:index, :show, :random]
@@ -93,7 +93,9 @@ class DoisController < ApplicationController
   end
 
   def status
-    render json: @doi.get_landing_page_info.to_json, status: :ok
+    doi = Doi.where(doi: params[:id]).first
+    status = Doi.get_landing_page_info(doi: doi, url: params[:url])
+    render json: status.to_json, status: :ok
   end
 
   def random

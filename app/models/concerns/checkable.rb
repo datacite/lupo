@@ -1,10 +1,9 @@
 module Checkable
   extend ActiveSupport::Concern
 
-  included do
-    def get_landing_page_info
-      return nil unless doi.present?
-
+  module ClassMethods
+    def get_landing_page_info(doi: nil, url: nil)
+      url = doi.present? ? doi.url : url
       return { "status" => 404, "content_type" => nil, "checked" => Time.zone.now.utc.iso8601 } unless
         url.present?
 
@@ -17,9 +16,9 @@ module Checkable
 
       checked = Time.zone.now
 
-      write_attribute(:last_landing_page_status, response.status)
-      write_attribute(:last_landing_page_content_type, content_type)
-      write_attribute(:last_landing_page_status_check, checked)
+      doi.update_attributes(last_landing_page_status: response.status,
+                            last_landing_page_content_type: content_type,
+                            last_landing_page_status_check: checked) if doi.present?
 
       { "status" => response.status,
         "content-type" => content_type,

@@ -1,0 +1,48 @@
+---
+http_interactions:
+- request:
+    method: head
+    uri: https://blog.datacite.org/re3data-science-europe/
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Maremma - http://df07e5739183
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '17629'
+      Connection:
+      - keep-alive
+      Date:
+      - Sat, 03 Mar 2018 07:03:33 GMT
+      Cache-Control:
+      - max-age=31536000
+      Last-Modified:
+      - Wed, 28 Feb 2018 20:13:40 GMT
+      Etag:
+      - '"1920e368fefb9ce45b3a103f9378853d"'
+      Server:
+      - AmazonS3
+      Age:
+      - '4425'
+      X-Cache:
+      - Hit from cloudfront
+      Via:
+      - 1.1 2b7e0587e76bdc8afc2d63bea659b942.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - JsoEx40bPQRuESAdALnDGRx3kLq8LnaSp3Dicl0F-_DQTb_kMUWF7A==
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sat, 03 Mar 2018 08:17:22 GMT
+recorded_with: VCR 3.0.3

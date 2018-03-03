@@ -1,0 +1,46 @@
+---
+http_interactions:
+- request:
+    method: head
+    uri: https://blog.datacite.org/xxx
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Maremma - http://df07e5739183
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Content-Length:
+      - '0'
+      Connection:
+      - keep-alive
+      X-Amz-Error-Code:
+      - NoSuchKey
+      X-Amz-Error-Message:
+      - The specified key does not exist.
+      X-Amz-Error-Detail-Key:
+      - xxx
+      Date:
+      - Sat, 03 Mar 2018 08:17:17 GMT
+      Server:
+      - AmazonS3
+      Age:
+      - '2'
+      X-Cache:
+      - Error from cloudfront
+      Via:
+      - 1.1 d89eaba973a5c1614ea9f0994f5e8a12.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - k24UJLypSmSzJzLaha_MhzpM-kWZxw_hDdTbQnzil3NPSqTnO51K6g==
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sat, 03 Mar 2018 08:17:24 GMT
+recorded_with: VCR 3.0.3
