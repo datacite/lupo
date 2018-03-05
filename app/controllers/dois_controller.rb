@@ -4,7 +4,7 @@ class DoisController < ApplicationController
   prepend_before_action :authenticate_user!
   before_action :set_doi, only: [:show, :update, :destroy]
   before_action :set_user_hash, only: [:create, :update, :destroy]
-  before_action :set_include
+  before_action :set_include, only: [:index, :show]
   authorize_resource :except => [:index, :show, :random]
 
   def index
@@ -54,6 +54,15 @@ class DoisController < ApplicationController
 
   def show
     render jsonapi: @doi, include: @include, serializer: DoiSerializer
+  end
+
+  def new
+    @doi = Doi.new(safe_params.merge(@user_hash))
+    authorize! :new, @doi
+
+    @doi.valid?
+
+    render jsonapi: @doi, serializer: DoiSerializer
   end
 
   def create
@@ -162,7 +171,8 @@ class DoisController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:doi, :url, :xml, :reason, :event, :client]
+      params, only: [:doi, :url, :title, :publisher, :published, "resource-type", "resource-type-subtype", :description, :xml, :reason, :event, :regenerate, :client, creator: []],
+              keys: { "resource-type" => :resource_type, "resource-type-subtype" => :additional_type }
     )
   end
 end
