@@ -2,7 +2,7 @@ class DoiSerializer < ActiveModel::Serializer
   include Bolognese::Utils
   include Bolognese::DoiUtils
 
-  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :landing_page, :license, :related_identifier, :version, :metadata_version, :schema_version, :state, :is_active, :reason, :xml, :published, :registered, :updated
+  attributes :doi, :identifier, :url, :creator, :title, :publisher, :description, :resource_type_subtype, :landing_page, :license, :related_identifier, :version, :metadata_version, :schema_version, :state, :is_active, :reason, :xml, :published, :registered, :updated
 
   belongs_to :client, serializer: ClientSerializer
   belongs_to :provider, serializer: ProviderSerializer
@@ -17,6 +17,10 @@ class DoiSerializer < ActiveModel::Serializer
     object.doi.downcase
   end
 
+  def creator
+    object.author
+  end
+
   def title
     t = parse_attributes(object.title, content: "text", first: true)
     t.truncate(255) if t.is_a?(String)
@@ -26,7 +30,7 @@ class DoiSerializer < ActiveModel::Serializer
     object.additional_type
   end
 
-  def container_title
+  def publisher
     object.container_title || object.publisher
   end
 
