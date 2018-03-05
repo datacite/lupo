@@ -34,14 +34,11 @@ class DoiSearch < Bolognese::Metadata
 
   # backwards compatibility
   def member
-    m = cached_member_response(provider_id.to_s.upcase)
-    m[:data] if m.present?
+    cached_member_response(provider_id.to_s.upcase)
   end
 
   def resource_type
-    return nil unless resource_type_general.present?
-    r = ResourceType.where(id: resource_type_general.downcase.underscore.dasherize)
-    r[:data] if r.present?
+    cached_resource_type_response(resource_type_general.downcase.underscore.dasherize) if resource_type_general.present?
   end
 
   def media

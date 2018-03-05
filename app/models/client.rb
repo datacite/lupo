@@ -96,8 +96,7 @@ class Client < ActiveRecord::Base
 
   # backwards compatibility
   def member
-    m = cached_member_response(provider_id)
-    m[:data] if m.present?
+    cached_member_response(provider_id) if provider_id.present?
   end
 
   def year
