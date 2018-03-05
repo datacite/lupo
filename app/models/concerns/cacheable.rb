@@ -68,21 +68,24 @@ module Cacheable
       end
     end
 
-    def cached_provider_response(symbol)
-      Rails.cache.fetch("provider_response/#{symbol}", expires_in: 1.day) do
-        Provider.where(symbol: symbol).first
+    def cached_member_response(id)
+      Rails.cache.fetch("member_response/#{id}", expires_in: 12.hours) do
+        member = Member.where(id: id)
+        member.present? ? member[:data] : nil
       end
     end
 
-    def cached_member_response(id)
-      Rails.cache.fetch("member_response/#{id}", expires_in: 1.day) do
-        Member.where(id: id)
+    def cached_resource_type_response(id)
+      Rails.cache.fetch("resource_type_response/#{id}", expires_in: 1.month) do
+        resource_type = ResourceType.where(id: id)
+        resource_type.present? ? resource_type[:data] : nil
       end
     end
 
     def cached_repository_response(id, options={})
       Rails.cache.fetch("repository_response/#{id}", expires_in: 7.days) do
-        Repository.where(id: id)
+        repository = Repository.where(id: id)
+        repository.present? ? repository[:data] : nil
       end
     end
   end
