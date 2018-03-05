@@ -14,20 +14,13 @@ class Metadata < ActiveRecord::Base
   before_validation :set_metadata_version, :set_namespace
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
-  attr_accessor :regenerate
-
   def uid
-    Base32::URL.encode(id, split: 4, length: 16) if id.present?
+    Base32::URL.encode(id, split: 4, length: 16)
   end
 
   def xml=(value)
-    if value.blank?
-      write_attribute(:xml, nil)
-    else
-      input = Base64.decode64(value)
-      crosscite = Bolognese::Metadata.new(input: input, regenerate: regenerate)
-      write_attribute(:xml, crosscite.datacite)
-    end
+    xml = value.present? ? Base64.decode64(value) : nil
+    write_attribute(:xml, xml)
   end
 
   def doi_id
@@ -45,31 +38,18 @@ class Metadata < ActiveRecord::Base
     return nil if doi && doi.draft?
     return nil unless xml.present?
 
-    validation_errors
-  end
-
-  def validation_errors
     doc = Nokogiri::XML(xml, nil, 'UTF-8', &:noblanks)
     return nil unless doc.present?
 
     # load XSD from bolognese gem
-    self.namespace = doc.namespaces["xmlns"]
+    namespace = doc.namespaces["xmlns"]
     errors.add(:xml, "XML has no namespace.") && return unless namespace.present?
 
     kernel = namespace.to_s.split("/").last
     filepath = Bundler.rubygems.find_name('bolognese').first.full_gem_path + "/resources/#{kernel}/metadata.xsd"
     schema = Nokogiri::XML::Schema(open(filepath))
-    schema.validate(doc).reduce([]) do |sum, error|
-      _, _, source, title = error.to_s.split(': ').map(&:strip)
-      source = source.split("}").last[0..-2]
-      errors.add(source.to_sym, title)
-      sum << { source: source, title: title }
-      sum
-    end
-  end
-
-  def validation_errors?
-    validation_errors.present?
+    err = schema.validate(doc).map { |error| error.to_s }.unwrap
+    errors.add(:xml, err) if err.present?
   end
 
   def set_metadata_version

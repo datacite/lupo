@@ -2,7 +2,7 @@ class MetadataController < ApplicationController
   before_action :set_metadata, only: [:show, :destroy]
   before_action :set_include
   before_action :authenticate_user!
-  load_and_authorize_resource :except => [:index, :show, :convert]
+  load_and_authorize_resource :except => [:index, :show]
 
   def index
     if params[:doi_id].present?
@@ -65,17 +65,6 @@ class MetadataController < ApplicationController
     end
   end
 
-  def convert
-    @metadata = Metadata.new(safe_params.merge(regenerate: true))
-
-    if @metadata.validation_errors?
-      Rails.logger.warn @metadata.validation_errors.inspect
-      render jsonapi: { "errors" => @metadata.validation_errors }.to_json, status: :unprocessable_entity
-    else
-      render jsonapi: @metadata, status: :ok
-    end
-  end
-
   protected
 
   def set_metadata
@@ -100,7 +89,7 @@ class MetadataController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:xml, :doi, :regenerate]
+      params, only: [:xml, :doi]
     )
   end
 end
