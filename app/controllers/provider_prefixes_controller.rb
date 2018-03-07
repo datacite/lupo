@@ -29,7 +29,7 @@ class ProviderPrefixesController < ApplicationController
                  title: params[:year],
                  count: collection.where('YEAR(allocator_prefixes.created_at) = ?', params[:year]).count }]
     else
-      years = collection.where.not(prefixes: nil).order("allocator_prefixes.created_at DESC").group("YEAR(allocator_prefixes.created_at)").count
+      years = collection.where.not(prefixes: nil).order("YEAR(allocator_prefixes.created_at) DESC").group("YEAR(allocator_prefixes.created_at)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 
