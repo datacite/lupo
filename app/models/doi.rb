@@ -8,6 +8,9 @@ class Doi < ActiveRecord::Base
   # include helper module for generating random DOI suffixes
   include Helpable
 
+  # include helper module for converting and exposing metadata
+  include Crosscitable
+
   # include helper module for link checking
   include Checkable
 
@@ -81,7 +84,17 @@ class Doi < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
+  after_find :load_doi_metadata
+
   scope :query, ->(query) { where("dataset.doi = ?", query) }
+
+  def doi=(value)
+    write_attribute(:doi, value.upcase) if value.present?
+  end
+
+  def identifier
+    normalize_doi(doi, sandbox: !Rails.env.production?)
+  end
 
   def client_id
     client.symbol.downcase
@@ -98,29 +111,12 @@ class Doi < ActiveRecord::Base
     provider.symbol.downcase
   end
 
-  # def provider
-  #   r = cached_client_response(client_id)
-  #   fail ActiveRecord::RecordNotFound unless r.present?
-  #
-  #   r.allocator
-  # end
-
   def prefix
     doi.split('/', 2).first
   end
 
   def is_test_prefix?
     prefix == "10.5072"
-  end
-
-  def identifier
-    normalize_doi(doi, sandbox: !Rails.env.production?)
-  end
-
-  def resource_type
-    return nil unless resource_type_general.present?
-    r = ResourceType.where(id: resource_type_general.downcase.underscore.dasherize)
-    r[:data] if r.present?
   end
 
   # update URL in handle system, don't do that for draft state
@@ -140,14 +136,16 @@ class Doi < ActiveRecord::Base
       "identifier" => identifier,
       "url" => url,
       "author" => author,
-      "container-title" => container_title,
-      "resource-type-general" => resource_type_general,
+      "title" => title,
+      "publisher" => publisher,
+      "publication_year" => publication_year,
       "additional-type" => additional_type,
       "version" => version,
       "schema-version" => schema_version,
       "xml" => xml,
       "client-id" => client_id,
       "provider-id" => provider_id,
+      "resource-type-id" => resource_type_general,
       "state" => aasm_state,
       "is-active" => is_active == "\x01",
       "published" => date_published,
@@ -157,33 +155,25 @@ class Doi < ActiveRecord::Base
     { "id" => doi, "type" => "dois", "attributes" => attributes }
   end
 
-  # we use "PGhzaD48L2hzaD4=", i.e. "<hsh></hsh>", as base64 balks on nil
-  def xml=(value)
-    metadata.build(xml: value, doi: self) if value.present? && value != "PGhzaD48L2hzaD4="
-  end
-
-  def xml
-    current_metadata && ::Base64.strict_encode64(current_metadata.xml)
+  def validation_errors?
+    validation_errors.present?
   end
 
   def current_metadata
     metadata.order('metadata.created DESC').first
   end
 
-  # parse metadata using bolognese library
-  def doi_metadata
-    # return OpenStruct if no metadata record is found to handle delegate
-    return OpenStruct.new unless current_metadata
-
-    DoiSearch.new(input: current_metadata.xml,
-                  from: "datacite",
-                  doi: doi,
-                  sandbox: !Rails.env.production?)
+  def metadata_version
+    current_metadata ? current_metadata.metadata_version : 0
   end
 
-  delegate :author, :title, :container_title, :description, :resource_type_general,
-    :additional_type, :license, :related_identifier, :schema_version,
-    :date_published, :date_accepted, :date_available, :publisher, to: :doi_metadata
+  def schema_version
+    @schema_version ||= current_metadata ? current_metadata.namespace : "http://datacite.org/schema/kernel-4"
+  end
+
+  def resource_type
+    cached_resource_type_response(resource_type_general.downcase.underscore.dasherize) if resource_type_general.present?
+  end
 
   def date_registered
     minted
@@ -233,10 +223,6 @@ class Doi < ActiveRecord::Base
 
   def set_to_inactive
     self.is_active = "\x00"
-  end
-
-  def doi=(value)
-    write_attribute(:doi, value.upcase) if value.present?
   end
 
   private

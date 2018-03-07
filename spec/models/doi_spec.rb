@@ -108,9 +108,230 @@ describe Doi, type: :model, vcr: true do
       params = doi.to_jsonapi
       expect(params.dig("id")).to eq(doi.doi)
       expect(params.dig("attributes","url")).to eq(doi.url)
-      expect(params.dig("attributes","resource-type-general")).to eq("Text")
-      expect(params.dig("attributes","schema-version")).to eq("http://datacite.org/schema/kernel-3")
+      expect(params.dig("attributes","resource-type-id")).to eq("Text")
+      expect(params.dig("attributes","schema-version")).to eq("http://datacite.org/schema/kernel-4")
       expect(params.dig("attributes","is-active")).to be true
+    end
+  end
+
+  context "parses Crossref xml" do
+    let(:xml) { Base64.strict_encode64(file_fixture('crossref.xml').read) }
+
+    subject { create(:doi, xml: xml) }
+
+    it "creates xml" do
+      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "valid model" do
+      expect(subject.valid?).to be true
+    end
+
+    it "title" do
+      expect(subject.title).to eq("Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes")
+    end
+
+    it "author" do
+      expect(subject.author.length).to eq(5)
+      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Markus Ralser", "givenName"=>"Markus", "familyName"=>"Ralser")
+    end
+
+    it "schema_version" do
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
+    end
+  end
+
+  context "parses schema 3" do
+    let(:xml) { Base64.strict_encode64(file_fixture('datacite_schema_3.xml').read) }
+
+    subject { create(:doi, xml: xml) }
+
+    it "creates xml" do
+      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "valid model" do
+      expect(subject.valid?).to be true
+    end
+
+    it "title" do
+      expect(subject.title).to eq("Data from: A new malaria agent in African hominids.")
+    end
+
+    it "author" do
+      expect(subject.author.length).to eq(8)
+      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Benjamin Ollomo", "givenName"=>"Benjamin", "familyName"=>"Ollomo")
+    end
+
+    it "creates schema_version" do
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-3")
+    end
+  end
+
+  context "parses bibtex" do
+    let(:xml) { Base64.strict_encode64(file_fixture('crossref.bib').read) }
+
+    subject { create(:doi, xml: xml) }
+
+    it "creates xml" do
+      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "valid model" do
+      expect(subject.valid?).to be true
+    end
+
+    it "title" do
+      expect(subject.title).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
+    end
+
+    it "author" do
+      expect(subject.author.length).to eq(5)
+      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Martial Sankar", "givenName"=>"Martial", "familyName"=>"Sankar")
+    end
+
+    it "creates schema_version" do
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
+    end
+  end
+
+  context "parses ris" do
+    let(:xml) { ::Base64.strict_encode64(file_fixture('crossref.ris').read) }
+
+    subject { create(:doi, xml: xml) }
+
+    it "creates xml" do
+      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "valid model" do
+      expect(subject.valid?).to be true
+    end
+
+    it "title" do
+      expect(subject.title).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
+    end
+
+    it "author" do
+      expect(subject.author.length).to eq(5)
+      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Martial Sankar", "givenName"=>"Martial", "familyName"=>"Sankar")
+    end
+
+    it "creates schema_version" do
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
+    end
+  end
+
+  context "parses citeproc" do
+    let(:xml) { ::Base64.strict_encode64(file_fixture('citeproc.json').read) }
+
+    subject { create(:doi, xml: xml) }
+
+    it "creates xml" do
+      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "valid model" do
+      expect(subject.valid?).to be true
+    end
+
+    it "title" do
+      expect(subject.title).to eq("Eating your own Dog Food")
+    end
+
+    it "author" do
+      expect(subject.author).to eq("type"=>"Person", "name"=>"Martin Fenner", "givenName"=>"Martin", "familyName"=>"Fenner")
+    end
+
+    it "creates schema_version" do
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
+    end
+  end
+
+  context "parses codemeta" do
+    let(:xml) { ::Base64.strict_encode64(file_fixture('codemeta.json').read) }
+
+    subject { create(:doi, xml: xml) }
+
+    it "creates xml" do
+      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "valid model" do
+      expect(subject.valid?).to be true
+    end
+
+    it "title" do
+      expect(subject.title).to eq("R Interface to the DataONE REST API")
+    end
+
+    it "author" do
+      expect(subject.author.length).to eq(3)
+      expect(subject.author.first).to eq("type"=>"Person", "id"=>"http://orcid.org/0000-0003-0077-4738", "name"=>"Matt Jones", "givenName"=>"Matt", "familyName"=>"Jones")
+    end
+
+    it "creates schema_version" do
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
+    end
+  end
+
+  context "parses crosscite" do
+    let(:xml) { ::Base64.strict_encode64(file_fixture('crosscite.json').read) }
+
+    subject { create(:doi, xml: xml) }
+
+    it "creates xml" do
+      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "valid model" do
+      expect(subject.valid?).to be true
+    end
+
+    it "title" do
+      expect(subject.title).to eq("Analysis Tools for Crossover Experiment of UI using Choice Architecture")
+    end
+
+    it "author" do
+      expect(subject.author).to eq("type"=>"Person", "name"=>"Kristian Garza", "givenName"=>"Kristian", "familyName"=>"Garza")
+    end
+
+    it "creates schema_version" do
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
+    end
+  end
+
+  context "parses schema.org" do
+    let(:xml) { ::Base64.strict_encode64(file_fixture('schema_org.json').read) }
+
+    subject { create(:doi, xml: xml) }
+
+    it "creates xml" do
+      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "valid model" do
+      expect(subject.valid?).to be true
+    end
+
+    it "title" do
+      expect(subject.title).to eq("Eating your own Dog Food")
+    end
+
+    it "author" do
+      expect(subject.author).to eq("type"=>"Person", "id"=>"http://orcid.org/0000-0003-1419-2405", "name"=>"Martin Fenner", "givenName"=>"Martin", "familyName"=>"Fenner")
+    end
+
+    it "creates schema_version" do
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
     end
   end
 end

@@ -171,8 +171,8 @@ class DoisController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:doi, :url, :title, :publisher, :published, "resource-type", "resource-type-subtype", :description, :xml, :reason, :event, :regenerate, :client, creator: []],
-              keys: { "resource-type" => :resource_type, "resource-type-subtype" => :additional_type }
+      params, only: [:doi, :url, :title, :publisher, "publication-year", "resource-type", "resource-type-subtype", :description, :license, :xml, :reason, :event, :regenerate, :client, creator: []],
+              keys: { "publication-year" => :date_published, "resource-type" => :resource_type, "resource-type-subtype" => :additional_type, :creator => :author }
     )
   end
 end

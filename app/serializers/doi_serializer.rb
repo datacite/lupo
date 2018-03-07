@@ -2,7 +2,7 @@ class DoiSerializer < ActiveModel::Serializer
   include Bolognese::Utils
   include Bolognese::DoiUtils
 
-  attributes :doi, :identifier, :url, :creator, :title, :publisher, :description, :resource_type_subtype, :landing_page, :license, :related_identifier, :version, :metadata_version, :schema_version, :state, :is_active, :reason, :xml, :published, :registered, :updated
+  attributes :doi, :identifier, :url, :creator, :title, :publisher, :publication_year, :resource_type_subtype, :description, :version, :metadata_version, :schema_version, :state, :is_active, :reason, :landing_page, :registered, :updated
 
   belongs_to :client, serializer: ClientSerializer
   belongs_to :provider, serializer: ProviderSerializer
@@ -18,20 +18,19 @@ class DoiSerializer < ActiveModel::Serializer
   end
 
   def creator
-    object.author
+    Array.wrap(object.author)
   end
 
-  def title
-    t = parse_attributes(object.title, content: "text", first: true)
-    t.truncate(255) if t.is_a?(String)
+  def publication_year
+    object.date_published[0..3].to_i
+  end
+
+  def description
+    parse_attributes(object.description, content: "text", first: true)
   end
 
   def resource_type_subtype
     object.additional_type
-  end
-
-  def publisher
-    object.container_title || object.publisher
   end
 
   def is_active
@@ -46,10 +45,6 @@ class DoiSerializer < ActiveModel::Serializer
     object.updated_at
   end
 
-  def published
-    object.date_published
-  end
-
   def registered
     object.date_registered
   end
@@ -60,15 +55,11 @@ class DoiSerializer < ActiveModel::Serializer
       checked: object.last_landing_page_status_check }
   end
 
-  def license
-    Array.wrap(object.license).map { |l| l["id"] }.compact.unwrap
-  end
+  # def license
+  #   Array.wrap(object.license).map { |l| l["id"] }.compact.unwrap
+  # end
 
-  def version
-    object.doi_metadata && object.doi_metadata.version
-  end
-
-  def metadata_version
-    object.current_metadata && object.current_metadata.metadata_version
-  end
+  # def xml
+  #   Base64.strict_encode64(object.xml) if object.xml.present?
+  # end
 end
