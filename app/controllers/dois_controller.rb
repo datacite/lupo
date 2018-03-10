@@ -129,7 +129,7 @@ class DoisController < ApplicationController
   def set_url
     authorize! :update, Doi
     from_date = Time.zone.now - 1.day
-    Doi.where(url: nil).where("updated >= ?", from_date).find_each do |doi|
+    Doi.where(url: nil).where(aasm_state: ["registered", "findable"]).where("updated >= ?", from_date).find_each do |doi|
       UrlJob.perform_later(doi)
     end
     render json: { message: "Adding missing URLs queued." }.to_json, status: :ok
