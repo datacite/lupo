@@ -6,8 +6,8 @@ class Metadata < ActiveRecord::Base
 
   alias_attribute :created_at, :created
   validates_associated :doi
-  validates_presence_of :xml, :namespace
-  validate :metadata_must_be_valid
+  validates_presence_of :xml #, :namespace
+  #validate :metadata_must_be_valid
 
   belongs_to :doi, foreign_key: :dataset
 
@@ -58,6 +58,8 @@ class Metadata < ActiveRecord::Base
   end
 
   def set_namespace
+    return nil unless xml.present?
+
     doc = Nokogiri::XML(xml, nil, 'UTF-8', &:noblanks)
     self.namespace = doc && doc.namespaces["xmlns"]
   end

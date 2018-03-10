@@ -22,7 +22,7 @@ class DoiSerializer < ActiveModel::Serializer
   end
 
   def publication_year
-    object.date_published[0..3].to_i
+    object.date_published[0..3].to_i if object.date_published.present?
   end
 
   def description

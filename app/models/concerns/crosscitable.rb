@@ -8,7 +8,6 @@ module Crosscitable
     include Bolognese::Utils
     include Bolognese::DoiUtils
     include Bolognese::DataciteUtils
-    include Bolognese::Writers::DataciteWriter
 
     store :crosscite, accessors: [:author, :title, :publisher, :publication_year,
       :resource_type_general, :type, :additional_type, :description, :container_title, :type,
@@ -23,6 +22,7 @@ module Crosscitable
       options = {
         doi: doi,
         sandbox: !Rails.env.production?,
+        regenerate: false,
         author: author,
         title: title,
         publisher: publisher,
@@ -37,8 +37,9 @@ module Crosscitable
       bolognese = Bolognese::Metadata.new(input: Base64.decode64(value), **options)
 
       self.crosscite = JSON.parse(bolognese.crosscite)
+      namespace = bolognese.schema_version || "http://datacite.org/schema/kernel-4"
 
-      metadata.build(doi: self, xml: datacite_xml, namespace: schema_version)
+      metadata.build(doi: self, xml: bolognese.datacite, namespace: namespace)
     end
 
     # xml is generated from crosscite JSON
@@ -47,10 +48,9 @@ module Crosscitable
     end
 
     def load_doi_metadata
-      return nil if self.crosscite.present?
+      return nil if self.crosscite.present? || current_metadata.blank?
 
-      input = current_metadata.present? ? current_metadata.xml : xml
-      bolognese = Bolognese::Metadata.new(input: input.to_s,
+      bolognese = Bolognese::Metadata.new(input: current_metadata.xml,
                                           from: "datacite",
                                           doi: doi,
                                           sandbox: !Rails.env.production?)
