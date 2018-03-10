@@ -68,6 +68,7 @@ class Doi < ActiveRecord::Base
   validates_format_of :doi, :with => /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9]+\z/
   validates_format_of :url, :with => /https?:\/\/[\S]+/ , if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
+  validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
 
   # update cached doi count for client
   before_destroy :update_doi_count
