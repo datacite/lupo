@@ -28,7 +28,7 @@ class PrefixesController < ApplicationController
                  title: params[:year],
                  count: collection.where('YEAR(prefix.created) = ?', params[:year]).count }]
     else
-      years = collection.where.not(prefix: nil).order("prefix.created DESC").group("YEAR(prefix.created)").count
+      years = collection.where.not(prefix: nil).order("YEAR(prefix.created) DESC").group("YEAR(prefix.created)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 
