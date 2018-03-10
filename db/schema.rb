@@ -106,7 +106,8 @@ ActiveRecord::Schema.define(version: 20180310064742) do
     t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
     t.index ["datacentre"], name: "FK5605B47847B5F5FF"
     t.index ["doi"], name: "doi", unique: true
-    t.index ["last_landing_page"], name: "index_dataset_on_last_landing_page", length: { last_landing_page: 100 }
+    t.index ["last_landing_page_content_type"], name: "index_dataset_on_last_landing_page_content_type"
+    t.index ["last_landing_page_status"], name: "index_dataset_on_last_landing_page_status"
     t.index ["url"], name: "index_dataset_on_url", length: { url: 100 }
   end
 
