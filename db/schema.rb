@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180202063721) do
+ActiveRecord::Schema.define(version: 20180310064742) do
 
-  create_table "allocator", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "allocator", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT" do |t|
     t.string "contact_email", null: false
     t.string "contact_name", limit: 80, null: false
     t.datetime "created"
@@ -37,7 +37,7 @@ ActiveRecord::Schema.define(version: 20180202063721) do
     t.index ["symbol"], name: "symbol", unique: true
   end
 
-  create_table "allocator_prefixes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "allocator_prefixes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT" do |t|
     t.bigint "allocator", null: false
     t.bigint "prefixes", null: false
     t.datetime "created_at"
@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(version: 20180202063721) do
     t.index ["prefixes"], name: "FKE7FBD674AF86A1C7"
   end
 
-  create_table "datacentre", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "datacentre", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT" do |t|
     t.text "comments", limit: 4294967295
     t.string "contact_email", null: false
     t.string "contact_name", limit: 80, null: false
@@ -73,7 +73,7 @@ ActiveRecord::Schema.define(version: 20180202063721) do
     t.index ["url"], name: "index_datacentre_on_url", length: { url: 100 }
   end
 
-  create_table "datacentre_prefixes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "datacentre_prefixes", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT" do |t|
     t.bigint "datacentre", null: false
     t.bigint "prefixes", null: false
     t.datetime "created_at"
@@ -85,7 +85,7 @@ ActiveRecord::Schema.define(version: 20180202063721) do
     t.index ["prefixes"], name: "FK13A1B3BAAF86A1C7"
   end
 
-  create_table "dataset", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "dataset", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT" do |t|
     t.datetime "created"
     t.string "doi", null: false
     t.binary "is_active", limit: 1, null: false
@@ -98,17 +98,20 @@ ActiveRecord::Schema.define(version: 20180202063721) do
     t.bigint "datacentre", null: false
     t.datetime "minted"
     t.text "url"
-    t.string "last_landing_page"
+    t.text "last_landing_page"
     t.string "last_landing_page_content_type"
     t.string "aasm_state"
     t.string "reason"
+    t.text "crosscite", limit: 16777215
     t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
     t.index ["datacentre"], name: "FK5605B47847B5F5FF"
     t.index ["doi"], name: "doi", unique: true
+    t.index ["last_landing_page_content_type"], name: "index_dataset_on_last_landing_page_content_type"
+    t.index ["last_landing_page_status"], name: "index_dataset_on_last_landing_page_status"
     t.index ["url"], name: "index_dataset_on_url", length: { url: 100 }
   end
 
-  create_table "media", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "media", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT" do |t|
     t.datetime "created"
     t.string "media_type", limit: 80
     t.datetime "updated"
@@ -119,7 +122,7 @@ ActiveRecord::Schema.define(version: 20180202063721) do
     t.index ["dataset"], name: "FK62F6FE44D3D6B1B"
   end
 
-  create_table "metadata", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "metadata", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT" do |t|
     t.datetime "created"
     t.integer "metadata_version"
     t.integer "version"
@@ -131,7 +134,7 @@ ActiveRecord::Schema.define(version: 20180202063721) do
     t.index ["dataset"], name: "FKE52D7B2F4D3D6B1B"
   end
 
-  create_table "prefix", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "prefix", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT" do |t|
     t.datetime "created"
     t.string "prefix", limit: 80, null: false
     t.integer "version"
