@@ -17,25 +17,25 @@ class Doi < ActiveRecord::Base
   aasm :whiny_transitions => false do
     # initial is default state for new DOIs. This is needed to handle DOIs created
     # outside of this application (i.e. the MDS API)
-    state :unknown, :initial => true
+    state :undetermined, :initial => true
     state :draft, :tombstoned, :registered, :findable, :flagged, :broken
 
     event :start do
-      transitions :from => :unknown, :to => :draft, :after => Proc.new { set_to_inactive }
+      transitions :from => :undetermined, :to => :draft, :after => Proc.new { set_to_inactive }
     end
 
     event :register do
       # can't register test prefix
-      transitions :from => [:unknown, :draft], :to => :registered, :unless => :is_test_prefix?, :after => Proc.new { set_to_inactive }
+      transitions :from => [:undetermined, :draft], :to => :registered, :unless => :is_test_prefix?, :after => Proc.new { set_to_inactive }
 
-      transitions :from => :unknown, :to => :draft, :after => Proc.new { set_to_inactive }
+      transitions :from => :undetermined, :to => :draft, :after => Proc.new { set_to_inactive }
     end
 
     event :publish do
       # can't index test prefix
-      transitions :from => [:unknown, :draft, :registered], :to => :findable, :unless => :is_test_prefix?, :after => Proc.new { set_to_active }
+      transitions :from => [:undetermined, :draft, :registered], :to => :findable, :unless => :is_test_prefix?, :after => Proc.new { set_to_active }
 
-      transitions :from => :unknown, :to => :draft, :after => Proc.new { set_to_inactive }
+      transitions :from => :undetermined, :to => :draft, :after => Proc.new { set_to_inactive }
     end
 
     event :hide do
