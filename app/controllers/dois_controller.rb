@@ -5,6 +5,7 @@ class DoisController < ApplicationController
   before_action :set_doi, only: [:show, :update, :destroy]
   before_action :set_user_hash, only: [:create, :update, :destroy]
   before_action :set_include, only: [:index, :show]
+  # before_action :set_format, only: [:show]
   authorize_resource :except => [:index, :show, :random]
 
   def index
@@ -52,8 +53,28 @@ class DoisController < ApplicationController
     render jsonapi: @dois, meta: meta, include: @include, each_serializer: DoiSerializer
   end
 
+  # we support DOI content negotiation in show action
   def show
+    #if @content_type == :json
     render jsonapi: @doi, include: @include, serializer: DoiSerializer
+    # else
+    #   format = Mime::Type.lookup(@content_type.split(";").first).to_sym
+    #
+    #   if format == :citation
+    #     # set style and locale later so that we can take advantage of caching
+    #     hsh = @content_type.split(";").reduce({}) do |sum, i|
+    #       k, v = i.strip.split("=")
+    #       sum[k] = v if v.present?
+    #       sum
+    #     end
+    #     @doi.style = hsh["style"] || "apa"
+    #     @doi.locale = hsh["locale"] || "en-US"
+    #   end
+    #
+    #   response.set_header("Accept", @content_type)
+    #
+    #   render format => @doi
+    # end
   end
 
   def preview
@@ -167,13 +188,25 @@ class DoisController < ApplicationController
     end
   end
 
+  def set_format
+    # get all accept headers provided by client
+    @accept_headers = request.accepts.map { |i| i.to_s }
+
+    # select first match as content_type, handle text/x-bibliography differently
+    if @accept_headers.first.to_s.starts_with?("text/x-bibliography")
+      request.format = :citation
+    else
+      #request.format = (@accept_headers & AVAILABLE_CONTENT_TYPES.keys).first || :json
+    end
+  end
+
   private
 
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:doi, :url, :title, :publisher, "publication-year", "resource-type", "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", :description, :license, :xml, :reason, :event, :regenerate, :client, creator: []],
-              keys: { "publication-year" => :publication_year, :resource_type_subtype => :additional_type, :creator => :author, "last-landing-page" => :last_landing_page, "last-landing-page-status" => :last_landing_page_status, "last-landing-page-status-check" => :last_landing_page_status_check, "last-landing-page-content-type" => :last_landing_page_content_type }
+      params, only: [:doi, :url, :title, :publisher, "date-published", "resource-type", "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", :description, :license, :xml, :reason, :event, :regenerate, :client, creator: []],
+              keys: { "date-published" => :date_published, :resource_type_subtype => :additional_type, :creator => :author, "last-landing-page" => :last_landing_page, "last-landing-page-status" => :last_landing_page_status, "last-landing-page-status-check" => :last_landing_page_status_check, "last-landing-page-content-type" => :last_landing_page_content_type }
     )
   end
 end

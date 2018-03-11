@@ -117,7 +117,7 @@ describe Doi, type: :model, vcr: true do
   context "parses Crossref xml" do
     let(:xml) { Base64.strict_encode64(file_fixture('crossref.xml').read) }
 
-    subject { create(:doi, xml: xml) }
+    subject { create(:doi, xml: xml, event: "publish") }
 
     it "creates xml" do
       doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
@@ -127,6 +127,10 @@ describe Doi, type: :model, vcr: true do
     it "valid model" do
       expect(subject.valid?).to be true
     end
+
+    # it "validates against schema" do
+    #   expect(subject.validation_errors).to be_empty
+    # end
 
     it "title" do
       expect(subject.title).to eq("Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes")
@@ -145,7 +149,7 @@ describe Doi, type: :model, vcr: true do
   context "parses schema 3" do
     let(:xml) { Base64.strict_encode64(file_fixture('datacite_schema_3.xml').read) }
 
-    subject { create(:doi, xml: xml) }
+    subject { create(:doi, xml: xml, event: "publish") }
 
     it "creates xml" do
       doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
@@ -155,6 +159,10 @@ describe Doi, type: :model, vcr: true do
     it "valid model" do
       expect(subject.valid?).to be true
     end
+
+    # it "validates against schema" do
+    #   expect(subject.validation_errors).to be_empty
+    # end
 
     it "title" do
       expect(subject.title).to eq("Data from: A new malaria agent in African hominids.")
@@ -173,7 +181,7 @@ describe Doi, type: :model, vcr: true do
   context "parses bibtex" do
     let(:xml) { Base64.strict_encode64(file_fixture('crossref.bib').read) }
 
-    subject { create(:doi, xml: xml) }
+    subject { create(:doi, xml: xml, event: "publish") }
 
     it "creates xml" do
       doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
@@ -183,6 +191,10 @@ describe Doi, type: :model, vcr: true do
     it "valid model" do
       expect(subject.valid?).to be true
     end
+
+    # it "validates against schema" do
+    #   expect(subject.validation_errors).to be_empty
+    # end
 
     it "title" do
       expect(subject.title).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
@@ -201,7 +213,7 @@ describe Doi, type: :model, vcr: true do
   context "parses ris" do
     let(:xml) { ::Base64.strict_encode64(file_fixture('crossref.ris').read) }
 
-    subject { create(:doi, xml: xml) }
+    subject { create(:doi, xml: xml, event: "publish") }
 
     it "creates xml" do
       doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
@@ -211,6 +223,10 @@ describe Doi, type: :model, vcr: true do
     it "valid model" do
       expect(subject.valid?).to be true
     end
+
+    # it "validates against schema" do
+    #   expect(subject.validation_errors).to be_empty
+    # end
 
     it "title" do
       expect(subject.title).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
@@ -229,7 +245,7 @@ describe Doi, type: :model, vcr: true do
   context "parses citeproc" do
     let(:xml) { ::Base64.strict_encode64(file_fixture('citeproc.json').read) }
 
-    subject { create(:doi, xml: xml) }
+    subject { create(:doi, xml: xml, event: "publish") }
 
     it "creates xml" do
       doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
@@ -239,6 +255,10 @@ describe Doi, type: :model, vcr: true do
     it "valid model" do
       expect(subject.valid?).to be true
     end
+
+    # it "validates against schema" do
+    #   expect(subject.validation_errors).to be_empty
+    # end
 
     it "title" do
       expect(subject.title).to eq("Eating your own Dog Food")
@@ -256,7 +276,7 @@ describe Doi, type: :model, vcr: true do
   context "parses codemeta" do
     let(:xml) { ::Base64.strict_encode64(file_fixture('codemeta.json').read) }
 
-    subject { create(:doi, xml: xml) }
+    subject { create(:doi, xml: xml, event: "publish") }
 
     it "creates xml" do
       doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
@@ -266,6 +286,10 @@ describe Doi, type: :model, vcr: true do
     it "valid model" do
       expect(subject.valid?).to be true
     end
+
+    # it "validates against schema" do
+    #   expect(subject.validation_errors).to be_empty
+    # end
 
     it "title" do
       expect(subject.title).to eq("R Interface to the DataONE REST API")
@@ -284,7 +308,7 @@ describe Doi, type: :model, vcr: true do
   context "parses crosscite" do
     let(:xml) { ::Base64.strict_encode64(file_fixture('crosscite.json').read) }
 
-    subject { create(:doi, xml: xml) }
+    subject { create(:doi, xml: xml, event: "publish") }
 
     it "creates xml" do
       doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
@@ -294,6 +318,10 @@ describe Doi, type: :model, vcr: true do
     it "valid model" do
       expect(subject.valid?).to be true
     end
+
+    # it "validates against schema" do
+    #   expect(subject.validation_errors).to be_empty
+    # end
 
     it "title" do
       expect(subject.title).to eq("Analysis Tools for Crossover Experiment of UI using Choice Architecture")
@@ -311,7 +339,7 @@ describe Doi, type: :model, vcr: true do
   context "parses schema.org" do
     let(:xml) { ::Base64.strict_encode64(file_fixture('schema_org.json').read) }
 
-    subject { create(:doi, xml: xml) }
+    subject { create(:doi, xml: xml, event: "publish") }
 
     it "creates xml" do
       doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
@@ -321,6 +349,10 @@ describe Doi, type: :model, vcr: true do
     it "valid model" do
       expect(subject.valid?).to be true
     end
+
+    # it "validates against schema" do
+    #   expect(subject.validation_errors).to be_empty
+    # end
 
     it "title" do
       expect(subject.title).to eq("Eating your own Dog Food")
@@ -333,5 +365,67 @@ describe Doi, type: :model, vcr: true do
     # it "creates schema_version" do
     #   expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
     # end
+  end
+
+  describe "content negotiation" do
+    let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+
+    subject { create(:doi, doi: "10.5438/4k3m-nyvg", xml: xml, event: "publish") }
+
+    # it "validates against schema" do
+    #   expect(subject.validation_errors).to be_empty
+    # end
+
+    it "generates datacite_xml" do
+      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "generates bibtex" do
+      bibtex = BibTeX.parse(subject.bibtex).to_a(quotes: '').first
+      expect(bibtex[:bibtex_type].to_s).to eq("article")
+      expect(bibtex[:title].to_s).to eq("Eating your own Dog Food")
+    end
+
+    it "generates ris" do
+      ris = subject.ris.split("\r\n")
+      expect(ris[0]).to eq("TY - RPRT")
+      expect(ris[1]).to eq("T1 - Eating your own Dog Food")
+    end
+
+    it "generates schema_org" do
+      json = JSON.parse(subject.schema_org)
+      expect(json["@type"]).to eq("ScholarlyArticle")
+      expect(json["name"]).to eq("Eating your own Dog Food")
+    end
+
+    # it "generates datacite_json" do
+    #   json = JSON.parse(subject.datacite_json)
+    #   expect(json["resource_type_id"]).to eq("https://doi.org/10.7554/elife.01567")
+    #   expect(json["title"]).to eq("Eating your own Dog Food")
+    # end
+
+    it "generates codemeta" do
+      json = JSON.parse(subject.codemeta)
+      expect(json["@type"]).to eq("ScholarlyArticle")
+      expect(json["title"]).to eq("Eating your own Dog Food")
+    end
+
+    it "generates jats" do
+      jats = Maremma.from_xml(subject.jats).fetch("element_citation", {})
+      expect(jats.dig("publication_type")).to eq("journal")
+      expect(jats.dig("article_title")).to eq("Eating your own Dog Food")
+    end
+
+    it "generates rdf_xml" do
+      rdf_xml = Maremma.from_xml(subject.rdf_xml).fetch("RDF", {})
+      expect(rdf_xml.dig("ScholarlyArticle", "rdf:about")).to eq(subject.identifier)
+    end
+
+    it "generates turtle" do
+      ttl = subject.turtle.split("\n")
+      expect(ttl[0]).to eq("@prefix schema: <http://schema.org/> .")
+      expect(ttl[2]).to eq("<https://doi.org/10.5438/0012> a schema:CreativeWork .")
+    end
   end
 end
