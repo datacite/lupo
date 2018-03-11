@@ -8,7 +8,7 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Maremma - http://df07e5739183
+      - Maremma - http://a6b15c7c990c
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
   response:
@@ -25,18 +25,18 @@ http_interactions:
       X-Amz-Error-Detail-Key:
       - xxx
       Date:
-      - Sat, 03 Mar 2018 08:17:17 GMT
+      - Sun, 11 Mar 2018 21:36:18 GMT
       Server:
       - AmazonS3
       X-Cache:
       - Error from cloudfront
       Via:
-      - 1.1 e98abde3c6a5bc27d4bdd4168baa587d.cloudfront.net (CloudFront)
+      - 1.1 d89eaba973a5c1614ea9f0994f5e8a12.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - tTdU2VskpS18DtiN1hnHjYQQhyU5QLmktqDxLZhHapAVoKBvvQZxSg==
+      - fAH4yO1hHLUpNg6Bwxz2d25OXRC1BcI9zWcCIeZbzauwFVqwJjSWzQ==
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Sat, 03 Mar 2018 08:17:22 GMT
+  recorded_at: Sun, 11 Mar 2018 21:36:18 GMT
 recorded_with: VCR 3.0.3
