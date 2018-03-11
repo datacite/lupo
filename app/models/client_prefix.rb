@@ -45,15 +45,6 @@ class ClientPrefix < ActiveRecord::Base
     self.prefixes = r.id
   end
 
-  # def provider_prefix_id=(value)
-  #   r = ProviderPrefix.where(id: value).first
-  #   self.allocator_prefixes = r.id if r.present?
-  # end
-  #
-  # def provider_prefix_id
-  #   client.symbol.split('.').first if client.present?
-  # end
-
   private
 
   # random number that fits into MySQL bigint field (8 bytes)

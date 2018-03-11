@@ -5,6 +5,7 @@ module Helpable
   require "cirneco"
 
   included do
+    include Bolognese::Utils
     include Bolognese::DoiUtils
     include Cirneco::Utils
     include Cirneco::Api

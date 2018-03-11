@@ -22,6 +22,8 @@ FactoryBot.define do
   end
 
   factory :doi do
+    crosscite { { auto_resolve: false, auto_define: true } }
+
     client
 
     doi { ("10.4122/" + Faker::Internet.password(8)).downcase }

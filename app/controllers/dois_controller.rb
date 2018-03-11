@@ -56,9 +56,10 @@ class DoisController < ApplicationController
     render jsonapi: @doi, include: @include, serializer: DoiSerializer
   end
 
-  def new
+  def preview
+    puts safe_params
     @doi = Doi.new(safe_params.merge(@user_hash))
-    authorize! :new, @doi
+    authorize! :create, @doi
 
     @doi.valid?
 
@@ -171,8 +172,8 @@ class DoisController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:doi, :url, :title, :publisher, :published, "resource-type", "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", :description, :xml, :reason, :event, :regenerate, :client, creator: []],
-              keys: { "resource-type" => :resource_type, "resource-type-subtype" => :additional_type, "last-landing-page" => :last_landing_page, "last-landing-page-status" => :last_landing_page_status, "last-landing-page-status-check" => :last_landing_page_status_check, "last-landing-page-content-type" => :last_landing_page_content_type, }
+      params, only: [:doi, :url, :title, :publisher, "publication-year", "resource-type", "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", :description, :license, :xml, :reason, :event, :regenerate, :client, creator: []],
+              keys: { "publication-year" => :publication_year, :resource_type_subtype => :additional_type, :creator => :author, "last-landing-page" => :last_landing_page, "last-landing-page-status" => :last_landing_page_status, "last-landing-page-status-check" => :last_landing_page_status_check, "last-landing-page-content-type" => :last_landing_page_content_type }
     )
   end
 end
