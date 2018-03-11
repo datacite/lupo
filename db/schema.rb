@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180306172317) do
+ActiveRecord::Schema.define(version: 20180310064742) do
 
   create_table "allocator", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT" do |t|
     t.string "contact_email", null: false
@@ -98,7 +98,7 @@ ActiveRecord::Schema.define(version: 20180306172317) do
     t.bigint "datacentre", null: false
     t.datetime "minted"
     t.text "url"
-    t.string "last_landing_page"
+    t.text "last_landing_page"
     t.string "last_landing_page_content_type"
     t.string "aasm_state"
     t.string "reason"
@@ -106,6 +106,8 @@ ActiveRecord::Schema.define(version: 20180306172317) do
     t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
     t.index ["datacentre"], name: "FK5605B47847B5F5FF"
     t.index ["doi"], name: "doi", unique: true
+    t.index ["last_landing_page_content_type"], name: "index_dataset_on_last_landing_page_content_type"
+    t.index ["last_landing_page_status"], name: "index_dataset_on_last_landing_page_status"
     t.index ["url"], name: "index_dataset_on_url", length: { url: 100 }
   end
 

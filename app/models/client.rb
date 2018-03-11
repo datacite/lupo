@@ -74,9 +74,7 @@ class Client < ActiveRecord::Base
   end
 
   def repository
-    return nil unless re3data.present?
-    r = cached_repository_response(re3data)
-    r[:data] if r.present?
+    cached_repository_response(re3data) if re3data.present?
   end
 
   def target_id=(value)
