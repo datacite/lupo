@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  resources :metadata
-  resources :media
   root :to => 'index#index'
 
   # authentication
@@ -35,9 +33,14 @@ Rails.application.routes.draw do
   end
 
   resources :client_prefixes, path: 'client-prefixes'
-  resources :dois, constraints: { :id => /.+/ }
+  resources :dois, constraints: { :id => /.+/ } do
+    resources :metadata, shallow: true
+    resources :media, shallow: true
+  end
   resources :prefixes, constraints: { :id => /.+/ }
   resources :provider_prefixes, path: 'provider-prefixes'
+  resources :metadata
+  resources :media
   resources :random, only: [:index]
 
   resources :providers do
