@@ -129,8 +129,8 @@ class DoisController < ApplicationController
 
   def set_url
     authorize! :update, Doi
-    from = Time.zone.now - 6.hours
-    Doi.where(url: nil).where("updated >= ?", from).find_each do |doi|
+    from_date = Time.zone.now - 1.day
+    Doi.where(url: nil).where(aasm_state: ["registered", "findable"]).where("updated >= ?", from_date).find_each do |doi|
       UrlJob.perform_later(doi)
     end
     render json: { message: "Adding missing URLs queued." }.to_json, status: :ok
@@ -172,8 +172,8 @@ class DoisController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:doi, :url, :title, :publisher, :publication_year, :resource_type, :resource_type_subtype, :description, :license, :xml, :reason, :event, :regenerate, :client, creator: []],
-              keys: { :publication_year => :date_published, :resource_type_subtype => :additional_type, :creator => :author }
+      params, only: [:doi, :url, :title, :publisher, "publication-year", "resource-type", "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", :description, :license, :xml, :reason, :event, :regenerate, :client, creator: []],
+              keys: { "publication-year" => :publication_year, :resource_type_subtype => :additional_type, :creator => :author, "last-landing-page" => :last_landing_page, "last-landing-page-status" => :last_landing_page_status, "last-landing-page-status-check" => :last_landing_page_status_check, "last-landing-page-content-type" => :last_landing_page_content_type }
     )
   end
 end
