@@ -2,7 +2,7 @@ class DoiSerializer < ActiveModel::Serializer
   include Bolognese::Utils
   include Bolognese::DoiUtils
 
-  attributes :doi, :identifier, :url, :creator, :title, :publisher, :publication_year, :resource_type_subtype, :description, :version, :metadata_version, :schema_version, :state, :is_active, :reason, :landing_page, :xml, :published, :registered, :updated
+  attributes :doi, :prefix, :suffix, :identifier, :url, :creator, :title, :publisher, :publication_year, :resource_type_subtype, :description, :version, :metadata_version, :schema_version, :state, :is_active, :reason, :landing_page, :xml, :published, :registered, :updated
 
   belongs_to :client, serializer: ClientSerializer
   belongs_to :provider, serializer: ProviderSerializer
@@ -15,6 +15,14 @@ class DoiSerializer < ActiveModel::Serializer
 
   def doi
     object.doi.downcase
+  end
+
+  def prefix
+    object.doi.split("/", 2).first if object.doi.present?
+  end
+
+  def suffix
+    object.doi.downcase.split("/", 2).last if object.doi.present?
   end
 
   def creator
