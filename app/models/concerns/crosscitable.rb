@@ -53,9 +53,9 @@ module Crosscitable
       bolognese = Bolognese::Metadata.new(input: Base64.decode64(value), **options)
 
       self.crosscite = JSON.parse(bolognese.crosscite)
-      namespace = bolognese.schema_version || "http://datacite.org/schema/kernel-4"
+      @schema_version = bolognese.schema_version || "http://datacite.org/schema/kernel-4"
 
-      metadata.build(doi: self, xml: bolognese.datacite, namespace: namespace)
+      metadata.build(doi: self, xml: bolognese.datacite, namespace: @schema_version)
     end
 
     # xml is generated from crosscite JSON, unless
@@ -76,10 +76,14 @@ module Crosscitable
                                           sandbox: !Rails.env.production?)
 
       self.crosscite = JSON.parse(bolognese.crosscite)
-    rescue ArgumentError => e
+    rescue ArgumentError, NoMethodError => e
       Rails.logger.error "Error for " + doi + ": " + e.message
       return nil
     end
+
+    # def schema_version
+    #   @schema_version ||= current_metadata ? current_metadata.namespace : "http://datacite.org/schema/kernel-4"
+    # end
 
     # helper methods from bolognese below
 
@@ -100,6 +104,10 @@ module Crosscitable
       end
     rescue Nokogiri::XML::SyntaxError => e
       e.message
+    end
+
+    def validation_errors?
+      validation_errors.present?
     end
 
     def citation
