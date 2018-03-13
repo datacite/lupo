@@ -77,14 +77,16 @@ class DoisController < ApplicationController
     # end
   end
 
-  def preview
-    puts safe_params
-    @doi = Doi.new(safe_params.merge(@user_hash))
+  def validate
+    @doi = Doi.new(safe_params)
     authorize! :create, @doi
 
-    @doi.valid?
-
-    render jsonapi: @doi, serializer: DoiSerializer
+    if @doi.validation_errors.empty?
+      render jsonapi: @doi, serializer: DoiSerializer
+    else
+      Rails.logger.warn @doi.validation_errors.inspect
+      render jsonapi: { errors: @doi.validation_errors }.to_json
+    end
   end
 
   def create

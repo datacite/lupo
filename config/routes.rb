@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   post 'reset', :to => 'sessions#reset'
 
   # manage DOIs
-  post 'dois/preview', :to => 'dois#preview'
+  post 'dois/validate', :to => 'dois#validate'
   post 'dois/status', :to => 'dois#status'
   post 'dois/set-state', :to => 'dois#set_state'
   post 'dois/set-minted', :to => 'dois#set_minted'
