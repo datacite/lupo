@@ -62,6 +62,12 @@ module Cacheable
       end
     end
 
+    def cached_provider_response(id, options={})
+      Rails.cache.fetch("provider_response/#{id}", expires_in: 1.day) do
+        Provider.where(symbol: id).first
+      end
+    end
+
     def cached_providers
       Rails.cache.fetch("providers", expires_in: 1.day) do
         Provider.all.select(:id, :symbol, :name, :created)
