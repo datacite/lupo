@@ -6,7 +6,8 @@ end
 # re-register some default Mime types
 Mime::Type.register "text/html", :html, %w( application/xhtml+xml ), %w( xhtml )
 Mime::Type.register "text/plain", :text, [], %w(txt)
-Mime::Type.register "application/json", :json, %w( text/x-json application/vnd.api+json application/jsonrequest )
+Mime::Type.register "application/json", :json, %w( text/x-json application/jsonrequest )
+Mime::Type.register "application/vnd.api+json", :jsonapi
 
 # Mime types supported by bolognese gem https://github.com/datacite/bolognese
 Mime::Type.register "application/vnd.crossref.unixref+xml", :crossref
@@ -22,8 +23,6 @@ Mime::Type.register "application/vnd.codemeta.ld+json", :codemeta
 Mime::Type.register "application/x-bibtex", :bibtex
 Mime::Type.register "application/x-research-info-systems", :ris
 Mime::Type.register "text/x-bibliography", :citation
-
-AVAILABLE_CONTENT_TYPES = Mime::LOOKUP.map { |k, v| [k, v.to_sym] }.to_h.except %w(text/html application/xhtml+xml text/plain)
 
 # register renderers for these Mime types
 # :citation is handled differently
@@ -68,12 +67,4 @@ ActionController::Renderers.add :ris do |obj, options|
   filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
   send_data data, type: Mime[:ris],
     disposition: "attachment; filename=#{filename}.ris"
-end
-
-ActionController::Renderers.add :citation do |obj, options|
-  data = obj.send("citation")
-  fail AbstractController::ActionNotFound unless data.present?
-
-  self.content_type ||= "text/plain"
-  self.response_body = data
 end

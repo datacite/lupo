@@ -1,0 +1,80 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://citation.crosscite.org/format?locale=en-US&style=ieee
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "type": "report",
+          "id": "https://handle.test.datacite.org/10.4122/d693rwbyzyvfcxkj",
+          "categories": [
+            "datacite",
+            "doi",
+            "metadata"
+          ],
+          "author": [
+            {
+              "family": "Fenner",
+              "given": "Martin"
+            }
+          ],
+          "issued": {
+            "date-parts": [
+              [
+                2016,
+                12,
+                20
+              ]
+            ]
+          },
+          "submitted": {
+            "date_parts": [
+              [
+
+              ]
+            ]
+          },
+          "abstract": "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for...",
+          "DOI": "10.4122/D693RWBYZYVFCXKJ",
+          "publisher": "DataCite",
+          "title": "Eating your own Dog Food",
+          "URL": "http://davis.com/albina.friesen",
+          "version": 0
+        }
+    headers:
+      User-Agent:
+      - Maremma - http://1233a1e3ec2e
+      Content-Type:
+      - application/json
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 14 Mar 2018 11:01:14 GMT
+      Content-Type:
+      - text/plain
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Powered-By:
+      - Phusion Passenger 5.1.5
+      Server:
+      - nginx/1.10.3 + Phusion Passenger 5.1.5
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type,Accept,Accept-Encoding,Origin,User-Agent,Cache-Control,Keep-Alive
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        WzFdTS4gRmVubmVyLCDigJhFYXRpbmcgeW91ciBvd24gRG9nIEZvb2TigJksIERhdGFDaXRlLCBEZWMuIDIwMTYuCg==
+    http_version: 
+  recorded_at: Wed, 14 Mar 2018 11:01:17 GMT
+recorded_with: VCR 3.0.3

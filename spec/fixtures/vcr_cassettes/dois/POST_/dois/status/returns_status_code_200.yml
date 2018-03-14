@@ -8,7 +8,7 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Maremma - http://a6b15c7c990c
+      - Maremma - http://1233a1e3ec2e
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
   response:
@@ -23,7 +23,7 @@ http_interactions:
       Connection:
       - keep-alive
       Date:
-      - Sun, 11 Mar 2018 07:23:33 GMT
+      - Wed, 14 Mar 2018 10:40:49 GMT
       Cache-Control:
       - max-age=31536000
       Last-Modified:
@@ -32,17 +32,15 @@ http_interactions:
       - '"1920e368fefb9ce45b3a103f9378853d"'
       Server:
       - AmazonS3
-      Age:
-      - '49614'
       X-Cache:
       - Hit from cloudfront
       Via:
-      - 1.1 147e057d2f96cf5a0082d96978e38a5b.cloudfront.net (CloudFront)
+      - 1.1 cb4a13289775641b81a657ee95b08f74.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - MGl_2oWoGlvsgQhrMNfI00sds2Ya4NOBIfWwqOdSwqcG8Q8xAJ18ew==
+      - O7Ftj_4TZlHhrvVBE2e-NYBCqwxgHtuxncqOsvX4uXg5WdyLUjjI7g==
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Sun, 11 Mar 2018 21:10:29 GMT
+  recorded_at: Wed, 14 Mar 2018 10:40:50 GMT
 recorded_with: VCR 3.0.3
