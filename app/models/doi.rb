@@ -58,6 +58,8 @@ class Doi < ActiveRecord::Base
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   alias_attribute :uid, :doi
+  alias_attribute :resource_type_subtype, :additional_type
+  alias_attribute :resource_type_id, :resource_type_general
 
   belongs_to :client, foreign_key: :datacentre
   has_many :media, foreign_key: :dataset, dependent: :destroy
