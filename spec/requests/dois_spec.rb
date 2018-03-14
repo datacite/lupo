@@ -281,6 +281,76 @@ describe "dois", type: :request do
     end
 
     describe 'POST /dois/validate' do
+      context 'validates' do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('datacite.xml'))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.4122/10703",
+                "xml" => xml,
+              },
+              "relationships"=> {
+                "client"=>  {
+                  "data"=> {
+                    "type"=> "clients",
+                    "id"=> client.symbol.downcase
+                  }
+                }
+              }
+            }
+          }
+        end
+
+        before { post '/dois/validate', params: params.to_json, headers: headers }
+
+        it 'validates a Doi' do
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2016-12-20")
+        end
+
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
+      end
+
+      context 'validates schema 3' do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('datacite_schema_3.xml'))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.4122/10703",
+                "xml" => xml,
+              },
+              "relationships"=> {
+                "client"=>  {
+                  "data"=> {
+                    "type"=> "clients",
+                    "id"=> client.symbol.downcase
+                  }
+                }
+              }
+            }
+          }
+        end
+
+        before { post '/dois/validate', params: params.to_json, headers: headers }
+
+        it 'validates a Doi' do
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2011")
+        end
+
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
+      end
+
       context 'when the creator is missing' do
         let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('datacite_missing_creator.xml'))) }
         let(:params) do
@@ -306,9 +376,253 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          puts response.body
-          expect(json['errors'].size).to eq(3)
+          expect(json['errors'].size).to eq(1)
           expect(json['errors'].first).to eq("source"=>"creators", "title"=>"Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ).")
+        end
+
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
+      end
+
+      context 'validates citeproc' do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('citeproc.json'))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.4122/10703",
+                "xml" => xml,
+              },
+              "relationships"=> {
+                "client"=>  {
+                  "data"=> {
+                    "type"=> "clients",
+                    "id"=> client.symbol.downcase
+                  }
+                }
+              }
+            }
+          }
+        end
+
+        before { post '/dois/validate', params: params.to_json, headers: headers }
+
+        it 'validates a Doi' do
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2016-12-20")
+        end
+
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
+      end
+
+      context 'validates codemeta' do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('codemeta.json'))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.4122/10703",
+                "xml" => xml,
+              },
+              "relationships"=> {
+                "client"=>  {
+                  "data"=> {
+                    "type"=> "clients",
+                    "id"=> client.symbol.downcase
+                  }
+                }
+              }
+            }
+          }
+        end
+
+        before { post '/dois/validate', params: params.to_json, headers: headers }
+
+        it 'validates a Doi' do
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("R Interface to the DataONE REST API")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2016-05-27")
+        end
+
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
+      end
+
+      context 'validates crosscite' do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('crosscite.json'))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.4122/10703",
+                "xml" => xml,
+              },
+              "relationships"=> {
+                "client"=>  {
+                  "data"=> {
+                    "type"=> "clients",
+                    "id"=> client.symbol.downcase
+                  }
+                }
+              }
+            }
+          }
+        end
+
+        before { post '/dois/validate', params: params.to_json, headers: headers }
+
+        it 'validates a Doi' do
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Analysis Tools for Crossover Experiment of UI using Choice Architecture")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2016-03-27")
+        end
+
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
+      end
+
+      context 'validates bibtex' do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('crossref.bib'))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.4122/10703",
+                "xml" => xml,
+              },
+              "relationships"=> {
+                "client"=>  {
+                  "data"=> {
+                    "type"=> "clients",
+                    "id"=> client.symbol.downcase
+                  }
+                }
+              }
+            }
+          }
+        end
+
+        before { post '/dois/validate', params: params.to_json, headers: headers }
+
+        it 'validates a Doi' do
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2014")
+        end
+
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
+      end
+
+      context 'validates ris' do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('crossref.ris'))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.4122/10703",
+                "xml" => xml,
+              },
+              "relationships"=> {
+                "client"=>  {
+                  "data"=> {
+                    "type"=> "clients",
+                    "id"=> client.symbol.downcase
+                  }
+                }
+              }
+            }
+          }
+        end
+
+        before { post '/dois/validate', params: params.to_json, headers: headers }
+
+        it 'validates a Doi' do
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2014")
+        end
+
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
+      end
+
+      context 'validates crossref xml' do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('crossref.xml'))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.4122/10703",
+                "xml" => xml,
+              },
+              "relationships"=> {
+                "client"=>  {
+                  "data"=> {
+                    "type"=> "clients",
+                    "id"=> client.symbol.downcase
+                  }
+                }
+              }
+            }
+          }
+        end
+
+        before { post '/dois/validate', params: params.to_json, headers: headers }
+
+        it 'validates a Doi' do
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2006-12-20")
+        end
+
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
+      end
+
+      context 'validates schema.org' do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('schema_org.json'))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.4122/10703",
+                "xml" => xml,
+              },
+              "relationships"=> {
+                "client"=>  {
+                  "data"=> {
+                    "type"=> "clients",
+                    "id"=> client.symbol.downcase
+                  }
+                }
+              }
+            }
+          }
+        end
+
+        before { post '/dois/validate', params: params.to_json, headers: headers }
+
+        it 'validates a Doi' do
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2016-12-20")
         end
 
         it 'returns status code 200' do
@@ -550,244 +864,146 @@ describe "dois", type: :request do
     end
   end
 
-# describe 'POST /metadata/convert' do
-#     let(:valid_attributes) do
-#       {
-#         "data" => {
-#           "type" => "metadata",
-#           "attributes"=> {
-#             "xml"=> xml
-#           }
-#         }
-#       }
-#     end
-#
-#     before { post "/metadata/convert", params: valid_attributes.to_json, headers: headers }
-#
-#     context 'when the metadata validate' do
-#       it 'creates metadata record' do
-#         xml = Base64.decode64(json.dig('data', 'attributes', 'xml'))
-#         doc = Nokogiri::XML(xml, nil, 'UTF-8', &:noblanks)
-#         expect(doc.at_css("identifier").content).to eq("10.5256/f1000research.8570.r6420")
-#       end
-#
-#       it "creates namespace" do
-#         expect(json.dig('data', 'attributes', 'namespace')).to eq("http://datacite.org/schema/kernel-3")
-#       end
-#
-#       it 'returns status code 200' do
-#         expect(response).to have_http_status(200)
-#       end
-#     end
-#
-#     context 'when the metadata don\'t validate' do
-#       let(:xml) { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHJlc291cmNlIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zPSJodHRwOi8vZGF0YWNpdGUub3JnL3NjaGVtYS9rZXJuZWwtNCIgeHNpOnNjaGVtYUxvY2F0aW9uPSJodHRwOi8vZGF0YWNpdGUub3JnL3NjaGVtYS9rZXJuZWwtNCBodHRwOi8vc2NoZW1hLmRhdGFjaXRlLm9yZy9tZXRhL2tlcm5lbC00L21ldGFkYXRhLnhzZCI+CiAgPGlkZW50aWZpZXIgaWRlbnRpZmllclR5cGU9IkRPSSI+MTAuNTQzOC80SzNNLU5ZVkc8L2lkZW50aWZpZXI+CiAgPGNyZWF0b3JzLz4KICA8dGl0bGVzPgogICAgPHRpdGxlPkVhdGluZyB5b3VyIG93biBEb2cgRm9vZDwvdGl0bGU+CiAgPC90aXRsZXM+CiAgPHB1Ymxpc2hlcj5EYXRhQ2l0ZTwvcHVibGlzaGVyPgogIDxwdWJsaWNhdGlvblllYXI+MjAxNjwvcHVibGljYXRpb25ZZWFyPgogIDxyZXNvdXJjZVR5cGUgcmVzb3VyY2VUeXBlR2VuZXJhbD0iVGV4dCI+QmxvZ1Bvc3Rpbmc8L3Jlc291cmNlVHlwZT4KICA8YWx0ZXJuYXRlSWRlbnRpZmllcnM+CiAgICA8YWx0ZXJuYXRlSWRlbnRpZmllciBhbHRlcm5hdGVJZGVudGlmaWVyVHlwZT0iTG9jYWwgYWNjZXNzaW9uIG51bWJlciI+TVMtNDktMzYzMi01MDgzPC9hbHRlcm5hdGVJZGVudGlmaWVyPgogIDwvYWx0ZXJuYXRlSWRlbnRpZmllcnM+CiAgPHN1YmplY3RzPgogICAgPHN1YmplY3Q+ZGF0YWNpdGU8L3N1YmplY3Q+CiAgICA8c3ViamVjdD5kb2k8L3N1YmplY3Q+CiAgICA8c3ViamVjdD5tZXRhZGF0YTwvc3ViamVjdD4KICA8L3N1YmplY3RzPgogIDxkYXRlcz4KICAgIDxkYXRlIGRhdGVUeXBlPSJDcmVhdGVkIj4yMDE2LTEyLTIwPC9kYXRlPgogICAgPGRhdGUgZGF0ZVR5cGU9Iklzc3VlZCI+MjAxNi0xMi0yMDwvZGF0ZT4KICAgIDxkYXRlIGRhdGVUeXBlPSJVcGRhdGVkIj4yMDE2LTEyLTIwPC9kYXRlPgogIDwvZGF0ZXM+CiAgPHJlbGF0ZWRJZGVudGlmaWVycz4KICAgIDxyZWxhdGVkSWRlbnRpZmllciByZWxhdGVkSWRlbnRpZmllclR5cGU9IkRPSSIgcmVsYXRpb25UeXBlPSJSZWZlcmVuY2VzIj4xMC41NDM4LzAwMTI8L3JlbGF0ZWRJZGVudGlmaWVyPgogICAgPHJlbGF0ZWRJZGVudGlmaWVyIHJlbGF0ZWRJZGVudGlmaWVyVHlwZT0iRE9JIiByZWxhdGlvblR5cGU9IlJlZmVyZW5jZXMiPjEwLjU0MzgvNTVFNS1UNUMwPC9yZWxhdGVkSWRlbnRpZmllcj4KICAgIDxyZWxhdGVkSWRlbnRpZmllciByZWxhdGVkSWRlbnRpZmllclR5cGU9IkRPSSIgcmVsYXRpb25UeXBlPSJJc1BhcnRPZiI+MTAuNTQzOC8wMDAwLTAwU1M8L3JlbGF0ZWRJZGVudGlmaWVyPgogIDwvcmVsYXRlZElkZW50aWZpZXJzPgogIDx2ZXJzaW9uPjEuMDwvdmVyc2lvbj4KICA8ZGVzY3JpcHRpb25zPgogICAgPGRlc2NyaXB0aW9uIGRlc2NyaXB0aW9uVHlwZT0iQWJzdHJhY3QiPkVhdGluZyB5b3VyIG93biBkb2cgZm9vZCBpcyBhIHNsYW5nIHRlcm0gdG8gZGVzY3JpYmUgdGhhdCBhbiBvcmdhbml6YXRpb24gc2hvdWxkIGl0c2VsZiB1c2UgdGhlIHByb2R1Y3RzIGFuZCBzZXJ2aWNlcyBpdCBwcm92aWRlcy4gRm9yIERhdGFDaXRlIHRoaXMgbWVhbnMgdGhhdCB3ZSBzaG91bGQgdXNlIERPSXMgd2l0aCBhcHByb3ByaWF0ZSBtZXRhZGF0YSBhbmQgc3RyYXRlZ2llcyBmb3IgbG9uZy10ZXJtIHByZXNlcnZhdGlvbiBmb3IuLi48L2Rlc2NyaXB0aW9uPgogIDwvZGVzY3JpcHRpb25zPgo8L3Jlc291cmNlPgo=" }
-#       it 'shows errors' do
-#         expect(json["errors"]).to eq([{"source"=>"creators", "title"=>"Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator )."}])
-#       end
-#
-#       it 'returns status code 422' do
-#         expect(response).to have_http_status(422)
-#       end
-#     end
-#
-#     context 'when the metadata is bibtex' do
-#       let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('crossref.bib'))) }
-#
-#       it 'creates metadata record' do
-#         xml = Base64.decode64(json.dig('data', 'attributes', 'xml'))
-#         doc = Nokogiri::XML(xml, nil, 'UTF-8', &:noblanks)
-#         expect(doc.at_css("identifier").content).to eq("10.7554/elife.01567")
-#       end
-#
-#       it "creates namespace" do
-#         expect(json.dig('data', 'attributes', 'namespace')).to eq("http://datacite.org/schema/kernel-4")
-#       end
-#
-#       it 'returns status code 200' do
-#         expect(response).to have_http_status(200)
-#       end
-#     end
-#
-#     context 'when the metadata is ris' do
-#       let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('crossref.ris'))) }
-#
-#       it 'creates metadata record' do
-#         xml = Base64.decode64(json.dig('data', 'attributes', 'xml'))
-#         doc = Nokogiri::XML(xml, nil, 'UTF-8', &:noblanks)
-#         expect(doc.at_css("identifier").content).to eq("10.7554/elife.01567")
-#       end
-#
-#       it "creates namespace" do
-#         expect(json.dig('data', 'attributes', 'namespace')).to eq("http://datacite.org/schema/kernel-4")
-#       end
-#
-#       it 'returns status code 200' do
-#         expect(response).to have_http_status(200)
-#         expect(json["errors"]).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
-#       end
-#     end
-#   end
+  describe "content negotiation" do
+    let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+    let(:doi) { create(:doi, xml: xml) }
 
-  # describe "content negotiation" do
-  #   let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
-  #   let(:doi) { create(:doi, xml: xml) }
-  #
-  #   context "application/vnd.jats+xml" do
-  #     before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.jats+xml" } }
-  #
-  #     it 'understands accept header' do
-  #       expect(response.headers).to eq("CCDC 622650: Experimental Crystal Structure Determination")
-  #     end
-  #
-  #     it 'returns the Doi' do
-  #       jats = Maremma.from_xml(doi.jats).fetch("element_citation", {})
-  #       expect(jats.dig("publication_type")).to eq("journal")
-  #       expect(jats.dig("article_title")).to eq("Eating your own Dog Food")
-  #     end
-  #
-  #     it 'returns status code 200' do
-  #       expect(response.body).to eq(2)
-  #       expect(response).to have_http_status(200)
-  #     end
-  #   end
+    context "application/vnd.jats+xml" do
+      before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.jats+xml" } }
 
-    # context "application/vnd.datacite.datacite+xml" do
-    #   before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml" } }
-    #
-    #   it 'understands accept header' do
-    #     expect(response).to eq("CCDC 622650: Experimental Crystal Structure Determination")
-    #   end
-    #
-    #   it 'returns the Doi' do
-    #     puts doi.datacite
-    #     response = Maremma.from_xml(response.body).to_h.fetch("resource", {})
-    #     expect(response.dig("publisher")).to eq("Cambridge Crystallographic Data Centre")
-    #     expect(response.dig("titles", "title")).to eq("CCDC 622650: Experimental Crystal Structure Determination")
-    #   end
-    #
-    #   it 'returns status code 200' do
-    #     expect(response.body).to eq(2)
-    #     expect(response).to have_http_status(200)
-    #   end
-    # end
-    #
-    # context "application/vnd.datacite.datacite+xml not found" do
-    #   let(:doi) { create(:doi, client: client, doi: "10.15146/R34015") }
-    #   before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml" } }
-    #
-    #   it 'returns error message' do
-    #     expect(response.body).to eq("The resource you are looking for doesn't exist.")
-    #   end
-    #
-    #   it 'returns status code 404' do
-    #     expect(response).to have_http_status(404)
-    #   end
-    # end
+      it 'returns the Doi' do
+        jats = Maremma.from_xml(doi.jats).fetch("element_citation", {})
+        expect(jats.dig("publication_type")).to eq("journal")
+        expect(jats.dig("article_title")).to eq("Eating your own Dog Food")
+      end
 
-    # context "application/vnd.datacite.datacite+json" do
-    #   it "header" do
-    #     get "/#{doi}", nil, { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+json" }
-    #
-    #     expect(last_response.status).to eq(200)
-    #     response = JSON.parse(last_response.body)
-    #     expect(response["id"]).to eq("https://handle.test.datacite.org/10.4124/ccnwxhx")
-    #   end
-    #
-    #   it "link" do
-    #     get "/application/vnd.datacite.datacite+json/#{doi}"
-    #
-    #     expect(last_response.status).to eq(200)
-    #     response = JSON.parse(last_response.body)
-    #     expect(response["id"]).to eq("https://handle.test.datacite.org/10.4124/ccnwxhx")
-    #   end
-    # end
-    #
-    # context "application/vnd.schemaorg.ld+json" do
-    #   it "header" do
-    #     get "/#{doi}", nil, { "HTTP_ACCEPT" => "application/vnd.schemaorg.ld+json" }
-    #
-    #     expect(last_response.status).to eq(200)
-    #     response = JSON.parse(last_response.body)
-    #     expect(response["@type"]).to eq("Dataset")
-    #   end
-    #
-    #   it "link" do
-    #     get "/application/vnd.schemaorg.ld+json/#{doi}"
-    #
-    #     expect(last_response.status).to eq(200)
-    #     response = JSON.parse(last_response.body)
-    #     expect(response["@type"]).to eq("Dataset")
-    #   end
-    # end
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
 
-    # context "application/vnd.citationstyles.csl+json" do
-    #   before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.citationstyles.csl+json" } }
-    #
-    #   it 'returns the Doi' do
-    #     expect(json["type"]).to eq("dataset")
-    #   end
-    #
-    #   it 'returns status code 200' do
-    #     expect(response).to have_http_status(200)
-    #   end
-    # end
+    context "application/vnd.datacite.datacite+xml" do
+      before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml" } }
 
-    # context "application/x-research-info-systems" do
-    #   it "header" do
-    #     get "/#{doi}", nil, { "HTTP_ACCEPT" => "application/x-research-info-systems" }
-    #
-    #     expect(last_response.status).to eq(200)
-    #     expect(last_response.body).to start_with("TY - DATA")
-    #   end
-    #
-    #   it "link" do
-    #     get "/application/x-research-info-systems/#{doi}"
-    #
-    #     expect(last_response.status).to eq(200)
-    #     expect(last_response.body).to start_with("TY - DATA")
-    #   end
-    # end
+      it 'returns the Doi' do
+        data = Maremma.from_xml(response.body).to_h.fetch("resource", {})
+        expect(data.dig("publisher")).to eq("DataCite")
+        expect(data.dig("titles", "title")).to eq("Eating your own Dog Food")
+      end
 
-    # context "application/x-bibtex" do
-    #   before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/x-bibtex" } }
-    #
-    #   it 'returns the Doi' do
-    #     expect(response.body).to start_with("@misc{https://handle.test.datacite.org/10.4124/ccnwxhx")
-    #   end
-    #
-    #   it 'returns status code 200' do
-    #     expect(response).to have_http_status(200)
-    #   end
-    # end
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
 
-    # context "text/x-bibliography" do
-    #   it "header" do
-    #     get "/#{doi}", nil, { "HTTP_ACCEPT" => "text/x-bibliography" }
-    #     expect(last_response.status).to eq(200)
-    #     expect(last_response.body).to start_with("Krempner, C., Reinke, H.")
-    #   end
-    #
-    #   # it "link with style" do
-    #   #   get "/text/x-bibliography;style=ieee/#{doi}"
-    #   #
-    #   #   expect(last_response.status).to eq(200)
-    #   #   expect(last_response.body).to start_with("[1]C. Krempner, H.")
-    #   # end
-    #   #
-    #   # it "link with style and space" do
-    #   #   get "/text/x-bibliography;+style=ieee/#{doi}"
-    #   #
-    #   #   expect(last_response.status).to eq(200)
-    #   #   expect(last_response.body).to start_with("[1]C. Krempner, H.")
-    #   # end
-    #   #
-    #   # it "link with style and locale" do
-    #   #   get "/text/x-bibliography;style=vancouver;locale=de/#{doi}"
-    #   #
-    #   #   expect(last_response.status).to eq(200)
-    #   #   expect(last_response.body).to start_with("1. Krempner C")
-    #   # end
-    # end
-  # end
+    context "application/vnd.datacite.datacite+xml not found" do
+      before { get "/dois/xxx", headers: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml" } }
+
+      it 'returns error message' do
+        expect(json["errors"]).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
+      end
+
+      it 'returns status code 404' do
+        expect(response).to have_http_status(404)
+      end
+    end
+
+    context "application/vnd.datacite.datacite+json" do
+      before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+json" } }
+
+      it 'returns the Doi' do
+        expect(json["doi"]).to eq(doi.doi)
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "application/vnd.schemaorg.ld+json" do
+      before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.schemaorg.ld+json" } }
+
+      it 'returns the Doi' do
+        expect(json["@type"]).to eq("ScholarlyArticle")
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "application/vnd.citationstyles.csl+json" do
+      before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.citationstyles.csl+json" } }
+
+      it 'returns the Doi' do
+        expect(json["type"]).to eq("report")
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "application/x-research-info-systems" do
+      before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/x-research-info-systems" } }
+
+      it 'returns the Doi' do
+        expect(response.body).to start_with("TY - RPRT")
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "application/x-bibtex" do
+      before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/x-bibtex" } }
+
+      it 'returns the Doi' do
+        expect(response.body).to start_with("@article{https://handle.test.datacite.org/#{doi.doi.downcase}")
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context "text/x-bibliography", vcr: true do
+      context "default style" do
+        before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "text/x-bibliography" } }
+
+        it 'returns the Doi' do
+          expect(response.body).to start_with("Fenner, M. (2016)")
+        end
+
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
+      end
+
+      context "ieee style" do
+        before { get "/dois/#{doi.doi}?style=ieee", headers: { "HTTP_ACCEPT" => "text/x-bibliography" } }
+
+        it 'returns the Doi' do
+          expect(response.body).to start_with("[1]M. Fenner")
+        end
+
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
+      end
+
+      context "style and locale" do
+        before { get "/dois/#{doi.doi}?style=vancouver&locale=de", headers: { "HTTP_ACCEPT" => "text/x-bibliography" } }
+
+        it 'returns the Doi' do
+          expect(response.body).to start_with("1. Fenner M")
+        end
+
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
+      end
+    end
+  end
 end

@@ -139,7 +139,6 @@ class Doi < ActiveRecord::Base
       "creator" => author,
       "title" => title,
       "publisher" => publisher,
-      "publication-year" => publication_year,
       "resource-type-subtype" => additional_type,
       "version" => version,
       "schema-version" => schema_version,
@@ -156,20 +155,12 @@ class Doi < ActiveRecord::Base
     { "id" => doi, "type" => "dois", "attributes" => attributes }
   end
 
-  def validation_errors?
-    validation_errors.present?
-  end
-
   def current_metadata
     metadata.order('metadata.created DESC').first
   end
 
   def metadata_version
     current_metadata ? current_metadata.metadata_version : 0
-  end
-
-  def schema_version
-    @schema_version ||= current_metadata ? current_metadata.namespace : "http://datacite.org/schema/kernel-4"
   end
 
   def resource_type

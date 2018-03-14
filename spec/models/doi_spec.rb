@@ -94,6 +94,14 @@ describe Doi, type: :model, vcr: true do
       expect(subject.author).to eq("name"=>"D S")
     end
 
+    it "date_published" do
+      expect(subject.date_published).to eq("2017")
+    end
+
+    it "publication_year" do
+      expect(subject.publication_year).to eq(2017)
+    end
+
     it "schema_version" do
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-3")
     end
@@ -109,7 +117,7 @@ describe Doi, type: :model, vcr: true do
       expect(params.dig("id")).to eq(doi.doi)
       expect(params.dig("attributes","url")).to eq(doi.url)
       expect(params.dig("attributes","resource-type-id")).to eq("Text")
-      #expect(params.dig("attributes","schema-version")).to eq("http://datacite.org/schema/kernel-4")
+      expect(params.dig("attributes","schema-version")).to eq("http://datacite.org/schema/kernel-3")
       expect(params.dig("attributes","is-active")).to be true
     end
   end
@@ -128,12 +136,20 @@ describe Doi, type: :model, vcr: true do
       expect(subject.valid?).to be true
     end
 
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
+    it "validates against schema" do
+      expect(subject.validation_errors).to be_empty
+    end
 
     it "title" do
       expect(subject.title).to eq("Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes")
+    end
+
+    it "date_published" do
+      expect(subject.date_published).to eq("2006-12-20")
+    end
+
+    it "publication_year" do
+      expect(subject.publication_year).to eq(2006)
     end
 
     it "author" do
@@ -142,6 +158,45 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "schema_version" do
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
+    end
+  end
+
+  context "parses schema" do
+    let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+
+    subject { create(:doi, xml: xml, event: "publish") }
+
+    it "creates xml" do
+      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "valid model" do
+      expect(subject.valid?).to be true
+    end
+
+    it "validates against schema" do
+      expect(subject.validation_errors).to be_empty
+    end
+
+    it "title" do
+      expect(subject.title).to eq("Eating your own Dog Food")
+    end
+
+    it "author" do
+      expect(subject.author).to eq("type"=>"Person", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "givenName"=>"Martin", "familyName"=>"Fenner")
+    end
+
+    it "date_published" do
+      expect(subject.date_published).to eq("2016-12-20")
+    end
+
+    it "publication_year" do
+      expect(subject.publication_year).to eq(2016)
+    end
+
+    it "creates schema_version" do
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
     end
   end
@@ -160,10 +215,6 @@ describe Doi, type: :model, vcr: true do
       expect(subject.valid?).to be true
     end
 
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
-
     it "title" do
       expect(subject.title).to eq("Data from: A new malaria agent in African hominids.")
     end
@@ -171,6 +222,14 @@ describe Doi, type: :model, vcr: true do
     it "author" do
       expect(subject.author.length).to eq(8)
       expect(subject.author.first).to eq("type"=>"Person", "name"=>"Benjamin Ollomo", "givenName"=>"Benjamin", "familyName"=>"Ollomo")
+    end
+
+    it "date_published" do
+      expect(subject.date_published).to eq("2011")
+    end
+
+    it "publication_year" do
+      expect(subject.publication_year).to eq(2011)
     end
 
     it "creates schema_version" do
@@ -192,9 +251,9 @@ describe Doi, type: :model, vcr: true do
       expect(subject.valid?).to be true
     end
 
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
+    it "validates against schema" do
+      expect(subject.validation_errors).to be_empty
+    end
 
     it "title" do
       expect(subject.title).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
@@ -224,9 +283,9 @@ describe Doi, type: :model, vcr: true do
       expect(subject.valid?).to be true
     end
 
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
+    it "validates against schema" do
+      expect(subject.validation_errors).to be_empty
+    end
 
     it "title" do
       expect(subject.title).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
@@ -256,9 +315,9 @@ describe Doi, type: :model, vcr: true do
       expect(subject.valid?).to be true
     end
 
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
+    it "validates against schema" do
+      expect(subject.validation_errors).to be_empty
+    end
 
     it "title" do
       expect(subject.title).to eq("Eating your own Dog Food")
@@ -287,9 +346,9 @@ describe Doi, type: :model, vcr: true do
       expect(subject.valid?).to be true
     end
 
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
+    it "validates against schema" do
+      expect(subject.validation_errors).to be_empty
+    end
 
     it "title" do
       expect(subject.title).to eq("R Interface to the DataONE REST API")
@@ -319,9 +378,9 @@ describe Doi, type: :model, vcr: true do
       expect(subject.valid?).to be true
     end
 
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
+    it "validates against schema" do
+      expect(subject.validation_errors).to be_empty
+    end
 
     it "title" do
       expect(subject.title).to eq("Analysis Tools for Crossover Experiment of UI using Choice Architecture")
@@ -350,9 +409,9 @@ describe Doi, type: :model, vcr: true do
       expect(subject.valid?).to be true
     end
 
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
+    it "validates against schema" do
+      expect(subject.validation_errors).to be_empty
+    end
 
     it "title" do
       expect(subject.title).to eq("Eating your own Dog Food")
@@ -372,9 +431,9 @@ describe Doi, type: :model, vcr: true do
 
     subject { create(:doi, doi: "10.5438/4k3m-nyvg", xml: xml, event: "publish") }
 
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
+    it "validates against schema" do
+      expect(subject.validation_errors).to be_empty
+    end
 
     it "generates datacite_xml" do
       doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
@@ -399,11 +458,11 @@ describe Doi, type: :model, vcr: true do
       expect(json["name"]).to eq("Eating your own Dog Food")
     end
 
-    # it "generates datacite_json" do
-    #   json = JSON.parse(subject.datacite_json)
-    #   expect(json["resource_type_id"]).to eq("https://doi.org/10.7554/elife.01567")
-    #   expect(json["title"]).to eq("Eating your own Dog Food")
-    # end
+    it "generates datacite_json" do
+      json = JSON.parse(subject.datacite_json)
+      expect(json["doi"]).to eq("10.5438/4K3M-NYVG")
+      expect(json["title"]).to eq("Eating your own Dog Food")
+    end
 
     it "generates codemeta" do
       json = JSON.parse(subject.codemeta)
@@ -425,7 +484,7 @@ describe Doi, type: :model, vcr: true do
     it "generates turtle" do
       ttl = subject.turtle.split("\n")
       expect(ttl[0]).to eq("@prefix schema: <http://schema.org/> .")
-      expect(ttl[2]).to eq("<https://doi.org/10.5438/0012> a schema:CreativeWork .")
+      expect(ttl[2]).to eq("<https://doi.org/10.5438/0000-00ss> a schema:CreativeWork .")
     end
   end
 end
