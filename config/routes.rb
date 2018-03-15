@@ -24,7 +24,6 @@ Rails.application.routes.draw do
   post 'provider-prefixes/set-created', :to => 'provider_prefixes#set_created'
 
   resources :heartbeat, only: [:index]
-  resources :index, path: '/', only: [:index]
 
   resources :clients, constraints: { :id => /.+/ } do
     resources :prefixes, constraints: { :id => /.+/ }, shallow: true
@@ -64,6 +63,9 @@ Rails.application.routes.draw do
   resources :members, only: [:show, :index]
   resources :data_centers, only: [:show, :index], constraints: { :id => /.+/ }, path: "/data-centers"
 
+  # content negotiation
+  resources :index, path: '/', constraints: { :id => /.+/ }, only: [:show, :index]
+
   # rescue routing errors
-  match "*path", to: "index#routing_error", via: :all
+  #match "*path", to: "index#routing_error", via: :all
 end

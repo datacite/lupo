@@ -1,13 +1,10 @@
 require 'uri'
 
 class DoisController < ApplicationController
-  include ActionController::MimeResponds
-
   prepend_before_action :authenticate_user!
   before_action :set_doi, only: [:show, :update, :destroy]
   before_action :set_user_hash, only: [:create, :update, :destroy]
   before_action :set_include, only: [:index, :show]
-  # before_action :set_format, only: [:show]
   authorize_resource :except => [:index, :show, :random]
 
   def index
@@ -55,32 +52,8 @@ class DoisController < ApplicationController
     render jsonapi: @dois, meta: meta, include: @include, each_serializer: DoiSerializer
   end
 
-  # we support content negotiation in show action
   def show
-    respond_to do |format|
-      format.jsonapi { render jsonapi: @doi, include: @include, serializer: DoiSerializer }
-      format.json { render jsonapi: @doi, include: @include, serializer: DoiSerializer }
-
-      format.bibtex { render bibtex: @doi }
-      format.citeproc { render citeproc: @doi }
-      format.codemeta { render codemeta: @doi }
-      format.datacite { render datacite: @doi }
-      format.datacite_json { render datacite_json: @doi }
-      format.jats { render jats: @doi }
-      format.ris { render ris: @doi }
-      format.schema_org { render schema_org: @doi }
-      format.citation do
-        # fetch formatted citation
-        options = {
-          style: params[:style] || "apa",
-          locale: params[:locale] || "en-US" }
-
-        citation_url = ENV["CITEPROC_URL"] + "?" + URI.encode_www_form(options)
-        response = Maremma.post citation_url, content_type: 'json', data: @doi.citeproc
-
-        render plain: response.body.fetch("data", nil)
-      end
-    end
+    render jsonapi: @doi, include: @include, serializer: DoiSerializer
   end
 
   def validate
@@ -193,18 +166,6 @@ class DoisController < ApplicationController
       @include = [@include]
     else
       @include = ["client,provider,resource_type"]
-    end
-  end
-
-  def set_format
-    # get all accept headers provided by client
-    @accept_headers = request.accepts.map { |i| i.to_s }
-
-    # select first match as content_type, handle text/x-bibliography differently
-    if @accept_headers.first.to_s.starts_with?("text/x-bibliography")
-      request.format = :citation
-    else
-      #request.format = (@accept_headers & AVAILABLE_CONTENT_TYPES.keys).first || :json
     end
   end
 
