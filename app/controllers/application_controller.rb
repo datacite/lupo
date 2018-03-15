@@ -16,6 +16,8 @@ class ApplicationController < ActionController::API
   # pass ability into serializer
   serialization_scope :current_ability
 
+  before_bugsnag_notify :add_user_info_to_bugsnag
+
   before_action :default_format_json, :transform_params
   after_action :set_jsonp_format, :set_consumer_header
 
@@ -77,6 +79,9 @@ class ApplicationController < ActionController::API
       elsif status == 401
         message = "You are not authorized to access this resource."
       else
+        Bugsnag.notify(exception)
+        exception.skip_bugsnag = true
+
         message = exception.message
       end
 
@@ -88,5 +93,15 @@ class ApplicationController < ActionController::API
 
   def is_admin_or_staff?
     current_user && current_user.is_admin_or_staff? ? 1 : 0
+  end
+
+  private
+
+  def add_user_info_to_bugsnag(report)
+    report.user = {
+      email: current_user.email,
+      name: current_user.name,
+      id: current_user.id
+    }
   end
 end

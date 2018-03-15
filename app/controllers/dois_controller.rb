@@ -7,6 +7,8 @@ class DoisController < ApplicationController
   before_action :set_include, only: [:index, :show]
   authorize_resource :except => [:index, :show, :random]
 
+  before_bugsnag_notify :add_metadata_to_bugsnag
+
   def index
     # support nested routes
     if params[:client_id].present?
@@ -174,8 +176,14 @@ class DoisController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:doi, :url, :title, :publisher, :published, :resource_type_id, "resource-type-id", :resource_type_subtype, "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", :description, :license, :xml, :reason, :event, :regenerate, :client, creator: []],
-              keys: { :published => :date_published, "resource-type-id" => :resource_type_general, "resource-type-subtype" => :additional_type, :creator => :author, "last-landing-page" => :last_landing_page, "last-landing-page-status" => :last_landing_page_status, "last-landing-page-status-check" => :last_landing_page_status_check, "last-landing-page-content-type" => :last_landing_page_content_type }
+      params, only: [:doi, :url, :title, :publisher, :published, "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", :description, :license, :xml, :reason, :event, :regenerate, :client, "resource_type", creator: []],
+              keys: { :published => :date_published, "resource-type" => :resource_type, "resource-type-subtype" => :additional_type, :creator => :author, "last-landing-page" => :last_landing_page, "last-landing-page-status" => :last_landing_page_status, "last-landing-page-status-check" => :last_landing_page_status_check, "last-landing-page-content-type" => :last_landing_page_content_type }
     )
+  end
+
+  def add_metadata_to_bugsnag(report)
+    report.add_tab(:metadata, {
+      metadata: @doi && @doi.xml.present? ? Base64.decode64(@doi.xml) : nil
+    })
   end
 end
