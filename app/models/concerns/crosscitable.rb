@@ -112,17 +112,9 @@ module Crosscitable
     def load_doi_metadata
       return nil if self.crosscite.present? || current_metadata.blank?
 
-      bolognese = Bolognese::Metadata.new(input: current_metadata.xml,
-                                          from: "datacite",
-                                          doi: doi,
-                                          sandbox: !Rails.env.production?)
-
-      self.crosscite = JSON.parse(bolognese.crosscite)
-      @from = bolognese.from
-      @raw = bolognese.raw
-    rescue ArgumentError, NoMethodError => e
-      Rails.logger.error "Error for " + doi + ": " + e.message
-      return nil
+      self.crosscite = cached_doi_response
+      #@from = bolognese.from
+      #@raw = bolognese.raw
     end
 
     # helper methods from bolognese below

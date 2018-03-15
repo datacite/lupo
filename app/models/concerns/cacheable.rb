@@ -50,6 +50,20 @@ module Cacheable
       end
     end
 
+    def cached_doi_response
+      Rails.cache.fetch("doi_response/#{id}-#{updated.utc.iso8601}") do
+        bolognese = Bolognese::Metadata.new(input: current_metadata.xml,
+                                            from: "datacite",
+                                            doi: doi,
+                                            sandbox: !Rails.env.production?)
+
+        JSON.parse(bolognese.crosscite)
+      end
+    rescue ArgumentError, NoMethodError => e
+      Rails.logger.error "Error for " + doi + ": " + e.message
+      return nil
+    end
+
     def cached_client_response(id, options={})
       Rails.cache.fetch("client_response/#{id}", expires_in: 1.day) do
         Client.where(symbol: id).first
@@ -126,22 +140,6 @@ module Cacheable
     #     Client.all.select(:id, :symbol, :name, :updated)
     #   end
     # end
-
-    def cached_datasets
-      Rails.cache.fetch("datasets", expires_in: 1.day) do
-        Dataset.all
-      end
-    end
-
-    def cached_datasets_options(options={})
-      Rails.cache.fetch("records_datasets", :expires_in => 1.day) do
-        collection = cached_datasets
-        # collection = collection.all unless options.values.include?([nil,nil])
-        collection = collection.where('extract(year  from created) = ?', options[:year]) if options[:year].present?
-        collection = collection.where(datacentre:  Client.find_by(symbol: options[:client_id]).id) if options[:client_id].present?
-        collection
-      end
-    end
 
     def cached_providers_response(options={})
       Rails.cache.fetch("provider_response", expires_in: 1.day) do
