@@ -183,7 +183,7 @@ class DoisController < ApplicationController
 
   def add_metadata_to_bugsnag(report)
     report.add_tab(:metadata, {
-      metadata: @doi && @doi.xml.present? ? Base64.decode64(@doi.xml) : nil
+      metadata: Base64.decode64(params.dig(:data, :attributes, :xml) || "PGhzaD48L2hzaD4=\n")
     })
   end
 end

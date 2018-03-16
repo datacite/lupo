@@ -80,7 +80,6 @@ class ApplicationController < ActionController::API
         message = "You are not authorized to access this resource."
       else
         Bugsnag.notify(exception)
-        exception.skip_bugsnag = true
 
         message = exception.message
       end

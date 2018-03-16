@@ -525,6 +525,39 @@ describe "dois", type: :request do
         end
       end
 
+      context 'doesn\'t validate bibtex' do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('bibtex_errors.bib'))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.4122/10703",
+                "xml" => xml,
+              },
+              "relationships"=> {
+                "client"=>  {
+                  "data"=> {
+                    "type"=> "clients",
+                    "id"=> client.symbol.downcase
+                  }
+                }
+              }
+            }
+          }
+        end
+
+        before { post '/dois/validate', params: params.to_json, headers: headers }
+
+        it 'has error' do
+          expect(json['errors'].first.to_h.fetch('title', '')).to start_with("undefined method `url' for #<BibTeX::Entry")
+        end
+
+        it 'returns status code 422' do
+          expect(response).to have_http_status(422)
+        end
+      end
+
       context 'validates ris' do
         let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('crossref.ris'))) }
         let(:params) do

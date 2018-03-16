@@ -128,8 +128,8 @@ describe 'Clients', type: :request do
 
       before { post '/clients', params: params.to_json, headers: headers }
 
-      it 'returns status code 500' do
-        expect(response).to have_http_status(500)
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
       end
 
       # it 'returns a validation failure message' do
