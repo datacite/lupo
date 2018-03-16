@@ -10,14 +10,6 @@ class IndexController < ApplicationController
   # we support content negotiation in show action
   def show
     respond_to do |format|
-      format.bibtex { render bibtex: @doi }
-      format.citeproc { render citeproc: @doi }
-      format.codemeta { render codemeta: @doi }
-      format.datacite { render datacite: @doi }
-      format.datacite_json { render datacite_json: @doi }
-      format.jats { render jats: @doi }
-      format.ris { render ris: @doi }
-      format.schema_org { render schema_org: @doi }
       format.citation do
         # fetch formatted citation
         options = {
@@ -29,6 +21,8 @@ class IndexController < ApplicationController
 
         render plain: response.body.fetch("data", nil)
       end
+      format.any(:bibtex, :citeproc, :codemeta, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => @doi }
+      format.any { fail ActionController::UnknownFormat }
     end
   end
 

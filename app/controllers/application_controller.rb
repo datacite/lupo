@@ -70,6 +70,7 @@ class ApplicationController < ActionController::API
       status = case exception.class.to_s
                when "CanCan::AccessDenied", "JWT::DecodeError" then 401
                when "ActiveRecord::RecordNotFound", "AbstractController::ActionNotFound", "ActionController::RoutingError" then 404
+               when "ActionController::UnknownFormat" then 406
                when "ActiveModel::ForbiddenAttributesError", "ActionController::ParameterMissing", "ActionController::UnpermittedParameters" then 422
                else 400
                end
@@ -78,6 +79,8 @@ class ApplicationController < ActionController::API
         message = "The resource you are looking for doesn't exist."
       elsif status == 401
         message = "You are not authorized to access this resource."
+      elsif status == 406
+        message = "The content type is not recognized."
       else
         Bugsnag.notify(exception)
 

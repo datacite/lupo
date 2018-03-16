@@ -141,4 +141,28 @@ describe "content_negotation", type: :request do
       end
     end
   end
+
+  context "unknown content type" do
+    before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "text/csv" } }
+
+    it 'returns the Doi' do
+      expect(json["errors"]).to eq([{"status"=>"406", "title"=>"The content type is not recognized."}])
+    end
+
+    it 'returns status code 406' do
+      expect(response).to have_http_status(406)
+    end
+  end
+
+  context "missing content type" do
+    before { get "/#{doi.doi}" }
+
+    it 'returns the Doi' do
+      expect(json["errors"]).to eq([{"status"=>"406", "title"=>"The content type is not recognized."}])
+    end
+
+    it 'returns status code 406' do
+      expect(response).to have_http_status(406)
+    end
+  end
 end
