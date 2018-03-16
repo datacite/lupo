@@ -80,6 +80,8 @@ module Crosscitable
     def xml=(value)
       return nil unless value.present?
 
+      input = Base64.decode64(value).force_encoding("UTF-8")
+
       options = {
         doi: doi,
         sandbox: !Rails.env.production?,
@@ -95,7 +97,7 @@ module Crosscitable
         license: license
       }.compact
 
-      bolognese = Bolognese::Metadata.new(input: Base64.decode64(value), **options)
+      bolognese = Bolognese::Metadata.new(input: input, **options)
 
       self.crosscite = JSON.parse(bolognese.crosscite)
       @schema_version = bolognese.schema_version || "http://datacite.org/schema/kernel-4"
