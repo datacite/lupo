@@ -37,6 +37,18 @@ describe "Prefixes", type: :request do
       end
     end
 
+    context 'when the prefix does not exist' do
+      before { get "/prefixes/10.1234" , headers: headers}
+
+      it 'returns status code 404' do
+        expect(response).to have_http_status(404)
+      end
+
+      it 'returns a not found message' do
+        expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
+      end
+    end
+
     context 'when the record does not exist' do
       before { get "/prefixes/xxx" , headers: headers}
 

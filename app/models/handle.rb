@@ -43,11 +43,11 @@ class Handle
       return nil unless response_code == 1
 
       record = result.body.fetch("data", {}).fetch("values", []).find { |hs| hs["type"] == "HS_SERV" }
-      ra = record.dig("data", "value")
+      ra = record.to_h.dig("data", "value")
 
       item = {
         "id" => result.body.dig("data", "handle"),
-        "registration_agency" => RA_HANDLES[ra] || ra,
+        "registration_agency" => RA_HANDLES[ra] || ra || "unknown",
         "updated_at" => record.fetch("timestamp", nil) }
 
       parse_item(item)
