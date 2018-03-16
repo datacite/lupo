@@ -36,14 +36,17 @@ class Handle
   def self.parse_data(result, options={})
     return nil if result.blank? || result['errors']
 
-    Rails.logger.info result
+    Rails.logger.debug result
 
     if options[:id]
       response_code = result.body.dig("data", "responseCode")
       return nil unless response_code == 1
 
       record = result.body.fetch("data", {}).fetch("values", []).find { |hs| hs["type"] == "HS_SERV" }
-      ra = record.to_h.dig("data", "value")
+
+      fail ActiveRecord::RecordNotFound unless record.present?
+
+      ra = record.dig("data", "value")
 
       item = {
         "id" => result.body.dig("data", "handle"),

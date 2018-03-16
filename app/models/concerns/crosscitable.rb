@@ -30,7 +30,7 @@ module Crosscitable
       :is_referenced_by, :is_part_of, :has_part, :is_identical_to, :is_previous_version_of,
       :is_new_version_of, :is_supplement_to, :is_supplemented_by, :references,
       :reviews, :is_reviewed_by, :is_identical_to, :is_variant_form_of, :is_original_form_of,
-      :license, :subject,
+      :license, :subject, :b_url, :b_version,
       :content_size, :spatial_coverage, :schema_version],
       coder: JSON
 
@@ -86,7 +86,6 @@ module Crosscitable
         doi: doi,
         sandbox: !Rails.env.production?,
         regenerate: false,
-        url: url,
         author: author,
         title: title,
         publisher: publisher,
@@ -100,12 +99,14 @@ module Crosscitable
       bolognese = Bolognese::Metadata.new(input: input, **options)
 
       self.crosscite = JSON.parse(bolognese.crosscite)
+      self.url = bolognese.b_url if url.blank?
+      
       @schema_version = bolognese.schema_version || "http://datacite.org/schema/kernel-4"
       @from = bolognese.from
       @raw = bolognese.raw
 
       metadata.build(doi: self, xml: datacite, namespace: @schema_version)
-    rescue NoMethodError => exception
+    rescue NoMethodError, ArgumentError => exception
       Bugsnag.notify(exception)
       Rails.logger.error "Error " + exception.message + " for doi " + doi + "."
       nil

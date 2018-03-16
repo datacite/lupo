@@ -68,6 +68,10 @@ class DoiSerializer < ActiveModel::Serializer
   #   Array.wrap(object.license).map { |l| l["id"] }.compact.unwrap
   # end
 
+  def version
+    object.b_version
+  end
+
   def xml
     Base64.strict_encode64(object.xml) if object.xml.present?
   end
