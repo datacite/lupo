@@ -6,8 +6,7 @@ RESCUABLE_EXCEPTIONS = [CanCan::AccessDenied,
                         AbstractController::ActionNotFound,
                         ActionController::RoutingError,
                         ActionController::ParameterMissing,
-                        ActionController::UnpermittedParameters,
-                        NoMethodError]
+                        ActionController::UnpermittedParameters]
 
 # Format used for DOI validation
 # The prefix is 10.x where x is 4-5 digits. The suffix can be anything, but can"t be left off

@@ -550,11 +550,12 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'has error' do
-          expect(json['errors'].first.to_h.fetch('title', '')).to start_with("undefined method `url' for #<BibTeX::Entry")
+          expect(json['errors'].size).to eq(8)
+          expect(json['errors'].first).to eq("source"=>"creators", "title"=>"Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ).")
         end
 
-        it 'returns status code 422' do
-          expect(response).to have_http_status(422)
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
         end
       end
 

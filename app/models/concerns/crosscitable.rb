@@ -103,6 +103,10 @@ module Crosscitable
       @raw = bolognese.raw
 
       metadata.build(doi: self, xml: datacite, namespace: @schema_version)
+    rescue NoMethodError => exception
+      Bugsnag.notify(exception)
+      Rails.logger.error "Error " + exception.message + " for doi " + doi + "."
+      nil
     end
 
     def schema_version
