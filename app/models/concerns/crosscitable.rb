@@ -53,7 +53,7 @@ module Crosscitable
     end
 
     def container_title
-      Array.wrap(is_part_of).length == 1 ? is_part_of.to_h.fetch("title", nil) : nil
+      Array.wrap(is_part_of).first.to_h.fetch("title", nil)
     end
 
     def should_passthru
@@ -100,7 +100,7 @@ module Crosscitable
 
       self.crosscite = JSON.parse(bolognese.crosscite)
       self.url = bolognese.b_url if url.blank?
-      
+
       @schema_version = bolognese.schema_version || "http://datacite.org/schema/kernel-4"
       @from = bolognese.from
       @raw = bolognese.raw
