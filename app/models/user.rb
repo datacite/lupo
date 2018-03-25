@@ -91,7 +91,7 @@ class User
     }.compact
 
     jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24))
-    url = ENV['DOI_URL'] + "?jwt=" + jwt
+    url = ENV['BRACCO_URL'] + "?jwt=" + jwt
 
     title = Rails.env.stage? ? "DataCite DOI Fabrica Test" : "DataCite DOI Fabrica"
     subject = "#{title}: Password Reset Request"
