@@ -182,8 +182,10 @@ class DoisController < ApplicationController
   end
 
   def add_metadata_to_bugsnag(report)
+    return nil unless params.dig(:data, :attributes, :xml).present?
+
     report.add_tab(:metadata, {
-      metadata: Base64.decode64(params.dig(:data, :attributes, :xml) || "PGhzaD48L2hzaD4=\n")
+      metadata: Base64.decode64(params.dig(:data, :attributes, :xml))
     })
   end
 end

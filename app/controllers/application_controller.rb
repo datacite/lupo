@@ -100,6 +100,8 @@ class ApplicationController < ActionController::API
   private
 
   def add_user_info_to_bugsnag(report)
+    return nil unless current_user.present?
+    
     report.user = {
       email: current_user.email,
       name: current_user.name,
