@@ -56,15 +56,15 @@ after_success:
       rm dockerize-linux-amd64-v0.6.0.tar.gz;
       export GIT_SHA=$(git rev-parse --short HEAD);
       export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1));
-      git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/${TERRAFORM_REPO}.git";
-      ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:${TERRAFORM_REPO}/_lupo.auto.tfvars;
-      cd ${TERRAFORM_REPO};
+      git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git";
+      ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/stage/services/client-api/_lupo.auto.tfvars;
+      cd mastino;
       git remote;
       git config user.email ${DOCKER_EMAIL};
       git config user.name ${DOCKER_USERNAME};
       git add _lupo.auto.tfvars;
       git commit -m "Adding lupo git variables for latest commit";
-      git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/${TERRAFORM_REPO}.git" master;
+      git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" master;
     fi
 
 notifications:
