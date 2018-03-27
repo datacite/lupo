@@ -56,6 +56,18 @@ describe "content_negotation", type: :request do
     end
   end
 
+  context "application/vnd.crosscite.crosscite+json" do
+    before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.crosscite.crosscite+json" } }
+
+    it 'returns the Doi' do
+      expect(json["doi"]).to eq(doi.doi)
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
   context "application/vnd.schemaorg.ld+json" do
     before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.schemaorg.ld+json" } }
 

@@ -26,7 +26,15 @@ Mime::Type.register "text/x-bibliography", :citation
 
 # register renderers for these Mime types
 # :citation is handled differently
-%w(crosscite datacite_json schema_org turtle citeproc codemeta).each do |f|
+ActionController::Renderers.add :crosscite do |obj, options|
+  data = obj.crosscite.to_json
+  fail AbstractController::ActionNotFound unless data.present?
+
+  self.content_type ||= Mime[:crosscite]
+  self.response_body = data
+end
+
+%w(datacite_json schema_org turtle citeproc codemeta).each do |f|
   ActionController::Renderers.add f.to_sym do |obj, options|
     data = obj.send(f)
     fail AbstractController::ActionNotFound unless data.present?

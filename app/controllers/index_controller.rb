@@ -21,7 +21,7 @@ class IndexController < ApplicationController
 
         render plain: response.body.fetch("data", nil)
       end
-      format.any(:bibtex, :citeproc, :codemeta, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => @doi }
+      format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => @doi }
       format.any { fail ActionController::UnknownFormat }
     end
   end

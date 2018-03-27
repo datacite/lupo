@@ -64,6 +64,12 @@ module Cacheable
       return nil
     end
 
+    def cached_metadata_response
+      Rails.cache.fetch("metadata_response/#{id}-#{updated.utc.iso8601}") do
+        metadata.order('metadata.created DESC').first
+      end
+    end
+
     def cached_client_response(id, options={})
       Rails.cache.fetch("client_response/#{id}", expires_in: 1.day) do
         Client.where(symbol: id).first
