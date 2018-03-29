@@ -14,13 +14,21 @@ class SessionsController < ApplicationController
   end
 
   def reset
-    Rails.logger.info safe_params.inspect
-    error_response("Missing account ID.") && return if safe_params[:username].blank?
+    if safe_params[:username].blank?
+      message = "Missing account ID."
+      status = 404
+    else
+      response = User.reset(safe_params[:username])
+      if response.present?
+        message = response[:message]
+        status = response[:status]
+      else
+        message = "Account not found."
+        status = 404
+      end
+    end
 
-    response = User.reset(safe_params[:username])
-    error_response("Account not found.") && return unless response[:status] == 200
-
-    render json: { "message" => response[:message] }.to_json, status: response[:status]
+    render json: { "message" => message }.to_json, status: status
   end
 
   private

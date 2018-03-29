@@ -97,7 +97,17 @@ class User
     subject = "#{title}: Password Reset Request"
     text = User.format_message_text(template: "users/reset.text.erb", title: title, contact_name: user.contact_name, name: user.symbol, url: url)
     html = User.format_message_html(template: "users/reset.html.erb", title: title, contact_name: user.contact_name, name: user.symbol, url: url)
+    response = self.send_message(name: user.contact_name, email: user.contact_email, subject: subject, text: text, html: html)
 
-    self.send_message(name: user.contact_name, email: user.contact_email, subject: subject, text: text, html: html)
+    fields = [
+      { title: "Account ID", value: uid.upcase},
+      { title: "Contact name", value: user.contact_name, short: true },
+      { title: "Contact email", value: user.contact_email, short: true }
+    ]
+    slack_title = subject + (response[:status] == 200 ? " Sent" : " Failed")
+    level = response[:status] == 200 ? "good" : "danger"
+    self.send_notification_to_slack(nil, title: slack_title, level: level, fields: fields)
+
+    response
   end
 end

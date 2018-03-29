@@ -1,0 +1,58 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: "<SLACK_WEBHOOK_URL>"
+    body:
+      encoding: US-ASCII
+      string: payload=%7B%22username%22%3A%22Fabrica%22%2C%22icon_url%22%3A%22https%3A%2F%2Fgithub.com%2Fdatacite%2Fsegugio%2Fblob%2Fmaster%2Fsource%2Fimages%2Ffabrica.png%22%2C%22attachments%22%3A%5B%7B%22title%22%3A%22TEST%3A+new+client+account+TEST5.TEST5+created.%22%2C%22text%22%3A%22Using+contact+email+test%40datacite.org.%22%2C%22color%22%3A%22good%22%7D%5D%7D
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - text/html
+      Content-Length:
+      - '22'
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 29 Mar 2018 06:30:51 GMT
+      Server:
+      - Apache
+      X-Slack-Backend:
+      - h
+      Referrer-Policy:
+      - no-referrer
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      X-Frame-Options:
+      - SAMEORIGIN
+      Vary:
+      - Accept-Encoding
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Via:
+      - haproxy-www-9wor
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 610a680d631d265aa3ecd3a5e1082360.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - 458QNRAWSGFObmXWOV0uaQAJ3scxYqnagGR56kH4gWb5PtDTmvkRSw==
+    body:
+      encoding: ASCII-8BIT
+      string: ok
+    http_version: 
+  recorded_at: Thu, 29 Mar 2018 06:30:53 GMT
+recorded_with: VCR 3.0.3

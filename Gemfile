@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '~> 5.1.1'
-gem 'mysql2'
+gem 'mysql2', '~> 0.4.10'
 gem 'dotenv'
 gem 'multi_json'
 gem 'json', '~> 1.8', '>= 1.8.5'
@@ -39,6 +39,7 @@ gem 'flipper', '~> 0.11.0'
 gem 'flipper-active_support_cache_store'
 gem 'rack-cors', '~> 1.0', '>= 1.0.2', :require => 'rack/cors'
 gem 'strip_attributes', '~> 1.8'
+gem 'slack-notifier', '~> 2.1'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5', '>= 3.5.2'

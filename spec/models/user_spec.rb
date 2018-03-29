@@ -82,7 +82,7 @@ describe User, type: :model do
 
   describe "reset client password", vcr: true do
     let(:provider) { create(:provider, symbol: "DATACITE", password_input: "12345") }
-    let(:client) { create(:client, provider: provider, symbol: "DATACITE.DATACITE", contact_email: "support@datacite.org") }
+    let(:client) { create(:client, provider: provider, symbol: "DATACITE.DATACITE", contact_email: "test@datacite.org") }
 
     it "sends message" do
       response = User.reset(client.symbol)

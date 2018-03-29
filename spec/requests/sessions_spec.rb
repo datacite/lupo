@@ -104,8 +104,9 @@ describe "Client session", type: :request  do
   end
 end
 
-describe "reset", type: :request do
-  let!(:client) { create(:client, password_input: "12345") }
+describe "reset", type: :request, vcr: true do
+  let(:provider) { create(:provider, symbol: "DATACITE", password_input: "12345") }
+  let!(:client) { create(:client, symbol: "DATACITE.DATACITE", password_input: "12345", provider: provider) }
 
   context 'account exists' do
     let(:params) { "username=#{client.symbol}" }
@@ -127,11 +128,11 @@ describe "reset", type: :request do
     before { post '/reset', params: params, headers: nil }
 
     it 'sends an email' do
-      expect(json["errors"]).to eq([{"status"=>"400", "title"=>"Account not found."}])
+      expect(json["message"]).to eq("Account not found.")
     end
 
-    it 'returns status code 400' do
-      expect(response).to have_http_status(400)
+    it 'returns status code 404' do
+      expect(response).to have_http_status(404)
     end
   end
 
@@ -141,11 +142,11 @@ describe "reset", type: :request do
     before { post '/reset', params: params, headers: nil }
 
     it 'sends an email' do
-      expect(json["errors"]).to eq([{"status"=>"400", "title"=>"Missing account ID."}])
+      expect(json["message"]).to eq("Missing account ID.")
     end
 
-    it 'returns status code 400' do
-      expect(response).to have_http_status(400)
+    it 'returns status code 404' do
+      expect(response).to have_http_status(404)
     end
   end
 end

@@ -3,6 +3,7 @@ module Mailable
 
   require 'mailgun'
   require 'premailer'
+  require 'slack-notifier'
 
   included do
     def send_welcome_email
@@ -30,11 +31,23 @@ module Mailable
       text = User.format_message_text(template: "users/welcome.text.erb", title: title, contact_name: contact_name, name: symbol, url: url)
       html = User.format_message_html(template: "users/welcome.html.erb", title: title, contact_name: contact_name, name: symbol, url: url)
 
-      User.send_message(name: contact_name, email: contact_email, subject: subject, text: text, html: html)
+      response = User.send_message(name: contact_name, email: contact_email, subject: subject, text: text, html: html)
+
+      fields = [
+        { title: "Account ID", value: symbol},
+        { title: "Contact name", value: contact_name, short: true },
+        { title: "Contact email", value: contact_email, short: true }
+      ]
+      User.send_notification_to_slack(nil, title: subject, level: "good", fields: fields)
+
+      response
     end
   end
 
   module ClassMethods
+    # icon for Slack messages
+    SLACK_ICON_URL = "https://github.com/datacite/segugio/blob/master/source/images/fabrica.png"
+
     def format_message_text(template: nil, title: nil, contact_name: nil, name: nil, url: nil)
       ActionController::Base.render(
         assigns: { title: title, contact_name: contact_name, name: name, url: url },
@@ -68,6 +81,23 @@ module Mailable
       body = JSON.parse(response.body)
 
       { id: body["id"], message: body["message"], status: response.code }
+    end
+
+    def send_notification_to_slack(text, options={})
+      return nil unless ENV['SLACK_WEBHOOK_URL'].present?
+
+      attachment = {
+        title: options[:title] || "Fabrica Message",
+        text: text,
+        color: options[:level] || "good",
+        fields: options[:fields]
+      }.compact
+
+      notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'],
+                                     username: "Fabrica",
+                                     icon_url: SLACK_ICON_URL
+      response = notifier.ping attachments: [attachment]
+      response.first.body
     end
   end
 end
