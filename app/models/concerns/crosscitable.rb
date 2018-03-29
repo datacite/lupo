@@ -74,14 +74,14 @@ module Crosscitable
     end
 
     def xml
-      datacite
+      current_metadata.xml
     end
 
     def xml=(value)
       return nil unless value.present?
 
       input = Base64.decode64(value).force_encoding("UTF-8")
-
+      
       options = {
         doi: doi,
         sandbox: !Rails.env.production?,
@@ -103,7 +103,7 @@ module Crosscitable
 
       @schema_version = bolognese.schema_version || "http://datacite.org/schema/kernel-4"
       @from = bolognese.from
-      @raw = bolognese.raw
+      @raw = value
 
       metadata.build(doi: self, xml: datacite, namespace: @schema_version)
     rescue NoMethodError, ArgumentError => exception
