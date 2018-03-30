@@ -4,19 +4,19 @@ class CreateActiveStorageTables < ActiveRecord::Migration[5.2]
     add_column :allocator, :logo, :string
 
     create_table :active_storage_blobs do |t|
-      t.string   :key,        null: false
-      t.string   :filename,   null: false
-      t.string   :content_type
+      t.string   :key,        null: false, limit: 191
+      t.string   :filename,   null: false, limit: 191
+      t.string   :content_type, limit: 191
       t.text     :metadata
       t.bigint   :byte_size,  null: false
-      t.string   :checksum,   null: false
+      t.string   :checksum,   null: false, limit: 191
       t.datetime :created_at, null: false
 
       t.index [ :key ], unique: true
     end
 
     create_table :active_storage_attachments do |t|
-      t.string     :name,     null: false
+      t.string     :name,     null: false, limit: 191
       t.references :record,   null: false, polymorphic: true, index: false
       t.references :blob,     null: false
 
