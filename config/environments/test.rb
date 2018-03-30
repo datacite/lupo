@@ -38,6 +38,8 @@ Rails.application.configure do
   # set Active Job queueing backend
   config.active_job.queue_adapter = :inline
 
+  config.active_storage.service = :test
+
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 

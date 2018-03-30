@@ -7,7 +7,6 @@ services:
   - mysql
   - docker
   - memcached
-  - redis-server
 
 addons:
   code_climate:
