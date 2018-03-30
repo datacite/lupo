@@ -8,6 +8,7 @@ gem 'json', '~> 1.8', '>= 1.8.5'
 gem 'oj', '~> 2.18', '>= 2.18.1'
 gem 'equivalent-xml', '~> 0.6.0'
 gem 'nokogiri', '~> 1.8.1'
+gem 'commonmarker', '~> 0.17.9'
 gem 'iso8601', '~> 0.9.0'
 gem 'maremma', '>= 3.5'
 gem 'bolognese', '~> 0.9', '>= 0.9'
@@ -52,7 +53,7 @@ group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
-  gem 'httplog', '~> 1.0'
+  # gem 'httplog', '~> 1.0'
 end
 
 group :test do

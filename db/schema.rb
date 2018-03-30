@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180310064742) do
+ActiveRecord::Schema.define(version: 20180330040550) do
 
   create_table "allocator", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT" do |t|
     t.string "contact_email", null: false
@@ -27,13 +27,15 @@ ActiveRecord::Schema.define(version: 20180310064742) do
     t.integer "version"
     t.text "comments", limit: 4294967295
     t.string "experiments"
-    t.string "description"
-    t.integer "year"
+    t.text "description"
     t.string "region"
     t.string "country_code"
     t.string "website"
     t.string "phone"
     t.datetime "deleted_at"
+    t.date "joined"
+    t.string "institution_type", limit: 191
+    t.index ["institution_type"], name: "index_member_institution_type"
     t.index ["symbol"], name: "symbol", unique: true
   end
 

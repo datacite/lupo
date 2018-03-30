@@ -35,8 +35,12 @@ class Provider < ActiveRecord::Base
   validates_uniqueness_of :symbol, message: "This name has already been taken"
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, message: "contact_email should be an email"
   validates_format_of :website, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be an url"
-  validates_inclusion_of :role_name, :in => %w( ROLE_ALLOCATOR ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
+  validates_inclusion_of :role_name, :in => %w( ROLE_ALLOCATOR ROLE_MEMBER ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
+  validates_inclusion_of :institution_type, :in => %w(national_organization academic_institution research_institution government_organization publisher association service_provider), :message => "Institution type %s is not included in the list", if: :institution_type?
   validate :freeze_symbol, :on => :update
+
+  before_validation :set_region
+
   strip_attributes
 
   has_many :clients, foreign_key: :allocator
@@ -57,13 +61,25 @@ class Provider < ActiveRecord::Base
   scope :query, ->(query) { where("allocator.symbol like ? OR allocator.name like ?", "%#{query}%", "%#{query}%") }
 
   def year
-    created.year
+    joined.year if joined.present?
   end
 
-  def country_name
-    return nil unless country_code.present?
+  # def country=(value)
+  #   Rails.logger.debug value.inspect
+  #   write_attribute(:country_code, value["code"]) if value.present?
+  # end
 
-    ISO3166::Country[country_code].name
+  def country_name
+    ISO3166::Country[country_code].name if country_code.present?
+  end
+
+  def set_region
+    if country_code.present?
+      r = ISO3166::Country[country_code].world_region
+    else
+      r = nil
+    end
+    write_attribute(:region, r)
   end
 
   def regions
@@ -72,7 +88,7 @@ class Provider < ActiveRecord::Base
       "EMEA" => "EMEA" }
   end
 
-  def region_name
+  def region_human_name
     regions[region]
   end
 
@@ -82,6 +98,14 @@ class Provider < ActiveRecord::Base
 
   def password_input=(value)
     write_attribute(:password, encrypt_password_sha256(value)) if value.present?
+  end
+
+  def member_type
+    if role_name == "ROLE_ALLOCATOR"
+      "provider"
+    elsif role_name == "ROLE_MEMBER"
+      "other_member"
+    end
   end
 
   # cumulative count clients by year
@@ -132,12 +156,16 @@ class Provider < ActiveRecord::Base
     attributes = {
       "symbol" => symbol,
       "name" => name,
+      "website" => website,
       "contact-name" => contact_name,
       "contact-email" => contact_email,
+      "contact-phone" => phone,
       "prefixes" => prefixes.map { |p| p.prefix },
       "country-code" => country_code,
+      "description" => description,
       "is-active" => is_active == "\x01",
       "version" => version,
+      "joined" => joined && joined.iso8601,
       "created" => created.iso8601,
       "updated" => updated.iso8601 }
 

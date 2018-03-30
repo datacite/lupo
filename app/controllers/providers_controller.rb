@@ -24,7 +24,17 @@ class ProvidersController < ApplicationController
     end
 
     collection = collection.where(region: params[:region]) if params[:region].present?
+    collection = collection.where(institution_type: params[:institution_type]) if params[:institution_type].present?
     collection = collection.where("YEAR(allocator.created) = ?", params[:year]) if params[:year].present?
+
+    if params[:institution_type].present?
+      institution_types = [{ id: params[:institution_type],
+                             title: params[:institution_type].humanize,
+                             count: collection.where(institution_type: params[:institution_type]).count }]
+    else
+      institution_types = collection.where.not(institution_type: nil).group(:institution_type).count
+      institution_types = institution_types.map { |k,v| { id: k, title: k.humanize, count: v } }
+    end
 
     if params[:region].present?
       regions = [{ id: params[:region],
@@ -34,12 +44,13 @@ class ProvidersController < ApplicationController
       regions = collection.where.not(region: nil).group(:region).count
       regions = regions.map { |k,v| { id: k.downcase, title: REGIONS[k], count: v } }
     end
+
     if params[:year].present?
       years = [{ id: params[:year],
                  title: params[:year],
-                 count: collection.where("YEAR(allocator.created) = ?", params[:year]).count }]
+                 count: collection.where("YEAR(allocator.joined) = ?", params[:year]).count }]
     else
-      years = collection.where.not(created: nil).order("YEAR(allocator.created) DESC").group("YEAR(allocator.created)").count
+      years = collection.where.not(joined: nil).order("YEAR(allocator.joined) DESC").group("YEAR(allocator.joined)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 
@@ -91,6 +102,7 @@ class ProvidersController < ApplicationController
 
   # PATCH/PUT /providers/1
   def update
+    Rails.logger.debug safe_params.inspect
     if @provider.update_attributes(safe_params)
       render jsonapi: @provider
     else
@@ -147,8 +159,8 @@ class ProvidersController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:name, :symbol, "contact-name", "contact-email", "country-code", "is_active", "password-input"],
-              keys: { "country-code" => :country_code, "contact-name" => :contact_name, "contact-email" => :contact_email, "is-active" => :is_active, "password-input" => :password_input }
+      params, only: [:name, :symbol, :description, :website, :joined, "institution-type", "contact_phone", "contact-name", "contact-email", "is_active", "password-input", :country],
+              keys: { "institution-type" => :institution_type, "contact_phone" => :phone, "contact-name" => :contact_name, "contact-email" => :contact_email, :country => :country_code, "is-active" => :is_active, "password-input" => :password_input }
     )
   end
 end
