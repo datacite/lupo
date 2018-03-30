@@ -93,7 +93,7 @@ class Provider < ActiveRecord::Base
   end
 
   def logo_url
-    "#{ENV['CDN_URL']}/images/members/#{symbol.downcase}.png"
+    "#{ENV['CDN_URL']}/images/members/#{logo}" if logo.present?
   end
 
   def password_input=(value)

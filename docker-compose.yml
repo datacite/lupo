@@ -12,6 +12,7 @@ services:
       - ./db:/home/app/webapp/db
       - ./lib:/home/app/webapp/lib
       - ./spec:/home/app/webapp/spec
+      - ./storage:/home/app/webapp/storage
     networks:
       - public
   memcached:
