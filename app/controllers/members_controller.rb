@@ -3,7 +3,7 @@ class MembersController < ApplicationController
   before_action :set_include
 
   def index
-    collection = Provider
+    collection = Provider.unscoped.where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_MEMBER')").where(deleted_at: nil)
 
     if params[:id].present?
       collection = collection.where(symbol: params[:id])

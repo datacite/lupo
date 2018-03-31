@@ -104,7 +104,7 @@ class Provider < ActiveRecord::Base
     if role_name == "ROLE_ALLOCATOR"
       "provider"
     elsif role_name == "ROLE_MEMBER"
-      "other_member"
+      "member_only"
     end
   end
 
