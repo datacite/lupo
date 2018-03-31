@@ -1,7 +1,7 @@
 class MemberSerializer < ActiveModel::Serializer
   type "members"
 
-  attributes :title, :description, :member_type, :institution_type, :region, :country, :year, :logo_url, :email, :website, :phone, :created, :updated
+  attributes :title, :description, :member_type, :institution_type, :region, :country, :year, :logo_url, :email, :website, :phone, :joined, :created, :updated
 
   def id
     object.symbol.downcase
