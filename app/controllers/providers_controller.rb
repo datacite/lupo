@@ -4,7 +4,7 @@ class ProvidersController < ApplicationController
   load_and_authorize_resource :except => [:index, :show, :set_test_prefix]
 
   def index
-    collection = Provider
+    collection = Provider.unscoped.where("allocator.role_name = ?", 'ROLE_ALLOCATOR').where(deleted_at: nil)
 
     if params[:id].present?
       collection = collection.where(symbol: params[:id])
@@ -141,7 +141,7 @@ class ProvidersController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_provider
-    @provider = Provider.unscoped.where(symbol: params[:id]).first
+    @provider = Provider.unscoped.where("allocator.role_name = ?", 'ROLE_ALLOCATOR').where(deleted_at: nil).where(symbol: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @provider.present?
   end
 
