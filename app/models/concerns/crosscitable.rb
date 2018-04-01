@@ -34,7 +34,7 @@ module Crosscitable
       :content_size, :spatial_coverage, :schema_version],
       coder: JSON
 
-    attr_accessor :regenerate, :raw, :from, :style, :locale
+    attr_accessor :raw, :from, :style, :locale
 
     # calculated attributes from bolognese
 
@@ -56,10 +56,6 @@ module Crosscitable
       Array.wrap(is_part_of).first.to_h.fetch("title", nil)
     end
 
-    def should_passthru
-      (from == "datacite") && !regenerate
-    end
-
     def style
       @style ||= "apa"
     end
@@ -68,9 +64,8 @@ module Crosscitable
       @locale ||= "en-US"
     end
 
-    # xml is generated from crosscite JSON unless passed through
     def datacite
-      should_passthru ? raw : datacite_xml
+      (from == "datacite") ? raw : datacite_xml 
     end
 
     def xml
@@ -85,7 +80,6 @@ module Crosscitable
       options = {
         doi: doi,
         sandbox: !Rails.env.production?,
-        regenerate: false,
         author: author,
         title: title,
         publisher: publisher,
@@ -101,7 +95,9 @@ module Crosscitable
       self.crosscite = JSON.parse(bolognese.crosscite)
       self.url = bolognese.b_url if url.blank?
 
+      # add schema_version when converting from different metadata format
       @schema_version = bolognese.schema_version || "http://datacite.org/schema/kernel-4"
+
       @from = bolognese.from
       @raw = bolognese.raw
 
@@ -120,8 +116,9 @@ module Crosscitable
       return nil if self.crosscite.present? || current_metadata.blank?
 
       self.crosscite = cached_doi_response
-      #@from = bolognese.from
-      #@raw = bolognese.raw
+      
+      @from = "datacite"
+      @raw = current_metadata.xml
     end
 
     # helper methods from bolognese below
