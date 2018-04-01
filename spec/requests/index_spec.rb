@@ -23,8 +23,27 @@ describe "content_negotation", type: :request do
 
     it 'returns the Doi' do
       data = Maremma.from_xml(response.body).to_h.fetch("resource", {})
+      expect(data.dig("xmlns")).to eq("http://datacite.org/schema/kernel-4")
       expect(data.dig("publisher")).to eq("DataCite")
       expect(data.dig("titles", "title")).to eq("Eating your own Dog Food")
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
+  context "application/vnd.datacite.datacite+xml schema 3" do
+    let(:xml) { Base64.strict_encode64(file_fixture('datacite_schema_3.xml').read) }
+    let(:doi) { create(:doi, xml: xml) }
+
+    before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml" } }
+
+    it 'returns the Doi' do
+      data = Maremma.from_xml(response.body).to_h.fetch("resource", {})
+      # expect(data.dig("xmlns")).to eq("http://datacite.org/schema/kernel-3")
+      expect(data.dig("publisher")).to eq("Dryad Digital Repository")
+      expect(data.dig("titles", "title")).to eq("Data from: A new malaria agent in African hominids.")
     end
 
     it 'returns status code 200' do
