@@ -51,7 +51,7 @@ module Cacheable
     end
 
     def cached_doi_response
-      Rails.cache.fetch("doi_response/#{id}-#{updated.utc.iso8601}") do
+      Rails.cache.fetch("doi_response/#{doi}-#{updated.utc.iso8601}") do
         bolognese = Bolognese::Metadata.new(input: current_metadata.xml,
                                             from: "datacite",
                                             doi: doi,
@@ -64,9 +64,34 @@ module Cacheable
       return nil
     end
 
-    def cached_metadata_response
-      Rails.cache.fetch("metadata_response/#{id}-#{updated.utc.iso8601}") do
-        metadata.order('metadata.created DESC').first
+    def write_cached_xml(str)
+      Rails.cache.write("cached_xml/#{doi}", str, raw: true)
+    end
+
+    def fetch_cached_xml
+      Rails.cache.fetch("cached_xml/#{doi}", raw: true) do
+        m = metadata.order('metadata.created DESC').first
+        m.present? ? m.xml : nil
+      end
+    end
+
+    def write_cached_schema_version(str)
+      Rails.cache.write("cached_schema_version/#{doi}", str)
+    end
+
+    def fetch_cached_schema_version
+      Rails.cache.fetch("cached_schema_version/#{doi}") do
+        current_metadata ? current_metadata.namespace : "http://datacite.org/schema/kernel-4"
+      end
+    end
+
+    def write_cached_metadata_version(str)
+      Rails.cache.write("cached_schema_version/#{doi}", str)
+    end
+
+    def fetch_cached_metadata_version
+      Rails.cache.fetch("cached_metadata_version/#{doi}") do
+        current_metadata ? current_metadata.metadata_version : 0
       end
     end
 

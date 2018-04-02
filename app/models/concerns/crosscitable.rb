@@ -34,7 +34,7 @@ module Crosscitable
       :content_size, :spatial_coverage, :schema_version],
       coder: JSON
 
-    attr_accessor :raw, :from, :style, :locale
+    attr_accessor :style, :locale
 
     # calculated attributes from bolognese
 
@@ -65,7 +65,7 @@ module Crosscitable
     end
 
     def datacite
-      (from == "datacite") ? raw : datacite_xml 
+      (from == "datacite") ? fetch_cached_xml : datacite_xml
     end
 
     def xml
@@ -94,14 +94,15 @@ module Crosscitable
 
       self.crosscite = JSON.parse(bolognese.crosscite)
       self.url = bolognese.b_url if url.blank?
+      self.from = bolognese.from
 
       # add schema_version when converting from different metadata format
-      @schema_version = bolognese.schema_version || "http://datacite.org/schema/kernel-4"
+      write_cached_schema_version(bolognese.schema_version || "http://datacite.org/schema/kernel-4")
 
-      @from = bolognese.from
-      @raw = bolognese.raw
-
-      metadata.build(doi: self, xml: datacite, namespace: @schema_version)
+      cached_xml = bolognese.datacite
+      write_cached_xml(cached_xml)
+      
+      metadata.build(doi: self, xml: cached_xml, namespace: @schema_version)
     rescue NoMethodError, ArgumentError => exception
       Bugsnag.notify(exception)
       Rails.logger.error "Error " + exception.message + " for doi " + doi + "."
@@ -109,16 +110,13 @@ module Crosscitable
     end
 
     def schema_version
-      @schema_version ||= current_metadata ? current_metadata.namespace : "http://datacite.org/schema/kernel-4"
+      fetch_cached_schema_version
     end
 
     def load_doi_metadata
       return nil if self.crosscite.present? || current_metadata.blank?
 
       self.crosscite = cached_doi_response
-      
-      @from = "datacite"
-      @raw = current_metadata.xml
     end
 
     # helper methods from bolognese below

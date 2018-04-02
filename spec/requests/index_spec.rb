@@ -41,7 +41,7 @@ describe "content_negotation", type: :request do
 
     it 'returns the Doi' do
       data = Maremma.from_xml(response.body).to_h.fetch("resource", {})
-      # expect(data.dig("xmlns")).to eq("http://datacite.org/schema/kernel-3")
+      expect(data.dig("xmlns")).to eq("http://datacite.org/schema/kernel-3")
       expect(data.dig("publisher")).to eq("Dryad Digital Repository")
       expect(data.dig("titles", "title")).to eq("Data from: A new malaria agent in African hominids.")
     end

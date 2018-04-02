@@ -157,11 +157,11 @@ class Doi < ActiveRecord::Base
   end
 
   def current_metadata
-    cached_metadata_response if updated.present?
+    metadata.order('metadata.created DESC').first
   end
 
   def metadata_version
-    current_metadata ? current_metadata.metadata_version : 0
+    fetch_cached_metadata_version
   end
 
   def resource_type
