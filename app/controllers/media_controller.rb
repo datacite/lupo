@@ -5,6 +5,7 @@ class MediaController < ApplicationController
   load_and_authorize_resource :except => [:index, :show]
 
   def index
+    puts params.inspect
     if params[:doi_id].present?
       doi = Doi.where(doi: params[:doi_id]).first
       if doi.present?
@@ -103,7 +104,8 @@ class MediaController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:media_type, :url, :doi]
+      params, only: ["media-type", :url, :doi],
+              keys: { "media-type" => :media_type }
     )
   end
 end

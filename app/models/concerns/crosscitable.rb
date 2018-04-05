@@ -84,7 +84,7 @@ module Crosscitable
         title: title,
         publisher: publisher,
         date_published: date_published,
-        resource_type_general: resource_type_general,
+        resource_type_general: resource_type_id,
         additional_type: additional_type,
         description: description,
         license: license

@@ -84,7 +84,7 @@ describe "Media", type: :request, :order => :defined do
           "data" => {
             "type" => "media",
             "attributes"=> {
-        			"media_type" => media_type,
+        			"media-type" => media_type,
               "url" => url
         		},
             "relationships"=>  {
@@ -117,7 +117,7 @@ describe "Media", type: :request, :order => :defined do
           "data" => {
             "type" => "media",
             "attributes"=> {
-        			"media_type" => media_type,
+        			"media-type" => media_type,
               "url" => url
         		}
           }
@@ -142,7 +142,7 @@ describe "Media", type: :request, :order => :defined do
           "data" => {
             "type" => "media",
             "attributes"=> {
-              "media_type"=> media_type,
+              "media-type"=> media_type,
               "url"=> url
             },
             "relationships"=>  {
@@ -175,7 +175,7 @@ describe "Media", type: :request, :order => :defined do
           "data" => {
             "type" => "media",
             "attributes"=> {
-              "media_type"=> media_type,
+              "media-type"=> media_type,
               "url"=> url
             },
             "relationships"=>  {
@@ -210,7 +210,7 @@ describe "Media", type: :request, :order => :defined do
           "data" => {
             "type" => "media",
             "attributes"=> {
-              "media_type"=> media_type,
+              "media-type"=> media_type,
               "url"=> url
             },
             "relationships"=>  {
