@@ -41,10 +41,11 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
 
   # add custom json method
-  config.include RequestSpecHelper, type: :request
+  config.include RequestHelper, type: :request
+
+  config.include JobHelper, type: :job
 
   ActiveJob::Base.queue_adapter = :test
-
 end
 
 VCR.configure do |c|

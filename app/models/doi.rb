@@ -81,7 +81,8 @@ class Doi < ActiveRecord::Base
   after_update :update_doi_count, if: :saved_change_to_datacentre?
 
   # update url in handle system
-  after_save :update_url, if: :saved_change_to_url?
+  after_create :update_url, if: :url?
+  after_update :update_url, if: :saved_change_to_url?
 
   before_save :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
@@ -123,13 +124,13 @@ class Doi < ActiveRecord::Base
   end
 
   # update URL in handle system, don't do that for draft state
+  # providers europ and ethz do their own handle registration
   def update_url
-    return nil if draft? || password.blank?
+    return nil if draft? || url.blank? || password.blank? || %w(europ ethz).include?(provider_id)
 
     HandleJob.perform_later(self, url: url,
-                       username: username,
-                       password: password,
-                       sandbox: !Rails.env.production?)
+                            username: username,
+                            password: password)
   end
 
   # attributes to be sent to elasticsearch index

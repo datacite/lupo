@@ -81,6 +81,88 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
+  describe "update_url" do
+    context "draft doi" do
+      let(:provider)  { create(:provider, symbol: "ADMIN") }
+      let(:client)  { create(:client, provider: provider) }
+      subject { create(:doi, client: client, username: client.symbol.downcase, password: "12345") }
+
+      it "don't update" do
+        expect(subject.update_url).to be_nil
+      end
+    end
+
+    context "registered doi" do
+      let(:provider)  { create(:provider, symbol: "ADMIN") }
+      let(:client)  { create(:client, provider: provider) }
+      subject { create(:doi, client: client, username: client.symbol.downcase, password: "12345") }
+
+      it "update" do
+        subject.register
+        expect(subject).to have_state(:registered)
+        job = subject.update_url
+        expect(job.arguments.last).to eq(url: subject.url, username: subject.username, password: subject.password)
+      end
+    end
+
+    context "findable doi" do
+      let(:provider)  { create(:provider, symbol: "ADMIN") }
+      let(:client)  { create(:client, provider: provider) }
+      subject { create(:doi, client: client, username: client.symbol.downcase, password: "12345") }
+
+      it "update" do
+        subject.publish
+        expect(subject).to have_state(:findable)
+        job = subject.update_url
+        expect(job.arguments.last).to eq(url: subject.url, username: subject.username, password: subject.password)
+      end
+    end
+
+    context "provider ethz" do
+      let(:provider)  { create(:provider, symbol: "ETHZ") }
+      let(:client)  { create(:client, provider: provider) }
+      subject { create(:doi, client: client, username: client.symbol.downcase, password: "12345") }
+
+      it "don't update" do
+        expect(subject.update_url).to be_nil
+      end
+    end
+
+    context "provider europ" do
+      let(:provider)  { create(:provider, symbol: "EUROP") }
+      let(:client)  { create(:client, provider: provider) }
+      subject { create(:doi, client: client, username: client.symbol.downcase, password: "12345") }
+
+      it "don't update" do
+        expect(subject.update_url).to be_nil
+      end
+    end
+
+    context "no password" do
+      let(:provider)  { create(:provider, symbol: "ADMIN") }
+      let(:client)  { create(:client, provider: provider) }
+      subject { create(:doi, client: client, username: client.symbol.downcase, password: nil) }
+
+      it "don't update" do
+        subject.publish
+        expect(subject).to have_state(:findable)
+        expect(subject.update_url).to be_nil
+      end
+    end
+
+    context "no url" do
+      let(:provider)  { create(:provider, symbol: "ADMIN") }
+      let(:client)  { create(:client, provider: provider) }
+      subject { create(:doi, client: client, username: client.symbol.downcase, url: nil, password: "12345") }
+
+      it "don't update" do
+        subject.publish
+        expect(subject).to have_state(:findable)
+        expect(subject.update_url).to be_nil
+      end
+    end
+  end
+
   describe "metadata" do
     let(:xml) { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxyZXNvdXJjZSB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC0zIGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTMvbWV0YWRhdGEueHNkIiB4bWxucz0iaHR0cDovL2RhdGFjaXRlLm9yZy9zY2hlbWEva2VybmVsLTMiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiPjxpZGVudGlmaWVyIGlkZW50aWZpZXJUeXBlPSJET0kiPjEwLjUyNTYvZjEwMDByZXNlYXJjaC44NTcwLnI2NDIwPC9pZGVudGlmaWVyPjxjcmVhdG9ycz48Y3JlYXRvcj48Y3JlYXRvck5hbWU+ZCBzPC9jcmVhdG9yTmFtZT48L2NyZWF0b3I+PC9jcmVhdG9ycz48dGl0bGVzPjx0aXRsZT5SZWZlcmVlIHJlcG9ydC4gRm9yOiBSRVNFQVJDSC0zNDgyIFt2ZXJzaW9uIDU7IHJlZmVyZWVzOiAxIGFwcHJvdmVkLCAxIGFwcHJvdmVkIHdpdGggcmVzZXJ2YXRpb25zXTwvdGl0bGU+PC90aXRsZXM+PHB1Ymxpc2hlcj5GMTAwMCBSZXNlYXJjaCBMaW1pdGVkPC9wdWJsaXNoZXI+PHB1YmxpY2F0aW9uWWVhcj4yMDE3PC9wdWJsaWNhdGlvblllYXI+PHJlc291cmNlVHlwZSByZXNvdXJjZVR5cGVHZW5lcmFsPSJUZXh0Ii8+PC9yZXNvdXJjZT4=" }
 

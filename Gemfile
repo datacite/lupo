@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 5.2.0.rc2'
+gem 'rails', '~> 5.2.0'
 gem 'bootsnap', '~> 1.2', '>= 1.2.1'
 gem 'mysql2', '~> 0.4.4'
 gem 'dotenv'

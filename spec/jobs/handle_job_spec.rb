@@ -8,4 +8,9 @@ describe HandleJob, type: :job do
     expect { job }.to have_enqueued_job(HandleJob)
       .on_queue("test_lupo")
   end
+
+  after do
+    clear_enqueued_jobs
+    clear_performed_jobs
+  end
 end
