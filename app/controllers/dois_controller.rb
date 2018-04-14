@@ -62,11 +62,14 @@ class DoisController < ApplicationController
     @doi = Doi.new(safe_params)
     authorize! :create, @doi
 
-    if @doi.validation_errors.empty?
-      render jsonapi: @doi, serializer: DoiSerializer
+    if @doi.errors.present?
+      Rails.logger.info @doi.errors.inspect
+      render jsonapi: serialize(@doi.errors).to_json, status: :ok
+    elsif @doi.validation_errors.present?
+      Rails.logger.info @doi.validation_errors.inspect
+      render jsonapi: { errors: @doi.validation_errors }.to_json, status: :ok
     else
-      Rails.logger.warn @doi.validation_errors.inspect
-      render jsonapi: { errors: @doi.validation_errors }.to_json
+      render jsonapi: @doi, serializer: DoiSerializer
     end
   end
 

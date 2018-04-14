@@ -3,6 +3,7 @@ module Crosscitable
 
   require "bolognese"
   require "cirneco"
+  require "jsonlint"
 
   included do
     include Bolognese::Utils
@@ -73,9 +74,8 @@ module Crosscitable
     end
 
     def xml=(value)
-      return nil unless value.present?
-
-      input = Base64.decode64(value).force_encoding("UTF-8")
+      input = well_formed_xml(value)
+      #return nil unless input.present?
 
       options = {
         doi: doi,
@@ -117,6 +117,44 @@ module Crosscitable
       return nil if self.crosscite.present? || current_metadata.blank?
 
       self.crosscite = cached_doi_response
+    end
+
+    def well_formed_xml(string)
+      return "" unless string.present?
+
+      string = Base64.decode64(string).force_encoding("UTF-8")
+  
+      from_xml(string) || from_json(string)
+
+      string
+    end
+  
+    def from_xml(string)
+      return nil unless string.start_with?('<?xml version="1.0"')
+
+      Nokogiri::XML(string) { |config| config.options = Nokogiri::XML::ParseOptions::STRICT }
+
+      nil
+    rescue Nokogiri::XML::SyntaxError => e
+      line, column, level, text = e.message.split(":", 4)
+      message = text.strip + " at line #{line}, column #{column}"
+      errors.add(:xml, message)
+
+      string
+    end
+  
+    def from_json(string)
+      return nil unless string.start_with?('[', '{')
+
+      linter = JsonLint::Linter.new
+      errors_array = []
+
+      valid = linter.send(:check_not_empty?, string, errors_array)
+      valid &&= linter.send(:check_syntax_valid?, string, errors_array)
+      valid &&= linter.send(:check_overlapping_keys?, string, errors_array)
+
+      errors_array.each { |e| errors.add(:xml, e.capitalize) }
+      errors_array.empty? ? nil : string
     end
 
     # helper methods from bolognese below
