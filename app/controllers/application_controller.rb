@@ -37,7 +37,8 @@ class ApplicationController < ActionController::API
     end
   end
 
-  #convert parameters with hyphen to parameters with underscore.
+  # convert parameters with hyphen to parameters with underscore.
+  # deep_transform_keys has been removed in Rails 5.1
   # https://stackoverflow.com/questions/35812277/fields-parameters-with-hyphen-in-ruby-on-rails
   def transform_params
     params.transform_keys! { |key| key.tr('-', '_') }

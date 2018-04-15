@@ -15,7 +15,7 @@ describe "Metadata", type: :request  do
 
     it 'returns Metadata' do
       expect(json).not_to be_empty
-      expect(json['data'].size).to eq(7)
+      expect(json['data'].size).to eq(6)
     end
 
     it 'returns status code 200' do
@@ -101,7 +101,7 @@ describe "Metadata", type: :request  do
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"]).to eq([{"source"=>"doi", "title"=>"Doi must exist"}])
+        expect(json["errors"]).to eq([{"source"=>"doi", "title"=>"Must exist"}])
       end
     end
 

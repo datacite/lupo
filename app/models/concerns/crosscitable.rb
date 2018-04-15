@@ -92,8 +92,11 @@ module Crosscitable
 
       bolognese = Bolognese::Metadata.new(input: input, **options)
 
-      self.crosscite = JSON.parse(bolognese.crosscite)
       self.url = bolognese.b_url if url.blank?
+
+      return nil unless bolognese.valid?
+
+      self.crosscite = JSON.parse(bolognese.crosscite)
       self.from = bolognese.from
 
       # add schema_version when converting from different metadata format
@@ -165,18 +168,24 @@ module Crosscitable
       filepath = Bundler.rubygems.find_name('bolognese').first.full_gem_path + "/resources/#{kernel}/metadata.xsd"
       schema = Nokogiri::XML::Schema(open(filepath))
 
-      schema.validate(Nokogiri::XML(xml, nil, 'UTF-8')).reduce([]) do |sum, error|
-        _, _, source, title = error.to_s.split(': ').map(&:strip)
-        source = source.split("}").last[0..-2]
+      schema.validate(Nokogiri::XML(xml, nil, 'UTF-8')).reduce({}) do |sum, error|
+        location, level, source, text = error.message.split(": ", 4)
+        line, column = location.split(":", 2)
+        title = text.strip + " at line #{line}, column #{column}" if line.present?
+        source = source.split("}").last[0..-2] if line.present?
 
-        # only add to errors if not in draft state
-        errors.add(source.to_sym, title) unless draft?
+        errors.add(source.to_sym, title)
 
-        sum << { source: source, title: title }
+        sum[source.to_sym] = Array(sum[source.to_sym]) + [title]
+
         sum
       end
     rescue Nokogiri::XML::SyntaxError => e
-      e.message
+      line, column, level, text = e.message.split(":", 4)
+      message = text.strip + " at line #{line}, column #{column}"
+      errors.add(:xml, message)
+
+      errors
     end
 
     def validation_errors?

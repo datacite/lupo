@@ -64,10 +64,10 @@ class DoisController < ApplicationController
 
     if @doi.errors.present?
       Rails.logger.info @doi.errors.inspect
-      render jsonapi: serialize(@doi.errors).to_json, status: :ok
-    elsif @doi.validation_errors.present?
+      render jsonapi: serialize(@doi.errors), status: :ok
+    elsif @doi.validation_errors?
       Rails.logger.info @doi.validation_errors.inspect
-      render jsonapi: { errors: @doi.validation_errors }.to_json, status: :ok
+      render jsonapi: serialize(@doi.validation_errors), status: :ok
     else
       render jsonapi: @doi, serializer: DoiSerializer
     end

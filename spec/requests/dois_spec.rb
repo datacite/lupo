@@ -319,7 +319,7 @@ describe "dois", type: :request do
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"]).to eq([{"source"=>"doi", "title"=>"Doi is invalid"}])
+        expect(json["errors"]).to eq([{"source"=>"doi", "title"=>"Is invalid"}])
       end
     end
 
@@ -420,7 +420,7 @@ describe "dois", type: :request do
 
         it 'validates a Doi' do
           expect(json['errors'].size).to eq(1)
-          expect(json['errors'].first).to eq("source"=>"creators", "title"=>"Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ).")
+          expect(json['errors'].first).to eq("source"=>"resource", "title"=>"No matching global declaration available for the validation root. at line 2, column 0")
         end
 
         it 'returns status code 200' do

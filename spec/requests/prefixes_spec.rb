@@ -109,7 +109,7 @@ describe "Prefixes", type: :request do
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"].first).to eq("source"=>"prefix", "title"=>"Prefix can't be blank")
+        expect(json["errors"].first).to eq("source"=>"prefix", "title"=>"Can't be blank")
       end
     end
   end

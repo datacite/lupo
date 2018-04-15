@@ -130,7 +130,7 @@ describe "Media", type: :request, :order => :defined do
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"]).to eq([{"source"=>"doi", "title"=>"Doi must exist"}])
+        expect(json["errors"]).to eq([{"source"=>"doi", "title"=>"Must exist"}])
       end
     end
 
@@ -163,7 +163,7 @@ describe "Media", type: :request, :order => :defined do
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"]).to eq([{"source"=>"media_type", "title"=>"Media type is invalid"}])
+        expect(json["errors"]).to eq([{"source"=>"media_type", "title"=>"Is invalid"}])
       end
     end
   end
@@ -232,7 +232,7 @@ describe "Media", type: :request, :order => :defined do
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"].first).to eq("source"=>"url", "title"=>"Url is invalid")
+        expect(json["errors"].first).to eq("source"=>"url", "title"=>"Is invalid")
       end
     end
   end

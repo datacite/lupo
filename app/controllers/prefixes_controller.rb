@@ -36,8 +36,8 @@ class PrefixesController < ApplicationController
     # no faceting by client
     if params[:provider_id].present?
       providers = [{ id: params[:provider_id],
-                   title: provider.name,
-                   count: collection.includes(:providers).where('allocator.id' => provider.id).count }]
+                     title: provider.name,
+                     count: collection.includes(:providers).where('allocator.id' => provider.id).count }]
     else
       providers = collection.includes(:providers).where.not('allocator.id' => nil).group('allocator.id').count
       providers = providers
