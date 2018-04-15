@@ -89,7 +89,18 @@ class ResourceType
 
       { data: parse_item(item) }
     else
-      { data: parse_items(items), meta: { total: items.length } }
+        items = items.select { |i| (i.fetch("title", "").downcase + i.fetch("description", "").downcase).include?(options[:query]) } if options[:query]
+
+        page = (options.dig(:page, :number) || 1).to_i
+        per_page = options.dig(:page, :size) && (1..1000).include?(options.dig(:page, :size).to_i) ? options.dig(:page, :size).to_i : 25
+        total_pages = (items.length.to_f / per_page).ceil
+
+        meta = { total: items.length, "total-pages" => total_pages, page: page }
+        
+        offset = (page - 1) * per_page
+        items = items[offset...offset + per_page] || []
+
+      { data: parse_items(items), meta: meta }
     end
   end
 end

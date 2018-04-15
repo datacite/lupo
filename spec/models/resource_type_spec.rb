@@ -8,6 +8,13 @@ describe ResourceType, type: :model, vcr: true do
     expect(resource_type.title).to eq("Audiovisual")
   end
 
+  it "query" do
+    resource_types = ResourceType.where(query: "data")[:data]
+    expect(resource_types.length).to eq(2)
+    resource_type = resource_types.first
+    expect(resource_type.title).to eq("DataPaper")
+  end
+
   it "one" do
     resource_type = ResourceType.where(id: "text")[:data]
     expect(resource_type.title).to eq("Text")
