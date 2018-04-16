@@ -53,6 +53,8 @@ class ClientPrefix < ActiveRecord::Base
   end
 
   def set_allocator_prefixes
+    return nil unless client.present?
+    
     provider_symbol = client.symbol.split('.').first
     r = ProviderPrefix.joins(:provider).where('allocator.symbol = ?', provider_symbol).where(prefixes: prefixes).first
     self.allocator_prefixes = r.id if r.present?

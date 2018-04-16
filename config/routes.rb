@@ -26,8 +26,7 @@ Rails.application.routes.draw do
   resources :heartbeat, only: [:index]
 
   resources :clients, constraints: { :id => /.+/ } do
-    resources :prefixes, constraints: { :id => /.+/ }, shallow: true
-    resources :client_prefixes, path: 'client-prefixes'
+    resources :prefixes, constraints: { :id => /.+/ }
     resources :dois, constraints: { :id => /.+/ }
   end
 
@@ -45,8 +44,7 @@ Rails.application.routes.draw do
   resources :providers do
     resources :clients, constraints: { :id => /.+/ }, shallow: true
     resources :dois, constraints: { :id => /.+/ }
-    resources :prefixes, constraints: { :id => /.+/ }, shallow: true
-    resources :provider_prefixes, path: 'provider-prefixes'
+    resources :prefixes, constraints: { :id => /.+/ }
   end
   resources :providers, constraints: { :id => /.+/ }
 

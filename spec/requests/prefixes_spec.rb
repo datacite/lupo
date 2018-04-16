@@ -62,7 +62,6 @@ describe "Prefixes", type: :request do
     end
   end
 
-  # Test suite for POST /prefixes
   describe 'POST /prefixes' do
     context 'when the request is valid' do
       let!(:provider)  { create(:provider) }

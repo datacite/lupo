@@ -1,8 +1,8 @@
 class ProviderPrefixesController < ApplicationController
-  before_action :set_provider_prefix, only: [:show, :update, :destroy]
-  before_action :authenticate_user!
+  prepend_before_action :authenticate_user!
+  before_action :set_provider_prefix, only: [:show, :destroy]
   before_action :set_include
-  load_and_authorize_resource :except => [:index, :show]
+  authorize_resource :except => [:index, :show]
 
   def index
     # support nested routes
@@ -99,7 +99,7 @@ class ProviderPrefixesController < ApplicationController
     authorize! :create, @provider_prefix
 
     if @provider_prefix.save
-      render jsonapi: @provider_prefix, status: :created, location: @provider_prefix
+      render jsonapi: @provider_prefix, status: :created
     else
       Rails.logger.warn @provider_prefix.errors.inspect
       render jsonapi: serialize(@provider_prefix.errors), status: :unprocessable_entity

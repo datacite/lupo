@@ -44,6 +44,65 @@ describe "Provider Prefixes", type: :request   do
     end
   end
 
+  describe 'POST /provider-prefixes' do
+    context 'when the request is valid' do
+      let(:provider) { create(:provider) }
+      let(:prefix) { create(:prefix) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "provider-prefixes",
+            "relationships": {
+              "provider": {
+                "data":{
+                  "type": "providers",
+                  "id": provider.symbol.downcase
+                }
+              },
+              "prefix": {
+                "data":{
+                  "type": "prefixes",
+                  "id": prefix.prefix
+                }
+              }
+            }
+          }
+        }
+      end
+
+      before { post '/provider-prefixes', params: valid_attributes.to_json, headers: headers }
+
+      it 'creates a provider-prefix' do
+        expect(json.dig('data', 'id')).not_to be_nil
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+    end
+
+    context 'when the request is invalid' do
+      let!(:provider) { create(:provider) }
+      let(:not_valid_attributes) do
+        {
+          "data" => {
+            "type" => "provider-prefixes"
+          }
+        }
+      end
+
+      before { post '/provider-prefixes', params: not_valid_attributes.to_json, headers: headers }
+
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'returns a validation failure message' do
+        expect(json["errors"].first).to eq("source"=>"provider", "title"=>"Must exist")
+      end
+    end
+  end
+
   describe 'POST /provider-prefixes/set-created' do
     before { post '/provider-prefixes/set-created', headers: headers }
 

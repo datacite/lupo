@@ -44,6 +44,73 @@ describe "Client Prefixes", type: :request do
     end
   end
 
+  describe 'POST /client-prefixes' do
+    context 'when the request is valid' do
+      let(:provider) { create(:provider) }
+      let(:client) { create(:client, provider: provider) }
+      let(:prefix) { create(:prefix) }
+      let(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "provider-prefixes",
+            "relationships": {
+              "client": {
+                "data":{
+                  "type": "clients",
+                  "id": client.symbol.downcase
+                }
+              },
+              "provider-prefix": {
+                "data":{
+                  "type": "provider-prefixes",
+                  "id": provider_prefix.prefix
+                }
+              },
+              "prefix": {
+                "data":{
+                  "type": "prefixes",
+                  "id": prefix.prefix
+                }
+              }
+            }
+          }
+        }
+      end
+
+      before { post '/client-prefixes', params: valid_attributes.to_json, headers: headers }
+
+      it 'creates a client-prefix' do
+        expect(json.dig('data', 'id')).not_to be_nil
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+    end
+
+    context 'when the request is invalid' do
+      let!(:client)  { create(:client) }
+      let(:not_valid_attributes) do
+        {
+          "data" => {
+            "type" => "client-prefixes"
+          }
+        }
+      end
+
+      before { post '/client-prefixes', params: not_valid_attributes.to_json, headers: headers }
+
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'returns a validation failure message' do
+        expect(json["errors"].first).to eq("source"=>"client", "title"=>"Must exist")
+      end
+    end
+  end
+
   describe 'POST /client-prefixes/set-created' do
     before { post '/client-prefixes/set-created', headers: headers }
 

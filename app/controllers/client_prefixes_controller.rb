@@ -2,7 +2,7 @@ require 'base32/url'
 require 'uri'
 
 class ClientPrefixesController < ApplicationController
-  before_action :set_client_prefix, only: [:show, :update, :destroy]
+  before_action :set_client_prefix, only: [:show, :destroy]
   before_action :authenticate_user!
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show, :set_created, :set_provider]
@@ -67,7 +67,7 @@ class ClientPrefixesController < ApplicationController
     authorize! :create, @client_prefix
 
     if @client_prefix.save
-      render jsonapi: @client_prefix, status: :created, location: @client_prefix
+      render jsonapi: @client_prefix, status: :created
     else
       Rails.logger.warn @client_prefix.errors.inspect
       render jsonapi: serialize(@client_prefix.errors), status: :unprocessable_entity
