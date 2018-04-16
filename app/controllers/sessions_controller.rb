@@ -40,6 +40,6 @@ class SessionsController < ApplicationController
   end
 
   def safe_params
-    params.permit(:grant_type, :username, :password, :client_id, :client_secret, :format, :controller, :action)
+    params.permit(:grant_type, :username, :password, :client_id, :client_secret, :refresh_token, :format, :controller, :action)
   end
 end
