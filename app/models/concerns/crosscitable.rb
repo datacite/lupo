@@ -75,7 +75,6 @@ module Crosscitable
 
     def xml=(value)
       input = well_formed_xml(value)
-      #return nil unless input.present?
 
       options = {
         doi: doi,
@@ -100,12 +99,13 @@ module Crosscitable
       self.from = bolognese.from
 
       # add schema_version when converting from different metadata format
-      write_cached_schema_version(bolognese.schema_version || "http://datacite.org/schema/kernel-4")
-
+      schema_version = bolognese.schema_version || "http://datacite.org/schema/kernel-4"
       cached_xml = bolognese.datacite
+
       write_cached_xml(cached_xml)
+      write_cached_schema_version(schema_version)
       
-      metadata.build(doi: self, xml: cached_xml, namespace: @schema_version)
+      metadata.build(doi: self, xml: cached_xml, namespace: schema_version)
     rescue NoMethodError, ArgumentError => exception
       Bugsnag.notify(exception)
       Rails.logger.error "Error " + exception.message + " for doi " + doi + "."

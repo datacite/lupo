@@ -6,8 +6,8 @@ class Metadata < ActiveRecord::Base
 
   alias_attribute :created_at, :created
   validates_associated :doi
-  validates_presence_of :xml #, :namespace
-  #validate :metadata_must_be_valid
+  validates_presence_of :xml, :namespace
+  validate :metadata_must_be_valid
 
   belongs_to :doi, foreign_key: :dataset
 
@@ -16,11 +16,6 @@ class Metadata < ActiveRecord::Base
 
   def uid
     Base32::URL.encode(id, split: 4, length: 16)
-  end
-
-  def xml=(value)
-    xml = value.present? ? Base64.decode64(value) : nil
-    write_attribute(:xml, xml)
   end
 
   def doi_id
