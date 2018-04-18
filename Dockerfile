@@ -1,5 +1,5 @@
-FROM phusion/passenger-full:0.9.22
-MAINTAINER Kristian Garza "kgarza@datacite.org"
+FROM phusion/passenger-full:0.9.30
+LABEL maintainer="kgarza@datacite.org"
 
 # Set correct environment variables.
 ENV HOME /home/app
@@ -11,8 +11,8 @@ RUN usermod -a -G docker_env app
 # Use baseimage-docker's init process.
 CMD ["/sbin/my_init"]
 
-# Install Ruby 2.3.3
-RUN bash -lc 'rvm --default use ruby-2.4.1'
+# Install Ruby 2.4.4
+RUN bash -lc 'rvm --default use ruby-2.4.4'
 
 # Update installed APT packages
 RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold" && \
@@ -43,26 +43,22 @@ COPY vendor/docker/00_app_env.conf /etc/nginx/conf.d/00_app_env.conf
 # Use Amazon NTP servers
 COPY vendor/docker/ntp.conf /etc/ntp.conf
 
-# WORKDIR /tmp
-# ADD Gemfile Gemfile
-# ADD Gemfile.lock Gemfile.lock
-# RUN gem update --system && \
-#     gem install bundler && \
-#     /sbin/setuser app bundle install
+# Install Ruby gems
+COPY Gemfile* /home/app/webapp/
+WORKDIR /home/app/webapp
+RUN mkdir -p vendor/bundle && \
+    chown -R app:app . && \
+    chmod -R 755 . && \
+    gem update --system && \
+    gem install bundler && \
+    /sbin/setuser app bundle install --path vendor/bundle
 
 # Copy webapp folder
 COPY . /home/app/webapp/
-RUN mkdir -p /home/app/webapp/tmp/pids && \
-    mkdir -p /home/app/webapp/tmp/storage && \
-    mkdir -p /home/app/webapp/vendor/bundle && \
+RUN mkdir -p tmp/pids && \
+    mkdir -p tmp/storage && \
     chown -R app:app /home/app/webapp && \
     chmod -R 755 /home/app/webapp
-
-# Install Ruby gems
-WORKDIR /home/app/webapp
-RUN gem update --system && \
-    gem install bundler && \
-    /sbin/setuser app bundle install --path vendor/bundle
 
 # Add Runit script for shoryuken workers
 RUN mkdir /etc/service/shoryuken
