@@ -187,6 +187,15 @@ describe Doi, type: :model, vcr: true do
     it "schema_version" do
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-3")
     end
+
+    it "metadata" do
+      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "namespace" do
+      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-3")
+    end
   end
 
   describe "to_jsonapi" do
@@ -242,6 +251,15 @@ describe Doi, type: :model, vcr: true do
     it "schema_version" do
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
     end
+
+    it "metadata" do
+      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "namespace" do
+      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
+    end
   end
 
   context "parses schema" do
@@ -281,6 +299,15 @@ describe Doi, type: :model, vcr: true do
     it "creates schema_version" do
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
     end
+
+    it "metadata" do
+      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "namespace" do
+      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
+    end
   end
 
   context "parses schema 3" do
@@ -317,6 +344,15 @@ describe Doi, type: :model, vcr: true do
     it "creates schema_version" do
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-3")
     end
+
+    it "metadata" do
+      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "namespace" do
+      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-3")
+    end
   end
 
   context "parses bibtex" do
@@ -348,6 +384,15 @@ describe Doi, type: :model, vcr: true do
 
     it "creates schema_version" do
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
+    end
+
+    it "metadata" do
+      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "namespace" do
+      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
     end
   end
 
@@ -381,6 +426,15 @@ describe Doi, type: :model, vcr: true do
     it "creates schema_version" do
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
     end
+
+    it "metadata" do
+      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "namespace" do
+      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
+    end
   end
 
   context "parses citeproc" do
@@ -411,6 +465,15 @@ describe Doi, type: :model, vcr: true do
 
     it "creates schema_version" do
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
+    end
+
+    it "metadata" do
+      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "namespace" do
+      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
     end
   end
 
@@ -444,6 +507,15 @@ describe Doi, type: :model, vcr: true do
     it "creates schema_version" do
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
     end
+
+    it "metadata" do
+      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "namespace" do
+      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
+    end
   end
 
   context "parses crosscite" do
@@ -475,6 +547,15 @@ describe Doi, type: :model, vcr: true do
     it "creates schema_version" do
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
     end
+
+    it "metadata" do
+      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "namespace" do
+      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
+    end
   end
 
   context "parses schema.org" do
@@ -505,6 +586,15 @@ describe Doi, type: :model, vcr: true do
 
     it "creates schema_version" do
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
+    end
+
+    it "metadata" do
+      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "namespace" do
+      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
     end
   end
 
