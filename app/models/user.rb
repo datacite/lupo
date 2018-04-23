@@ -8,7 +8,7 @@ class User
   # include helper module for setting emails via Mailgun API
   include Mailable
 
-  attr_accessor :name, :uid, :email, :role_id, :jwt, :password, :provider_id, :client_id, :beta_tester
+  attr_accessor :name, :uid, :email, :role_id, :jwt, :password, :provider_id, :client_id, :beta_tester, :errors
 
   def initialize(credentials, options={})
     if credentials.present? && options.fetch(:type, "").downcase == "basic"
@@ -20,7 +20,10 @@ class User
       @jwt = credentials
     end
 
-    if payload.present?
+    if payload.blank? || payload[:errors]
+      @role_id = "anonymous"
+      @errors = payload[:errors] if payload.present?
+    else
       @uid = payload.fetch("uid", nil)
       @name = payload.fetch("name", nil)
       @email = payload.fetch("email", nil)
@@ -29,8 +32,6 @@ class User
       @provider_id = payload.fetch("provider_id", nil)
       @client_id = payload.fetch("client_id", nil)
       @beta_tester = payload.fetch("beta_tester", false)
-    else
-      @role_id = "anonymous"
     end
   end
 
@@ -92,11 +93,11 @@ class User
 
     jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24))
     url = ENV['BRACCO_URL'] + "?jwt=" + jwt
-
+    reset_url = ENV['BRACCO_URL'] + "/reset"
     title = Rails.env.stage? ? "DataCite DOI Fabrica Test" : "DataCite DOI Fabrica"
     subject = "#{title}: Password Reset Request"
-    text = User.format_message_text(template: "users/reset.text.erb", title: title, contact_name: user.contact_name, name: user.symbol, url: url)
-    html = User.format_message_html(template: "users/reset.html.erb", title: title, contact_name: user.contact_name, name: user.symbol, url: url)
+    text = User.format_message_text(template: "users/reset.text.erb", title: title, contact_name: user.contact_name, name: user.symbol, url: url, reset_url: reset_url)
+    html = User.format_message_html(template: "users/reset.html.erb", title: title, contact_name: user.contact_name, name: user.symbol, url: url, reset_url: reset_url)
     response = self.send_message(name: user.contact_name, email: user.contact_email, subject: subject, text: text, html: html)
 
     fields = [

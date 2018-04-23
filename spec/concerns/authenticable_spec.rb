@@ -12,12 +12,19 @@ describe User, type: :model do
 
     it "empty token" do
       payload = subject.decode_token("")
-      expect(payload).to be_empty
+      expect(payload).to eq(errors: "The token could not be decoded.")
     end
 
     it "invalid token" do
       payload = subject.decode_token("abc")
-      expect(payload).to be_empty
+      expect(payload).to eq(errors: "The token could not be decoded.")
+    end
+
+    it "expired token" do
+      token = User.generate_token(exp: 0)
+      subject = User.new(token)
+      payload = subject.decode_token(token)
+      expect(payload).to eq(errors: "The token has expired.")
     end
   end
 

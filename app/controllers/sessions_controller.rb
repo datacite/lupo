@@ -8,6 +8,7 @@ class SessionsController < ApplicationController
     credentials = User.encode_auth_param(username: safe_params[:username], password: safe_params[:password])
     user = User.new(credentials, type: "basic")
 
+    error_response(user.errors) && return if user.errors.present?
     error_response("Wrong account ID or password.") && return if user.role_id == "anonymous"
 
     render json: { "access_token" => user.jwt, "expires_in" => 3600 * 24 * 30 }.to_json, status: 200

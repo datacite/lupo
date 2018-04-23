@@ -25,11 +25,11 @@ module Mailable
 
       jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24))
       url = ENV['BRACCO_URL'] + "?jwt=" + jwt
-
+      reset_url = ENV['BRACCO_URL'] + "/reset"
       title = Rails.env.stage? ? "DataCite DOI Fabrica Test" : "DataCite DOI Fabrica"
       subject = "#{title}: New Account"
-      text = User.format_message_text(template: "users/welcome.text.erb", title: title, contact_name: contact_name, name: symbol, url: url)
-      html = User.format_message_html(template: "users/welcome.html.erb", title: title, contact_name: contact_name, name: symbol, url: url)
+      text = User.format_message_text(template: "users/welcome.text.erb", title: title, contact_name: contact_name, name: symbol, url: url, reset_url: reset_url)
+      html = User.format_message_html(template: "users/welcome.html.erb", title: title, contact_name: contact_name, name: symbol, url: url, reset_url: reset_url)
 
       response = User.send_message(name: contact_name, email: contact_email, subject: subject, text: text, html: html)
 
@@ -48,17 +48,17 @@ module Mailable
     # icon for Slack messages
     SLACK_ICON_URL = "https://github.com/datacite/segugio/blob/master/source/images/fabrica.png"
 
-    def format_message_text(template: nil, title: nil, contact_name: nil, name: nil, url: nil)
+    def format_message_text(template: nil, title: nil, contact_name: nil, name: nil, url: nil, reset_url: nil)
       ActionController::Base.render(
-        assigns: { title: title, contact_name: contact_name, name: name, url: url },
+        assigns: { title: title, contact_name: contact_name, name: name, url: url, reset_url: reset_url },
         template: template,
         layout: false
       )
     end
 
-    def format_message_html(template: nil, title: nil, contact_name: nil, name: nil, url: nil)
+    def format_message_html(template: nil, title: nil, contact_name: nil, name: nil, url: nil, reset_url: nil)
       input = ActionController::Base.render(
-        assigns: { title: title, contact_name: contact_name, name: name, url: url },
+        assigns: { title: title, contact_name: contact_name, name: name, url: url, reset_url: reset_url },
         template: template,
         layout: "application"
       )

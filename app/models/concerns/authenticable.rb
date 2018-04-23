@@ -21,16 +21,19 @@ module Authenticable
       payload = (JWT.decode token, public_key, true, { :algorithm => 'RS256' }).first
 
       # check whether token has expired
-      return {} unless Time.now.to_i < payload["exp"].to_i
+      fail JWT::ExpiredSignature, "The token has expired." unless Time.now.to_i < payload["exp"].to_i
 
       payload
+    rescue JWT::ExpiredSignature => error
+      Rails.logger.error "JWT::ExpiredSignature: " + error.message + " for " + token
+      return { errors: "The token has expired." }
     rescue JWT::DecodeError => error
       Rails.logger.error "JWT::DecodeError: " + error.message + " for " + token
-      return {}
+      return { errors: "The token could not be decoded." }
     rescue OpenSSL::PKey::RSAError => error
       public_key = ENV['JWT_PUBLIC_KEY'].presence || "nil"
       Rails.logger.error "OpenSSL::PKey::RSAError: " + error.message + " for " + public_key
-      return {}
+      return { errors: "An error occured." }
     end
 
     # basic auth
