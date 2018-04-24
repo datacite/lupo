@@ -178,10 +178,19 @@ class DoisController < ApplicationController
 
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
-    ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:doi, :url, :title, :publisher, :published, "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", :description, :license, :xml, :reason, :event, :regenerate, :client, "resource_type", creator: [:type, :id, :name, "family-name", "given-name"]],
-              keys: { :published => :date_published, "resource-type" => :resource_type, "resource-type-subtype" => :additional_type, :creator => :author, "last-landing-page" => :last_landing_page, "last-landing-page-status" => :last_landing_page_status, "last-landing-page-status-check" => :last_landing_page_status_check, "last-landing-page-content-type" => :last_landing_page_content_type }
-    )
+    attributes = [:doi, "confirm-doi", :identifier, :url, :title, :publisher, :published, :prefix, :suffix, "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", :description, :license, :xml, :version, "metadata-version", "schema-version", :state, "is-active", :reason, :registered, :updated, :mode, :event, :regenerate, :client, "resource_type", author: [:type, :id, :name, "given-name", "family-name"]]
+    relationships = [{ client: [data: [:type, :id]] },  { provider: [data: [:type, :id]] }, { "resource-type" => [data: [:type, :id]] }]
+    p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships)
+    p = p.fetch("attributes").merge(client_id: p.dig("relationships", "client", "data", "id"), resource_type_id: p.dig("relationships", "resource-type", "data", "id"))
+    p.merge(
+      date_published: p[:published], 
+      additional_type: p["resource-type-subtype"],
+      schema_version: p["schema-version"],
+      last_landing_page: p["last-landing-page"],
+      last_landing_page_status: p["last-landing-page-status"],
+      last_landing_page_status_check: p["last-landing-page-status-check"],
+      last_landing_page_content_type: p["last-landing-page-content-type"]
+    ).except("confirm-doi", :identifier, :prefix, :suffix, "resource-type-subtype", "metadata-version", "schema-version", :state, "is-active", :published, :registered, :updated, :mode, "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type")
   end
 
   def add_metadata_to_bugsnag(report)

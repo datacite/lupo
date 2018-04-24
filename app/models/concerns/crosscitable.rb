@@ -9,7 +9,6 @@ module Crosscitable
     include Bolognese::Utils
     include Bolognese::DoiUtils
     include Bolognese::AuthorUtils
-    include Bolognese::DateUtils
     include Bolognese::DataciteUtils
     include Bolognese::Writers::BibtexWriter
     include Bolognese::Writers::CiteprocWriter
@@ -83,7 +82,7 @@ module Crosscitable
         title: title,
         publisher: publisher,
         date_published: date_published,
-        resource_type_general: resource_type_id,
+        resource_type_general: resource_type_general,
         additional_type: additional_type,
         description: description,
         license: license

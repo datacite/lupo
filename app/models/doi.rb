@@ -58,8 +58,9 @@ class Doi < ActiveRecord::Base
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   alias_attribute :uid, :doi
-  alias_attribute :resource_type_subtype, :additional_type
   alias_attribute :resource_type_id, :resource_type_general
+  alias_attribute :resource_type_subtype, :additional_type
+  alias_attribute :creator, :author
 
   belongs_to :client, foreign_key: :datacentre
   has_many :media, foreign_key: :dataset, dependent: :destroy
@@ -148,7 +149,7 @@ class Doi < ActiveRecord::Base
       "xml" => xml,
       "client-id" => client_id,
       "provider-id" => provider_id,
-      "resource-type-id" => resource_type_id,
+      "resource-type-id" => resource_type_general,
       "state" => aasm_state,
       "is-active" => is_active == "\x01",
       "published" => date_published,
@@ -167,7 +168,7 @@ class Doi < ActiveRecord::Base
   end
 
   def resource_type
-    cached_resource_type_response(resource_type_id.downcase.underscore.dasherize) if resource_type_id.present?
+    cached_resource_type_response(resource_type_general.downcase.underscore.dasherize) if resource_type_general.present?
   end
 
   def date_registered
