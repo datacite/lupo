@@ -36,6 +36,9 @@ module Crosscitable
 
     attr_accessor :style, :locale
 
+    # these attributes can be changed via API
+    attr_writer :date_published
+
     # calculated attributes from bolognese
 
     def related_identifier_hsh(relation_type)
@@ -78,7 +81,7 @@ module Crosscitable
       options = {
         doi: doi,
         sandbox: !Rails.env.production?,
-        author: author,
+        author: author.presence,
         title: title,
         publisher: publisher,
         date_published: date_published,
