@@ -15,7 +15,7 @@ describe "Metadata", type: :request  do
 
     it 'returns Metadata' do
       expect(json).not_to be_empty
-      expect(json['data'].size).to eq(6)
+      expect(json['data'].size).to eq(7)
     end
 
     it 'returns status code 200' do

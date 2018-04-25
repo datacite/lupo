@@ -34,10 +34,7 @@ module Crosscitable
       :content_size, :spatial_coverage, :schema_version],
       coder: JSON
 
-    attr_accessor :style, :locale
-
-    # these attributes can be changed via API
-    attr_writer :date_published
+    attr_accessor :style, :locale, :published
 
     # calculated attributes from bolognese
 
@@ -84,7 +81,7 @@ module Crosscitable
         author: author.presence,
         title: title,
         publisher: publisher,
-        date_published: date_published,
+        date_published: published,
         resource_type_general: resource_type_general,
         additional_type: additional_type,
         description: description,
@@ -94,9 +91,6 @@ module Crosscitable
       bolognese = Bolognese::Metadata.new(input: input, **options)
 
       self.url = bolognese.b_url if url.blank?
-
-      return nil unless bolognese.valid?
-
       self.crosscite = JSON.parse(bolognese.crosscite)
       self.from = bolognese.from
 
