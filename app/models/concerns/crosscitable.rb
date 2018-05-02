@@ -166,6 +166,10 @@ module Crosscitable
       crosscite["license"] if crosscite.present?
     end
 
+    def license=(value)
+      @license = value
+    end
+
     def volume
       crosscite["volume"] if crosscite.present?
     end
