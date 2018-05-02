@@ -245,7 +245,7 @@ describe Doi, type: :model, vcr: true do
 
     it "author" do
       expect(subject.author.length).to eq(5)
-      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Markus Ralser", "givenName"=>"Markus", "familyName"=>"Ralser")
+      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Ralser, Markus", "givenName"=>"Markus", "familyName"=>"Ralser")
     end
 
     it "schema_version" do
@@ -379,7 +379,7 @@ describe Doi, type: :model, vcr: true do
 
     it "author" do
       expect(subject.author.length).to eq(5)
-      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Martial Sankar", "givenName"=>"Martial", "familyName"=>"Sankar")
+      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Sankar, Martial", "givenName"=>"Martial", "familyName"=>"Sankar")
     end
 
     it "creates schema_version" do
@@ -420,7 +420,7 @@ describe Doi, type: :model, vcr: true do
 
     it "author" do
       expect(subject.author.length).to eq(5)
-      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Martial Sankar", "givenName"=>"Martial", "familyName"=>"Sankar")
+      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Sankar, Martial", "givenName"=>"Martial", "familyName"=>"Sankar")
     end
 
     it "creates schema_version" do
@@ -460,7 +460,7 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "author" do
-      expect(subject.author).to eq("type"=>"Person", "name"=>"Martin Fenner", "givenName"=>"Martin", "familyName"=>"Fenner")
+      expect(subject.author).to eq("type"=>"Person", "name"=>"Fenner, Martin", "givenName"=>"Martin", "familyName"=>"Fenner")
     end
 
     it "creates schema_version" do
@@ -501,7 +501,7 @@ describe Doi, type: :model, vcr: true do
 
     it "author" do
       expect(subject.author.length).to eq(3)
-      expect(subject.author.first).to eq("type"=>"Person", "id"=>"http://orcid.org/0000-0003-0077-4738", "name"=>"Matt Jones", "givenName"=>"Matt", "familyName"=>"Jones")
+      expect(subject.author.first).to eq("type"=>"Person", "id"=>"https://orcid.org/0000-0003-0077-4738", "name"=>"Jones, Matt", "givenName"=>"Matt", "familyName"=>"Jones")
     end
 
     it "creates schema_version" do
@@ -541,7 +541,7 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "author" do
-      expect(subject.author).to eq("type"=>"Person", "name"=>"Kristian Garza", "givenName"=>"Kristian", "familyName"=>"Garza")
+      expect(subject.author).to eq("type"=>"Person", "name"=>"Garza, Kristian", "givenName"=>"Kristian", "familyName"=>"Garza")
     end
 
     it "creates schema_version" do
@@ -581,7 +581,7 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "author" do
-      expect(subject.author).to eq("type"=>"Person", "id"=>"http://orcid.org/0000-0003-1419-2405", "name"=>"Martin Fenner", "givenName"=>"Martin", "familyName"=>"Fenner")
+      expect(subject.author).to eq("type"=>"Person", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "givenName"=>"Martin", "familyName"=>"Fenner")
     end
 
     it "creates schema_version" do

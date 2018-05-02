@@ -21,20 +21,249 @@ module Crosscitable
     include Bolognese::Writers::SchemaOrgWriter
     include Bolognese::Writers::TurtleWriter
 
-    store :crosscite, accessors: [:author, :title, :publisher, :service_provider,
-      :resource_type_general, :type, :additional_type, :description,
-      :type, :bibtex_type, :citeproc_type, :ris_type, :alternate_name, :keywords,
-      :editor, :contributor, :funding, :language, :volume, :issue, :first_page, :last_page,
-      :date_created, :date_published, :date_modified, :date_accepted, :date_available,
-      :date_copyrighted, :date_collected, :date_submitted, :date_valid,
-      :is_referenced_by, :is_part_of, :has_part, :is_identical_to, :is_previous_version_of,
-      :is_new_version_of, :is_supplement_to, :is_supplemented_by, :references,
-      :reviews, :is_reviewed_by, :is_identical_to, :is_variant_form_of, :is_original_form_of,
-      :license, :subject, :b_url, :b_version,
-      :content_size, :spatial_coverage, :schema_version],
-      coder: JSON
+    # store :crosscite, accessors: [:author, :title, :publisher, :service_provider,
+    #   :resource_type_general, :type, :additional_type, :description,
+    #   :type, :bibtex_type, :citeproc_type, :ris_type, :alternate_name, :keywords,
+    #   :editor, :contributor, :funding, :language, :volume, :issue, :first_page, :last_page,
+    #   :date_created, :date_published, :date_modified, :date_accepted, :date_available,
+    #   :date_copyrighted, :date_collected, :date_submitted, :date_valid,
+    #   :is_referenced_by, :is_part_of, :has_part, :is_identical_to, :is_previous_version_of,
+    #   :is_new_version_of, :is_supplement_to, :is_supplemented_by, :references,
+    #   :reviews, :is_reviewed_by, :is_identical_to, :is_variant_form_of, :is_original_form_of,
+    #   :license, :subject, :b_url, :b_version,
+    #   :content_size, :spatial_coverage, :schema_version],
+    #   coder: JSON
 
-    attr_accessor :style, :locale, :published
+    def crosscite
+      cached_doi_response
+    end
+
+    def type
+      crosscite["type"] if crosscite.present?
+    end
+
+    def additional_type
+      crosscite["additional_type"] if crosscite.present?
+    end
+
+    def additional_type=(value)
+
+    end
+
+    def bibtex_type
+      crosscite["bibtex_type"] if crosscite.present?
+    end
+
+    def ris_type
+      crosscite["ris_type"] if crosscite.present?
+    end
+
+    def citeproc_type
+      crosscite["citeproc_type"] if crosscite.present?
+    end
+
+    def resource_type_general
+      crosscite["resource_type_general"] if crosscite.present?
+    end
+
+    def resource_type_general=(value)
+
+    end
+
+    def alternate_name
+      crosscite["alternate_name"] if crosscite.present?
+    end
+
+    def author
+      crosscite["author"] if crosscite.present?
+    end
+
+    def author=(value)
+      i_author = value
+    end
+
+    def editor
+      crosscite["editor"] if crosscite.present?
+    end
+
+    def contributor
+      crosscite["contributor"] if crosscite.present?
+    end
+
+    def title
+      crosscite["title"] if crosscite.present?
+    end
+
+    def title=(value)
+      i_title = value
+      xml = xml
+    end
+
+    def publisher
+      crosscite["publisher"] if crosscite.present?
+    end
+
+    def publisher=(value)
+
+    end
+
+    def date_published
+      crosscite["date_published"] if crosscite.present?
+    end
+
+    def date_published=(value)
+
+    end
+
+    def date_created
+      crosscite["date_created"] if crosscite.present?
+    end
+
+    def date_modified
+      crosscite["date_modified"] if crosscite.present?
+    end
+
+    def date_accepted
+      crosscite["date_accepted"] if crosscite.present?
+    end
+
+    def date_available
+      crosscite["date_available"] if crosscite.present?
+    end
+
+    def date_copyrighted
+      crosscite["date_copyrighted"] if crosscite.present?
+    end
+
+    def date_collected
+      crosscite["date_collected"] if crosscite.present?
+    end
+
+    def date_submitted
+      crosscite["date_submitted"] if crosscite.present?
+    end
+
+    def date_valid
+      crosscite["date_valid"] if crosscite.present?
+    end
+
+    def description
+      crosscite["description"] if crosscite.present?
+    end
+
+    def keywords
+      crosscite["keywords"] if crosscite.present?
+    end
+
+    def language
+      crosscite["language"] if crosscite.present?
+    end
+
+    def license
+      crosscite["license"] if crosscite.present?
+    end
+
+    def volume
+      crosscite["volume"] if crosscite.present?
+    end
+
+    def issue
+      crosscite["issue"] if crosscite.present?
+    end
+
+    def first_page
+      crosscite["first_page"] if crosscite.present?
+    end
+
+    def last_page
+      crosscite["last_page"] if crosscite.present?
+    end
+
+    def content_size
+      crosscite["content_size"] if crosscite.present?
+    end
+
+    def spatial_coverage
+      crosscite["spatial_coverage"] if crosscite.present?
+    end
+
+    def schema_version
+      crosscite["schema_version"] if crosscite.present?
+    end
+
+    def schema_version=(value)
+
+    end
+
+    def b_url
+      crosscite["b_url"] if crosscite.present?
+    end
+
+    def b_version
+      crosscite["b_version"] if crosscite.present?
+    end
+
+    def is_part_of
+      crosscite["is_part_of"] if crosscite.present?
+    end
+
+    def has_part
+      crosscite["has_part"] if crosscite.present?
+    end
+
+    def is_identical_to
+      crosscite["is_identical_to"] if crosscite.present?
+    end
+
+    def is_previous_version_of
+      crosscite["is_previous_version_of"] if crosscite.present?
+    end
+
+    def is_new_version_of
+      crosscite["is_new_version_of"] if crosscite.present?
+    end
+
+    def references
+      crosscite["references"] if crosscite.present?
+    end
+
+    def is_referenced_by
+      crosscite["is_referenced_by"] if crosscite.present?
+    end
+
+    def is_supplement_to
+      crosscite["is_supplement_to"] if crosscite.present?
+    end
+
+    def is_supplemented_by
+      crosscite["is_supplemented_by"] if crosscite.present?
+    end
+
+    def reviews
+      crosscite["reviews"] if crosscite.present?
+    end
+
+    def is_reviewed_by
+      crosscite["is_reviewed_by"] if crosscite.present?
+    end
+
+    def is_variant_form_of
+      crosscite["is_variant_form_of"] if crosscite.present?
+    end
+
+    def is_original_form_of
+      crosscite["is_original_form_of"] if crosscite.present?
+    end
+
+    def funding
+      crosscite["funding"] if crosscite.present?
+    end
+
+    def service_provider
+      crosscite["service_provider"] if crosscite.present?
+    end
+
+    attr_accessor :style, :locale, :published, :i_author, :i_title
 
     # calculated attributes from bolognese
 
@@ -65,7 +294,8 @@ module Crosscitable
     end
 
     def datacite
-      (from == "datacite") ? fetch_cached_xml : datacite_xml
+      #(from == "datacite") ? fetch_cached_xml : datacite_xml
+      fetch_cached_xml
     end
 
     def xml
@@ -78,21 +308,21 @@ module Crosscitable
       options = {
         doi: doi,
         sandbox: !Rails.env.production?,
-        author: author.presence,
-        title: title,
-        publisher: publisher,
-        date_published: published,
-        resource_type_general: resource_type_general,
-        additional_type: additional_type,
-        description: description,
-        license: license
+        #author: i_author.presence,
+        #title: i_title,
+        # publisher: publisher,
+        # date_published: published,
+        # resource_type_general: resource_type_general,
+        # additional_type: additional_type,
+        # description: description,
+        # license: license
       }.compact
 
       bolognese = Bolognese::Metadata.new(input: input, **options)
 
       self.url = bolognese.b_url if url.blank?
-      self.crosscite = JSON.parse(bolognese.crosscite)
-      self.from = bolognese.from
+      # self.crosscite = JSON.parse(bolognese.crosscite)
+      # self.from = bolognese.from
 
       # add schema_version when converting from different metadata format
       schema_version = bolognese.schema_version || "http://datacite.org/schema/kernel-4"
@@ -112,11 +342,11 @@ module Crosscitable
       fetch_cached_schema_version
     end
 
-    def load_doi_metadata
-      return nil if self.crosscite.present? || current_metadata.blank?
+    # def load_doi_metadata
+    #   return nil if self.crosscite.present? || current_metadata.blank?
 
-      self.crosscite = cached_doi_response
-    end
+    #   self.crosscite = cached_doi_response
+    # end
 
     def well_formed_xml(string)
       return "" unless string.present?

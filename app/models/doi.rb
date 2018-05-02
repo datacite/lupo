@@ -88,8 +88,9 @@ class Doi < ActiveRecord::Base
   before_save :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
+  # before_validation :set_metadata
 
-  after_find :load_doi_metadata
+  # after_find :load_doi_metadata
 
   scope :query, ->(query) { where("dataset.doi = ?", query) }
 
