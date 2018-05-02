@@ -51,7 +51,9 @@ module Cacheable
     end
 
     def cached_doi_response
-      Rails.cache.fetch("doi_response/#{doi}-#{updated.utc.iso8601}") do
+      return {} unless current_metadata.present?
+      
+      Rails.cache.fetch("doi_response/#{doi}-#{timestamp}") do
         bolognese = Bolognese::Metadata.new(input: current_metadata.xml,
                                             from: "datacite",
                                             doi: doi,
@@ -65,11 +67,12 @@ module Cacheable
     end
 
     def write_cached_xml(str)
-      Rails.cache.write("cached_xml/#{doi}", str, raw: true)
+
+      Rails.cache.write("cached_xml/#{doi}-#{timestamp}", str, raw: true)
     end
 
     def fetch_cached_xml
-      Rails.cache.fetch("cached_xml/#{doi}", raw: true) do
+      Rails.cache.fetch("cached_xml/#{doi}-#{timestamp}", raw: true) do
         m = metadata.order('metadata.created DESC').first
         m.present? ? m.xml : nil
       end

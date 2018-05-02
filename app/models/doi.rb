@@ -61,6 +61,7 @@ class Doi < ActiveRecord::Base
   alias_attribute :resource_type_id, :resource_type_general
   alias_attribute :resource_type_subtype, :additional_type
   alias_attribute :creator, :author
+  alias_attribute :published, :date_published
 
   belongs_to :client, foreign_key: :datacentre
   has_many :media, foreign_key: :dataset, dependent: :destroy
@@ -88,7 +89,6 @@ class Doi < ActiveRecord::Base
   before_save :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
-  # before_validation :set_metadata
 
   # after_find :load_doi_metadata
 
@@ -182,6 +182,14 @@ class Doi < ActiveRecord::Base
 
   def event=(value)
     self.send(value) if %w(start register publish hide).include?(value)
+  end
+
+  def timestamp
+    if updated.present?
+      updated.utc.iso8601 
+    else
+      Time.zone.now.utc.iso8601
+    end
   end
 
   # update state for all DOIs starting from from_date

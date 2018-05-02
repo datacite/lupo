@@ -43,11 +43,11 @@ module Crosscitable
     end
 
     def additional_type
-      crosscite["additional_type"] if crosscite.present?
+      @additional_type ||= crosscite.to_h["additional_type"]
     end
 
     def additional_type=(value)
-
+      @additional_type = value
     end
 
     def bibtex_type
@@ -63,11 +63,11 @@ module Crosscitable
     end
 
     def resource_type_general
-      crosscite["resource_type_general"] if crosscite.present?
+      @resource_type_general ||= crosscite.to_h["resource_type_general"]
     end
 
     def resource_type_general=(value)
-
+      @resource_type_general = value
     end
 
     def alternate_name
@@ -75,11 +75,11 @@ module Crosscitable
     end
 
     def author
-      crosscite["author"] if crosscite.present?
+      @author ||= crosscite.to_h["author"]
     end
 
     def author=(value)
-      i_author = value
+      @author = value
     end
 
     def editor
@@ -91,28 +91,27 @@ module Crosscitable
     end
 
     def title
-      crosscite["title"] if crosscite.present?
+      @title ||= crosscite.to_h["title"]
     end
 
     def title=(value)
-      i_title = value
-      xml = xml
+      @title = value
     end
 
     def publisher
-      crosscite["publisher"] if crosscite.present?
+      @publisher ||= crosscite.to_h["publisher"]
     end
 
     def publisher=(value)
-
+      @publisher = value
     end
 
     def date_published
-      crosscite["date_published"] if crosscite.present?
+      @date_published ||= crosscite.to_h["date_published"]
     end
 
     def date_published=(value)
-
+      @date_published = value
     end
 
     def date_created
@@ -148,7 +147,11 @@ module Crosscitable
     end
 
     def description
-      crosscite["description"] if crosscite.present?
+      @description ||= crosscite.to_h["description"]
+    end
+
+    def description=(value)
+      @description = value
     end
 
     def keywords
@@ -188,11 +191,11 @@ module Crosscitable
     end
 
     def schema_version
-      crosscite["schema_version"] if crosscite.present?
+      @schema_version ||= crosscite.to_h["schema_version"]
     end
 
     def schema_version=(value)
-
+      @schema_version = value
     end
 
     def b_url
@@ -263,7 +266,7 @@ module Crosscitable
       crosscite["service_provider"] if crosscite.present?
     end
 
-    attr_accessor :style, :locale, :published, :i_author, :i_title
+    attr_accessor :style, :locale
 
     # calculated attributes from bolognese
 
@@ -308,14 +311,13 @@ module Crosscitable
       options = {
         doi: doi,
         sandbox: !Rails.env.production?,
-        #author: i_author.presence,
-        #title: i_title,
-        # publisher: publisher,
-        # date_published: published,
-        # resource_type_general: resource_type_general,
-        # additional_type: additional_type,
-        # description: description,
-        # license: license
+        author: author.presence,
+        title: title,
+        publisher: publisher,
+        date_published: date_published,
+        resource_type_general: resource_type_general,
+        additional_type: additional_type,
+        description: description
       }.compact
 
       bolognese = Bolognese::Metadata.new(input: input, **options)
@@ -397,7 +399,7 @@ module Crosscitable
       schema.validate(Nokogiri::XML(xml, nil, 'UTF-8')).reduce({}) do |sum, error|
         location, level, source, text = error.message.split(": ", 4)
         line, column = location.split(":", 2)
-        title = text.strip + " at line #{line}, column #{column}" if line.present?
+        title = text.to_s.strip + " at line #{line}, column #{column}" if line.present?
         source = source.split("}").last[0..-2] if line.present?
 
         errors.add(source.to_sym, title)
