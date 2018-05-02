@@ -74,7 +74,9 @@ class DoiSerializer < ActiveModel::Serializer
 
   def xml
     Base64.strict_encode64(object.xml) if object.xml.present?
-  rescue ArgumentError
+  rescue ArgumentError => exception
+    Bugsnag.notify(exception)
+    
     nil
   end
 end
