@@ -86,10 +86,8 @@ class Doi < ActiveRecord::Base
   after_create :update_url, if: :url?
   after_update :update_url, if: :saved_change_to_url?
 
-  before_save :set_defaults
+  before_save :set_defaults, :set_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
-
-  # after_find :load_doi_metadata
 
   scope :query, ->(query) { where("dataset.doi = ?", query) }
 
@@ -212,6 +210,10 @@ class Doi < ActiveRecord::Base
     return nil unless p.present?
 
     Doi.where("datacentre in (SELECT id from datacentre where allocator = ?)", p.id).where("updated >= ?", from_date).where(is_active: "\x01").where(minted: nil).update_all(("minted = updated"))
+  end
+
+  def set_metadata
+    metadata.build(doi: self, xml: datacite, namespace: schema_version)
   end
 
   def set_defaults

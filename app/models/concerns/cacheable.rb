@@ -51,7 +51,15 @@ module Cacheable
     end
 
     def fetch_cached_meta
-      Rails.cache.fetch("cached_meta/#{doi}-#{timestamp}") do
+      if timestamp.present?
+        Rails.cache.fetch("cached_meta/#{doi}-#{timestamp}") do
+          if from.present? && string.present? 
+            send("read_" + from, string: string, sandbox: sandbox)
+          else
+            read_datacite(string: fetch_cached_xml, sandbox: sandbox)
+          end
+        end
+      else
         if from.present? && string.present? 
           send("read_" + from, string: string, sandbox: sandbox)
         else
@@ -64,7 +72,12 @@ module Cacheable
     end
 
     def fetch_cached_xml
-      Rails.cache.fetch("cached_xml/#{doi}-#{timestamp}", raw: true) do
+      if timestamp.present?
+        Rails.cache.fetch("cached_xml/#{doi}-#{timestamp}", raw: true) do
+          m = metadata.first
+          m.present? ? m.xml : nil
+        end
+      else
         m = metadata.first
         m.present? ? m.xml : nil
       end

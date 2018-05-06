@@ -30,7 +30,7 @@ module Crosscitable
 
     # cache xml
     def xml
-      @xml ||= metadata.first && metadata.first.xml #fetch_cached_xml
+      @xml ||= fetch_cached_xml
     end
 
     def xml=(value)
