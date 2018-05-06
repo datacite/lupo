@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_04_02_214555) do
+ActiveRecord::Schema.define(version: 2018_05_05_084805) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -126,8 +126,6 @@ ActiveRecord::Schema.define(version: 2018_04_02_214555) do
     t.string "last_landing_page_content_type"
     t.string "aasm_state"
     t.string "reason"
-    t.text "crosscite", limit: 16777215
-    t.string "from"
     t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
     t.index ["datacentre"], name: "FK5605B47847B5F5FF"
     t.index ["doi"], name: "doi", unique: true

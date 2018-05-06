@@ -25,16 +25,18 @@ Mime::Type.register "application/x-research-info-systems", :ris
 Mime::Type.register "text/x-bibliography", :citation
 
 # register renderers for these Mime types
-# :citation is handled differently
-ActionController::Renderers.add :crosscite do |obj, options|
-  data = obj.crosscite.to_json
+# :citation and :datacite is handled differently
+ActionController::Renderers.add :datacite do |obj, options|
+  uri = Addressable::URI.parse(obj.identifier)
+  data = obj.xml
   fail AbstractController::ActionNotFound unless data.present?
 
-  self.content_type ||= Mime[:crosscite]
-  self.response_body = data
+  filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
+  send_data data, type: Mime[:datacite],
+    disposition: "attachment; filename=#{filename}.xml"
 end
 
-%w(datacite_json schema_org turtle citeproc codemeta).each do |f|
+%w(datacite_json schema_org crosscite turtle citeproc codemeta).each do |f|
   ActionController::Renderers.add f.to_sym do |obj, options|
     data = obj.send(f)
     fail AbstractController::ActionNotFound unless data.present?
@@ -45,7 +47,7 @@ end
 end
 
 # these Mime types send a file for download. We give proper filename and extension
-%w(crossref datacite rdf_xml jats).each do |f|
+%w(crossref rdf_xml jats).each do |f|
   ActionController::Renderers.add f.to_sym do |obj, options|
     uri = Addressable::URI.parse(obj.identifier)
     data = obj.send(f)

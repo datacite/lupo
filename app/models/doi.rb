@@ -64,8 +64,8 @@ class Doi < ActiveRecord::Base
   alias_attribute :published, :date_published
 
   belongs_to :client, foreign_key: :datacentre
-  has_many :media, foreign_key: :dataset, dependent: :destroy
-  has_many :metadata, foreign_key: :dataset, dependent: :destroy
+  has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
+  has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
 
   delegate :provider, to: :client
 
@@ -88,7 +88,6 @@ class Doi < ActiveRecord::Base
 
   before_save :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
-  before_save { self.updated = Time.zone.now.utc.iso8601 }
 
   # after_find :load_doi_metadata
 
@@ -185,11 +184,9 @@ class Doi < ActiveRecord::Base
   end
 
   def timestamp
-    if updated.present?
-      updated.utc.iso8601 
-    else
-      Time.zone.now.utc.iso8601
-    end
+    self.updated = Time.zone.now.utc.iso8601 if updated.blank?
+    
+    updated.utc.iso8601 
   end
 
   # update state for all DOIs starting from from_date
@@ -220,6 +217,7 @@ class Doi < ActiveRecord::Base
   def set_defaults
     self.is_active = is_active ? "\x01" : "\x00"
     self.version = version.present? ? version + 1 : 0
+    self.updated = Time.zone.now.utc.iso8601
   end
 
   def set_to_active

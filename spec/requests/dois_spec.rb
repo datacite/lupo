@@ -48,6 +48,10 @@ describe "dois", type: :request do
   end
 
   describe 'PATCH /dois/:id' do
+    before(:each) do
+      Rails.cache.clear
+    end
+
     context 'when the record exists' do
       let(:valid_attributes) do
         {
@@ -128,6 +132,10 @@ describe "dois", type: :request do
   end
 
   describe 'POST /dois' do
+    before(:each) do
+      Rails.cache.clear
+    end
+    
     context 'when the request is valid' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
@@ -157,7 +165,7 @@ describe "dois", type: :request do
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-        #expect(json.dig('data', 'attributes', 'title')).to eq("Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
+        expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
         expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-4")
       end
 
@@ -392,9 +400,9 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          #expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-          #expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
-          #expect(json.dig('data', 'attributes', 'published')).to eq("2016-12-20")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2016-12-20")
         end
 
         it 'returns status code 200' do
@@ -427,9 +435,9 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          #expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-          #expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
-          #expect(json.dig('data', 'attributes', 'published')).to eq("2011")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2011")
         end
 
         it 'returns status code 200' do
@@ -463,7 +471,7 @@ describe "dois", type: :request do
 
         it 'validates a Doi' do
           expect(json['errors'].size).to eq(1)
-          #expect(json['errors'].first).to eq("source"=>"creators", "title"=>"Missing child element(s). expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0")
+          expect(json['errors'].first).to eq("source"=>"creators", "title"=>"Missing child element(s). expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0")
         end
 
         it 'returns status code 200' do
@@ -496,9 +504,9 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          #expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-          #expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
-          #expect(json.dig('data', 'attributes', 'published')).to eq("2016-12-20")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2016-12-20")
         end
 
         it 'returns status code 200' do
@@ -531,9 +539,9 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          #expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-          #expect(json.dig('data', 'attributes', 'title')).to eq("R Interface to the DataONE REST API")
-          #expect(json.dig('data', 'attributes', 'published')).to eq("2016-05-27")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("R Interface to the DataONE REST API")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2016-05-27")
         end
 
         it 'returns status code 200' do
@@ -566,9 +574,9 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          #expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-          #expect(json.dig('data', 'attributes', 'title')).to eq("Analysis Tools for Crossover Experiment of UI using Choice Architecture")
-          #expect(json.dig('data', 'attributes', 'published')).to eq("2016-03-27")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Analysis Tools for Crossover Experiment of UI using Choice Architecture")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2016-03-27")
         end
 
         it 'returns status code 200' do
@@ -601,9 +609,9 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          #expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-          #expect(json.dig('data', 'attributes', 'title')).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
-          #expect(json.dig('data', 'attributes', 'published')).to eq("2014")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2014")
         end
 
         it 'returns status code 200' do
@@ -636,9 +644,9 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          #expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-          #expect(json.dig('data', 'attributes', 'title')).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
-          #expect(json.dig('data', 'attributes', 'published')).to eq("2014")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2014")
         end
 
         it 'returns status code 200' do
@@ -671,9 +679,9 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          #expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-          #expect(json.dig('data', 'attributes', 'title')).to eq("Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes")
-          #expect(json.dig('data', 'attributes', 'published')).to eq("2006-12-20")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2006-12-20")
         end
 
         it 'returns status code 200' do
@@ -706,9 +714,9 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          #expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-          #expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
-          #expect(json.dig('data', 'attributes', 'published')).to eq("2016-12-20")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+          expect(json.dig('data', 'attributes', 'published')).to eq("2016-12-20")
         end
 
         it 'returns status code 200' do
@@ -749,10 +757,10 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a Doi' do
-        #expect(json.dig('data', 'attributes', 'url')).to eq(url)
-        #expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-        # expect(json.dig('data', 'attributes', 'landing-page', 'url')).to eq(url)
-        # expect(json.dig('data', 'attributes', 'landing-page', 'status')).to eq(200)
+        expect(json.dig('data', 'attributes', 'url')).to eq(url)
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'landing-page', 'url')).to eq(url)
+        expect(json.dig('data', 'attributes', 'landing-page', 'status')).to eq(200)
       end
 
       it 'returns status code 201' do

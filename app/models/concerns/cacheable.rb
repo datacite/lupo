@@ -50,50 +50,28 @@ module Cacheable
       end
     end
 
-    def cached_doi_response
-      return {} unless current_metadata.present?
-      
-      Rails.cache.fetch("doi_response/#{doi}-#{timestamp}") do
-        bolognese = Bolognese::Metadata.new(input: current_metadata.xml,
-                                            from: "datacite",
-                                            doi: doi,
-                                            sandbox: !Rails.env.production?)
-
-        JSON.parse(bolognese.crosscite)
+    def fetch_cached_meta
+      Rails.cache.fetch("cached_meta/#{doi}-#{timestamp}") do
+        if from.present? && string.present? 
+          send("read_" + from, string: string, sandbox: sandbox)
+        else
+          read_datacite(string: fetch_cached_xml, sandbox: sandbox)
+        end
       end
     rescue ArgumentError, NoMethodError => e
       Rails.logger.error "Error for " + doi + ": " + e.message
-      return nil
-    end
-
-    def write_cached_xml(str)
-
-      Rails.cache.write("cached_xml/#{doi}-#{timestamp}", str, raw: true)
+      return {}
     end
 
     def fetch_cached_xml
       Rails.cache.fetch("cached_xml/#{doi}-#{timestamp}", raw: true) do
-        m = metadata.order('metadata.created DESC').first
+        m = metadata.first
         m.present? ? m.xml : nil
       end
     end
 
-    def write_cached_schema_version(str)
-      Rails.cache.write("cached_schema_version/#{doi}", str)
-    end
-
-    def fetch_cached_schema_version
-      Rails.cache.fetch("cached_schema_version/#{doi}") do
-        current_metadata ? current_metadata.namespace : "http://datacite.org/schema/kernel-4"
-      end
-    end
-
-    def write_cached_metadata_version(str)
-      Rails.cache.write("cached_schema_version/#{doi}", str)
-    end
-
     def fetch_cached_metadata_version
-      Rails.cache.fetch("cached_metadata_version/#{doi}") do
+      Rails.cache.fetch("cached_metadata_version/#{doi}-#{timestamp}") do
         current_metadata ? current_metadata.metadata_version : 0
       end
     end

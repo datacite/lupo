@@ -70,10 +70,6 @@ describe Doi, vcr: true do
   end
 
   context "get attributes" do
-    it "crosscite" do
-      expect(subject.crosscite["title"]).to eq("Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
-    end
-
     it "author" do
       expect(subject.author).to eq("name"=>"D S")
     end
@@ -96,19 +92,10 @@ describe Doi, vcr: true do
   end
 
   context "set attributes" do
-    # it "crosscite" do
-    #   author = { "name" => "Carberry, Josiah"}
-    #   subject.author = author
-    #   subject.save
-    #   expect(subject.crosscite["author"]).to eq(author)
-    #   expect(subject.author).to eq(author)
-    # end
-
     it "author" do
       author = { "name" => "Carberry, Josiah"}
       subject.author = author
       expect(subject.author).to eq(author)
-      subject.crosscite["author"] = author
     end
 
     it "title" do
