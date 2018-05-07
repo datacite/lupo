@@ -100,6 +100,7 @@ describe "dois", type: :request do
               "doi" => "10.4122/10703",
               "url" => "http://www.bl.uk/pdf/pat.pdf",
               "title" => title,
+              "mode" => "edit",
               "event" => "register"
             },
             "relationships"=> {
@@ -119,6 +120,53 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
         expect(json.dig('data', 'attributes', 'title')).to eq(title)
+
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("titles", "title")).to eq(title)
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'sets state to registered' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("registered")
+      end
+    end
+
+    context 'when the author changes' do
+      let(:author) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.4122/10703",
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "author" => author,
+              "mode" => "edit",
+              "event" => "register"
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+      before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+
+      it 'updates the record' do
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'author')).to eq(author)
+
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("creators", "creator")).to eq([{"creatorName"=>"Ollomi, Benjamin"}, {"creatorName"=>"Duran, Patrick"}])
       end
 
       it 'returns status code 200' do
@@ -207,7 +255,7 @@ describe "dois", type: :request do
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-        #expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
+        expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
         expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-3")
       end
 
@@ -232,6 +280,7 @@ describe "dois", type: :request do
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
               "title" => title,
+              "mode" => "new",
               "event" => "register"
             },
             "relationships"=> {
@@ -252,6 +301,9 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
         expect(json.dig('data', 'attributes', 'title')).to eq("Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("titles", "title")).to eq(title)
       end
 
       it 'returns status code 201' do
@@ -275,6 +327,7 @@ describe "dois", type: :request do
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
               "author" => author,
+              "mode" => "new",
               "event" => "register"
             },
             "relationships"=> {
@@ -293,8 +346,11 @@ describe "dois", type: :request do
 
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-        expect(json.dig('data', 'attributes', 'author')).to eq([{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }])
+        expect(json.dig('data', 'attributes', 'author')).to eq(author)
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("creators", "creator")).to eq(author)
       end
 
       it 'returns status code 201' do

@@ -198,6 +198,61 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
+  describe "change metadata" do
+    let(:xml) { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxyZXNvdXJjZSB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC0zIGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTMvbWV0YWRhdGEueHNkIiB4bWxucz0iaHR0cDovL2RhdGFjaXRlLm9yZy9zY2hlbWEva2VybmVsLTMiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiPjxpZGVudGlmaWVyIGlkZW50aWZpZXJUeXBlPSJET0kiPjEwLjUyNTYvZjEwMDByZXNlYXJjaC44NTcwLnI2NDIwPC9pZGVudGlmaWVyPjxjcmVhdG9ycz48Y3JlYXRvcj48Y3JlYXRvck5hbWU+ZCBzPC9jcmVhdG9yTmFtZT48L2NyZWF0b3I+PC9jcmVhdG9ycz48dGl0bGVzPjx0aXRsZT5SZWZlcmVlIHJlcG9ydC4gRm9yOiBSRVNFQVJDSC0zNDgyIFt2ZXJzaW9uIDU7IHJlZmVyZWVzOiAxIGFwcHJvdmVkLCAxIGFwcHJvdmVkIHdpdGggcmVzZXJ2YXRpb25zXTwvdGl0bGU+PC90aXRsZXM+PHB1Ymxpc2hlcj5GMTAwMCBSZXNlYXJjaCBMaW1pdGVkPC9wdWJsaXNoZXI+PHB1YmxpY2F0aW9uWWVhcj4yMDE3PC9wdWJsaWNhdGlvblllYXI+PHJlc291cmNlVHlwZSByZXNvdXJjZVR5cGVHZW5lcmFsPSJUZXh0Ii8+PC9yZXNvdXJjZT4=" }
+
+    subject  { create(:doi, xml: xml) }
+
+    it "title" do
+      title = "Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"
+      subject.title = title
+      subject.save
+      
+      expect(subject.title).to eq(title)
+
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
+      expect(xml.dig("titles", "title")).to eq(title)
+    end
+
+    it "author" do
+      author = [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }]
+      subject.author = author
+      subject.save
+
+      expect(subject.author).to eq(author)
+
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
+      expect(xml.dig("creators", "creator")).to eq([{"creatorName"=>"Ollomi, Benjamin"}, {"creatorName"=>"Duran, Patrick"}])
+    end
+
+    # it "date_published" do
+    #   expect(subject.date_published).to eq("2017")
+    # end
+
+    # it "publication_year" do
+    #   expect(subject.publication_year).to eq(2017)
+    # end
+
+    it "schema_version" do
+      title = "Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"
+      subject.title = title
+      
+      xml = Maremma.from_xml(subject.datacite_xml).fetch("resource", {})
+      expect(xml.dig("titles", "title")).to eq(title)
+
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-3")
+    end
+
+    # it "metadata" do
+    #   doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
+    #   expect(doc.at_css("identifier").content).to eq(subject.doi)
+    # end
+
+    # it "namespace" do
+    #   expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-3")
+    # end
+  end
+
   describe "to_jsonapi" do
     let(:provider)  { create(:provider, symbol: "ADMIN") }
     let(:client)  { create(:client, provider: provider) }

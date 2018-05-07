@@ -182,9 +182,7 @@ class Doi < ActiveRecord::Base
   end
 
   def timestamp
-    self.updated = Time.zone.now.utc.iso8601 if updated.blank?
-    
-    updated.utc.iso8601 
+    updated.utc.iso8601 if updated.present?
   end
 
   # update state for all DOIs starting from from_date
@@ -212,8 +210,12 @@ class Doi < ActiveRecord::Base
     Doi.where("datacentre in (SELECT id from datacentre where allocator = ?)", p.id).where("updated >= ?", from_date).where(is_active: "\x01").where(minted: nil).update_all(("minted = updated"))
   end
 
+  # update metadata when any virtual attribute has changed
   def set_metadata
-    metadata.build(doi: self, xml: datacite, namespace: schema_version)
+    changed_virtual_attributes = changed & %w(author title publisher date_published additional_type resource_type_general description)
+    #xml = datacite_xml if changed_virtual_attributes.present?
+    
+    metadata.build(doi: self, xml: xml, namespace: schema_version)
   end
 
   def set_defaults

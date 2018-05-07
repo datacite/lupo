@@ -63,7 +63,7 @@ module Cacheable
         if from.present? && string.present? 
           send("read_" + from, string: string, sandbox: sandbox)
         else
-          read_datacite(string: fetch_cached_xml, sandbox: sandbox)
+          read_datacite(string: xml, sandbox: sandbox)
         end
       end
     rescue ArgumentError, NoMethodError => e

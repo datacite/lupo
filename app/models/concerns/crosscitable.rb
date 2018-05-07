@@ -8,6 +8,43 @@ module Crosscitable
   included do
     include Bolognese::MetadataUtils
 
+    # track changes of virtual attributes
+
+    def author=(value)
+      attribute_will_change!(:author) unless value == @author
+      @author = value
+    end
+
+    def title=(value)
+      attribute_will_change!(:title) unless value == @title
+      @title = value
+    end
+
+    def publisher=(value)
+      attribute_will_change!(:publisher) unless value == @publisher
+      @publisher = value
+    end
+
+    def date_published=(value)
+      attribute_will_change!(:date_published) unless value == @date_published
+      @date_published = value
+    end
+
+    def additional_type=(value)
+      attribute_will_change!(:additional_type) unless value == @additional_type
+      @additional_type = value
+    end
+
+    def resource_type_general=(value)
+      attribute_will_change!(:resource_type_general) unless value == @resource_type_general
+      @resource_type_general = value
+    end
+
+    def description=(value)
+      attribute_will_change!(:description) unless value == @description
+      @description = value
+    end
+
     # modified bolognese attributes
 
     def sandbox
@@ -50,8 +87,9 @@ module Crosscitable
         @from = find_from_format(string: input)
         @string = input
       end
-      
-      metadata.build(doi: self, xml: datacite, namespace: schema_version)
+
+      attribute_will_change!(:xml)
+      @xml = datacite
     rescue NoMethodError, ArgumentError => exception
       Bugsnag.notify(exception)
       Rails.logger.error "Error " + exception.message + " for doi " + doi + "."
