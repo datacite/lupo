@@ -4,7 +4,7 @@ class DoisController < ApplicationController
   prepend_before_action :authenticate_user!
   before_action :set_doi, only: [:show, :update, :destroy]
   before_action :set_user_hash, only: [:create, :update, :destroy]
-  before_action :set_include, only: [:index, :show]
+  before_action :set_include, only: [:index, :show, :create, :update]
   authorize_resource :except => [:index, :show, :random]
 
   before_bugsnag_notify :add_metadata_to_bugsnag
@@ -82,7 +82,7 @@ class DoisController < ApplicationController
       render jsonapi: @doi, status: :created, location: @doi
     else
       Rails.logger.warn @doi.errors.inspect
-      render jsonapi: serialize(@doi.errors), status: :unprocessable_entity
+      render jsonapi: serialize(@doi.errors), include: @include, status: :unprocessable_entity
     end
   end
 
@@ -91,7 +91,7 @@ class DoisController < ApplicationController
       render jsonapi: @doi
     else
       Rails.logger.warn @doi.errors.inspect
-      render jsonapi: serialize(@doi.errors), status: :unprocessable_entity
+      render jsonapi: serialize(@doi.errors), include: @include, status: :unprocessable_entity
     end
   end
 
@@ -181,7 +181,7 @@ class DoisController < ApplicationController
     attributes = [:doi, "confirm-doi", :identifier, :url, :title, :publisher, :published, :prefix, :suffix, "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", :description, :license, :xml, :version, "metadata-version", "schema-version", :state, "is-active", :reason, :registered, :updated, :mode, :event, :regenerate, :client, "resource_type", author: [:type, :id, :name, "given-name", "family-name"]]
     relationships = [{ client: [data: [:type, :id]] },  { provider: [data: [:type, :id]] }, { "resource-type" => [:data, data: [:type, :id]] }]
     p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships)
-    p = p.fetch("attributes").merge(client_id: p.dig("relationships", "client", "data", "id"), resource_type_id: p.dig("relationships", "resource-type", "data", "id"))
+    p = p.fetch("attributes").merge(client_id: p.dig("relationships", "client", "data", "id"), resource_type_id: camelize_str(p.dig("relationships", "resource-type", "data", "id")))
     p.merge(
       additional_type: p["resource-type-subtype"],
       schema_version: p["schema-version"],
@@ -190,6 +190,18 @@ class DoisController < ApplicationController
       last_landing_page_status_check: p["last-landing-page-status-check"],
       last_landing_page_content_type: p["last-landing-page-content-type"]
     ).except("confirm-doi", :identifier, :prefix, :suffix, "resource-type-subtype", "metadata-version", "schema-version", :state, "is-active", :registered, :updated, :mode, "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type")
+  end
+
+  def underscore_str(str)
+    return str unless str.present?
+
+    str.underscore
+  end
+
+  def camelize_str(str)
+    return str unless str.present?
+
+    str.underscore.camelize
   end
 
   def add_metadata_to_bugsnag(report)

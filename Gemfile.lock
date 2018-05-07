@@ -456,7 +456,7 @@ DEPENDENCIES
   bergamasco (~> 0.3.10)
   better_errors
   binding_of_caller
-  bolognese (~> 0.9, >= 0.9)
+  bolognese (~> 0.9, >= 0.10)
   bootsnap (~> 1.2, >= 1.2.1)
   bugsnag (~> 6.1, >= 6.1.1)
   byebug
