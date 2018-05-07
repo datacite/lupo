@@ -213,7 +213,11 @@ class Doi < ActiveRecord::Base
   # update metadata when any virtual attribute has changed
   def set_metadata
     changed_virtual_attributes = changed & %w(author title publisher date_published additional_type resource_type_general description)
-    #xml = datacite_xml if changed_virtual_attributes.present?
+
+    if changed_virtual_attributes.present?
+      @xml = datacite_xml
+      @schema_version = Maremma.from_xml(xml).dig("resource", "xmlns")
+    end
     
     metadata.build(doi: self, xml: xml, namespace: schema_version)
   end

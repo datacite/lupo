@@ -225,32 +225,74 @@ describe Doi, type: :model, vcr: true do
       expect(xml.dig("creators", "creator")).to eq([{"creatorName"=>"Ollomi, Benjamin"}, {"creatorName"=>"Duran, Patrick"}])
     end
 
-    # it "date_published" do
-    #   expect(subject.date_published).to eq("2017")
-    # end
+    it "publisher" do
+      publisher = "Zenodo"
+      subject.publisher = publisher
+      subject.save
 
-    # it "publication_year" do
-    #   expect(subject.publication_year).to eq(2017)
-    # end
+      expect(subject.publisher).to eq(publisher)
+
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
+      expect(xml.dig("publisher")).to eq(publisher)
+    end
+
+    it "date_published" do
+      date_published = "2011-05-26"
+      subject.date_published = date_published
+      subject.save
+
+      expect(subject.date_published).to eq(date_published)
+
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
+      expect(xml.dig("dates", "date")).to eq("dateType"=>"Issued", "__content__"=>date_published)
+      expect(xml.dig("publicationYear")).to eq("2011")
+    end
+
+    it "additional_type" do
+      additional_type = "BlogPosting"
+      subject.additional_type = additional_type
+      subject.save
+
+      expect(subject.additional_type).to eq(additional_type)
+
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
+      expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>"Text", "__content__"=>"BlogPosting")
+    end
+
+    it "resource_type_general" do
+      resource_type_general = "Software"
+      subject.resource_type_general = resource_type_general
+      subject.save
+
+      expect(subject.resource_type_general).to eq(resource_type_general)
+
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
+      expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>resource_type_general, "__content__"=>"ScholarlyArticle")
+    end
+
+    it "description" do
+      description = "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for..."
+      subject.description = description
+      subject.save
+      
+      expect(subject.description).to eq(description)
+
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
+      expect(xml.dig("descriptions", "description")).to eq("__content__" => "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for...", "descriptionType" => "Abstract")
+    end
 
     it "schema_version" do
       title = "Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"
       subject.title = title
-      
-      xml = Maremma.from_xml(subject.datacite_xml).fetch("resource", {})
+      subject.save
+
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
       expect(xml.dig("titles", "title")).to eq(title)
 
-      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-3")
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
+      expect(xml.dig("xmlns")).to eq("http://datacite.org/schema/kernel-4")
+      #expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
     end
-
-    # it "metadata" do
-    #   doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
-    #   expect(doc.at_css("identifier").content).to eq(subject.doi)
-    # end
-
-    # it "namespace" do
-    #   expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-3")
-    # end
   end
 
   describe "to_jsonapi" do
