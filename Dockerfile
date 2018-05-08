@@ -33,13 +33,6 @@ RUN rm -f /etc/service/nginx/down && \
 COPY vendor/docker/webapp.conf /etc/nginx/sites-enabled/webapp.conf
 COPY vendor/docker/00_app_env.conf /etc/nginx/conf.d/00_app_env.conf
 
-# send logs to STDOUT and STDERR
-RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
-    ln -sf /dev/stderr /var/log/nginx/error.log
-
-COPY vendor/docker/webapp.conf /etc/nginx/sites-enabled/webapp.conf
-COPY vendor/docker/00_app_env.conf /etc/nginx/conf.d/00_app_env.conf
-
 # Use Amazon NTP servers
 COPY vendor/docker/ntp.conf /etc/ntp.conf
 
