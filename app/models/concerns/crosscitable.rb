@@ -11,7 +11,7 @@ module Crosscitable
     # track changes of virtual attributes
 
     def author=(value)
-      return @author if value.nil? || value == author
+      return @author if value.blank? || value == author
 
       attribute_will_change!(:author)
       @author = value
