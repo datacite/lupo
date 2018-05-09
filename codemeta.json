@@ -23,7 +23,7 @@
 	"identifier": "https://doi.org/10.5438/8gb0-v673",
 	"codeRepository": "https://github.com/datacite/lupo",
 	"controlledTem": "software",
-	"dateCreated": "2015-11-28",
+	"dateCreated": "2017-05-18",
 	"datePublished": "2018-05-09",
 	"dateModified": "2018-05-09",
 	"description": "Rails API application for managing DataCite providers, clients, prefixes and DOIs. The API is based on the JSONAPI specification.",
