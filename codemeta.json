@@ -29,7 +29,8 @@
 	"description": "Rails API application for managing DataCite providers, clients, prefixes and DOIs. The API is based on the JSONAPI specification.",
 	"isAutomatedBuild": true,
 	"licenseId": "MIT",
-	"publisher": "DataCite",
+  "publisher": "DataCite",
+  "version": "1.0.1",
 	"tags": [
 		"Doi Registration",
 		"Rails API",
