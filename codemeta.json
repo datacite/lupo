@@ -36,7 +36,7 @@
 		"Rails API",
 		"DOI Fabrica"
 	],
-	"title": "DataCite REST API",
+	"title": "DataCite Application API",
 	"programmingLanguage": {
 		"name": "Ruby",
 		"version": "≥ 2.4.1",
