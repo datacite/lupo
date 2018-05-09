@@ -85,7 +85,7 @@ class Doi < ActiveRecord::Base
   after_create :update_url, if: :url?
   after_update :update_url, if: :saved_change_to_url?
 
-  before_save :set_defaults, :set_metadata
+  before_save :set_defaults, :update_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
   scope :query, ->(query) { where("dataset.doi = ?", query) }
@@ -210,7 +210,7 @@ class Doi < ActiveRecord::Base
   end
 
   # update metadata when any virtual attribute has changed
-  def set_metadata
+  def update_metadata
     changed_virtual_attributes = changed & %w(author title publisher date_published additional_type resource_type_general description)
 
     if changed_virtual_attributes.present?

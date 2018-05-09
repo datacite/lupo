@@ -3,7 +3,7 @@ require 'rails_helper'
 describe "Metadata", type: :request  do
   let(:provider)  { create(:provider, symbol: "ADMIN") }
   let(:client)  { create(:client, provider: provider) }
-  let(:doi) { create(:doi, client: client, xml: nil) }
+  let(:doi) { create(:doi, client: client) }
   let(:xml) { file_fixture('datacite.xml').read }
   let!(:metadatas)  { create_list(:metadata, 5, doi: doi, xml: xml) }
   let!(:metadata) { create(:metadata, doi: doi, xml: xml) }

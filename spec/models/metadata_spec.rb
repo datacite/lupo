@@ -9,7 +9,7 @@ describe Metadata, type: :model, vcr: true do
   context "parses xml" do
     let(:provider)  { create(:provider, symbol: "ADMIN") }
     let(:client)  { create(:client, provider: provider) }
-    let(:doi) { create(:doi, client: client, xml: nil) }
+    let(:doi) { create(:doi, client: client) }
     let(:xml) { file_fixture('datacite.xml').read }
 
     subject { Metadata.create(xml: xml, doi: doi) }
@@ -52,7 +52,7 @@ describe Metadata, type: :model, vcr: true do
     end
 
     it "valid model" do
-      expect(subject.valid?).to be true
+      expect(subject.valid?).to be false
     end
 
     it "validates xml" do

@@ -537,11 +537,11 @@ describe "dois", type: :request do
 
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-        #expect(json.dig('data', 'attributes', 'author')).to eq(author)
+        expect(json.dig('data', 'attributes', 'author')).to eq(author)
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
 
-        #xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        #expect(xml.dig("creators", "creator")).to eq([{"creatorName"=>"Ollomi, Benjamin"}, {"creatorName"=>"Duran, Patrick"}])
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("creators", "creator")).to eq([{"creatorName"=>"Ollomi, Benjamin"}, {"creatorName"=>"Duran, Patrick"}])
       end
 
       it 'returns status code 201' do
