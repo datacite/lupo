@@ -1,0 +1,45 @@
+{
+	"@context": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld",
+	"@type": "SoftwareSourceCode",
+	"@id": "https://doi.org/10.5438/8gb0-v673",
+	"agents": [{
+		"@id": "https://orcid.org/0000-0003-0077-4738",
+		"@type": "person",
+		"name": "Martin Fenner",
+		"affiliation": "DataCite",
+		"mustBeCited": true,
+		"isMaintainer": true,
+		"isRightsHolder": true
+  },
+  {
+		"@id": "https://orcid.org/0000-0003-3484-6875",
+		"@type": "person",
+		"name": "Kristian Garza",
+		"affiliation": "DataCite",
+		"mustBeCited": true,
+		"isMaintainer": true,
+		"isRightsHolder": true
+	}],
+	"identifier": "https://doi.org/10.5438/8gb0-v673",
+	"codeRepository": "https://github.com/datacite/lupo",
+	"controlledTem": "software",
+	"dateCreated": "2015-11-28",
+	"datePublished": "2018-05-09",
+	"dateModified": "2018-05-09",
+	"description": "Rails API application for managing DataCite providers, clients, prefixes and DOIs. The API is based on the JSONAPI specification.",
+	"isAutomatedBuild": true,
+	"licenseId": "MIT",
+	"publisher": "DataCite",
+	"tags": [
+		"Doi Registration",
+		"Rails API",
+		"DOI Fabrica"
+	],
+	"title": "DataCite REST API",
+	"programmingLanguage": {
+		"name": "Ruby",
+		"version": "≥ 2.4.1",
+		"URL": "https://www.ruby-lang.org"
+	},
+	"readme": "https://github.com/datacite/lupo/blob/master/README.md"
+}

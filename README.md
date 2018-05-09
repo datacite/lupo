@@ -1,6 +1,8 @@
-# DataCite REST API
-
+[![Identifier](https://img.shields.io/badge/doi-10.5438%2F8gb0--v673.svg)](https://doi.org/10.5438/8gb0-v673)
+[![Gem Version](https://badge.fury.io/rb/lupo.svg)](https://badge.fury.io/rb/lupo)
 [![Build Status](https://travis-ci.org/datacite/lupo.svg?branch=master)](https://travis-ci.org/datacite/lupo) [![Docker Build Status](https://img.shields.io/docker/build/datacite/lupo.svg)](https://hub.docker.com/r/datacite/lupo/) [![Maintainability](https://api.codeclimate.com/v1/badges/dddd95f9f6f354b7af93/maintainability)](https://codeclimate.com/github/datacite/lupo/maintainability) (https://codeclimate.com/github/datacite/lupo/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/dddd95f9f6f354b7af93/test_coverage)](https://codeclimate.com/github/datacite/lupo/test_coverage)
+
+# DataCite REST API
 
 Rails API application for managing DataCite providers, clients, prefixes and DOIs. The API is based on the [JSONAPI](http://jsonapi.org/) specification.
 
