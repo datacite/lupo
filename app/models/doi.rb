@@ -60,7 +60,6 @@ class Doi < ActiveRecord::Base
   alias_attribute :uid, :doi
   alias_attribute :resource_type_id, :resource_type_general
   alias_attribute :resource_type_subtype, :additional_type
-  alias_attribute :creator, :author
   alias_attribute :published, :date_published
 
   belongs_to :client, foreign_key: :datacentre

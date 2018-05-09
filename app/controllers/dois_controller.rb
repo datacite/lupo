@@ -74,6 +74,7 @@ class DoisController < ApplicationController
   end
 
   def create
+   #  Rails.logger.info safe_params.inspect
     @doi = Doi.new(safe_params.merge(@user_hash))
     authorize! :create, @doi
 
@@ -87,6 +88,7 @@ class DoisController < ApplicationController
   end
 
   def update
+    # Rails.logger.info safe_params.inspect
     if @doi.update_attributes(safe_params.merge(@user_hash))
       render jsonapi: @doi
     else

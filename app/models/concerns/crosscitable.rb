@@ -107,7 +107,7 @@ module Crosscitable
     rescue NoMethodError, ArgumentError => exception
       Bugsnag.notify(exception)
       Rails.logger.error "Error " + exception.message + " for doi " + doi + "."
-      nil
+      @xml = nil
     end
 
     def well_formed_xml(string)
@@ -121,7 +121,7 @@ module Crosscitable
     end
   
     def from_xml(string)
-      return nil unless string.start_with?('<?xml version="1.0"')
+      return nil unless string.start_with?('<?xml version=')
 
       Nokogiri::XML(string) { |config| config.options = Nokogiri::XML::ParseOptions::STRICT }
 

@@ -508,6 +508,51 @@ describe "dois", type: :request do
       end
     end
 
+    context 'when the author changes no xml' do
+      let(:author) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.4122/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => nil,
+              "author" => author,
+              "event" => "publish"
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+
+      before { post '/dois', params: valid_attributes.to_json, headers: headers }
+
+      it 'creates a Doi' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        #expect(json.dig('data', 'attributes', 'author')).to eq(author)
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+
+        #xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        #expect(xml.dig("creators", "creator")).to eq([{"creatorName"=>"Ollomi, Benjamin"}, {"creatorName"=>"Duran, Patrick"}])
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'sets state to registered' do
+        #expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+      end
+    end
+
     context 'state change with test prefix' do
       let(:valid_attributes) do
         {
