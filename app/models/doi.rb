@@ -216,9 +216,10 @@ class Doi < ActiveRecord::Base
     if changed_virtual_attributes.present?
       @xml = datacite_xml
       @schema_version = Maremma.from_xml(xml).dig("resource", "xmlns")
+      attribute_will_change!(:xml)
     end
     
-    metadata.build(doi: self, xml: xml, namespace: schema_version)
+    metadata.build(doi: self, xml: xml, namespace: schema_version) if changed & %w(xml)
   end
 
   def set_defaults

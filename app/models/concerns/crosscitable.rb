@@ -103,6 +103,7 @@ module Crosscitable
       end
 
       @xml = @string.present? ? datacite : nil
+      attribute_will_change!(:xml)
     rescue NoMethodError, ArgumentError => exception
       Bugsnag.notify(exception)
       Rails.logger.error "Error " + exception.message + " for doi " + doi + "."

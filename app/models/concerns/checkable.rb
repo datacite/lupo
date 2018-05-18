@@ -16,9 +16,9 @@ module Checkable
 
       checked = Time.zone.now
 
-      doi.update_attributes(last_landing_page_status: response.status,
-                            last_landing_page_content_type: content_type,
-                            last_landing_page_status_check: checked) if doi.present?
+      doi.update_columns(last_landing_page_status: response.status,
+                         last_landing_page_content_type: content_type,
+                         last_landing_page_status_check: checked) if doi.present?
 
       { "status" => response.status,
         "content-type" => content_type,
