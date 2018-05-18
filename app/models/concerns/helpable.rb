@@ -24,8 +24,12 @@ module Helpable
         Rails.logger.info "[Handle] Updated to URL " + options[:url] + " for DOI " + doi + "."
         response
       else
-        Rails.logger.warn "[Handle] Error updating URL " + options[:url] + " for DOI " + doi + "."
-        Rails.logger.warn response.body["errors"].inspect
+        text = "Error " + response.body.dig("errors", 0, "status").to_s + " " + (response.body.dig("errors", 0, "title") || "unknown") + " for URL " + options[:url] + "."
+        title = "Error updating DOI " + doi
+        
+        Rails.logger.warn "[Handle] " + title
+        Rails.logger.warn text
+        User.send_notification_to_slack(text, title: title, level: "danger") unless Rails.env.test?
         response
       end
     end
