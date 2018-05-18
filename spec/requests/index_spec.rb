@@ -103,7 +103,7 @@ describe "content_negotation", type: :request do
     before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.citationstyles.csl+json" } }
 
     it 'returns the Doi' do
-      expect(json["type"]).to eq("report")
+      expect(json["type"]).to eq("article-journal")
     end
 
     it 'returns status code 200' do
