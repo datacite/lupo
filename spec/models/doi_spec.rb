@@ -717,8 +717,8 @@ describe Doi, type: :model, vcr: true do
 
     it "generates ris" do
       ris = subject.ris.split("\r\n")
-      expect(ris[0]).to eq("TY - RPRT")
-      expect(ris[1]).to eq("T1 - Eating your own Dog Food")
+      expect(ris[0]).to eq("TY  - RPRT")
+      expect(ris[1]).to eq("T1  - Eating your own Dog Food")
     end
 
     it "generates schema_org" do

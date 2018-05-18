@@ -59,6 +59,7 @@ class DoisController < ApplicationController
   end
 
   def validate
+    # Rails.logger.info safe_params.inspect
     @doi = Doi.new(safe_params)
     authorize! :create, @doi
 

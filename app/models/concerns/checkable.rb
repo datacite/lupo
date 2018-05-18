@@ -23,6 +23,12 @@ module Checkable
       { "status" => response.status,
         "content-type" => content_type,
         "checked" => checked.utc.iso8601 }
+    rescue URI::InvalidURIError => e
+      Rails.logger.error e.message
+      
+      { "status" => 404, 
+        "content_type" => nil, 
+        "checked" => Time.zone.now.utc.iso8601 }
     end
   end
 end

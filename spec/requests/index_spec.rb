@@ -115,7 +115,7 @@ describe "content_negotation", type: :request do
     before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/x-research-info-systems" } }
 
     it 'returns the Doi' do
-      expect(response.body).to start_with("TY - RPRT")
+      expect(response.body).to start_with("TY  - RPRT")
     end
 
     it 'returns status code 200' do
