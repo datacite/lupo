@@ -29,14 +29,14 @@ class Doi < ActiveRecord::Base
 
     event :register do
       # can't register test prefix
-      transitions :from => [:undetermined, :draft], :to => :registered, :unless => :is_test_prefix?, :after => Proc.new { set_to_inactive }
+      transitions :from => [:undetermined, :draft], :to => :registered, :guards => [:is_not_test_prefix?], :after => Proc.new { set_to_active }
 
       transitions :from => :undetermined, :to => :draft, :after => Proc.new { set_to_inactive }
     end
 
     event :publish do
       # can't index test prefix
-      transitions :from => [:undetermined, :draft, :registered], :to => :findable, :unless => :is_test_prefix?, :after => Proc.new { set_to_active }
+      transitions :from => [:undetermined, :draft, :registered], :to => :findable, :guards => [:is_not_test_prefix?], :after => Proc.new { set_to_active }
 
       transitions :from => :undetermined, :to => :draft, :after => Proc.new { set_to_inactive }
     end
@@ -117,8 +117,8 @@ class Doi < ActiveRecord::Base
     doi.split('/', 2).first
   end
 
-  def is_test_prefix?
-    prefix == "10.5072"
+  def is_not_test_prefix?
+    prefix != "10.5072"
   end
 
   # update URL in handle system, don't do that for draft state
@@ -187,10 +187,12 @@ class Doi < ActiveRecord::Base
   # update state for all DOIs starting from from_date
   def self.set_state(from_date: nil)
     from_date ||= Time.zone.now - 1.day
-    Doi.where("updated >= ?", from_date).where(minted: nil).update_all(aasm_state: "draft")
+    Doi.where("updated >= ?", from_date).where(is_active: "\x00").where(minted: nil).update_all(aasm_state: "draft")
     Doi.where("updated >= ?", from_date).where(is_active: "\x00").where.not(minted: nil).update_all(aasm_state: "registered")
     Doi.where("updated >= ?", from_date).where(is_active: "\x01").where.not(minted: nil).update_all(aasm_state: "findable")
-    Doi.where("updated >= ?", from_date).where("doi LIKE ?", "10.5072%").update_all(aasm_state: "draft")
+    Doi.where("updated >= ?", from_date).where("doi LIKE ?", "10.5072%").where.not(aasm_state: "draft").update_all(aasm_state: "draft")
+  rescue ActiveRecord::LockWaitTimeout::Mysql2::Error => e
+    Rails.logger.error e.inspect
   end
 
   # delete all DOIs with test prefix 10.5072 older than from_date
@@ -200,13 +202,13 @@ class Doi < ActiveRecord::Base
     Doi.where("updated <= ?", from_date).where("doi LIKE ?", "10.5072%").find_each { |d| d.destroy }
   end
 
-  # set minted date for DOIs have been registered in the handle system externally for ETHZ
+  # set minted date for DOIs that have been registered in an handle system (providers ETHZ and EUROP)
   def self.set_minted(from_date: nil)
     from_date ||= Time.zone.now - 1.day
-    p = cached_provider_response("ETHZ")
-    return nil unless p.present?
+    ids = ENV['HANDLES_MINTED'].to_s.split(",")
+    return nil unless ids.present?
 
-    Doi.where("datacentre in (SELECT id from datacentre where allocator = ?)", p.id).where("updated >= ?", from_date).where(is_active: "\x01").where(minted: nil).update_all(("minted = updated"))
+    Doi.where("datacentre in (SELECT id from datacentre where allocator IN ?)", ids).where("updated >= ?", from_date).where(is_active: "\x01").where(minted: nil).update_all(("minted = updated"))
   end
 
   # update metadata when any virtual attribute has changed
