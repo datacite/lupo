@@ -85,80 +85,127 @@ describe Doi, type: :model, vcr: true do
     context "draft doi" do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
       let(:client)  { create(:client, provider: provider) }
+      let(:url) { "https://www.example.org" }
       subject { create(:doi, client: client, username: client.symbol.downcase, password: "12345") }
 
-      it "don't update" do
-        expect(subject.update_url).to be_nil
+      it "don't update state change" do
+        expect { subject.start }.not_to have_enqueued_job(HandleJob)
+        expect(subject).to have_state(:draft)
+      end
+
+      it "don't update url change" do
+        subject.start
+        expect { subject.url = url }.not_to have_enqueued_job(HandleJob)
       end
     end
 
     context "registered doi" do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
       let(:client)  { create(:client, provider: provider) }
+      let(:url) { "https://www.example.org" }
       subject { create(:doi, client: client, username: client.symbol.downcase, password: "12345") }
 
-      it "update" do
-        subject.register
+      it "update state change" do
+        expect { subject.register }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
+          expect(doi.url).to eq(subject.url)
+        }
         expect(subject).to have_state(:registered)
-        job = subject.update_url
-        expect(job.arguments.last).to eq(url: subject.url, username: subject.username, password: subject.password)
+      end
+
+      it "update url change" do
+        subject.register
+        expect { subject.url = url }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
+          expect(subject.url).to eq(url)
+        }
       end
     end
 
     context "findable doi" do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
       let(:client)  { create(:client, provider: provider) }
+      let(:url) { "https://www.example.org" }
       subject { create(:doi, client: client, username: client.symbol.downcase, password: "12345") }
 
-      it "update" do
-        subject.publish
+      it "update state change" do
+        expect { subject.publish }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
+          expect(doi.url).to eq(subject.url)
+        }
         expect(subject).to have_state(:findable)
-        job = subject.update_url
-        expect(job.arguments.last).to eq(url: subject.url, username: subject.username, password: subject.password)
+      end
+
+      it "update url change" do
+        subject.publish
+        expect { subject.url = url }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
+          expect(subject.url).to eq(url)
+        }
       end
     end
 
     context "provider ethz" do
       let(:provider)  { create(:provider, symbol: "ETHZ") }
       let(:client)  { create(:client, provider: provider) }
+      let(:url) { "https://www.example.org" }
       subject { create(:doi, client: client, username: client.symbol.downcase, password: "12345") }
 
-      it "don't update" do
-        expect(subject.update_url).to be_nil
+      it "don't update state change" do
+        expect { subject.publish }.not_to have_enqueued_job(HandleJob)
+        expect(subject).to have_state(:findable)
+      end
+
+      it "don't update url change" do
+        subject.publish
+        expect { subject.url = url }.not_to have_enqueued_job(HandleJob)
       end
     end
 
     context "provider europ" do
       let(:provider)  { create(:provider, symbol: "EUROP") }
       let(:client)  { create(:client, provider: provider) }
+      let(:url) { "https://www.example.org" }
       subject { create(:doi, client: client, username: client.symbol.downcase, password: "12345") }
 
-      it "don't update" do
-        expect(subject.update_url).to be_nil
+      it "don't update state change" do
+        expect { subject.publish }.not_to have_enqueued_job(HandleJob)
+        expect(subject).to have_state(:findable)
+      end
+
+      it "don't update url change" do
+        subject.publish
+        expect { subject.url = url }.not_to have_enqueued_job(HandleJob)
       end
     end
 
     context "no password" do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
       let(:client)  { create(:client, provider: provider) }
+      let(:url) { "https://www.example.org" }
       subject { create(:doi, client: client, username: client.symbol.downcase, password: nil) }
 
-      it "don't update" do
-        subject.publish
+      it "don't update state change" do
+        expect { subject.publish }.not_to have_enqueued_job(HandleJob)
         expect(subject).to have_state(:findable)
-        expect(subject.update_url).to be_nil
+      end
+
+      it "don't update url change" do
+        subject.publish
+        expect { subject.url = url }.not_to have_enqueued_job(HandleJob)
       end
     end
 
     context "no url" do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
       let(:client)  { create(:client, provider: provider) }
+      let(:url) { "https://www.example.org" }
       subject { create(:doi, client: client, username: client.symbol.downcase, url: nil, password: "12345") }
 
-      it "don't update" do
-        subject.publish
+      it "don't update state change" do
+        expect { subject.publish }.not_to have_enqueued_job(HandleJob)
         expect(subject).to have_state(:findable)
-        expect(subject.update_url).to be_nil
+      end
+
+      it "don't update url change" do
+        subject.publish
+        expect { subject.url = url }.not_to have_enqueued_job(HandleJob)
       end
     end
   end

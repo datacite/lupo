@@ -29,15 +29,14 @@ class Doi < ActiveRecord::Base
 
     event :register do
       # can't register test prefix
-      transitions :from => [:undetermined, :draft], :to => :registered, :guards => [:is_not_test_prefix?], :after => Proc.new { set_to_active }
-
+      transitions :from => [:undetermined, :draft], :to => :registered, :unless => :is_test_prefix?, :after => Proc.new { update_url }
       transitions :from => :undetermined, :to => :draft, :after => Proc.new { set_to_inactive }
     end
 
     event :publish do
       # can't index test prefix
-      transitions :from => [:undetermined, :draft, :registered], :to => :findable, :guards => [:is_not_test_prefix?], :after => Proc.new { set_to_active }
-
+      transitions :from => [:undetermined, :draft], :to => :findable, :unless => :is_test_prefix?, :after => Proc.new { update_url }
+      transitions :from => :registered, :to => :findable, :after => Proc.new { set_to_active }
       transitions :from => :undetermined, :to => :draft, :after => Proc.new { set_to_inactive }
     end
 
@@ -81,10 +80,6 @@ class Doi < ActiveRecord::Base
   after_create :update_doi_count
   after_update :update_doi_count, if: :saved_change_to_datacentre?
 
-  # update url in handle system
-  after_create :update_url, if: :url?
-  after_update :update_url, if: :saved_change_to_url?
-
   before_save :set_defaults, :update_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
@@ -117,14 +112,27 @@ class Doi < ActiveRecord::Base
     doi.split('/', 2).first
   end
 
-  def is_not_test_prefix?
-    prefix != "10.5072"
+  def is_test_prefix?
+    prefix == "10.5072"
   end
 
-  # update URL in handle system, don't do that for draft state
+  def is_registered_or_findable?
+    %w(registered findable).include?(aasm_state)
+  end
+
+  def url=(value)
+    # update url in handle system if url is present and has changed
+    update_url if value.present? && value != url && is_registered_or_findable?
+
+    super(value)
+  end
+
+  # update URL in handle system for registered and findable state
   # providers europ and ethz do their own handle registration
   def update_url
-    return nil if draft? || url.blank? || password.blank? || %w(europ ethz).include?(provider_id)
+    return nil if url.blank? || password.blank? || %w(europ ethz).include?(provider_id)
+
+    set_to_active if is_active == "\x00"
 
     HandleJob.perform_later(self, url: url,
                             username: username,
@@ -208,7 +216,7 @@ class Doi < ActiveRecord::Base
     ids = ENV['HANDLES_MINTED'].to_s.split(",")
     return nil unless ids.present?
 
-    Doi.where("datacentre in (SELECT id from datacentre where allocator IN ?)", ids).where("updated >= ?", from_date).where(is_active: "\x01").where(minted: nil).update_all(("minted = updated"))
+    Doi.where("datacentre in (SELECT id from datacentre where allocator IN (:ids))", ids: ids).where("updated >= ?", from_date).where(is_active: "\x01").where(minted: nil).update_all(("minted = updated"))
   end
 
   # update metadata when any virtual attribute has changed

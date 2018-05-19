@@ -27,8 +27,8 @@ module Helpable
         text = "Error " + response.body.dig("errors", 0, "status").to_s + " " + (response.body.dig("errors", 0, "title") || "unknown") + " for URL " + options[:url] + "."
         title = "Error updating DOI " + doi
         
-        Rails.logger.warn "[Handle] " + title
-        Rails.logger.warn text
+        Rails.logger.error "[Handle] " + title
+        Rails.logger.error text
         User.send_notification_to_slack(text, title: title, level: "danger") unless Rails.env.test?
         response
       end
