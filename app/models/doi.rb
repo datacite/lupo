@@ -199,8 +199,8 @@ class Doi < ActiveRecord::Base
     Doi.where("updated >= ?", from_date).where(is_active: "\x00").where.not(minted: nil).update_all(aasm_state: "registered")
     Doi.where("updated >= ?", from_date).where(is_active: "\x01").where.not(minted: nil).update_all(aasm_state: "findable")
     Doi.where("updated >= ?", from_date).where("doi LIKE ?", "10.5072%").where.not(aasm_state: "draft").update_all(aasm_state: "draft")
-  rescue ActiveRecord::LockWaitTimeout::Mysql2::Error => e
-    Rails.logger.error e.inspect
+  rescue ActiveRecord::LockWaitTimeout::Mysql2::Error => exception
+    Bugsnag.notify(exception)
   end
 
   # delete all DOIs with test prefix 10.5072 older than from_date
