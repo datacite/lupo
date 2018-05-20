@@ -99,7 +99,7 @@ class Doi < ActiveRecord::Base
 
   def client_id=(value)
     r = cached_client_response(value)
-    fail ActiveRecord::RecordNotFound unless r.present?
+    return @client_id unless r.present?
 
     write_attribute(:datacentre, r.id)
   end
@@ -229,7 +229,7 @@ class Doi < ActiveRecord::Base
       attribute_will_change!(:xml)
     end
     
-    metadata.build(doi: self, xml: xml, namespace: schema_version) if changed & %w(xml)
+    metadata.build(doi: self, xml: xml, namespace: schema_version) if (changed & %w(xml)).present?
   end
 
   def set_defaults

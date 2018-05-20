@@ -90,7 +90,7 @@ class DoisController < ApplicationController
 
   def update
     # Rails.logger.info safe_params.inspect
-    if @doi.update_attributes(safe_params.merge(@user_hash))
+    if @doi.update_attributes(safe_params.merge(@user_hash).except(:doi))
       render jsonapi: @doi
     else
       Rails.logger.warn @doi.errors.inspect
@@ -184,7 +184,7 @@ class DoisController < ApplicationController
     attributes = [:doi, "confirm-doi", :identifier, :url, :title, :publisher, :published, :prefix, :suffix, "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", :description, :license, :xml, :version, "metadata-version", "schema-version", :state, "is-active", :reason, :registered, :updated, :mode, :event, :regenerate, :client, "resource_type", author: [:type, :id, :name, "given-name", "family-name"]]
     relationships = [{ client: [data: [:type, :id]] },  { provider: [data: [:type, :id]] }, { "resource-type" => [:data, data: [:type, :id]] }]
     p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships)
-    p = p.fetch("attributes").merge(client_id: p.dig("relationships", "client", "data", "id"), resource_type_id: camelize_str(p.dig("relationships", "resource-type", "data", "id")))
+    p = p.fetch("attributes").merge(client_id: p.dig("relationships", "client", "data", "id"), resource_type_general: camelize_str(p.dig("relationships", "resource-type", "data", "id")))
     p.merge(
       additional_type: p["resource-type-subtype"],
       schema_version: p["schema-version"],

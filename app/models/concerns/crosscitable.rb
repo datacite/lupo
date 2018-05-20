@@ -81,7 +81,7 @@ module Crosscitable
 
     # cache xml
     def xml
-      @xml ||= fetch_cached_xml
+      @xml || fetch_cached_xml
     end
 
     def xml=(value)
@@ -102,8 +102,9 @@ module Crosscitable
         @string = input
       end
 
-      @xml = @string.present? ? datacite : nil
       attribute_will_change!(:xml)
+
+      @xml = (from == "datacite") ? raw : datacite_xml
     rescue NoMethodError, ArgumentError => exception
       Bugsnag.notify(exception)
       Rails.logger.error "Error " + exception.message + " for doi " + doi + "."

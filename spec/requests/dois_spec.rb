@@ -59,18 +59,8 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
               "url" => "http://www.bl.uk/pdf/pat.pdf",
-              "xml" => xml,
-              "event" => "register"
-            },
-            "relationships"=> {
-              "client"=>  {
-                "data"=> {
-                  "type"=> "clients",
-                  "id"=> client.symbol.downcase
-                }
-              }
+              "xml" => xml
             }
           }
         }
@@ -79,8 +69,11 @@ describe "dois", type: :request do
 
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-        expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        # expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("titles", "title")).to eq("Eating your own Dog Food")
       end
 
       it 'returns status code 200' do
@@ -88,7 +81,40 @@ describe "dois", type: :request do
       end
 
       it 'sets state to registered' do
-        expect(json.dig('data', 'attributes', 'state')).to eq("registered")
+        expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+      end
+    end
+
+    context 'when the record exists with conversion' do
+      let(:xml) { Base64.strict_encode64(file_fixture('crossref.bib').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "xml" => xml
+            }
+          }
+        }
+      end
+      before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+
+      it 'updates the record' do
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        # expect(json.dig('data', 'attributes', 'title')).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
+      
+        # xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        # expect(xml.dig("titles", "title")).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'sets state to registered' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("draft")
       end
     end
 
@@ -100,7 +126,6 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
               "url" => "http://www.bl.uk/pdf/pat.pdf",
               "xml" => xml,
               "title" => title,
@@ -121,7 +146,7 @@ describe "dois", type: :request do
 
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
         expect(json.dig('data', 'attributes', 'title')).to eq(title)
 
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
@@ -145,7 +170,6 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
               "url" => "http://www.bl.uk/pdf/pat.pdf",
               "xml" => xml,
               "author" => author,
@@ -166,7 +190,7 @@ describe "dois", type: :request do
 
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
         expect(json.dig('data', 'attributes', 'author')).to eq(author)
 
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
@@ -190,7 +214,6 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
               "url" => "http://www.bl.uk/pdf/pat.pdf",
               "xml" => xml,
               "event" => "register"
@@ -216,11 +239,11 @@ describe "dois", type: :request do
 
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
         # expect(json.dig('data', 'relationships', 'resource-type')).to eq(2)
 
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>"DataPaper", "__content__"=>"BlogPosting")
+        expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>"DataPaper", "__content__"=>"ScholarlyArticle")
       end
 
       it 'returns status code 200' do
@@ -1006,7 +1029,6 @@ describe "dois", type: :request do
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
-        expect(json.dig('data', 'attributes', 'landing-page', 'url')).to eq(url)
         expect(json.dig('data', 'attributes', 'landing-page', 'status')).to eq(200)
       end
 
