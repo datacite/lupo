@@ -104,6 +104,7 @@ module Crosscitable
 
       attribute_will_change!(:xml)
 
+      @meta = @from.present? ? send("read_" + @from, string: raw, sandbox: sandbox) : {}
       @xml = (from == "datacite") ? raw : datacite_xml
     rescue NoMethodError, ArgumentError => exception
       Bugsnag.notify(exception)
