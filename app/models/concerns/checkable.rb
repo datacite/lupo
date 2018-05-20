@@ -2,10 +2,13 @@ module Checkable
   extend ActiveSupport::Concern
 
   module ClassMethods
-    def get_landing_page_info(doi: nil, url: nil)
+    def get_landing_page_info(doi: nil, url: nil, keep: true)
       url = doi.present? ? doi.url : url
       return { "status" => 404, "content_type" => nil, "checked" => Time.zone.now.utc.iso8601 } unless
         url.present?
+
+      return { "status" => doi.last_landing_page_status, "content_type" => doi.last_landing_page_content_type, "checked" => doi.last_landing_page_status_check } if
+        doi.present? && keep && doi.last_landing_page_status_check.present? && doi.last_landing_page_status_check > (Time.zone.now - 7.days)
 
       response = Maremma.head(url, timeout: 5)
       if response.headers && response.headers["Content-Type"].present?

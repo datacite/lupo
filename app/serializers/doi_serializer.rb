@@ -58,8 +58,7 @@ class DoiSerializer < ActiveModel::Serializer
   end
 
   def landing_page
-    { url: object.last_landing_page,
-      status: object.last_landing_page_status,
+    { status: object.last_landing_page_status,
       content_type: object.last_landing_page_content_type,
       checked: object.last_landing_page_status_check }
   end
