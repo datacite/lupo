@@ -173,7 +173,7 @@ class Doi < ActiveRecord::Base
   end
 
   def resource_type
-    cached_resource_type_response(resource_type_general.downcase.underscore.dasherize) if resource_type_general.present?
+    cached_resource_type_response(resource_type_general.underscore.dasherize.downcase) if resource_type_general.present?
   end
 
   def date_registered
