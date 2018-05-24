@@ -195,10 +195,12 @@ class Doi < ActiveRecord::Base
   # update state for all DOIs starting from from_date
   def self.set_state(from_date: nil)
     from_date ||= Time.zone.now - 1.day
-    Doi.where("updated >= ?", from_date).where(is_active: "\x00").where(minted: nil).update_all(aasm_state: "draft")
-    Doi.where("updated >= ?", from_date).where(is_active: "\x00").where.not(minted: nil).update_all(aasm_state: "registered")
-    Doi.where("updated >= ?", from_date).where(is_active: "\x01").where.not(minted: nil).update_all(aasm_state: "findable")
-    Doi.where("updated >= ?", from_date).where("doi LIKE ?", "10.5072%").where.not(aasm_state: "draft").update_all(aasm_state: "draft")
+    collection = Doi.where("updated >= ?", from_date).where("updated < ?", Time.zone.now - 15.minutes)
+
+    collection.where(is_active: "\x00").where(minted: nil).update_all(aasm_state: "draft")
+    collection.where(is_active: "\x00").where.not(minted: nil).update_all(aasm_state: "registered")
+    collection.where(is_active: "\x01").where.not(minted: nil).update_all(aasm_state: "findable")
+    collection.where("doi LIKE ?", "10.5072%").where.not(aasm_state: "draft").update_all(aasm_state: "draft")
   rescue ActiveRecord::LockWaitTimeout => exception
     Bugsnag.notify(exception)
   end
