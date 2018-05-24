@@ -61,14 +61,27 @@ describe Doi, vcr: true do
     end
   end
 
-  context "register_doi" do
+  context "register_doi", order: :defined do
     let(:client) { create(:client) }
+    let(:bearer) { User.generate_token(role_id: "staff_admin") }
+    let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
 
     subject { build(:doi, doi: "10.5438/mcnv-ga6n", client: client) }
 
     it 'should register' do
-      options = { url: "https://blog.datacite.org/re3data-science-europe/", username: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'] }
+      url = "https://blog.datacite.org/"
+      options = { url: url, username: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'] }
       expect(subject.register_url(options).body).to eq("data"=>"OK")
+
+      expect(subject.get_url(options).body).to eq("data" => url)
+    end
+
+    it 'should change url' do
+      url = "https://blog.datacite.org/re3data-science-europe/"
+      options = { url: url, username: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'] }
+      expect(subject.register_url(options).body).to eq("data"=>"OK")
+
+      expect(subject.get_url(options).body).to eq("data" => url)
     end
 
     it 'missing username and password' do

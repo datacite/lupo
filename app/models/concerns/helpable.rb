@@ -20,15 +20,33 @@ module Helpable
 
       response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: options[:username], password: options[:password])
 
-      if response.status == 201
-        Rails.logger.info "[Handle] Updated to URL " + options[:url] + " for DOI " + doi + "."
+      if response.status == 200
         response
       else
-        text = "Error " + response.body.dig("errors", 0, "status").to_s + " " + (response.body.dig("errors", 0, "title") || "unknown") + " for URL " + options[:url] + "."
+        text = "Error " + response.body.dig("errors", 0, "status").to_s + " " + (response.body.dig("errors", 0, "title") || "unknown") + " for DOI " + doi + "."
         title = "Error updating DOI " + doi
         
         Rails.logger.error "[Handle] " + title
         Rails.logger.error text
+
+        response
+      end
+    end
+
+    def get_url(options={})
+      return OpenStruct.new(body: { "errors" => [{ "title" => "Username or password missing" }] }) unless options[:username].present? && options[:password].present?
+
+      mds_url = Rails.env.production? ? 'https://mds.datacite.org' : 'https://mds.test.datacite.org' 
+      url = "#{mds_url}/doi/#{doi}"
+
+      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: options[:password])
+
+      if response.status == 200
+        response
+      else
+        text = "Error " + response.body.dig("errors", 0, "status").to_s + " " + (response.body.dig("errors", 0, "title") || "unknown") + " for URL " + options[:url] + "."
+        
+        Rails.logger.error "[Handle] " + text
         User.send_notification_to_slack(text, title: title, level: "danger") unless Rails.env.test?
         response
       end
