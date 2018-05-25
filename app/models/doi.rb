@@ -61,6 +61,8 @@ class Doi < ActiveRecord::Base
   alias_attribute :resource_type_subtype, :additional_type
   alias_attribute :published, :date_published
 
+  attr_accessor :current_user
+
   belongs_to :client, foreign_key: :datacentre
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
   has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
@@ -122,13 +124,11 @@ class Doi < ActiveRecord::Base
 
   def url=(value)
     # update url in handle system if url is present and has changed
-    if value.present? && value != url && password.present? && is_registered_or_findable? && !%w(europ ethz).include?(provider_id)
-      
-      Rails.logger.info "[Handle] Queued " + doi + " with " + value + "."
+    if value.present? && value != url && current_user.present? && is_registered_or_findable? && !%w(europ ethz).include?(provider_id)
 
       HandleJob.perform_later(self, url: value,
-                                    username: username,
-                                    password: password)
+                                    username: current_user.uid,
+                                    password: current_user.password)
     end
 
     super(value)
@@ -139,13 +139,11 @@ class Doi < ActiveRecord::Base
   def update_url
     set_to_active if is_active == "\x00"
 
-    return nil if url.blank? || password.blank? || %w(europ ethz).include?(provider_id)
-
-    Rails.logger.info "[Handle] Queued " + doi + " with " + url + "."
+    return nil if url.blank? || current_user.blank? || %w(europ ethz).include?(provider_id)
 
     HandleJob.perform_later(self, url: url,
-                            username: username,
-                            password: password)
+                                  username: current_user.uid,
+                                  password: current_user.password)
   end
 
   # attributes to be sent to elasticsearch index

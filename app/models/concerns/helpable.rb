@@ -9,8 +9,6 @@ module Helpable
     include Bolognese::DoiUtils
     include Cirneco::Utils
 
-    attr_accessor :username, :password
-
     def register_url(options={})
       return OpenStruct.new(body: { "errors" => [{ "title" => "Username or password missing" }] }) unless options[:username].present? && options[:password].present?
 

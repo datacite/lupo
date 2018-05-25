@@ -82,11 +82,14 @@ describe Doi, type: :model, vcr: true do
   end
 
   describe "update_url" do
+    let(:token) { User.generate_token }
+    let(:current_user) { User.new(token) }
+
     context "draft doi" do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
       let(:client)  { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
-      subject { create(:doi, client: client, username: client.symbol.downcase, password: "12345") }
+      subject { create(:doi, client: client, current_user: current_user) }
 
       it "don't update state change" do
         expect { subject.start }.not_to have_enqueued_job(HandleJob)
@@ -103,7 +106,7 @@ describe Doi, type: :model, vcr: true do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
       let(:client)  { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
-      subject { create(:doi, client: client, username: client.symbol.downcase, password: "12345") }
+      subject { create(:doi, client: client, current_user: current_user) }
 
       it "update state change" do
         expect { subject.register }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
@@ -124,7 +127,7 @@ describe Doi, type: :model, vcr: true do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
       let(:client)  { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
-      subject { create(:doi, client: client, username: client.symbol.downcase, password: "12345") }
+      subject { create(:doi, client: client, current_user: current_user) }
 
       it "update state change" do
         expect { subject.publish }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
@@ -145,7 +148,7 @@ describe Doi, type: :model, vcr: true do
       let(:provider)  { create(:provider, symbol: "ETHZ") }
       let(:client)  { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
-      subject { create(:doi, client: client, username: client.symbol.downcase, password: "12345") }
+      subject { create(:doi, client: client, current_user: current_user) }
 
       it "don't update state change" do
         expect { subject.publish }.not_to have_enqueued_job(HandleJob)
@@ -162,7 +165,7 @@ describe Doi, type: :model, vcr: true do
       let(:provider)  { create(:provider, symbol: "EUROP") }
       let(:client)  { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
-      subject { create(:doi, client: client, username: client.symbol.downcase, password: "12345") }
+      subject { create(:doi, client: client, current_user: current_user) }
 
       it "don't update state change" do
         expect { subject.publish }.not_to have_enqueued_job(HandleJob)
@@ -175,11 +178,11 @@ describe Doi, type: :model, vcr: true do
       end
     end
 
-    context "no password" do
+    context "no current_user" do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
       let(:client)  { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
-      subject { create(:doi, client: client, username: client.symbol.downcase, password: nil) }
+      subject { create(:doi, client: client, current_user: nil) }
 
       it "don't update state change" do
         expect { subject.publish }.not_to have_enqueued_job(HandleJob)
@@ -196,7 +199,7 @@ describe Doi, type: :model, vcr: true do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
       let(:client)  { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
-      subject { create(:doi, client: client, username: client.symbol.downcase, url: nil, password: "12345") }
+      subject { create(:doi, client: client, url: nil, current_user: current_user) }
 
       it "don't update state change" do
         expect { subject.publish }.not_to have_enqueued_job(HandleJob)
