@@ -122,7 +122,12 @@ class Doi < ActiveRecord::Base
 
   def url=(value)
     # update url in handle system if url is present and has changed
-    update_url if value.present? && value != url && is_registered_or_findable?
+    if value.present? && value != url && password.present? && is_registered_or_findable? && !%w(europ ethz).include?(provider_id)
+      
+      HandleJob.perform_later(self, url: value,
+                                    username: username,
+                                    password: password)
+    end
 
     super(value)
   end
@@ -130,9 +135,9 @@ class Doi < ActiveRecord::Base
   # update URL in handle system for registered and findable state
   # providers europ and ethz do their own handle registration
   def update_url
-    return nil if url.blank? || password.blank? || %w(europ ethz).include?(provider_id)
-
     set_to_active if is_active == "\x00"
+
+    return nil if url.blank? || password.blank? || %w(europ ethz).include?(provider_id)
 
     HandleJob.perform_later(self, url: url,
                             username: username,
@@ -209,7 +214,8 @@ class Doi < ActiveRecord::Base
   # we need to use destroy_all to also delete has_many associations for metadata and media
   def self.delete_test_dois(from_date: nil)
     from_date ||= Time.zone.now - 1.month
-    Doi.where("updated <= ?", from_date).where("doi LIKE ?", "10.5072%").find_each { |d| d.destroy }
+    collection = Doi.where("updated >= ?", from_date).where("updated < ?", Time.zone.now - 15.minutes)
+    collection.where("doi LIKE ?", "10.5072%").find_each { |d| d.destroy }
   end
 
   # set minted date for DOIs that have been registered in an handle system (providers ETHZ and EUROP)
@@ -218,7 +224,8 @@ class Doi < ActiveRecord::Base
     ids = ENV['HANDLES_MINTED'].to_s.split(",")
     return nil unless ids.present?
 
-    Doi.where("datacentre in (SELECT id from datacentre where allocator IN (:ids))", ids: ids).where("updated >= ?", from_date).where(is_active: "\x01").where(minted: nil).update_all(("minted = updated"))
+    collection = Doi.where("datacentre in (SELECT id from datacentre where allocator IN (:ids))", ids: ids).where("updated >= ?", from_date).where("updated < ?", Time.zone.now - 15.minutes)
+    collection.where(is_active: "\x01").where(minted: nil).update_all(("minted = updated"))
   end
 
   # update metadata when any virtual attribute has changed

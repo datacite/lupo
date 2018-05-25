@@ -20,7 +20,7 @@ module Helpable
 
       response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: options[:username], password: options[:password])
 
-      if response.status == 200
+      if response.status == 201
         response
       else
         text = "Error " + response.body.dig("errors", 0, "status").to_s + " " + (response.body.dig("errors", 0, "title") || "unknown") + " for DOI " + doi + "."

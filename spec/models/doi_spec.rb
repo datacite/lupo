@@ -203,9 +203,9 @@ describe Doi, type: :model, vcr: true do
         expect(subject).to have_state(:findable)
       end
 
-      it "don't update url change" do
+      it "update url change" do
         subject.publish
-        expect { subject.url = url }.not_to have_enqueued_job(HandleJob)
+        expect { subject.url = url }.to have_enqueued_job(HandleJob)
       end
     end
   end
