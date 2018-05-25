@@ -123,10 +123,12 @@ class Doi < ActiveRecord::Base
   def url=(value)
     # update url in handle system if url is present and has changed
     if value.present? && value != url && password.present? && is_registered_or_findable? && !%w(europ ethz).include?(provider_id)
+
+      register_url(url: url, username: username, password: password)
       
-      HandleJob.perform_later(self, url: value,
-                                    username: username,
-                                    password: password)
+      # HandleJob.perform_later(self, url: value,
+      #                               username: username,
+      #                               password: password)
     end
 
     super(value)
@@ -139,9 +141,11 @@ class Doi < ActiveRecord::Base
 
     return nil if url.blank? || password.blank? || %w(europ ethz).include?(provider_id)
 
-    HandleJob.perform_later(self, url: url,
-                            username: username,
-                            password: password)
+    register_url(url: url, username: username, password: password)
+
+    # HandleJob.perform_later(self, url: url,
+    #                         username: username,
+    #                         password: password)
   end
 
   # attributes to be sent to elasticsearch index
