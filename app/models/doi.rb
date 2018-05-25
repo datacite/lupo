@@ -124,7 +124,7 @@ class Doi < ActiveRecord::Base
     # update url in handle system if url is present and has changed
     if value.present? && value != url && password.present? && is_registered_or_findable? && !%w(europ ethz).include?(provider_id)
 
-      register_url(url: url, username: username, password: password)
+      register_url(url: value, username: username, password: password)
       
       # HandleJob.perform_later(self, url: value,
       #                               username: username,
