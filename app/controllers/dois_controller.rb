@@ -158,7 +158,7 @@ class DoisController < ApplicationController
     fail ActiveRecord::RecordNotFound unless @doi.present?
 
     # capture username and password for client_admins for reuse in the handle system
-    @doi.current_user = current_user if current_user.role_id == "client_admin"
+    @doi.current_user = current_user if current_user && current_user.role_id == "client_admin"
   end
 
   def set_include
