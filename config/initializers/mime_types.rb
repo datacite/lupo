@@ -29,20 +29,18 @@ Mime::Type.register "text/x-bibliography", :citation
 ActionController::Renderers.add :datacite do |obj, options|
   uri = Addressable::URI.parse(obj.identifier)
   data = obj.xml
-  fail AbstractController::ActionNotFound unless data.present?
 
   filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
-  send_data data, type: Mime[:datacite],
+  send_data data.to_s, type: Mime[:datacite],
     disposition: "attachment; filename=#{filename}.xml"
 end
 
 %w(datacite_json schema_org crosscite turtle citeproc codemeta).each do |f|
   ActionController::Renderers.add f.to_sym do |obj, options|
     data = obj.send(f)
-    fail AbstractController::ActionNotFound unless data.present?
 
     self.content_type ||= Mime[f.to_sym]
-    self.response_body = data
+    self.response_body = data.to_s
   end
 end
 
@@ -51,10 +49,9 @@ end
   ActionController::Renderers.add f.to_sym do |obj, options|
     uri = Addressable::URI.parse(obj.identifier)
     data = obj.send(f)
-    fail AbstractController::ActionNotFound unless data.present?
 
     filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
-    send_data data, type: Mime[f.to_sym],
+    send_data data.to_s, type: Mime[f.to_sym],
       disposition: "attachment; filename=#{filename}.xml"
   end
 end
@@ -62,19 +59,17 @@ end
 ActionController::Renderers.add :bibtex do |obj, options|
   uri = Addressable::URI.parse(obj.identifier)
   data = obj.send("bibtex")
-  fail AbstractController::ActionNotFound unless data.present?
 
   filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
-  send_data data, type: Mime[:bibtex],
+  send_data data.to_s, type: Mime[:bibtex],
     disposition: "attachment; filename=#{filename}.bib"
 end
 
 ActionController::Renderers.add :ris do |obj, options|
   uri = Addressable::URI.parse(obj.identifier)
   data = obj.send("ris")
-  fail AbstractController::ActionNotFound unless data.present?
 
   filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
-  send_data data, type: Mime[:ris],
+  send_data data.to_s, type: Mime[:ris],
     disposition: "attachment; filename=#{filename}.ris"
 end

@@ -51,6 +51,20 @@ describe "content_negotation", type: :request do
     end
   end
 
+  context "no metadata" do
+    let(:doi) { create(:doi, xml: nil) }
+
+    before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml" } }
+
+    it 'returns the Doi' do
+      expect(response.body).to eq('')
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
   context "application/vnd.datacite.datacite+xml not found" do
     before { get "/xxx", headers: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml" } }
 
