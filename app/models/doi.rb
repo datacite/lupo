@@ -212,11 +212,11 @@ class Doi < ActiveRecord::Base
     Bugsnag.notify(exception)
   end
 
-  # delete all DOIs with test prefix 10.5072 older than from_date
+  # delete all DOIs with test prefix 10.5072 not updated since from_date
   # we need to use destroy_all to also delete has_many associations for metadata and media
   def self.delete_test_dois(from_date: nil)
     from_date ||= Time.zone.now - 1.month
-    collection = Doi.where("updated >= ?", from_date).where("updated < ?", Time.zone.now - 15.minutes)
+    collection = Doi.where("updated < ?", from_date)
     collection.where("doi LIKE ?", "10.5072%").find_each { |d| d.destroy }
   end
 
