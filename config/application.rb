@@ -95,12 +95,5 @@ module Lupo
     config.generators do |g|
       g.fixture_replacement :factory_bot
     end
-
-    config.middleware.insert_before 0, Rack::Cors do
-      allow do
-        origins '*'
-        resource '*', :headers => :any, :methods => [:head, :get, :post, :put, :patch, :delete, :options]
-      end
-    end
   end
 end
