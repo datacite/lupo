@@ -92,7 +92,7 @@ GEM
       latex-decode (~> 0.0)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
-    bolognese (0.10.18)
+    bolognese (0.10.19)
       activesupport (>= 4.2.5, < 6)
       benchmark_methods (~> 0.7)
       bibtex-ruby (~> 4.1)
@@ -187,7 +187,7 @@ GEM
       faraday
     faraday_middleware (0.10.1)
       faraday (>= 0.7.4, < 1.0)
-    ffi (1.9.23)
+    ffi (1.9.25)
     flipper (0.11.0)
     flipper-active_support_cache_store (0.11.0)
       activesupport (>= 3.2, < 6)
@@ -424,7 +424,7 @@ GEM
     unf_ext (0.0.7.5)
     unicode_utils (1.4.0)
     vcr (3.0.3)
-    webmock (3.4.1)
+    webmock (3.4.2)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff
