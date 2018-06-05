@@ -113,7 +113,7 @@ describe "reset", type: :request, vcr: true do
 
     before { post '/reset', params: params, headers: nil }
 
-    it 'sends an email' do
+    it 'sends a message' do
       expect(json["message"]).to eq("Queued. Thank you.")
     end
 
@@ -127,12 +127,12 @@ describe "reset", type: :request, vcr: true do
 
     before { post '/reset', params: params, headers: nil }
 
-    it 'sends an email' do
+    it 'sends a message' do
       expect(json["message"]).to eq("Account not found.")
     end
 
     it 'returns status code 404' do
-      expect(response).to have_http_status(404)
+      expect(response).to have_http_status(200)
     end
   end
 
@@ -141,12 +141,12 @@ describe "reset", type: :request, vcr: true do
 
     before { post '/reset', params: params, headers: nil }
 
-    it 'sends an email' do
+    it 'sends a message' do
       expect(json["message"]).to eq("Missing account ID.")
     end
 
     it 'returns status code 404' do
-      expect(response).to have_http_status(404)
+      expect(response).to have_http_status(200)
     end
   end
 end

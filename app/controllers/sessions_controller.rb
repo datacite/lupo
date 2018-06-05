@@ -17,7 +17,7 @@ class SessionsController < ApplicationController
   def reset
     if safe_params[:username].blank?
       message = "Missing account ID."
-      status = 404
+      status = :ok
     else
       response = User.reset(safe_params[:username])
       if response.present?
@@ -25,7 +25,7 @@ class SessionsController < ApplicationController
         status = response[:status]
       else
         message = "Account not found."
-        status = 404
+        status = :ok
       end
     end
 
