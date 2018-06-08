@@ -106,10 +106,11 @@ describe Doi, type: :model, vcr: true do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
       let(:client)  { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
-      subject { create(:doi, client: client, current_user: current_user) }
+      subject { build(:doi, client: client, current_user: current_user) }
 
       it "update state change" do
-        expect { subject.register }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
+        subject.register
+        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
           expect(doi.url).to eq(subject.url)
         }
         expect(subject).to have_state(:registered)
@@ -117,7 +118,8 @@ describe Doi, type: :model, vcr: true do
 
       it "update url change" do
         subject.register
-        expect { subject.url = url }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
+        subject.url = url
+        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
           expect(subject.url).to eq(url)
         }
       end
@@ -127,10 +129,11 @@ describe Doi, type: :model, vcr: true do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
       let(:client)  { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
-      subject { create(:doi, client: client, current_user: current_user) }
+      subject { build(:doi, client: client, current_user: current_user) }
 
       it "update state change" do
-        expect { subject.publish }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
+        subject.publish
+        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
           expect(doi.url).to eq(subject.url)
         }
         expect(subject).to have_state(:findable)
@@ -138,7 +141,8 @@ describe Doi, type: :model, vcr: true do
 
       it "update url change" do
         subject.publish
-        expect { subject.url = url }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
+        subject.url = url
+        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
           expect(subject.url).to eq(url)
         }
       end
@@ -199,16 +203,18 @@ describe Doi, type: :model, vcr: true do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
       let(:client)  { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
-      subject { create(:doi, client: client, url: nil, current_user: current_user) }
+      subject { build(:doi, client: client, url: nil, current_user: current_user) }
 
       it "don't update state change" do
-        expect { subject.publish }.not_to have_enqueued_job(HandleJob)
+        subject.publish
+        expect { subject.save }.not_to have_enqueued_job(HandleJob)
         expect(subject).to have_state(:findable)
       end
 
       it "update url change" do
         subject.publish
-        expect { subject.url = url }.to have_enqueued_job(HandleJob)
+        subject.url = url
+        expect { subject.save }.to have_enqueued_job(HandleJob)
       end
     end
   end

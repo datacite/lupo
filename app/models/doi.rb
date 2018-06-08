@@ -29,13 +29,13 @@ class Doi < ActiveRecord::Base
 
     event :register do
       # can't register test prefix
-      transitions :from => [:undetermined, :draft], :to => :registered, :unless => :is_test_prefix?, :after => Proc.new { update_url }
+      transitions :from => [:undetermined, :draft], :to => :registered, :unless => :is_test_prefix?, :after => Proc.new { set_to_active }
       transitions :from => :undetermined, :to => :draft, :after => Proc.new { set_to_inactive }
     end
 
     event :publish do
       # can't index test prefix
-      transitions :from => [:undetermined, :draft], :to => :findable, :unless => :is_test_prefix?, :after => Proc.new { update_url }
+      transitions :from => [:undetermined, :draft], :to => :findable, :unless => :is_test_prefix?, :after => Proc.new { set_to_active }
       transitions :from => :registered, :to => :findable, :after => Proc.new { set_to_active }
       transitions :from => :undetermined, :to => :draft, :after => Proc.new { set_to_inactive }
     end
@@ -81,6 +81,7 @@ class Doi < ActiveRecord::Base
   before_destroy :update_doi_count
   after_create :update_doi_count
   after_update :update_doi_count, if: :saved_change_to_datacentre?
+  after_save :update_url, if: :is_registered_or_findable?
 
   before_save :set_defaults, :update_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
@@ -122,23 +123,21 @@ class Doi < ActiveRecord::Base
     %w(registered findable).include?(aasm_state)
   end
 
-  def url=(value)
-    # update url in handle system if url is present and has changed
-    if value.present? && value != url && current_user.present? && is_registered_or_findable? && !%w(europ ethz).include?(provider_id)
+  # def url=(value)
+  #   # update url in handle system if url is present and has changed
+  #   if value.present? && value != url && current_user.present? && is_registered_or_findable? && !%w(europ ethz).include?(provider_id)
 
-      HandleJob.perform_later(self, url: value,
-                                    username: current_user.uid,
-                                    password: current_user.password)
-    end
+  #     HandleJob.perform_later(self, url: value,
+  #                                   username: current_user.uid,
+  #                                   password: current_user.password)
+  #   end
 
-    super(value)
-  end
+  #   super(value)
+  # end
 
   # update URL in handle system for registered and findable state
   # providers europ and ethz do their own handle registration
   def update_url
-    set_to_active if is_active == "\x00"
-
     return nil if url.blank? || current_user.blank? || %w(europ ethz).include?(provider_id)
 
     HandleJob.perform_later(self, url: url,
