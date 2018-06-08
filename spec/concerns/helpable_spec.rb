@@ -70,7 +70,7 @@ describe Doi, vcr: true do
 
     it 'should register' do
       url = "https://blog.datacite.org/"
-      options = { url: url, username: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'] }
+      options = { url: url, username: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], role_id: "client_admin" }
       expect(subject.register_url(options).body).to eq("data"=>"OK")
 
       expect(subject.get_url(options).body).to eq("data" => url)
@@ -78,7 +78,7 @@ describe Doi, vcr: true do
 
     it 'should change url' do
       url = "https://blog.datacite.org/re3data-science-europe/"
-      options = { url: url, username: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'] }
+      options = { url: url, username: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], role_id: "client_admin" }
       expect(subject.register_url(options).body).to eq("data"=>"OK")
 
       expect(subject.get_url(options).body).to eq("data" => url)
@@ -86,11 +86,11 @@ describe Doi, vcr: true do
 
     it 'missing username and password' do
       options = { url: "https://blog.datacite.org/re3data-science-europe/" }
-      expect(subject.register_url(options).body).to eq("errors"=>[{"title"=>"Username or password missing"}])
+      expect(subject.register_url(options).body).to eq("errors"=>[{"title"=>"Username or password missing."}])
     end
 
     it 'wrong username and password' do
-      options = { url: "https://blog.datacite.org/re3data-science-europe/", username: ENV['MDS_USERNAME'], password: 12345 }
+      options = { url: "https://blog.datacite.org/re3data-science-europe/", username: ENV['MDS_USERNAME'], password: 12345, role_id: "client_admin" }
       expect(subject.register_url(options).body).to eq("errors"=>[{"status"=>401, "title"=>"Unauthorized"}])
     end
   end

@@ -10,7 +10,16 @@ module Helpable
     include Cirneco::Utils
 
     def register_url(options={})
-      return OpenStruct.new(body: { "errors" => [{ "title" => "Username or password missing" }] }) unless options[:username].present? && options[:password].present?
+      unless options[:username].present? && options[:password].present?
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": Username or password missing."
+        return OpenStruct.new(body: { "errors" => [{ "title" => "Username or password missing." }] })
+      end
+
+      unless options[:role_id] == "client_admin"
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": User does not have permission to register handle."
+        return OpenStruct.new(body: { "errors" => [{ "title" => "User does not have permission to register handle." }] })
+      end
+
 
       payload = "doi=#{doi}\nurl=#{options[:url]}"
       mds_url = Rails.env.production? ? 'https://mds.datacite.org' : 'https://mds.test.datacite.org' 
@@ -22,12 +31,7 @@ module Helpable
         Rails.logger.info "[Handle] Updated " + doi + " with " + options[:url] + "."
         response
       else
-        text = "Error " + response.body.dig("errors", 0, "status").to_s + " " + (response.body.dig("errors", 0, "title") || "unknown") + " for DOI " + doi + "."
-        title = "Error updating DOI " + doi
-        
-        Rails.logger.error "[Handle] " + title
-        Rails.logger.error text
-
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + (response.body.dig("errors", 0, "title") || "unknown")
         response
       end
     end

@@ -140,9 +140,10 @@ class Doi < ActiveRecord::Base
   # providers europ and ethz do their own handle registration
   # only role client_admin can update handle
   def update_url
-    return nil if current_user.nil? || current_user.role_id != "client_admin" || %w(europ ethz).include?(provider_id)
+    return nil if current_user.nil? || %w(europ ethz).include?(provider_id)
 
     HandleJob.perform_later(self, url: url,
+                                  role_id: current_user.role_id,
                                   username: current_user.uid,
                                   password: current_user.password)
   end
