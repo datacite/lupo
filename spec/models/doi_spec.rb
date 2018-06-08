@@ -89,16 +89,18 @@ describe Doi, type: :model, vcr: true do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
       let(:client)  { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
-      subject { create(:doi, client: client, current_user: current_user) }
+      subject { build(:doi, client: client, current_user: current_user) }
 
       it "don't update state change" do
-        expect { subject.start }.not_to have_enqueued_job(HandleJob)
+        subject.start
+        expect { subject.save }.not_to have_enqueued_job(HandleJob)
         expect(subject).to have_state(:draft)
       end
 
       it "don't update url change" do
         subject.start
-        expect { subject.url = url }.not_to have_enqueued_job(HandleJob)
+        subject.url = url
+        expect { subject.save }.not_to have_enqueued_job(HandleJob)
       end
     end
 
@@ -152,16 +154,18 @@ describe Doi, type: :model, vcr: true do
       let(:provider)  { create(:provider, symbol: "ETHZ") }
       let(:client)  { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
-      subject { create(:doi, client: client, current_user: current_user) }
+      subject { build(:doi, client: client, current_user: current_user) }
 
       it "don't update state change" do
-        expect { subject.publish }.not_to have_enqueued_job(HandleJob)
+        subject.publish
+        expect { subject.save }.not_to have_enqueued_job(HandleJob)
         expect(subject).to have_state(:findable)
       end
 
       it "don't update url change" do
         subject.publish
-        expect { subject.url = url }.not_to have_enqueued_job(HandleJob)
+        subject.url = url
+        expect { subject.save }.not_to have_enqueued_job(HandleJob)
       end
     end
 
@@ -169,16 +173,18 @@ describe Doi, type: :model, vcr: true do
       let(:provider)  { create(:provider, symbol: "EUROP") }
       let(:client)  { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
-      subject { create(:doi, client: client, current_user: current_user) }
+      subject { build(:doi, client: client, current_user: current_user) }
 
       it "don't update state change" do
-        expect { subject.publish }.not_to have_enqueued_job(HandleJob)
+        subject.publish
+        expect { subject.save }.not_to have_enqueued_job(HandleJob)
         expect(subject).to have_state(:findable)
       end
 
       it "don't update url change" do
         subject.publish
-        expect { subject.url = url }.not_to have_enqueued_job(HandleJob)
+        subject.url = url
+        expect { subject.save }.not_to have_enqueued_job(HandleJob)
       end
     end
 
@@ -186,16 +192,18 @@ describe Doi, type: :model, vcr: true do
       let(:provider)  { create(:provider, symbol: "ADMIN") }
       let(:client)  { create(:client, provider: provider) }
       let(:url) { "https://www.example.org" }
-      subject { create(:doi, client: client, current_user: nil) }
+      subject { build(:doi, client: client, current_user: nil) }
 
       it "don't update state change" do
-        expect { subject.publish }.not_to have_enqueued_job(HandleJob)
+        subject.publish
+        expect { subject.save }.not_to have_enqueued_job(HandleJob)
         expect(subject).to have_state(:findable)
       end
 
       it "don't update url change" do
         subject.publish
-        expect { subject.url = url }.not_to have_enqueued_job(HandleJob)
+        subject.url = url
+        expect { subject.save }.not_to have_enqueued_job(HandleJob)
       end
     end
 
