@@ -20,6 +20,10 @@ module Helpable
         return OpenStruct.new(body: { "errors" => [{ "title" => "User does not have permission to register handle." }] })
       end
 
+      unless is_registered_or_findable?
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": DOI is not registered or findable."
+        return OpenStruct.new(body: { "errors" => [{ "title" => "DOI is not registered or findable." }] })
+      end
 
       payload = "doi=#{doi}\nurl=#{options[:url]}"
       mds_url = Rails.env.production? ? 'https://mds.datacite.org' : 'https://mds.test.datacite.org' 

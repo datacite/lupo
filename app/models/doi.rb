@@ -82,7 +82,7 @@ class Doi < ActiveRecord::Base
   before_destroy :update_doi_count
   after_create :update_doi_count
   after_update :update_doi_count, if: :saved_change_to_datacentre?
-  after_save :update_url, if: :is_registered_or_findable?
+  after_save :update_url
 
   before_save :set_defaults, :update_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
@@ -121,7 +121,7 @@ class Doi < ActiveRecord::Base
   end
 
   def is_registered_or_findable?
-    aasm_state != "draft"
+    %w(registered findable).include?(aasm_state)
   end
 
   # update URL in handle system for registered and findable state

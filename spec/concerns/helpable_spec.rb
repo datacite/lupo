@@ -66,7 +66,7 @@ describe Doi, vcr: true do
     let(:bearer) { User.generate_token(role_id: "staff_admin") }
     let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
 
-    subject { build(:doi, doi: "10.5438/mcnv-ga6n", client: client) }
+    subject { build(:doi, doi: "10.5438/mcnv-ga6n", client: client, aasm_state: "findable") }
 
     it 'should register' do
       url = "https://blog.datacite.org/"
@@ -82,6 +82,13 @@ describe Doi, vcr: true do
       expect(subject.register_url(options).body).to eq("data"=>"OK")
 
       expect(subject.get_url(options).body).to eq("data" => url)
+    end
+
+    it 'draft doi' do
+      subject = build(:doi, doi: "10.5438/mcnv-ga6n", client: client, aasm_state: "draft")
+      url = "https://blog.datacite.org/"
+      options = { url: url, username: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], role_id: "client_admin" }
+      expect(subject.register_url(options).body).to eq("errors"=>[{"title"=>"DOI is not registered or findable."}])
     end
 
     it 'missing username and password' do
