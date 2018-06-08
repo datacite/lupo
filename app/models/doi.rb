@@ -121,20 +121,8 @@ class Doi < ActiveRecord::Base
   end
 
   def is_registered_or_findable?
-    %w(registered findable).include?(aasm_state)
+    aasm_state != "draft"
   end
-
-  # def url=(value)
-  #   # update url in handle system if url is present and has changed
-  #   if value.present? && value != url && current_user.present? && is_registered_or_findable? && !%w(europ ethz).include?(provider_id)
-
-  #     HandleJob.perform_later(self, url: value,
-  #                                   username: current_user.uid,
-  #                                   password: current_user.password)
-  #   end
-
-  #   super(value)
-  # end
 
   # update URL in handle system for registered and findable state
   # providers europ and ethz do their own handle registration
