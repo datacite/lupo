@@ -48,6 +48,9 @@ describe "dois", type: :request do
   end
 
   describe 'PATCH /dois/:id' do
+    let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }
+    let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
+
     before(:each) do
       Rails.cache.clear
     end
@@ -645,6 +648,9 @@ describe "dois", type: :request do
     end
 
     describe 'POST /dois/validate' do
+      let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }
+      let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
+
       context 'validates' do
         let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('datacite.xml'))) }
         let(:params) do

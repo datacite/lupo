@@ -82,7 +82,7 @@ describe Doi, type: :model, vcr: true do
   end
 
   describe "update_url" do
-    let(:token) { User.generate_token }
+    let(:token) { User.generate_token(role_id: "client_admin") }
     let(:current_user) { User.new(token) }
 
     context "draft doi" do

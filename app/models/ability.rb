@@ -4,6 +4,8 @@ class Ability
   attr_reader :user
 
   def initialize(user)
+    alias_action :create, :read, :update, :destroy, to: :crud
+
     user ||= User.new(nil) # Guest user
     @user = user
 
