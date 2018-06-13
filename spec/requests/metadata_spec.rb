@@ -7,11 +7,11 @@ describe "Metadata", type: :request  do
   let(:xml) { file_fixture('datacite.xml').read }
   let!(:metadatas)  { create_list(:metadata, 5, doi: doi, xml: xml) }
   let!(:metadata) { create(:metadata, doi: doi, xml: xml) }
-  let(:bearer) { User.generate_token(role_id: "staff_admin") }
+  let(:bearer) { User.generate_token(role_id: "client_admin", provider_id: provider.symbol.downcase, client_id: client.symbol.downcase) }
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
 
-  describe 'GET /metadata' do
-    before { get '/metadata', headers: headers }
+  describe 'GET /dois/DOI/metadata' do
+    before { get "/dois/#{doi.doi}/metadata", headers: headers }
 
     it 'returns Metadata' do
       expect(json).not_to be_empty
@@ -23,8 +23,8 @@ describe "Metadata", type: :request  do
     end
   end
 
-  describe 'GET /metadata/:id' do
-    before { get "/metadata/#{metadata.uid}", headers: headers }
+  describe 'GET /dois/DOI/metadata/:id' do
+    before { get "/dois/#{doi.doi}/metadata/#{metadata.uid}", headers: headers }
 
     context 'when the record exists' do
       it 'returns the Metadata' do
@@ -38,7 +38,7 @@ describe "Metadata", type: :request  do
     end
 
     context 'when the record does not exist' do
-      before { get "/metadata/xxxx", headers: headers }
+      before { get "/dois/#{doi.doi}/metadata/xxxx", headers: headers }
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
@@ -58,19 +58,11 @@ describe "Metadata", type: :request  do
             "type" => "metadata",
             "attributes"=> {
         			"xml"=> Base64.strict_encode64(xml)
-        		},
-            "relationships"=>  {
-              "doi"=>  {
-                "data"=> {
-                  "type"=> "dois",
-                  "id"=> doi.doi
-                }
-              }
-            }
+        		}
           }
         }
       end
-      before { post '/metadata', params: valid_attributes.to_json, headers: headers }
+      before { post "/dois/#{doi.doi}/metadata", params: valid_attributes.to_json, headers: headers }
 
       it 'creates a metadata record' do
         expect(Base64.decode64(json.dig('data', 'attributes', 'xml'))).to eq(xml)
@@ -82,26 +74,23 @@ describe "Metadata", type: :request  do
       end
     end
 
-    context 'when the doi is missing' do
+    context 'when the xml is missing' do
       # missing doi
       let(:not_valid_attributes) do
         {
           "data" => {
-            "type" => "metadata",
-            "attributes"=> {
-        			"xml"=> Base64.strict_encode64(xml)
-        		}
+            "type" => "metadata"
           }
         }
       end
-      before { post '/metadata', params: not_valid_attributes.to_json, headers: headers }
+      before { post "/dois/#{doi.doi}/metadata", params: not_valid_attributes.to_json, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"]).to eq([{"source"=>"doi", "title"=>"Must exist"}])
+        expect(json["errors"]).to eq([{"source"=>"xml", "title"=>"Can't be blank"}])
       end
     end
 
@@ -126,7 +115,7 @@ describe "Metadata", type: :request  do
           }
         }
       end
-      before { post '/metadata', params: valid_attributes.to_json, headers: headers }
+      before { post "/dois/#{doi.doi}/metadata", params: valid_attributes.to_json, headers: headers }
 
       it 'returns status code 201' do
         expect(response).to have_http_status(201)
@@ -172,8 +161,8 @@ describe "Metadata", type: :request  do
     # end
   end
 
-  describe 'DELETE /metadata/:id' do
-    before { delete "/metadata/#{metadata.uid}", headers: headers }
+  describe 'DELETE /dois/DOI/metadata/:id' do
+    before { delete "/dois/#{doi.doi}/metadata/#{metadata.uid}", headers: headers }
 
     context 'when the resources does exist' do
       it 'returns status code 204' do
@@ -182,7 +171,7 @@ describe "Metadata", type: :request  do
     end
 
     context 'when the resources doesnt exist' do
-      before { delete '/metadata/xxx',  headers: headers }
+      before { delete "/dois/#{doi.doi}/metadata/xxx",  headers: headers }
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)

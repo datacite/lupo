@@ -1,23 +1,12 @@
 class MediaController < ApplicationController
+  before_action :set_doi
   before_action :set_media, only: [:show, :update, :destroy]
   before_action :set_include
   before_action :authenticate_user!
-  load_and_authorize_resource :except => [:index, :show]
 
   def index
-    if params[:doi_id].present?
-      doi = Doi.where(doi: params[:doi_id]).first
-      if doi.present?
-        collection = doi.media
-        total = doi.cached_media_count.reduce(0) { |sum, d| sum + d[:count].to_i }
-      else
-        collection = Media.none
-        total = 0
-      end
-    else
-      collection = Media.joins(:doi)
-      total = Media.cached_media_count.reduce(0) { |sum, d| sum + d[:count].to_i }
-    end
+    collection = @doi.media
+    total = @doi.cached_media_count.reduce(0) { |sum, d| sum + d[:count].to_i }
 
     page = params[:page] || {}
     page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
@@ -45,8 +34,9 @@ class MediaController < ApplicationController
   end
 
   def create
-    @media = Media.new(safe_params)
-    authorize! :create, @media
+    authorize! :update, @doi
+
+    @media = Media.new(safe_params.merge(doi: @doi))
 
     if @media.save
       render jsonapi: @media, status: :created
@@ -57,7 +47,9 @@ class MediaController < ApplicationController
   end
 
   def update
-    if @media.update_attributes(safe_params)
+    authorize! :update, @doi
+
+    if @media.update_attributes(safe_params.merge(doi: @doi))
       render jsonapi: @media
     else
       Rails.logger.warn @media.errors.inspect
@@ -66,7 +58,9 @@ class MediaController < ApplicationController
   end
 
   def destroy
-    if @media.doi.draft?
+    authorize! :update, @doi
+
+    if @doi.draft?
       if @media.destroy
         head :no_content
       else
@@ -80,6 +74,11 @@ class MediaController < ApplicationController
   end
 
   protected
+
+  def set_doi
+    @doi = Doi.where(doi: params[:doi_id]).first
+    fail ActiveRecord::RecordNotFound unless @doi.present?
+  end
 
   def set_media
     id = Base32::URL.decode(URI.decode(params[:id]))
@@ -103,7 +102,7 @@ class MediaController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: ["media-type", :url, :doi],
+      params, only: ["media-type", :url],
               keys: { "media-type" => :media_type }
     )
   end

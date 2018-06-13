@@ -32,13 +32,11 @@ Rails.application.routes.draw do
 
   resources :client_prefixes, path: 'client-prefixes'
   resources :dois, constraints: { :id => /.+/ } do
-    resources :metadata, shallow: true
-    resources :media, shallow: true
+    resources :metadata
+    resources :media
   end
   resources :prefixes, constraints: { :id => /.+/ }
   resources :provider_prefixes, path: 'provider-prefixes'
-  resources :metadata
-  resources :media
   resources :random, only: [:index]
 
   resources :providers do

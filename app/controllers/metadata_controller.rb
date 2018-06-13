@@ -1,18 +1,15 @@
 class MetadataController < ApplicationController
+  before_action :set_doi
   before_action :set_metadata, only: [:show, :destroy]
   before_action :set_include
   before_action :authenticate_user!
-  load_and_authorize_resource :except => [:index, :show]
 
   def index
-    if params[:doi_id].present?
-      doi = Doi.where(doi: params[:doi_id]).first
-      collection = doi.present? ? doi.metadata : Metadata.none
-      total = doi.cached_metadata_count.reduce(0) { |sum, d| sum + d[:count].to_i }
-    else
-      collection = Metadata.joins(:doi)
-      total = Metadata.cached_metadata_count.reduce(0) { |sum, d| sum + d[:count].to_i }
-    end
+    @doi = Doi.where(doi: params[:doi_id]).first
+    fail ActiveRecord::RecordNotFound unless @doi.present?
+
+    collection = @doi.metadata
+    total = @doi.cached_metadata_count.reduce(0) { |sum, d| sum + d[:count].to_i }
 
     page = params[:page] || {}
     page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
@@ -40,9 +37,11 @@ class MetadataController < ApplicationController
   end
 
   def create
+    authorize! :update, @doi
+
     # convert back to plain xml
-    @metadata = Metadata.new(safe_params.merge(xml: Base64.decode64(safe_params[:xml])))
-    authorize! :create, @metadata
+    xml = safe_params[:xml].present? ? Base64.decode64(safe_params[:xml]) : nil
+    @metadata = Metadata.new(safe_params.merge(doi: @doi, xml: xml))
 
     if @metadata.save
       render jsonapi: @metadata, status: :created
@@ -53,7 +52,9 @@ class MetadataController < ApplicationController
   end
 
   def destroy
-    if @metadata.doi.draft?
+    authorize! :update, @doi
+
+    if @doi.draft?
       if @metadata.destroy
         head :no_content
       else
@@ -67,6 +68,11 @@ class MetadataController < ApplicationController
   end
 
   protected
+
+  def set_doi
+    @doi = Doi.where(doi: params[:doi_id]).first
+    fail ActiveRecord::RecordNotFound unless @doi.present?
+  end
 
   def set_metadata
     id = Base32::URL.decode(URI.decode(params[:id]))
@@ -91,7 +97,7 @@ class MetadataController < ApplicationController
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:xml, :doi]
+      params, only: [:xml]
     )
   end
 end

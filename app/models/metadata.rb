@@ -10,6 +10,7 @@ class Metadata < ActiveRecord::Base
   validate :metadata_must_be_valid
 
   belongs_to :doi, foreign_key: :dataset
+  delegate :client, to: :doi
 
   before_validation :set_metadata_version, :set_namespace
   before_create { self.created = Time.zone.now.utc.iso8601 }
@@ -27,6 +28,13 @@ class Metadata < ActiveRecord::Base
     fail ActiveRecord::RecordNotFound unless r.present?
 
     write_attribute(:dataset, r.id)
+  end
+
+  def client_id
+    client.symbol.downcase
+  end
+
+  def client_id=(value)
   end
 
   def metadata_must_be_valid

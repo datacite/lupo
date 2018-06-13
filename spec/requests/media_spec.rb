@@ -6,26 +6,13 @@ describe "Media", type: :request, :order => :defined do
   let(:doi) { create(:doi, client: client) }
   let!(:medias)  { create_list(:media, 5, doi: doi) }
   let!(:media) { create(:media, doi: doi) }
-  let(:bearer) { User.generate_token(role_id: "staff_admin") }
+  let(:bearer) { User.generate_token(role_id: "client_admin", provider_id: provider.symbol.downcase, client_id: client.symbol.downcase) }
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
   let(:media_type) { "application/xml" }
   let(:url) { "https://example.org" }
 
-  describe 'GET /media' do
-    before { get '/media', headers: headers }
-
-    it 'returns media' do
-      expect(json).not_to be_empty
-      expect(json['data'].size).to eq(6)
-    end
-
-    it 'returns status code 200' do
-      expect(response).to have_http_status(200)
-    end
-  end
-
-  describe 'GET /media query by doi' do
-    before { get "/media?doi-id=#{doi.doi}", headers: headers }
+  describe 'GET /dois/DOI/media' do
+    before { get "/dois/#{doi.doi}/media", headers: headers }
 
     it 'returns media' do
       expect(json).not_to be_empty
@@ -38,20 +25,20 @@ describe "Media", type: :request, :order => :defined do
   end
 
   describe 'GET /media query by doi not found' do
-    before { get "/media?doi-id=xxx", headers: headers }
+    before { get "/dois/xxx/media", headers: headers }
 
     it 'returns media' do
       expect(json).not_to be_empty
-      expect(json['data'].size).to eq(0)
+      expect(json["errors"]).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
     end
 
-    it 'returns status code 200' do
-      expect(response).to have_http_status(200)
+    it 'returns status code 404' do
+      expect(response).to have_http_status(404)
     end
   end
 
-  describe 'GET /media/:id' do
-    before { get "/media/#{media.uid}", headers: headers }
+  describe 'GET /dois/DOI/media/:id' do
+    before { get "/dois/#{doi.doi}/media/#{media.uid}", headers: headers }
 
     context 'when the record exists' do
       it 'returns the media' do
@@ -65,7 +52,7 @@ describe "Media", type: :request, :order => :defined do
     end
 
     context 'when the record does not exist' do
-      before { get "/media/xxxx", headers: headers }
+      before { get "/dois/#{doi.doi}/media/xxxx", headers: headers }
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
@@ -86,19 +73,11 @@ describe "Media", type: :request, :order => :defined do
             "attributes"=> {
         			"media-type" => media_type,
               "url" => url
-        		},
-            "relationships"=>  {
-              "doi"=>  {
-                "data"=> {
-                  "type"=> "dois",
-                  "id"=> doi.doi
-                }
-              }
-            }
+        		}
           }
         }
       end
-      before { post '/media', params: valid_attributes.to_json, headers: headers }
+      before { post "/dois/#{doi.doi}/media", params: valid_attributes.to_json, headers: headers }
 
       it 'creates a media record' do
         expect(json.dig('data', 'attributes', 'media-type')).to eq(media_type)
@@ -110,27 +89,26 @@ describe "Media", type: :request, :order => :defined do
       end
     end
 
-    context 'when the doi is missing' do
-      # missing doi
+    context 'when the media-type is missing' do
       let(:not_valid_attributes) do
         {
           "data" => {
             "type" => "media",
             "attributes"=> {
-        			"media-type" => media_type,
+        			"media-type" => nil,
               "url" => url
         		}
           }
         }
       end
-      before { post '/media', params: not_valid_attributes.to_json, headers: headers }
+      before { post "/dois/#{doi.doi}/media", params: not_valid_attributes.to_json, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"]).to eq([{"source"=>"doi", "title"=>"Must exist"}])
+        expect(json["errors"]).to eq([{"source"=>"media_type", "title"=>"Can't be blank"}])
       end
     end
 
@@ -156,7 +134,7 @@ describe "Media", type: :request, :order => :defined do
           }
         }
       end
-      before { post '/media', params: valid_attributes.to_json, headers: headers }
+      before { post "/dois/#{doi.doi}/media", params: valid_attributes.to_json, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -168,7 +146,7 @@ describe "Media", type: :request, :order => :defined do
     end
   end
 
-  describe 'PATCH /media/:id' do
+  describe 'PATCH /dois/DOI/media/:id' do
     context 'when the request is valid' do
       let(:valid_attributes) do
         {
@@ -190,7 +168,7 @@ describe "Media", type: :request, :order => :defined do
         }
       end
 
-      before { patch "/media/#{media.uid}", params: valid_attributes.to_json, headers: headers }
+      before { patch "/dois/#{doi.doi}/media/#{media.uid}", params: valid_attributes.to_json, headers: headers }
 
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'media-type')).to eq(media_type)
@@ -225,7 +203,7 @@ describe "Media", type: :request, :order => :defined do
         }
       end
 
-      before { patch "/media/#{media.uid}", params: params.to_json, headers: headers }
+      before { patch "/dois/#{doi.doi}/media/#{media.uid}", params: params.to_json, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -237,8 +215,8 @@ describe "Media", type: :request, :order => :defined do
     end
   end
 
-  describe 'DELETE /media/:id' do
-    before { delete "/media/#{media.uid}", headers: headers }
+  describe 'DELETE /dois/DOI/media/:id' do
+    before { delete "/dois/#{doi.doi}/media/#{media.uid}", headers: headers }
 
     context 'when the resources does exist' do
       it 'returns status code 204' do
@@ -247,7 +225,7 @@ describe "Media", type: :request, :order => :defined do
     end
 
     context 'when the resources doesnt exist' do
-      before { delete '/media/xxx',  headers: headers }
+      before { delete "/dois/#{doi.doi}/media/xxx",  headers: headers }
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
