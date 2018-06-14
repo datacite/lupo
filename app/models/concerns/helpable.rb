@@ -23,7 +23,6 @@ module Helpable
       end
 
       unless is_registered_or_findable?
-        Rails.logger.error "[Handle] Error updating DOI " + doi + ": DOI is not registered or findable."
         return OpenStruct.new(body: { "errors" => [{ "title" => "DOI is not registered or findable." }] })
       end
 
