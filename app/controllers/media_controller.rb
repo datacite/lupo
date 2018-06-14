@@ -60,16 +60,11 @@ class MediaController < ApplicationController
   def destroy
     authorize! :update, @doi
 
-    if @doi.draft?
-      if @media.destroy
-        head :no_content
-      else
-        Rails.logger.warn @media.errors.inspect
-        render jsonapi: serialize(@media.errors), status: :unprocessable_entity
-      end
+    if @media.destroy
+      head :no_content
     else
-      response.headers["Allow"] = "HEAD, GET, POST, PATCH, PUT, OPTIONS"
-      render json: { errors: [{ status: "405", title: "Method not allowed" }] }.to_json, status: :method_not_allowed
+      Rails.logger.warn @media.errors.inspect
+      render jsonapi: serialize(@media.errors), status: :unprocessable_entity
     end
   end
 
@@ -93,7 +88,7 @@ class MediaController < ApplicationController
       @include = params[:include].split(",").map { |i| i.downcase.underscore }.join(",")
       @include = [@include]
     else
-      @include = []
+      @include = ["doi"]
     end
   end
 

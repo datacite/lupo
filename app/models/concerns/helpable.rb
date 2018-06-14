@@ -26,7 +26,6 @@ module Helpable
       end
 
       payload = "doi=#{doi}\nurl=#{options[:url]}"
-      mds_url = Rails.env.production? ? 'https://mds.datacite.org' : 'https://mds.test.datacite.org' 
       url = "#{mds_url}/doi/#{doi}"
 
       response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: options[:username], password: options[:password])
@@ -43,13 +42,16 @@ module Helpable
     def get_url(options={})
       return OpenStruct.new(body: { "errors" => [{ "title" => "Username or password missing" }] }) unless options[:username].present? && options[:password].present?
 
-      mds_url = Rails.env.production? ? 'https://mds.datacite.org' : 'https://mds.test.datacite.org' 
       url = "#{mds_url}/doi/#{doi}"
 
       response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: options[:password])
 
       if response.status == 200
         response
+      elsif response.status == 401
+        raise CanCan::AccessDenied
+      elsif response.status == 404
+        raise ActiveRecord::RecordNotFound
       else
         text = "Error " + response.body.dig("errors", 0, "status").to_s + " " + (response.body.dig("errors", 0, "title") || "unknown") + " for URL " + options[:url] + "."
         
@@ -57,6 +59,10 @@ module Helpable
         User.send_notification_to_slack(text, title: title, level: "danger") unless Rails.env.test?
         response
       end
+    end
+
+    def mds_url
+      Rails.env.production? ? 'https://mds.datacite.org' : 'https://mds-legacy.test.datacite.org' 
     end
 
     def generate_random_doi(str, options={})
@@ -69,6 +75,31 @@ module Helpable
 
     def epoch_to_utc(epoch)
       Time.at(epoch).to_datetime.utc.iso8601
+    end
+  end
+
+  module ClassMethods
+    def get_dois(options={})
+      return OpenStruct.new(body: { "errors" => [{ "title" => "Username or password missing" }] }) unless options[:username].present? && options[:password].present?
+
+      mds_url = Rails.env.production? ? 'https://mds.datacite.org' : 'https://mds-legacy.test.datacite.org' 
+      url = "#{mds_url}/doi"
+
+      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: options[:password])
+
+      if response.status == 200
+        response
+      elsif response.status == 401
+        raise CanCan::AccessDenied
+      elsif response.status == 404
+        raise ActiveRecord::RecordNotFound
+      else
+        text = "Error " + response.body.dig("errors", 0, "status").to_s + " " + (response.body.dig("errors", 0, "title") || "unknown") + " for URL " + options[:url] + "."
+        
+        Rails.logger.error "[Handle] " + text
+        User.send_notification_to_slack(text, title: title, level: "danger") unless Rails.env.test?
+        response
+      end
     end
   end
 end

@@ -62,15 +62,14 @@ describe Doi, vcr: true do
   end
 
   context "register_doi", order: :defined do
-    let(:client) { create(:client) }
-    let(:bearer) { User.generate_token(role_id: "staff_admin") }
-    let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
-
+    let(:provider) { create(:provider, symbol: "DATACITE") }
+    let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
+    
     subject { build(:doi, doi: "10.5438/mcnv-ga6n", client: client, aasm_state: "findable") }
 
     it 'should register' do
       url = "https://blog.datacite.org/"
-      options = { url: url, username: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], role_id: "client_admin" }
+      options = { url: url, username: client.symbol, password: client.password, role_id: "client_admin" }
       expect(subject.register_url(options).body).to eq("data"=>"OK")
 
       expect(subject.get_url(options).body).to eq("data" => url)
@@ -78,7 +77,7 @@ describe Doi, vcr: true do
 
     it 'should change url' do
       url = "https://blog.datacite.org/re3data-science-europe/"
-      options = { url: url, username: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], role_id: "client_admin" }
+      options = { url: url, username: client.symbol, password: client.password, role_id: "client_admin" }
       expect(subject.register_url(options).body).to eq("data"=>"OK")
 
       expect(subject.get_url(options).body).to eq("data" => url)
@@ -87,7 +86,7 @@ describe Doi, vcr: true do
     it 'draft doi' do
       subject = build(:doi, doi: "10.5438/mcnv-ga6n", client: client, aasm_state: "draft")
       url = "https://blog.datacite.org/"
-      options = { url: url, username: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], role_id: "client_admin" }
+      options = { url: url, username: client.symbol, password: client.password, role_id: "client_admin" }
       expect(subject.register_url(options).body).to eq("errors"=>[{"title"=>"DOI is not registered or findable."}])
     end
 
@@ -97,8 +96,20 @@ describe Doi, vcr: true do
     end
 
     it 'wrong username and password' do
-      options = { url: "https://blog.datacite.org/re3data-science-europe/", username: ENV['MDS_USERNAME'], password: 12345, role_id: "client_admin" }
+      options = { url: "https://blog.datacite.org/re3data-science-europe/", username: client.uid, password: 12345, role_id: "client_admin" }
       expect(subject.register_url(options).body).to eq("errors"=>[{"status"=>401, "title"=>"Unauthorized"}])
+    end
+  end
+
+  context "get_dois" do
+    let(:provider) { create(:provider, symbol: "DATACITE") }
+    let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
+    
+    it 'should get dois' do
+      options = { username: client.symbol, password: client.password, role_id: "client_admin" }
+      dois = Doi.get_dois(options).body["data"].split("\n")
+      expect(dois.length).to eq(24)
+      expect(dois.first).to eq("10.14454/05MB-Q396")
     end
   end
 end

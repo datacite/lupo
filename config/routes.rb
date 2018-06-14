@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   post 'dois/set-url', :to => 'dois#set_url'
   post 'dois/delete-test-dois', :to => 'dois#delete_test_dois'
   get 'dois/random', :to => 'dois#random'
+  get 'dois/:id/get-url', :to => 'dois#get_url', constraints: { :id => /.+/ }
+  get 'dois/get-dois', :to => 'dois#get_dois'
 
   # manage prefixes, keep database in sync for changes via MDS
   post 'clients/set-test-prefix', :to => 'clients#set_test_prefix'

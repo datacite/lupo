@@ -129,6 +129,7 @@ module Authenticable
         provider_id: attributes.fetch(:provider_id, nil),
         client_id: attributes.fetch(:client_id, nil),
         role_id: attributes.fetch(:role_id, "staff_admin"),
+        password: attributes.fetch(:password, nil),
         iat: Time.now.to_i,
         exp: Time.now.to_i + attributes.fetch(:exp, 30)
       }.compact

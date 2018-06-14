@@ -87,7 +87,7 @@ class MetadataController < ApplicationController
       @include = params[:include].split(",").map { |i| i.downcase.underscore }.join(",")
       @include = [@include]
     else
-      @include = []
+      @include = ["doi"]
     end
   end
 

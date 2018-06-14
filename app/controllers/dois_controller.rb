@@ -2,7 +2,7 @@ require 'uri'
 
 class DoisController < ApplicationController
   prepend_before_action :authenticate_user!
-  before_action :set_doi, only: [:show, :update, :destroy]
+  before_action :set_doi, only: [:show, :update, :destroy, :get_url]
   before_action :set_include, only: [:index, :show, :create, :update]
   authorize_resource :except => [:index, :show, :random]
 
@@ -128,6 +128,28 @@ class DoisController < ApplicationController
     authorize! :update, Doi
     Doi.set_state
     render json: { message: "DOI state updated." }.to_json, status: :ok
+  end
+
+  def get_url
+    authorize! :update, Doi
+
+    response = @doi.get_url(username: current_user.uid.upcase, password: current_user.password)
+    if response.body["data"]
+      render json: { url: response.body["data"] }.to_json, status: :ok
+    else
+      render json: serialize(response.body["errors"]), status: :bad_request
+    end
+  end
+
+  def get_dois
+    authorize! :update, Doi
+
+    response = Doi.get_dois(username: current_user.uid.upcase, password: current_user.password)
+    if response.body["data"]
+      render json: { dois: response.body["data"].split("\n") }.to_json, status: :ok
+    else
+      render json: serialize(response.body["errors"]), status: :bad_request
+    end
   end
 
   def set_minted

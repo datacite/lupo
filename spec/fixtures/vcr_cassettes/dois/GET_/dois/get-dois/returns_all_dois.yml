@@ -1,0 +1,68 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://mds-legacy.test.datacite.org/doi
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Maremma - http://87efcb9ff4f5
+      Content-Type:
+      - text/plain;charset=UTF-8
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Authorization:
+      - Basic <MDS_TOKEN>
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 14 Jun 2018 10:57:54 GMT
+      Content-Type:
+      - text/html;charset=UTF-8
+      Content-Length:
+      - '479'
+      Connection:
+      - keep-alive
+      Server:
+      - Apache-Coyote/1.1
+      Pragma:
+      - no-cache
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Cache-Control:
+      - no-cache, no-store
+    body:
+      encoding: UTF-8
+      string: |-
+        10.14454/05MB-Q396
+        10.14454/2KB7-5P40
+        10.14454/3CXN-TM67
+        10.14454/3YGG-WN44
+        10.14454/4VCB-8X72
+        10.14454/7BMH-VJ84
+        10.14454/D1WY-WY46
+        10.14454/DYW6-0X89
+        10.14454/EZSB-6V87
+        10.14454/HQ27-DX44
+        10.14454/HW4H-XW13
+        10.14454/M3QH-KQ57
+        10.14454/MT56-CK70
+        10.14454/QAVS-SP42
+        10.14454/RSMQ-4Y67
+        10.14454/TERRA+AQUA/CERES/CLDTYPHIST_L3.004
+        10.14454/TSW5-P334
+        10.14454/V6E2-YC93
+        10.14454/W7ZM-3420
+        10.14454/XGE8-4515
+        10.14454/Z3C2-FV03
+        10.23725/ABX7-XA03
+        10.23725/BC11-CQW8
+        10.5438/MCNV-GA6N
+    http_version: 
+  recorded_at: Thu, 14 Jun 2018 10:57:58 GMT
+recorded_with: VCR 3.0.3
