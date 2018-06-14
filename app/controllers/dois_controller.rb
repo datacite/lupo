@@ -137,7 +137,7 @@ class DoisController < ApplicationController
     if response.body["data"]
       render json: { url: response.body["data"] }.to_json, status: :ok
     else
-      render json: serialize(response.body["errors"]), status: :bad_request
+      render json: response.body.to_json, status: response.status || :bad_request
     end
   end
 

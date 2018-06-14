@@ -1,0 +1,42 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://mds-legacy.test.datacite.org/doi/10.1371/JOURNAL.PBIO.2001414
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.0.8; +https://github.com/datacite/maremma)
+      Content-Type:
+      - text/plain;charset=UTF-8
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Authorization:
+      - Basic <MDS_TOKEN>
+  response:
+    status:
+      code: 500
+      message: Internal Server Error
+    headers:
+      Date:
+      - Thu, 14 Jun 2018 17:57:10 GMT
+      Content-Length:
+      - '33'
+      Connection:
+      - keep-alive
+      Server:
+      - Apache-Coyote/1.1
+      Pragma:
+      - no-cache
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Cache-Control:
+      - no-cache, no-store
+    body:
+      encoding: ASCII-8BIT
+      string: SERVER NOT RESPONSIBLE FOR HANDLE
+    http_version: 
+  recorded_at: Thu, 14 Jun 2018 17:57:09 GMT
+recorded_with: VCR 3.0.3

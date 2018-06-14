@@ -1247,6 +1247,20 @@ describe "dois", type: :request do
     end
   end
 
+  describe 'GET /dois/DOI/get-url not found', vcr: true do
+    let(:doi) { create(:doi, client: client, doi: "10.14454/61y1-e521", event: "publish") }
+
+    before { get "/dois/#{doi.doi}/get-url", headers: headers }
+
+    it 'returns not found' do
+      expect(json['errors']).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
+    end
+
+    it 'returns status code 404' do
+      expect(response).to have_http_status(404)
+    end
+  end
+
   describe 'GET /dois/DOI/get-url', vcr: true do
     let(:doi) { create(:doi, client: client, doi: "10.14454/61y1-e521", event: "publish") }
 
@@ -1258,6 +1272,20 @@ describe "dois", type: :request do
 
     it 'returns status code 404' do
       expect(response).to have_http_status(404)
+    end
+  end
+
+  describe 'GET /dois/DOI/get-url not DataCite DOI', vcr: true do
+    let(:doi) { create(:doi, client: client, doi: "10.1371/journal.pbio.2001414", event: "publish") }
+
+    before { get "/dois/#{doi.doi}/get-url", headers: headers }
+
+    it 'returns not DataCite DOI' do
+      expect(json['errors']).to eq([{"status"=>500, "title"=>"SERVER NOT RESPONSIBLE FOR HANDLE"}])
+    end
+
+    it 'returns status code 500' do
+      expect(response).to have_http_status(500)
     end
   end
 
