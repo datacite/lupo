@@ -97,7 +97,13 @@ describe Doi, vcr: true do
 
     it 'wrong username and password' do
       options = { url: "https://blog.datacite.org/re3data-science-europe/", username: client.uid, password: 12345, role_id: "client_admin" }
-      expect(subject.register_url(options).body).to eq("errors"=>[{"status"=>401, "title"=>"Unauthorized"}])
+      expect(subject.register_url(options).body).to eq("errors"=>[{"status"=>401, "title"=>"Bad credentials"}])
+    end
+
+    it 'server not responsible' do
+      subject = build(:doi, doi: "10.1371/journal.pbio.2001414", client: client, aasm_state: "findable")
+      options = { username: client.symbol, password: client.password }
+      expect(subject.get_url(options).body).to eq("errors"=>[{"status"=>500, "title"=>"SERVER NOT RESPONSIBLE FOR HANDLE"}])
     end
   end
 

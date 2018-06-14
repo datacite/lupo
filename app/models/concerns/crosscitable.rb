@@ -2,7 +2,6 @@ module Crosscitable
   extend ActiveSupport::Concern
 
   require "bolognese"
-  require "cirneco"
   require "jsonlint"
 
   included do

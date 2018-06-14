@@ -1,13 +1,15 @@
 module Helpable
   extend ActiveSupport::Concern
 
-  require "bolognese"
-  require "cirneco"
+  require 'bolognese'
+  require 'securerandom'
+  require 'base32/url'
 
   included do
     include Bolognese::Utils
     include Bolognese::DoiUtils
-    include Cirneco::Utils
+
+    UPPER_LIMIT = 1073741823
 
     def register_url(options={})
       unless options[:username].present? && options[:password].present?
@@ -34,7 +36,7 @@ module Helpable
         Rails.logger.info "[Handle] Updated " + doi + " with " + options[:url] + "."
         response
       else
-        Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + (response.body.dig("errors", 0, "title") || "unknown")
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.inspect
         response
       end
     end
@@ -51,12 +53,9 @@ module Helpable
       elsif response.status == 401
         raise CanCan::AccessDenied
       elsif response.status == 404
-        raise ActiveRecord::RecordNotFound
+        raise ActiveRecord::RecordNotFound, "DOI not found"
       else
-        text = "Error " + response.body.dig("errors", 0, "status").to_s + " " + (response.body.dig("errors", 0, "title") || "unknown") + " for URL " + options[:url] + "."
-        
-        Rails.logger.error "[Handle] " + text
-        User.send_notification_to_slack(text, title: title, level: "danger") unless Rails.env.test?
+        Rails.logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect
         response
       end
     end
@@ -71,6 +70,19 @@ module Helpable
 
       shoulder = str.split("/", 2)[1].to_s
       encode_doi(prefix, shoulder: shoulder, number: options[:number])
+    end
+
+    def encode_doi(prefix, options={})
+      prefix = validate_prefix(prefix)
+      return nil unless prefix.present?
+
+      number = options[:number].to_s.scan(/\d+/).join("").to_i
+      number = SecureRandom.random_number(UPPER_LIMIT) unless number > 0
+      shoulder = options[:shoulder].to_s
+      shoulder += "-" if shoulder.present?
+      length = 8
+      split = 4
+      prefix.to_s + "/" + shoulder + Base32::URL.encode(number, split: split, length: length, checksum: true)
     end
 
     def epoch_to_utc(epoch)
