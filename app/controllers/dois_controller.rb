@@ -2,7 +2,7 @@ require 'uri'
 
 class DoisController < ApplicationController
   prepend_before_action :authenticate_user!
-  before_action :set_doi, only: [:show, :update, :destroy, :get_url]
+  before_action :set_doi, only: [:show, :destroy, :get_url]
   before_action :set_include, only: [:index, :show, :create, :update]
   authorize_resource :except => [:index, :show, :random]
 
@@ -88,9 +88,25 @@ class DoisController < ApplicationController
   end
 
   def update
-    # Rails.logger.info safe_params.inspect
-    if @doi.update_attributes(safe_params.except(:doi))
-      render jsonapi: @doi
+    #  Rails.logger.info safe_params.inspect
+    @doi = Doi.where(doi: params[:id]).first
+    exists = @doi.present?
+
+    unless exists
+      doi_id = validate_doi(params[:id])
+      @doi = Doi.new(safe_params.merge(doi: doi_id))
+    end
+
+    authorize! :update, @doi
+
+    # capture username and password for reuse in the handle system
+    @doi.current_user = current_user
+
+    if exists && @doi.update_attributes(safe_params.except(:doi))
+      render jsonapi: @doi, include: @include, status: :ok
+    elsif @doi.save
+      @doi.start
+      render jsonapi: @doi, status: :created, location: @doi
     else
       Rails.logger.warn @doi.errors.inspect
       render jsonapi: serialize(@doi.errors), include: @include, status: :unprocessable_entity

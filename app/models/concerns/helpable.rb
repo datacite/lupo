@@ -5,11 +5,11 @@ module Helpable
   require 'securerandom'
   require 'base32/url'
 
+  UPPER_LIMIT = 1073741823
+
   included do
     include Bolognese::Utils
     include Bolognese::DoiUtils
-
-    UPPER_LIMIT = 1073741823
 
     def register_url(options={})
       unless options[:username].present? && options[:password].present?

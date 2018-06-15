@@ -83,7 +83,49 @@ describe "dois", type: :request do
         expect(response).to have_http_status(200)
       end
 
-      it 'sets state to registered' do
+      it 'sets state to draft' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+      end
+    end
+
+    context 'when the record doesn\'t exist' do
+      let(:doi_id) { "10.5438/4K3M-NYVG" }
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "xml" => xml
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+      before { put "/dois/#{doi_id}", params: valid_attributes.to_json, headers: headers }
+
+      it 'creates the record' do
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi_id.downcase)
+        expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("titles", "title")).to eq("Eating your own Dog Food")
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'sets state to draft' do
         expect(json.dig('data', 'attributes', 'state')).to eq("draft")
       end
     end
