@@ -192,7 +192,7 @@ class Doi < ActiveRecord::Base
   # update state for all DOIs starting from from_date
   def self.set_state(from_date: nil)
     from_date ||= Time.zone.now - 1.day
-    collection = Doi.where("updated >= ?", from_date).where("updated < ?", Time.zone.now - 15.minutes)
+    collection = Doi.where("updated >= ?", from_date).where("updated < ?", Time.zone.now - 15.minutes).where(aasm_state: '')
 
     collection.where(is_active: "\x00").where(minted: nil).update_all(aasm_state: "draft")
     collection.where(is_active: "\x00").where.not(minted: nil).update_all(aasm_state: "registered")
