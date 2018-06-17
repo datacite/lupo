@@ -75,11 +75,10 @@ class DoisController < ApplicationController
 
   def create
    #  Rails.logger.info safe_params.inspect
-    @doi = Doi.new(safe_params)
+    @doi = Doi.new(safe_params.merge(event: safe_params[:event] || "start"))
     authorize! :create, @doi
 
     if @doi.save
-      @doi.start
       render jsonapi: @doi, status: :created, location: @doi
     else
       Rails.logger.warn @doi.errors.inspect
@@ -92,21 +91,20 @@ class DoisController < ApplicationController
     @doi = Doi.where(doi: params[:id]).first
     exists = @doi.present?
 
-    unless exists
+    if exists
+      @doi.assign_attributes(safe_params.except(:doi))
+    else
       doi_id = validate_doi(params[:id])
-      @doi = Doi.new(safe_params.merge(doi: doi_id))
+      @doi = Doi.new(safe_params.merge(doi: doi_id, event: safe_params[:event] || "start"))
     end
 
     authorize! :update, @doi
 
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
-
-    if exists && @doi.update_attributes(safe_params.except(:doi))
-      render jsonapi: @doi, include: @include, status: :ok
-    elsif @doi.save
-      @doi.start
-      render jsonapi: @doi, status: :created, location: @doi
+    
+    if @doi.save
+      render jsonapi: @doi, status: exists ? :ok : :created
     else
       Rails.logger.warn @doi.errors.inspect
       render jsonapi: serialize(@doi.errors), include: @include, status: :unprocessable_entity
