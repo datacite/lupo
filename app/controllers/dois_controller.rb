@@ -78,6 +78,9 @@ class DoisController < ApplicationController
     @doi = Doi.new(safe_params.merge(event: safe_params[:event] || "start"))
     authorize! :create, @doi
 
+    # capture username and password for reuse in the handle system
+    @doi.current_user = current_user
+
     if @doi.save
       render jsonapi: @doi, status: :created, location: @doi
     else
