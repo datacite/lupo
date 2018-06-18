@@ -207,7 +207,10 @@ class Doi < ActiveRecord::Base
   def self.delete_test_dois(from_date: nil)
     from_date ||= Time.zone.now - 1.month
     collection = Doi.where("updated < ?", from_date)
-    collection.where("doi LIKE ?", "10.5072%").find_each { |d| d.destroy }
+    collection.where("doi LIKE ?", "10.5072%").find_each do |d|
+      Rails.logger.info "Automatically deleted #{d.doi}, last updated #{d.updated.iso8601}."
+      d.destroy
+    end
   end
 
   # set minted date for DOIs that have been registered in an handle system (providers ETHZ and EUROP)
