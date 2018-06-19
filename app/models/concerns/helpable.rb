@@ -35,7 +35,7 @@ module Helpable
         Rails.logger.info "[Handle] Updated " + doi + " with " + options[:url] + "."
         response
       else
-        Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.dig("errors", 0, "title")
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.inspect
         response
       end
     end
