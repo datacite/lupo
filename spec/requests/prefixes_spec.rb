@@ -1,13 +1,11 @@
 require 'rails_helper'
 
 describe "Prefixes", type: :request do
-  # initialize test data
   let!(:prefixes)  { create_list(:prefix, 10) }
   let(:bearer) { User.generate_token }
   let(:prefix_id) { prefixes.first.prefix }
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer }}
 
-  # Test suite for GET /prefixes
   describe 'GET /prefixes' do
     # make HTTP get request before each example
     before { get '/prefixes', headers: headers }
@@ -22,7 +20,6 @@ describe "Prefixes", type: :request do
     end
   end
 
-  # Test suite for GET /prefixes/:id
   describe 'GET /prefixes/:id' do
     before { get "/prefixes/#{prefix_id}", headers: headers }
 
@@ -59,6 +56,18 @@ describe "Prefixes", type: :request do
       it 'returns a not found message' do
         expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
       end
+    end
+  end
+
+  describe 'PATCH /prefixes/:prefix_id' do
+    before { patch "/prefixes/#{prefix_id}", headers: headers }
+
+    it 'returns method not supported error' do
+      expect(json.dig("errors")).to eq([{"status"=>"405", "title"=>"Method not allowed"}])
+    end
+
+    it 'returns status code 405' do
+      expect(response).to have_http_status(405)
     end
   end
 

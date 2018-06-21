@@ -44,6 +44,18 @@ describe "Client Prefixes", type: :request do
     end
   end
 
+  describe 'PATCH /client-prefixes/:uid' do
+    before { patch "/client-prefixes/#{client_prefix.uid}", headers: headers }
+
+    it 'returns method not supported error' do
+      expect(json.dig("errors")).to eq([{"status"=>"405", "title"=>"Method not allowed"}])
+    end
+
+    it 'returns status code 405' do
+      expect(response).to have_http_status(405)
+    end
+  end
+
   describe 'POST /client-prefixes' do
     context 'when the request is valid' do
       let(:provider) { create(:provider) }

@@ -2,7 +2,7 @@ require 'base32/url'
 require 'uri'
 
 class ClientPrefixesController < ApplicationController
-  before_action :set_client_prefix, only: [:show, :destroy]
+  before_action :set_client_prefix, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show, :set_created, :set_provider]
@@ -72,6 +72,11 @@ class ClientPrefixesController < ApplicationController
       Rails.logger.warn @client_prefix.errors.inspect
       render jsonapi: serialize(@client_prefix.errors), status: :unprocessable_entity
     end
+  end
+
+  def update
+    response.headers["Allow"] = "HEAD, GET, POST, DELETE, OPTIONS"
+    render json: { errors: [{ status: "405", title: "Method not allowed" }] }.to_json, status: :method_not_allowed
   end
 
   def destroy

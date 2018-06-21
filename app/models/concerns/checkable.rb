@@ -3,7 +3,7 @@ module Checkable
 
   module ClassMethods
     def get_landing_page_info(doi: nil, url: nil, keep: true)
-      url = doi.present? ? doi.url : url
+      url = doi.url if doi.present?
       return { "status" => 404, "content-type" => nil, "checked" => Time.zone.now.utc.iso8601 } unless
         url.present?
 

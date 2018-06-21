@@ -4,7 +4,6 @@ class PrefixesController < ApplicationController
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show]
 
-  # GET /prefixes
   def index
     # support nested routes
     if params[:id].present?
@@ -92,12 +91,10 @@ class PrefixesController < ApplicationController
     render jsonapi: @prefixes, meta: meta, include: @include
   end
 
-  # GET /prefixes/1
   def show
     render jsonapi: @prefix, include: @include, serializer: PrefixSerializer
   end
 
-  # POST /prefixes
   def create
     @prefix = Prefix.new(safe_params)
     authorize! :create, @prefix
@@ -110,7 +107,11 @@ class PrefixesController < ApplicationController
     end
   end
 
-  # DELETE /prefixes/1
+  def update
+    response.headers["Allow"] = "HEAD, GET, POST, DELETE, OPTIONS"
+    render json: { errors: [{ status: "405", title: "Method not allowed" }] }.to_json, status: :method_not_allowed
+  end
+
   def destroy
     @prefix.destroy
   end

@@ -1,6 +1,6 @@
 class ProviderPrefixesController < ApplicationController
   prepend_before_action :authenticate_user!
-  before_action :set_provider_prefix, only: [:show, :destroy]
+  before_action :set_provider_prefix, only: [:show, :update, :destroy]
   before_action :set_include
   authorize_resource :except => [:index, :show]
 
@@ -104,6 +104,11 @@ class ProviderPrefixesController < ApplicationController
       Rails.logger.warn @provider_prefix.errors.inspect
       render jsonapi: serialize(@provider_prefix.errors), status: :unprocessable_entity
     end
+  end
+
+  def update
+    response.headers["Allow"] = "HEAD, GET, POST, DELETE, OPTIONS"
+    render json: { errors: [{ status: "405", title: "Method not allowed" }] }.to_json, status: :method_not_allowed
   end
 
   def destroy
