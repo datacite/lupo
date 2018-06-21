@@ -797,6 +797,40 @@ describe "dois", type: :request do
         end
       end
 
+      context 'when the creator is malformed' do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('datacite_malformed_creator.xml'))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.4122/10703",
+                "xml" => xml,
+              },
+              "relationships"=> {
+                "client"=>  {
+                  "data"=> {
+                    "type"=> "clients",
+                    "id"=> client.symbol.downcase
+                  }
+                }
+              }
+            }
+          }
+        end
+
+        before { post '/dois/validate', params: params.to_json, headers: headers }
+
+        it 'validates a Doi' do
+          expect(json['errors'].size).to eq(1)
+          expect(json['errors'].first).to eq("source"=>"creatorName", "title"=>"This element is not expected. expected is ( {http://datacite.org/schema/kernel-4}affiliation ). at line 16, column 0")
+        end
+
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
+      end
+
       context 'validates citeproc' do
         let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('citeproc.json'))) }
         let(:params) do
