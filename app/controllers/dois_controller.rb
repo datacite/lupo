@@ -81,7 +81,10 @@ class DoisController < ApplicationController
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
 
-    if @doi.save
+    if safe_params[:xml] && @doi.validation_errors?
+      Rails.logger.error @doi.validation_errors.inspect
+      render jsonapi: serialize(@doi.validation_errors), status: :unprocessable_entity
+    elsif @doi.save
       render jsonapi: @doi, status: :created, location: @doi
     else
       Rails.logger.warn @doi.errors.inspect
@@ -105,8 +108,11 @@ class DoisController < ApplicationController
 
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
-    
-    if @doi.save
+
+    if safe_params[:xml] && @doi.validation_errors?
+      Rails.logger.error @doi.validation_errors.inspect
+      render jsonapi: serialize(@doi.validation_errors), status: :unprocessable_entity
+    elsif @doi.save
       render jsonapi: @doi, status: exists ? :ok : :created
     else
       Rails.logger.warn @doi.errors.inspect

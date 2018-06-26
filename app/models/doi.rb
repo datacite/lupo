@@ -78,6 +78,8 @@ class Doi < ActiveRecord::Base
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
 
+  # validate :validation_errors
+
   # update cached doi count for client
   before_destroy :update_doi_count
   after_create :update_doi_count

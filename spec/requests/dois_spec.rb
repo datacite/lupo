@@ -689,6 +689,39 @@ describe "dois", type: :request do
       end
     end
 
+    context 'when the xml is invalid' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite_missing_creator.xml').read) }
+      let(:not_valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.4122/10703",
+              "url"=> "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+      before { post '/dois', params: not_valid_attributes.to_json, headers: headers }
+
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'returns a validation failure message' do
+        expect(json["errors"]).to eq([{"source"=>"creators", "title"=>"Missing child element(s). expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0"}])
+      end
+    end
+
     describe 'POST /dois/validate' do
       let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }
       let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
