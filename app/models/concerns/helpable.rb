@@ -108,7 +108,7 @@ module Helpable
         text = "Error " + response.body["errors"].inspect
         
         Rails.logger.error "[Handle] " + text
-        User.send_notification_to_slack(text, title: "An error occurred", level: "danger") unless Rails.env.test?
+        User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
         response
       end
     end
