@@ -105,10 +105,10 @@ module Helpable
       elsif response.status == 404
         raise ActiveRecord::RecordNotFound
       else
-        text = "Error " + response.body.dig("errors", 0, "status").to_s + " " + (response.body.dig("errors", 0, "title") || "unknown") + " for URL " + options[:url] + "."
+        text = "Error " + response.body["errors"].inspect
         
         Rails.logger.error "[Handle] " + text
-        User.send_notification_to_slack(text, title: title, level: "danger") unless Rails.env.test?
+        User.send_notification_to_slack(text, title: "An error occurred", level: "danger") unless Rails.env.test?
         response
       end
     end
