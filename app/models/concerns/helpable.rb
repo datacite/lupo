@@ -47,7 +47,7 @@ module Helpable
 
       response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: options[:password])
 
-      if [200, 204].include?(response.status)
+      if response.status == 200
         response
       elsif response.status == 401
         raise CanCan::AccessDenied
@@ -98,7 +98,7 @@ module Helpable
 
       response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: options[:password])
 
-      if response.status == 200
+      if [200, 204].include?(response.status)
         response
       elsif response.status == 401
         raise CanCan::AccessDenied
