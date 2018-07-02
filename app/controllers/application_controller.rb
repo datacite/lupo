@@ -100,6 +100,11 @@ class ApplicationController < ActionController::API
 
   private
 
+  def append_info_to_payload(payload)
+    super
+    payload[:uid] = current_user.id if current_user.present?
+  end
+
   def add_user_info_to_bugsnag(report)
     return nil unless current_user.present?
     
