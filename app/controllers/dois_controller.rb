@@ -158,6 +158,7 @@ class DoisController < ApplicationController
 
     if @doi.aasm_state == "draft"
       url = @doi.url
+      response = OpenStruct.new(status: 404, body: { "errors" => [{ "title" => "No URL found." }] })
     else
       response = @doi.get_url(username: current_user.uid.upcase, password: current_user.password)
       url = response.body["data"]
