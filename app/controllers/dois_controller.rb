@@ -168,8 +168,10 @@ class DoisController < ApplicationController
     authorize! :update, Doi
 
     response = Doi.get_dois(username: current_user.uid.upcase, password: current_user.password)
-    if response.body["data"]
+    if response.status == 200
       render json: { dois: response.body["data"].split("\n") }.to_json, status: :ok
+    elsif response.status == 204
+      head :no_content
     else
       render json: serialize(response.body["errors"]), status: :bad_request
     end
