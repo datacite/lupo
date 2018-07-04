@@ -1370,17 +1370,17 @@ describe "dois", type: :request do
     end
   end
 
-  describe 'GET /dois/DOI/get-url', vcr: true do
-    let(:doi) { create(:doi, client: client, doi: "10.14454/61y1-e521", event: "publish") }
+  describe 'GET /dois/DOI/get-url draft doi', vcr: true do
+    let(:doi) { create(:doi, client: client, doi: "10.14454/61y1-e521", event: "start") }
 
     before { get "/dois/#{doi.doi}/get-url", headers: headers }
 
     it 'returns not found' do
-      expect(json['errors']).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
+      expect(json['url']).to eq(doi.url)
     end
 
-    it 'returns status code 404' do
-      expect(response).to have_http_status(404)
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
     end
   end
 
