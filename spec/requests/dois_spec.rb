@@ -689,7 +689,7 @@ describe "dois", type: :request do
       end
     end
 
-    context 'when the xml is invalid' do
+    context 'when the xml is invalid draft doi' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite_missing_creator.xml').read) }
       let(:not_valid_attributes) do
         {
@@ -699,6 +699,48 @@ describe "dois", type: :request do
               "doi" => "10.4122/10703",
               "url"=> "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+      before { post '/dois', params: not_valid_attributes.to_json, headers: headers }
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'creates a Doi' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig('data', 'attributes', 'author')).to be_blank
+
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("titles", "title")).to eq("Eating your own Dog Food")
+        expect(xml.dig("creators", "creator")).to be_nil
+      end
+    end
+
+    context 'when the xml is invalid' do
+      let(:doi) { create(:doi, client: client, doi: "10.5438/4f6f-zr33") }
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite_missing_creator.xml').read) }
+      let(:not_valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => doi.doi,
+              "url"=> "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "event" => "publish"
             },
             "relationships"=> {
               "client"=>  {
