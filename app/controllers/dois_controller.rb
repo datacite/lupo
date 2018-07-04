@@ -156,9 +156,15 @@ class DoisController < ApplicationController
   def get_url
     authorize! :update, Doi
 
-    response = @doi.get_url(username: current_user.uid.upcase, password: current_user.password)
-    if response.body["data"]
-      render json: { url: response.body["data"] }.to_json, status: :ok
+    if @doi.aasm_state == "draft"
+      url = @doi.url
+    else
+      response = @doi.get_url(username: current_user.uid.upcase, password: current_user.password)
+      url = response.body["data"]
+    end
+
+    if url.present?
+      render json: { url: url }.to_json, status: :ok
     else
       render json: response.body.to_json, status: response.status || :bad_request
     end
