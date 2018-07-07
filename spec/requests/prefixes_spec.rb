@@ -7,8 +7,10 @@ describe "Prefixes", type: :request do
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer }}
 
   describe 'GET /prefixes' do
-    # make HTTP get request before each example
-    before { get '/prefixes', headers: headers }
+    before do
+      sleep 1
+      get '/prefixes', headers: headers
+    end
 
     it 'returns prefixes' do
       expect(json).not_to be_empty

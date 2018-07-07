@@ -20,22 +20,97 @@ describe "Indexable", vcr: true do
 end
 
 describe "Indexable class methods", elasticsearch: true do
-  it 'find_by_id' do
-    client = create(:client)
-    response = Client.find_by_id(client.symbol)
-    expect(response.results).to eq(2)
+  context "client" do
+    let!(:client) { create(:client) }
+
+    it 'find_by_id' do
+      sleep 1
+      result = Client.find_by_id(client.symbol).results.first
+      expect(result.symbol).to eq(client.symbol)
+    end
+
+    it 'find_by_ids' do
+      sleep 1
+      results = Client.find_by_ids(client.symbol).results
+      expect(results.total).to eq(1)
+    end
+
+    it 'query' do
+      sleep 1
+      results = Client.query(client.name).results
+      expect(results.total).to eq(1)
+    end
   end
 
-  it 'find_by_ids' do
-    client = create(:client)
-    response = Client.find_by_ids(client.symbol)
-    expect(response.results).to eq(2)
+  context "provider" do
+    let!(:provider) { create(:provider) }
+
+    it 'find_by_id' do
+      sleep 1
+      result = Provider.find_by_id(provider.symbol).results.first
+      expect(result.symbol).to eq(provider.symbol)
+    end
+
+    it 'find_by_ids' do
+      sleep 1
+      results = Provider.find_by_ids(provider.symbol).results
+      expect(results.total).to eq(1)
+    end
+
+    it 'query' do
+      sleep 1
+      results = Provider.query(provider.name).results
+      expect(results.total).to eq(1)
+    end
   end
 
-  it 'query' do
-    client = create(:client)
-    puts client.name
-    response = Client.query(client.name)
-    expect(response.results).to eq(2)
+  context "doi" do
+    let!(:doi) { create(:doi, title: "Soil investigations", publisher: "Pangaea", description: "this is a description") }
+
+    it 'find_by_id' do
+      sleep 1
+      result = Doi.find_by_id(doi.doi).results.first
+      expect(result.doi).to eq(doi.doi)
+    end
+
+    it 'query by doi' do
+      sleep 1
+      results = Doi.query(doi.doi).results
+      expect(results.total).to eq(1)
+    end
+
+    it 'query by title' do
+      sleep 1
+      results = Doi.query("soil").results
+      expect(results.total).to eq(1)
+    end
+
+    it 'query by publisher' do
+      sleep 1
+      results = Doi.query("pangaea").results
+      expect(results.total).to eq(1)
+    end
+
+    it 'query by description' do
+      sleep 1
+      results = Doi.query("description").results
+      expect(results.total).to eq(1)
+    end
+
+    it 'query by description not found' do
+      sleep 1
+      results = Doi.query("climate").results
+      expect(results.total).to eq(0)
+    end
+  end
+
+  context "prefix" do
+    let!(:prefix) { create(:prefix) }
+
+    it 'query' do
+      sleep 1
+      results = Prefix.query(prefix.prefix).results
+      expect(results.total).to eq(1)
+    end
   end
 end

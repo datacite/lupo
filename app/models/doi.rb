@@ -165,6 +165,19 @@ class Doi < ActiveRecord::Base
     ['doi^10', 'title^10', 'author^10', 'publisher^10', 'description^10', '_all']
   end
 
+  def self.find_by_id(id, options={})
+    return nil unless id.present?
+
+    __elasticsearch__.search({
+      query: {
+        term: {
+          doi: id
+        }
+      },
+      aggregations: query_aggregations
+    })
+  end
+
   def doi=(value)
     write_attribute(:doi, value.upcase) if value.present?
   end

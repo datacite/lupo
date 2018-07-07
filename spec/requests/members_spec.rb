@@ -1,11 +1,14 @@
 require 'rails_helper'
 
-describe 'Members', type: :request, elasticsearch: true do
+describe 'Members', type: :request do
   let!(:providers)  { create_list(:provider, 10) }
   let(:provider)  { create(:provider) }
 
-  describe 'GET /members' do
-    before { get '/members' }
+  describe 'GET /members', elasticsearch: true do
+    before do
+      sleep 1
+      get '/members'
+    end
 
     it 'returns members' do
       expect(json).not_to be_empty
@@ -17,8 +20,11 @@ describe 'Members', type: :request, elasticsearch: true do
     end
   end
 
-  describe 'GET /members query' do
-    before { get "/members?query=my" }
+  describe 'GET /members query', elasticsearch: true do
+    before do
+      sleep 1
+      get "/members?query=my"
+    end
 
     it 'returns members' do
       expect(json).not_to be_empty

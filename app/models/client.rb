@@ -131,11 +131,13 @@ class Client < ActiveRecord::Base
     c = self.class.find_by_id(value)
     return nil unless c.present?
 
-    dois.update_all(datacentre: c.id)
+    target = c.records.first
+
+    dois.update_all(datacentre: target.id)
 
     # update DOI count for source and target client
     cached_doi_count(force: true)
-    c.cached_doi_count(force: true)
+    target.cached_doi_count(force: true)
   end
 
   def password_input=(value)

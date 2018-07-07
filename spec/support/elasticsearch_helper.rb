@@ -4,7 +4,7 @@ SEARCHABLE_MODELS = [Client, Provider, Doi, Prefix]
 RSpec.configure do |config|
   config.around :each, elasticsearch: true do |example|
     SEARCHABLE_MODELS.each do |model|
-      Elasticsearch::Model.client.indices.create index: model.index_name rescue nil
+      model.__elasticsearch__.create_index! force: true rescue nil
     end
 
     example.run

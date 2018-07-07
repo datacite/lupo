@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Clients', type: :request, elasticsearch: true do
+describe 'Clients', type: :request do
   let!(:clients)  { create_list(:client, 10) }
   let(:ids) { clients.map { |c| c.uid }.join(",") }
   let(:bearer) { User.generate_token }
@@ -27,8 +27,11 @@ describe 'Clients', type: :request, elasticsearch: true do
   let(:query) { "jamon"}
 
   # Test suite for GET /clients
-  describe 'GET /clients' do
-    before { get '/clients', headers: headers }
+  describe 'GET /clients', elasticsearch: true do
+    before do
+      sleep 1
+      get '/clients', headers: headers
+    end
 
     it 'returns clients' do
       expect(json).not_to be_empty
@@ -54,8 +57,11 @@ describe 'Clients', type: :request, elasticsearch: true do
   #   end
   # end
 
-  describe 'GET /clients?ids=' do
-    before { get "/clients?ids=#{ids}", headers: headers }
+  describe 'GET /clients?ids=', elasticsearch: true do
+    before do
+      sleep 1
+      get "/clients?ids=#{ids}", headers: headers
+    end
 
     it 'returns clients' do
       expect(json).not_to be_empty
