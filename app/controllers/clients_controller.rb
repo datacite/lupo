@@ -5,66 +5,41 @@ class ClientsController < ApplicationController
   load_and_authorize_resource :except => [:index, :show, :set_test_prefix]
 
   def index
-    # support nested routes
-    if params[:provider_id].present?
-      provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
-      collection = provider.present? ? provider.clients : Client.none
-    else
-      collection = Client
-    end
+    page = (params.dig(:page, :number) || 1).to_i
+    size = (params.dig(:page, :size) || 25).to_i
+    from = (page - 1) * size
+
+    sort = case params[:sort]
+           when "name" then { "name.keyword" => { order: 'asc' }}
+           when "-name" then { "name.keyword" => { order: 'desc' }}
+           when "created" then { created: { order: 'asc' }}
+           when "-created" then { created: { order: 'desc' }}
+           else { "_score": { "order": "desc" }}
+           end
 
     if params[:id].present?
-      collection = collection.where(symbol: params[:id])
+      response = Client.find_by_id(params[:id]) 
     elsif params[:ids].present?
-      collection = collection.where(symbol: params[:ids].split(","))
-    elsif params[:query].present?
-      collection = collection.query(params[:query])
-    elsif params.has_key?(:url)
-      collection = collection.where.not(url: [nil, ""])
-    end
-
-    # cache prefixes for faster queries
-    if params[:prefix].present?
-      prefix = cached_prefix_response(params[:prefix])
-      collection = collection.includes(:prefixes).where('prefix.id' => prefix.id)
-    end
-
-    collection = collection.where('YEAR(datacentre.created) = ?', params[:year]) if params[:year].present?
-
-    # calculate facet counts after filtering
-    providers = collection.joins(:provider).select('allocator.symbol, allocator.name, count(allocator.id) as count').order('count DESC').group('allocator.id')
-
-    # workaround, as selecting allocator.symbol as id doesn't work
-    providers = providers.map { |p| { id: p.symbol, title: p.name, count: p.count } }
-
-    if params[:year].present?
-      years = [{ id: params[:year],
-                 title: params[:year],
-                 count: collection.where('YEAR(datacentre.created) = ?', params[:year]).count }]
+      response = Client.find_by_ids(params[:ids], from: from, size: size, sort: sort)
     else
-      years = collection.where.not(created: nil).order("YEAR(datacentre.created) DESC").group("YEAR(datacentre.created)").count
-      years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
+      response = Client.query(params[:query], year: params[:year], provider_id: params[:provider_id], from: from, size: size, sort: sort)
     end
 
-    page = params[:page] || {}
-    page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
-    page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
-    total = collection.count
+    total = response.results.total
+    total_pages = (total.to_f / size).ceil
+    years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
+    providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
 
-    order = case params[:sort]
-            when "-name" then "datacentre.name DESC"
-            when "created" then "datacentre.created"
-            when "-created" then "datacentre.created DESC"
-            else "datacentre.name"
-            end
+    #@clients = Kaminari.paginate_array(response.results, total_count: total).page(page).per(size)
+    @clients = response.page(page).per(size).records
 
-    @clients = collection.order(order).page(page[:number]).per(page[:size])
-
-    meta = { total: total,
-             total_pages: @clients.total_pages,
-             page: page[:number].to_i,
-             providers: providers,
-             years: years }
+    meta = {
+      total: total,
+      total_pages: total_pages,
+      page: page,
+      years: years,
+      providers: providers
+    }.compact
 
     render jsonapi: @clients, meta: meta, include: @include
   end

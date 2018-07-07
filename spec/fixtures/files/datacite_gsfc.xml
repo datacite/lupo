@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource
+    xmlns="http://datacite.org/schema/kernel-3"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+    <identifier identifierType="DOI">10.5067/ALTCY-TJ122</identifier>
+    <creators>
+        <creator>
+            <creatorName>GSFC</creatorName>
+        </creator>
+    </creators>
+    <titles>
+        <title>Integrated Multi-Mission Ocean Altimeter Data for Climate Research Version 2</title>
+    </titles>
+    <publisher>NASA PO.DAAC</publisher>
+    <publicationYear>2013</publicationYear>
+    <resourceType resourceTypeGeneral="Dataset">Dataset</resourceType>
+    <descriptions>
+        <description descriptionType="Abstract"/>
+    </descriptions>
+</resource>

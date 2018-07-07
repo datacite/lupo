@@ -4,10 +4,18 @@ module Indexable
   require 'aws-sdk-sqs'
 
   included do
-    unless Rails.env.test?
-      before_destroy { send_delete_message(self.to_jsonapi) }
-      after_save { send_import_message(self.to_jsonapi) }
-    end
+    # mapping do
+    #   # ...
+    # end
+
+    # def self.search(query)
+    #   # ...
+    # end
+
+    # unless Rails.env.test?
+    #   before_destroy { send_delete_message(self.to_jsonapi) }
+    #   after_save { send_import_message(self.to_jsonapi) }
+    # end
 
     def send_delete_message(data)
       send_message(data, shoryuken_class: "ElasticDeleteWorker")
@@ -36,6 +44,88 @@ module Indexable
       }
 
       sqs.send_message(options)
+    end
+  end
+
+  module ClassMethods
+    # don't raise an exception when not found
+    def find_by_id(id, options={})
+      return nil unless id.present?
+
+      __elasticsearch__.search({
+        query: {
+          term: {
+            symbol: id.upcase
+          }
+        },
+        aggregations: query_aggregations
+      })
+    end
+
+    def find_by_id_list(ids, options={})
+      options[:sort] ||= { "_doc" => { order: 'asc' }}
+
+      __elasticsearch__.search({
+        from: options[:from] || 0,
+        size: options[:size] || 25,
+        sort: [options[:sort]],
+        query: {
+          terms: {
+            id: ids.split(",")
+          }
+        },
+        aggregations: query_aggregations
+      })
+    end
+
+    def find_by_ids(ids, options={})
+      options[:sort] ||= { "_doc" => { order: 'asc' }}
+
+      __elasticsearch__.search({
+        from: options[:from] || 0,
+        size: options[:size] || 25,
+        sort: [options[:sort]],
+        query: {
+          terms: {
+            symbol: ids.split(",").map(&:upcase)
+          }
+        },
+        aggregations: query_aggregations
+      })
+    end
+
+    def query(query, options={})
+      options[:sort] ||= { "_doc" => { order: 'asc' }}
+
+      must = []
+      must << { multi_match: { query: query, fields: query_fields }} if query.present?
+      must << { term: { aasm_state: options[:state] }} if options[:state].present?
+      must << { term: { resource_type_general: options[:resource_type] }} if options[:resource_type].present?
+      must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
+      must << { terms: { client_id: options[:client_id].split(",") }} if options[:client_id].present?
+      must << { range: { published: { gte: "#{options[:year].split(",").min}-01-01", lte: "#{options[:year].split(",").max}-12-31", format: "yyyy-mm-dd" }}} if options[:year].present?
+      must << { range: { minted: { gte: "#{options[:registered].split(",").min}-01-01", lte: "#{options[:registered].split(",").max}-12-31", format: "yyyy-mm-dd" }}} if options[:registered].present?
+      must << { term: { schema_version: options[:schema_version] }} if options[:schema_version].present?
+
+      __elasticsearch__.search({
+        from: options[:from] || 0,
+        size: options[:size] || 25,
+        sort: [options[:sort]],
+        query: {
+          bool: {
+            must: must
+          }
+        },
+        aggregations: query_aggregations
+      })
+    end
+
+    def recreate_index(options={})
+      client     = self.gateway.client
+      index_name = self.index_name
+
+      client.indices.delete index: index_name rescue nil if options[:force]
+      client.indices.create index: index_name, body: { settings:  {"index.requests.cache.enable": true }}
     end
   end
 end

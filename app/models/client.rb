@@ -13,10 +13,13 @@ class Client < ActiveRecord::Base
   include Authenticable
 
   # include helper module for Elasticsearch
-  include Indexable if ENV["AWS_REGION"]
+  include Indexable
 
   # include helper module for sending emails
   include Mailable
+
+  include Elasticsearch::Model
+  include Elasticsearch::Model::Callbacks
 
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
@@ -46,16 +49,63 @@ class Client < ActiveRecord::Base
   has_many :provider_prefixes, through: :client_prefixes
 
   before_validation :set_defaults
-  before_create :set_test_prefix #, if: Proc.new { |client| client.provider_symbol == "SANDBOX" }
+  before_create :set_test_prefix
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   after_create :send_welcome_email, unless: Proc.new { Rails.env.test? }
 
-  default_scope { where(deleted_at: nil) }
+  #default_scope { where(deleted_at: nil) }
 
-  scope :query, ->(query) { where("datacentre.symbol like ? OR datacentre.name like ?", "%#{query}%", "%#{query}%") }
+  #scope :query, ->(query) { where("datacentre.symbol like ? OR datacentre.name like ?", "%#{query}%", "%#{query}%") }
 
   attr_accessor :target_id
+
+  # use different index for testing
+  index_name Rails.env.test? ? "clients-test" : "clients"
+
+  mapping dynamic: 'false' do
+    indexes :symbol,        type: :keyword
+    indexes :name,          type: :text, fields: { keyword: { type: "keyword" }}
+    indexes :contact_name,  type: :text
+    indexes :contact_email, type: :text, fields: { keyword: { type: "keyword" }}
+    indexes :provider_id,   type: :keyword
+    indexes :re3data,       type: :keyword
+    indexes :version,       type: :integer
+    indexes :is_active,     type: :keyword
+    indexes :domains,       type: :text
+    indexes :year,          type: :integer
+    indexes :url,           type: :text, fields: { keyword: { type: "keyword" }}
+    indexes :created,       type: :date
+    indexes :updated,       type: :date
+  end
+
+  def as_indexed_json(options={})
+    {
+      "provider_id" => provider_id,
+      "name" => name,
+      "symbol" => symbol,
+      "year" => year,
+      "contact_name" => contact_name,
+      "contact_email" => contact_email,
+      "domains" => domains,
+      "url" => url,
+      "is_active" => is_active,
+      "password" => password,
+      "created" => created,
+      "updated" => updated
+    }
+  end
+
+  def self.query_fields
+    ['symbol^10', 'name^10', 'contact_name^10', 'contact_email^10', 'domains', 'url', '_all']
+  end
+
+  def self.query_aggregations
+    {
+      years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
+      providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } }
+    }
+  end
 
   # workaround for non-standard database column names and association
   def provider_id
@@ -78,7 +128,7 @@ class Client < ActiveRecord::Base
   end
 
   def target_id=(value)
-    c = Client.where(symbol: value).first
+    c = self.class.find_by_id(value)
     return nil unless c.present?
 
     dois.update_all(datacentre: c.id)

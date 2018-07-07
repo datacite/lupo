@@ -1,0 +1,804 @@
+---
+http_interactions:
+- request:
+    method: put
+    uri: http://elasticsearch:9200/providers-test/provider/374
+    body:
+      encoding: UTF-8
+      string: '{"id":374,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:11.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"is_active":"\u0001","name":"My
+        provider","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_ALLOCATOR","symbol":"TEST337","updated":"2018-07-05T05:13:11.000-04:00","version":0,"comments":null,"experiments":null,"description":null,"region":"EMEA","country_code":"DE","website":null,"phone":null,"deleted_at":null,"joined":null,"institution_type":null,"logo":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/providers-test/provider/374"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '137'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"providers-test","_type":"provider","_id":"374","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/clients-test/client/254
+    body:
+      encoding: UTF-8
+      string: '{"id":254,"comments":null,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"domains":"*","is_active":"\u0001","name":"My
+        data center","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_DATACENTRE","symbol":"TEST337.TEST281","updated":"2018-07-05T05:13:12.000-04:00","version":0,"allocator":374,"experiments":null,"deleted_at":null,"re3data":null,"url":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/clients-test/client/254"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '134'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"clients-test","_type":"client","_id":"254","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/providers-test/provider/375
+    body:
+      encoding: UTF-8
+      string: '{"id":375,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"is_active":"\u0001","name":"My
+        provider","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_ALLOCATOR","symbol":"TEST338","updated":"2018-07-05T05:13:12.000-04:00","version":0,"comments":null,"experiments":null,"description":null,"region":"EMEA","country_code":"DE","website":null,"phone":null,"deleted_at":null,"joined":null,"institution_type":null,"logo":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/providers-test/provider/375"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '137'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"providers-test","_type":"provider","_id":"375","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/clients-test/client/255
+    body:
+      encoding: UTF-8
+      string: '{"id":255,"comments":null,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"domains":"*","is_active":"\u0001","name":"My
+        data center","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_DATACENTRE","symbol":"TEST338.TEST282","updated":"2018-07-05T05:13:12.000-04:00","version":0,"allocator":375,"experiments":null,"deleted_at":null,"re3data":null,"url":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/clients-test/client/255"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '134'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"clients-test","_type":"client","_id":"255","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/providers-test/provider/376
+    body:
+      encoding: UTF-8
+      string: '{"id":376,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"is_active":"\u0001","name":"My
+        provider","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_ALLOCATOR","symbol":"TEST339","updated":"2018-07-05T05:13:12.000-04:00","version":0,"comments":null,"experiments":null,"description":null,"region":"EMEA","country_code":"DE","website":null,"phone":null,"deleted_at":null,"joined":null,"institution_type":null,"logo":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/providers-test/provider/376"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '137'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"providers-test","_type":"provider","_id":"376","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/clients-test/client/256
+    body:
+      encoding: UTF-8
+      string: '{"id":256,"comments":null,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"domains":"*","is_active":"\u0001","name":"My
+        data center","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_DATACENTRE","symbol":"TEST339.TEST283","updated":"2018-07-05T05:13:12.000-04:00","version":0,"allocator":376,"experiments":null,"deleted_at":null,"re3data":null,"url":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/clients-test/client/256"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '134'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"clients-test","_type":"client","_id":"256","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/providers-test/provider/377
+    body:
+      encoding: UTF-8
+      string: '{"id":377,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"is_active":"\u0001","name":"My
+        provider","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_ALLOCATOR","symbol":"TEST340","updated":"2018-07-05T05:13:12.000-04:00","version":0,"comments":null,"experiments":null,"description":null,"region":"EMEA","country_code":"DE","website":null,"phone":null,"deleted_at":null,"joined":null,"institution_type":null,"logo":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/providers-test/provider/377"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '137'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"providers-test","_type":"provider","_id":"377","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/clients-test/client/257
+    body:
+      encoding: UTF-8
+      string: '{"id":257,"comments":null,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"domains":"*","is_active":"\u0001","name":"My
+        data center","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_DATACENTRE","symbol":"TEST340.TEST284","updated":"2018-07-05T05:13:12.000-04:00","version":0,"allocator":377,"experiments":null,"deleted_at":null,"re3data":null,"url":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/clients-test/client/257"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '134'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"clients-test","_type":"client","_id":"257","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/providers-test/provider/378
+    body:
+      encoding: UTF-8
+      string: '{"id":378,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"is_active":"\u0001","name":"My
+        provider","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_ALLOCATOR","symbol":"TEST341","updated":"2018-07-05T05:13:12.000-04:00","version":0,"comments":null,"experiments":null,"description":null,"region":"EMEA","country_code":"DE","website":null,"phone":null,"deleted_at":null,"joined":null,"institution_type":null,"logo":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/providers-test/provider/378"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '137'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"providers-test","_type":"provider","_id":"378","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/clients-test/client/258
+    body:
+      encoding: UTF-8
+      string: '{"id":258,"comments":null,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"domains":"*","is_active":"\u0001","name":"My
+        data center","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_DATACENTRE","symbol":"TEST341.TEST285","updated":"2018-07-05T05:13:12.000-04:00","version":0,"allocator":378,"experiments":null,"deleted_at":null,"re3data":null,"url":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/clients-test/client/258"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '134'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"clients-test","_type":"client","_id":"258","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/providers-test/provider/379
+    body:
+      encoding: UTF-8
+      string: '{"id":379,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"is_active":"\u0001","name":"My
+        provider","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_ALLOCATOR","symbol":"TEST342","updated":"2018-07-05T05:13:12.000-04:00","version":0,"comments":null,"experiments":null,"description":null,"region":"EMEA","country_code":"DE","website":null,"phone":null,"deleted_at":null,"joined":null,"institution_type":null,"logo":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/providers-test/provider/379"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '137'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"providers-test","_type":"provider","_id":"379","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/clients-test/client/259
+    body:
+      encoding: UTF-8
+      string: '{"id":259,"comments":null,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"domains":"*","is_active":"\u0001","name":"My
+        data center","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_DATACENTRE","symbol":"TEST342.TEST286","updated":"2018-07-05T05:13:12.000-04:00","version":0,"allocator":379,"experiments":null,"deleted_at":null,"re3data":null,"url":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/clients-test/client/259"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '134'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"clients-test","_type":"client","_id":"259","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/providers-test/provider/380
+    body:
+      encoding: UTF-8
+      string: '{"id":380,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"is_active":"\u0001","name":"My
+        provider","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_ALLOCATOR","symbol":"TEST343","updated":"2018-07-05T05:13:12.000-04:00","version":0,"comments":null,"experiments":null,"description":null,"region":"EMEA","country_code":"DE","website":null,"phone":null,"deleted_at":null,"joined":null,"institution_type":null,"logo":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/providers-test/provider/380"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '137'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"providers-test","_type":"provider","_id":"380","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/clients-test/client/260
+    body:
+      encoding: UTF-8
+      string: '{"id":260,"comments":null,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"domains":"*","is_active":"\u0001","name":"My
+        data center","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_DATACENTRE","symbol":"TEST343.TEST287","updated":"2018-07-05T05:13:12.000-04:00","version":0,"allocator":380,"experiments":null,"deleted_at":null,"re3data":null,"url":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/clients-test/client/260"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '134'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"clients-test","_type":"client","_id":"260","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/providers-test/provider/381
+    body:
+      encoding: UTF-8
+      string: '{"id":381,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"is_active":"\u0001","name":"My
+        provider","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_ALLOCATOR","symbol":"TEST344","updated":"2018-07-05T05:13:12.000-04:00","version":0,"comments":null,"experiments":null,"description":null,"region":"EMEA","country_code":"DE","website":null,"phone":null,"deleted_at":null,"joined":null,"institution_type":null,"logo":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/providers-test/provider/381"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '137'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"providers-test","_type":"provider","_id":"381","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/clients-test/client/261
+    body:
+      encoding: UTF-8
+      string: '{"id":261,"comments":null,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"domains":"*","is_active":"\u0001","name":"My
+        data center","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_DATACENTRE","symbol":"TEST344.TEST288","updated":"2018-07-05T05:13:12.000-04:00","version":0,"allocator":381,"experiments":null,"deleted_at":null,"re3data":null,"url":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/clients-test/client/261"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '134'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"clients-test","_type":"client","_id":"261","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/providers-test/provider/382
+    body:
+      encoding: UTF-8
+      string: '{"id":382,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"is_active":"\u0001","name":"My
+        provider","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_ALLOCATOR","symbol":"TEST345","updated":"2018-07-05T05:13:12.000-04:00","version":0,"comments":null,"experiments":null,"description":null,"region":"EMEA","country_code":"DE","website":null,"phone":null,"deleted_at":null,"joined":null,"institution_type":null,"logo":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/providers-test/provider/382"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '137'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"providers-test","_type":"provider","_id":"382","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/clients-test/client/262
+    body:
+      encoding: UTF-8
+      string: '{"id":262,"comments":null,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"domains":"*","is_active":"\u0001","name":"My
+        data center","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_DATACENTRE","symbol":"TEST345.TEST289","updated":"2018-07-05T05:13:12.000-04:00","version":0,"allocator":382,"experiments":null,"deleted_at":null,"re3data":null,"url":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/clients-test/client/262"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '134'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"clients-test","_type":"client","_id":"262","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/providers-test/provider/383
+    body:
+      encoding: UTF-8
+      string: '{"id":383,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"is_active":"\u0001","name":"My
+        provider","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_ALLOCATOR","symbol":"TEST346","updated":"2018-07-05T05:13:12.000-04:00","version":0,"comments":null,"experiments":null,"description":null,"region":"EMEA","country_code":"DE","website":null,"phone":null,"deleted_at":null,"joined":null,"institution_type":null,"logo":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/providers-test/provider/383"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '137'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"providers-test","_type":"provider","_id":"383","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/clients-test/client/263
+    body:
+      encoding: UTF-8
+      string: '{"id":263,"comments":null,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"domains":"*","is_active":"\u0001","name":"My
+        data center","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_DATACENTRE","symbol":"TEST346.TEST290","updated":"2018-07-05T05:13:12.000-04:00","version":0,"allocator":383,"experiments":null,"deleted_at":null,"re3data":null,"url":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/clients-test/client/263"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '134'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"clients-test","_type":"client","_id":"263","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/providers-test/provider/384
+    body:
+      encoding: UTF-8
+      string: '{"id":384,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"is_active":"\u0001","name":"My
+        provider","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_ALLOCATOR","symbol":"TEST347","updated":"2018-07-05T05:13:12.000-04:00","version":0,"comments":null,"experiments":null,"description":null,"region":"EMEA","country_code":"DE","website":null,"phone":null,"deleted_at":null,"joined":null,"institution_type":null,"logo":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/providers-test/provider/384"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '137'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"providers-test","_type":"provider","_id":"384","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: put
+    uri: http://elasticsearch:9200/clients-test/client/264
+    body:
+      encoding: UTF-8
+      string: '{"id":264,"comments":null,"contact_email":"josiah@example.org","contact_name":"Josiah
+        Carberry","created":"2018-07-05T05:13:12.000-04:00","doi_quota_allowed":-1,"doi_quota_used":0,"domains":"*","is_active":"\u0001","name":"My
+        data center","password":"15e4bf0dfe3407d79121bf1a093fd57bdcff5b4bc5996e18da5e6115ac0fdd65","role_name":"ROLE_DATACENTRE","symbol":"TEST347.TEST291","updated":"2018-07-05T05:13:12.000-04:00","version":0,"allocator":384,"experiments":null,"deleted_at":null,"re3data":null,"url":null}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Location:
+      - "/clients-test/client/264"
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '134'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"clients-test","_type":"client","_id":"264","_version":1,"result":"created","_shards":{"total":2,"successful":1,"failed":0},"created":true}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+- request:
+    method: post
+    uri: http://elasticsearch:9200/clients-test/client/264/_update
+    body:
+      encoding: UTF-8
+      string: '{"doc":{"name":"Imperial College 2","version":1}}'
+    headers:
+      Authorization:
+      - Basic ZWxhc3RpYzpjaGFuZ2VtZQ==
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.15.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '129'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"_index":"clients-test","_type":"client","_id":"264","_version":2,"result":"updated","_shards":{"total":2,"successful":1,"failed":0}}'
+    http_version: 
+  recorded_at: Thu, 05 Jul 2018 09:13:12 GMT
+recorded_with: VCR 3.0.3

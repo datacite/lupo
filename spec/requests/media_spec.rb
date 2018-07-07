@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "Media", type: :request, :order => :defined do
+describe "Media", type: :request, :order => :defined, elasticsearch: true do
   let(:provider)  { create(:provider, symbol: "ADMIN") }
   let(:client)  { create(:client, provider: provider) }
   let(:doi) { create(:doi, client: client) }

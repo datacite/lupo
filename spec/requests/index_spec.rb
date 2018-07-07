@@ -149,6 +149,21 @@ describe "content_negotation", type: :request do
     end
   end
 
+  context "application/x-bibtex nasa gsfc" do
+    let(:xml) { Base64.strict_encode64(file_fixture('datacite_gsfc.xml').read) }
+    let(:doi) { create(:doi, xml: xml) }
+
+    before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/x-bibtex" } }
+
+    it 'returns the Doi' do
+      expect(response.body).to start_with("@misc{https://handle.test.datacite.org/#{doi.doi.downcase}")
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
   context "text/x-bibliography", vcr: true do
     context "default style" do
       before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "text/x-bibliography" } }

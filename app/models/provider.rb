@@ -15,10 +15,13 @@ class Provider < ActiveRecord::Base
   include Authenticable
 
   # include helper module for Elasticsearch
-  include Indexable if ENV["AWS_REGION"]
+  include Indexable
 
   # include helper module for sending emails
   include Mailable
+
+  include Elasticsearch::Model
+  include Elasticsearch::Model::Callbacks
 
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
@@ -56,9 +59,60 @@ class Provider < ActiveRecord::Base
 
   accepts_nested_attributes_for :prefixes
 
-  default_scope { where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')").where(deleted_at: nil) }
+  #default_scope { where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')").where(deleted_at: nil) }
 
-  scope :query, ->(query) { where("allocator.symbol like ? OR allocator.name like ?", "%#{query}%", "%#{query}%") }
+  #scope :query, ->(query) { where("allocator.symbol like ? OR allocator.name like ?", "%#{query}%", "%#{query}%") }
+
+  # use different index for testing
+  index_name Rails.env.test? ? "providers-test" : "providers"
+
+  mapping dynamic: 'false' do
+    indexes :symbol,        type: :keyword
+    indexes :name,          type: :text, fields: { keyword: { type: "keyword" }}
+    indexes :contact_name,  type: :text
+    indexes :contact_email, type: :text, fields: { keyword: { type: "keyword" }}
+    indexes :version,       type: :integer
+    indexes :is_active,     type: :keyword
+    indexes :year,          type: :integer
+    indexes :description,   type: :text
+    indexes :website,       type: :text, fields: { keyword: { type: "keyword" }}
+    indexes :phone,         type: :text
+    indexes :region,        type: :keyword
+    indexes :country_code,  type: :keyword
+    indexes :joined,        type: :date
+    indexes :created,       type: :date
+    indexes :updated,       type: :date
+  end
+
+  def as_indexed_json(options={})
+    {
+      "name" => name,
+      "symbol" => symbol,
+      "year" => year,
+      "contact_name" => contact_name,
+      "contact_email" => contact_email,
+      "is_active" => is_active,
+      "description" => description,
+      "website" => website,
+      "phone" => phone,
+      "region" => region,
+      "country_code" => country_code,
+      "password" => password,
+      "joined" => joined,
+      "created" => created,
+      "updated" => updated
+    }
+  end
+
+  def self.query_fields
+    ['symbol^10', 'name^10', 'contact_name^10', 'contact_email^10', '_all']
+  end
+  
+  def self.query_aggregations
+    {
+      years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } }
+    }
+  end
 
   def year
     joined.year if joined.present?

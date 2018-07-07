@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Clients', type: :request do
+describe 'Clients', type: :request, elasticsearch: true do
   let!(:clients)  { create_list(:client, 10) }
   let(:ids) { clients.map { |c| c.uid }.join(",") }
   let(:bearer) { User.generate_token }

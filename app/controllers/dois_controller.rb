@@ -9,48 +9,54 @@ class DoisController < ApplicationController
   before_bugsnag_notify :add_metadata_to_bugsnag
 
   def index
-    # support nested routes
-    if params[:client_id].present?
-      client = Client.where('datacentre.symbol = ?', params[:client_id]).first
-      collection = client.present? ? client.dois : Doi.none
-      total = client.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
-    elsif params[:provider_id].present? && params[:provider_id] != "admin"
-      provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
-      collection = provider.present? ? Doi.joins(:client).where("datacentre.allocator = ?", provider.id) : Doi.none
-      total = provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
-    elsif params[:id].present?
-      collection = Doi.where(doi: params[:id])
-      total = collection.all.size
+    page = (params.dig(:page, :number) || 1).to_i
+    size = (params.dig(:page, :size) || 25).to_i
+    from = (page - 1) * size
+
+    sort = case params[:sort]
+           when "name" then { "doi" => { order: 'asc' }}
+           when "-name" then { "doi" => { order: 'desc' }}
+           when "created" then { created: { order: 'asc' }}
+           when "-created" then { created: { order: 'desc' }}
+           else { "_score": { "order": "desc" }}
+           end
+
+    if params[:id].present?
+      response = Doi.find_by_id(params[:id]) 
+    elsif params[:ids].present?
+      response = Doi.find_by_ids(params[:ids], from: from, size: size, sort: sort)
     else
-      provider = Provider.unscoped.where('allocator.symbol = ?', "ADMIN").first
-      total = provider.present? ? provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i } : 0
-      collection = Doi
+      response = Doi.query(params[:query], state: params[:state], year: params[:year], registered: params[:registered], provider_id: params[:provider_id], client_id: params[:client_id], from: from, size: size, sort: sort)
     end
 
-    if params[:query].present?
-      collection = Doi.query(params[:query])
-      total = collection.all.size
-    end
+    total = response.results.total
+    total_pages = (total.to_f / size).ceil
 
-    page = params[:page] || {}
-    page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
-    page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
-    total_pages = (total.to_f / page[:size]).ceil
+    states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
+    resource_types = total > 0 ? facet_by_key(response.response.aggregations.resource_types.buckets) : nil
+    years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
+    registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
+    providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+    clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
+    schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
 
-    order = case params[:sort]
-            when "name" then "dataset.doi"
-            when "-name" then "dataset.doi DESC"
-            when "created" then "dataset.created"
-            else "dataset.created DESC"
-            end
+    #@clients = Kaminari.paginate_array(response.results, total_count: total).page(page).per(size)
+    @dois = response.page(page).per(size).records
 
-    @dois = collection.order(order).page(page[:number]).per(page[:size]).without_count
+    meta = {
+      total: total,
+      total_pages: total_pages,
+      page: page,
+      states: states,
+      resource_types: resource_types,
+      years: years,
+      registered: registered,
+      providers: providers,
+      clients: clients,
+      schema_versions: schema_versions
+    }.compact
 
-    meta = { total: total,
-             total_pages: total_pages,
-             page: page[:number].to_i }
-
-    render jsonapi: @dois, meta: meta, include: @include, each_serializer: DoiSerializer
+    render jsonapi: @dois, meta: meta, include: @include
   end
 
   def show
