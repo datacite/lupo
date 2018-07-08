@@ -17,8 +17,8 @@ class DoisController < ApplicationController
            when "name" then { "doi" => { order: 'asc' }}
            when "-name" then { "doi" => { order: 'desc' }}
            when "created" then { created: { order: 'asc' }}
-           when "-created" then { created: { order: 'desc' }}
-           else { "_score": { "order": "desc" }}
+           when "relevance" then { "_score": { "order": "desc" }}
+           else { created: { order: 'desc' }}
            end
 
     if params[:id].present?
