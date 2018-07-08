@@ -79,11 +79,11 @@ describe "Indexable class methods", elasticsearch: true do
       expect(results.total).to eq(1)
     end
 
-    # it 'query by title' do
-    #   sleep 1
-    #   results = Doi.query("soil").results
-    #   expect(results.total).to eq(1)
-    # end
+    it 'query by title' do
+      sleep 1
+      results = Doi.query("soil").results
+      expect(results.total).to eq(1)
+    end
 
     it 'query by publisher' do
       sleep 1
@@ -91,11 +91,11 @@ describe "Indexable class methods", elasticsearch: true do
       expect(results.total).to eq(1)
     end
 
-    # it 'query by description' do
-    #   sleep 1
-    #   results = Doi.query("description").results
-    #   expect(results.total).to eq(1)
-    # end
+    it 'query by description' do
+      sleep 1
+      results = Doi.query("description").results
+      expect(results.total).to eq(1)
+    end
 
     it 'query by description not found' do
       sleep 1

@@ -128,9 +128,9 @@ class Doi < ActiveRecord::Base
     {
       "doi" => doi,
       "url" => url,
-      "author" => author_normalized,
-      "title" => title_normalized,
-      "description" => description_normalized,
+      "author_normalized" => author_normalized,
+      "title_normalized" => title_normalized,
+      "description_normalized" => description_normalized,
       "publisher" => publisher,
       "client_id" => client_id,
       "provider_id" => provider_id,
