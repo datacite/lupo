@@ -26,11 +26,15 @@ class DoiSerializer < ActiveModel::Serializer
   end
 
   def author
-    Array.wrap(object.author)
+    object.author_normalized
+  end
+
+  def title
+    object.title_normalized
   end
 
   def description
-    parse_attributes(object.description, content: "text", first: true)
+    object.description_normalized
   end
 
   def resource_type_subtype

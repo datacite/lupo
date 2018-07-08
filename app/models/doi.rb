@@ -105,9 +105,9 @@ class Doi < ActiveRecord::Base
   mapping dynamic: 'false' do
     indexes :doi,                            type: :keyword
     indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
-    indexes :author,                         type: :nested
-    indexes :title,                          type: :text
-    indexes :description,                    type: :text
+    indexes :author_normalized,              type: :nested
+    indexes :title_normalized,               type: :text
+    indexes :description_normalized,         type: :text
     indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" }}
     indexes :client_id,                      type: :keyword
     indexes :provider_id,                    type: :keyword
@@ -128,9 +128,9 @@ class Doi < ActiveRecord::Base
     {
       "doi" => doi,
       "url" => url,
-      "author" => author,
-      "title" => title,
-      "description" => description,
+      "author" => author_normalized,
+      "title" => title_normalized,
+      "description" => description_normalized,
       "publisher" => publisher,
       "client_id" => client_id,
       "provider_id" => provider_id,
@@ -161,7 +161,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['doi^10', 'title^10', 'author^10', 'publisher^10', 'description^10', '_all']
+    ['doi^10', 'title_normalized^10', 'author_normalized^10', 'publisher^10', 'description_normalized^10', '_all']
   end
 
   def self.find_by_id(id, options={})
@@ -175,6 +175,18 @@ class Doi < ActiveRecord::Base
       },
       aggregations: query_aggregations
     })
+  end
+
+  def author_normalized
+    Array.wrap(author)
+  end
+  
+  def title_normalized
+    parse_attributes(title, content: "text", first: true)
+  end
+
+  def description_normalized
+    parse_attributes(description, content: "text", first: true)
   end
 
   def doi=(value)
