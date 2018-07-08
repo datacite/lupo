@@ -35,6 +35,7 @@ class DoisController < ApplicationController
                            registered: params[:registered], 
                            provider_id: params[:provider_id], 
                            client_id: params[:client_id], 
+                           person_id: params[:person_id], 
                            resource_type_id: camelize_str(params[:resource_type_id]), 
                            schema_version: params[:schema_version], 
                            from: from, 

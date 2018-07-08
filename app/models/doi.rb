@@ -105,13 +105,18 @@ class Doi < ActiveRecord::Base
   mapping dynamic: 'false' do
     indexes :doi,                            type: :keyword
     indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
-    indexes :author_normalized,              type: :nested
+    indexes :author,                         type: :object, properties: {
+      "type": { type: :keyword },
+      "id": { type: :keyword },
+      "name": { type: :text }
+    }
     indexes :title_normalized,               type: :text
     indexes :description_normalized,         type: :text
     indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" }}
     indexes :client_id,                      type: :keyword
     indexes :provider_id,                    type: :keyword
     indexes :resource_type_general,          type: :keyword
+    indexes :resource_type_subtype,          type: :keyword
     indexes :version,                        type: :integer
     indexes :is_active,                      type: :keyword
     indexes :aasm_state,                     type: :keyword
@@ -128,7 +133,7 @@ class Doi < ActiveRecord::Base
     {
       "doi" => doi,
       "url" => url,
-      "author_normalized" => author_normalized,
+      "author" => author,
       "title_normalized" => title_normalized,
       "description_normalized" => description_normalized,
       "publisher" => publisher,
@@ -161,7 +166,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['doi^10', 'title_normalized^10', 'author_normalized^10', 'publisher^10', 'description_normalized^10', '_all']
+    ['doi^10', 'title_normalized^10', 'author.name^10', 'author.id^10', 'publisher^10', 'description_normalized^10', 'resource_type_general^10', 'resource_type_subtype^10', '_all']
   end
 
   def self.find_by_id(id, options={})
@@ -175,10 +180,6 @@ class Doi < ActiveRecord::Base
       },
       aggregations: query_aggregations
     })
-  end
-
-  def author_normalized
-    Array.wrap(author)
   end
   
   def title_normalized

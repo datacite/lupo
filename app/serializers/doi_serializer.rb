@@ -26,7 +26,7 @@ class DoiSerializer < ActiveModel::Serializer
   end
 
   def author
-    object.author_normalized
+    Array.wrap(object.author)
   end
 
   def title
