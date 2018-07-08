@@ -111,7 +111,7 @@ module Indexable
       must << { term: { resource_type_general: options[:resource_type_id] }} if options[:resource_type_id].present?
       must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
       must << { terms: { client_id: options[:client_id].split(",") }} if options[:client_id].present?
-      must << { term: { person_id: "https://orcid.org/#{options[:person_id]}" }} if options[:person_id].present?
+      must << { term: { "author.id" => "https://orcid.org/#{options[:person_id]}" }} if options[:person_id].present?
       must << { range: { published: { gte: "#{options[:year].split(",").min}-01-01", lte: "#{options[:year].split(",").max}-12-31", format: "yyyy-mm-dd" }}} if options[:year].present?
       must << { range: { minted: { gte: "#{options[:registered].split(",").min}-01-01", lte: "#{options[:registered].split(",").max}-12-31", format: "yyyy-mm-dd" }}} if options[:registered].present?
       must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
