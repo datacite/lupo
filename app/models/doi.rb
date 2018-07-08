@@ -116,7 +116,7 @@ class Doi < ActiveRecord::Base
     indexes :client_id,                      type: :keyword
     indexes :provider_id,                    type: :keyword
     indexes :resource_type_general,          type: :keyword
-    indexes :resource_type_subtype,          type: :keyword
+    indexes :additional_type,                type: :keyword
     indexes :version,                        type: :integer
     indexes :is_active,                      type: :keyword
     indexes :aasm_state,                     type: :keyword
@@ -140,6 +140,7 @@ class Doi < ActiveRecord::Base
       "client_id" => client_id,
       "provider_id" => provider_id,
       "resource_type_general" => resource_type_general,
+      "additional_type" => additional_type,
       "version" => version,
       "is_active" => is_active,
       "last_landing_page_status" => last_landing_page_status,
@@ -166,7 +167,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['doi^10', 'title_normalized^10', 'author.name^10', 'author.id^10', 'publisher^10', 'description_normalized^10', 'resource_type_general^10', 'resource_type_subtype^10', '_all']
+    ['doi^10', 'title_normalized^10', 'author.name^10', 'author.id^10', 'publisher^10', 'description_normalized^10', 'resource_type_general^10', 'additional_type^10', '_all']
   end
 
   def self.find_by_id(id, options={})
