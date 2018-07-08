@@ -34,6 +34,14 @@ module Facetable
       end
     end
 
+    def facet_by_resource_type(arr)
+      arr.map do |hsh|
+        { "id" => hsh["key"].underscore.dasherize,
+          "title" => hsh["key"].underscore.humanize,
+          "count" => hsh["doc_count"] }
+      end
+    end
+
     def facet_by_provider(arr)
       # generate hash with id and name for each provider in facet
       ids = arr.map { |hsh| hsh["key"] }.join(",")

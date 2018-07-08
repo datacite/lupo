@@ -100,7 +100,7 @@ module Indexable
       must = []
       must << { multi_match: { query: query, fields: query_fields }} if query.present?
       must << { term: { aasm_state: options[:state] }} if options[:state].present?
-      must << { term: { resource_type_general: options[:resource_type] }} if options[:resource_type].present?
+      must << { term: { resource_type_general: options[:resource_type_id] }} if options[:resource_type_id].present?
       must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
       must << { terms: { client_id: options[:client_id].split(",") }} if options[:client_id].present?
       must << { range: { published: { gte: "#{options[:year].split(",").min}-01-01", lte: "#{options[:year].split(",").max}-12-31", format: "yyyy-mm-dd" }}} if options[:year].present?

@@ -26,14 +26,24 @@ class DoisController < ApplicationController
     elsif params[:ids].present?
       response = Doi.find_by_ids(params[:ids], from: from, size: size, sort: sort)
     else
-      response = Doi.query(params[:query], state: params[:state], year: params[:year], registered: params[:registered], provider_id: params[:provider_id], client_id: params[:client_id], schema_version: params[:schema_version], from: from, size: size, sort: sort)
+      response = Doi.query(params[:query], 
+                           state: params[:state], 
+                           year: params[:year], 
+                           registered: params[:registered], 
+                           provider_id: params[:provider_id], 
+                           client_id: params[:client_id], 
+                           resource_type_id: camelize_str(params[:resource_type_id]), 
+                           schema_version: params[:schema_version], 
+                           from: from, 
+                           size: size, 
+                           sort: sort)
     end
 
     total = response.results.total
     total_pages = (total.to_f / size).ceil
 
     states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
-    resource_types = total > 0 ? facet_by_key(response.response.aggregations.resource_types.buckets) : nil
+    resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
     years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
     registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
     providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
