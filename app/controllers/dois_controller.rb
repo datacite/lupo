@@ -26,7 +26,7 @@ class DoisController < ApplicationController
     elsif params[:ids].present?
       response = Doi.find_by_ids(params[:ids], from: from, size: size, sort: sort)
     else
-      response = Doi.query(params[:query], state: params[:state], year: params[:year], registered: params[:registered], provider_id: params[:provider_id], client_id: params[:client_id], from: from, size: size, sort: sort)
+      response = Doi.query(params[:query], state: params[:state], year: params[:year], registered: params[:registered], provider_id: params[:provider_id], client_id: params[:client_id], schema_version: params[:schema_version], from: from, size: size, sort: sort)
     end
 
     total = response.results.total
