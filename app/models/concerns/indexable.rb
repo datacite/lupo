@@ -4,13 +4,21 @@ module Indexable
   require 'aws-sdk-sqs'
 
   included do
-    # mapping do
-    #   # ...
-    # end
-
-    # def self.search(query)
-    #   # ...
-    # end
+    after_commit on: [:create] do
+      __elasticsearch__.index_document
+    end
+  
+    after_commit on: [:update] do
+      begin
+        __elasticsearch__.update_document
+      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+        __elasticsearch__.index_document
+      end
+    end
+  
+    after_commit on: [:destroy] do
+      __elasticsearch__.delete_document
+    end
 
     # unless Rails.env.test?
     #   before_destroy { send_delete_message(self.to_jsonapi) }

@@ -6,7 +6,6 @@ class Prefix < ActiveRecord::Base
   include Indexable
 
   include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
 
   self.table_name = "prefix"
   alias_attribute :created_at, :created

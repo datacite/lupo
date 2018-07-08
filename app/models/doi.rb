@@ -24,7 +24,6 @@ class Doi < ActiveRecord::Base
   include Mailable
 
   include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
 
   aasm :whiny_transitions => false do
     # initial is default state for new DOIs. This is needed to handle DOIs created

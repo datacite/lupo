@@ -21,7 +21,6 @@ class Provider < ActiveRecord::Base
   include Mailable
 
   include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
 
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
