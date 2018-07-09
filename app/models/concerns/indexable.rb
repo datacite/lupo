@@ -9,11 +9,8 @@ module Indexable
     end
   
     after_commit on: [:update] do
-      begin
-        __elasticsearch__.update_document
-      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
-        __elasticsearch__.index_document
-      end
+      # use index_document instead of update_document to also update virtual attributes
+      __elasticsearch__.index_document
     end
   
     after_commit on: [:destroy] do
