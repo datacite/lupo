@@ -5,38 +5,88 @@ class PrefixesController < ApplicationController
   load_and_authorize_resource :except => [:index, :show]
 
   def index
-    page = (params.dig(:page, :number) || 1).to_i
-    size = (params.dig(:page, :size) || 25).to_i
-    from = (page - 1) * size
-
-    sort = case params[:sort]
-           when "name" then { "name.keyword" => { order: 'asc' }}
-           when "-name" then { "name.keyword" => { order: 'desc' }}
-           when "created" then { created: { order: 'asc' }}
-           else { created: { order: 'desc' }}
-           end
-
+    # support nested routes
     if params[:id].present?
-      response = Prefix.find_by_id(params[:id]) 
+      collection = Prefix.where(prefix: params[:id])
+    elsif params[:provider_id].present?
+      provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
+      collection = provider.present? ? provider.prefixes : Prefix.none
+    elsif params[:client_id].present?
+      client = Client.where('datacentre.symbol = ?', params[:client_id]).first
+      collection = client.present? ? client.prefixes : Prefix.none
     else
-      response = Prefix.query(params[:query], year: params[:year], provider_id: params[:provider_id], from: from, size: size, sort: sort)
+      collection = Prefix
     end
 
-    total = response.results.total
-    total_pages = (total.to_f / size).ceil
-    years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
-    providers = total > 0 ? facet_by_provider_ids(response.response.aggregations.providers.buckets) : nil
+    collection = collection.state(params[:state]) if params[:state].present?
+    collection = collection.query(params[:query]) if params[:query].present?
+    collection = collection.where('YEAR(prefix.created) = ?', params[:year]) if params[:year].present?
 
-    #@clients = Kaminari.paginate_array(response.results, total_count: total).page(page).per(size)
-    @prefixes = response.page(page).per(size).records
+    if params[:year].present?
+      years = [{ id: params[:year],
+                 title: params[:year],
+                 count: collection.where('YEAR(prefix.created) = ?', params[:year]).count }]
+    else
+      years = collection.where.not(prefix: nil).order("YEAR(prefix.created) DESC").group("YEAR(prefix.created)").count
+      years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
+    end
 
-    meta = {
-      total: total,
-      total_pages: total_pages,
-      page: page,
-      years: years,
-      providers: providers
-    }.compact
+    # calculate facet counts after filtering
+    # no faceting by client
+    if params[:provider_id].present?
+      providers = [{ id: params[:provider_id],
+                     title: provider.name,
+                     count: collection.includes(:providers).where('allocator.id' => provider.id).count }]
+    else
+      providers = collection.includes(:providers).where.not('allocator.id' => nil).group('allocator.id').count
+      providers = providers
+                  .sort { |a, b| b[1] <=> a[1] }
+                  .reduce([]) do |sum, i|
+                                if provider = cached_providers.find { |m| m.id == i[0] }
+                                  sum << { id: provider.symbol.downcase, title: provider.name, count: i[1] }
+                                end
+
+                                sum
+                              end
+    end
+
+    if params[:state].present?
+      states = [{ id: params[:state],
+                  title: params[:state].underscore.humanize,
+                  count: collection.count }]
+    else
+      states = [{ id: "unassigned",
+                  title: "Unassigned",
+                  count: collection.state("unassigned").count },
+                { id: "without-client",
+                  title: "Without client",
+                  count: collection.state("without-client").count },
+                { id: "with-client",
+                  title: "With client",
+                  count: collection.state("with-client").count }]
+    end
+
+    # pagination
+    page = params[:page] || {}
+    page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
+    page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
+    total = collection.count
+
+    order = case params[:sort]
+            when "name" then "prefix.prefix"
+            when "-name" then "prefix.prefix DESC"
+            when "created" then "prefix.created"
+            else "prefix.created DESC"
+            end
+
+    @prefixes = collection.order(order).page(page[:number]).per(page[:size])
+
+    meta = { total: total,
+             total_pages: @prefixes.total_pages,
+             page: page[:number].to_i,
+             states: states,
+             providers: providers,
+             years: years }
 
     render jsonapi: @prefixes, meta: meta, include: @include
   end
