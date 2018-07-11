@@ -91,6 +91,39 @@ describe "dois", type: :request do
       end
     end
 
+    context 'when the record exists no creator validate' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite_missing_creator.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "xml" => xml,
+              "validate" => "true"
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+      before { put "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+
+      it 'returns error' do
+        expect(json["errors"]).to eq([{"source"=>"creators", "title"=>"Missing child element(s). expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0"}])
+      end
+
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
+      end
+    end
+
     context 'when the record doesn\'t exist' do
       let(:doi_id) { "10.5438/4K3M-NYVG" }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
@@ -130,6 +163,40 @@ describe "dois", type: :request do
 
       it 'sets state to draft' do
         expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+      end
+    end
+
+    context 'when the record doesn\'t exist no creator validate' do
+      let(:doi_id) { "10.5438/077d-fj48" }
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite_missing_creator.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "xml" => xml,
+              "validate" => "true"
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+      before { put "/dois/#{doi_id}", params: valid_attributes.to_json, headers: headers }
+
+      it 'returns error' do
+        expect(json["errors"]).to eq([{"source"=>"creators", "title"=>"Missing child element(s). expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0"}])
+      end
+
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
       end
     end
 

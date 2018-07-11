@@ -70,6 +70,7 @@ class Doi < ActiveRecord::Base
   alias_attribute :published, :date_published
 
   attr_accessor :current_user
+  attr_accessor :validate
 
   belongs_to :client, foreign_key: :datacentre
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy

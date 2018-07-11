@@ -129,7 +129,7 @@ class DoisController < ApplicationController
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
 
-    if safe_params[:xml] && @doi.aasm_state != "draft" && @doi.validation_errors?
+    if safe_params[:xml] && (@doi.aasm_state != "draft" || safe_params[:validate]) && @doi.validation_errors?
       Rails.logger.error @doi.validation_errors.inspect
       render jsonapi: serialize(@doi.validation_errors), status: :unprocessable_entity
     elsif @doi.save
@@ -248,7 +248,7 @@ class DoisController < ApplicationController
 
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
-    attributes = [:doi, "confirm-doi", :identifier, :url, :title, :publisher, :published, :created, :prefix, :suffix, "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", :description, :license, :xml, :version, "metadata-version", "schema-version", :state, "is-active", :reason, :registered, :updated, :mode, :event, :regenerate, :client, "resource_type", author: [:type, :id, :name, "given-name", "family-name"]]
+    attributes = [:doi, "confirm-doi", :identifier, :url, :title, :publisher, :published, :created, :prefix, :suffix, "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", :description, :license, :xml, :validate, :version, "metadata-version", "schema-version", :state, "is-active", :reason, :registered, :updated, :mode, :event, :regenerate, :client, "resource_type", author: [:type, :id, :name, "given-name", "family-name"]]
     relationships = [{ client: [data: [:type, :id]] },  { provider: [data: [:type, :id]] }, { "resource-type" => [:data, data: [:type, :id]] }]
     p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships)
     p = p.fetch("attributes").merge(client_id: p.dig("relationships", "client", "data", "id"), resource_type_general: camelize_str(p.dig("relationships", "resource-type", "data", "id")))
