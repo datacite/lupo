@@ -4,11 +4,11 @@ class DoisController < ApplicationController
   prepend_before_action :authenticate_user!
   before_action :set_doi, only: [:show, :destroy, :get_url]
   before_action :set_include, only: [:index, :show, :create, :update]
-  authorize_resource :except => [:index, :show, :random]
-
   before_bugsnag_notify :add_metadata_to_bugsnag
 
   def index
+    authorize! :read, Doi
+
     page = (params.dig(:page, :number) || 1).to_i
     size = (params.dig(:page, :size) || 25).to_i
     from = (page - 1) * size
@@ -74,6 +74,8 @@ class DoisController < ApplicationController
   end
 
   def show
+    authorize! :read, @doi
+
     render jsonapi: @doi, include: @include, serializer: DoiSerializer
   end
 
@@ -141,6 +143,8 @@ class DoisController < ApplicationController
   end
 
   def destroy
+    authorize! :delete, @doi
+
     if @doi.draft?
       if @doi.destroy
         head :no_content

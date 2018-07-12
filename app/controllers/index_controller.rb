@@ -1,14 +1,18 @@
 class IndexController < ApplicationController
   include ActionController::MimeResponds
 
+  prepend_before_action :authenticate_user!
   before_action :set_doi, only: [:show]
-
+  
   def index
+    authorize! :index
     render plain: ENV['SITE_TITLE']
   end
 
   # we support content negotiation in show action
   def show
+    authorize! :show, @doi
+
     respond_to do |format|
       format.citation do
         # fetch formatted citation
