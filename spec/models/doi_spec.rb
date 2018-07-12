@@ -516,6 +516,51 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
+  context "parses schema 2.2" do
+    let(:xml) { Base64.strict_encode64(file_fixture('datacite_schema_2.2.xml').read) }
+
+    subject { create(:doi, xml: xml, event: "publish") }
+
+    it "creates xml" do
+      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "valid model" do
+      expect(subject.valid?).to be true
+    end
+
+    it "title" do
+      expect(subject.title).to eq(["Właściwości rzutowań podprzestrzeniowych", {"title_type"=>"TranslatedTitle", "text"=>"Translation of Polish titles"}])
+    end
+
+    it "author" do
+      expect(subject.author.length).to eq(2)
+      expect(subject.author.first).to eq("type"=>"Person", "name"=>"John Smith", "givenName"=>"John", "familyName"=>"Smith")
+    end
+
+    it "date_published" do
+      expect(subject.date_published).to eq("2010")
+    end
+
+    it "publication_year" do
+      expect(subject.publication_year).to eq(2010)
+    end
+
+    it "creates schema_version" do
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-2.2")
+    end
+
+    it "metadata" do
+      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "namespace" do
+      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-2.2")
+    end
+  end
+
   context "parses bibtex" do
     let(:xml) { Base64.strict_encode64(file_fixture('crossref.bib').read) }
 
