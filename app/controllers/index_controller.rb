@@ -5,7 +5,7 @@ class IndexController < ApplicationController
   before_action :set_doi, only: [:show]
   
   def index
-    authorize! :index
+    authorize! :index, :Index
     render plain: ENV['SITE_TITLE']
   end
 
