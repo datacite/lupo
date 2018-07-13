@@ -340,6 +340,7 @@ class Doi < ActiveRecord::Base
   end
 
   def set_defaults
+    self.start if aasm_state == "undetermined"
     self.is_active = (aasm_state == "findable") ? "\x01" : "\x00"
     self.version = version.present? ? version + 1 : 0
     self.updated = Time.zone.now.utc.iso8601
