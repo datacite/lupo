@@ -32,24 +32,24 @@ class Doi < ActiveRecord::Base
     state :draft, :tombstoned, :registered, :findable, :flagged, :broken
 
     event :start do
-      transitions :from => :undetermined, :to => :draft, :after => Proc.new { set_to_inactive }
+      transitions :from => :undetermined, :to => :draft
     end
 
     event :register do
       # can't register test prefix
-      transitions :from => [:undetermined, :draft], :to => :registered, :unless => :is_test_prefix?, :after => Proc.new { set_to_active }
-      transitions :from => :undetermined, :to => :draft, :after => Proc.new { set_to_inactive }
+      transitions :from => [:undetermined, :draft], :to => :registered, :unless => :is_test_prefix?
+      transitions :from => :undetermined, :to => :draft
     end
 
     event :publish do
       # can't index test prefix
-      transitions :from => [:undetermined, :draft], :to => :findable, :unless => :is_test_prefix?, :after => Proc.new { set_to_active }
-      transitions :from => :registered, :to => :findable, :after => Proc.new { set_to_active }
-      transitions :from => :undetermined, :to => :draft, :after => Proc.new { set_to_inactive }
+      transitions :from => [:undetermined, :draft], :to => :findable, :unless => :is_test_prefix?
+      transitions :from => :registered, :to => :findable
+      transitions :from => :undetermined, :to => :draft
     end
 
     event :hide do
-      transitions :from => [:findable], :to => :registered, :after => Proc.new { set_to_inactive }
+      transitions :from => [:findable], :to => :registered
     end
 
     event :flag do
@@ -340,17 +340,9 @@ class Doi < ActiveRecord::Base
   end
 
   def set_defaults
-    self.is_active = is_active ? "\x01" : "\x00"
+    self.is_active = (aasm_state == "findable") ? "\x01" : "\x00"
     self.version = version.present? ? version + 1 : 0
     self.updated = Time.zone.now.utc.iso8601
-  end
-
-  def set_to_active
-    self.is_active = "\x01"
-  end
-
-  def set_to_inactive
-    self.is_active = "\x00"
   end
 
   private

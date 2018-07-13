@@ -370,7 +370,7 @@ describe Doi, type: :model, vcr: true do
       expect(params.dig("attributes","url")).to eq(doi.url)
       expect(params.dig("attributes","resource-type-id")).to eq("Text")
       expect(params.dig("attributes","schema-version")).to eq("http://datacite.org/schema/kernel-3")
-      expect(params.dig("attributes","is-active")).to be true
+      expect(params.dig("attributes","is-active")).to be false
     end
   end
 
