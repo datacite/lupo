@@ -10,7 +10,7 @@ describe "dois", type: :request do
   let!(:dois) { create_list(:doi, 3, client: client) }
   let(:doi) { create(:doi, client: client) }
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
-  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
+  let(:headers) { { 'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer }}
 
   describe 'GET /dois', elasticsearch: true do
     before do
@@ -1469,6 +1469,49 @@ describe "dois", type: :request do
 
     it 'returns status code 200' do
       expect(response).to have_http_status(200)
+    end
+  end
+
+  describe 'GET /dois/DOI/get-url no password', vcr: true do
+    let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
+
+    before { get "/dois/#{doi.doi}/get-url", headers: { 'ACCEPT'=>'application/vnd.api+json' } }
+
+    it 'returns error' do
+      expect(json['errors']).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
+    end
+
+    it 'returns status code 401' do
+      expect(response).to have_http_status(401)
+    end
+  end
+
+  describe 'GET /dois/DOI/get-url wrong password', vcr: true do
+    let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
+    let(:credentials) { client.encode_auth_param(username: client.symbol.downcase, password: "12345") }
+
+    before { get "/dois/#{doi.doi}/get-url", headers: { 'ACCEPT'=>'application/vnd.api+json', 'Authorization' => 'Basic ' + credentials } }
+
+    it 'returns error' do
+      expect(json['errors']).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
+    end
+
+    it 'returns status code 401' do
+      expect(response).to have_http_status(401)
+    end
+  end
+
+  describe 'GET /dois/DOI/get-url no permission', vcr: true do
+    let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
+
+    before { get "/dois/#{doi.doi}/get-url", headers: admin_headers }
+
+    it 'returns error' do
+      expect(json['errors']).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+    end
+
+    it 'returns status code 403' do
+      expect(response).to have_http_status(403)
     end
   end
 

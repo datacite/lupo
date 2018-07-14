@@ -229,7 +229,7 @@ class DoisController < ApplicationController
   end
 
   def get_url
-    authorize! :get_url, Doi
+    authorize! :get_url, @doi
 
     if @doi.aasm_state == "draft"
       url = @doi.url

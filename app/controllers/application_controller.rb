@@ -79,11 +79,11 @@ class ApplicationController < ActionController::API
 
       if status == 401
         message = "Bad credentials."
-      elsif status == 403 && @current_user.blank?
+      elsif status == 403 && current_user.try(:uid)
+        message = "You are not authorized to access this resource."
+      elsif status == 403
         status = 401
         message = "Bad credentials."
-      elsif status == 403
-        message = "You are not authorized to access this resource."
       elsif status == 404
         message = "The resource you are looking for doesn't exist."
       elsif status == 406
@@ -108,16 +108,16 @@ class ApplicationController < ActionController::API
 
   def append_info_to_payload(payload)
     super
-    payload[:uid] = current_user.id if current_user.present?
+    payload[:uid] = current_user.uid.downcase if current_user.try(:uid)
   end
 
   def add_user_info_to_bugsnag(report)
-    return nil unless current_user.present?
+    return nil unless current_user.try(:uid)
     
     report.user = {
       email: current_user.email,
       name: current_user.name,
-      id: current_user.id
+      id: current_user.uid
     }
   end
 end
