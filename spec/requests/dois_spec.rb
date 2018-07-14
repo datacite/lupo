@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 describe "dois", type: :request do
+  let(:admin) { create(:provider, symbol: "ADMIN") }
+  let(:admin_bearer) { Client.generate_token(role_id: "staff_admin", uid: admin.symbol, password: admin.password) }
+  let(:admin_headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + admin_bearer}}
+
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
   let!(:dois) { create_list(:doi, 3, client: client) }
@@ -1300,7 +1304,7 @@ describe "dois", type: :request do
   end
 
   describe 'POST /dois/set-state' do
-    before { post '/dois/set-state', headers: headers }
+    before { post '/dois/set-state', headers: admin_headers }
 
     it 'returns dois' do
       expect(json['message']).to eq("DOI state updated.")
@@ -1316,7 +1320,7 @@ describe "dois", type: :request do
     let(:client)  { create(:client, provider: provider) }
     let!(:dois) { create_list(:doi, 10, client: client) }
 
-    before { post '/dois/set-minted', headers: headers }
+    before { post '/dois/set-minted', headers: admin_headers }
 
     it 'returns dois' do
       expect(json['message']).to eq("DOI minted timestamp added.")
@@ -1330,7 +1334,7 @@ describe "dois", type: :request do
   describe 'POST /dois/set-url' do
     let!(:dois) { create_list(:doi, 3, client: client, url: nil) }
 
-    before { post '/dois/set-url', headers: headers }
+    before { post '/dois/set-url', headers: admin_headers }
 
     it 'returns dois' do
       expect(json['message']).to eq("Adding missing URLs queued.")
@@ -1342,7 +1346,7 @@ describe "dois", type: :request do
   end
 
   describe 'POST /dois/delete-test-dois' do
-    before { post '/dois/delete-test-dois', headers: headers }
+    before { post '/dois/delete-test-dois', headers: admin_headers }
 
     it 'returns dois' do
       expect(json['message']).to eq("Test DOIs deleted.")
@@ -1527,7 +1531,8 @@ describe "dois", type: :request do
     before { get "/dois/get-dois", headers: nil }
 
     it 'returns error message' do
-      expect(json["errors"]).to eq([{"status"=>"401", "title"=>"You are not authorized to access this resource."}])
+      puts response.body
+      expect(json["errors"]).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
     end
 
     it 'returns status code 401' do

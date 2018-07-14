@@ -13,11 +13,11 @@ describe "content_negotation", type: :request do
     before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.jats+xml", 'Authorization' => 'Bearer ' + bearer } }
 
     it 'returns error message' do
-      expect(json["errors"]).to eq([{"status"=>"401", "title"=>"You are not authorized to access this resource."}])
+      expect(json["errors"]).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
     end
 
-    it 'returns status code 401' do
-      expect(response).to have_http_status(401)
+    it 'returns status code 403' do
+      expect(response).to have_http_status(403)
     end
   end
 
@@ -25,7 +25,7 @@ describe "content_negotation", type: :request do
     before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.jats+xml" } }
 
     it 'returns error message' do
-      expect(json["errors"]).to eq([{"status"=>"401", "title"=>"You are not authorized to access this resource."}])
+      expect(json["errors"]).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
     end
 
     it 'returns status code 401' do

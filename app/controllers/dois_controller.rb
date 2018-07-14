@@ -143,7 +143,7 @@ class DoisController < ApplicationController
   end
 
   def destroy
-    authorize! :delete, @doi
+    authorize! :destroy, @doi
 
     if @doi.draft?
       if @doi.destroy
@@ -172,13 +172,13 @@ class DoisController < ApplicationController
   end
 
   def set_state
-    authorize! :update, Doi
+    authorize! :set_state, Doi
     Doi.set_state
     render json: { message: "DOI state updated." }.to_json, status: :ok
   end
 
   def get_url
-    authorize! :update, Doi
+    authorize! :read, Doi
 
     if @doi.aasm_state == "draft"
       url = @doi.url
@@ -196,7 +196,7 @@ class DoisController < ApplicationController
   end
 
   def get_dois
-    authorize! :update, Doi
+    authorize! :get_urls, Doi
 
     response = Doi.get_dois(username: current_user.uid.upcase, password: current_user.password)
     if response.status == 200
@@ -209,13 +209,13 @@ class DoisController < ApplicationController
   end
 
   def set_minted
-    authorize! :update, Doi
+    authorize! :set_minted, Doi
     Doi.set_minted
     render json: { message: "DOI minted timestamp added." }.to_json, status: :ok
   end
 
   def set_url
-    authorize! :update, Doi
+    authorize! :set_url, Doi
     from_date = Time.zone.now - 1.day
     Doi.where(url: nil).where(aasm_state: ["registered", "findable"]).where("updated >= ?", from_date).find_each do |doi|
       UrlJob.perform_later(doi)
@@ -224,7 +224,7 @@ class DoisController < ApplicationController
   end
 
   def delete_test_dois
-    authorize! :delete, Doi
+    authorize! :delete_test_dois, Doi
     Doi.delete_test_dois
     render json: { message: "Test DOIs deleted." }.to_json, status: :ok
   end

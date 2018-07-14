@@ -10,7 +10,8 @@ class Ability
     @user = user
 
     if user.role_id == "staff_admin"
-      can :manage, :all
+      can :manage, [Provider, ProviderPrefix, Client, ClientPrefix, Prefix, Phrase, User]
+      can [:read, :transfer, :set_state, :set_minted, :set_url, :delete_test_dois], Doi
     elsif user.role_id == "staff_user"
       can :read, :all
     elsif user.role_id == "provider_admin" && user.provider_id.present?
@@ -24,8 +25,10 @@ class Ability
       # else
       #   can [:read, :update], Doi, :provider_id => user.provider_id
       # end
-      can [:manage], Doi, :provider_id => user.provider_id
-
+      can [:read, :transfer], Doi, :provider_id => user.provider_id
+      can [:read], Doi do |doi| 
+        doi.findable?
+      end
       can [:read], User
       can [:read], Phrase
     elsif user.role_id == "provider_user" && user.provider_id.present?
@@ -34,6 +37,9 @@ class Ability
       can [:read], Client, :provider_id => user.provider_id
       can [:read], ClientPrefix#, :client_id => user.client_id
       can [:read], Doi, :provider_id => user.provider_id
+      can [:read], Doi do |doi| 
+        doi.findable?
+      end
       can [:read], User
       can [:read], Phrase
     elsif user.role_id == "client_admin" && user.client_id.present?
@@ -45,21 +51,34 @@ class Ability
       # else
       #   can [:read, :update], Doi, :client_id => user.client_id
       # end
-      can [:manage, :register_url], Doi, :client_id => user.client_id
+      can [:read, :new, :create, :update, :destroy, :register_url, :get_urls], Doi, :client_id => user.client_id
+      can [:read], Doi do |doi|
+        doi.findable?
+      end
       can [:read], User
       can [:read], Phrase
     elsif user.role_id == "client_user" && user.client_id.present?
       can [:read], Client, :symbol => user.client_id.upcase
       can [:read], ClientPrefix, :client_id => user.client_id
       can [:read], Doi, :client_id => user.client_id
+      can [:read], Doi do
+        |doi| doi.findable?
+      end
       can [:read], User
       can [:read], Phrase
     elsif user.role_id == "user"
       can [:read, :update], Provider, :symbol => user.provider_id.upcase if user.provider_id.present?
       can [:read, :update], Client, :symbol => user.client_id.upcase if user.client_id.present?
-      can [:read], Doi
+      can [:read], Doi, :client_id => user.client_id if user.client_id.present?
+      can [:read], Doi do |doi| 
+        doi.findable?
+      end
       can [:read], User, :id => user.id
       can [:read], Phrase
+    elsif user.role_id == "anonymous"
+      can [:read], Doi do |doi|
+        doi.findable?
+      end
     end
   end
 end
