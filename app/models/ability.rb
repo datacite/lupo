@@ -51,7 +51,7 @@ class Ability
       # else
       #   can [:read, :update], Doi, :client_id => user.client_id
       # end
-      can [:read, :new, :create, :update, :destroy, :register_url, :get_urls], Doi, :client_id => user.client_id
+      can [:read, :new, :create, :update, :destroy, :register_url, :get_url, :get_urls], Doi, :client_id => user.client_id
       can [:read], Doi do |doi|
         doi.findable?
       end
