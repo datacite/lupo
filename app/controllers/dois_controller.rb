@@ -126,7 +126,11 @@ class DoisController < ApplicationController
       @doi = Doi.new(safe_params.merge(doi: doi_id, event: safe_params[:event] || "start"))
     end
 
-    authorize! :update, @doi
+    if safe_params[:xml].present? || safe_params[:url].present?
+      authorize! :update, @doi
+    else
+      authorize! :transfer, @doi
+    end
 
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
