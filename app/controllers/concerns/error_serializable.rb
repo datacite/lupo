@@ -9,7 +9,7 @@ module ErrorSerializable
         source = err.keys.first
 
         Array.wrap(err.values.first).each do |title|
-          sum << { source: source, title: title.capitalize }
+          sum << { source: source, title: title.is_a?(String) ? title.capitalize : title.to_s }
         end
 
         sum
