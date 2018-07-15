@@ -173,7 +173,7 @@ class DoisController < ApplicationController
       @doi = Doi.new(safe_params.merge(doi: doi_id, event: safe_params[:event] || "start"))
     end
 
-    if safe_params[:xml].present? || safe_params[:url]
+    if safe_params[:xml].present? || safe_params[:url].present? || safe_params[:event].present?
       authorize! :update, @doi
     else
       authorize! :transfer, @doi
