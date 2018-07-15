@@ -49,11 +49,6 @@ after_success:
       docker push $REPO;
       echo "Pushed to" $REPO;
       AUTO_DEPLOY=true;
-    elif [ "$TRAVIS_BRANCH" == "elasticsearch" ]; then
-      docker build -f Dockerfile -t $REPO .;
-      docker push $REPO;
-      echo "Pushed to" $REPO;
-      AUTO_DEPLOY=true;
     else
       docker build -f Dockerfile -t $REPO:$TRAVIS_BRANCH .;
       docker push $REPO:$TRAVIS_BRANCH;
