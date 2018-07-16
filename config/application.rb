@@ -82,6 +82,9 @@ module Lupo
     config.action_view.sanitized_allowed_tags = %w(strong em b i code pre sub sup br)
     config.action_view.sanitized_allowed_attributes = []
 
+    # make sure all input is UTF-8
+    config.middleware.insert 0, Rack::UTF8Sanitizer, additional_content_types: ['application/vnd.api+json', 'application/xml']
+
     # compress responses with deflate or gzip
     config.middleware.use Rack::Deflater
 

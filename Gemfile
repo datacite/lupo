@@ -49,6 +49,8 @@ gem 'mini_magick', '~> 4.8'
 gem 'elasticsearch-model', '~> 5.0', '>= 5.0.2', require: 'elasticsearch/model'
 gem 'elasticsearch-rails', '~> 5.0', '>= 5.0.2'
 gem 'faraday_middleware-aws-sigv4', '~> 0.2.4'
+gem 'rack-utf8_sanitizer', '~> 1.6'
+gem 'oj_mimic_json', '~> 1.0', '>= 1.0.1'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5', '>= 3.5.2'
