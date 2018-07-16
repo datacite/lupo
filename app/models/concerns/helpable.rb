@@ -29,7 +29,7 @@ module Helpable
       payload = "doi=#{doi}\nurl=#{options[:url]}"
       url = "#{mds_url}/doi/#{doi}"
 
-      response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: options[:username], password: options[:password])
+      response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: options[:username], password: options[:password], timeout: 2)
 
       if response.status == 201
         Rails.logger.info "[Handle] Updated " + doi + " with " + options[:url] + "."
@@ -45,7 +45,7 @@ module Helpable
 
       url = "#{mds_url}/doi/#{doi}"
 
-      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: options[:password])
+      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: options[:password], timeout: 2)
 
       if response.status == 200
         response
@@ -60,7 +60,7 @@ module Helpable
     end
 
     def mds_url
-      Rails.env.production? ? 'https://mds.datacite.org' : 'https://mds-legacy.test.datacite.org' 
+      Rails.env.production? ? 'https://mds-legacy.datacite.org' : 'https://mds-legacy.test.datacite.org' 
     end
 
     def generate_random_doi(str, options={})
@@ -93,10 +93,10 @@ module Helpable
     def get_dois(options={})
       return OpenStruct.new(body: { "errors" => [{ "title" => "Username or password missing" }] }) unless options[:username].present? && options[:password].present?
 
-      mds_url = Rails.env.production? ? 'https://mds.datacite.org' : 'https://mds-legacy.test.datacite.org' 
+      mds_url = Rails.env.production? ? 'https://mds-legacy.datacite.org' : 'https://mds-legacy.test.datacite.org' 
       url = "#{mds_url}/doi"
 
-      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: options[:password])
+      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: options[:password], timeout: 5)
 
       if [200, 204].include?(response.status)
         response
