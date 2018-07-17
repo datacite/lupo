@@ -12,14 +12,9 @@ module Helpable
     include Bolognese::DoiUtils
 
     def register_url(options={})
-      unless options[:username].present? && options[:password].present?
-        Rails.logger.error "[Handle] Error updating DOI " + doi + ": Username or password missing."
-        return OpenStruct.new(body: { "errors" => [{ "title" => "Username or password missing." }] })
-      end
-
-      unless options[:role_id] == "client_admin"
-        Rails.logger.error "[Handle] Error updating DOI " + doi + ": User does not have permission to register handle."
-        return OpenStruct.new(body: { "errors" => [{ "title" => "User does not have permission to register handle." }] })
+      unless options[:password].present?
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": password missing."
+        return OpenStruct.new(body: { "errors" => [{ "title" => "Password missing." }] })
       end
 
       unless is_registered_or_findable?
@@ -29,7 +24,7 @@ module Helpable
       payload = "doi=#{doi}\nurl=#{options[:url]}"
       url = "#{mds_url}/doi/#{doi}"
 
-      response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: options[:username], password: options[:password], timeout: 10)
+      response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: client_id, password: options[:password], timeout: 10)
 
       if response.status == 201
         Rails.logger.info "[Handle] Updated " + doi + " with " + options[:url] + "."
@@ -41,11 +36,11 @@ module Helpable
     end
 
     def get_url(options={})
-      return OpenStruct.new(body: { "errors" => [{ "title" => "Username or password missing" }] }) unless options[:username].present? && options[:password].present?
+      return OpenStruct.new(body: { "errors" => [{ "title" => "Password missing" }] }) unless options[:password].present?
 
       url = "#{mds_url}/doi/#{doi}"
 
-      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: options[:password], timeout: 10)
+      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: client_id, password: options[:password], timeout: 10)
 
       if response.status == 200
         response

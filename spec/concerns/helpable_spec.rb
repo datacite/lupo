@@ -92,7 +92,7 @@ describe Doi, vcr: true do
 
     it 'missing username and password' do
       options = { url: "https://blog.datacite.org/re3data-science-europe/" }
-      expect(subject.register_url(options).body).to eq("errors"=>[{"title"=>"Username or password missing."}])
+      expect(subject.register_url(options).body).to eq("errors"=>[{"title"=>"Password missing."}])
     end
 
     it 'wrong username and password' do

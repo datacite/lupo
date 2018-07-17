@@ -22,7 +22,7 @@ namespace :doi do
   desc 'Register all URLs'
   task :register_all_urls => :environment do
     from_date = ENV['FROM_DATE'] || Time.zone.now - 1.day
-    Doi.register_all_urls(from_date: from_date)
+    Doi.register_all_urls(password: ENV['PASSWORD'], from_date: from_date)
   end
 
   desc 'Delete DOIs with test prefix older than one month'

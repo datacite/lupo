@@ -236,9 +236,7 @@ class Doi < ActiveRecord::Base
     return nil if current_user.nil? || %w(europ ethz).include?(provider_id)
 
     HandleJob.set(wait: 1.minute).perform_later(self, url: url,
-                                                 role_id: current_user.role_id,
-                                                 username: current_user.uid,
-                                                 password: current_user.password)
+                                                password: current_user.password)
   end
 
   # attributes to be sent to elasticsearch index
@@ -329,16 +327,14 @@ class Doi < ActiveRecord::Base
   end
 
   # register DOIs in the handle system that have not been registered yet
-  def self.register_all_urls(from_date: nil)
+  def self.register_all_urls(password: nil, from_date: nil)
     from_date ||= Time.zone.now - 1.day
 
     Doi.where(minted: nil).where.not(aasm_state: "draft").where("updated >= ?", from_date).where("updated < ?", Time.zone.now - 15.minutes).find_each do |d|
-      next if d.url.blank? || d.current_user.nil?
+      next if d.url.blank?
 
       HandleJob.set(wait: 1.minute).perform_later(d, url: d.url,
-                                                  role_id: d.current_user.role_id,
-                                                  username: d.current_user.uid,
-                                                  password: d.current_user.password)
+                                                  password: password)
     end
   end
 
