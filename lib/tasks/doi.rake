@@ -21,8 +21,8 @@ namespace :doi do
 
   desc 'Register all URLs'
   task :register_all_urls => :environment do
-    from_hour = ENV['FROM_HOUR'] || 1.hour
-    Doi.register_all_urls(password: ENV['PASSWORD'], from_hour: from_hour)
+    limit = ENV['LIMIT'] || 100
+    Doi.register_all_urls(password: ENV['PASSWORD'], limit: limit)
   end
 
   desc 'Delete DOIs with test prefix older than one month'

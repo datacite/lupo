@@ -327,10 +327,10 @@ class Doi < ActiveRecord::Base
   end
 
   # register DOIs in the handle system that have not been registered yet
-  def self.register_all_urls(password: nil, from_hour: nil)
-    from_hour ||= 1.hour
+  def self.register_all_urls(password: nil, limit: nil)
+    limit ||= 100
 
-    Doi.where(minted: nil).where.not(aasm_state: "draft").where("updated >= ?", Time.zone.now - from_hour).where("updated < ?", Time.zone.now - 15.minutes).find_each do |d|
+    Doi.where(minted: nil).where.not(aasm_state: "draft").where("updated < ?", Time.zone.now - 15.minutes).order(created: :desc).limit(limit.to_i).find_each do |d|
       next if d.url.blank?
 
       HandleJob.set(wait: 1.minute).perform_later(d, url: d.url,
