@@ -29,9 +29,6 @@ module Helpable
       payload = "doi=#{doi}\nurl=#{options[:url]}"
       url = "#{mds_url}/doi/#{doi}"
 
-      # delay handle registration to make sure legacy MDS can see DOI record 
-      sleep 1
-
       response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: options[:username], password: options[:password], timeout: 10)
 
       if response.status == 201
