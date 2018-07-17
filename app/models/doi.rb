@@ -328,6 +328,20 @@ class Doi < ActiveRecord::Base
     collection.where(is_active: "\x01").where(minted: nil).update_all(("minted = updated"))
   end
 
+  # register DOIs in the handle system that have not been registered yet
+  def self.register_all_urls(from_date: nil)
+    from_date ||= Time.zone.now - 1.day
+
+    Doi.where(minted: nil).where.not(aasm_state: "draft").where("updated >= ?", from_date).where("updated < ?", Time.zone.now - 15.minutes).find_each do |d|
+      next if d.url.blank? || d.current_user.nil?
+
+      HandleJob.set(wait: 1.minute).perform_later(d, url: d.url,
+                                                  role_id: d.current_user.role_id,
+                                                  username: d.current_user.uid,
+                                                  password: d.current_user.password)
+    end
+  end
+
   # update metadata when any virtual attribute has changed
   def update_metadata
     changed_virtual_attributes = changed & %w(author title publisher date_published additional_type resource_type_general description)
