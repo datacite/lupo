@@ -170,6 +170,8 @@ class DoisController < ApplicationController
       @doi.assign_attributes(safe_params.except(:doi))
     else
       doi_id = validate_doi(params[:id])
+      fail ActiveRecord::RecordNotFound unless doi_id.present?
+      
       @doi = Doi.new(safe_params.merge(doi: doi_id, event: safe_params[:event] || "start"))
     end
 
