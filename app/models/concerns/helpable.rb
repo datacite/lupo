@@ -32,7 +32,7 @@ module Helpable
       # delay handle registration to make sure legacy MDS can see DOI record 
       sleep 1
 
-      response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: options[:username], password: options[:password], timeout: 2)
+      response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: options[:username], password: options[:password], timeout: 10)
 
       if response.status == 201
         Rails.logger.info "[Handle] Updated " + doi + " with " + options[:url] + "."
@@ -48,7 +48,7 @@ module Helpable
 
       url = "#{mds_url}/doi/#{doi}"
 
-      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: options[:password], timeout: 2)
+      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: options[:password], timeout: 10)
 
       if response.status == 200
         response
@@ -99,7 +99,7 @@ module Helpable
       mds_url = Rails.env.production? ? 'https://mds-legacy.datacite.org' : 'https://mds-legacy.test.datacite.org' 
       url = "#{mds_url}/doi"
 
-      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: options[:password], timeout: 5)
+      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: options[:password], timeout: 10)
 
       if [200, 204].include?(response.status)
         response
