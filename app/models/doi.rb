@@ -93,7 +93,7 @@ class Doi < ActiveRecord::Base
   before_destroy :update_doi_count
   after_create :update_doi_count
   after_update :update_doi_count, if: :saved_change_to_datacentre?
-  after_save :update_url
+  after_commit :update_url, on: [:create, :update]
 
   before_save :set_defaults, :update_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
