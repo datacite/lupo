@@ -128,6 +128,21 @@ describe "dois", type: :request do
       end
     end
 
+    context 'when the record exists https://github.com/datacite/lupo/issues/89' do
+      let(:doi) { create(:doi, doi: "10.24425/119496", client: client, state: "registered") }
+      let(:valid_attributes) {file_fixture('datacite_89.json').read}
+
+      before { put "/dois/#{doi.doi}", params: valid_attributes, headers: headers }
+
+      it 'returns no errors' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
     context 'when the record doesn\'t exist' do
       let(:doi_id) { "10.5438/4K3M-NYVG" }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
