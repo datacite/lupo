@@ -29,6 +29,12 @@ module Helpable
       if response.status == 201
         Rails.logger.info "[Handle] Updated " + doi + " with " + options[:url] + "."
         response
+      elsif [408, 502, 503, 504].include?(response.status)
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.inspect
+        fail Faraday::TimeoutError
+      elsif response.status == 500 && response.body.to_s.start_with?("Another user has changed this record")
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.inspect
+        fail ActiveRecord::Deadlocked
       else
         Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.inspect
         response
