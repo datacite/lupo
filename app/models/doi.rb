@@ -79,7 +79,7 @@ class Doi < ActiveRecord::Base
   delegate :provider, to: :client
 
   validates_presence_of :doi
-  validates_presence_of :url, if: :is_registered_or_findable?
+  # validates_presence_of :url, if: :is_registered_or_findable?
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, :with => /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9]+\z/
