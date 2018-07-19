@@ -104,13 +104,13 @@ describe "Indexable class methods", elasticsearch: true do
     end
   end
 
-  context "prefix" do
-    let!(:prefix) { create(:prefix) }
+  # context "prefix" do
+  #   let!(:prefix) { create(:prefix) }
 
-    it 'query' do
-      sleep 1
-      results = Prefix.query(prefix.prefix).results
-      expect(results.total).to eq(1)
-    end
-  end
+  #   it 'query' do
+  #     sleep 1
+  #     results = Prefix.query(prefix.prefix).results
+  #     expect(results.total).to eq(1)
+  #   end
+  # end
 end

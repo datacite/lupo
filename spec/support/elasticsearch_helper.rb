@@ -1,5 +1,5 @@
 ## https://github.com/elastic/elasticsearch-ruby/issues/462
-SEARCHABLE_MODELS = [Client, Provider, Doi, Prefix]
+SEARCHABLE_MODELS = [Client, Provider, Doi]
 
 RSpec.configure do |config|
   config.around :each, elasticsearch: true do |example|
