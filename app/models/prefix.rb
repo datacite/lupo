@@ -3,9 +3,9 @@ class Prefix < ActiveRecord::Base
   include Cacheable
 
   # include helper module for Elasticsearch
-  include Indexable
+  # include Indexable
 
-  include Elasticsearch::Model
+  # include Elasticsearch::Model
 
   self.table_name = "prefix"
   alias_attribute :created_at, :created
@@ -24,40 +24,40 @@ class Prefix < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
-  # scope :query, ->(query) { where("prefix like ?", "%#{query}%") }
+  scope :query, ->(query) { where("prefix like ?", "%#{query}%") }
 
   # use different index for testing
-  index_name Rails.env.test? ? "prefixes-test" : "prefixes"
+  # index_name Rails.env.test? ? "prefixes-test" : "prefixes"
 
-  mapping dynamic: 'false' do
-    indexes :prefix,                         type: :keyword
-    indexes :provider_ids,                   type: :keyword
-    indexes :registration_agency,            type: :keyword
-    indexes :created,                        type: :date
-    indexes :updated_at,                     type: :date
-  end
+  # mapping dynamic: 'false' do
+  #   indexes :prefix,                         type: :keyword
+  #   indexes :provider_ids,                   type: :keyword
+  #   indexes :registration_agency,            type: :keyword
+  #   indexes :created,                        type: :date
+  #   indexes :updated_at,                     type: :date
+  # end
 
-  def as_indexed_json(options={})
-    {
-      "prefix" => prefix,
-      "provider_ids" => provider_ids,
-      "registration_agency" => registration_agency,
-      "created" => created,
-      "updated_at" => updated_at
-    }
-  end
+  # def as_indexed_json(options={})
+  #   {
+  #     "prefix" => prefix,
+  #     "provider_ids" => provider_ids,
+  #     "registration_agency" => registration_agency,
+  #     "created" => created,
+  #     "updated_at" => updated_at
+  #   }
+  # end
 
-  def self.query_aggregations
-    {
-      #states: { terms: { field: 'aasm_state', size: 15, min_doc_count: 1 } },
-      years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
-      providers: { terms: { field: 'provider_ids', size: 15, min_doc_count: 1 } }
-    }
-  end
+  # def self.query_aggregations
+  #   {
+  #     #states: { terms: { field: 'aasm_state', size: 15, min_doc_count: 1 } },
+  #     years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
+  #     providers: { terms: { field: 'provider_ids', size: 15, min_doc_count: 1 } }
+  #   }
+  # end
 
-  def self.query_fields
-    ['prefix^10', '_all']
-  end
+  # def self.query_fields
+  #   ['prefix^10', '_all']
+  # end
 
   def registration_agency
     "DataCite"
