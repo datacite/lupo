@@ -203,7 +203,7 @@ class Doi < ActiveRecord::Base
   end
 
   def client_id
-    client.symbol.downcase
+    client.symbol.downcase if client.present?
   end
 
   def client_id=(value)
@@ -218,7 +218,7 @@ class Doi < ActiveRecord::Base
   end
 
   def prefix
-    doi.split('/', 2).first
+    doi.split('/', 2).first if doi.present?
   end
 
   def is_test_prefix?

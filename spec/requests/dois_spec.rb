@@ -143,6 +143,39 @@ describe "dois", type: :request do
       end
     end
 
+    context 'NoMethodError https://github.com/datacite/lupo/issues/84' do
+      let(:doi_id) { "10.6084/m9.figshare.6839054.v1" }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url"=> "https://figshare.com/articles/Additional_file_1_of_Contemporary_ancestor_Adaptive_divergence_from_standing_genetic_variation_in_Pacific_marine_threespine_stickleback/6839054/1",
+              "event" => "publish"
+            },
+            "relationships" => {
+              "client" => {
+                "data" => {
+                  "type" => "clients",
+                  "id" => client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+
+      before { put "/dois/#{doi_id}", params: valid_attributes.to_json, headers: headers }
+
+      it 'returns no errors' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi_id)
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+    end
+
     context 'when the record doesn\'t exist' do
       let(:doi_id) { "10.5438/4K3M-NYVG" }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
