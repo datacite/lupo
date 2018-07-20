@@ -171,8 +171,9 @@ class DoisController < ApplicationController
     else
       doi_id = validate_doi(params[:id])
       fail ActiveRecord::RecordNotFound unless doi_id.present?
-      
-      @doi = Doi.new(safe_params.merge(doi: doi_id, event: safe_params[:event] || "start"))
+
+      event = safe_params[:validate] ? "start" : safe_params[:event].presence || "start"
+      @doi = Doi.new(safe_params.merge(doi: doi_id, event: event))
     end
 
     if safe_params[:xml].present? || safe_params[:url].present? || safe_params[:event].present?
