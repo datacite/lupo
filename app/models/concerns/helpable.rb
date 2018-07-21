@@ -12,10 +12,12 @@ module Helpable
     include Bolognese::DoiUtils
 
     def register_url(options={})
-      unless options[:password].present?
-        Rails.logger.error "[Handle] Error updating DOI " + doi + ": password missing."
-        return OpenStruct.new(body: { "errors" => [{ "title" => "Password missing." }] })
+      unless client_id.present?
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": client ID missing."
+        return OpenStruct.new(body: { "errors" => [{ "title" => "Client ID missing." }] })
       end
+
+      password = options[:password].presence || ENV['ADMIN_PASSWORD']
 
       unless is_registered_or_findable?
         return OpenStruct.new(body: { "errors" => [{ "title" => "DOI is not registered or findable." }] })
@@ -24,7 +26,7 @@ module Helpable
       payload = "doi=#{doi}\nurl=#{options[:url]}"
       url = "#{mds_url}/doi/#{doi}"
 
-      response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: client_id, password: options[:password], timeout: 10)
+      response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: client_id, password: password, timeout: 10)
 
       if response.status == 201
         Rails.logger.info "[Handle] Updated " + doi + " with " + options[:url] + "."
@@ -42,11 +44,11 @@ module Helpable
     end
 
     def get_url(options={})
-      return OpenStruct.new(body: { "errors" => [{ "title" => "Password missing" }] }) unless options[:password].present?
+      password = options[:password] || ENV['ADMIN_PASSWORD']
 
       url = "#{mds_url}/doi/#{doi}"
 
-      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: client_id, password: options[:password], timeout: 10)
+      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: client_id, password: password, timeout: 10)
 
       if response.status == 200
         response
@@ -92,12 +94,14 @@ module Helpable
 
   module ClassMethods
     def get_dois(options={})
-      return OpenStruct.new(body: { "errors" => [{ "title" => "Username or password missing" }] }) unless options[:username].present? && options[:password].present?
+      return OpenStruct.new(body: { "errors" => [{ "title" => "Username missing" }] }) unless options[:username].present?
+
+      password = options[:password] || ENV['ADMIN_PASSWORD']
 
       mds_url = Rails.env.production? ? 'https://mds-legacy.datacite.org' : 'https://mds-legacy.test.datacite.org' 
       url = "#{mds_url}/doi"
 
-      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: options[:password], timeout: 10)
+      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: password, timeout: 10)
 
       if [200, 204].include?(response.status)
         response

@@ -90,9 +90,10 @@ describe Doi, vcr: true do
       expect(subject.register_url(options).body).to eq("errors"=>[{"title"=>"DOI is not registered or findable."}])
     end
 
-    it 'missing username and password' do
+    it 'missing username' do
+      subject = build(:doi, doi: "10.5438/mcnv-ga6n", client: nil, aasm_state: "findable")
       options = { url: "https://blog.datacite.org/re3data-science-europe/" }
-      expect(subject.register_url(options).body).to eq("errors"=>[{"title"=>"Password missing."}])
+      expect(subject.register_url(options).body).to eq("errors"=>[{"title"=>"Client ID missing."}])
     end
 
     it 'wrong username and password' do
