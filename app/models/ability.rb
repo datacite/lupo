@@ -10,8 +10,9 @@ class Ability
     @user = user
 
     if user.role_id == "staff_admin"
-      can :manage, [Provider, ProviderPrefix, Client, ClientPrefix, Prefix, Phrase, User]
-      can [:read, :transfer, :set_state, :set_minted, :set_url, :delete_test_dois], Doi
+      can :manage, :all
+      # can :manage, [Provider, ProviderPrefix, Client, ClientPrefix, Prefix, Phrase, User]
+      # can [:read, :transfer, :set_state, :set_minted, :set_url, :delete_test_dois], Doi
     elsif user.role_id == "staff_user"
       can :read, :all
     elsif user.role_id == "provider_admin" && user.provider_id.present?
