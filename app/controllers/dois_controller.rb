@@ -240,7 +240,9 @@ class DoisController < ApplicationController
     else
       response = @doi.get_url(username: current_user.uid.upcase, password: current_user.password)
 
-      if response.status == 200
+      if ENV['HANDLE_URL'].blank?
+        url = response.body["data"]
+      elsif response.status == 200
         url = response.body.dig("data", "values", 0, "data", "value")
       elsif response.status == 400 && response.body.dig("errors", 0, "title", "responseCode") == 301 
         response = OpenStruct.new(status: 500, body: { "errors" => [{ "status" => 500, "title" => "SERVER NOT RESPONSIBLE FOR HANDLE" }] })
