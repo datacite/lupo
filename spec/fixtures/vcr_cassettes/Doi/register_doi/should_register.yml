@@ -10,7 +10,7 @@ http_interactions:
         url=https://blog.datacite.org/
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.0.12; +https://github.com/datacite/maremma)
+      - Mozilla/5.0 (compatible; Maremma/4.1; +https://github.com/datacite/maremma)
       Content-Type:
       - text/plain;charset=UTF-8
       Accept:
@@ -23,7 +23,7 @@ http_interactions:
       message: Created
     headers:
       Date:
-      - Tue, 24 Jul 2018 07:51:45 GMT
+      - Tue, 24 Jul 2018 09:57:08 GMT
       Content-Type:
       - text/html;charset=UTF-8
       Content-Length:
@@ -42,16 +42,16 @@ http_interactions:
       encoding: ASCII-8BIT
       string: OK
     http_version: 
-  recorded_at: Tue, 24 Jul 2018 07:51:48 GMT
+  recorded_at: Tue, 24 Jul 2018 09:57:09 GMT
 - request:
     method: get
-    uri: http://38.100.138.135:8000/api/handles/10.5438/MCNV-GA6N?index=1
+    uri: https://38.100.138.135:8000/api/handles/10.5438/MCNV-GA6N?index=1
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.0.12; +https://github.com/datacite/maremma)
+      - Mozilla/5.0 (compatible; Maremma/4.1; +https://github.com/datacite/maremma)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
   response:
@@ -67,5 +67,5 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"responseCode":1,"handle":"10.5438/MCNV-GA6N","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/re3data-webinar-and-datacite-en-avant/"},"ttl":86400,"timestamp":"2017-01-09T13:54:42Z"}]}'
     http_version: 
-  recorded_at: Tue, 24 Jul 2018 07:51:48 GMT
+  recorded_at: Tue, 24 Jul 2018 09:57:09 GMT
 recorded_with: VCR 3.0.3

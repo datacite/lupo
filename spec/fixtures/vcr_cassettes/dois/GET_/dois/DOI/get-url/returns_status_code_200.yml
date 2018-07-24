@@ -2,13 +2,13 @@
 http_interactions:
 - request:
     method: get
-    uri: http://38.100.138.135:8000/api/handles/10.5438/8SYZ-YM47?index=1
+    uri: https://38.100.138.135:8000/api/handles/10.5438/8SYZ-YM47?index=1
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.0.12; +https://github.com/datacite/maremma)
+      - Mozilla/5.0 (compatible; Maremma/4.1; +https://github.com/datacite/maremma)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
   response:
@@ -24,5 +24,5 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"responseCode":1,"handle":"10.5438/8SYZ-YM47","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/welcome-helena-cousijn/"},"ttl":86400,"timestamp":"2018-06-18T15:05:57Z"}]}'
     http_version: 
-  recorded_at: Tue, 24 Jul 2018 08:00:35 GMT
+  recorded_at: Tue, 24 Jul 2018 09:59:30 GMT
 recorded_with: VCR 3.0.3

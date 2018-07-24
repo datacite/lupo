@@ -2,13 +2,13 @@
 http_interactions:
 - request:
     method: get
-    uri: http://38.100.138.135:8000/api/handles/10.14454/61Y1-E521?index=1
+    uri: https://38.100.138.135:8000/api/handles/10.14454/61Y1-E521?index=1
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.0.12; +https://github.com/datacite/maremma)
+      - Mozilla/5.0 (compatible; Maremma/4.1; +https://github.com/datacite/maremma)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
   response:
@@ -24,5 +24,5 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"responseCode":100,"handle":"10.14454/61Y1-E521"}'
     http_version: 
-  recorded_at: Tue, 24 Jul 2018 08:22:31 GMT
+  recorded_at: Tue, 24 Jul 2018 09:59:33 GMT
 recorded_with: VCR 3.0.3

@@ -48,7 +48,7 @@ module Helpable
 
       if ENV['HANDLE_URL'].present?
         url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}?index=1"
-        response = Maremma.get(url, timeout: 10)
+        response = Maremma.get(url, ssl_self_signed: true, timeout: 10)
 
         if response.status == 200
           response
