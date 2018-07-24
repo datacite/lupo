@@ -46,19 +46,35 @@ module Helpable
     def get_url(options={})
       password = options[:password] || ENV['ADMIN_PASSWORD']
 
-      url = "#{mds_url}/doi/#{doi}"
+      if ENV['HANDLE_URL'].present?
+        url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}?index=1"
+        response = Maremma.get(url, timeout: 10)
 
-      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: client_id, password: password, timeout: 10)
-
-      if response.status == 200
-        response
-      elsif response.status == 401
-        raise CanCan::AccessDenied
-      elsif response.status == 404
-        raise ActiveRecord::RecordNotFound, "DOI not found"
+        if response.status == 200
+          response
+        elsif response.status == 401
+          raise CanCan::AccessDenied
+        elsif response.status == 404
+          raise ActiveRecord::RecordNotFound, "DOI not found"
+        else
+          Rails.logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect
+          response
+        end
       else
-        Rails.logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect
-        response
+        url = "#{mds_url}/doi/#{doi}"
+
+        response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: client_id, password: password, timeout: 10)
+
+        if response.status == 200
+          response
+        elsif response.status == 401
+          raise CanCan::AccessDenied
+        elsif response.status == 404
+          raise ActiveRecord::RecordNotFound, "DOI not found"
+        else
+          Rails.logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect
+          response
+        end
       end
     end
 

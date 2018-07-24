@@ -1507,12 +1507,12 @@ describe "dois", type: :request do
   end
 
   describe 'GET /dois/DOI/get-url', vcr: true do
-    let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
+    let(:doi) { create(:doi, client: client, doi: "10.5438/8syz-ym47", event: "publish") }
 
     before { get "/dois/#{doi.doi}/get-url", headers: headers }
 
     it 'returns url' do
-      expect(json["url"]).to eq("https://blog.datacite.org/")
+      expect(json["url"]).to eq("https://blog.datacite.org/welcome-helena-cousijn/")
     end
 
     it 'returns status code 200' do
@@ -1550,9 +1550,10 @@ describe "dois", type: :request do
   end
 
   describe 'GET /dois/DOI/get-url no permission', vcr: true do
-    let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
-
-    before { get "/dois/#{doi.doi}/get-url", headers: admin_headers }
+    let(:other_client) { create(:client, provider: provider) }
+    let(:doi) { create(:doi, client: other_client, doi: "10.5438/8syz-ym47", event: "publish") }
+    
+    before { get "/dois/#{doi.doi}/get-url", headers: headers }
 
     it 'returns error' do
       expect(json['errors']).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])

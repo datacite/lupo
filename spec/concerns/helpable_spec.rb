@@ -72,7 +72,10 @@ describe Doi, vcr: true do
       options = { url: url, username: client.symbol, password: client.password, role_id: "client_admin" }
       expect(subject.register_url(options).body).to eq("data"=>"OK")
 
-      expect(subject.get_url(options).body).to eq("data" => url)
+      response = subject.get_url(options)
+
+      expect(response.body.dig("data", "responseCode")).to eq(1)
+      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-webinar-and-datacite-en-avant/"}, "ttl"=>86400, "timestamp"=>"2017-01-09T13:54:42Z"}])
     end
 
     it 'should change url' do
@@ -80,7 +83,10 @@ describe Doi, vcr: true do
       options = { url: url, username: client.symbol, password: client.password, role_id: "client_admin" }
       expect(subject.register_url(options).body).to eq("data"=>"OK")
 
-      expect(subject.get_url(options).body).to eq("data" => url)
+      response = subject.get_url(options)
+
+      expect(response.body.dig("data", "responseCode")).to eq(1)
+      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-webinar-and-datacite-en-avant/"}, "ttl"=>86400, "timestamp"=>"2017-01-09T13:54:42Z"}])
     end
 
     it 'draft doi' do
@@ -104,7 +110,7 @@ describe Doi, vcr: true do
     it 'server not responsible' do
       subject = build(:doi, doi: "10.1371/journal.pbio.2001414", client: client, aasm_state: "findable")
       options = { username: client.symbol, password: client.password }
-      expect(subject.get_url(options).body).to eq("errors"=>[{"status"=>500, "title"=>"SERVER NOT RESPONSIBLE FOR HANDLE"}])
+      expect(subject.get_url(options).body).to eq("errors"=>[{"status"=>400, "title"=>{"responseCode"=>301, "message"=>"That prefix doesn't live here", "handle"=>"10.1371/JOURNAL.PBIO.2001414"}}])
     end
   end
 

@@ -2,41 +2,27 @@
 http_interactions:
 - request:
     method: get
-    uri: https://mds-legacy.test.datacite.org/doi/10.1371/JOURNAL.PBIO.2001414
+    uri: http://38.100.138.135:8000/api/handles/10.1371/JOURNAL.PBIO.2001414?index=1
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.0.8; +https://github.com/datacite/maremma)
-      Content-Type:
-      - text/plain;charset=UTF-8
+      - Mozilla/5.0 (compatible; Maremma/4.0.12; +https://github.com/datacite/maremma)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-      Authorization:
-      - Basic <MDS_TOKEN>
   response:
     status:
-      code: 500
-      message: Internal Server Error
+      code: 400
+      message: Bad Request
     headers:
-      Date:
-      - Thu, 14 Jun 2018 19:30:49 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
       Content-Length:
-      - '33'
-      Connection:
-      - keep-alive
-      Server:
-      - Apache-Coyote/1.1
-      Pragma:
-      - no-cache
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Cache-Control:
-      - no-cache, no-store
+      - '102'
     body:
       encoding: ASCII-8BIT
-      string: SERVER NOT RESPONSIBLE FOR HANDLE
+      string: '{"responseCode":301,"message":"That prefix doesn''t live here","handle":"10.1371/JOURNAL.PBIO.2001414"}'
     http_version: 
-  recorded_at: Thu, 14 Jun 2018 19:30:49 GMT
+  recorded_at: Tue, 24 Jul 2018 08:23:19 GMT
 recorded_with: VCR 3.0.3

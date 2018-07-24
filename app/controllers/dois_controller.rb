@@ -239,7 +239,15 @@ class DoisController < ApplicationController
       response = OpenStruct.new(status: 404, body: { "errors" => [{ "title" => "No URL found." }] })
     else
       response = @doi.get_url(username: current_user.uid.upcase, password: current_user.password)
-      url = response.body["data"]
+
+      if response.status == 200
+        url = response.body.dig("data", "values", 0, "data", "value")
+      elsif response.status == 400 && response.body.dig("errors", 0, "title", "responseCode") == 301 
+        response = OpenStruct.new(status: 500, body: { "errors" => [{ "status" => 500, "title" => "SERVER NOT RESPONSIBLE FOR HANDLE" }] })
+        url = nil
+      else
+        url = nil
+      end
     end
 
     if url.present?
