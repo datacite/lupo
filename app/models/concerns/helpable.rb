@@ -12,6 +12,11 @@ module Helpable
     include Bolognese::DoiUtils
 
     def register_url(options={})
+      unless options[:url].present?
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": url missing."
+        return OpenStruct.new(body: { "errors" => [{ "title" => "URL missing." }] })
+      end
+
       unless client_id.present?
         Rails.logger.error "[Handle] Error updating DOI " + doi + ": client ID missing."
         return OpenStruct.new(body: { "errors" => [{ "title" => "Client ID missing." }] })
@@ -23,23 +28,55 @@ module Helpable
         return OpenStruct.new(body: { "errors" => [{ "title" => "DOI is not registered or findable." }] })
       end
 
-      payload = "doi=#{doi}\nurl=#{options[:url]}"
-      url = "#{mds_url}/doi/#{doi}"
+      if ENV['HANDLE_URL'].present?
+        payload = {
+          "index" => 1,
+          "type" => "URL",
+          "data" => {
+            "format" => "string",
+            "value" => options[:url]
+          }
+        }.to_json
 
-      response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: client_id, password: password, timeout: 10)
+        url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}?index=1"
+        response = Maremma.put(url, content_type: 'application/json;charset=UTF-8', data: payload, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
 
-      if response.status == 201
-        Rails.logger.info "[Handle] Updated " + doi + " with " + options[:url] + "."
-        response
-      elsif [408, 502, 503, 504].include?(response.status)
-        Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.inspect
-        #fail Faraday::TimeoutError
-      elsif response.status == 500 && response.body.to_s.start_with?("Another user has changed this record")
-        Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.inspect
-        #fail ActiveRecord::Deadlocked
+        if response.status == 200
+          # update minted column after first successful registration in handle system
+          if minted.blank?
+            timestamp = DateTime.parse(response.body.dig("data", "values", 0, "timestamp")) 
+            write_attribute(:minted, timestamp)
+            self.save
+          end
+
+          response
+        elsif response.status == 401
+          raise CanCan::AccessDenied
+        elsif response.status == 404
+          raise ActiveRecord::RecordNotFound, "DOI not found"
+        else
+          Rails.logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect
+          response
+        end
       else
-        Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.inspect
-        response
+        payload = "doi=#{doi}\nurl=#{options[:url]}"
+        url = "#{mds_url}/doi/#{doi}"
+
+        response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: client_id, password: password, timeout: 10)
+
+        if response.status == 201
+          Rails.logger.info "[Handle] Updated " + doi + " with " + options[:url] + "."
+          response
+        elsif [408, 502, 503, 504].include?(response.status)
+          Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.inspect
+          #fail Faraday::TimeoutError
+        elsif response.status == 500 && response.body.to_s.start_with?("Another user has changed this record")
+          Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.inspect
+          #fail ActiveRecord::Deadlocked
+        else
+          Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.inspect
+          response
+        end
       end
     end
 

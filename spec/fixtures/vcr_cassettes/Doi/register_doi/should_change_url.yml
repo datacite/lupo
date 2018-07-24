@@ -2,47 +2,33 @@
 http_interactions:
 - request:
     method: put
-    uri: https://mds-legacy.test.datacite.org/doi/10.5438/MCNV-GA6N
+    uri: https://38.100.138.135:8000/api/handles/10.5438/MCNV-GA6N?index=1
     body:
       encoding: UTF-8
-      string: |-
-        doi=10.5438/MCNV-GA6N
-        url=https://blog.datacite.org/re3data-science-europe/
+      string: '{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/re3data-science-europe/"}}'
     headers:
       User-Agent:
       - Mozilla/5.0 (compatible; Maremma/4.1; +https://github.com/datacite/maremma)
       Content-Type:
-      - text/plain;charset=UTF-8
+      - application/json;charset=UTF-8
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
       Authorization:
-      - Basic ZGF0YWNpdGUuZGF0YWNpdGU6S2Y3SkVRMmM=
+      - Basic <HANDLE_TOKEN>
   response:
     status:
-      code: 201
-      message: Created
+      code: 200
+      message: OK
     headers:
-      Date:
-      - Tue, 24 Jul 2018 09:57:09 GMT
       Content-Type:
-      - text/html;charset=UTF-8
-      Content-Length:
-      - '2'
-      Connection:
-      - keep-alive
-      Server:
-      - Apache-Coyote/1.1
-      Pragma:
-      - no-cache
-      Expires:
-      - Thu, 01 Jan 1970 00:00:00 GMT
-      Cache-Control:
-      - no-cache, no-store
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept-Encoding
     body:
       encoding: ASCII-8BIT
-      string: OK
+      string: '{"responseCode":1,"handle":"10.5438/MCNV-GA6N"}'
     http_version: 
-  recorded_at: Tue, 24 Jul 2018 09:57:11 GMT
+  recorded_at: Tue, 24 Jul 2018 10:43:34 GMT
 - request:
     method: get
     uri: https://38.100.138.135:8000/api/handles/10.5438/MCNV-GA6N?index=1
@@ -65,7 +51,7 @@ http_interactions:
       - Accept-Encoding
     body:
       encoding: ASCII-8BIT
-      string: '{"responseCode":1,"handle":"10.5438/MCNV-GA6N","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/re3data-webinar-and-datacite-en-avant/"},"ttl":86400,"timestamp":"2017-01-09T13:54:42Z"}]}'
+      string: '{"responseCode":1,"handle":"10.5438/MCNV-GA6N","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/re3data-science-europe/"},"ttl":86400,"timestamp":"2018-07-24T10:43:29Z"}]}'
     http_version: 
-  recorded_at: Tue, 24 Jul 2018 09:57:11 GMT
+  recorded_at: Tue, 24 Jul 2018 10:43:34 GMT
 recorded_with: VCR 3.0.3

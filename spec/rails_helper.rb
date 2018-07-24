@@ -51,6 +51,8 @@ end
 
 VCR.configure do |c|
   mds_token = Base64.strict_encode64("#{ENV['MDS_USERNAME']}:#{ENV['MDS_PASSWORD']}")
+  admin_token = Base64.strict_encode64("#{ENV['ADMIN_USERNAME']}:#{ENV['ADMIN_PASSWORD']}")
+  handle_token = Base64.strict_encode64("300%3A#{ENV['HANDLE_USERNAME']}:#{ENV['HANDLE_PASSWORD']}")
   mailgun_token = Base64.strict_encode64("api:#{ENV['MAILGUN_API_KEY']}")
   sqs_host = "sqs.#{ENV['AWS_REGION'].to_s}.amazonaws.com"
 
@@ -59,6 +61,8 @@ VCR.configure do |c|
   c.ignore_localhost = true
   c.ignore_hosts "codeclimate.com", "api.mailgun.net", "elasticsearch", sqs_host
   c.filter_sensitive_data("<MDS_TOKEN>") { mds_token }
+  c.filter_sensitive_data("<ADMIN_TOKEN>") { admin_token }
+  c.filter_sensitive_data("<HANDLE_TOKEN>") { handle_token }
   c.filter_sensitive_data("<MAILGUN_TOKEN>") { mailgun_token }
   c.filter_sensitive_data("<VOLPINO_TOKEN>") { ENV["VOLPINO_TOKEN"] }
   c.filter_sensitive_data("<SLACK_WEBHOOK_URL>") { ENV["SLACK_WEBHOOK_URL"] }

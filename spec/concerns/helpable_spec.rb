@@ -70,23 +70,25 @@ describe Doi, vcr: true do
     it 'should register' do
       url = "https://blog.datacite.org/"
       options = { url: url, username: client.symbol, password: client.password, role_id: "client_admin" }
-      expect(subject.register_url(options).body).to eq("data"=>"OK")
+      expect(subject.register_url(options).body).to eq("data"=>{"responseCode"=>1, "handle"=>"10.5438/MCNV-GA6N"})
+      expect(subject.minted.iso8601).to be_present
 
       response = subject.get_url(options)
 
       expect(response.body.dig("data", "responseCode")).to eq(1)
-      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-webinar-and-datacite-en-avant/"}, "ttl"=>86400, "timestamp"=>"2017-01-09T13:54:42Z"}])
+      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/"}, "ttl"=>86400, "timestamp"=>"2018-07-24T10:43:28Z"}])
     end
 
     it 'should change url' do
       url = "https://blog.datacite.org/re3data-science-europe/"
       options = { url: url, username: client.symbol, password: client.password, role_id: "client_admin" }
-      expect(subject.register_url(options).body).to eq("data"=>"OK")
+      expect(subject.register_url(options).body).to eq("data"=>{"responseCode"=>1, "handle"=>"10.5438/MCNV-GA6N"})
+      expect(subject.minted.iso8601).to be_present
 
       response = subject.get_url(options)
 
       expect(response.body.dig("data", "responseCode")).to eq(1)
-      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-webinar-and-datacite-en-avant/"}, "ttl"=>86400, "timestamp"=>"2017-01-09T13:54:42Z"}])
+      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-science-europe/"}, "ttl"=>86400, "timestamp"=>"2018-07-24T10:43:29Z"}])
     end
 
     it 'draft doi' do
@@ -100,11 +102,6 @@ describe Doi, vcr: true do
       subject = build(:doi, doi: "10.5438/mcnv-ga6n", client: nil, aasm_state: "findable")
       options = { url: "https://blog.datacite.org/re3data-science-europe/" }
       expect(subject.register_url(options).body).to eq("errors"=>[{"title"=>"Client ID missing."}])
-    end
-
-    it 'wrong username and password' do
-      options = { url: "https://blog.datacite.org/re3data-science-europe/", username: client.uid, password: 12345, role_id: "client_admin" }
-      expect(subject.register_url(options).body).to eq("errors"=>[{"status"=>401, "title"=>"Bad credentials"}])
     end
 
     it 'server not responsible' do
