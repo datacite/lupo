@@ -22,13 +22,13 @@ module Helpable
         return OpenStruct.new(body: { "errors" => [{ "title" => "Client ID missing." }] })
       end
 
-      password = options[:password].presence || ENV['ADMIN_PASSWORD']
-
       unless is_registered_or_findable?
         return OpenStruct.new(body: { "errors" => [{ "title" => "DOI is not registered or findable." }] })
       end
 
       if ENV['HANDLE_URL'].present?
+        sleep 10
+
         payload = {
           "index" => 1,
           "type" => "URL",
@@ -59,6 +59,7 @@ module Helpable
           response
         end
       else
+        password = options[:password].presence || ENV['ADMIN_PASSWORD']
         payload = "doi=#{doi}\nurl=#{options[:url]}"
         url = "#{mds_url}/doi/#{doi}"
 
@@ -91,8 +92,6 @@ module Helpable
           response
         elsif response.status == 401
           raise CanCan::AccessDenied
-        elsif response.status == 404
-          raise ActiveRecord::RecordNotFound, "DOI not found"
         else
           Rails.logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect
           response
@@ -147,27 +146,46 @@ module Helpable
 
   module ClassMethods
     def get_dois(options={})
-      return OpenStruct.new(body: { "errors" => [{ "title" => "Username missing" }] }) unless options[:username].present?
+      if ENV['HANDLE_URL'].present?
+        return OpenStruct.new(body: { "errors" => [{ "title" => "Prefix missing" }] }) unless options[:prefix].present?
 
-      password = options[:password] || ENV['ADMIN_PASSWORD']
+        url = "#{ENV['HANDLE_URL']}/api/handles?prefix=#{options[:prefix]}"
+        response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
 
-      mds_url = Rails.env.production? ? 'https://mds-legacy.datacite.org' : 'https://mds-legacy.test.datacite.org' 
-      url = "#{mds_url}/doi"
-
-      response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: password, timeout: 10)
-
-      if [200, 204].include?(response.status)
-        response
-      elsif response.status == 401
-        raise CanCan::AccessDenied
-      elsif response.status == 404
-        raise ActiveRecord::RecordNotFound
+        if response.status == 200
+          response
+        elsif response.status == 401
+          raise CanCan::AccessDenied
+        else
+          text = "Error " + response.body["errors"].inspect
+          
+          Rails.logger.error "[Handle] " + text
+          User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
+          response
+        end
       else
-        text = "Error " + response.body["errors"].inspect
-        
-        Rails.logger.error "[Handle] " + text
-        User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
-        response
+        return OpenStruct.new(body: { "errors" => [{ "title" => "Username missing" }] }) unless options[:username].present?
+
+        password = options[:password] || ENV['ADMIN_PASSWORD']
+
+        mds_url = Rails.env.production? ? 'https://mds-legacy.datacite.org' : 'https://mds-legacy.test.datacite.org' 
+        url = "#{mds_url}/doi"
+
+        response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: password, timeout: 10)
+
+        if [200, 204].include?(response.status)
+          response
+        elsif response.status == 401
+          raise CanCan::AccessDenied
+        elsif response.status == 404
+          raise ActiveRecord::RecordNotFound
+        else
+          text = "Error " + response.body["errors"].inspect
+          
+          Rails.logger.error "[Handle] " + text
+          User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
+          response
+        end
       end
     end
   end

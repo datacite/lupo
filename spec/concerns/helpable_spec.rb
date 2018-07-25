@@ -116,10 +116,10 @@ describe Doi, vcr: true do
     let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
     
     it 'should get dois' do
-      options = { username: client.symbol, password: client.password, role_id: "client_admin" }
-      dois = Doi.get_dois(options).body["data"].split("\n")
-      expect(dois.length).to eq(24)
-      expect(dois.first).to eq("10.14454/05MB-Q396")
+      options = { prefix: "10.14454", username: client.symbol, password: client.password, role_id: "client_admin" }
+      dois = Doi.get_dois(options).body.dig("data", "handles")
+      expect(dois.length).to eq(7)
+      expect(dois.first).to eq("10.14454/07243.2013.001")
     end
   end
 end

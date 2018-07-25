@@ -1570,7 +1570,7 @@ describe "dois", type: :request do
     before { get "/dois/#{doi.doi}/get-url", headers: headers }
 
     it 'returns not found' do
-      expect(json['errors']).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
+      expect(json['errors']).to eq([{"status"=>404, "title"=>"Not found"}])
     end
 
     it 'returns status code 404' do
@@ -1607,11 +1607,14 @@ describe "dois", type: :request do
   end
 
   describe 'GET /dois/get-dois', vcr: true do
+    let(:prefix) { create(:prefix, prefix: "10.14454") }
+    let!(:client_prefix) { create(:client_prefix, prefix: prefix, client: client) }
+
     before { get "/dois/get-dois", headers: headers }
 
     it 'returns all dois' do
-      expect(json["dois"].length).to eq(24)
-      expect(json["dois"].first).to eq("10.14454/05MB-Q396")
+      expect(json["dois"].length).to eq(7)
+      expect(json["dois"].first).to eq("10.14454/07243.2013.001")
     end
 
     it 'returns status code 200' do
@@ -1623,7 +1626,6 @@ describe "dois", type: :request do
     before { get "/dois/get-dois", headers: nil }
 
     it 'returns error message' do
-      puts response.body
       expect(json["errors"]).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
     end
 
