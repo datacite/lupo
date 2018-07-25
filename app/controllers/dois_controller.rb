@@ -262,17 +262,28 @@ class DoisController < ApplicationController
   def get_dois
     authorize! :get_urls, Doi
 
-    client = Client.where('datacentre.symbol = ?', current_user.uid.upcase).first
-    client_prefix = client.prefixes.where.not('prefix.prefix = ?', "10.5072").first
-    head :no_content and return unless client_prefix.present?
+    if ENV['HANDLE_URL'].present?
+      client = Client.where('datacentre.symbol = ?', current_user.uid.upcase).first
+      client_prefix = client.prefixes.where.not('prefix.prefix = ?', "10.5072").first
+      head :no_content and return unless client_prefix.present?
 
-    response = Doi.get_dois(prefix: client_prefix.prefix, username: current_user.uid.upcase, password: current_user.password)
-    if response.status == 200
-      render json: { dois: response.body.dig("data", "handles") }.to_json, status: :ok
-    elsif response.status == 204
-      head :no_content
+      response = Doi.get_dois(prefix: client_prefix.prefix, username: current_user.uid.upcase, password: current_user.password)
+      if response.status == 200
+        render json: { dois: response.body.dig("data", "handles") }.to_json, status: :ok
+      elsif response.status == 204
+        head :no_content
+      else
+        render json: serialize(response.body["errors"]), status: :bad_request
+      end
     else
-      render json: serialize(response.body["errors"]), status: :bad_request
+      response = Doi.get_dois(username: current_user.uid.upcase, password: current_user.password)
+      if response.status == 200
+        render json: { dois: response.body["data"].split("\n") }.to_json, status: :ok
+      elsif response.status == 204
+        head :no_content
+      else
+        render json: serialize(response.body["errors"]), status: :bad_request
+      end
     end
   end
 
