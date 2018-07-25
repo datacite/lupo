@@ -26,7 +26,7 @@ module Helpable
         return OpenStruct.new(body: { "errors" => [{ "title" => "DOI is not registered or findable." }] })
       end
 
-      if ENV['HANDLE_URL'].present?
+      if ENV['HANDLE_URL'].present? && prefix == "10.5438"
         sleep 10
 
         payload = {
