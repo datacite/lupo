@@ -79,6 +79,12 @@ describe Doi, type: :model, vcr: true do
       subject = create(:doi, url: url)
       expect(subject.url).to eq(url)
     end
+
+    it "can handle ftp urls" do
+      url = "ftp://ftp.library.noaa.gov/noaa_documents.lib/NESDIS/GSICS_quarterly/v1_no2_2007.pdf"
+      subject = create(:doi, url: url)
+      expect(subject.url).to eq(url)
+    end
   end
 
   describe "update_url" do
