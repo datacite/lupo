@@ -11,8 +11,8 @@ module Helpable
     include Bolognese::Utils
     include Bolognese::DoiUtils
 
-    def register_url(options={})
-      unless options[:url].present?
+    def register_url
+      unless url.present?
         Rails.logger.error "[Handle] Error updating DOI " + doi + ": url missing."
         return OpenStruct.new(body: { "errors" => [{ "title" => "URL missing." }] })
       end
@@ -32,7 +32,7 @@ module Helpable
           "type" => "URL",
           "data" => {
             "format" => "string",
-            "value" => options[:url]
+            "value" => url
           }
         }.to_json
 
@@ -57,7 +57,7 @@ module Helpable
           response
         end
       else
-        payload = "doi=#{doi}\nurl=#{options[:url]}"
+        payload = "doi=#{doi}\nurl=#{url}"
         url = "#{mds_url}/doi/#{doi}"
 
         response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: client_id, password: ENV['ADMIN_PASSWORD'], timeout: 10)

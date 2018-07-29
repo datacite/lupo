@@ -65,12 +65,10 @@ describe Doi, vcr: true do
     let(:provider) { create(:provider, symbol: "DATACITE") }
     let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME']) }
     
-    subject { build(:doi, doi: "10.5438/mcnv-ga6n", client: client, aasm_state: "findable") }
+    subject { build(:doi, doi: "10.5438/mcnv-ga6n", url: "https://blog.datacite.org/", client: client, aasm_state: "findable") }
 
     it 'should register' do
-      url = "https://blog.datacite.org/"
-      options = { url: url }
-      expect(subject.register_url(options).body).to eq("data"=>{"responseCode"=>1, "handle"=>"10.5438/MCNV-GA6N"})
+      expect(subject.register_url.body).to eq("data"=>{"responseCode"=>1, "handle"=>"10.5438/MCNV-GA6N"})
       expect(subject.minted.iso8601).to be_present
 
       response = subject.get_url
@@ -94,9 +92,8 @@ describe Doi, vcr: true do
     # end
 
     it 'should change url' do
-      url = "https://blog.datacite.org/re3data-science-europe/"
-      options = { url: url }
-      expect(subject.register_url(options).body).to eq("data"=>{"responseCode"=>1, "handle"=>"10.5438/MCNV-GA6N"})
+      subject.url = "https://blog.datacite.org/re3data-science-europe/"
+      expect(subject.register_url.body).to eq("data"=>{"responseCode"=>1, "handle"=>"10.5438/MCNV-GA6N"})
       expect(subject.minted.iso8601).to be_present
 
       response = subject.get_url
@@ -106,16 +103,13 @@ describe Doi, vcr: true do
     end
 
     it 'draft doi' do
-      subject = build(:doi, doi: "10.5438/mcnv-ga6n", client: client, aasm_state: "draft")
-      url = "https://blog.datacite.org/"
-      options = { url: url }
-      expect(subject.register_url(options).body).to eq("errors"=>[{"title"=>"DOI is not registered or findable."}])
+      subject = build(:doi, doi: "10.5438/mcnv-ga6n", url: "https://blog.datacite.org/", client: client, aasm_state: "draft")
+      expect(subject.register_url.body).to eq("errors"=>[{"title"=>"DOI is not registered or findable."}])
     end
 
     it 'missing username' do
-      subject = build(:doi, doi: "10.5438/mcnv-ga6n", client: nil, aasm_state: "findable")
-      options = { url: "https://blog.datacite.org/re3data-science-europe/" }
-      expect(subject.register_url(options).body).to eq("errors"=>[{"title"=>"Client ID missing."}])
+      subject = build(:doi, doi: "10.5438/mcnv-ga6n", url: "https://blog.datacite.org/re3data-science-europe/", client: nil, aasm_state: "findable")
+      expect(subject.register_url.body).to eq("errors"=>[{"title"=>"Client ID missing."}])
     end
 
     it 'server not responsible' do

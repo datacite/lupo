@@ -231,11 +231,10 @@ class Doi < ActiveRecord::Base
 
   # update URL in handle system for registered and findable state
   # providers europ and ethz do their own handle registration
-  # only role client_admin can update handle
   def update_url
     return nil if current_user.nil? || %w(europ ethz).include?(provider_id)
 
-    HandleJob.set(wait: 1.minute).perform_later(self, url: url)
+    HandleJob.set(wait: 1.minute).perform_later(self)
   end
 
   # attributes to be sent to elasticsearch index
@@ -330,7 +329,7 @@ class Doi < ActiveRecord::Base
     limit ||= 100
 
     Doi.where(minted: nil).where.not(url: nil).where.not(aasm_state: "draft").where("updated < ?", Time.zone.now - 15.minutes).order(created: :desc).limit(limit.to_i).find_each do |d|
-      HandleJob.set(wait: 1.minute).perform_later(d, url: d.url)
+      HandleJob.set(wait: 1.minute).perform_later(d)
     end
   end
 

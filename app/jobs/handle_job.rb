@@ -6,8 +6,8 @@ class HandleJob < ActiveJob::Base
 
   discard_on ActiveJob::DeserializationError
 
-  def perform(doi, options={})
+  def perform(doi)
     Rails.logger.debug "Update Handle record for #{doi.doi}"
-    doi.register_url(options)
+    doi.register_url
   end
 end
