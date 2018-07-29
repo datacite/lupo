@@ -234,7 +234,7 @@ class Doi < ActiveRecord::Base
   def update_url
     return nil if current_user.nil? || %w(europ ethz).include?(provider_id)
 
-    HandleJob.set(wait: 1.minute).perform_later(self)
+    HandleJob.set(wait: 3.minutes).perform_later(self)
   end
 
   # attributes to be sent to elasticsearch index
@@ -329,7 +329,7 @@ class Doi < ActiveRecord::Base
     limit ||= 100
 
     Doi.where(minted: nil).where.not(url: nil).where.not(aasm_state: "draft").where("updated < ?", Time.zone.now - 15.minutes).order(created: :desc).limit(limit.to_i).find_each do |d|
-      HandleJob.set(wait: 1.minute).perform_later(d)
+      HandleJob.perform_later(d)
     end
   end
 
