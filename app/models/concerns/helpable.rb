@@ -26,9 +26,7 @@ module Helpable
         return OpenStruct.new(body: { "errors" => [{ "title" => "DOI is not registered or findable." }] })
       end
 
-      if ENV['HANDLE_URL'].present? && prefix == "10.5438"
-        sleep 10
-
+      if ENV['HANDLE_URL'].present?
         payload = {
           "index" => 1,
           "type" => "URL",
@@ -59,11 +57,10 @@ module Helpable
           response
         end
       else
-        password = options[:password].presence || ENV['ADMIN_PASSWORD']
         payload = "doi=#{doi}\nurl=#{options[:url]}"
         url = "#{mds_url}/doi/#{doi}"
 
-        response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: client_id, password: password, timeout: 10)
+        response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: client_id, password: ENV['ADMIN_PASSWORD'], timeout: 10)
 
         if response.status == 201
           Rails.logger.info "[Handle] Updated " + doi + " with " + options[:url] + "."
@@ -81,9 +78,7 @@ module Helpable
       end
     end
 
-    def get_url(options={})
-      password = options[:password] || ENV['ADMIN_PASSWORD']
-
+    def get_url
       if ENV['HANDLE_URL'].present?
         url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}?index=1"
         response = Maremma.get(url, ssl_self_signed: true, timeout: 10)
@@ -99,7 +94,7 @@ module Helpable
       else
         url = "#{mds_url}/doi/#{doi}"
 
-        response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: client_id, password: password, timeout: 10)
+        response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: client_id, password: ENV['ADMIN_PASSWORD'], timeout: 10)
 
         if response.status == 200
           response

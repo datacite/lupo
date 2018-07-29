@@ -238,7 +238,7 @@ class DoisController < ApplicationController
       url = @doi.url
       response = OpenStruct.new(status: 404, body: { "errors" => [{ "title" => "No URL found." }] })
     else
-      response = @doi.get_url(username: current_user.uid.upcase, password: current_user.password)
+      response = @doi.get_url
 
       if ENV['HANDLE_URL'].blank?
         url = response.body["data"]

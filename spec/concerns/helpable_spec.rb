@@ -63,29 +63,43 @@ describe Doi, vcr: true do
 
   context "register_doi", order: :defined do
     let(:provider) { create(:provider, symbol: "DATACITE") }
-    let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
+    let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME']) }
     
     subject { build(:doi, doi: "10.5438/mcnv-ga6n", client: client, aasm_state: "findable") }
 
     it 'should register' do
       url = "https://blog.datacite.org/"
-      options = { url: url, username: client.symbol, password: client.password, role_id: "client_admin" }
+      options = { url: url }
       expect(subject.register_url(options).body).to eq("data"=>{"responseCode"=>1, "handle"=>"10.5438/MCNV-GA6N"})
       expect(subject.minted.iso8601).to be_present
 
-      response = subject.get_url(options)
+      response = subject.get_url
 
       expect(response.body.dig("data", "responseCode")).to eq(1)
       expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/"}, "ttl"=>86400, "timestamp"=>"2018-07-24T10:43:28Z"}])
     end
 
+    # it 'should register on save' do
+    #   url = "https://blog.datacite.org/"
+    #   subject = create(:doi, doi: "10.5438/hpc4-5t22", url: url, client: client, aasm_state: "findable")
+
+    #   expect(subject.url).to eq(url)
+    #   expect(subject.minted.iso8601).to be_present
+
+    #   sleep 1
+    #   response = subject.get_url
+
+    #   expect(response.body.dig("data", "responseCode")).to eq(1)
+    #   expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/"}, "ttl"=>86400, "timestamp"=>"2018-07-24T10:43:28Z"}])
+    # end
+
     it 'should change url' do
       url = "https://blog.datacite.org/re3data-science-europe/"
-      options = { url: url, username: client.symbol, password: client.password, role_id: "client_admin" }
+      options = { url: url }
       expect(subject.register_url(options).body).to eq("data"=>{"responseCode"=>1, "handle"=>"10.5438/MCNV-GA6N"})
       expect(subject.minted.iso8601).to be_present
 
-      response = subject.get_url(options)
+      response = subject.get_url
 
       expect(response.body.dig("data", "responseCode")).to eq(1)
       expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-science-europe/"}, "ttl"=>86400, "timestamp"=>"2018-07-24T10:43:29Z"}])
@@ -94,7 +108,7 @@ describe Doi, vcr: true do
     it 'draft doi' do
       subject = build(:doi, doi: "10.5438/mcnv-ga6n", client: client, aasm_state: "draft")
       url = "https://blog.datacite.org/"
-      options = { url: url, username: client.symbol, password: client.password, role_id: "client_admin" }
+      options = { url: url }
       expect(subject.register_url(options).body).to eq("errors"=>[{"title"=>"DOI is not registered or findable."}])
     end
 
@@ -106,8 +120,7 @@ describe Doi, vcr: true do
 
     it 'server not responsible' do
       subject = build(:doi, doi: "10.1371/journal.pbio.2001414", client: client, aasm_state: "findable")
-      options = { username: client.symbol, password: client.password }
-      expect(subject.get_url(options).body).to eq("errors"=>[{"status"=>400, "title"=>{"responseCode"=>301, "message"=>"That prefix doesn't live here", "handle"=>"10.1371/JOURNAL.PBIO.2001414"}}])
+      expect(subject.get_url.body).to eq("errors"=>[{"status"=>400, "title"=>{"responseCode"=>301, "message"=>"That prefix doesn't live here", "handle"=>"10.1371/JOURNAL.PBIO.2001414"}}])
     end
   end
 

@@ -235,8 +235,7 @@ class Doi < ActiveRecord::Base
   def update_url
     return nil if current_user.nil? || %w(europ ethz).include?(provider_id)
 
-    HandleJob.set(wait: 1.minute).perform_later(self, url: url,
-                                                password: current_user.password)
+    HandleJob.set(wait: 1.minute).perform_later(self, url: url)
   end
 
   # attributes to be sent to elasticsearch index

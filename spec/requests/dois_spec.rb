@@ -516,6 +516,48 @@ describe "dois", type: :request do
       end
     end
 
+    # context 'when the request uses namespaced xml' do
+    #   let(:xml) { Base64.strict_encode64(file_fixture('ns0.xml').read) }
+    #   let(:valid_attributes) do
+    #     {
+    #       "data" => {
+    #         "type" => "dois",
+    #         "attributes" => {
+    #           "doi" => "10.4122/10703",
+    #           "url" => "http://www.bl.uk/pdf/patspec.pdf",
+    #           "xml" => xml,
+    #           "event" => "register"
+    #         },
+    #         "relationships"=> {
+    #           "client"=>  {
+    #             "data"=> {
+    #               "type"=> "clients",
+    #               "id"=> client.symbol.downcase
+    #             }
+    #           }
+    #         }
+    #       }
+    #     }
+    #   end
+
+    #   before { post '/dois', params: valid_attributes.to_json, headers: headers }
+
+    #   it 'creates a Doi' do
+    #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+    #     expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
+    #     # expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-3")
+    #   end
+
+    #   it 'returns status code 201' do
+    #     expect(response.body).to eq(2)
+    #     expect(response).to have_http_status(201)
+    #   end
+
+    #   it 'sets state to registered' do
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("registered")
+    #   end
+    # end
+
     context 'when the title changes' do
       let(:title) { "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]" }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
@@ -551,6 +593,47 @@ describe "dois", type: :request do
 
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
         expect(xml.dig("titles", "title")).to eq(title)
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'sets state to registered' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("registered")
+      end
+    end
+
+    context 'when the url changes ftp url' do
+      let(:url) { "ftp://ftp.library.noaa.gov/noaa_documents.lib/NOS/NGS/TM_NOS_NGS/TM_NOS_NGS_72.pdf" }
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.4122/10703",
+              "url" => url,
+              "xml" => xml,
+              "event" => "register"
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+
+      before { post '/dois', params: valid_attributes.to_json, headers: headers }
+
+      it 'creates a Doi' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'url')).to eq(url)
       end
 
       it 'returns status code 201' do
