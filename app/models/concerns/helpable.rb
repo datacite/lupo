@@ -41,9 +41,8 @@ module Helpable
 
         if [200, 201].include?(response.status)
           # update minted column after first successful registration in handle system
-          timestamp = response.body.dig("data", "values", 0, "timestamp")
-          if minted.blank? && timestamp.present?
-            write_attribute(:minted, DateTime.parse(timestamp))
+          if minted.blank?
+            write_attribute(:minted, Time.zone.now)
             self.save
           end
 
