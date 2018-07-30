@@ -99,14 +99,14 @@ describe Doi, type: :model, vcr: true do
 
       it "don't update state change" do
         subject.start
-        expect { subject.save }.to have_enqueued_job(HandleJob)
+        expect { subject.save }.not_to have_enqueued_job(HandleJob)
         expect(subject).to have_state(:draft)
       end
 
       it "don't update url change" do
         subject.start
         subject.url = url
-        expect { subject.save }.to have_enqueued_job(HandleJob)
+        expect { subject.save }.not_to have_enqueued_job(HandleJob)
       end
     end
 
@@ -118,8 +118,8 @@ describe Doi, type: :model, vcr: true do
 
       it "update state change" do
         subject.register
-        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
-          expect(doi.url).to eq(subject.url)
+        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi_id|
+          expect(doi_id).to eq(subject.doi)
         }
         expect(subject).to have_state(:registered)
       end
@@ -127,8 +127,8 @@ describe Doi, type: :model, vcr: true do
       it "update url change" do
         subject.register
         subject.url = url
-        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
-          expect(subject.url).to eq(url)
+        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi_id|
+          expect(doi_id).to eq(subject.doi)
         }
       end
     end
@@ -141,8 +141,8 @@ describe Doi, type: :model, vcr: true do
 
       it "update state change" do
         subject.publish
-        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
-          expect(doi.url).to eq(subject.url)
+        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi_id|
+          expect(doi_id).to eq(subject.doi)
         }
         expect(subject).to have_state(:findable)
       end
@@ -150,8 +150,8 @@ describe Doi, type: :model, vcr: true do
       it "update url change" do
         subject.publish
         subject.url = url
-        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi|
-          expect(subject.url).to eq(url)
+        expect { subject.save }.to have_enqueued_job(HandleJob).on_queue("test_lupo").with { |doi_id|
+          expect(doi_id).to eq(subject.doi)
         }
       end
     end
