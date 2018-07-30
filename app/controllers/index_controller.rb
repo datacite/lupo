@@ -23,7 +23,7 @@ class IndexController < ApplicationController
         citation_url = ENV["CITEPROC_URL"] + "?" + URI.encode_www_form(options)
         response = Maremma.post citation_url, content_type: 'json', data: @doi.citeproc
 
-        render plain: response.body.fetch("data", nil)
+        render plain: CGI.unescapeHTML(response.body.fetch("data", ""))
       end
       format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => @doi }
       format.any { fail ActionController::UnknownFormat }
