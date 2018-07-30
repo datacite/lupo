@@ -7,7 +7,7 @@ class HandleJob < ActiveJob::Base
   # discard_on ActiveJob::DeserializationError
 
   def perform(doi_id)
-    Rails.logger.info "Update Handle record for #{doi_id}"
+    Rails.logger.debug "Update Handle record for #{doi_id}"
     doi = Doi.where(doi: doi_id).first
 
     if doi.present?

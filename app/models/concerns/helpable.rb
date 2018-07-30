@@ -36,7 +36,7 @@ module Helpable
           }
         }.to_json
 
-        url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}?index=1"
+        url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}?index=various"
         response = Maremma.put(url, content_type: 'application/json;charset=UTF-8', data: payload, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
 
         if response.status == 200
