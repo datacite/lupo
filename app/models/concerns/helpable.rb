@@ -39,7 +39,7 @@ module Helpable
         url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}"
         response = Maremma.put(url, content_type: 'application/json;charset=UTF-8', data: payload, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
 
-        if response.status == 200
+        if [200, 201].include?(response.status)
           # update minted column after first successful registration in handle system
           if minted.blank?
             timestamp = DateTime.parse(response.body.dig("data", "values", 0, "timestamp")) 
