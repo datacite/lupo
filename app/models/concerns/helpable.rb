@@ -36,12 +36,13 @@ module Helpable
           }
         }.to_json
 
-        url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}"
-        response = Maremma.put(url, content_type: 'application/json;charset=UTF-8', data: payload, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
+        handle_url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}"
+        response = Maremma.put(handle_url, content_type: 'application/json;charset=UTF-8', data: payload, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
 
         if [200, 201].include?(response.status)
           # update minted column after first successful registration in handle system
           doi.update_columns(minted: Time.zone.now, updated: Time.zone.now) if minted.blank?
+          Rails.logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "."
 
           response
         else
