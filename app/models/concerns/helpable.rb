@@ -56,10 +56,10 @@ module Helpable
         response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: client_id, password: ENV['ADMIN_PASSWORD'], timeout: 10)
 
         if response.status == 201
-          Rails.logger.info "[Handle] Updated " + doi + " with " + options[:url] + "."
+          Rails.logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "."
           response
         else
-          Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.inspect
+          Rails.logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect
           response
         end
       end
