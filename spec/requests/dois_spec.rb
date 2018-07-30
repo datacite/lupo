@@ -551,10 +551,6 @@ describe "dois", type: :request do
       it 'returns status code 201' do
         expect(response).to have_http_status(201)
       end
-
-      it 'sets state to registered' do
-        expect(json.dig('data', 'attributes', 'state')).to eq("registered")
-      end
     end
 
     # context 'when the request uses namespaced xml' do
