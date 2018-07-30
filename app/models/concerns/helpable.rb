@@ -41,10 +41,7 @@ module Helpable
 
         if [200, 201].include?(response.status)
           # update minted column after first successful registration in handle system
-          if minted.blank?
-            write_attribute(:minted, Time.zone.now)
-            self.save
-          end
+          doi.update_columns(minted: Time.zone.now, updated: Time.zone.now) if minted.blank?
 
           response
         else
