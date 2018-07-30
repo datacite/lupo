@@ -1718,11 +1718,11 @@ describe "dois", type: :request do
     before { get "/dois/#{doi.doi}/get-url", headers: headers }
 
     it 'returns not DataCite DOI' do
-      expect(json['errors']).to eq([{"status"=>500, "title"=>"SERVER NOT RESPONSIBLE FOR HANDLE"}])
+      expect(json['url']).to eq("http://dx.plos.org/10.1371/journal.pbio.2001414")
     end
 
-    it 'returns status code 500' do
-      expect(response).to have_http_status(500)
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
     end
   end
 

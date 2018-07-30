@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://doi.org/api/handles/10.5438/8SYZ-YM47?index=1
+    uri: https://doi.org/api/handles/10.1371/JOURNAL.PBIO.2001414?index=1
     body:
       encoding: US-ASCII
       string: ''
@@ -17,14 +17,14 @@ http_interactions:
       message: ''
     headers:
       Date:
-      - Mon, 30 Jul 2018 18:48:01 GMT
+      - Mon, 30 Jul 2018 18:53:52 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Connection:
       - keep-alive
       Set-Cookie:
-      - __cfduid=d1772eeaee2380cc050a449a3e35e8b211532976481; expires=Tue, 30-Jul-19
-        18:48:01 GMT; path=/; domain=.doi.org; HttpOnly
+      - __cfduid=d67050eb14d19cf0a9e1bb95a730854b31532976832; expires=Tue, 30-Jul-19
+        18:53:52 GMT; path=/; domain=.doi.org; HttpOnly
       Vary:
       - Accept-Encoding
       Expect-Ct:
@@ -32,10 +32,10 @@ http_interactions:
       Server:
       - cloudflare
       Cf-Ray:
-      - 4429ff3eda28649f-FRA
+      - 442a07d31da863c1-FRA
     body:
       encoding: ASCII-8BIT
-      string: '{"responseCode":1,"handle":"10.5438/8SYZ-YM47","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/welcome-helena-cousijn/"},"ttl":86400,"timestamp":"2018-07-29T23:57:59Z"}]}'
+      string: '{"responseCode":1,"handle":"10.1371/JOURNAL.PBIO.2001414","values":[{"index":1,"type":"URL","data":{"format":"string","value":"http://dx.plos.org/10.1371/journal.pbio.2001414"},"ttl":86400,"timestamp":"2017-06-29T17:30:17Z"}]}'
     http_version: 
-  recorded_at: Mon, 30 Jul 2018 18:48:01 GMT
+  recorded_at: Mon, 30 Jul 2018 18:53:52 GMT
 recorded_with: VCR 3.0.3

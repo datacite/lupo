@@ -27,14 +27,28 @@ module Helpable
       end
 
       if ENV['HANDLE_URL'].present?
-        payload = {
-          "index" => 1,
-          "type" => "URL",
-          "data" => {
-            "format" => "string",
-            "value" => url
+        payload = [
+          {
+            "index" => 100,
+            "type" => "HS_ADMIN",
+            "data" => {
+              "format" => "admin",
+              "value" => {
+                "handle" => ENV['HANDLE_USERNAME'],
+                "index" => 300,
+                "permissions" => "111111111111"
+              }
+            }
+          },
+          {
+            "index" => 1,
+            "type" => "URL",
+            "data" => {
+              "format" => "string",
+              "value" => url
+            }
           }
-        }.to_json
+        ].to_json
 
         handle_url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}"
         response = Maremma.put(handle_url, content_type: 'application/json;charset=UTF-8', data: payload, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
@@ -67,7 +81,7 @@ module Helpable
 
     def get_url
       if ENV['HANDLE_URL'].present?
-        url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}?index=1"
+        url = "https://doi.org/api/handles/#{doi}?index=1"
         response = Maremma.get(url, ssl_self_signed: true, timeout: 10)
 
         if response.status == 200

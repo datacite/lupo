@@ -74,7 +74,7 @@ describe Doi, vcr: true do
       response = subject.get_url
 
       expect(response.body.dig("data", "responseCode")).to eq(1)
-      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/"}, "ttl"=>86400, "timestamp"=>"2018-07-30T07:53:25Z"}])
+      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-science-europe/"}, "ttl"=>86400, "timestamp"=>"2018-07-30T07:53:49Z"}])
     end
 
     # it 'should register on save' do
@@ -114,7 +114,7 @@ describe Doi, vcr: true do
 
     it 'server not responsible' do
       subject = build(:doi, doi: "10.1371/journal.pbio.2001414", client: client, aasm_state: "findable")
-      expect(subject.get_url.body).to eq("errors"=>[{"status"=>400, "title"=>{"responseCode"=>301, "message"=>"That prefix doesn't live here", "handle"=>"10.1371/JOURNAL.PBIO.2001414"}}])
+      expect(subject.register_url.body).to eq("errors"=>[{"status"=>400, "title"=>{"responseCode"=>301, "message"=>"That prefix doesn't live here", "handle"=>"10.1371/JOURNAL.PBIO.2001414"}}])
     end
   end
 
