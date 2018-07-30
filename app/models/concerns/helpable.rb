@@ -48,12 +48,8 @@ module Helpable
           end
 
           response
-        elsif response.status == 401
-          raise CanCan::AccessDenied
-        elsif response.status == 404
-          raise ActiveRecord::RecordNotFound, "DOI not found"
         else
-          Rails.logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect
+          Rails.logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect
           response
         end
       else
@@ -65,12 +61,6 @@ module Helpable
         if response.status == 201
           Rails.logger.info "[Handle] Updated " + doi + " with " + options[:url] + "."
           response
-        elsif [408, 502, 503, 504].include?(response.status)
-          Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.inspect
-          #fail Faraday::TimeoutError
-        elsif response.status == 500 && response.body.to_s.start_with?("Another user has changed this record")
-          Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.inspect
-          #fail ActiveRecord::Deadlocked
         else
           Rails.logger.error "[Handle] Error updating DOI " + doi + ": " + response.body.inspect
           response
@@ -85,8 +75,6 @@ module Helpable
 
         if response.status == 200
           response
-        elsif response.status == 401
-          raise CanCan::AccessDenied
         else
           Rails.logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect
           response
@@ -98,10 +86,6 @@ module Helpable
 
         if response.status == 200
           response
-        elsif response.status == 401
-          raise CanCan::AccessDenied
-        elsif response.status == 404
-          raise ActiveRecord::RecordNotFound, "DOI not found"
         else
           Rails.logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect
           response
@@ -149,8 +133,6 @@ module Helpable
 
         if response.status == 200
           response
-        elsif response.status == 401
-          raise CanCan::AccessDenied
         else
           text = "Error " + response.body["errors"].inspect
           
@@ -171,14 +153,20 @@ module Helpable
         if [200, 204].include?(response.status)
           response
         elsif response.status == 401
-          raise CanCan::AccessDenied
+          text = "Error " + response.body["errors"].inspect
+          Rails.logger.error "[Handle] " + text
+
+          response
         elsif response.status == 404
-          raise ActiveRecord::RecordNotFound
+          text = "Error " + response.body["errors"].inspect
+          Rails.logger.error "[Handle] " + text
+
+          response
         else
           text = "Error " + response.body["errors"].inspect
-          
           Rails.logger.error "[Handle] " + text
           User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
+          
           response
         end
       end
