@@ -84,6 +84,7 @@ class DoisController < ApplicationController
                             person_id: params[:person_id], 
                             resource_type_id: camelize_str(params[:resource_type_id]), 
                             schema_version: params[:schema_version], 
+                            source: params[:source], 
                             from: from, 
                             size: size, 
                             sort: sort)
@@ -99,6 +100,7 @@ class DoisController < ApplicationController
       providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
       clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
       schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
+      sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
 
       #@clients = Kaminari.paginate_array(response.results, total_count: total).page(page).per(size)
       @dois = response.page(page).per(size).records
@@ -113,7 +115,8 @@ class DoisController < ApplicationController
         registered: registered,
         providers: providers,
         clients: clients,
-        schema_versions: schema_versions
+        schema_versions: schema_versions,
+        sources: sources
       }.compact
 
       render jsonapi: @dois, meta: meta, include: @include
@@ -245,7 +248,7 @@ class DoisController < ApplicationController
       elsif response.status == 200
         url = response.body.dig("data", "values", 0, "data", "value")
       elsif response.status == 400 && response.body.dig("errors", 0, "title", "responseCode") == 301 
-        response = OpenStruct.new(status: 500, body: { "errors" => [{ "status" => 500, "title" => "SERVER NOT RESPONSIBLE FOR HANDLE" }] })
+        response = OpenStruct.new(status: 403, body: { "errors" => [{ "status" => 403, "title" => "SERVER NOT RESPONSIBLE FOR HANDLE" }] })
         url = nil
       else
         url = nil
@@ -331,7 +334,7 @@ class DoisController < ApplicationController
 
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
-    attributes = [:doi, "confirm-doi", :identifier, :url, :title, :publisher, :published, :created, :prefix, :suffix, "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", :description, :license, :xml, :validate, :version, "metadata-version", "schema-version", :state, "is-active", :reason, :registered, :updated, :mode, :event, :regenerate, :client, "resource_type", author: [:type, :id, :name, "given-name", "family-name"]]
+    attributes = [:doi, "confirm-doi", :identifier, :url, :title, :publisher, :published, :created, :prefix, :suffix, "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", :description, :license, :xml, :validate, :source, :version, "metadata-version", "schema-version", :state, "is-active", :reason, :registered, :updated, :mode, :event, :regenerate, :client, "resource_type", author: [:type, :id, :name, "given-name", "family-name"]]
     relationships = [{ client: [data: [:type, :id]] },  { provider: [data: [:type, :id]] }, { "resource-type" => [:data, data: [:type, :id]] }]
     p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships)
     p = p.fetch("attributes").merge(client_id: p.dig("relationships", "client", "data", "id"), resource_type_general: camelize_str(p.dig("relationships", "resource-type", "data", "id")))

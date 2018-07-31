@@ -438,6 +438,7 @@ describe "dois", type: :request do
               "doi" => "10.4122/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
+              "source" => "test",
               "event" => "register"
             },
             "relationships"=> {
@@ -459,6 +460,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
         expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
         expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig('data', 'attributes', 'source')).to eq("test")
         # expect(json.dig('data', 'relationships', 'resource-type')).to eq(2)
 
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
@@ -484,6 +486,7 @@ describe "dois", type: :request do
               "doi" => "10.4122/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
+              "source" => "test",
               "event" => "register"
             },
             "relationships"=> {
@@ -504,6 +507,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
         expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
+        expect(json.dig('data', 'attributes', 'source')).to eq("test")
         # expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-3")
       end
 
@@ -606,6 +610,7 @@ describe "dois", type: :request do
               "doi" => "10.4122/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
+              "source" => "test",
               "title" => title,
               "event" => "register"
             },
@@ -627,6 +632,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
         expect(json.dig('data', 'attributes', 'title')).to eq("Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig('data', 'attributes', 'source')).to eq("test")
 
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
         expect(xml.dig("titles", "title")).to eq(title)

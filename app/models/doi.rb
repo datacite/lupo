@@ -123,6 +123,7 @@ class Doi < ActiveRecord::Base
       indexes :is_active,                      type: :keyword
       indexes :aasm_state,                     type: :keyword
       indexes :schema_version,                 type: :keyword
+      indexes :source,                         type: :keyword
       indexes :last_landing_page_status,       type: :integer
       indexes :last_landing_page_status_check, type: :date
       indexes :published,                      type: :date
@@ -164,7 +165,8 @@ class Doi < ActiveRecord::Base
         registered: { date_histogram: { field: 'minted', interval: 'year', min_doc_count: 1 } },
         providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } },
         clients: { terms: { field: 'client_id', size: 15, min_doc_count: 1 } },
-        schema_versions: { terms: { field: 'schema_version', size: 15, min_doc_count: 1 } }
+        schema_versions: { terms: { field: 'schema_version', size: 15, min_doc_count: 1 } },
+        sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } }
       }
     end
 
