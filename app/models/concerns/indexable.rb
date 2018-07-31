@@ -112,6 +112,7 @@ module Indexable
       must << { range: { published: { gte: "#{options[:year].split(",").min}-01-01", lte: "#{options[:year].split(",").max}-12-31", format: "yyyy-mm-dd" }}} if options[:year].present?
       must << { range: { minted: { gte: "#{options[:registered].split(",").min}-01-01", lte: "#{options[:registered].split(",").max}-12-31", format: "yyyy-mm-dd" }}} if options[:registered].present?
       must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
+      must << { term: { source: options[:source] }} if options[:source].present?
 
       __elasticsearch__.search({
         from: options[:from] || 0,
