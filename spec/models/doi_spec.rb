@@ -429,54 +429,56 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
-  # context "parses namespaced xml" do
-  #   let(:xml) { Base64.strict_encode64(file_fixture('ns0.xml').read) }
+  context "parses namespaced xml" do
+    let(:xml) { Base64.strict_encode64(file_fixture('ns0.xml').read) }
 
-  #   subject { create(:doi, xml: xml, event: "publish") }
+    subject { create(:doi, doi: "10.4231/D38G8FK8B", xml: xml, event: "publish") }
 
-  #   it "creates xml" do
-  #     doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
-  #     expect(doc.at_css("identifier").content).to eq(subject.doi)
-  #   end
+    it "creates xml" do
+      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      doc.remove_namespaces!
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
 
-  #   it "valid model" do
-  #     expect(subject.valid?).to be true
-  #   end
+    it "valid model" do
+      expect(subject.valid?).to be true
+    end
 
-  #   it "validates against schema" do
-  #     expect(subject.validation_errors).to be_empty
-  #   end
+    it "validates against schema" do
+      expect(subject.validation_errors).to be_empty
+    end
 
-  #   it "title" do
-  #     expect(subject.title).to eq("Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes")
-  #   end
+    it "title" do
+      expect(subject.title).to eq("LAMMPS Data-File Generator")
+    end
 
-  #   it "date_published" do
-  #     expect(subject.date_published).to eq("2006-12-20")
-  #   end
+    it "date_published" do
+      expect(subject.date_published).to eq("2018")
+    end
 
-  #   it "publication_year" do
-  #     expect(subject.publication_year).to eq(2006)
-  #   end
+    it "publication_year" do
+      expect(subject.publication_year).to eq(2018)
+    end
 
-  #   it "author" do
-  #     expect(subject.author.length).to eq(5)
-  #     expect(subject.author.first).to eq("type"=>"Person", "name"=>"Markus Ralser", "givenName"=>"Markus", "familyName"=>"Ralser")
-  #   end
+    it "author" do
+      expect(subject.author.length).to eq(5)
+      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Carlos PatiÃ±O", "givenName"=>"Carlos", "familyName"=>"PatiÃ±O")
+    end
 
-  #   it "schema_version" do
-  #     expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
-  #   end
+    it "schema_version" do
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-2.2")
+    end
 
-  #   it "metadata" do
-  #     doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
-  #     expect(doc.at_css("identifier").content).to eq(subject.doi)
-  #   end
+    it "metadata" do
+      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
+      doc.remove_namespaces!
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
 
-  #   it "namespace" do
-  #     expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
-  #   end
-  # end
+    it "namespace" do
+      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-2.2")
+    end
+  end
 
   context "parses schema" do
     let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }

@@ -341,7 +341,9 @@ class Doi < ActiveRecord::Base
 
     if changed_virtual_attributes.present?
       @xml = datacite_xml
-      @schema_version = Maremma.from_xml(xml).dig("resource", "xmlns")
+      doc = Nokogiri::XML(xml, nil, 'UTF-8', &:noblanks)
+      ns = doc.collect_namespaces.find { |k, v| v.start_with?("http://datacite.org/schema/kernel") }
+      @schema_version = Array.wrap(ns).last || "http://datacite.org/schema/kernel-4"
       attribute_will_change!(:xml)
     end
     

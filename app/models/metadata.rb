@@ -44,10 +44,9 @@ class Metadata < ActiveRecord::Base
     doc = Nokogiri::XML(xml, nil, 'UTF-8', &:noblanks)
     return nil unless doc.present?
 
-    # load XSD from bolognese gem
-    namespace = doc.namespaces["xmlns"]
     errors.add(:xml, "XML has no namespace.") && return unless namespace.present?
-
+    
+    # load XSD from bolognese gem
     kernel = namespace.to_s.split("/").last
     filepath = Bundler.rubygems.find_name('bolognese').first.full_gem_path + "/resources/#{kernel}/metadata.xsd"
     schema = Nokogiri::XML::Schema(open(filepath))
@@ -64,6 +63,7 @@ class Metadata < ActiveRecord::Base
     return nil unless xml.present?
 
     doc = Nokogiri::XML(xml, nil, 'UTF-8', &:noblanks)
-    self.namespace = doc && doc.namespaces["xmlns"]
+    ns = doc.collect_namespaces.find { |k, v| v.start_with?("http://datacite.org/schema/kernel") }
+    self.namespace = Array.wrap(ns).last
   end
 end
