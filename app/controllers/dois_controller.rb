@@ -170,6 +170,12 @@ class DoisController < ApplicationController
     exists = @doi.present?
 
     if exists
+      if safe_params[:xml].present? || safe_params[:url].present? || safe_params[:event].present?
+        authorize! :update, @doi
+      else
+        authorize! :transfer, @doi
+      end
+
       @doi.assign_attributes(safe_params.except(:doi))
     else
       doi_id = validate_doi(params[:id])
@@ -177,12 +183,8 @@ class DoisController < ApplicationController
 
       event = safe_params[:validate] ? "start" : safe_params[:event].presence || "start"
       @doi = Doi.new(safe_params.merge(doi: doi_id, event: event))
-    end
 
-    if safe_params[:xml].present? || safe_params[:url].present? || safe_params[:event].present?
-      authorize! :update, @doi
-    else
-      authorize! :transfer, @doi
+      authorize! :create, @doi
     end
 
     # capture username and password for reuse in the handle system

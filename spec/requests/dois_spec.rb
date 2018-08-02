@@ -7,6 +7,8 @@ describe "dois", type: :request do
 
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
+  let(:prefix) { create(:prefix, prefix: "10.14454") }
+  let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
   let!(:dois) { create_list(:doi, 3, client: client) }
   let(:doi) { create(:doi, client: client) }
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
@@ -144,7 +146,7 @@ describe "dois", type: :request do
     end
 
     context 'NoMethodError https://github.com/datacite/lupo/issues/84' do
-      let(:doi_id) { "10.6084/m9.figshare.6839054.v1" }
+      let(:doi_id) { "10.14454/m9.figshare.6839054.v1" }
       let(:valid_attributes) do
         {
           "data" => {
@@ -177,7 +179,7 @@ describe "dois", type: :request do
     end
 
     context 'when the record doesn\'t exist' do
-      let(:doi_id) { "10.5438/4K3M-NYVG" }
+      let(:doi_id) { "10.14454/4K3M-NYVG" }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
         {
@@ -219,7 +221,7 @@ describe "dois", type: :request do
     end
 
     context 'when the record doesn\'t exist no creator validate' do
-      let(:doi_id) { "10.5438/077d-fj48" }
+      let(:doi_id) { "10.14454/077d-fj48" }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite_missing_creator.xml').read) }
       let(:valid_attributes) do
         {
@@ -435,7 +437,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
+              "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
               "source" => "test",
@@ -457,7 +459,7 @@ describe "dois", type: :request do
 
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
         expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
@@ -483,7 +485,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
+              "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
               "source" => "test",
@@ -505,7 +507,7 @@ describe "dois", type: :request do
 
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
         # expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-3")
@@ -527,7 +529,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
+              "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
               "event" => "register"
@@ -548,7 +550,7 @@ describe "dois", type: :request do
 
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'title')).to eq("A dataset with a large file for testing purpose. Will be a but over 2.5 MB")
       end
 
@@ -564,7 +566,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
+              "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
               "event" => "register"
@@ -584,7 +586,7 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a Doi' do
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'title')).to eq("LAMMPS Data-File Generator")
         # expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-3")
       end
@@ -606,7 +608,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
+              "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
               "title" => title,
@@ -627,7 +629,7 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a Doi' do
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'title')).to eq("Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
         # expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-3")
       end
@@ -650,7 +652,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
+              "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
               "source" => "test",
@@ -672,7 +674,7 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a Doi' do
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'title')).to eq("Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
@@ -698,7 +700,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
+              "doi" => "10.14454/10703",
               "url" => url,
               "xml" => xml,
               "event" => "register"
@@ -718,7 +720,7 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a Doi' do
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
       end
 
@@ -738,7 +740,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
+              "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
               "title" => nil,
@@ -759,7 +761,7 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a Doi' do
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
 
@@ -783,7 +785,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
+              "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
               "title" => '',
@@ -804,7 +806,7 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a Doi' do
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'title')).to eq("")
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
 
@@ -829,7 +831,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
+              "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
               "author" => author,
@@ -850,7 +852,7 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a Doi' do
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'author')).to eq(author)
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
 
@@ -874,7 +876,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
+              "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => nil,
               "author" => author,
@@ -895,7 +897,7 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a Doi' do
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'author')).to eq(author)
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
 
@@ -913,6 +915,9 @@ describe "dois", type: :request do
     end
 
     context 'state change with test prefix' do
+      let(:prefix) { create(:prefix, prefix: "10.5072") }
+      let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
+
       let(:valid_attributes) do
         {
           "data" => {
@@ -971,12 +976,12 @@ describe "dois", type: :request do
       end
       before { post '/dois', params: not_valid_attributes.to_json, headers: headers }
 
-      it 'returns status code 422' do
-        expect(response).to have_http_status(422)
+      it 'returns status code 403' do
+        expect(response).to have_http_status(403)
       end
 
       it 'returns a validation failure message' do
-        expect(json["errors"]).to eq([{"source"=>"doi", "title"=>"Is invalid"}])
+        expect(json["errors"]).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
       end
     end
 
@@ -987,7 +992,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
+              "doi" => "10.14454/10703",
               "url"=> "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml
             },
@@ -1009,7 +1014,7 @@ describe "dois", type: :request do
       end
 
       it 'creates a Doi' do
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'author')).to be_blank
@@ -1021,7 +1026,7 @@ describe "dois", type: :request do
     end
 
     context 'when the xml is invalid' do
-      let(:doi) { create(:doi, client: client, doi: "10.5438/4f6f-zr33") }
+      let(:doi) { create(:doi, client: client, doi: "10.14454/4f6f-zr33") }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite_missing_creator.xml').read) }
       let(:not_valid_attributes) do
         {
@@ -1066,7 +1071,7 @@ describe "dois", type: :request do
             "data" => {
               "type" => "dois",
               "attributes" => {
-                "doi" => "10.4122/10703",
+                "doi" => "10.14454/10703",
                 "xml" => xml,
               },
               "relationships"=> {
@@ -1084,7 +1089,7 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
           expect(json.dig('data', 'attributes', 'published')).to eq("2016-12-20")
         end
@@ -1101,7 +1106,7 @@ describe "dois", type: :request do
             "data" => {
               "type" => "dois",
               "attributes" => {
-                "doi" => "10.4122/10703",
+                "doi" => "10.14454/10703",
                 "xml" => xml,
               },
               "relationships"=> {
@@ -1119,7 +1124,7 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
           expect(json.dig('data', 'attributes', 'published')).to eq("2011")
         end
@@ -1136,7 +1141,7 @@ describe "dois", type: :request do
             "data" => {
               "type" => "dois",
               "attributes" => {
-                "doi" => "10.4122/10703",
+                "doi" => "10.14454/10703",
                 "xml" => xml,
               },
               "relationships"=> {
@@ -1170,7 +1175,7 @@ describe "dois", type: :request do
             "data" => {
               "type" => "dois",
               "attributes" => {
-                "doi" => "10.4122/10703",
+                "doi" => "10.14454/10703",
                 "xml" => xml,
               },
               "relationships"=> {
@@ -1204,7 +1209,7 @@ describe "dois", type: :request do
             "data" => {
               "type" => "dois",
               "attributes" => {
-                "doi" => "10.4122/10703",
+                "doi" => "10.14454/10703",
                 "xml" => xml,
               },
               "relationships"=> {
@@ -1222,7 +1227,7 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
           expect(json.dig('data', 'attributes', 'published')).to eq("2016-12-20")
         end
@@ -1239,7 +1244,7 @@ describe "dois", type: :request do
             "data" => {
               "type" => "dois",
               "attributes" => {
-                "doi" => "10.4122/10703",
+                "doi" => "10.14454/10703",
                 "xml" => xml,
               },
               "relationships"=> {
@@ -1257,7 +1262,7 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'title')).to eq("R Interface to the DataONE REST API")
           expect(json.dig('data', 'attributes', 'published')).to eq("2016-05-27")
         end
@@ -1274,7 +1279,7 @@ describe "dois", type: :request do
             "data" => {
               "type" => "dois",
               "attributes" => {
-                "doi" => "10.4122/10703",
+                "doi" => "10.14454/10703",
                 "xml" => xml,
               },
               "relationships"=> {
@@ -1292,7 +1297,7 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'title')).to eq("Analysis Tools for Crossover Experiment of UI using Choice Architecture")
           expect(json.dig('data', 'attributes', 'published')).to eq("2016-03-27")
         end
@@ -1309,7 +1314,7 @@ describe "dois", type: :request do
             "data" => {
               "type" => "dois",
               "attributes" => {
-                "doi" => "10.4122/10703",
+                "doi" => "10.14454/10703",
                 "xml" => xml,
               },
               "relationships"=> {
@@ -1327,7 +1332,7 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'title')).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
           expect(json.dig('data', 'attributes', 'published')).to eq("2014")
         end
@@ -1344,7 +1349,7 @@ describe "dois", type: :request do
             "data" => {
               "type" => "dois",
               "attributes" => {
-                "doi" => "10.4122/10703",
+                "doi" => "10.14454/10703",
                 "xml" => xml,
               },
               "relationships"=> {
@@ -1362,7 +1367,7 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'title')).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
           expect(json.dig('data', 'attributes', 'published')).to eq("2014")
         end
@@ -1379,7 +1384,7 @@ describe "dois", type: :request do
             "data" => {
               "type" => "dois",
               "attributes" => {
-                "doi" => "10.4122/10703",
+                "doi" => "10.14454/10703",
                 "xml" => xml,
               },
               "relationships"=> {
@@ -1397,7 +1402,7 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'title')).to eq("Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes")
           expect(json.dig('data', 'attributes', 'published')).to eq("2006-12-20")
         end
@@ -1414,7 +1419,7 @@ describe "dois", type: :request do
             "data" => {
               "type" => "dois",
               "attributes" => {
-                "doi" => "10.4122/10703",
+                "doi" => "10.14454/10703",
                 "xml" => xml,
               },
               "relationships"=> {
@@ -1432,7 +1437,7 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
           expect(json.dig('data', 'attributes', 'published')).to eq("2016-12-20")
         end
@@ -1451,7 +1456,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.4122/10703",
+              "doi" => "10.14454/10703",
               "url" => url,
               "xml" => xml,
               "last-landing-page" => url,
@@ -1476,7 +1481,7 @@ describe "dois", type: :request do
 
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.4122/10703")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'landing-page', 'status')).to eq(200)
       end
 
@@ -1588,12 +1593,10 @@ describe "dois", type: :request do
   end
 
   describe 'GET /dois/random?prefix' do
-    let(:prefix) { "10.5438" }
-
-    before { get "/dois/random?prefix=#{prefix}", headers: headers }
+    before { get "/dois/random?prefix=#{prefix.prefix}", headers: headers }
 
     it 'returns random doi with prefix' do
-      expect(json['doi']).to start_with(prefix)
+      expect(json['doi']).to start_with("10.14454")
       expect(response).to have_http_status(200)
     end
 

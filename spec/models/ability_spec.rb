@@ -6,13 +6,13 @@ describe User, type: :model do
   let(:user) { User.new(token) }
   let(:provider) { create(:provider) }
   let(:client) { create(:client, provider: provider) }
+  let(:prefix) { create(:prefix, prefix: "10.14454") }
+  let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
+  let(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
   let(:doi) { create(:doi, client: client) }
   let(:media) { create(:media, doi: doi) }
   let(:xml) { file_fixture('datacite.xml').read }
   let(:metadata) { create(:metadata, xml: xml, doi: doi) }
-  let(:prefix) { create(:prefix) }
-  let(:client_prefix) { create(:client_prefix, client: client) }
-  let(:provider_prefix) { create(:provider_prefix, provider: provider) }
 
   describe 'User attributes', :order => :defined do
     it "is valid with valid attributes" do

@@ -13,6 +13,9 @@ class Ability
       can :manage, :all
       # can :manage, [Provider, ProviderPrefix, Client, ClientPrefix, Prefix, Phrase, User]
       # can [:read, :transfer, :set_state, :set_minted, :set_url, :delete_test_dois], Doi
+      cannot [:new, :create], Doi do |doi|
+        !doi.client.prefixes.where(prefix: doi.prefix).first
+      end
     elsif user.role_id == "staff_user"
       can :read, :all
     elsif user.role_id == "provider_admin" && user.provider_id.present?
@@ -52,7 +55,10 @@ class Ability
       # else
       #   can [:read, :update], Doi, :client_id => user.client_id
       # end
-      can [:read, :new, :create, :update, :destroy, :register_url, :get_url, :get_urls], Doi, :client_id => user.client_id
+      can [:read, :update, :destroy, :register_url, :get_url, :get_urls], Doi, :client_id => user.client_id
+      can [:new, :create], Doi do |doi|
+        doi.client_id == user.client_id && doi.client.prefixes.where(prefix: doi.prefix).first
+      end
       can [:read], Doi do |doi|
         doi.findable?
       end
