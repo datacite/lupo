@@ -10,11 +10,12 @@ class ClientsController < ApplicationController
     from = (page - 1) * size
 
     sort = case params[:sort]
+           when "relevance" then { "_score" => { order: 'desc' }}
            when "name" then { "name.keyword" => { order: 'asc' }}
            when "-name" then { "name.keyword" => { order: 'desc' }}
            when "created" then { created: { order: 'asc' }}
            when "-created" then { created: { order: 'desc' }}
-           else { "_score": { "order": "desc" }}
+           else { "name.keyword": { "order": "asc" }}
            end
 
     if params[:id].present?
