@@ -78,7 +78,7 @@ class DoisController < ApplicationController
         response = Doi.query(params[:query], 
                             state: params[:state], 
                             year: params[:year], 
-                            registered: params[:registered], 
+                            created: params[:created], 
                             provider_id: params[:provider_id], 
                             client_id: params[:client_id], 
                             prefix: params[:prefix], 
@@ -97,7 +97,7 @@ class DoisController < ApplicationController
       states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
       resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
       years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
-      registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
+      created = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
       providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
       clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
       prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
@@ -114,7 +114,7 @@ class DoisController < ApplicationController
         states: states,
         resource_types: resource_types,
         years: years,
-        registered: registered,
+        created: created,
         providers: providers,
         clients: clients,
         prefixes: prefixes,
