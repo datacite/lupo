@@ -81,6 +81,7 @@ class DoisController < ApplicationController
                             registered: params[:registered], 
                             provider_id: params[:provider_id], 
                             client_id: params[:client_id], 
+                            prefix: params[:prefix], 
                             person_id: params[:person_id], 
                             resource_type_id: camelize_str(params[:resource_type_id]), 
                             schema_version: params[:schema_version], 
@@ -99,6 +100,7 @@ class DoisController < ApplicationController
       registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
       providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
       clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
+      prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
       schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
       sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
 
@@ -115,6 +117,7 @@ class DoisController < ApplicationController
         registered: registered,
         providers: providers,
         clients: clients,
+        prefixes: prefixes,
         schema_versions: schema_versions,
         sources: sources
       }.compact
