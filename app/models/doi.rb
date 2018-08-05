@@ -112,6 +112,7 @@ class Doi < ActiveRecord::Base
         "id": { type: :keyword },
         "name": { type: :text }
       }
+      indexes :author_normalized,              type: :text
       indexes :title_normalized,               type: :text
       indexes :description_normalized,         type: :text
       indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" }}
@@ -138,6 +139,7 @@ class Doi < ActiveRecord::Base
         "doi" => doi,
         "url" => url,
         "author" => author,
+        "author_normalized" => author_normalized,
         "title_normalized" => title_normalized,
         "description_normalized" => description_normalized,
         "publisher" => publisher,
@@ -175,7 +177,7 @@ class Doi < ActiveRecord::Base
     end
 
     def self.query_fields
-      ['doi^10', 'title_normalized^10', 'author.name^10', 'author.id^10', 'publisher^10', 'description_normalized^10', 'resource_type_general^10', 'additional_type^10', '_all']
+      ['doi^10', 'title_normalized^10', 'author_normalized^10', 'author.name^10', 'author.id^10', 'publisher^10', 'description_normalized^10', 'resource_type_general^10', 'additional_type^10', '_all']
     end
 
     def self.find_by_id(id, options={})
@@ -198,6 +200,19 @@ class Doi < ActiveRecord::Base
 
   def description_normalized
     parse_attributes(description, content: "text", first: true)
+  end
+ 
+  # author name in natural order: "John Smith" instead of "Smith, John"
+  def author_normalized
+    Array.wrap(author).map do |a| 
+      if a["familyName"].present? 
+        [a["givenName"], a["familyName"]].join(" ")
+      elsif a["name"].include?(", ")
+        a["name"].split(", ", 2).reverse.join(" ")
+      else
+        a["name"]
+      end
+    end
   end
 
   def doi=(value)
