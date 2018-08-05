@@ -14,7 +14,7 @@ class Ability
       # can :manage, [Provider, ProviderPrefix, Client, ClientPrefix, Prefix, Phrase, User]
       # can [:read, :transfer, :set_state, :set_minted, :set_url, :delete_test_dois], Doi
       cannot [:new, :create], Doi do |doi|
-        !doi.client.prefixes.where(prefix: doi.prefix).first
+        doi.client.blank? || !doi.client.prefixes.where(prefix: doi.prefix).first
       end
     elsif user.role_id == "staff_user"
       can :read, :all
