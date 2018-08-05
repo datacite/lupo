@@ -82,6 +82,7 @@ class Provider < ActiveRecord::Base
     indexes :joined,        type: :date
     indexes :created,       type: :date
     indexes :updated,       type: :date
+    indexes :deleted_at,    type: :date
   end
 
   def as_indexed_json(options={})
@@ -101,7 +102,8 @@ class Provider < ActiveRecord::Base
       "password" => password,
       "joined" => joined,
       "created" => created,
-      "updated" => updated
+      "updated" => updated,
+      "deleted_at" => deleted_at
     }
   end
 
@@ -223,7 +225,8 @@ class Provider < ActiveRecord::Base
       "version" => version,
       "joined" => joined && joined.iso8601,
       "created" => created.iso8601,
-      "updated" => updated.iso8601 }
+      "updated" => updated.iso8601,
+      "deleted_at" => deleted_at.iso8601 }
 
     { "id" => symbol.downcase, "type" => "providers", "attributes" => attributes }
   end

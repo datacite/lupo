@@ -120,6 +120,7 @@ module Indexable
       if self.name == "Provider"
         must << { range: { created: { gte: "#{options[:year].split(",").min}-01-01", lte: "#{options[:year].split(",").max}-12-31", format: "yyyy-mm-dd" }}} if options[:year].present?
         must << { term: { role_name: "ROLE_ALLOCATOR" }} 
+        must_not << { exists: { field: "deleted_at" }}
       elsif self.name == "Client"
         must << { range: { created: { gte: "#{options[:year].split(",").min}-01-01", lte: "#{options[:year].split(",").max}-12-31", format: "yyyy-mm-dd" }}} if options[:year].present?
         must_not << { exists: { field: "deleted_at" }}
