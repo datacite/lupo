@@ -115,13 +115,20 @@ module Indexable
       must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
       must << { term: { source: options[:source] }} if options[:source].present?
 
+      must_not = []
+
+      # filters for some classes
+      must << { term: { role_name: "ROLE_ALLOCATOR" }} if self.name == "Provider"
+      must_not << { exists: { field: "deleted_at" }} if self.name == "Client"
+
       __elasticsearch__.search({
         from: options[:from] || 0,
         size: options[:size] || 25,
         sort: [options[:sort]],
         query: {
           bool: {
-            must: must
+            must: must,
+            must_not: must_not
           }
         },
         aggregations: query_aggregations

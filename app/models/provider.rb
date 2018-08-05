@@ -78,6 +78,7 @@ class Provider < ActiveRecord::Base
     indexes :phone,         type: :text
     indexes :region,        type: :keyword
     indexes :country_code,  type: :keyword
+    indexes :role_name,     type: :keyword
     indexes :joined,        type: :date
     indexes :created,       type: :date
     indexes :updated,       type: :date
@@ -96,6 +97,7 @@ class Provider < ActiveRecord::Base
       "phone" => phone,
       "region" => region,
       "country_code" => country_code,
+      "role_name" => role_name,
       "password" => password,
       "joined" => joined,
       "created" => created,
@@ -215,6 +217,7 @@ class Provider < ActiveRecord::Base
       "contact-phone" => phone,
       "prefixes" => prefixes.map { |p| p.prefix },
       "country-code" => country_code,
+      "role_name" => role_name,
       "description" => description,
       "is-active" => is_active == "\x01",
       "version" => version,

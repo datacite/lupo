@@ -76,6 +76,7 @@ class Client < ActiveRecord::Base
     indexes :url,           type: :text, fields: { keyword: { type: "keyword" }}
     indexes :created,       type: :date
     indexes :updated,       type: :date
+    indexes :deleted_at,    type: :date
   end
 
   def as_indexed_json(options={})
@@ -91,7 +92,8 @@ class Client < ActiveRecord::Base
       "is_active" => is_active,
       "password" => password,
       "created" => created,
-      "updated" => updated
+      "updated" => updated,
+      "deleted_at" => deleted_at
     }
   end
 
@@ -167,7 +169,8 @@ class Client < ActiveRecord::Base
       "is-active" => is_active == "\x01",
       "version" => version,
       "created" => created.iso8601,
-      "updated" => updated.iso8601 }
+      "updated" => updated.iso8601,
+      "deleted_at" => deleted_at }
 
     { "id" => symbol.downcase, "type" => "clients", "attributes" => attributes }
   end
