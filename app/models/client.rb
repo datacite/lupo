@@ -170,7 +170,7 @@ class Client < ActiveRecord::Base
       "version" => version,
       "created" => created.iso8601,
       "updated" => updated.iso8601,
-      "deleted_at" => deleted_at }
+      "deleted_at" => deleted_at ? deleted_at.iso8601 : nil }
 
     { "id" => symbol.downcase, "type" => "clients", "attributes" => attributes }
   end

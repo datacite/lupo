@@ -226,7 +226,7 @@ class Provider < ActiveRecord::Base
       "joined" => joined && joined.iso8601,
       "created" => created.iso8601,
       "updated" => updated.iso8601,
-      "deleted_at" => deleted_at.iso8601 }
+      "deleted_at" => deleted_at ? deleted_at.iso8601 : nil }
 
     { "id" => symbol.downcase, "type" => "providers", "attributes" => attributes }
   end
