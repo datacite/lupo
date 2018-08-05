@@ -110,7 +110,6 @@ module Indexable
       must << { terms: { client_id: options[:client_id].split(",") }} if options[:client_id].present?
       must << { term: { prefix: options[:prefix] }} if options[:prefix].present?
       must << { term: { "author.id" => "https://orcid.org/#{options[:person_id]}" }} if options[:person_id].present?
-      must << { range: { published: { gte: "#{options[:year].split(",").min}-01-01", lte: "#{options[:year].split(",").max}-12-31", format: "yyyy-mm-dd" }}} if options[:year].present?
       must << { range: { created: { gte: "#{options[:created].split(",").min}-01-01", lte: "#{options[:created].split(",").max}-12-31", format: "yyyy-mm-dd" }}} if options[:created].present?
       must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
       must << { term: { source: options[:source] }} if options[:source].present?
@@ -118,8 +117,15 @@ module Indexable
       must_not = []
 
       # filters for some classes
-      must << { term: { role_name: "ROLE_ALLOCATOR" }} if self.name == "Provider"
-      must_not << { exists: { field: "deleted_at" }} if self.name == "Client"
+      if self.name == "Provider"
+        must << { range: { created: { gte: "#{options[:year].split(",").min}-01-01", lte: "#{options[:year].split(",").max}-12-31", format: "yyyy-mm-dd" }}} if options[:year].present?
+        must << { term: { role_name: "ROLE_ALLOCATOR" }} 
+      elsif self.name == "Client"
+        must << { range: { created: { gte: "#{options[:year].split(",").min}-01-01", lte: "#{options[:year].split(",").max}-12-31", format: "yyyy-mm-dd" }}} if options[:year].present?
+        must_not << { exists: { field: "deleted_at" }}
+      elsif self.name == "Doi"
+        must << { range: { published: { gte: "#{options[:year].split(",").min}-01-01", lte: "#{options[:year].split(",").max}-12-31", format: "yyyy-mm-dd" }}} if options[:year].present?
+      end
 
       __elasticsearch__.search({
         from: options[:from] || 0,
