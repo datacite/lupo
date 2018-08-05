@@ -207,7 +207,7 @@ class Doi < ActiveRecord::Base
     Array.wrap(author).map do |a| 
       if a["familyName"].present? 
         [a["givenName"], a["familyName"]].join(" ")
-      elsif a["name"].include?(", ")
+      elsif a["name"].to_s.include?(", ")
         a["name"].split(", ", 2).reverse.join(" ")
       else
         a["name"]
