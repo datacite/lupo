@@ -14,20 +14,20 @@ describe "dois", type: :request do
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
   let(:headers) { { 'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer }}
 
-  describe 'GET /dois', elasticsearch: true do
-    before do
-      sleep 1
-      get '/dois', headers: headers
-    end
+  # describe 'GET /dois', elasticsearch: true do
+  #   before do
+  #     sleep 1
+  #     get '/dois', headers: headers
+  #   end
 
-    it 'returns dois' do
-      expect(json['data'].size).to eq(3)
-    end
+  #   it 'returns dois' do
+  #     expect(json['data'].size).to eq(3)
+  #   end
 
-    it 'returns status code 200' do
-      expect(response).to have_http_status(200)
-    end
-  end
+  #   it 'returns status code 200' do
+  #     expect(response).to have_http_status(200)
+  #   end
+  # end
 
   describe 'GET /dois/:id' do
     context 'when the record exists' do

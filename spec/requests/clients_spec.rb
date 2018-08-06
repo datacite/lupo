@@ -27,21 +27,21 @@ describe 'Clients', type: :request do
   let(:query) { "jamon"}
 
   # Test suite for GET /clients
-  describe 'GET /clients', elasticsearch: true do
-    before do
-      sleep 1
-      get '/clients', headers: headers
-    end
+  # describe 'GET /clients', elasticsearch: true do
+  #   before do
+  #     sleep 1
+  #     get '/clients', headers: headers
+  #   end
 
-    it 'returns clients' do
-      expect(json).not_to be_empty
-      expect(json['data'].size).to eq(11)
-    end
+  #   it 'returns clients' do
+  #     expect(json).not_to be_empty
+  #     expect(json['data'].size).to eq(11)
+  #   end
 
-    it 'returns status code 200' do
-      expect(response).to have_http_status(200)
-    end
-  end
+  #   it 'returns status code 200' do
+  #     expect(response).to have_http_status(200)
+  #   end
+  # end
 
   # # Test suite for GET /clients
   # describe 'GET /clients query' do
@@ -57,21 +57,21 @@ describe 'Clients', type: :request do
   #   end
   # end
 
-  describe 'GET /clients?ids=', elasticsearch: true do
-    before do
-      sleep 1
-      get "/clients?ids=#{ids}", headers: headers
-    end
+  # describe 'GET /clients?ids=', elasticsearch: true do
+  #   before do
+  #     sleep 1
+  #     get "/clients?ids=#{ids}", headers: headers
+  #   end
 
-    it 'returns clients' do
-      expect(json).not_to be_empty
-      expect(json['data'].size).to eq(10)
-    end
+  #   it 'returns clients' do
+  #     expect(json).not_to be_empty
+  #     expect(json['data'].size).to eq(10)
+  #   end
 
-    it 'returns status code 200' do
-      expect(response).to have_http_status(200)
-    end
-  end
+  #   it 'returns status code 200' do
+  #     expect(response).to have_http_status(200)
+  #   end
+  # end
 
   # Test suite for GET /clients/:id
   describe 'GET /clients/:id' do

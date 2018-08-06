@@ -4,17 +4,13 @@ module Indexable
   require 'aws-sdk-sqs'
 
   included do
-    after_commit on: [:create] do
-      __elasticsearch__.index_document
-    end
-  
-    after_commit on: [:update] do
+    after_commit on: [:create, :update] do
       # use index_document instead of update_document to also update virtual attributes
-      __elasticsearch__.index_document
+      IndexJob.perform_later(self)
     end
   
     after_commit on: [:destroy] do
-      __elasticsearch__.delete_document
+      DeleteJob.perform_later(self)
     end
 
     # unless Rails.env.test?
