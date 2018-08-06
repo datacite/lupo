@@ -134,7 +134,9 @@ class Client < ActiveRecord::Base
 
     target = c.records.first
 
-    dois.update_all(datacentre: target.id)
+    dois.find_each do |doi|
+      doi.update_attributes(datacentre: target.id)
+    end
 
     # update DOI count for source and target client
     cached_doi_count(force: true)
