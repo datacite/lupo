@@ -3,9 +3,9 @@ class DeleteJob < ActiveJob::Base
 
   def perform(id, options={})
     begin
-      Client.delete index: options[:class_name].downcase + "s", type: options[:class_name].downcase, id: id
-    rescue Elasticsearch::Transport::Transport::Errors::NotFound
-      Rails.logger.debug "#{options[:class_name]} #{id} not found"
+      Client.delete index: options[:class_name], type: options[:class_name].downcase, id: id
+    rescue Elasticsearch::Transport::Transport::Errors::NotFound, ActiveJob::DeserializationError
+      logger.debug "# not found, ID: #{record_id}"
     end
   end
 end

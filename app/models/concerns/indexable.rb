@@ -9,7 +9,7 @@ module Indexable
       IndexJob.perform_later(self)
     end
   
-    after_commit on: [:destroy] do
+    before_destroy do
       DeleteJob.perform_later(self.id, class_name: self.class.name)
     end
 
