@@ -135,7 +135,7 @@ class Client < ActiveRecord::Base
     target = c.records.first
 
     dois.find_each do |doi|
-      doi.update_attributes(datacentre: target.id)
+      TransferJob.perform_later(doi.doi, target_id: target.id)
     end
 
     # update DOI count for source and target client
