@@ -244,7 +244,7 @@ class DoisController < ApplicationController
 
     if @doi.aasm_state == "draft"
       url = @doi.url
-      response = OpenStruct.new(status: 404, body: { "errors" => [{ "title" => "No URL found." }] })
+      head :no_content and return unless url.present?
     else
       response = @doi.get_url
 
