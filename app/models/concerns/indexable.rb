@@ -10,7 +10,7 @@ module Indexable
     end
   
     after_commit on: [:destroy] do
-      DeleteJob.perform_later(self)
+      DeleteJob.perform_later(self.id, class_name: self.class.name)
     end
 
     # unless Rails.env.test?
