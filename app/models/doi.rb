@@ -18,12 +18,12 @@ class Doi < ActiveRecord::Base
   include AASM
 
   # include helper module for Elasticsearch
-  include Indexable unless Rails.env.production?
+  include Indexable
 
   # include helper module for sending emails
   include Mailable
 
-  include Elasticsearch::Model unless Rails.env.production?
+  include Elasticsearch::Model
 
   aasm :whiny_transitions => false do
     # initial is default state for new DOIs. This is needed to handle DOIs created
@@ -98,100 +98,98 @@ class Doi < ActiveRecord::Base
   before_save :set_defaults, :update_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
-  if Rails.env.production?
-    scope :query, ->(query) { where("dataset.doi = ?", query) }
-  else
-    # use different index for testing
-    index_name Rails.env.test? ? "dois-test" : "dois"
+  scope :q, ->(query) { where("dataset.doi = ?", query) }
 
-    mapping dynamic: 'false' do
-      indexes :doi,                            type: :keyword
-      indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
-      indexes :author,                         type: :object, properties: {
-        "type": { type: :keyword },
-        "id": { type: :keyword },
-        "name": { type: :text }
-      }
-      indexes :author_normalized,              type: :text
-      indexes :title_normalized,               type: :text
-      indexes :description_normalized,         type: :text
-      indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" }}
-      indexes :client_id,                      type: :keyword
-      indexes :provider_id,                    type: :keyword
-      indexes :resource_type_general,          type: :keyword
-      indexes :additional_type,                type: :keyword
-      indexes :version,                        type: :integer
-      indexes :is_active,                      type: :keyword
-      indexes :aasm_state,                     type: :keyword
-      indexes :schema_version,                 type: :keyword
-      indexes :source,                         type: :keyword
-      indexes :prefix,                         type: :keyword
-      indexes :last_landing_page_status,       type: :integer
-      indexes :last_landing_page_status_check, type: :date
-      indexes :published,                      type: :date
-      indexes :minted,                         type: :date
-      indexes :created,                        type: :date
-      indexes :updated,                        type: :date
-    end
+  # use different index for testing
+  index_name Rails.env.test? ? "dois-test" : "dois"
 
-    def as_indexed_json(options={})
-      {
-        "doi" => doi,
-        "url" => url,
-        "author" => author,
-        "author_normalized" => author_normalized,
-        "title_normalized" => title_normalized,
-        "description_normalized" => description_normalized,
-        "publisher" => publisher,
-        "client_id" => client_id,
-        "provider_id" => provider_id,
-        "prefix" => prefix,
-        "resource_type_general" => resource_type_general,
-        "additional_type" => additional_type,
-        "version" => version,
-        "is_active" => is_active,
-        "last_landing_page_status" => last_landing_page_status,
-        "last_landing_page_status_check" => last_landing_page_status_check,
-        "aasm_state" => aasm_state,
-        "schema_version" => schema_version,
-        "source" => source,
-        "published" => published,
-        "minted" => minted,
-        "created" => created,
-        "updated" => updated
-      }
-    end
+  mapping dynamic: 'false' do
+    indexes :doi,                            type: :keyword
+    indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
+    indexes :author,                         type: :object, properties: {
+      "type": { type: :keyword },
+      "id": { type: :keyword },
+      "name": { type: :text }
+    }
+    indexes :author_normalized,              type: :text
+    indexes :title_normalized,               type: :text
+    indexes :description_normalized,         type: :text
+    indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" }}
+    indexes :client_id,                      type: :keyword
+    indexes :provider_id,                    type: :keyword
+    indexes :resource_type_general,          type: :keyword
+    indexes :additional_type,                type: :keyword
+    indexes :version,                        type: :integer
+    indexes :is_active,                      type: :keyword
+    indexes :aasm_state,                     type: :keyword
+    indexes :schema_version,                 type: :keyword
+    indexes :source,                         type: :keyword
+    indexes :prefix,                         type: :keyword
+    indexes :last_landing_page_status,       type: :integer
+    indexes :last_landing_page_status_check, type: :date
+    indexes :published,                      type: :date
+    indexes :minted,                         type: :date
+    indexes :created,                        type: :date
+    indexes :updated,                        type: :date
+  end
 
-    def self.query_aggregations
-      {
-        resource_types: { terms: { field: 'resource_type_general', size: 15, min_doc_count: 1 } },
-        states: { terms: { field: 'aasm_state', size: 10, min_doc_count: 1 } },
-        years: { date_histogram: { field: 'published', interval: 'year', min_doc_count: 1 } },
-        created: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
-        providers: { terms: { field: 'provider_id', size: 10, min_doc_count: 1 } },
-        clients: { terms: { field: 'client_id', size: 10, min_doc_count: 1 } },
-        prefixes: { terms: { field: 'prefix', size: 10, min_doc_count: 1 } },
-        schema_versions: { terms: { field: 'schema_version', size: 10, min_doc_count: 1 } },
-        sources: { terms: { field: 'source', size: 10, min_doc_count: 1 } }
-      }
-    end
+  def as_indexed_json(options={})
+    {
+      "doi" => doi,
+      "url" => url,
+      "author" => author,
+      "author_normalized" => author_normalized,
+      "title_normalized" => title_normalized,
+      "description_normalized" => description_normalized,
+      "publisher" => publisher,
+      "client_id" => client_id,
+      "provider_id" => provider_id,
+      "prefix" => prefix,
+      "resource_type_general" => resource_type_general,
+      "additional_type" => additional_type,
+      "version" => version,
+      "is_active" => is_active,
+      "last_landing_page_status" => last_landing_page_status,
+      "last_landing_page_status_check" => last_landing_page_status_check,
+      "aasm_state" => aasm_state,
+      "schema_version" => schema_version,
+      "source" => source,
+      "published" => published,
+      "minted" => minted,
+      "created" => created,
+      "updated" => updated
+    }
+  end
 
-    def self.query_fields
-      ['doi^10', 'title_normalized^10', 'author_normalized^10', 'author.name^10', 'author.id^10', 'publisher^10', 'description_normalized^10', 'resource_type_general^10', 'additional_type^10', '_all']
-    end
+  def self.query_aggregations
+    {
+      resource_types: { terms: { field: 'resource_type_general', size: 15, min_doc_count: 1 } },
+      states: { terms: { field: 'aasm_state', size: 10, min_doc_count: 1 } },
+      years: { date_histogram: { field: 'published', interval: 'year', min_doc_count: 1 } },
+      created: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
+      providers: { terms: { field: 'provider_id', size: 10, min_doc_count: 1 } },
+      clients: { terms: { field: 'client_id', size: 10, min_doc_count: 1 } },
+      prefixes: { terms: { field: 'prefix', size: 10, min_doc_count: 1 } },
+      schema_versions: { terms: { field: 'schema_version', size: 10, min_doc_count: 1 } },
+      sources: { terms: { field: 'source', size: 10, min_doc_count: 1 } }
+    }
+  end
 
-    def self.find_by_id(id, options={})
-      return nil unless id.present?
+  def self.query_fields
+    ['doi^10', 'title_normalized^10', 'author_normalized^10', 'author.name^10', 'author.id^10', 'publisher^10', 'description_normalized^10', 'resource_type_general^10', 'additional_type^10', '_all']
+  end
 
-      __elasticsearch__.search({
-        query: {
-          term: {
-            doi: id
-          }
-        },
-        aggregations: query_aggregations
-      })
-    end
+  def self.find_by_id(id, options={})
+    return nil unless id.present?
+
+    __elasticsearch__.search({
+      query: {
+        term: {
+          doi: id
+        }
+      },
+      aggregations: query_aggregations
+    })
   end
   
   def title_normalized
