@@ -1498,6 +1498,7 @@ describe "dois", type: :request do
   describe 'DELETE /dois/:id' do
     before do
       doi = create(:doi, client: client, aasm_state: "draft")
+      sleep 1
       delete "/dois/#{doi.doi}", headers: headers
     end
 

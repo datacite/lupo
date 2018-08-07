@@ -8,7 +8,6 @@ describe "Prefixes", type: :request do
 
   describe 'GET /prefixes' do
     before do
-      sleep 1
       get '/prefixes', headers: headers
     end
 

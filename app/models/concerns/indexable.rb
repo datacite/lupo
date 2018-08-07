@@ -10,7 +10,11 @@ module Indexable
     end
   
     before_destroy do
-      DeleteJob.perform_later(self.id, class_name: self.class.name)
+      begin
+        __elasticsearch__.delete_document
+      rescue Elasticsearch::Transport::Transport::Errors::NotFound
+        nil
+      end
     end
 
     # unless Rails.env.test?
