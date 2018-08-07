@@ -26,86 +26,54 @@ module Helpable
         return OpenStruct.new(body: { "errors" => [{ "title" => "DOI is not registered or findable." }] })
       end
 
-      if ENV['HANDLE_URL'].present?
-        payload = [
-          {
-            "index" => 100,
-            "type" => "HS_ADMIN",
-            "data" => {
-              "format" => "admin",
-              "value" => {
-                "handle" => ENV['HANDLE_USERNAME'],
-                "index" => 300,
-                "permissions" => "111111111111"
-              }
-            }
-          },
-          {
-            "index" => 1,
-            "type" => "URL",
-            "data" => {
-              "format" => "string",
-              "value" => url
+      payload = [
+        {
+          "index" => 100,
+          "type" => "HS_ADMIN",
+          "data" => {
+            "format" => "admin",
+            "value" => {
+              "handle" => ENV['HANDLE_USERNAME'],
+              "index" => 300,
+              "permissions" => "111111111111"
             }
           }
-        ].to_json
+        },
+        {
+          "index" => 1,
+          "type" => "URL",
+          "data" => {
+            "format" => "string",
+            "value" => url
+          }
+        }
+      ].to_json
 
-        handle_url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}"
-        response = Maremma.put(handle_url, content_type: 'application/json;charset=UTF-8', data: payload, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
+      handle_url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}"
+      response = Maremma.put(handle_url, content_type: 'application/json;charset=UTF-8', data: payload, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
 
-        if [200, 201].include?(response.status)
-          # update minted column after first successful registration in handle system
-          self.update_columns(minted: Time.zone.now, updated: Time.zone.now) if minted.blank?
-          Rails.logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "."
+      if [200, 201].include?(response.status)
+        # update minted column after first successful registration in handle system
+        self.update_columns(minted: Time.zone.now, updated: Time.zone.now) if minted.blank?
+        Rails.logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "."
 
-          response
-        else
-          Rails.logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect
-          response
-        end
+        response
       else
-        payload = "doi=#{doi}\nurl=#{url}"
-        url = "#{mds_url}/doi/#{doi}"
-
-        response = Maremma.put(url, content_type: 'text/plain;charset=UTF-8', data: payload, username: client_id, password: ENV['ADMIN_PASSWORD'], timeout: 10)
-
-        if response.status == 201
-          Rails.logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "."
-          response
-        else
-          Rails.logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect
-          response
-        end
+        Rails.logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect
+        response
       end
     end
 
     def get_url
-      if ENV['HANDLE_URL'].present?
-        url = "https://doi.org/api/handles/#{doi}?index=1"
-        response = Maremma.get(url, ssl_self_signed: true, timeout: 10)
+      url = "https://doi.org/api/handles/#{doi}?index=1"
+      response = Maremma.get(url, ssl_self_signed: true, timeout: 10)
 
-        if response.status == 200
-          response
-        else
-          Rails.logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect
-          response
-        end
+      if response.status == 200
+        response
       else
-        url = "#{mds_url}/doi/#{doi}"
-
-        response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: client_id, password: ENV['ADMIN_PASSWORD'], timeout: 10)
-
-        if response.status == 200
-          response
-        else
-          Rails.logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect
-          response
-        end
+        Rails.logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect
+        response
       end
-    end
-
-    def mds_url
-      Rails.env.production? ? 'https://mds-legacy.datacite.org' : 'https://mds-legacy.test.datacite.org' 
     end
 
     def generate_random_doi(str, options={})
@@ -136,50 +104,19 @@ module Helpable
 
   module ClassMethods
     def get_dois(options={})
-      if ENV['HANDLE_URL'].present?
-        return OpenStruct.new(body: { "errors" => [{ "title" => "Prefix missing" }] }) unless options[:prefix].present?
+      return OpenStruct.new(body: { "errors" => [{ "title" => "Prefix missing" }] }) unless options[:prefix].present?
 
-        url = "#{ENV['HANDLE_URL']}/api/handles?prefix=#{options[:prefix]}"
-        response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
+      url = "#{ENV['HANDLE_URL']}/api/handles?prefix=#{options[:prefix]}"
+      response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
 
-        if response.status == 200
-          response
-        else
-          text = "Error " + response.body["errors"].inspect
-          
-          Rails.logger.error "[Handle] " + text
-          User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
-          response
-        end
+      if response.status == 200
+        response
       else
-        return OpenStruct.new(body: { "errors" => [{ "title" => "Username missing" }] }) unless options[:username].present?
-
-        password = options[:password] || ENV['ADMIN_PASSWORD']
-
-        mds_url = Rails.env.production? ? 'https://mds-legacy.datacite.org' : 'https://mds-legacy.test.datacite.org' 
-        url = "#{mds_url}/doi"
-
-        response = Maremma.get(url, content_type: 'text/plain;charset=UTF-8', username: options[:username], password: password, timeout: 10)
-
-        if [200, 204].include?(response.status)
-          response
-        elsif response.status == 401
-          text = "Error " + response.body["errors"].inspect
-          Rails.logger.error "[Handle] " + text
-
-          response
-        elsif response.status == 404
-          text = "Error " + response.body["errors"].inspect
-          Rails.logger.error "[Handle] " + text
-
-          response
-        else
-          text = "Error " + response.body["errors"].inspect
-          Rails.logger.error "[Handle] " + text
-          User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
-          
-          response
-        end
+        text = "Error " + response.body["errors"].inspect
+        
+        Rails.logger.error "[Handle] " + text
+        User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
+        response
       end
     end
   end

@@ -31,7 +31,7 @@ class DoisController < ApplicationController
       end
 
       if params[:query].present?
-        collection = Doi.query(params[:query])
+        collection = Doi.q(params[:query])
         total = collection.all.size
       end
 
@@ -50,8 +50,8 @@ class DoisController < ApplicationController
       @dois = collection.order(order).page(page[:number]).per(page[:size]).without_count
 
       meta = { total: total,
-              total_pages: total_pages,
-              page: page[:number].to_i }
+               total_pages: total_pages,
+               page: page[:number].to_i }
 
       render jsonapi: @dois, meta: meta, include: @include, each_serializer: DoiSerializer
     else
@@ -248,9 +248,7 @@ class DoisController < ApplicationController
     else
       response = @doi.get_url
 
-      if ENV['HANDLE_URL'].blank?
-        url = response.body["data"]
-      elsif response.status == 200
+      if response.status == 200
         url = response.body.dig("data", "values", 0, "data", "value")
       elsif response.status == 400 && response.body.dig("errors", 0, "title", "responseCode") == 301 
         response = OpenStruct.new(status: 403, body: { "errors" => [{ "status" => 403, "title" => "SERVER NOT RESPONSIBLE FOR HANDLE" }] })
@@ -270,28 +268,17 @@ class DoisController < ApplicationController
   def get_dois
     authorize! :get_urls, Doi
 
-    if ENV['HANDLE_URL'].present?
-      client = Client.where('datacentre.symbol = ?', current_user.uid.upcase).first
-      client_prefix = client.prefixes.where.not('prefix.prefix = ?', "10.5072").first
-      head :no_content and return unless client_prefix.present?
+    client = Client.where('datacentre.symbol = ?', current_user.uid.upcase).first
+    client_prefix = client.prefixes.where.not('prefix.prefix = ?', "10.5072").first
+    head :no_content and return unless client_prefix.present?
 
-      response = Doi.get_dois(prefix: client_prefix.prefix, username: current_user.uid.upcase, password: current_user.password)
-      if response.status == 200
-        render json: { dois: response.body.dig("data", "handles") }.to_json, status: :ok
-      elsif response.status == 204
-        head :no_content
-      else
-        render json: serialize(response.body["errors"]), status: :bad_request
-      end
+    response = Doi.get_dois(prefix: client_prefix.prefix, username: current_user.uid.upcase, password: current_user.password)
+    if response.status == 200
+      render json: { dois: response.body.dig("data", "handles") }.to_json, status: :ok
+    elsif response.status == 204
+      head :no_content
     else
-      response = Doi.get_dois(username: current_user.uid.upcase, password: current_user.password)
-      if response.status == 200
-        render json: { dois: response.body["data"].split("\n") }.to_json, status: :ok
-      elsif response.status == 204
-        head :no_content
-      else
-        render json: serialize(response.body["errors"]), status: :bad_request
-      end
+      render json: serialize(response.body["errors"]), status: :bad_request
     end
   end
 
