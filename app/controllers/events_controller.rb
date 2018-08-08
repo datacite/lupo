@@ -4,7 +4,7 @@ class EventsController < ApplicationController
   before_action :set_include
 
   def index
-    authorize! :read, Doi
+    authorize! :read, @doi
 
     page = (params.dig(:page, :number) || 1).to_i
     size = (params.dig(:page, :size) || 25).to_i
