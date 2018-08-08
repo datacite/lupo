@@ -2,12 +2,12 @@ namespace :elasticsearch do
   namespace :event do
     desc "Create index for events"
     task :create_index => :environment do
-      Event.__elasticsearch__.create_index!
+      Elasticsearch::Model.client.indices.create index: Event.index_name
     end
 
     desc "Delete index for events"
     task :delete_index => :environment do
-      Event.__elasticsearch__.delete_index!
+      Elasticsearch::Model.client.indices.delete index: Event.index_name
     end
 
     desc "Refresh index for events"

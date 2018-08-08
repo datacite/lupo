@@ -16,7 +16,7 @@ class EventsController < ApplicationController
            when "-total" then { "total" => { order: 'desc' }}
            when "created" then { created_at: { order: 'asc' }}
            when "-created" then { created_at: { order: 'desc' }}
-           else { occurred_at: { order: "asc" }}
+           else { "_doc" => { order: "asc" }}
            end
 
     if params[:id].present?
@@ -36,7 +36,7 @@ class EventsController < ApplicationController
                              sort: sort)
     end
 
-    total = response.response.total
+    total = response.response.hits.total
     total_pages = (total.to_f / size).ceil
     year_months = total > 0 ? facet_by_year_month(response.response.aggregations.year_months.buckets) : nil
     sources = total > 0 ? facet_by_source(response.response.aggregations.sources.buckets) : nil

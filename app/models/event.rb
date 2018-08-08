@@ -1,4 +1,7 @@
 class Event
+  # do not autoload to not interfere with ActiveRecord-based models
+  require 'elasticsearch/persistence/model'
+
   include Elasticsearch::Model::Proxy
   include Elasticsearch::Persistence::Model
 
@@ -30,7 +33,7 @@ class Event
   attribute :created_at, DateTime, mapping: { type: :date }
   attribute :updated_at, DateTime, mapping: { type: :date }
   attribute :indexed_at, DateTime, mapping: { type: :date }
-  attribute :occured_at, DateTime, mapping: { type: :date }
+  attribute :occurred_at, DateTime, mapping: { type: :date }
 
   def self.query_fields
     ['subj_id^10', 'obj_id^10', '_all']
