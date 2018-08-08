@@ -36,6 +36,7 @@ Rails.application.routes.draw do
   resources :dois, constraints: { :id => /.+/ } do
     resources :metadata
     resources :media
+    resources :events
   end
   resources :prefixes, constraints: { :id => /.+/ }
   resources :provider_prefixes, path: 'provider-prefixes'

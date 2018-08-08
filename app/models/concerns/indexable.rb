@@ -4,16 +4,18 @@ module Indexable
   require 'aws-sdk-sqs'
 
   included do
-    after_commit on: [:create, :update] do
-      # use index_document instead of update_document to also update virtual attributes
-      IndexJob.perform_later(self)
-    end
-  
-    before_destroy do
-      begin
-        __elasticsearch__.delete_document
-      rescue Elasticsearch::Transport::Transport::Errors::NotFound
-        nil
+    unless self.name == "Event"
+      after_commit on: [:create, :update] do
+        # use index_document instead of update_document to also update virtual attributes
+        IndexJob.perform_later(self)
+      end
+    
+      before_destroy do
+        begin
+          __elasticsearch__.delete_document
+        rescue Elasticsearch::Transport::Transport::Errors::NotFound
+          nil
+        end
       end
     end
 
@@ -126,6 +128,14 @@ module Indexable
         must_not << { exists: { field: "deleted_at" }}
       elsif self.name == "Doi"
         must << { range: { published: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+      elsif self.name == "Event"
+        must << { term: { doi: options[:doi] }} if options[:doi].present?
+        must << { term: { year_month: options[:year_month] }} if options[:year_month].present?
+        must << { range: { occurred_at: { gte: "#{options[:occurred_at].split(",").min}||/y", lte: "#{options[:occurred_at].split(",").max}||/y", format: "yyyy" }}} if options[:occurred_at].present?
+        must << { term: { source_id: options[:source_id] }} if options[:source_id].present?
+        must << { term: { relation_type_id: options[:relation_type_id] }} if options[:relation_type_id].present?
+        must << { term: { metric_type: options[:metric_type] }} if options[:metric_type].present?
+        must << { term: { access_method: options[:access_method] }} if options[:access_method].present?
       end
 
       __elasticsearch__.search({
