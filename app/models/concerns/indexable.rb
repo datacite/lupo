@@ -7,35 +7,32 @@ module Indexable
     after_commit on: [:create, :update] do
       # use index_document instead of update_document to also update virtual attributes
       IndexJob.perform_later(self)
+      send_import_message(self.to_jsonapi) unless Rails.env.test?
     end
   
     before_destroy do
       begin
         __elasticsearch__.delete_document
+        send_delete_message(self.to_jsonapi) unless Rails.env.test?
       rescue Elasticsearch::Transport::Transport::Errors::NotFound
         nil
       end
     end
 
-    # unless Rails.env.test?
-    #   before_destroy { send_delete_message(self.to_jsonapi) }
-    #   after_save { send_import_message(self.to_jsonapi) }
-    # end
-
     def send_delete_message(data)
-      send_message(data, shoryuken_class: "ElasticDeleteWorker")
+      send_message(data, shoryuken_class: "EventDeleteWorker")
     end
 
     def send_import_message(data)
-      send_message(data, shoryuken_class: "ElasticImportWorker")
+      send_message(data, shoryuken_class: "EventImportWorker")
     end
     
     # shoryuken_class is needed for the consumer to process the message
     # we use the AWS SQS client directly as there is no consumer in this app
     def send_message(body, options={})
       sqs = Aws::SQS::Client.new
-      queue_url = sqs.get_queue_url(queue_name: "#{Rails.env}_elastic").queue_url
-      options[:shoryuken_class] ||= "ElasticImportWorker"
+      queue_url = sqs.get_queue_url(queue_name: "#{Rails.env}_event").queue_url
+      options[:shoryuken_class] ||= "EventImportWorker"
 
       options = {
         queue_url: queue_url,
