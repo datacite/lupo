@@ -62,21 +62,30 @@ class Client < ActiveRecord::Base
   # use different index for testing
   index_name Rails.env.test? ? "clients-test" : "clients"
 
-  mapping dynamic: 'false' do
-    indexes :symbol,        type: :keyword
-    indexes :name,          type: :text, fields: { keyword: { type: "keyword" }}
-    indexes :contact_name,  type: :text
-    indexes :contact_email, type: :text, fields: { keyword: { type: "keyword" }}
-    indexes :provider_id,   type: :keyword
-    indexes :re3data,       type: :keyword
-    indexes :version,       type: :integer
-    indexes :is_active,     type: :keyword
-    indexes :domains,       type: :text
-    indexes :year,          type: :integer
-    indexes :url,           type: :text, fields: { keyword: { type: "keyword" }}
-    indexes :created,       type: :date
-    indexes :updated,       type: :date
-    indexes :deleted_at,    type: :date
+  settings index: {
+    analysis: {
+      analyzer: {
+        string_lowercase: { tokenizer: 'keyword', filter: %w(lowercase ascii_folding) }
+      },
+      filter: { ascii_folding: { type: 'asciifolding', preserve_original: true } }
+    }
+  } do
+    mapping dynamic: 'false' do
+      indexes :symbol,        type: :keyword
+      indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }}
+      indexes :contact_name,  type: :text
+      indexes :contact_email, type: :text, fields: { keyword: { type: "keyword" }}
+      indexes :provider_id,   type: :keyword
+      indexes :re3data,       type: :keyword
+      indexes :version,       type: :integer
+      indexes :is_active,     type: :keyword
+      indexes :domains,       type: :text
+      indexes :year,          type: :integer
+      indexes :url,           type: :text, fields: { keyword: { type: "keyword" }}
+      indexes :created,       type: :date
+      indexes :updated,       type: :date
+      indexes :deleted_at,    type: :date
+    end
   end
 
   def as_indexed_json(options={})
