@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe "Indexable", vcr: true do
-  subject  { create(:client) }
+  subject  { create(:doi) }
 
   it 'send_message' do
     response = subject.send_message(subject.to_jsonapi)
