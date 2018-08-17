@@ -268,7 +268,6 @@ class Doi < ActiveRecord::Base
       "resource-type-subtype" => additional_type,
       "version" => version,
       "schema-version" => schema_version,
-      "xml" => xml.present? ? ::Base64.strict_encode64(xml) : '',
       "client-id" => client_id,
       "provider-id" => provider_id,
       "resource-type-id" => resource_type_general,
