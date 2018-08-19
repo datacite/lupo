@@ -31,28 +31,42 @@ class ClientsController < ApplicationController
     years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
     providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
 
-    #@clients = Kaminari.paginate_array(response.results, total_count: total).page(page).per(size)
-    @clients = response.page(page).per(size).records
+    @clients = response.results.results
 
-    meta = {
+    options = {}
+    options[:meta] = {
       total: total,
-      total_pages: total_pages,
+      "total-pages" => total_pages,
       page: page,
       years: years,
       providers: providers
     }.compact
 
-    render jsonapi: @clients, meta: meta, include: @include
+    options[:links] = {
+      self: request.original_url,
+      next: @clients.blank? ? nil : request.base_url + "/clients?" + {
+        query: params[:query],
+        "provider-id" => params[:provider_id],
+        year: params[:year],
+        "page[number]" => params.dig(:page, :number),
+        "page[size]" => params.dig(:page, :size),
+        sort: sort }.compact.to_query
+      }.compact
+    options[:include] = @include
+    options[:is_collection] = true
+
+    render json: ClientSerializer.new(@clients, options).serialized_json, status: :ok
   end
 
-  # GET /clients/1
   def show
-    meta = { dois: @client.cached_doi_count }
+    options = {}
+    options[:meta] = { dois: @client.cached_doi_count }
+    options[:include] = @include
+    options[:is_collection] = false
 
-    render jsonapi: @client, meta: meta, include: @include
+    render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
   end
 
-  # POST /clients
   def create
     @client = Client.new(safe_params)
     authorize! :create, @client
@@ -65,7 +79,6 @@ class ClientsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /clients/1
   def update
     if @client.update_attributes(safe_params)
       render jsonapi: @client
@@ -112,7 +125,6 @@ class ClientsController < ApplicationController
     end
   end
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_client
     # params[:id] = params[:id][/.+?(?=\/)/]
     @client = Client.where(symbol: params[:id]).first

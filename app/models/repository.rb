@@ -4,7 +4,7 @@ class Repository
 
   RE3DATA_DATE = "2017-10-07"
 
-  attr_reader :id, :name, :additional_name, :description, :repository_url, :repository_contact, :subject, :repository_software, :created_at, :updated_at
+  attr_reader :id, :name, :additional_name, :description, :repository_url, :repository_contact, :subject, :repository_software, :created, :updated
 
   def initialize(item, options={})
     @id = item.fetch("id", nil) || item.fetch("re3data.orgIdentifier", nil)
@@ -18,8 +18,28 @@ class Repository
       k, v = s.split(" ", 2)
       { "id" => k.to_i, "name" => v }
     end.sort { |a, b| a.fetch("id") <=> b.fetch("id") }.presence
-    @created_at = item.fetch("entryDate", nil).present? ? item.fetch("entryDate") + "T00:00:00Z" : nil
-    @updated_at = (item.fetch("lastUpdate", nil) || RE3DATA_DATE) + "T00:00:00Z"
+    @created = item.fetch("entryDate", nil).present? ? item.fetch("entryDate") + "T00:00:00Z" : nil
+    @updated = (item.fetch("lastUpdate", nil) || RE3DATA_DATE) + "T00:00:00Z"
+  end
+
+  def as_indexed_json(options={})
+    {
+      "id" => id,
+      "name" => name,
+      "additional_name" => additional_name,
+      "description" => description,
+      "repository_url" => repository_url,
+      "repository_contact" => repository_contact,
+      "repository_software" => repository_software,
+      "subject" => subject,
+      "cache_key" => cache_key,
+      "created" => created,
+      "updated" => updated
+    }
+  end
+
+  def cache_key
+    "repositories/#{id}-#{updated}"
   end
 
   def self.get_query_url(options={})

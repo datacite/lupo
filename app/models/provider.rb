@@ -24,13 +24,11 @@ class Provider < ActiveRecord::Base
 
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
-
   self.table_name = "allocator"
-  alias_attribute :uid, :symbol
   alias_attribute :flipper_id, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-  attr_readonly :uid, :symbol
+  attr_readonly :symbol
   attr_accessor :password_input
 
   validates_presence_of :symbol, :name, :contact_name, :contact_email
@@ -74,6 +72,8 @@ class Provider < ActiveRecord::Base
     }
   } do
     mapping dynamic: 'false' do
+      indexes :id,            type: :keyword
+      indexes :uid,           type: :keyword
       indexes :symbol,        type: :keyword
       indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }}
       indexes :contact_name,  type: :text
@@ -84,9 +84,12 @@ class Provider < ActiveRecord::Base
       indexes :description,   type: :text
       indexes :website,       type: :text, fields: { keyword: { type: "keyword" }}
       indexes :phone,         type: :text
+      indexes :logo_url,      type: :text
       indexes :region,        type: :keyword
+      indexes :institution_type, type: :keyword
       indexes :country_code,  type: :keyword
       indexes :role_name,     type: :keyword
+      indexes :cache_key,     type: :keyword
       indexes :joined,        type: :date
       indexes :created,       type: :date
       indexes :updated,       type: :date
@@ -94,8 +97,11 @@ class Provider < ActiveRecord::Base
     end
   end
 
+  # also index id as workaround for finding the correct key in associations
   def as_indexed_json(options={})
     {
+      "id" => uid,
+      "uid" => uid,
       "name" => name,
       "symbol" => symbol,
       "year" => year,
@@ -107,8 +113,11 @@ class Provider < ActiveRecord::Base
       "phone" => phone,
       "region" => region,
       "country_code" => country_code,
+      "logo_url" => logo_url,
+      "institution_type" => institution_type,
       "role_name" => role_name,
       "password" => password,
+      "cache_key" => cache_key,
       "joined" => joined,
       "created" => created,
       "updated" => updated,
@@ -124,6 +133,14 @@ class Provider < ActiveRecord::Base
     {
       years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } }
     }
+  end
+
+  def uid
+    symbol.downcase
+  end
+  
+  def cache_key
+    "providers/#{uid}-#{updated.iso8601}"
   end
 
   def year

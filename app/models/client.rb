@@ -24,11 +24,10 @@ class Client < ActiveRecord::Base
   # uid is used as unique identifier, mapped to id in serializer
   self.table_name = "datacentre"
 
-  alias_attribute :uid, :symbol
   alias_attribute :flipper_id, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-  attr_readonly :uid, :symbol
+  attr_readonly :symbol
   delegate :symbol, to: :provider, prefix: true
   attr_accessor :password_input
 
@@ -53,10 +52,6 @@ class Client < ActiveRecord::Base
   before_save { self.updated = Time.zone.now.utc.iso8601 }
   after_create :send_welcome_email, unless: Proc.new { Rails.env.test? }
 
-  #default_scope { where(deleted_at: nil) }
-
-  #scope :query, ->(query) { where("datacentre.symbol like ? OR datacentre.name like ?", "%#{query}%", "%#{query}%") }
-
   attr_accessor :target_id
 
   # use different index for testing
@@ -71,26 +66,38 @@ class Client < ActiveRecord::Base
     }
   } do
     mapping dynamic: 'false' do
+      indexes :id,            type: :keyword
       indexes :symbol,        type: :keyword
+      indexes :provider_id,   type: :keyword
+      indexes :repository_id, type: :keyword
+      indexes :prefix_ids,    type: :keyword
       indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }}
       indexes :contact_name,  type: :text
       indexes :contact_email, type: :text, fields: { keyword: { type: "keyword" }}
-      indexes :provider_id,   type: :keyword
       indexes :re3data,       type: :keyword
       indexes :version,       type: :integer
       indexes :is_active,     type: :keyword
       indexes :domains,       type: :text
       indexes :year,          type: :integer
       indexes :url,           type: :text, fields: { keyword: { type: "keyword" }}
+      indexes :cache_key,     type: :keyword
       indexes :created,       type: :date
       indexes :updated,       type: :date
       indexes :deleted_at,    type: :date
+
+      # include parent objects
+      indexes :provider,      type: :object
+      indexes :repository,    type: :object
     end
   end
 
   def as_indexed_json(options={})
     {
+      "id" => uid,
+      "uid" => uid,
       "provider_id" => provider_id,
+      "repository_id" => repository_id,
+      "prefix_ids" => prefix_ids,
       "name" => name,
       "symbol" => symbol,
       "year" => year,
@@ -100,9 +107,12 @@ class Client < ActiveRecord::Base
       "url" => url,
       "is_active" => is_active,
       "password" => password,
+      "cache_key" => cache_key,
       "created" => created,
       "updated" => updated,
-      "deleted_at" => deleted_at
+      "deleted_at" => deleted_at,
+      "provider" => provider.as_indexed_json,
+      "repository" => repository.try(:as_indexed_json)
     }
   end
 
@@ -117,6 +127,10 @@ class Client < ActiveRecord::Base
     }
   end
 
+  def uid
+    symbol.downcase
+  end
+
   # workaround for non-standard database column names and association
   def provider_id
     provider_symbol.downcase
@@ -127,6 +141,14 @@ class Client < ActiveRecord::Base
     return nil unless r.present?
 
     write_attribute(:allocator, r.id)
+  end
+
+  def prefix_ids
+    prefixes.pluck(:prefix)
+  end
+
+  def repository_id
+    re3data
   end
 
   def repository_id=(value)
@@ -150,6 +172,10 @@ class Client < ActiveRecord::Base
     # update DOI count for source and target client
     cached_doi_count(force: true)
     target.cached_doi_count(force: true)
+  end
+
+  def cache_key
+    "clients/#{uid}-#{updated.iso8601}"
   end
 
   def password_input=(value)

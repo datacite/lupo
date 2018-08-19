@@ -29,26 +29,41 @@ class ProvidersController < ApplicationController
     total_pages = (total.to_f / size).ceil
     years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
 
-    #@providers = Kaminari.paginate_array(response.results, total_count: total).page(page).per(size)
-    @providers = response.page(page).per(size).records
+    @providers = response.results.results
 
-    meta = {
+    options = {}
+    options[:meta] = {
       total: total,
-      total_pages: total_pages,
+      "total-pages" => total_pages,
       page: page,
       years: years
-    }
+    }.compact
 
-    render jsonapi: @providers, meta: meta, include: @include, each_serializer: ProviderSerializer
+    options[:links] = {
+      self: request.original_url,
+      next: @clients.blank? ? nil : request.base_url + "/clients?" + {
+        query: params[:query],
+        year: params[:year],
+        "page[number]" => params.dig(:page, :number),
+        "page[size]" => params.dig(:page, :size),
+        sort: sort }.compact.to_query
+      }.compact
+    options[:include] = @include
+    options[:is_collection] = true
+
+    render json: ProviderSerializer.new(@providers, options).serialized_json, status: :ok
   end
 
   def show
-    meta = { providers: @provider.provider_count,
-             clients: @provider.client_count,
-             dois: @provider.cached_doi_count
-            }.compact
+    options = {}
+    options[:meta] = { 
+      providers: @provider.provider_count,
+      clients: @provider.client_count,
+      dois: @provider.cached_doi_count }.compact
+    options[:include] = @include
+    options[:is_collection] = false
 
-    render jsonapi: @provider, meta: meta, include: @include
+    render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
   end
 
   # POST /providers
