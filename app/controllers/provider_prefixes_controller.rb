@@ -80,18 +80,39 @@ class ProviderPrefixesController < ApplicationController
 
     @provider_prefixes = collection.order(order).page(page[:number]).per(page[:size])
 
-    meta = { total: total,
-             total_pages: @provider_prefixes.total_pages,
-             page: page[:number].to_i,
-             states: states,
-             providers: providers,
-             years: years }
+    options = {}
+    options[:meta] = {
+      total: total,
+      "total-pages" => @provider_prefixes.total_pages,
+      page: page[:number].to_i,
+      states: states,
+      providers: providers,
+      years: years
+    }.compact
 
-    render jsonapi: @provider_prefixes, meta: meta, include: @include
+    options[:links] = {
+      self: request.original_url,
+      next: @provider_prefixes.blank? ? nil : request.base_url + "/provider-prefixes?" + {
+        query: params[:query],
+        "provider-id" => params[:provider_id],
+        "prefix-id" => params[:prefix_id],
+        year: params[:year],
+        "page[number]" => params.dig(:page, :number).to_i + 1,
+        "page[size]" => params.dig(:page, :size),
+        sort: params[:sort] }.compact.to_query
+      }.compact
+    options[:include] = @include
+    options[:is_collection] = true
+
+    render json: ProviderPrefixSerializer.new(@provider_prefixes, options).serialized_json, status: :ok
   end
 
   def show
-    render jsonapi: @provider_prefix, include: @include, serializer: ProviderPrefixSerializer
+    options = {}
+    options[:include] = @include
+    options[:is_collection] = false
+
+    render json: ProviderPrefixSerializer.new(@provider_prefix, options).serialized_json, status: :ok
   end
 
   def create
@@ -99,10 +120,14 @@ class ProviderPrefixesController < ApplicationController
     authorize! :create, @provider_prefix
 
     if @provider_prefix.save
-      render jsonapi: @provider_prefix, status: :created
+      options = {}
+      options[:include] = @include
+      options[:is_collection] = false
+  
+      render json: ProviderPrefixSerializer.new(@provider_prefix, options).serialized_json, status: :created
     else
       Rails.logger.warn @provider_prefix.errors.inspect
-      render jsonapi: serialize(@provider_prefix.errors), status: :unprocessable_entity
+      render json: serialize(@provider_prefix.errors), status: :unprocessable_entity
     end
   end
 

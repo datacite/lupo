@@ -25,15 +25,33 @@ class MetadataController < ApplicationController
 
     @metadata = collection.order(order).page(page[:number]).per(page[:size])
 
-    meta = { total: total,
-             total_pages: total_pages,
-             page: page[:number].to_i }
+    options = {}
+    options[:meta] = {
+      total: total,
+      "total-pages" => total_pages,
+      page: page[:number].to_i,
+      years: years
+    }.compact
 
-    render jsonapi: @metadata, meta: meta, include: @include
+    options[:links] = {
+      self: request.original_url,
+      next: @metadata.blank? ? nil : request.base_url + "/media?" + {
+        "page[number]" => params.dig(:page, :number).to_i + 1,
+        "page[size]" => params.dig(:page, :size),
+        sort: params[:sort] }.compact.to_query
+      }.compact
+    options[:include] = @include
+    options[:is_collection] = true
+
+    render json: MediaSerializer.new(@metadata, options).serialized_json, status: :ok
   end
 
   def show
-    render jsonapi: @metadata, include: @include
+    options = {}
+    options[:include] = @include
+    options[:is_collection] = false
+
+    render json: MetadataSerializer.new(@metadata, options).serialized_json, status: :ok
   end
 
   def create
@@ -44,10 +62,14 @@ class MetadataController < ApplicationController
     @metadata = Metadata.new(safe_params.merge(doi: @doi, xml: xml))
 
     if @metadata.save
-      render jsonapi: @metadata, status: :created
+      options = {}
+      options[:include] = @include
+      options[:is_collection] = false
+  
+      render json: MetadataSerializer.new(@metadata, options).serialized_json, status: :created
     else
       Rails.logger.warn @metadata.errors.inspect
-      render jsonapi: serialize(@metadata.errors), status: :unprocessable_entity
+      render json: serialize(@metadata.errors), status: :unprocessable_entity
     end
   end
 
@@ -59,7 +81,7 @@ class MetadataController < ApplicationController
         head :no_content
       else
         Rails.logger.warn @metadata.errors.inspect
-        render jsonapi: serialize(@metadata.errors), status: :unprocessable_entity
+        render json: serialize(@metadata.errors), status: :unprocessable_entity
       end
     else
       response.headers["Allow"] = "HEAD, GET, POST, PATCH, PUT, OPTIONS"

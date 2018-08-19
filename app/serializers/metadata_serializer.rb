@@ -1,17 +1,19 @@
-class MetadataSerializer < ActiveModel::Serializer
+class MetadataSerializer
+  include FastJsonapi::ObjectSerializer
+  set_key_transform :dash
+  set_type "metadata"
+  set_id :uid
+  cache_options enabled: true, cache_length: 24.hours
+
   attributes :version, :namespace, :xml, :created
 
-  belongs_to :doi, serializer: DoiSerializer
+  belongs_to :doi
 
-  def id
-    object.uid
-  end
-
-  def xml
+  attribute :xml do |object|
     Base64.strict_encode64(object.xml)
   end
 
-  def version
+  attribute :version do |object|
     object.metadata_version
   end
 end

@@ -11,6 +11,9 @@ class ProviderPrefix < ActiveRecord::Base
   has_many :client_prefixes, foreign_key: :allocator_prefixes, dependent: :destroy
   has_many :clients, through: :client_prefixes
 
+  alias_attribute :created, :created_at
+  alias_attribute :updated, :updated_at 
+
   delegate :symbol, to: :provider, prefix: true
 
   before_create :set_id
@@ -35,6 +38,14 @@ class ProviderPrefix < ActiveRecord::Base
     fail ActiveRecord::RecordNotFound unless r.present?
 
     self.allocator = r.id
+  end
+
+  def prefix_id
+    prefix.prefix
+  end
+
+  def client_ids
+    clients.pluck(:symbol).map(&:downcase)
   end
 
   # workaround for non-standard database column names and association

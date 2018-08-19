@@ -48,9 +48,9 @@ class ClientsController < ApplicationController
         query: params[:query],
         "provider-id" => params[:provider_id],
         year: params[:year],
-        "page[number]" => params.dig(:page, :number),
+        "page[number]" => params.dig(:page, :number).to_i + 1,
         "page[size]" => params.dig(:page, :size),
-        sort: sort }.compact.to_query
+        sort: params[:sort] }.compact.to_query
       }.compact
     options[:include] = @include
     options[:is_collection] = true
@@ -72,16 +72,24 @@ class ClientsController < ApplicationController
     authorize! :create, @client
 
     if @client.save
-      render jsonapi: @client, status: :created
+      options = {}
+      options[:meta] = { dois: @client.cached_doi_count }
+      options[:is_collection] = false
+  
+      render json: ClientSerializer.new(@client, options).serialized_json, status: :created
     else
       Rails.logger.warn @client.errors.inspect
-      render jsonapi: serialize(@client.errors), status: :unprocessable_entity
+      render json: serialize(@client.errors), status: :unprocessable_entity
     end
   end
 
   def update
     if @client.update_attributes(safe_params)
-      render jsonapi: @client
+      options = {}
+      options[:meta] = { dois: @client.cached_doi_count }
+      options[:is_collection] = false
+  
+      render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
     else
       Rails.logger.warn @client.errors.inspect
       render json: serialize(@client.errors), status: :unprocessable_entity
@@ -101,7 +109,7 @@ class ClientsController < ApplicationController
       head :no_content
     else
       Rails.logger.warn @client.errors.inspect
-      render jsonapi: serialize(@client.errors), status: :unprocessable_entity
+      render json: serialize(@client.errors), status: :unprocessable_entity
     end
   end
 

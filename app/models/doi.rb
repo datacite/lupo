@@ -64,7 +64,6 @@ class Doi < ActiveRecord::Base
   self.table_name = "dataset"
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-  alias_attribute :uid, :doi
   alias_attribute :resource_type_id, :resource_type_general
   alias_attribute :resource_type_subtype, :additional_type
   alias_attribute :published, :date_published
@@ -104,6 +103,7 @@ class Doi < ActiveRecord::Base
   index_name Rails.env.test? ? "dois-test" : "dois"
 
   mapping dynamic: 'false' do
+    indexes :id,                             type: :keyword
     indexes :doi,                            type: :keyword
     indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
     indexes :author,                         type: :object, properties: {
@@ -135,7 +135,8 @@ class Doi < ActiveRecord::Base
 
   def as_indexed_json(options={})
     {
-      "doi" => doi,
+      "id" => uid,
+      "doi" => uid,
       "url" => url,
       "author" => author,
       "author_normalized" => author_normalized,
@@ -190,6 +191,10 @@ class Doi < ActiveRecord::Base
       },
       aggregations: query_aggregations
     })
+  end
+
+  def uid
+    doi.downcase
   end
   
   def title_normalized

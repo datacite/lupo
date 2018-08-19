@@ -17,6 +17,9 @@ class ClientPrefix < ActiveRecord::Base
   before_save { self.updated_at = Time.zone.now.utc.iso8601 }
   before_validation :set_allocator_prefixes
 
+  alias_attribute :created, :created_at
+  alias_attribute :updated, :updated_at
+
   scope :query, ->(query) { includes(:prefix).where("prefix.prefix like ?", "%#{query}%") }
 
   # use base32-encode id as uid, with pretty formatting and checksum
@@ -37,12 +40,28 @@ class ClientPrefix < ActiveRecord::Base
     self.datacentre = r.id
   end
 
+  def prefix_id
+    prefix.prefix
+  end
+
   # workaround for non-standard database column names and association
   def prefix_id=(value)
     r = cached_prefix_response(value)
     fail ActiveRecord::RecordNotFound unless r.present?
 
     self.prefixes = r.id
+  end
+
+  def provider_id
+    client.provider_id
+  end
+
+  def provider
+    client.provider
+  end
+
+  def provider_prefix_id
+    provider_prefix.uid
   end
 
   private

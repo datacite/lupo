@@ -3,7 +3,7 @@ class ProviderSerializer
   set_key_transform :dash
   set_type :providers
   set_id :uid
-  #cache_options enabled: true, cache_length: 24.hours
+  cache_options enabled: true, cache_length: 24.hours
 
   attributes :name, :symbol, :website, :contact_name, :contact_email, :phone, :description, :country, :logo_url, :institution_type, :is_active, :has_password, :joined, :created, :updated
 

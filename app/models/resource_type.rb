@@ -9,6 +9,8 @@ class ResourceType
     @updated_at = DATACITE_SCHEMA_DATE + "T00:00:00Z"
   end
 
+  alias_attribute :updated, :updated_at
+
   def cache_key
     "resource_type/#{id}-#{updated_at}"
   end

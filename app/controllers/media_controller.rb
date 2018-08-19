@@ -22,15 +22,33 @@ class MediaController < ApplicationController
 
     @media = collection.order(order).page(page[:number]).per(page[:size])
 
-    meta = { total: total,
-             total_pages: total_pages,
-             page: page[:number].to_i }
+    options = {}
+    options[:meta] = {
+      total: total,
+      "total-pages" => total_pages,
+      page: page[:number].to_i,
+      years: years
+    }.compact
 
-    render jsonapi: @media, meta: meta, include: @include
+    options[:links] = {
+      self: request.original_url,
+      next: @media.blank? ? nil : request.base_url + "/media?" + {
+        "page[number]" => params.dig(:page, :number).to_i + 1,
+        "page[size]" => params.dig(:page, :size),
+        sort: params[:sort] }.compact.to_query
+      }.compact
+    options[:include] = @include
+    options[:is_collection] = true
+
+    render json: MediaSerializer.new(@media, options).serialized_json, status: :ok
   end
 
   def show
-    render jsonapi: @media, include: @include
+    options = {}
+    options[:include] = @include
+    options[:is_collection] = false
+
+    render json: MediaSerializer.new(@media, options).serialized_json, status: :ok
   end
 
   def create
@@ -39,10 +57,14 @@ class MediaController < ApplicationController
     @media = Media.new(safe_params.merge(doi: @doi))
 
     if @media.save
-      render jsonapi: @media, status: :created
+      options = {}
+      options[:include] = @include
+      options[:is_collection] = false
+  
+      render json: MediaSerializer.new(@media, options).serialized_json, status: :created
     else
       Rails.logger.warn @media.errors.inspect
-      render jsonapi: serialize(@media.errors), status: :unprocessable_entity
+      render json: serialize(@media.errors), status: :unprocessable_entity
     end
   end
 
@@ -50,10 +72,14 @@ class MediaController < ApplicationController
     authorize! :update, @doi
 
     if @media.update_attributes(safe_params.merge(doi: @doi))
-      render jsonapi: @media
+      options = {}
+      options[:include] = @include
+      options[:is_collection] = false
+  
+      render json: MediaSerializer.new(@media, options).serialized_json, status: :ok
     else
       Rails.logger.warn @media.errors.inspect
-      render jsonapi: serialize(@media.errors), status: :unprocessable_entity
+      render json: serialize(@media.errors), status: :unprocessable_entity
     end
   end
 
@@ -64,7 +90,7 @@ class MediaController < ApplicationController
       head :no_content
     else
       Rails.logger.warn @media.errors.inspect
-      render jsonapi: serialize(@media.errors), status: :unprocessable_entity
+      render json: serialize(@media.errors), status: :unprocessable_entity
     end
   end
 

@@ -50,16 +50,35 @@ class ClientPrefixesController < ApplicationController
 
     @client_prefixes = collection.order(order).page(page[:number]).per(page[:size])
 
-    meta = { total: total,
-             total_pages: @client_prefixes.total_pages,
-             page: page[:number].to_i,
-             years: years }
+    options = {}
+    options[:meta] = {
+      total: total,
+      "total-pages" => @client_prefixes.total_pages,
+      page: page[:number].to_i,
+      years: years
+    }.compact
 
-    render jsonapi: @client_prefixes, meta: meta, include: @include
+    options[:links] = {
+      self: request.original_url,
+      next: @client_prefixes.blank? ? nil : request.base_url + "/client-prefixes?" + {
+        query: params[:query],
+        year: params[:year],
+        "page[number]" => params.dig(:page, :number).to_i + 1,
+        "page[size]" => params.dig(:page, :size),
+        sort: params[:sort] }.compact.to_query
+      }.compact
+    options[:include] = @include
+    options[:is_collection] = true
+
+    render json: ClientPrefixSerializer.new(@client_prefixes, options).serialized_json, status: :ok
   end
 
   def show
-    render jsonapi: @client_prefix, include: @include, serializer: ClientPrefixSerializer
+    options = {}
+    options[:include] = @include
+    options[:is_collection] = false
+
+    render json: ClientPrefixSerializer.new(@client_prefix, options).serialized_json, status: :ok
   end
 
   def create
@@ -67,10 +86,14 @@ class ClientPrefixesController < ApplicationController
     authorize! :create, @client_prefix
 
     if @client_prefix.save
-      render jsonapi: @client_prefix, status: :created
+      options = {}
+      options[:include] = @include
+      options[:is_collection] = false
+  
+      render json: ClientPrefixSerializer.new(@client_prefix, options).serialized_json, status: :created
     else
       Rails.logger.warn @client_prefix.errors.inspect
-      render jsonapi: serialize(@client_prefix.errors), status: :unprocessable_entity
+      render json: serialize(@client_prefix.errors), status: :unprocessable_entity
     end
   end
 

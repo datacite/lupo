@@ -1,14 +1,35 @@
 class RepositoriesController < ApplicationController
   def index
     @repositories = Repository.where(params)
-    render jsonapi: @repositories[:data], meta: @repositories[:meta]
+
+    options = {}
+    options[:meta] = {
+      total: @repositories.dig(:meta, :total),
+      "total-pages" => @repositories.dig(:meta, :total_pages),
+      page: @repositories.dig(:meta, :page)
+    }.compact
+
+    options[:links] = {
+      self: request.original_url,
+      next: @repositories[:data].blank? ? nil : request.base_url + "/repositories?" + {
+        "page[number]" => params.dig(:page, :number).to_i + 1,
+        "page[size]" => params.dig(:page, :size),
+        sort: params[:sort] }.compact.to_query
+      }.compact
+    options[:include] = @include
+    options[:is_collection] = true
+
+    render json: RepositorySerializer.new(@repositories[:data], options).serialized_json, status: :ok
   end
 
   def show
     @repository = Repository.where(id: params[:id])
     fail AbstractController::ActionNotFound unless @repository.present?
 
-    render jsonapi: @repository[:data]
+    options = {}
+    options[:is_collection] = false
+
+    render json: RepositorySerializer.new(@repository[:data], options).serialized_json, status: :ok
   end
 
   def badge

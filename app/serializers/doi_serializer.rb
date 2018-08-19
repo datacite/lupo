@@ -1,21 +1,19 @@
-class DoiSerializer < ActiveModel::Serializer
+class ProviderSerializer
+  include FastJsonapi::ObjectSerializer
+  set_key_transform :dash
+  set_type :dois
+  set_id :uid
+  #cache_options enabled: true, cache_length: 24.hours
+
   include Bolognese::Utils
   include Bolognese::DoiUtils
 
   attributes :doi, :prefix, :suffix, :identifier, :url, :author, :title, :publisher, :resource_type_subtype, :description, :version, :metadata_version, :schema_version, :state, :is_active, :reason, :source, :landing_page, :xml, :published, :created, :registered, :updated
 
-  belongs_to :client, serializer: ClientSerializer
-  belongs_to :provider, serializer: ProviderSerializer
-  belongs_to :resource_type, serializer: ResourceTypeSerializer
-  has_many :media, serializer: MediaSerializer
-
-  def id
-    object.doi.downcase
-  end
-
-  def doi
-    object.doi.downcase
-  end
+  belongs_to :client
+  belongs_to :provider
+  belongs_to :resource_type
+  has_many :media
 
   def prefix
     object.doi.split("/", 2).first if object.doi.present?

@@ -92,7 +92,11 @@ class PrefixesController < ApplicationController
   end
 
   def show
-    render jsonapi: @prefix, include: @include, serializer: PrefixSerializer
+    options = {}
+    options[:include] = @include
+    options[:is_collection] = false
+
+    render json: PrefixSerializer.new(@prefix, options).serialized_json, status: :ok
   end
 
   def create
@@ -100,10 +104,14 @@ class PrefixesController < ApplicationController
     authorize! :create, @prefix
 
     if @prefix.save
-      render jsonapi: @prefix, status: :created, location: @prefix
+      options = {}
+      options[:include] = @include
+      options[:is_collection] = false
+  
+      render json: PrefixSerializer.new(@prefix, options).serialized_json, status: :ok, location: @prefix
     else
       Rails.logger.warn @prefix.errors.inspect
-      render jsonapi: serialize(@prefix.errors), status: :unprocessable_entity
+      render json: serialize(@prefix.errors), status: :unprocessable_entity
     end
   end
 
