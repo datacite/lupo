@@ -15,6 +15,15 @@ class ResourceType
     "resource_type/#{id}-#{updated_at}"
   end
 
+  def as_indexed_json(options={})
+    {
+      "id" => id,
+      "title" => title,
+      "cache_key" => cache_key,
+      "updated" => updated
+    }
+  end
+
   def self.debug
     false
   end

@@ -36,8 +36,14 @@ class DoisController < ApplicationController
       end
 
       page = params[:page] || {}
-      page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
-      page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
+      if page[:size].present? 
+        page[:size] = [page[:size].to_i, 1000].min
+        max_number = 1
+      else
+        page[:size] = 25
+        max_number = 10000/page[:size]
+      end
+      page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
       total_pages = (total.to_f / page[:size]).ceil
 
       order = case params[:sort]
@@ -49,31 +55,51 @@ class DoisController < ApplicationController
 
       @dois = collection.order(order).page(page[:number]).per(page[:size]).without_count
 
-      meta = { total: total,
-               total_pages: total_pages,
-               page: page[:number].to_i }
-
-      render jsonapi: @dois, meta: meta, include: @include, each_serializer: DoiSerializer
+      options = {}
+      options[:meta] = {
+        total: total,
+        "total-pages" => total_pages,
+        page: page[:number].to_i
+      }.compact
+  
+      options[:links] = {
+        self: request.original_url,
+        next: @dois.blank? ? nil : request.base_url + "/dois?" + {
+          query: params[:query],
+          "provider-id" => params[:provider_id],
+          "client-id" => params[:client_id],
+          "page[number]" => page[:number] + 1,
+          "page[size]" => page[:size],
+          sort: params[:sort] }.compact.to_query
+        }.compact
+      options[:include] = @include
+      options[:is_collection] = true
+  
+      render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
     else
-      page = (params.dig(:page, :number) || 1).to_i
-      size = (params.dig(:page, :size) || 25).to_i
-      from = (page - 1) * size
-
-      # limit pagination
-      from = 10000 - size if from + size > 10000
-
       sort = case params[:sort]
             when "name" then { "doi" => { order: 'asc' }}
             when "-name" then { "doi" => { order: 'desc' }}
             when "created" then { created: { order: 'asc' }}
+            when "-created" then { created: { order: 'desc' }}
             when "relevance" then { "_score": { "order": "desc" }}
-            else { created: { order: 'desc' }}
+            else { updated: { order: 'desc' }}
             end
+
+      page = params[:page] || {}
+      if page[:size].present? 
+        page[:size] = [page[:size].to_i, 1000].min
+        max_number = 1
+      else
+        page[:size] = 25
+        max_number = 10000/page[:size]
+      end
+      page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
 
       if params[:id].present?
         response = Doi.find_by_id(params[:id]) 
       elsif params[:ids].present?
-        response = Doi.find_by_ids(params[:ids], from: from, size: size, sort: sort)
+        response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
       else
         response = Doi.query(params[:query], 
                             state: params[:state], 
@@ -86,13 +112,12 @@ class DoisController < ApplicationController
                             resource_type_id: camelize_str(params[:resource_type_id]), 
                             schema_version: params[:schema_version], 
                             source: params[:source], 
-                            from: from, 
-                            size: size, 
+                            page: page,
                             sort: sort)
       end
 
       total = response.results.total
-      total_pages = (total.to_f / size).ceil
+      total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
 
       states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
       resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
@@ -104,13 +129,13 @@ class DoisController < ApplicationController
       schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
       sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
 
-      #@clients = Kaminari.paginate_array(response.results, total_count: total).page(page).per(size)
-      @dois = response.page(page).per(size).records
+      @dois = response.results.results
 
-      meta = {
+      options = {}
+      options[:meta] = {
         total: total,
-        total_pages: total_pages,
-        page: page,
+        "total-pages" => total_pages,
+        page: page[:number],
         states: states,
         resource_types: resource_types,
         years: years,
@@ -121,15 +146,32 @@ class DoisController < ApplicationController
         schema_versions: schema_versions,
         sources: sources
       }.compact
-
-      render jsonapi: @dois, meta: meta, include: @include
+  
+      options[:links] = {
+        self: request.original_url,
+        next: @dois.blank? ? nil : request.base_url + "/dois?" + {
+          query: params[:query],
+          "provider-id" => params[:provider_id],
+          "client-id" => params[:client_id],
+          year: params[:year],
+          "page[cursor]" => @dois.last[:sort].first,
+          "page[size]" => params.dig(:page, :size) }.compact.to_query
+        }.compact
+      options[:include] = @include
+      options[:is_collection] = true
+  
+      render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
     end
   end
 
   def show
-    authorize! :read, @doi
+    # authorize! :read, @doi
 
-    render jsonapi: @doi, include: @include, serializer: DoiSerializer
+    options = {}
+    options[:include] = @include
+    options[:is_collection] = false
+
+    render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
   end
 
   def validate
@@ -139,12 +181,16 @@ class DoisController < ApplicationController
 
     if @doi.errors.present?
       Rails.logger.info @doi.errors.inspect
-      render jsonapi: serialize(@doi.errors), status: :ok
+      render json: serialize(@doi.errors), status: :ok
     elsif @doi.validation_errors?
       Rails.logger.info @doi.validation_errors.inspect
-      render jsonapi: serialize(@doi.validation_errors), status: :ok
+      render json: serialize(@doi.validation_errors), status: :ok
     else
-      render jsonapi: @doi, serializer: DoiSerializer
+      options = {}
+      options[:include] = @include
+      options[:is_collection] = false
+  
+      render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
     end
   end
 
@@ -158,12 +204,16 @@ class DoisController < ApplicationController
 
     if safe_params[:xml] && @doi.aasm_state != "draft" && @doi.validation_errors?
       Rails.logger.error @doi.validation_errors.inspect
-      render jsonapi: serialize(@doi.validation_errors), status: :unprocessable_entity
+      render json: serialize(@doi.validation_errors), status: :unprocessable_entity
     elsif @doi.save
-      render jsonapi: @doi, status: :created, location: @doi
+      options = {}
+      options[:include] = @include
+      options[:is_collection] = false
+  
+      render json: DoiSerializer.new(@doi, options).serialized_json, status: :created, location: @doi
     else
       Rails.logger.warn @doi.errors.inspect
-      render jsonapi: serialize(@doi.errors), include: @include, status: :unprocessable_entity
+      render json: serialize(@doi.errors), include: @include, status: :unprocessable_entity
     end
   end
 
@@ -195,12 +245,16 @@ class DoisController < ApplicationController
 
     if safe_params[:xml] && (@doi.aasm_state != "draft" || safe_params[:validate]) && @doi.validation_errors?
       Rails.logger.error @doi.validation_errors.inspect
-      render jsonapi: serialize(@doi.validation_errors), status: :unprocessable_entity
+      render json: serialize(@doi.validation_errors), status: :unprocessable_entity
     elsif @doi.save
-      render jsonapi: @doi, status: exists ? :ok : :created
+      options = {}
+      options[:include] = @include
+      options[:is_collection] = false
+  
+      render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
     else
       Rails.logger.warn @doi.errors.inspect
-      render jsonapi: serialize(@doi.errors), include: @include, status: :unprocessable_entity
+      render json: serialize(@doi.errors), include: @include, status: :unprocessable_entity
     end
   end
 
@@ -212,7 +266,7 @@ class DoisController < ApplicationController
         head :no_content
       else
         Rails.logger.warn @doi.errors.inspect
-        render jsonapi: serialize(@doi.errors), status: :unprocessable_entity
+        render json: serialize(@doi.errors), status: :unprocessable_entity
       end
     else
       response.headers["Allow"] = "HEAD, GET, POST, PATCH, PUT, OPTIONS"
@@ -318,7 +372,7 @@ class DoisController < ApplicationController
       @include = params[:include].split(",").map { |i| i.downcase.underscore }.join(",")
       @include = [@include]
     else
-      @include = ["client,provider,resource_type"]
+      @include = [] #["client,provider,resource_type"]
     end
   end
 

@@ -1,83 +1,38 @@
-class ProviderSerializer
+class DoiSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :dash
   set_type :dois
-  set_id :uid
+  set_id :doi
   #cache_options enabled: true, cache_length: 24.hours
 
-  include Bolognese::Utils
-  include Bolognese::DoiUtils
+  attributes :doi, :identifier, :url, :prefix, :suffix
 
-  attributes :doi, :prefix, :suffix, :identifier, :url, :author, :title, :publisher, :resource_type_subtype, :description, :version, :metadata_version, :schema_version, :state, :is_active, :reason, :source, :landing_page, :xml, :published, :created, :registered, :updated
+  attribute :author do |object|
+    object.author_normalized
+  end
+
+  attribute :title do |object|
+    object.title_normalized
+  end
+
+  attribute :description do |object|
+    object.description_normalized
+  end
+
+  attributes :publisher, :resource_type_subtype, :metadata_version, :schema_version, :reason, :source, :created
 
   belongs_to :client
   belongs_to :provider
   belongs_to :resource_type
   has_many :media
 
-  def prefix
-    object.doi.split("/", 2).first if object.doi.present?
-  end
-
-  def suffix
-    object.doi.downcase.split("/", 2).last if object.doi.present?
-  end
-
-  def author
-    Array.wrap(object.author)
-  end
-
-  def title
-    object.title_normalized
-  end
-
-  def description
-    object.description_normalized
-  end
-
-  def resource_type_subtype
-    object.additional_type
-  end
-
-  def is_active
+  attribute :is_active do |object|
     object.is_active == "\u0001" ? true : false
   end
 
-  def state
-    object.aasm_state
-  end
-
-  def updated
-    object.updated_at
-  end
-
-  def registered
-    object.date_registered
-  end
-
-  def published
-    object.date_published
-  end
-
-  def landing_page
+  attribute :landing_page do |object|
     { status: object.last_landing_page_status,
-      content_type: object.last_landing_page_content_type,
+      "content-type" => object.last_landing_page_content_type,
       checked: object.last_landing_page_status_check }
-  end
-
-  # def license
-  #   Array.wrap(object.license).map { |l| l["id"] }.compact.unwrap
-  # end
-
-  def version
-    object.b_version
-  end
-
-  def xml
-    Base64.strict_encode64(object.xml) if object.xml.present?
-  rescue ArgumentError => exception
-    Bugsnag.notify(exception)
-    
-    nil
   end
 end

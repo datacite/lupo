@@ -63,6 +63,14 @@ class Prefix < ActiveRecord::Base
     "DataCite"
   end
 
+  def client_ids
+    clients.pluck(:symbol).map(&:downcase)
+  end
+
+  def provider_ids
+    providers.pluck(:symbol).map(&:downcase)
+  end
+
   # # workaround for non-standard database column names and association
   # def client_ids=(values)
   #   ids = Client.where(symbol: values).pluck(:id)

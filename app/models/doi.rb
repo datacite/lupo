@@ -64,7 +64,6 @@ class Doi < ActiveRecord::Base
   self.table_name = "dataset"
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-  alias_attribute :resource_type_id, :resource_type_general
   alias_attribute :resource_type_subtype, :additional_type
   alias_attribute :published, :date_published
 
@@ -105,11 +104,14 @@ class Doi < ActiveRecord::Base
   mapping dynamic: 'false' do
     indexes :id,                             type: :keyword
     indexes :doi,                            type: :keyword
+    indexes :identifier,                     type: :keyword
     indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
     indexes :author,                         type: :object, properties: {
-      "type": { type: :keyword },
-      "id": { type: :keyword },
-      "name": { type: :text }
+      type: { type: :keyword },
+      id: { type: :keyword },
+      name: { type: :text },
+      "given-name" => { type: :text },
+      "family-name" => { type: :text }
     }
     indexes :author_normalized,              type: :text
     indexes :title_normalized,               type: :text
@@ -117,48 +119,70 @@ class Doi < ActiveRecord::Base
     indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" }}
     indexes :client_id,                      type: :keyword
     indexes :provider_id,                    type: :keyword
-    indexes :resource_type_general,          type: :keyword
-    indexes :additional_type,                type: :keyword
+    indexes :resource_type_id,               type: :keyword
+    indexes :media_ids,                      type: :keyword
+    indexes :resource_type_subtype,          type: :keyword
     indexes :version,                        type: :integer
     indexes :is_active,                      type: :keyword
     indexes :aasm_state,                     type: :keyword
     indexes :schema_version,                 type: :keyword
+    indexes :metadata_version,               type: :keyword
     indexes :source,                         type: :keyword
     indexes :prefix,                         type: :keyword
+    indexes :suffix,                         type: :keyword
+    indexes :reason,                         type: :text
+    indexes :meta,                           type: :object
+    indexes :xml,                            type: :text, index: "not_analyzed"
     indexes :last_landing_page_status,       type: :integer
     indexes :last_landing_page_status_check, type: :date
+    indexes :last_landing_page_content_type, type: :keyword
     indexes :published,                      type: :date
     indexes :minted,                         type: :date
     indexes :created,                        type: :date
     indexes :updated,                        type: :date
+
+    # include parent objects
+    indexes :client,        type: :object
+    indexes :provider,      type: :object
+    indexes :resource_type, type: :object
   end
 
   def as_indexed_json(options={})
     {
       "id" => uid,
       "doi" => uid,
+      "identifier" => identifier,
       "url" => url,
-      "author" => author,
       "author_normalized" => author_normalized,
       "title_normalized" => title_normalized,
       "description_normalized" => description_normalized,
       "publisher" => publisher,
       "client_id" => client_id,
       "provider_id" => provider_id,
+      "media_ids" => media_ids,
       "prefix" => prefix,
-      "resource_type_general" => resource_type_general,
-      "additional_type" => additional_type,
-      "version" => version,
+      "suffix" => suffix,
+      "resource_type_id" => resource_type_id,
+      "resource_type_subtype" => additional_type,
+      "version" => b_version,
       "is_active" => is_active,
+      "meta" => meta,
       "last_landing_page_status" => last_landing_page_status,
       "last_landing_page_status_check" => last_landing_page_status_check,
+      "last_landing_page_content_type" => last_landing_page_content_type,
       "aasm_state" => aasm_state,
       "schema_version" => schema_version,
+      "metadata_version" => metadata_version,
+      "reason" => reason,
+      "xml" => xml_encoded,
       "source" => source,
       "published" => published,
       "minted" => minted,
       "created" => created,
-      "updated" => updated
+      "updated" => updated,
+      "client" => client.as_indexed_json,
+      "provider" => provider.as_indexed_json,
+      "resource-type" => resource_type.try(:as_indexed_json)
     }
   end
 
@@ -195,6 +219,20 @@ class Doi < ActiveRecord::Base
 
   def uid
     doi.downcase
+  end
+
+  def resource_type_id
+    resource_type_general.downcase if resource_type_general.present?
+  end
+
+  def media_ids
+    media.pluck(:id).map { |m| Base32::URL.encode(m.id, split: 4, length: 16) }
+  end
+
+  def xml_encoded
+    Base64.strict_encode64(xml) if xml.present?
+  rescue ArgumentError => exception    
+    nil
   end
   
   def title_normalized
@@ -245,6 +283,10 @@ class Doi < ActiveRecord::Base
     doi.split('/', 2).first if doi.present?
   end
 
+  def suffix
+    uid.split("/", 2).last if doi.present?
+  end
+
   def is_test_prefix?
     prefix == "10.5072"
   end
@@ -273,6 +315,7 @@ class Doi < ActiveRecord::Base
       "resource-type-subtype" => additional_type,
       "version" => version,
       "schema-version" => schema_version,
+      "metadata-version" => metadata_version,
       "client-id" => client_id,
       "provider-id" => provider_id,
       "resource-type-id" => resource_type_general,
@@ -306,6 +349,10 @@ class Doi < ActiveRecord::Base
 
   def date_updated
     updated
+  end
+
+  def cache_key
+    "dois/#{uid}-#{updated.iso8601}"
   end
 
   def event=(value)
