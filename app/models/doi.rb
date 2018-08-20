@@ -104,6 +104,7 @@ class Doi < ActiveRecord::Base
 
   mapping dynamic: 'false' do
     indexes :id,                             type: :keyword
+    indexes :uid,                            type: :keyword
     indexes :doi,                            type: :keyword
     indexes :identifier,                     type: :keyword
     indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
@@ -151,6 +152,7 @@ class Doi < ActiveRecord::Base
   def as_indexed_json(options={})
     {
       "id" => uid,
+      "uid" => uid,
       "doi" => doi,
       "identifier" => identifier,
       "url" => url,
