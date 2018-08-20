@@ -79,7 +79,6 @@ class ClientsController < ApplicationController
 
     if @client.save
       options = {}
-      options[:meta] = { dois: @client.cached_doi_count }
       options[:is_collection] = false
   
       render json: ClientSerializer.new(@client, options).serialized_json, status: :created

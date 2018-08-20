@@ -2,6 +2,7 @@ class IdentifierError < RuntimeError; end
 
 RESCUABLE_EXCEPTIONS = [CanCan::AccessDenied,
                         CanCan::AuthorizationNotPerformed,
+                        ActiveModelSerializers::Adapter::JsonApi::Deserialization::InvalidDocument,
                         JWT::DecodeError,
                         JWT::VerificationError,
                         ActiveRecord::RecordNotFound,

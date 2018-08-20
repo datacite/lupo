@@ -36,11 +36,11 @@ class MembersController < ApplicationController
       years: years
     }
 
-    render jsonapi: @providers, meta: meta, include: @include, each_serializer: MemberSerializer
+    render json: @providers, meta: meta, include: @include, each_serializer: MemberSerializer
   end
 
   def show
-    render jsonapi: @provider, include: @include, serializer: MemberSerializer
+    render json: @provider, include: @include, serializer: MemberSerializer
   end
 
   protected

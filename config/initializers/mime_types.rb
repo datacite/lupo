@@ -6,8 +6,7 @@ end
 # re-register some default Mime types
 Mime::Type.register "text/html", :html, %w( application/xhtml+xml ), %w( xhtml )
 Mime::Type.register "text/plain", :text, [], %w(txt)
-Mime::Type.register "application/json", :json, %w( text/x-json application/jsonrequest )
-Mime::Type.register "application/vnd.api+json", :jsonapi
+Mime::Type.register "application/json", :json, %w( text/x-json application/jsonrequest application/vnd.api+json )
 
 # Mime types supported by bolognese gem https://github.com/datacite/bolognese
 Mime::Type.register "application/vnd.crossref.unixref+xml", :crossref

@@ -78,10 +78,14 @@ class ProvidersController < ApplicationController
     authorize! :create, @provider
 
     if @provider.save
-      render jsonapi: @provider, status: :created, location: @provider
+      options = {}
+      options[:include] = @include
+      options[:is_collection] = false
+  
+      render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
       Rails.logger.warn @provider.errors.inspect
-      render jsonapi: serialize(@provider.errors), status: :unprocessable_entity
+      render json: serialize(@provider.errors), status: :unprocessable_entity
     end
   end
 
@@ -89,10 +93,18 @@ class ProvidersController < ApplicationController
   def update
     Rails.logger.debug safe_params.inspect
     if @provider.update_attributes(safe_params)
-      render jsonapi: @provider
+      options = {}
+      options[:meta] = { 
+        providers: @provider.provider_count,
+        clients: @provider.client_count,
+        dois: @provider.cached_doi_count }.compact
+      options[:include] = @include
+      options[:is_collection] = false
+  
+      render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
       Rails.logger.warn @provider.errors.inspect
-      render jsonapi: serialize(@provider.errors), status: :unprocessable_entity
+      render json: serialize(@provider.errors), status: :unprocessable_entity
     end
   end
 
@@ -109,7 +121,7 @@ class ProvidersController < ApplicationController
       head :no_content
     else
       Rails.logger.warn @provider.errors.inspect
-      render jsonapi: serialize(@provider.errors), status: :unprocessable_entity
+      render json: serialize(@provider.errors), status: :unprocessable_entity
     end
   end
 

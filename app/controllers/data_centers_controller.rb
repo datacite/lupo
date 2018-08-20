@@ -58,11 +58,11 @@ class DataCentersController < ApplicationController
              providers: providers,
              years: years }
 
-    render jsonapi: @clients, meta: meta, include: @include, each_serializer: DataCenterSerializer
+    render json: @clients, meta: meta, include: @include, each_serializer: DataCenterSerializer
   end
 
   def show
-    render jsonapi: @client, include: @include, serializer: DataCenterSerializer
+    render json: @client, include: @include, serializer: DataCenterSerializer
   end
 
   protected
