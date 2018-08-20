@@ -202,7 +202,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['doi^10', 'title_normalized^10', 'author_normalized^10', 'author_normalized.name^10', 'author_normalized.id^10', 'publisher^10', 'description_normalized^10', 'resource_type_id^10', 'resource_type_subtype^10', '_all']
+    ['doi^10', 'title_normalized^10', 'author_names^10', 'author_normalized.name^10', 'author_normalized.id^10', 'publisher^10', 'description_normalized^10', 'resource_type_id^10', 'resource_type_subtype^10', '_all']
   end
 
   def self.find_by_id(id, options={})
@@ -243,9 +243,13 @@ class Doi < ActiveRecord::Base
   def description_normalized
     parse_attributes(description, content: "text", first: true)
   end
+
+  def author_normalized
+    Array.wrap(author)
+  end
  
   # author name in natural order: "John Smith" instead of "Smith, John"
-  def author_normalized
+  def author_names
     Array.wrap(author).map do |a| 
       if a["familyName"].present? 
         [a["givenName"], a["familyName"]].join(" ")

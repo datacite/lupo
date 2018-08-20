@@ -16,7 +16,7 @@ class ProvidersController < ApplicationController
     page = params[:page] || {}
     if page[:size].present? 
       page[:size] = [page[:size].to_i, 1000].min
-      max_number = 1
+      max_number = page[:size] > 0 ? 10000/page[:size] : 1
     else
       page[:size] = 25
       max_number = 10000/page[:size]
@@ -41,7 +41,7 @@ class ProvidersController < ApplicationController
     options[:meta] = {
       total: total,
       "total-pages" => total_pages,
-      page: page,
+      page: page[:number],
       years: years
     }.compact
 
