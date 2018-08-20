@@ -105,10 +105,10 @@ class MetadataController < ApplicationController
 
   def set_include
     if params[:include].present?
-      @include = params[:include].split(",").map { |i| i.downcase.underscore }.join(",")
-      @include = [@include]
+      @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
+      @include = @include
     else
-      @include = ["doi"]
+      @include = [:doi]
     end
   end
 

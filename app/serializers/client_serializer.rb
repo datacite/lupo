@@ -8,7 +8,7 @@ class ClientSerializer
   attributes :name, :symbol, :year, :contact_name, :contact_email, :domains, :url, :created, :updated
 
   belongs_to :provider, record_type: :providers
-  belongs_to :repository, record_type: :repositories
+  belongs_to :repository, record_type: :repositories, if: Proc.new { |client| client.repository_id }
 
   attribute :is_active do |object|
     object.is_active == "\u0001" ? true : false

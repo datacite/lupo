@@ -145,11 +145,11 @@ class PrefixesController < ApplicationController
 
   def set_include
     if params[:include].present?
-      @include = params[:include].split(",").map { |i| i.downcase.underscore }.join(",")
+      @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
       @include = [@include]
     else
       # always include because Ember pagination doesn't (yet) understand include parameter
-      @include = ['clients','providers']
+      @include = [:clients, :providers]
     end
   end
 

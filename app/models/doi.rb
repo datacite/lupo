@@ -183,7 +183,7 @@ class Doi < ActiveRecord::Base
       "updated" => updated,
       "client" => client.as_indexed_json,
       "provider" => provider.as_indexed_json,
-      "resource-type" => resource_type.try(:as_indexed_json)
+      "resource_type" => resource_type.try(:as_indexed_json)
     }
   end
 
