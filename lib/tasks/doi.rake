@@ -7,12 +7,22 @@ namespace :doi do
     end
   end
 
-  desc 'Index all DOIs in database'
+  desc 'Index all DOIs by month'
+  task :index_by_month => :environment do
+    from_date = ENV['FROM_DATE'] || Date.current.beginning_of_month.strftime("%F")
+    until_date = ENV['UNTIL_DATE'] || Date.current.end_of_month.strftime("%F")
+
+    response = Doi.index_by_month(from_date: from_date, until_date: until_date)
+    puts response
+  end
+
+  desc 'Index all DOIs'
   task :index => :environment do
-    from_date = ENV['FROM_DATE'] || Time.zone.now - 1.day
-    Doi.where("updated >= ?", from_date).find_each do |doi|
-      IndexJob.perform_later(doi)
-    end
+    from_date = ENV['FROM_DATE'] || (Date.current - 1.day).strftime("%F")
+    until_date = ENV['UNTIL_DATE'] || Date.current.strftime("%F")
+
+    response = Doi.index(from_date: from_date, until_date: until_date)
+    puts "Queued indexing for #{response} DOIs updated from #{from_date} - #{until_date}."
   end
 
   desc 'Set state'

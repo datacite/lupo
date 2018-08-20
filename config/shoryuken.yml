@@ -3,3 +3,4 @@ delay: 30
 pidfile: tmp/pids/shoryuken.pid
 queues:
   - lupo
+  - lupo_background

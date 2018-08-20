@@ -219,6 +219,27 @@ class Doi < ActiveRecord::Base
     })
   end
 
+  def self.index_by_month(options={})
+    from_date = (options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current).beginning_of_month
+    until_date = (options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current).end_of_month
+
+    # get first day of every month between from_date and until_date
+    (from_date..until_date).select {|d| d.day == 1}.each do |m|
+      DoiIndexByMonthJob.perform_later(from_date: m.strftime("%F"), until_date: m.end_of_month.strftime("%F"))
+    end
+
+    "Queued indexing for DOIs updated from #{from_date.strftime("%F")} until #{until_date.strftime("%F")}."
+  end
+
+  def self.index(options={})
+    from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current - 1.day
+    until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
+
+    Doi.where("updated >= ?", from_date.strftime("%F")).where("updated <= ?", until_date.strftime("%F")).find_each do |doi|
+      IndexJob.set(queue: :lupo_background).perform_later(doi)
+    end
+  end
+
   def uid
     doi.downcase
   end

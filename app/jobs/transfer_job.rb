@@ -1,5 +1,5 @@
 class TransferJob < ActiveJob::Base
-  queue_as :lupo
+  queue_as :lupo_background
 
   def perform(doi_id, options={})
     doi = Doi.where(doi: doi_id).first
