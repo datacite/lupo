@@ -1,7 +1,7 @@
 class Handle
   include Searchable
 
-  attr_reader :id, :prefix, :registration_agency, :clients, :providers, :created, :updated_at
+  attr_reader :id, :prefix, :registration_agency, :clients, :providers, :created, :cache_key, :updated_at
 
   RA_HANDLES = {
     "10.SERV/CROSSREF" => "Crossref",
@@ -23,6 +23,10 @@ class Handle
     @prefix = @id
     @registration_agency = attributes.fetch("registration_agency", nil)
     @updated_at = attributes.fetch("updated_at", nil)
+  end
+
+  def cache_key
+    "handles/#{id}-#{updated_at.iso8601}"
   end
 
   def self.get_query_url(options={})
