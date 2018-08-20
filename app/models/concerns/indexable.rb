@@ -125,6 +125,7 @@ module Indexable
       # filters for some classes
       if self.name == "Provider"
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        must << { term: { region: options[:region] }} if options[:region].present?
         must << { term: { role_name: "ROLE_ALLOCATOR" }} 
         must_not << { exists: { field: "deleted_at" }}
       elsif self.name == "Client"

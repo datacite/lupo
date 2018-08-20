@@ -2,6 +2,12 @@ module Facetable
   extend ActiveSupport::Concern
 
   included do
+
+    REGIONS = { 
+      "AMER" => "Americas",
+      "APAC" => "Asia Pacific",
+      "EMEA" => "EMEA" }
+      
     def client_year_facet(params, collection)
       [{ id: params[:year],
          title: params[:year],
@@ -30,6 +36,14 @@ module Facetable
 
         { "id" => id,
           "title" => "Schema #{id}",
+          "count" => hsh["doc_count"] }
+      end
+    end
+
+    def facet_by_region(arr)
+      arr.map do |hsh|
+        { "id" => hsh["key"],
+          "title" => REGIONS[hsh["key"]] || hsh["key"],
           "count" => hsh["doc_count"] }
       end
     end

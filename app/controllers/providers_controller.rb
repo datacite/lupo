@@ -28,12 +28,13 @@ class ProvidersController < ApplicationController
     elsif params[:ids].present?
       response = Provider.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      response = Provider.query(params[:query], year: params[:year], page: page, sort: sort)
+      response = Provider.query(params[:query], year: params[:year], region: params[:region], page: page, sort: sort)
     end
 
     total = response.results.total
     total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
     years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
+    regions = total > 0 ? facet_by_region(response.response.aggregations.regions.buckets) : nil
 
     @providers = response.results.results
 
@@ -42,7 +43,8 @@ class ProvidersController < ApplicationController
       total: total,
       "total-pages" => total_pages,
       page: page[:number],
-      years: years
+      years: years,
+      regions: regions
     }.compact
 
     options[:links] = {
@@ -50,6 +52,7 @@ class ProvidersController < ApplicationController
       next: @providers.blank? ? nil : request.base_url + "/providers?" + {
         query: params[:query],
         year: params[:year],
+        region: params[:region],
         "page[number]" => params.dig(:page, :number),
         "page[size]" => params.dig(:page, :size),
         sort: sort }.compact.to_query

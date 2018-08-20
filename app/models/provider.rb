@@ -133,7 +133,8 @@ class Provider < ActiveRecord::Base
   
   def self.query_aggregations
     {
-      years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } }
+      years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
+      regions: { terms: { field: 'region', size: 10, min_doc_count: 1 } }
     }
   end
 
