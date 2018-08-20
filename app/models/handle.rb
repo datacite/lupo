@@ -1,7 +1,7 @@
 class Handle
   include Searchable
 
-  attr_reader :id, :prefix, :registration_agency, :clients, :providers, :created, :cache_key, :updated_at
+  attr_reader :id, :prefix, :registration_agency, :clients, :providers, :created, :cache_key, :updated
 
   RA_HANDLES = {
     "10.SERV/CROSSREF" => "Crossref",
@@ -22,11 +22,19 @@ class Handle
     @id = attributes.fetch("id").underscore.dasherize
     @prefix = @id
     @registration_agency = attributes.fetch("registration_agency", nil)
-    @updated_at = attributes.fetch("updated_at", nil)
+    @updated = attributes.fetch("updated", nil)
   end
 
   def cache_key
-    "handles/#{id}-#{updated_at}"
+    "handles/#{id}-#{updated}"
+  end
+
+  def client_ids
+    []
+  end
+
+  def provider_ids
+    []
   end
 
   def self.get_query_url(options={})
@@ -55,7 +63,7 @@ class Handle
       item = {
         "id" => result.body.dig("data", "handle"),
         "registration_agency" => RA_HANDLES[ra] || ra || "unknown",
-        "updated_at" => record.fetch("timestamp", nil) }
+        "updated" => record.fetch("timestamp", nil) }
 
       parse_item(item)
     end
