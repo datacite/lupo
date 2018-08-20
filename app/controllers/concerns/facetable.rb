@@ -4,10 +4,10 @@ module Facetable
   included do
 
     REGIONS = { 
-      "AMER" => "Americas",
-      "APAC" => "Asia Pacific",
-      "EMEA" => "EMEA" }
-      
+      "amer" => "Americas",
+      "apac" => "Asia Pacific",
+      "emea" => "EMEA" }
+
     def client_year_facet(params, collection)
       [{ id: params[:year],
          title: params[:year],
@@ -42,6 +42,8 @@ module Facetable
 
     def facet_by_region(arr)
       arr.map do |hsh|
+        hsh["key"] = hsh["key"].downcase
+
         { "id" => hsh["key"],
           "title" => REGIONS[hsh["key"]] || hsh["key"],
           "count" => hsh["doc_count"] }
