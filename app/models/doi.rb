@@ -108,14 +108,14 @@ class Doi < ActiveRecord::Base
     indexes :doi,                            type: :keyword
     indexes :identifier,                     type: :keyword
     indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
-    indexes :author,                         type: :object, properties: {
+    indexes :author_normalized,              type: :object, properties: {
       type: { type: :keyword },
       id: { type: :keyword },
       name: { type: :text },
       "given-name" => { type: :text },
       "family-name" => { type: :text }
     }
-    indexes :author_normalized,              type: :text
+    indexes :author_names,                   type: :text
     indexes :title_normalized,               type: :text
     indexes :description_normalized,         type: :text
     indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" }}
@@ -157,6 +157,7 @@ class Doi < ActiveRecord::Base
       "identifier" => identifier,
       "url" => url,
       "author_normalized" => author_normalized,
+      "author_names" => author_names,
       "title_normalized" => title_normalized,
       "description_normalized" => description_normalized,
       "publisher" => publisher,
