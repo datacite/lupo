@@ -40,7 +40,7 @@ class MembersController < ApplicationController
     options[:meta] = {
       total: total,
       "total-pages" => total_pages,
-      page: page,
+      page: page[:number],
       years: years
     }.compact
 
