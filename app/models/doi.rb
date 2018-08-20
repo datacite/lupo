@@ -202,7 +202,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['doi^10', 'title_normalized^10', 'author_normalized^10', 'author.name^10', 'author.id^10', 'publisher^10', 'description_normalized^10', 'resource_type_general^10', 'additional_type^10', '_all']
+    ['doi^10', 'title_normalized^10', 'author_normalized^10', 'author_normalized.name^10', 'author_normalized.id^10', 'publisher^10', 'description_normalized^10', 'resource_type_id^10', 'resource_type_subtype^10', '_all']
   end
 
   def self.find_by_id(id, options={})

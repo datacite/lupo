@@ -125,7 +125,7 @@ class PrefixesController < ApplicationController
       options[:include] = @include
       options[:is_collection] = false
   
-      render json: PrefixSerializer.new(@prefix, options).serialized_json, status: :ok, location: @prefix
+      render json: PrefixSerializer.new(@prefix, options).serialized_json, status: :created, location: @prefix
     else
       Rails.logger.warn @prefix.errors.inspect
       render json: serialize(@prefix.errors), status: :unprocessable_entity

@@ -165,7 +165,7 @@ class DoisController < ApplicationController
   end
 
   def show
-    # authorize! :read, @doi
+    authorize! :read, @doi
 
     options = {}
     options[:include] = @include

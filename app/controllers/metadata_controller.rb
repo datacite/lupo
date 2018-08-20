@@ -42,7 +42,7 @@ class MetadataController < ApplicationController
     options[:include] = @include
     options[:is_collection] = true
 
-    render json: MediaSerializer.new(@metadata, options).serialized_json, status: :ok
+    render json: MetadataSerializer.new(@metadata, options).serialized_json, status: :ok
   end
 
   def show

@@ -13,4 +13,8 @@ class MemberSerializer
   attribute :email do |object|
     object.contact_email
   end
+
+  attribute :country do |object|
+    object.country_code
+  end
 end
