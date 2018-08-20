@@ -154,7 +154,7 @@ class DoisController < ApplicationController
           "provider-id" => params[:provider_id],
           "client-id" => params[:client_id],
           year: params[:year],
-          "page[cursor]" => @dois.last[:sort].first,
+          "page[cursor]" => Array.wrap(@dois.last[:sort]).first,
           "page[size]" => params.dig(:page, :size) }.compact.to_query
         }.compact
       options[:include] = @include
