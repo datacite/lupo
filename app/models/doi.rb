@@ -133,7 +133,6 @@ class Doi < ActiveRecord::Base
     indexes :prefix,                         type: :keyword
     indexes :suffix,                         type: :keyword
     indexes :reason,                         type: :text
-    indexes :meta,                           type: :object
     indexes :xml,                            type: :text, index: "no"
     indexes :last_landing_page_status,       type: :integer
     indexes :last_landing_page_status_check, type: :date
@@ -170,7 +169,6 @@ class Doi < ActiveRecord::Base
       "resource_type_subtype" => resource_type_subtype,
       "b_version" => b_version,
       "is_active" => is_active,
-      "meta" => meta,
       "last_landing_page_status" => last_landing_page_status,
       "last_landing_page_status_check" => last_landing_page_status_check,
       "last_landing_page_content_type" => last_landing_page_content_type,
