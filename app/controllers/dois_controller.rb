@@ -9,7 +9,7 @@ class DoisController < ApplicationController
   def index
     authorize! :read, Doi
 
-    if Rails.env.production?
+    if params[:client_id].present? || params[:provider_id].present? || params[:id].present? #Rails.env.production?
       # don't use elasticsearch
 
       # support nested routes
