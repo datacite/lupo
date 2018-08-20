@@ -5,7 +5,16 @@ class DoiSerializer
   set_id :doi
   #cache_options enabled: true, cache_length: 24.hours
 
-  attributes :doi, :identifier, :url, :prefix, :suffix
+  attributes :doi, :identifier, :url, :prefix, :suffix, :author, :title, :publisher, :resource_type_subtype, :description, :version, :metadata_version, :schema_version, :reason, :source, :state, :is_active, :landing_page, :published, :created, :registered, :updated, :xml
+
+  belongs_to :client
+  belongs_to :provider
+  belongs_to :resource_type
+  has_many :media
+
+  attribute :doi do |object|
+    object.doi.downcase
+  end
 
   attribute :author do |object|
     object.author_normalized
@@ -19,15 +28,20 @@ class DoiSerializer
     object.description_normalized
   end
 
-  attributes :publisher, :resource_type_subtype, :metadata_version, :schema_version, :reason, :source, :created
-
-  belongs_to :client
-  belongs_to :provider
-  belongs_to :resource_type
-  has_many :media
+  attribute :state do |object|
+    object.aasm_state
+  end
 
   attribute :is_active do |object|
     object.is_active == "\u0001" ? true : false
+  end
+
+  attribute :version do |object|
+    object.b_version
+  end
+
+  attribute :xml do |object|
+    object.xml_encoded
   end
 
   attribute :landing_page do |object|

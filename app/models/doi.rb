@@ -66,6 +66,7 @@ class Doi < ActiveRecord::Base
   alias_attribute :updated_at, :updated
   alias_attribute :resource_type_subtype, :additional_type
   alias_attribute :published, :date_published
+  alias_attribute :registered, :minted
 
   attr_accessor :current_user
   attr_accessor :validate
@@ -132,12 +133,12 @@ class Doi < ActiveRecord::Base
     indexes :suffix,                         type: :keyword
     indexes :reason,                         type: :text
     indexes :meta,                           type: :object
-    indexes :xml,                            type: :text, index: "not_analyzed"
+    indexes :xml,                            type: :text, index: "no"
     indexes :last_landing_page_status,       type: :integer
     indexes :last_landing_page_status_check, type: :date
     indexes :last_landing_page_content_type, type: :keyword
-    indexes :published,                      type: :date
-    indexes :minted,                         type: :date
+    indexes :published,                      type: :date, format: "yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true
+    indexes :registered,                     type: :date
     indexes :created,                        type: :date
     indexes :updated,                        type: :date
 
@@ -150,7 +151,7 @@ class Doi < ActiveRecord::Base
   def as_indexed_json(options={})
     {
       "id" => uid,
-      "doi" => uid,
+      "doi" => doi,
       "identifier" => identifier,
       "url" => url,
       "author_normalized" => author_normalized,
@@ -163,8 +164,8 @@ class Doi < ActiveRecord::Base
       "prefix" => prefix,
       "suffix" => suffix,
       "resource_type_id" => resource_type_id,
-      "resource_type_subtype" => additional_type,
-      "version" => b_version,
+      "resource_type_subtype" => resource_type_subtype,
+      "b_version" => b_version,
       "is_active" => is_active,
       "meta" => meta,
       "last_landing_page_status" => last_landing_page_status,
@@ -174,10 +175,10 @@ class Doi < ActiveRecord::Base
       "schema_version" => schema_version,
       "metadata_version" => metadata_version,
       "reason" => reason,
-      "xml" => xml_encoded,
+      "xml_encoded" => xml_encoded,
       "source" => source,
       "published" => published,
-      "minted" => minted,
+      "registered" => registered,
       "created" => created,
       "updated" => updated,
       "client" => client.as_indexed_json,

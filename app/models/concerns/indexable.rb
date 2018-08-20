@@ -68,7 +68,7 @@ module Indexable
       options[:sort] ||= { "_doc" => { order: 'asc' }}
 
       __elasticsearch__.search({
-        from: options[:from] || 0,
+        from: options[:page].present? ? (options.dig(:page, :number) - 1) * options.dig(:page, :size) : 0,
         size: options[:size] || 25,
         sort: [options[:sort]],
         query: {
@@ -82,9 +82,9 @@ module Indexable
 
     def find_by_ids(ids, options={})
       options[:sort] ||= { "_doc" => { order: 'asc' }}
-
+    
       __elasticsearch__.search({
-        from: options[:from] || 0,
+        from: options[:page].present? ? (options.dig(:page, :number) - 1) * options.dig(:page, :size) : 0,
         size: options[:size] || 25,
         sort: [options[:sort]],
         query: {
@@ -97,7 +97,8 @@ module Indexable
     end
 
     def query(query, options={})
-      if options.dig(:page, :cursor).present?
+      # enable cursor-based pagination for DOIs
+      if self.name == "Doi" && options.dig(:page, :cursor).present?
         from = 0
         search_after = [options.dig(:page, :cursor)]
         sort = [{ updated: { order: 'asc' }}]
