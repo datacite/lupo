@@ -26,7 +26,7 @@ class Handle
   end
 
   def cache_key
-    "handles/#{id}-#{updated_at.iso8601}"
+    "handles/#{id}-#{updated_at}"
   end
 
   def self.get_query_url(options={})
