@@ -7,6 +7,14 @@ namespace :doi do
     end
   end
 
+  desc 'Index all DOIs in database'
+  task :index => :environment do
+    from_date = ENV['FROM_DATE'] || Time.zone.now - 1.day
+    Doi.where("updated >= ?", from_date).find_each do |doi|
+      IndexJob.perform_later(doi)
+    end
+  end
+
   desc 'Set state'
   task :set_state => :environment do
     from_date = ENV['FROM_DATE'] || Time.zone.now - 1.day
