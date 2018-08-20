@@ -5,7 +5,7 @@ class ProviderSerializer
   set_id :uid
   cache_options enabled: true, cache_length: 24.hours
 
-  attributes :name, :symbol, :website, :contact_name, :contact_email, :phone, :description, :country, :logo_url, :institution_type, :is_active, :has_password, :joined, :created, :updated
+  attributes :name, :symbol, :website, :contact_name, :contact_email, :phone, :description, :region, :country, :logo_url, :institution_type, :is_active, :has_password, :joined, :created, :updated
 
   attribute :country do |object|
     object.country_code

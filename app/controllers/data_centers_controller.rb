@@ -3,66 +3,71 @@ class DataCentersController < ApplicationController
   before_action :set_include
 
   def index
-    # support nested routes
-    if params[:provider_id].present?
-      provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
-      collection = provider.present? ? provider.clients : Client.none
-    else
-      collection = Client
-    end
-
-    if params[:id].present?
-      collection = collection.where(symbol: params[:id])
-    elsif params[:query].present?
-      collection = collection.query(params[:query])
-    end
-
-    # cache prefixes for faster queries
-    if params[:prefix].present?
-      prefix = cached_prefix_response(params[:prefix])
-      collection = collection.includes(:prefixes).where('prefix.id' => prefix.id)
-    end
-
-    collection = collection.where('YEAR(datacentre.created) = ?', params[:year]) if params[:year].present?
-
-    # calculate facet counts after filtering
-
-    providers = collection.joins(:provider).select('allocator.symbol, allocator.name, count(allocator.id) as count').order('count DESC').group('allocator.id')
-    # workaround, as selecting allocator.symbol as id doesn't work
-    providers = providers.map { |p| { id: p.symbol, title: p.name, count: p.count } }
-
-    if params[:year].present?
-      years = client_year_facet params, collection
-    else
-      years = collection.where.not(created: nil).order("YEAR(datacentre.created) DESC").group("YEAR(datacentre.created)").count
-      years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
-    end
+    sort = case params[:sort]
+           when "relevance" then { "_score" => { order: 'desc' }}
+           when "name" then { "name.raw" => { order: 'asc' }}
+           when "-name" then { "name.raw" => { order: 'desc' }}
+           when "created" then { created: { order: 'asc' }}
+           when "-created" then { created: { order: 'desc' }}
+           else { updated: { "order": "asc" }}
+           end
 
     page = params[:page] || {}
-    page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
-    page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
-    total = collection.count
+    if page[:size].present? 
+      page[:size] = [page[:size].to_i, 1000].min
+      max_number = 1
+    else
+      page[:size] = 25
+      max_number = 10000/page[:size]
+    end
+    page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
 
-    order = case params[:sort]
-            when "-name" then "datacentre.name DESC"
-            when "-created" then "datacentre.created DESC"
-            when "created" then "datacentre.created"
-            else "datacentre.name"
-            end
+    if params[:id].present?
+      response = Client.find_by_id(params[:id]) 
+    elsif params[:ids].present?
+      response = Client.find_by_ids(params[:ids], page: page, sort: sort)
+    else
+      response = Client.query(params[:query], year: params[:year], provider_id: params[:member_id], page: page, sort: sort)
+    end
 
-    @clients = collection.order(order).page(page[:number]).per(page[:size])
+    total = response.results.total
+    total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
+    years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
+    providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
 
-    meta = { total: total,
-             total_pages: @clients.total_pages,
-             page: page[:number].to_i,
-             providers: providers,
-             years: years }
+    @clients = response.results.results
 
-    render json: @clients, meta: meta, include: @include, each_serializer: DataCenterSerializer
+    options = {}
+    options[:meta] = {
+      total: total,
+      "total-pages" => total_pages,
+      page: page[:number],
+      years: years,
+      members: providers
+    }.compact
+
+    options[:links] = {
+      self: request.original_url,
+      next: @clients.blank? ? nil : request.base_url + "/data-centers?" + {
+      query: params[:query],
+      "member-id" => params[:member_id],
+      year: params[:year],
+      "page[number]" => page[:number] + 1,
+      "page[size]" => page[:size],
+      sort: params[:sort] }.compact.to_query
+    }.compact
+    options[:include] = @include
+    options[:is_collection] = true
+
+    render json: DataCenterSerializer.new(@clients, options).serialized_json, status: :ok
   end
 
   def show
-    render json: @client, include: @include, serializer: DataCenterSerializer
+    options = {}
+    options[:include] = @include
+    options[:is_collection] = false
+
+    render json: DataCenterSerializer.new(@client, options).serialized_json, status: :ok
   end
 
   protected

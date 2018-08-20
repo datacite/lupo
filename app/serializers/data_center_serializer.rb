@@ -1,35 +1,27 @@
-class DataCenterSerializer < ActiveModel::Serializer
-  type "data_centers"
-
+class DataCenterSerializer
+  include FastJsonapi::ObjectSerializer
+  set_key_transform :dash
+  set_type "data-centers"
+  set_id :uid
+  #cache_options enabled: true, cache_length: 24.hours
+  
   attributes :title, :other_names, :prefixes, :member_id, :year, :created, :updated
 
-  belongs_to :member, serializer: MemberSerializer
+  belongs_to :member, record_type: :members, id_method_name: :provider_id
 
-  def id
-    object.symbol.downcase
-  end
-
-  def title
+  attribute :title do |object|
     object.name
   end
 
-  def member_id
+  attribute :member_id do |object|
     object.provider_id
   end
 
-  def other_names
+  attribute :other_names do |object|
     []
   end
 
-  def prefixes
+  attribute :prefixes do |object|
     []
-  end
-
-  def created
-    object.created.iso8601
-  end
-
-  def updated
-    object.updated.iso8601
   end
 end

@@ -3,44 +3,68 @@ class MembersController < ApplicationController
   before_action :set_include
 
   def index
-    page = (params.dig(:page, :number) || 1).to_i
-    size = (params.dig(:page, :size) || 25).to_i
-    from = (page - 1) * size
-
     sort = case params[:sort]
-           when "-name" then { "name.keyword" => { order: 'desc' }}
+           when "relevance" then { "_score" => { order: 'desc' }}
+           when "name" then { "name.raw" => { order: 'asc' }}
+           when "-name" then { "name.raw" => { order: 'desc' }}
            when "created" then { created: { order: 'asc' }}
            when "-created" then { created: { order: 'desc' }}
-           else { "name.keyword" => { order: 'asc' }}
+           else { updated: { "order": "asc" }}
            end
+
+    page = params[:page] || {}
+    if page[:size].present? 
+      page[:size] = [page[:size].to_i, 1000].min
+      max_number = 1
+    else
+      page[:size] = 25
+      max_number = 10000/page[:size]
+    end
+    page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
 
     if params[:id].present?
       response = Provider.find_by_id(params[:id])
     elsif params[:ids].present?
-      response = Provider.find_by_ids(params[:ids], from: from, size: size, sort: sort)
+      response = Provider.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      response = Provider.query(params[:query], year: params[:year], from: from, size: size, sort: sort)
+      response = Provider.query(params[:query], year: params[:year], page: page, sort: sort)
     end
 
     total = response.results.total
-    total_pages = (total.to_f / size).ceil
+    total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
     years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
 
-    #@providers = Kaminari.paginate_array(response.results, total_count: total).page(page).per(size)
-    @providers = response.page(page).per(size).records
+    @providers = response.results.results
 
-    meta = {
+    options = {}
+    options[:meta] = {
       total: total,
-      total_pages: total_pages,
+      "total-pages" => total_pages,
       page: page,
       years: years
-    }
+    }.compact
 
-    render json: @providers, meta: meta, include: @include, each_serializer: MemberSerializer
+    options[:links] = {
+      self: request.original_url,
+      next: @providers.blank? ? nil : request.base_url + "/providers?" + {
+        query: params[:query],
+        year: params[:year],
+        "page[number]" => params.dig(:page, :number),
+        "page[size]" => params.dig(:page, :size),
+        sort: sort }.compact.to_query
+      }.compact
+    options[:include] = @include
+    options[:is_collection] = true
+
+    render json: MemberSerializer.new(@providers, options).serialized_json, status: :ok
   end
 
   def show
-    render json: @provider, include: @include, serializer: MemberSerializer
+    options = {}
+    options[:include] = @include
+    options[:is_collection] = false
+
+    render json: MemberSerializer.new(@provider, options).serialized_json, status: :ok
   end
 
   protected

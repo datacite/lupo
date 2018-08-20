@@ -87,6 +87,7 @@ class Provider < ActiveRecord::Base
       indexes :logo_url,      type: :text
       indexes :region,        type: :keyword
       indexes :institution_type, type: :keyword
+      indexes :member_type,   type: :keyword
       indexes :country_code,  type: :keyword
       indexes :role_name,     type: :keyword
       indexes :cache_key,     type: :keyword
@@ -115,6 +116,7 @@ class Provider < ActiveRecord::Base
       "country_code" => country_code,
       "logo_url" => logo_url,
       "institution_type" => institution_type,
+      "member_type" => member_type,
       "role_name" => role_name,
       "password" => password,
       "cache_key" => cache_key,

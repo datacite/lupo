@@ -1,33 +1,16 @@
-class MemberSerializer < ActiveModel::Serializer
-  type "members"
-
+class MemberSerializer
+  include FastJsonapi::ObjectSerializer
+  set_key_transform :dash
+  set_type :members
+  set_id :uid
+  cache_options enabled: true, cache_length: 24.hours
   attributes :title, :description, :member_type, :institution_type, :region, :country, :year, :logo_url, :email, :website, :phone, :joined, :created, :updated
 
-  def id
-    object.symbol.downcase
-  end
-
-  def title
+  attribute :title do |object|
     object.name
   end
 
-  def country
-    object.country_name
-  end
-
-  def region
-    object.region_human_name
-  end
-
-  def email
+  attribute :email do |object|
     object.contact_email
-  end
-
-  def created
-    object.created_at
-  end
-
-  def updated
-    object.updated_at
   end
 end
