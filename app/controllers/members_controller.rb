@@ -1,6 +1,5 @@
 class MembersController < ApplicationController
   before_action :set_provider, only: [:show]
-  before_action :set_include
 
   def index
     sort = case params[:sort]
@@ -76,16 +75,5 @@ class MembersController < ApplicationController
   def set_provider
     @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_MEMBER')").where(deleted_at: nil).where(symbol: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @provider.present?
-  end
-
-  private
-
-  def set_include
-    if params[:include].present?
-      @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include
-    else
-      @include = nil
-    end
   end
 end

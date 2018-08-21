@@ -17,10 +17,11 @@ class ClientsController < ApplicationController
     page = params[:page] || {}
     if page[:size].present? 
       page[:size] = [page[:size].to_i, 1000].min
+      max_number = page[:size] > 0 ? 10000/page[:size] : 1
     else
       page[:size] = 25
+      max_number = 10000/page[:size]
     end
-    max_number = 10000/page[:size]
     page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
 
     if params[:id].present?
@@ -131,7 +132,7 @@ class ClientsController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include
+      @include = @include & [:provider, :repository]
     else
       @include = [:provider, :repository]
     end

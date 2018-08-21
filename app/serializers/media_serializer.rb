@@ -7,5 +7,5 @@ class MediaSerializer
 
   attributes :version, :url, :media_type, :created, :updated
 
-  belongs_to :doi
+  belongs_to :doi, record_type: :dois
 end

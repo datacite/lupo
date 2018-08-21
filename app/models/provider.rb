@@ -194,6 +194,14 @@ class Provider < ActiveRecord::Base
     end
   end
 
+  def client_ids
+    clients.where(deleted_at: nil).pluck(:symbol).map(&:downcase)
+  end
+
+  def prefix_ids
+    prefixes.pluck(:prefix).map { |p| p != "10.5072" }
+  end
+
   # cumulative count clients by year
   # count until the previous year if client has been deleted
   # show all clients for admin

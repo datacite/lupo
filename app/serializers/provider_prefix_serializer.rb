@@ -5,7 +5,6 @@ class ProviderPrefixSerializer
   set_id :uid
   attributes :created, :updated
 
-  belongs_to :provider
-  belongs_to :prefix
-  has_many :clients
+  belongs_to :provider, record_type: :providers
+  belongs_to :prefix, record_type: :prefixes
 end

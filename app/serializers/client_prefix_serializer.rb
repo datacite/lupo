@@ -7,8 +7,8 @@ class ClientPrefixSerializer
 
   attributes :created, :updated
 
-  belongs_to :client
-  belongs_to :provider
-  belongs_to :provider_prefix
-  belongs_to :prefix
+  belongs_to :client, record_type: :clients
+  belongs_to :provider, record_type: :providers
+  belongs_to :provider_prefix, record_type: :prefix_providers
+  belongs_to :prefix, record_type: :prefixes
 end

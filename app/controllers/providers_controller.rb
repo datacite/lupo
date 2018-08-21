@@ -1,6 +1,6 @@
 class ProvidersController < ApplicationController
   before_action :set_provider, only: [:show, :update, :destroy]
-  before_action :set_include, :authenticate_user!
+  before_action :authenticate_user!
   load_and_authorize_resource :except => [:index, :show, :set_test_prefix]
 
   def index
@@ -146,15 +146,6 @@ class ProvidersController < ApplicationController
   end
 
   private
-
-  def set_include
-    if params[:include].present?
-      @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include
-    else
-      @include = nil
-    end
-  end
 
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?

@@ -7,9 +7,9 @@ class DoiSerializer
 
   attributes :doi, :identifier, :url, :prefix, :suffix, :author, :title, :publisher, :resource_type_subtype, :description, :version, :metadata_version, :schema_version, :reason, :source, :state, :is_active, :landing_page, :published, :created, :registered, :updated, :xml
 
-  belongs_to :client
-  belongs_to :provider
-  belongs_to :resource_type
+  belongs_to :client, record_type: :clients
+  belongs_to :provider, record_type: :providers
+  belongs_to :resource_type, record_type: :resource_types
   has_many :media
 
   attribute :doi do |object|
