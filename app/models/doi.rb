@@ -379,7 +379,8 @@ class Doi < ActiveRecord::Base
   end
 
   def cache_key
-    "dois/#{uid}-#{updated.iso8601}"
+    timestamp = updated || Time.zone.now
+    "dois/#{uid}-#{timestamp.iso8601}"
   end
 
   def event=(value)
