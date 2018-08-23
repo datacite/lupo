@@ -10,7 +10,7 @@ class ProvidersController < ApplicationController
            when "-name" then { "name.raw" => { order: 'desc' }}
            when "created" then { created: { order: 'asc' }}
            when "-created" then { created: { order: 'desc' }}
-           else { updated: { "order": "asc" }}
+           else { "name.raw" => { order: 'asc' }}
            end
 
     page = params[:page] || {}
