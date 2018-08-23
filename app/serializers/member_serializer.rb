@@ -3,7 +3,8 @@ class MemberSerializer
   set_key_transform :dash
   set_type :members
   set_id :uid
-  # cache_options enabled: true, cache_length: 24.hours
+  # don't cache members, as they use the provider model
+  
   attributes :title, :description, :member_type, :institution_type, :region, :country, :year, :logo_url, :email, :website, :phone, :joined, :created, :updated
 
   attribute :title do |object|
