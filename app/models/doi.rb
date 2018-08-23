@@ -137,6 +137,7 @@ class Doi < ActiveRecord::Base
     indexes :last_landing_page_status,       type: :integer
     indexes :last_landing_page_status_check, type: :date
     indexes :last_landing_page_content_type, type: :keyword
+    indexes :cache_key,                      type: :keyword
     indexes :published,                      type: :date, format: "yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true
     indexes :registered,                     type: :date
     indexes :created,                        type: :date
@@ -144,7 +145,6 @@ class Doi < ActiveRecord::Base
 
     # include parent objects
     indexes :client,        type: :object
-    indexes :provider,      type: :object
     indexes :resource_type, type: :object
   end
 
@@ -178,12 +178,12 @@ class Doi < ActiveRecord::Base
       "reason" => reason,
       "xml_encoded" => xml_encoded,
       "source" => source,
+      "cache_key" => cache_key,
       "published" => published,
       "registered" => registered,
       "created" => created,
       "updated" => updated,
       "client" => client.as_indexed_json,
-      "provider" => provider.as_indexed_json,
       "resource_type" => resource_type.try(:as_indexed_json)
     }
   end
