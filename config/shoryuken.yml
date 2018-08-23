@@ -1,5 +1,6 @@
+polling_strategy: StrictPriority
 concurrency: 25
-delay: 30
+delay: 0
 pidfile: tmp/pids/shoryuken.pid
 queues:
   - lupo

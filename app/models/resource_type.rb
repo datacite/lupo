@@ -12,7 +12,7 @@ class ResourceType
   alias_attribute :updated, :updated_at
 
   def cache_key
-    "resource_type/#{id}-#{updated_at}"
+    "resource_types/#{id}-#{updated_at}"
   end
 
   def as_indexed_json(options={})
