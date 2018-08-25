@@ -9,6 +9,7 @@ class ClientSerializer
 
   belongs_to :provider, record_type: :providers
   belongs_to :repository, record_type: :repositories, if: Proc.new { |client| client.repository_id }
+  has_many :prefixes, record_type: :prefixes
 
   attribute :is_active do |object|
     object.is_active == "\u0001" ? true : false

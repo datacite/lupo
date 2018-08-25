@@ -75,6 +75,7 @@ class Provider < ActiveRecord::Base
       indexes :id,            type: :keyword
       indexes :uid,           type: :keyword
       indexes :symbol,        type: :keyword
+      indexes :prefix_ids,    type: :keyword
       indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }}
       indexes :contact_name,  type: :text
       indexes :contact_email, type: :text, fields: { keyword: { type: "keyword" }}
@@ -104,6 +105,7 @@ class Provider < ActiveRecord::Base
       "id" => uid,
       "uid" => uid,
       "name" => name,
+      "prefix_ids" => prefix_ids,
       "symbol" => symbol,
       "year" => year,
       "contact_name" => contact_name,
@@ -199,7 +201,7 @@ class Provider < ActiveRecord::Base
   end
 
   def prefix_ids
-    prefixes.pluck(:prefix).map { |p| p != "10.5072" }
+    prefixes.pluck(:prefix)
   end
 
   # cumulative count clients by year
