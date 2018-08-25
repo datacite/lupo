@@ -25,6 +25,16 @@ describe Client, type: :model do
     end
   end
 
+  # describe "prefixes" do
+  #   let(:client)  { create(:client, provider: provider) }
+  #   let!(:prefix)  { create(:prefix, prefix: "10.5072") }
+
+  #   it "automatically adds 10.5072 prefix" do
+  #     prefix = client.prefixes
+  #     expect(client.prefixes.count).to eq(2)
+  #   end
+  # end
+
   describe "methods" do
     it "should not update the symbol" do
       client.update_attributes :symbol => client.symbol+'foo.bar'
@@ -40,6 +50,8 @@ describe Client, type: :model do
     #   expect(Doi.where(datacentre: client.id).count).to eq(5)
     #   expect(Doi.where(datacentre: target.id).count).to eq(0)
     #   client.target_id = target.symbol
+    #   client.save
+    #   sleep 1
     #   expect(Doi.where(datacentre: client.id).count).to eq(0)
     #   expect(Doi.where(datacentre: target.id).count).to eq(5)
     # end

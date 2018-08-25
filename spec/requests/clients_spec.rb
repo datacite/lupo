@@ -100,47 +100,51 @@ describe 'Clients', type: :request do
     end
   end
 
-  # Test suite for POST /clients
   describe 'POST /clients' do
-    # context 'when the request is valid' do
-    #   before { post '/clients', params: params.to_json, headers: headers }
-    #
-    #   it 'creates a client' do
-    #     expect(json.dig('data', 'attributes')).to eq("Imperial College")
-    #   end
-    #
-    #   it 'returns status code 201' do
-    #     expect(response).to have_http_status(201)
-    #   end
-    # end
+    context 'when the request is valid' do
+      before { post '/clients', params: params.to_json, headers: headers }
+    
+      it 'creates a client' do
+        attributes = json.dig('data', 'attributes')
+        expect(attributes["name"]).to eq("Imperial College")
+        expect(attributes["contact-name"]).to eq("Madonna")
+
+        relationships = json.dig('data', 'relationships')
+        expect(relationships.dig("provider", "data", "id")).to eq(provider.symbol.downcase)
+      end
+    
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+    end
 
     context 'when the request is invalid' do
       let(:params) do
         { "data" => { "type" => "clients",
                       "attributes" => {
                         "symbol" => provider.symbol + ".IMPERIAL",
-                        "name" => "Imperial College"},
+                        "name" => "Imperial College",
                         "contact-name" => "Madonna"
                       },
                       "relationships": {
                   			"provider": {
-                  				"data":{
+                  				"data": {
                   					"type": "providers",
-                  					"id": provider.symbol
+                  					"id": provider.symbol.downcase
                   				}
                   			}
-                  		} }
+                  		}} }
       end
 
       before { post '/clients', params: params.to_json, headers: headers }
 
-      it 'returns status code 500' do
-        expect(response).to have_http_status(500)
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
       end
 
-      # it 'returns a validation failure message' do
-      #   expect(json["errors"]).to eq("id"=>"contact_name", "title"=>"Contact name can't be blank")
-      # end
+      it 'returns a validation failure message' do
+        expect(json["errors"]).to eq([{"source"=>"contact_email", "title"=>"Can't be blank"}, {"source"=>"contact_email", "title"=>"Is invalid"}])
+      end
     end
   end
 
@@ -206,7 +210,6 @@ describe 'Clients', type: :request do
     end
   end
 
-  # Test suite for DELETE /clients/:id
   describe 'DELETE /clients/:id' do
     before { delete "/clients/#{client.uid}", headers: headers }
 

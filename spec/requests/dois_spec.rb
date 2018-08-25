@@ -463,7 +463,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
         expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
-        # expect(json.dig('data', 'relationships', 'resource-type')).to eq(2)
+        expect(json.dig('data', 'relationships', 'resource-type', 'data', 'id')).to eq("text")
 
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
         expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>"Text", "__content__"=>"BlogPosting")
@@ -815,6 +815,7 @@ describe "dois", type: :request do
       # end
 
       # it 'returns status code 201' do
+      #   expect(response.body).to eq(2)
       #   expect(response).to have_http_status(201)
       # end
 
@@ -906,11 +907,12 @@ describe "dois", type: :request do
       # end
 
       # it 'returns status code 201' do
+      #   expect(response.body).to eq(2)
       #   expect(response).to have_http_status(201)
       # end
 
       # it 'sets state to registered' do
-      #   #expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+      #   expect(json.dig('data', 'attributes', 'state')).to eq("draft")
       # end
     end
 
