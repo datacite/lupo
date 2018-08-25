@@ -107,7 +107,8 @@ module Crosscitable
       @xml = (from == "datacite") ? raw : datacite_xml
     rescue NoMethodError, ArgumentError => exception
       Bugsnag.notify(exception)
-      Rails.logger.error "Error " + exception.message + " for doi " + doi + "."
+      logger = Logger.new(STDOUT)
+      logger.error "Error " + exception.message + " for doi " + doi + "."
       @xml = nil
     end
 

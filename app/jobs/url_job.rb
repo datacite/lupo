@@ -7,7 +7,8 @@ class UrlJob < ActiveJob::Base
   # discard_on ActiveJob::DeserializationError
 
   def perform(doi)
-    Rails.logger.debug "Set URL for #{doi.doi}"
+    logger = Logger.new(STDOUT)
+    logger.debug "Set URL for #{doi.doi}"
     doi.send(:set_url)
   end
 end

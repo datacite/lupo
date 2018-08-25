@@ -48,7 +48,8 @@ class Handle
   def self.parse_data(result, options={})
     return nil if result.blank? || result['errors']
 
-    Rails.logger.debug result
+    logger = Logger.new(STDOUT)
+    logger.debug result
 
     if options[:id]
       response_code = result.body.dig("data", "responseCode")

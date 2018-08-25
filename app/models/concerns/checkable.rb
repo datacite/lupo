@@ -27,7 +27,8 @@ module Checkable
         "content-type" => content_type,
         "checked" => checked.utc.iso8601 }
     rescue URI::InvalidURIError => e
-      Rails.logger.error e.message
+      logger = Logger.new(STDOUT)
+      logger.error e.message
       
       { "status" => 404, 
         "content_type" => nil, 

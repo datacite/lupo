@@ -12,13 +12,15 @@ module Helpable
     include Bolognese::DoiUtils
 
     def register_url
+      logger = Logger.new(STDOUT)
+
       unless url.present?
-        Rails.logger.error "[Handle] Error updating DOI " + doi + ": url missing."
+        logger.error "[Handle] Error updating DOI " + doi + ": url missing."
         return OpenStruct.new(body: { "errors" => [{ "title" => "URL missing." }] })
       end
 
       unless client_id.present?
-        Rails.logger.error "[Handle] Error updating DOI " + doi + ": client ID missing."
+        logger.error "[Handle] Error updating DOI " + doi + ": client ID missing."
         return OpenStruct.new(body: { "errors" => [{ "title" => "Client ID missing." }] })
       end
 
@@ -55,11 +57,11 @@ module Helpable
       if [200, 201].include?(response.status)
         # update minted column after first successful registration in handle system
         self.update_columns(minted: Time.zone.now, updated: Time.zone.now) if minted.blank?
-        Rails.logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "."
+        logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "."
 
         response
       else
-        Rails.logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect
+        logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect
         response
       end
     end
@@ -71,7 +73,8 @@ module Helpable
       if response.status == 200
         response
       else
-        Rails.logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect
+        logger = Logger.new(STDOUT)
+        logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect
         response
       end
     end
@@ -114,7 +117,8 @@ module Helpable
       else
         text = "Error " + response.body["errors"].inspect
         
-        Rails.logger.error "[Handle] " + text
+        logger = Logger.new(STDOUT)
+        logger.error "[Handle] " + text
         User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
         response
       end

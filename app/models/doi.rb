@@ -410,7 +410,8 @@ class Doi < ActiveRecord::Base
     from_date ||= Time.zone.now - 1.month
     collection = Doi.where("updated < ?", from_date)
     collection.where("doi LIKE ?", "10.5072%").find_each do |d|
-      Rails.logger.info "Automatically deleted #{d.doi}, last updated #{d.updated.iso8601}."
+      logger = Logger.new(STDOUT)
+      logger.info "Automatically deleted #{d.doi}, last updated #{d.updated.iso8601}."
       d.destroy
     end
   end
@@ -466,7 +467,8 @@ class Doi < ActiveRecord::Base
     response = Maremma.head(identifier, limit: 0)
     if response.headers.present?
       update_column(:url, response.headers["location"])
-      Rails.logger.debug "Set URL #{response.headers["location"]} for DOI #{doi}"
+      logger = Logger.new(STDOUT)
+      logger.debug "Set URL #{response.headers["location"]} for DOI #{doi}"
     end
   end
 end

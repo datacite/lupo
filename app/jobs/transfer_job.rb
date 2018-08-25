@@ -7,7 +7,8 @@ class TransferJob < ActiveJob::Base
     if doi.present?
       doi.update_attributes(datacentre: options[:target_id])
     else
-      Rails.logger.info "[Transfer] Error transferring DOI " + doi_id + ": not found"
+      logger = Logger.new(STDOUT)
+      logger.info "[Transfer] Error transferring DOI " + doi_id + ": not found"
     end
   end
 end

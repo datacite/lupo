@@ -13,12 +13,15 @@ module Authenticable
       private_key = OpenSSL::PKey::RSA.new(ENV['JWT_PRIVATE_KEY'].to_s.gsub('\n', "\n"))
       JWT.encode(payload, private_key, 'RS256')
     rescue JSON::GeneratorError => error
-      Rails.logger.error "JSON::GeneratorError: " + error.message + " for " + payload
+      logger = Logger.new(STDOUT)
+      logger.error "JSON::GeneratorError: " + error.message + " for " + payload
       return nil
     end
 
     # decode JWT token using SHA-256 hash algorithm
     def decode_token(token)
+      logger = Logger.new(STDOUT)
+
       public_key = OpenSSL::PKey::RSA.new(ENV['JWT_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
       payload = (JWT.decode token, public_key, true, { :algorithm => 'RS256' }).first
 
@@ -27,14 +30,14 @@ module Authenticable
 
       payload
     rescue JWT::ExpiredSignature => error
-      Rails.logger.error "JWT::ExpiredSignature: " + error.message + " for " + token
+      logger.error "JWT::ExpiredSignature: " + error.message + " for " + token
       return { errors: "The token has expired." }
     rescue JWT::DecodeError => error
-      Rails.logger.error "JWT::DecodeError: " + error.message + " for " + token
+      logger.error "JWT::DecodeError: " + error.message + " for " + token
       return { errors: "The token could not be decoded." }
     rescue OpenSSL::PKey::RSAError => error
       public_key = ENV['JWT_PUBLIC_KEY'].presence || "nil"
-      Rails.logger.error "OpenSSL::PKey::RSAError: " + error.message + " for " + public_key
+      logger.error "OpenSSL::PKey::RSAError: " + error.message + " for " + public_key
       return { errors: "An error occured." }
     end
 
@@ -110,7 +113,8 @@ module Authenticable
       private_key = OpenSSL::PKey::RSA.new(ENV['JWT_PRIVATE_KEY'].to_s.gsub('\n', "\n"))
       JWT.encode(payload, private_key, 'RS256')
     rescue OpenSSL::PKey::RSAError => e
-      Rails.logger.error e.inspect
+      logger = Logger.new(STDOUT)
+      logger.error e.inspect
 
       nil
     end

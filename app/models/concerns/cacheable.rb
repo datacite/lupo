@@ -67,7 +67,8 @@ module Cacheable
         end
       end
     rescue ArgumentError, NoMethodError => e
-      Rails.logger.error "Error for " + doi + ": " + e.message
+      logger = Logger.new(STDOUT)
+      logger.error "Error for " + doi + ": " + e.message
       return {}
     end
 
