@@ -919,7 +919,7 @@ describe Doi, type: :model, vcr: true do
     it "generates turtle" do
       ttl = subject.turtle.split("\n")
       expect(ttl[0]).to eq("@prefix schema: <http://schema.org/> .")
-      expect(ttl[2]).to eq("<https://doi.org/10.5438/0000-00ss> a schema:CreativeWork .")
+      expect(ttl[2]).to eq("<https://doi.org/10.5438/0012> a schema:CreativeWork .")
     end
   end
 end
