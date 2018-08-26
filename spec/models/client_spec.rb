@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe Client, type: :model do
   let(:provider)  { create(:provider) }
+  let(:prefix)  { create(:prefix, prefix: "10.5072") }
   let(:client)  { create(:client, provider: provider) }
   let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET") }
 
@@ -26,12 +27,11 @@ describe Client, type: :model do
   end
 
   # describe "prefixes" do
-  #   let(:client)  { create(:client, provider: provider) }
-  #   let!(:prefix)  { create(:prefix, prefix: "10.5072") }
-
-  #   it "automatically adds 10.5072 prefix" do
-  #     prefix = client.prefixes
-  #     expect(client.prefixes.count).to eq(2)
+  #   it "set_test_prefix" do
+  #     provider_prefix = create(:provider_prefix, provider: provider, prefix: prefix)
+  #     client.send(:set_test_prefix)
+  #     expect(client.client_prefixes.first).to be_valid
+  #     expect(client).to be_valid
   #   end
   # end
 
