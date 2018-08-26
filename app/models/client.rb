@@ -47,9 +47,10 @@ class Client < ActiveRecord::Base
   has_many :provider_prefixes, through: :client_prefixes
 
   before_validation :set_defaults
-  before_create :set_test_prefix
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
+
+  after_create :set_test_prefix, unless: Proc.new { Rails.env.test? }
   after_create :send_welcome_email, unless: Proc.new { Rails.env.test? }
 
   attr_accessor :target_id
@@ -231,8 +232,6 @@ class Client < ActiveRecord::Base
   private
 
   def set_test_prefix
-    return if Rails.env.test? || prefixes.where(prefix: "10.5072").first || provider.prefixes.where(prefix: "10.5072").first.blank?
-
     prefixes << cached_prefix_response("10.5072")
   end
 

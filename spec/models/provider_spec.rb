@@ -19,6 +19,16 @@ describe Provider, type: :model do
     end
   end
 
+  # describe "prefixes" do
+  #   let!(:prefix)  { create(:prefix, prefix: "10.5072") }
+
+  #   it "set_test_prefix" do
+  #     provider.send(:set_test_prefix)
+  #     expect(provider.provider_prefixes.first).to be_valid
+  #     expect(provider).to be_valid
+  #   end
+  # end
+
   describe "to_jsonapi" do
     it "works" do
       params = provider.to_jsonapi

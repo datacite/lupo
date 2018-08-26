@@ -48,7 +48,7 @@ FactoryBot.define do
   end
 
   factory :prefix do
-    sequence(:prefix) { |n| "10.507#{n}" }
+    sequence(:prefix) { |n| "10.508#{n}" }
   end
 
   factory :provider do
