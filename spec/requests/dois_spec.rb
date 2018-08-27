@@ -375,6 +375,43 @@ describe "dois", type: :request do
       end
     end
 
+    context 'when we transfer a DOI' do
+      let(:doi) { create(:doi, doi: "10.24425/119495", client: client, state: "registered") }
+      let(:new_client) { create(:client, symbol: "#{provider.symbol}.magic", provider: provider, password: ENV['MDS_PASSWORD']) }
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "xml" => xml
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> new_client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+
+      before { put "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: admin_headers }
+
+      it 'returns no errors' do
+        puts json
+        expect(response).to have_http_status(200)
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
+      end
+
+      it 'updates the client id' do
+        expect(json.dig('data', 'relationships', 'client','data','id')).to eq(new_client.symbol.downcase)
+      end
+    end
+
     context 'when the resource_type_general changes' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:resource_type_general) { "data-paper" }
