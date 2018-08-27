@@ -30,6 +30,12 @@ We use Rspec for testing:
 bundle exec rspec
 ```
 
+Note when using a fresh test database you will need to instantiate the test db with:
+```bash
+bundle exec rake db:create RAILS_ENV=test
+```
+
+
 Follow along via [Github Issues](https://github.com/datacite/lupo/issues).
 
 ### Note on Patches/Pull Requests
