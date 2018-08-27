@@ -67,7 +67,7 @@ module Helpable
     end
 
     def get_url
-      url = "https://doi.org/api/handles/#{doi}?index=1"
+      url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}?index=1"
       response = Maremma.get(url, ssl_self_signed: true, timeout: 10)
 
       if response.status == 200
@@ -116,7 +116,7 @@ module Helpable
         response
       else
         text = "Error " + response.body["errors"].inspect
-        
+
         logger = Logger.new(STDOUT)
         logger.error "[Handle] " + text
         User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
