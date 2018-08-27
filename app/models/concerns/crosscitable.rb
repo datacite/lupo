@@ -58,6 +58,20 @@ module Crosscitable
       @description = value
     end
 
+    def content_size=(value)
+      return @content_size if value.nil? || value == content_size
+
+      attribute_will_change!(:content_size)
+      @content_size = value
+    end
+
+    def content_format=(value)
+      return @content_format if value.nil? || value == content_format
+
+      attribute_will_change!(:content_format)
+      @content_format = value
+    end
+
     # modified bolognese attributes
 
     def sandbox
