@@ -33,6 +33,12 @@ context "validations" do
     expect(subject.url).to eq("gs://example.org")
   end
 
+  it "URL valid dos" do
+    subject = build(:media, url: "dos://example.org")
+    expect(subject).to be_valid
+    expect(subject.url).to eq("dos://example.org")
+  end
+
   it "URL invalid" do
     subject = build(:media, url: "mailto:info@example.org")
     expect(subject).to_not be_valid

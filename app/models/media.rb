@@ -7,7 +7,7 @@ class Media < ActiveRecord::Base
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   validates_presence_of  :url
-  validates_format_of :url, :with => /\A(ftp|http|https|gs|s3):\/\/[\S]+/, if: :url?
+  validates_format_of :url, :with => /\A(ftp|http|https|gs|s3|dos):\/\/[\S]+/, if: :url?
   validates_format_of :media_type, :with => /[\S]+\/[\S]+/, if: :media_type?
   validates_associated :doi
 

@@ -861,6 +861,67 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
+  context "parses schema.org topmed" do
+    let(:xml) { ::Base64.strict_encode64(file_fixture('schema_org_topmed.json').read) }
+
+    subject { create(:doi, xml: xml, event: "publish") }
+
+    it "creates xml" do
+      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+      expect(doc.at_css("relatedIdentifiers").content).to eq("10.23725/2g4s-qv04")
+    end
+
+    it "valid model" do
+      expect(subject.valid?).to be true
+    end
+
+    it "validates against schema" do
+      expect(subject.validation_errors).to be_empty
+    end
+
+    it "title" do
+      expect(subject.title).to eq("NWD165827.recab.cram")
+    end
+
+    it "author" do
+      expect(subject.author).to eq("name"=>"TOPMed IRC", "type"=>"Organization")
+    end
+
+    it "content_url" do
+      expect(subject.content_url).to eq(["s3://cgp-commons-public/topmed_open_access/197bc047-e917-55ed-852d-d563cdbc50e4/NWD165827.recab.cram", "gs://topmed-irc-share/public/NWD165827.recab.cram"])
+    end
+
+    it "references" do
+      expect(subject.references).to eq("id"=>"https://doi.org/10.23725/2g4s-qv04", "type"=>"Dataset")
+    end
+
+    it "funding" do
+      expect(subject.funding).to eq("id"=>"https://doi.org/10.13039/100000050", "name"=>"National Heart, Lung, and Blood Institute (NHLBI)", "type"=>"Organization")
+    end
+
+    it "alternate_identifier" do
+      expect(subject.alternate_identifier).to eq([{"name"=>"3b33f6b9338fccab0901b7d317577ea3", "type"=>"md5"}, {"name"=>"ark:/99999/fk41CrU4eszeLUDe", "type"=>"minid"}, {"name"=>"dg.4503/c3d66dc9-58da-411c-83c4-dd656aa3c4b7", "type"=>"dataguid"}])
+    end
+
+    it "creates schema_version" do
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
+    end
+
+    it "metadata" do
+      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
+    end
+
+    it "namespace" do
+      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
+    end
+
+    it "media" do
+      expect(subject.media.pluck(:url)).to eq(["s3://cgp-commons-public/topmed_open_access/197bc047-e917-55ed-852d-d563cdbc50e4/NWD165827.recab.cram", "gs://topmed-irc-share/public/NWD165827.recab.cram"])
+    end
+  end
+
   describe "content negotiation" do
     let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
 

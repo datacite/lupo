@@ -93,6 +93,7 @@ class Doi < ActiveRecord::Base
   after_create :update_doi_count
   after_update :update_doi_count, if: :saved_change_to_datacentre?
   after_commit :update_url, on: [:create, :update]
+  after_commit :update_media, on: [:create, :update]
 
   before_save :set_defaults, :update_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
@@ -339,6 +340,16 @@ class Doi < ActiveRecord::Base
     return nil if current_user.nil? || !is_registered_or_findable? || %w(europ ethz).include?(provider_id)
 
     HandleJob.set(wait: 1.minute).perform_later(doi)
+  end
+
+  def update_media
+    return nil unless content_url.present?
+
+    media.delete_all
+
+    Array.wrap(content_url).each do |c|
+      media << Media.create(url: c, media_type: content_format)
+    end
   end
 
   # attributes to be sent to elasticsearch index
