@@ -196,7 +196,7 @@ class Doi < ActiveRecord::Base
       "updated" => updated,
       "client" => client.as_indexed_json,
       "resource_type" => resource_type.try(:as_indexed_json),
-      "media" => media.map { |m| m.try(:as_indexed_json) }
+      "media" => media.map { |m| m.try(:as_indexed_json) }
     }
   end
 
