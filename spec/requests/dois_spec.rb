@@ -375,7 +375,24 @@ describe "dois", type: :request do
       end
     end
 
-    context 'when we transfer a DOI as provider' do
+    context 'fail when we transfer a DOI as provider' do
+
+      let(:provider_bearer) { User.generate_token(uid: "datacite", role_id: "provider_admin", name: "DataCite", email:"support@datacite.org", provider_id: "datacite") }
+      let(:provider_headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + provider_bearer}}
+
+      let(:doi) { create(:doi, client: client) }
+      let(:new_client) { create(:client, symbol: "#{provider.symbol}.magic", provider: provider, password: ENV['MDS_PASSWORD']) }
+      ## Attributes MUST be empty
+      let(:valid_attributes) {file_fixture('transfer.json').read }
+
+      before { put "/dois/#{doi.doi}", params: valid_attributes, headers: provider_headers }
+
+      it 'returns no errors' do
+        expect(response).to have_http_status(403)
+      end
+    end
+
+    context 'passeswhen we transfer a DOI as provider' do
 
       let(:provider_bearer) { User.generate_token(uid: "datacite", role_id: "provider_admin", name: "DataCite", email:"support@datacite.org", provider_id: "datacite") }
       let(:provider_headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + provider_bearer}}
@@ -387,7 +404,8 @@ describe "dois", type: :request do
         {
           "data" => {
             "type" => "dois",
-            "attributes" => {},
+            "attributes" => {
+            },
             "relationships"=> {
               "client"=>  {
                 "data"=> {
