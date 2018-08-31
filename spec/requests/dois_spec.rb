@@ -403,11 +403,6 @@ describe "dois", type: :request do
       before { put "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: provider_headers }
 
       it 'returns no errors' do
-        # puts response.inspect
-        # # puts provider_bearer
-        # # puts Client.where(symbol: new_client.symbol.downcase).inspect
-        # # puts Client.where(symbol: client.symbol.downcase).inspect
-        # # puts Provider.where(symbol: provider.symbol.downcase).inspect
         expect(response).to have_http_status(200)
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       end
@@ -556,6 +551,51 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'state')).to eq("registered")
       end
     end
+
+    # context 'schema_org' do
+    #   let(:xml) { Base64.strict_encode64(file_fixture('schema_org_topmed.json').read) }
+    #   let(:valid_attributes) do
+    #     {
+    #       "data" => {
+    #         "type" => "dois",
+    #         "attributes" => {
+    #           "url" => "https://ors.datacite.org/doi:/10.14454/8na3-9s47",
+    #           "xml" => xml,
+    #           "source" => "test",
+    #           "event" => "register"
+    #         }
+    #       },
+    #       "relationships"=> {
+    #         "client"=>  {
+    #           "data"=> {
+    #             "type"=> "clients",
+    #             "id"=> client.symbol.downcase
+    #           }
+    #         }
+    #       }
+    #     }
+    #   end
+      
+    #   before { patch "/dois/10.14454/8na3-9s47", params: valid_attributes.to_json, headers: headers }
+
+    #   it 'updates the record' do
+    #     expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
+    #     expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+    #     expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+
+    #     xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+    #     expect(xml.dig("titles", "title")).to eq("Eating your own Dog Food")
+    #   end
+
+    #   it 'returns status code 200' do
+    #     puts response.body
+    #     expect(response).to have_http_status(200)
+    #   end
+
+    #   it 'sets state to draft' do
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+    #   end
+    # end
 
     context 'when the request uses schema 3' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite_schema_3.xml').read) }

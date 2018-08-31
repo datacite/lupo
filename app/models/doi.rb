@@ -93,6 +93,7 @@ class Doi < ActiveRecord::Base
   after_create :update_doi_count
   after_update :update_doi_count, if: :saved_change_to_datacentre?
   after_commit :update_url, on: [:create, :update]
+  after_commit :update_media, on: [:create, :update]
 
   before_save :set_defaults, :update_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
@@ -123,6 +124,16 @@ class Doi < ActiveRecord::Base
     indexes :provider_id,                    type: :keyword
     indexes :resource_type_id,               type: :keyword
     indexes :media_ids,                      type: :keyword
+    indexes :media,                          type: :object, properties: {
+      type: { type: :keyword },
+      id: { type: :keyword },
+      uid: { type: :keyword },
+      url: { type: :text },
+      media_type: { type: :keyword },
+      version: { type: :keyword },
+      created: { type: :date },
+      updated: { type: :date }
+    }
     indexes :resource_type_subtype,          type: :keyword
     indexes :version,                        type: :integer
     indexes :is_active,                      type: :keyword
@@ -184,7 +195,8 @@ class Doi < ActiveRecord::Base
       "created" => created,
       "updated" => updated,
       "client" => client.as_indexed_json,
-      "resource_type" => resource_type.try(:as_indexed_json)
+      "resource_type" => resource_type.try(:as_indexed_json),
+      "media" => media.map { |m| m.try(:as_indexed_json) }
     }
   end
 
@@ -330,6 +342,16 @@ class Doi < ActiveRecord::Base
     HandleJob.set(wait: 1.minute).perform_later(doi)
   end
 
+  def update_media
+    return nil unless content_url.present?
+
+    media.delete_all
+
+    Array.wrap(content_url).each do |c|
+      media << Media.create(url: c, media_type: content_format)
+    end
+  end
+
   # attributes to be sent to elasticsearch index
   def to_jsonapi
     attributes = {
@@ -364,6 +386,10 @@ class Doi < ActiveRecord::Base
 
   def metadata_version
     fetch_cached_metadata_version
+  end
+
+  def current_media
+    media.order('media.created DESC').first
   end
 
   def resource_type
@@ -437,7 +463,7 @@ class Doi < ActiveRecord::Base
 
   # update metadata when any virtual attribute has changed
   def update_metadata
-    changed_virtual_attributes = changed & %w(author title publisher date_published additional_type resource_type_general description)
+    changed_virtual_attributes = changed & %w(author title publisher date_published additional_type resource_type_general description content_size content_format)
 
     if changed_virtual_attributes.present?
       @xml = datacite_xml

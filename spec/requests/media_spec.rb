@@ -92,7 +92,7 @@ describe "Media", type: :request, :order => :defined, elasticsearch: true do
     end
 
     context 'when the media-type is missing' do
-      let(:not_valid_attributes) do
+      let(:valid_attributes) do
         {
           "data" => {
             "type" => "media",
@@ -103,14 +103,14 @@ describe "Media", type: :request, :order => :defined, elasticsearch: true do
           }
         }
       end
-      before { post "/dois/#{doi.doi}/media", params: not_valid_attributes.to_json, headers: headers }
+      before { post "/dois/#{doi.doi}/media", params: valid_attributes.to_json, headers: headers }
 
-      it 'returns status code 422' do
-        expect(response).to have_http_status(422)
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
       end
 
-      it 'returns a validation failure message' do
-        expect(json["errors"]).to eq([{"source"=>"media_type", "title"=>"Can't be blank"}])
+      it 'creates a media record' do
+        expect(json.dig('data', 'attributes', 'url')).to eq(url)
       end
     end
 
