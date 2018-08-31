@@ -31,8 +31,7 @@
       "event": null,
       "created": "2018-08-29T13:45:34.000Z",
       "registered": "2018-08-29T14:07:53.000Z",
-      "updated": "2018-08-29T14:07:53.000Z",
-      "mode": "transfer"
+      "updated": "2018-08-29T14:07:53.000Z"
     },
     "relationships": {
       "client": {

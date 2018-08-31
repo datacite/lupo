@@ -405,6 +405,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
+              "mode" => "transfer"
             },
             "relationships"=> {
               "client"=>  {
