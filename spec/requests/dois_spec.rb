@@ -376,31 +376,23 @@ describe "dois", type: :request do
     end
 
     context 'when we transfer a DOI as provider' do
-      let(:provider_bearer) { User.generate_token(role_id: "provider_admin", uid: provider.symbol.downcase, password: provider.password) }
+
+      let(:provider_bearer) { User.generate_token(uid: "datacite", role_id: "provider_admin", name: "DataCite", email:"support@datacite.org", provider_id: "datacite") }
       let(:provider_headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + provider_bearer}}
 
       let(:doi) { create(:doi, client: client) }
       let(:new_client) { create(:client, symbol: "#{provider.symbol}.magic", provider: provider, password: ENV['MDS_PASSWORD']) }
-      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      ## Attributes MUST be empty
       let(:valid_attributes) do
         {
           "data" => {
             "type" => "dois",
-            "attributes" => {
-              "url" => "http://www.bl.uk/pdf/pat.pdf",
-              "xml" => xml
-            },
+            "attributes" => {},
             "relationships"=> {
               "client"=>  {
                 "data"=> {
                   "type"=> "clients",
                   "id"=> new_client.symbol.downcase
-                }
-              },
-              "provider"=>  {
-                "data"=> {
-                  "type"=> "providers",
-                  "id"=> provider.symbol.downcase
                 }
               }
             }
@@ -411,16 +403,18 @@ describe "dois", type: :request do
       before { put "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: provider_headers }
 
       it 'returns no errors' do
-        # puts provider_bearer
-        puts Client.where(symbol: new_client.symbol.downcase).inspect
-        puts Client.where(symbol: client.symbol.downcase).inspect
-        puts Provider.where(symbol: provider.symbol.downcase).inspect
+        # puts response.inspect
+        # # puts provider_bearer
+        # # puts Client.where(symbol: new_client.symbol.downcase).inspect
+        # # puts Client.where(symbol: client.symbol.downcase).inspect
+        # # puts Provider.where(symbol: provider.symbol.downcase).inspect
         expect(response).to have_http_status(200)
-        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       end
 
       it 'updates the client id' do
         expect(json.dig('data', 'relationships', 'client','data','id')).to eq(new_client.symbol.downcase)
+        expect(json.dig('data', 'attributes', 'title')).to eq(doi.title)
       end
     end
 

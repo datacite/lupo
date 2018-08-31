@@ -1,0 +1,53 @@
+{
+  "data": {
+    "id": "10.23725/at5e-0s42",
+    "attributes": {
+      "identifier": "https://handle.test.datacite.org/10.23725/at5e-0s42",
+      "doi": "10.23725/at5e-0s42",
+      "confirm-doi": null,
+      "prefix": "10.23725",
+      "suffix": "at5e-0s42",
+      "url": "http://example.com",
+      "author": [{
+        "type": "Person",
+        "id": "https://orcid.org/0000-0003-1419-2405",
+        "name": "Fenner, Martin",
+        "givenName": "Martin",
+        "familyName": "Fenner"
+      }],
+      "title": "Eating your own Dog Food",
+      "publisher": "DataCite",
+      "published": "2016",
+      "description": "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for...",
+      "license": null,
+      "xml": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPG5zMDpyZXNvdXJjZSB4bWxuczp4c2k9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvWE1MU2NoZW1hLWluc3RhbmNlIiB4bWxuczpuczA9Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IiB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTQvbWV0YWRhdGEueHNkIj4KICA8bnMwOmlkZW50aWZpZXIgaWRlbnRpZmllclR5cGU9IkRPSSI+MTAuMjM3MjUvYXQ1ZS0wczQyPC9uczA6aWRlbnRpZmllcj4KICA8bnMwOmNyZWF0b3JzPgogICAgPG5zMDpjcmVhdG9yPgogICAgICA8bnMwOmNyZWF0b3JOYW1lPkZlbm5lciwgTWFydGluPC9uczA6Y3JlYXRvck5hbWU+CiAgICAgIDxuczA6Z2l2ZW5OYW1lPk1hcnRpbjwvbnMwOmdpdmVuTmFtZT4KICAgICAgPG5zMDpmYW1pbHlOYW1lPkZlbm5lcjwvbnMwOmZhbWlseU5hbWU+CiAgICAgIDxuczA6bmFtZUlkZW50aWZpZXIgc2NoZW1lVVJJPSJodHRwOi8vb3JjaWQub3JnLyIgbmFtZUlkZW50aWZpZXJTY2hlbWU9Ik9SQ0lEIj4wMDAwLTAwMDMtMTQxOS0yNDA1PC9uczA6bmFtZUlkZW50aWZpZXI+CiAgICA8L25zMDpjcmVhdG9yPgogIDwvbnMwOmNyZWF0b3JzPgogIDxuczA6dGl0bGVzPgogICAgPG5zMDp0aXRsZT5FYXRpbmcgeW91ciBvd24gRG9nIEZvb2Q8L25zMDp0aXRsZT4KICA8L25zMDp0aXRsZXM+CiAgPG5zMDpwdWJsaXNoZXI+RGF0YUNpdGU8L25zMDpwdWJsaXNoZXI+CiAgPG5zMDpwdWJsaWNhdGlvblllYXI+MjAxNjwvbnMwOnB1YmxpY2F0aW9uWWVhcj4KICA8bnMwOnJlc291cmNlVHlwZSByZXNvdXJjZVR5cGVHZW5lcmFsPSJUZXh0Ij5CbG9nUG9zdGluZzwvbnMwOnJlc291cmNlVHlwZT4KICA8bnMwOmFsdGVybmF0ZUlkZW50aWZpZXJzPgogICAgPG5zMDphbHRlcm5hdGVJZGVudGlmaWVyIGFsdGVybmF0ZUlkZW50aWZpZXJUeXBlPSJMb2NhbCBhY2Nlc3Npb24gbnVtYmVyIj5NUy00OS0zNjMyLTUwODM8L25zMDphbHRlcm5hdGVJZGVudGlmaWVyPgogIDwvbnMwOmFsdGVybmF0ZUlkZW50aWZpZXJzPgogIDxuczA6c3ViamVjdHM+CiAgICA8bnMwOnN1YmplY3Q+ZGF0YWNpdGU8L25zMDpzdWJqZWN0PgogICAgPG5zMDpzdWJqZWN0PmRvaTwvbnMwOnN1YmplY3Q+CiAgICA8bnMwOnN1YmplY3Q+bWV0YWRhdGE8L25zMDpzdWJqZWN0PgogIDwvbnMwOnN1YmplY3RzPgogIDxuczA6ZGF0ZXM+CiAgICA8bnMwOmRhdGUgZGF0ZVR5cGU9IkNyZWF0ZWQiPjIwMTYtMTItMjA8L25zMDpkYXRlPgogICAgPG5zMDpkYXRlIGRhdGVUeXBlPSJJc3N1ZWQiPjIwMTYtMTItMjA8L25zMDpkYXRlPgogICAgPG5zMDpkYXRlIGRhdGVUeXBlPSJVcGRhdGVkIj4yMDE2LTEyLTIwPC9uczA6ZGF0ZT4KICA8L25zMDpkYXRlcz4KICA8bnMwOnJlbGF0ZWRJZGVudGlmaWVycz4KICAgIDxuczA6cmVsYXRlZElkZW50aWZpZXIgcmVsYXRlZElkZW50aWZpZXJUeXBlPSJET0kiIHJlbGF0aW9uVHlwZT0iUmVmZXJlbmNlcyI+MTAuNTQzOC8wMDEyPC9uczA6cmVsYXRlZElkZW50aWZpZXI+CiAgICA8bnMwOnJlbGF0ZWRJZGVudGlmaWVyIHJlbGF0ZWRJZGVudGlmaWVyVHlwZT0iRE9JIiByZWxhdGlvblR5cGU9IlJlZmVyZW5jZXMiPjEwLjU0MzgvNTVFNS1UNUMwPC9uczA6cmVsYXRlZElkZW50aWZpZXI+CiAgICA8bnMwOnJlbGF0ZWRJZGVudGlmaWVyIHJlbGF0ZWRJZGVudGlmaWVyVHlwZT0iRE9JIiByZWxhdGlvblR5cGU9IklzUGFydE9mIj4xMC41NDM4LzAwMDAtMDBTUzwvbnMwOnJlbGF0ZWRJZGVudGlmaWVyPgogIDwvbnMwOnJlbGF0ZWRJZGVudGlmaWVycz4KICA8bnMwOnZlcnNpb24+MS4wPC9uczA6dmVyc2lvbj4KICA8bnMwOmRlc2NyaXB0aW9ucz4KICAgIDxuczA6ZGVzY3JpcHRpb24gZGVzY3JpcHRpb25UeXBlPSJBYnN0cmFjdCI+RWF0aW5nIHlvdXIgb3duIGRvZyBmb29kIGlzIGEgc2xhbmcgdGVybSB0byBkZXNjcmliZSB0aGF0IGFuIG9yZ2FuaXphdGlvbiBzaG91bGQgaXRzZWxmIHVzZSB0aGUgcHJvZHVjdHMgYW5kIHNlcnZpY2VzIGl0IHByb3ZpZGVzLiBGb3IgRGF0YUNpdGUgdGhpcyBtZWFucyB0aGF0IHdlIHNob3VsZCB1c2UgRE9JcyB3aXRoIGFwcHJvcHJpYXRlIG1ldGFkYXRhIGFuZCBzdHJhdGVnaWVzIGZvciBsb25nLXRlcm0gcHJlc2VydmF0aW9uIGZvci4uLjwvbnMwOmRlc2NyaXB0aW9uPgogIDwvbnMwOmRlc2NyaXB0aW9ucz4KPC9uczA6cmVzb3VyY2U+",
+      "resource-type-subtype": "BlogPosting",
+      "version": "1.0",
+      "metadata-version": "1",
+      "schema-version": "http://datacite.org/schema/kernel-4",
+      "is-active": true,
+      "source": "mds",
+      "state": "findable",
+      "event": null,
+      "created": "2018-08-29T13:45:34.000Z",
+      "registered": "2018-08-29T14:07:53.000Z",
+      "updated": "2018-08-29T14:07:53.000Z",
+      "mode": "transfer"
+    },
+    "relationships": {
+      "client": {
+        "data": {
+          "type": "clients",
+          "id": "datacite.rph"
+        }
+      },
+      "resource-type": {
+        "data": {
+          "type": "resource-types",
+          "id": "text"
+        }
+      }
+    },
+    "type": "dois"
+  }
+}
