@@ -62,6 +62,16 @@ Rails.application.routes.draw do
   resources :data_centers, only: [:show, :index], constraints: { :id => /.+/ }, path: "/data-centers"
 
   # content negotiation
+  get '/application/vnd.datacite.datacite+xml/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :datacite }
+  get '/application/vnd.datacite.datacite+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :datacite_json }
+  get '/application/vnd.crosscite.crosscite+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :crosscite }
+  get '/application/vnd.schemaorg.ld+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :schema_org }
+  get '/application/vnd.codemeta.ld+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :codemeta }
+  get '/application/vnd.citationstyles.csl+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :citeproc }
+  get '/application/vnd.jats+xml/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :jats }
+  get '/application/x-bibtex/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :bibtex }
+  get '/application/x-research-info-systems/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :ris }
+  get '/text/x-bibliography/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :citation }
   resources :index, path: '/', constraints: { :id => /.+/ }, only: [:show, :index]
 
   # rescue routing errors

@@ -1,0 +1,72 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://citation.crosscite.org/format?locale=en-US&style=ieee
+    body:
+      encoding: UTF-8
+      string: |-
+        {
+          "type": "article-journal",
+          "id": "https://handle.test.datacite.org/10.14454/nofsl19iw8",
+          "categories": [
+            "datacite",
+            "doi",
+            "metadata"
+          ],
+          "author": [
+            {
+              "family": "Fenner",
+              "given": "Martin"
+            }
+          ],
+          "issued": {
+            "date-parts": [
+              [
+                2016,
+                12,
+                20
+              ]
+            ]
+          },
+          "abstract": "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for...",
+          "DOI": "10.14454/NOFSL19IW8",
+          "publisher": "DataCite",
+          "title": "Eating your own Dog Food",
+          "version": "1.0"
+        }
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.1.1; +https://github.com/datacite/maremma)
+      Content-Type:
+      - application/json;charset=UTF-8
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 01 Sep 2018 07:58:18 GMT
+      Content-Type:
+      - text/plain
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Powered-By:
+      - Phusion Passenger 5.2.3
+      Server:
+      - nginx/1.12.2 + Phusion Passenger 5.2.3
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type,Accept,Accept-Encoding,Origin,User-Agent,Cache-Control,Keep-Alive
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        WzFdTS4gRmVubmVyLCDigJhFYXRpbmcgeW91ciBvd24gRG9nIEZvb2TigJksIERlYy4gMjAxNi4K
+    http_version: 
+  recorded_at: Sat, 01 Sep 2018 07:58:18 GMT
+recorded_with: VCR 3.0.3
