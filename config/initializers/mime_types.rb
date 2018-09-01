@@ -34,16 +34,26 @@ ActionController::Renderers.add :datacite do |obj, options|
     disposition: "attachment; filename=#{filename}.xml"
 end
 
-%w(datacite_json schema_org crosscite turtle citeproc codemeta).each do |f|
+ActionController::Renderers.add :turtle do |obj, options|
+  uri = Addressable::URI.parse(obj.identifier)
+  data = obj.send(:turtle)
+
+  filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
+  send_data data.to_s, type: Mime[:turtle],
+    disposition: "attachment; filename=#{filename}.ttl"
+end
+
+%w(datacite_json schema_org crosscite citeproc codemeta).each do |f|
   ActionController::Renderers.add f.to_sym do |obj, options|
+    uri = Addressable::URI.parse(obj.identifier)
     data = obj.send(f)
 
-    self.content_type ||= Mime[f.to_sym]
-    self.response_body = data.to_s
+    filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
+    send_data data.to_s, type: Mime[f.to_sym],
+      disposition: "attachment; filename=#{filename}.json"
   end
 end
 
-# these Mime types send a file for download. We give proper filename and extension
 %w(crossref rdf_xml jats).each do |f|
   ActionController::Renderers.add f.to_sym do |obj, options|
     uri = Addressable::URI.parse(obj.identifier)
