@@ -31,7 +31,7 @@ describe "doi:index_by_day", elasticsearch: true do
   include_context "rake"
 
   let!(:doi)  { create_list(:doi, 10) }
-  let(:output) { "DOIs updated on 2018-01-04 indexed with 0 errors.\n" }
+  let(:output) { "DOIs updated on 2018-01-04 indexed.\n" }
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")

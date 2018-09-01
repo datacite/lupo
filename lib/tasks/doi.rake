@@ -20,8 +20,8 @@ namespace :doi do
   task :index_by_day => :environment do
     from_date = ENV['FROM_DATE'] || Date.current.strftime("%F")
 
-    count = Doi.index_by_day(from_date: from_date)
-    puts "DOIs updated on #{from_date} indexed with #{count} errors."
+    Doi.index_by_day(from_date: from_date)
+    puts "DOIs updated on #{from_date} indexed."
   end
 
   desc 'Set state'

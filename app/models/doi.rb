@@ -252,17 +252,21 @@ class Doi < ActiveRecord::Base
     from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
     until_date = from_date + 1.day
     errors = 0
+    count = 0
 
-    Doi.where("updated >= ?", from_date.strftime("%F") + " 00:00:00").where("updated <= ?", until_date.strftime("%F") + " 00:00:00").find_in_batches(batch_size: 1000) do |dois|
+    logger = Logger.new(STDOUT)
+
+    Doi.where("updated >= ?", from_date.strftime("%F") + " 00:00:00").where("updated <= ?", until_date.strftime("%F") + " 00:00:00").find_in_batches(batch_size: 100) do |dois|
       response = Doi.__elasticsearch__.client.bulk \
         index:   Doi.index_name,
         type:    Doi.document_type,
         body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
 
       errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
+      count += dois.length
     end
 
-    errors
+    logger.info "[Elasticsearch] #{errors} errors indexing #{count} DOIs updated on #{from_date.strftime("%F")}."
   end
 
   def uid
