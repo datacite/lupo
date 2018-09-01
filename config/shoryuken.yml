@@ -1,5 +1,5 @@
 polling_strategy: StrictPriority
-concurrency: 25
+concurrency: 15
 delay: 0
 pidfile: tmp/pids/shoryuken.pid
 queues:
