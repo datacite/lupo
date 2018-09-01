@@ -229,7 +229,7 @@ class Doi < ActiveRecord::Base
     __elasticsearch__.search({
       query: {
         term: {
-          doi: id
+          doi: id.downcase
         }
       },
       aggregations: query_aggregations
