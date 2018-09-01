@@ -134,6 +134,10 @@ class Doi < ActiveRecord::Base
       created: { type: :date },
       updated: { type: :date }
     }
+    indexes :alternate_identifier,           type: :object, properties: {
+      type: { type: :keyword },
+      name: { type: :keyword }
+    }
     indexes :resource_type_subtype,          type: :keyword
     indexes :version,                        type: :integer
     indexes :is_active,                      type: :keyword
@@ -215,7 +219,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['doi^10', 'title_normalized^10', 'author_names^10', 'author_normalized.name^10', 'author_normalized.id^10', 'publisher^10', 'description_normalized^10', 'resource_type_id^10', 'resource_type_subtype^10', '_all']
+    ['doi^10', 'title_normalized^10', 'author_names^10', 'author_normalized.name^10', 'author_normalized.id^10', 'publisher^10', 'description_normalized^10', 'resource_type_id^10', 'resource_type_subtype^10', 'alternate_identifier', '_all']
   end
 
   def self.find_by_id(id, options={})
@@ -247,9 +251,7 @@ class Doi < ActiveRecord::Base
     from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current - 1.day
     until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
 
-    Doi.where("updated >= ?", from_date.strftime("%F")).where("updated <= ?", until_date.strftime("%F")).find_each do |doi|
-      IndexJob.set(queue: :lupo_background).perform_later(doi)
-    end
+    Doi.import query: -> { where("updated >= ?", from_date.strftime("%F")).where("updated <= ?", until_date.strftime("%F")) }, batch_size: 1000
   end
 
   def uid

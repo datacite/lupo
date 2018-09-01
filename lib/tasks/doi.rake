@@ -21,8 +21,8 @@ namespace :doi do
     from_date = ENV['FROM_DATE'] || (Date.current - 1.day).strftime("%F")
     until_date = ENV['UNTIL_DATE'] || Date.current.strftime("%F")
 
-    response = Doi.index(from_date: from_date, until_date: until_date)
-    puts "Queued indexing for #{response} DOIs updated from #{from_date} - #{until_date}."
+    Doi.index(from_date: from_date, until_date: until_date)
+    puts "Queued indexing for DOIs updated from #{from_date} - #{until_date}."
   end
 
   desc 'Set state'
