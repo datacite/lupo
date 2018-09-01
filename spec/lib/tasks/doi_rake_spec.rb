@@ -18,7 +18,7 @@ describe "doi:index", elasticsearch: true do
     expect(capture_stdout { subject.invoke }).to eq(output)
   end
 
-  it "should enqueue an DoiIndexByMonthJob" do
+  it "should enqueue an DoiIndexByDayJob" do
     expect {
       capture_stdout { subject.invoke }
     }.to change(enqueued_jobs, :size).by(243)
