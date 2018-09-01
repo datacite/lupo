@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "doi:index_by_month", elasticsearch: true do
+describe "doi:index", elasticsearch: true do
   include ActiveJob::TestHelper
   include_context "rake"
 
@@ -21,17 +21,17 @@ describe "doi:index_by_month", elasticsearch: true do
   it "should enqueue an DoiIndexByMonthJob" do
     expect {
       capture_stdout { subject.invoke }
-    }.to change(enqueued_jobs, :size).by(8)
-    expect(enqueued_jobs.last[:job]).to be(DoiIndexByMonthJob)
+    }.to change(enqueued_jobs, :size).by(243)
+    expect(enqueued_jobs.last[:job]).to be(DoiIndexByDayJob)
   end
 end
 
-describe "doi:index", elasticsearch: true do
+describe "doi:index_by_day", elasticsearch: true do
   include ActiveJob::TestHelper
   include_context "rake"
 
   let!(:doi)  { create_list(:doi, 10) }
-  let(:output) { "Queued indexing for DOIs updated from 2018-01-04 - 2018-08-05.\n" }
+  let(:output) { "DOIs updated on 2018-01-04 indexed with 0 errors.\n" }
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")

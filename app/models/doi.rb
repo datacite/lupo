@@ -182,6 +182,7 @@ class Doi < ActiveRecord::Base
       "suffix" => suffix,
       "resource_type_id" => resource_type_id,
       "resource_type_subtype" => resource_type_subtype,
+      "alternate_identifier" => alternate_identifier,
       "b_version" => b_version,
       "is_active" => is_active,
       "last_landing_page_status" => last_landing_page_status,
@@ -235,23 +236,33 @@ class Doi < ActiveRecord::Base
     })
   end
 
-  def self.index_by_month(options={})
+  def self.index(options={})
     from_date = (options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current).beginning_of_month
     until_date = (options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current).end_of_month
 
     # get first day of every month between from_date and until_date
-    (from_date..until_date).select {|d| d.day == 1}.each do |m|
-      DoiIndexByMonthJob.perform_later(from_date: m.strftime("%F"), until_date: m.end_of_month.strftime("%F"))
+    (from_date..until_date).each do |d|
+      DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"))
     end
 
     "Queued indexing for DOIs updated from #{from_date.strftime("%F")} until #{until_date.strftime("%F")}."
   end
 
-  def self.index(options={})
-    from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current - 1.day
-    until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
+  def self.index_by_day(options={})
+    from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
+    until_date = from_date + 1.day
+    errors = 0
 
-    Doi.import query: -> { where("updated >= ?", from_date.strftime("%F")).where("updated <= ?", until_date.strftime("%F")) }, batch_size: 1000
+    Doi.where("updated >= ?", from_date.strftime("%F") + " 00:00:00").where("updated <= ?", until_date.strftime("%F") + " 00:00:00").find_in_batches(batch_size: 1000) do |dois|
+      response = Doi.__elasticsearch__.client.bulk \
+        index:   Doi.index_name,
+        type:    Doi.document_type,
+        body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
+
+      errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
+    end
+
+    errors
   end
 
   def uid
