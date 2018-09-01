@@ -223,10 +223,12 @@ class DoisController < ApplicationController
     exists = @doi.present?
 
     if exists
-      if safe_params[:xml].present? || safe_params[:url].present? || safe_params[:event].present?
+      if params[:data][:attributes][:mode] == "transfer"
+        authorize! :transfer, @doi
+      elsif safe_params[:xml].present? || safe_params[:url].present? || safe_params[:event].present?
         authorize! :update, @doi
       else
-        authorize! :transfer, @doi
+        fail ActionController::ParameterMissing 
       end
 
       @doi.assign_attributes(safe_params.except(:doi))
@@ -391,7 +393,7 @@ class DoisController < ApplicationController
       last_landing_page_status: p["last-landing-page-status"],
       last_landing_page_status_check: p["last-landing-page-status-check"],
       last_landing_page_content_type: p["last-landing-page-content-type"]
-    ).except("confirm-doi", :identifier, :prefix, :suffix, "resource-type-subtype", "metadata-version", "schema-version", :state, "is-active", :created, :registered, :updated, :mode, "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type")
+    ).except("confirm-doi", :identifier, :prefix, :suffix, "resource-type-subtype", "metadata-version", "schema-version", :state, :mode, "is-active", :created, :registered, :updated, "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type")
   end
 
   def underscore_str(str)
