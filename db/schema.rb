@@ -116,6 +116,7 @@ ActiveRecord::Schema.define(version: 2018_09_04_161700) do
     t.binary "is_ref_quality", limit: 1
     t.integer "last_landing_page_status"
     t.datetime "last_landing_page_status_check"
+    t.json "last_landing_page_status_result"
     t.string "last_metadata_status"
     t.datetime "updated"
     t.integer "version"
@@ -127,7 +128,6 @@ ActiveRecord::Schema.define(version: 2018_09_04_161700) do
     t.string "aasm_state"
     t.string "reason"
     t.string "source", limit: 191
-    t.text "last_landing_page_status_result", limit: 16777215
     t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
     t.index ["datacentre"], name: "FK5605B47847B5F5FF"
     t.index ["doi"], name: "doi", unique: true
