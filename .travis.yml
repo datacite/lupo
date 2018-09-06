@@ -24,10 +24,10 @@ before_install:
   - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.1.1.deb
   - sudo dpkg -i --force-confnew elasticsearch-5.1.1.deb
   - sudo service elasticsearch start
-  - mysql -e 'CREATE DATABASE lupo_test;'
-  - sudo mysql -e "use mysql; update user set authentication_string=PASSWORD('') where User='root'; update user set plugin='mysql_native_password';FLUSH PRIVILEGES;"
-  - sudo mysql_upgrade
+  - sudo mysql -e "use mysql; update user set authentication_string=PASSWORD('new_password') where User='root'; update user set plugin='mysql_native_password';FLUSH PRIVILEGES;"
+  - sudo mysql_upgrade -u root -pnew_password
   - sudo service mysql restart
+  - mysql -e 'CREATE DATABASE lupo_test;'
 
 install:
   - travis_retry bundle install
