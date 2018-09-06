@@ -980,7 +980,7 @@ describe Doi, type: :model, vcr: true do
     it "generates turtle" do
       ttl = subject.turtle.split("\n")
       expect(ttl[0]).to eq("@prefix schema: <http://schema.org/> .")
-      expect(ttl[2]).to eq("<https://doi.org/10.5438/0000-00ss> a schema:Periodical .")
+      expect(ttl[2]).to eq("<https://handle.test.datacite.org/10.5438/4k3m-nyvg> a schema:ScholarlyArticle;")
     end
   end
 end
