@@ -660,42 +660,42 @@ describe "dois", type: :request do
       end
     end
 
-    context 'when the request is a large xml file' do
-      let(:xml) { Base64.strict_encode64(file_fixture('large_file.xml').read) }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "doi" => "10.14454/10703",
-              "url" => "http://www.bl.uk/pdf/patspec.pdf",
-              "xml" => xml,
-              "event" => "register"
-            },
-            "relationships"=> {
-              "client"=>  {
-                "data"=> {
-                  "type"=> "clients",
-                  "id"=> client.symbol.downcase
-                }
-              }
-            }
-          }
-        }
-      end
+    # context 'when the request is a large xml file' do
+    #   let(:xml) { Base64.strict_encode64(file_fixture('large_file.xml').read) }
+    #   let(:valid_attributes) do
+    #     {
+    #       "data" => {
+    #         "type" => "dois",
+    #         "attributes" => {
+    #           "doi" => "10.14454/10703",
+    #           "url" => "http://www.bl.uk/pdf/patspec.pdf",
+    #           "xml" => xml,
+    #           "event" => "register"
+    #         },
+    #         "relationships"=> {
+    #           "client"=>  {
+    #             "data"=> {
+    #               "type"=> "clients",
+    #               "id"=> client.symbol.downcase
+    #             }
+    #           }
+    #         }
+    #       }
+    #     }
+    #   end
 
-      before { post '/dois', params: valid_attributes.to_json, headers: headers }
+    #   before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
-      it 'creates a Doi' do
-        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'title')).to eq("A dataset with a large file for testing purpose. Will be a but over 2.5 MB")
-      end
+    #   it 'creates a Doi' do
+    #     expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+    #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+    #     expect(json.dig('data', 'attributes', 'title')).to eq("A dataset with a large file for testing purpose. Will be a but over 2.5 MB")
+    #   end
 
-      it 'returns status code 201' do
-        expect(response).to have_http_status(201)
-      end
-    end
+    #   it 'returns status code 201' do
+    #     expect(response).to have_http_status(201)
+    #   end
+    # end
 
     context 'when the request uses namespaced xml' do
       let(:xml) { Base64.strict_encode64(file_fixture('ns0.xml').read) }
