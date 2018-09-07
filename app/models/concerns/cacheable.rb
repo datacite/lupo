@@ -3,7 +3,7 @@ module Cacheable
 
   included do
     def cached_doi_count(options={})
-      Rails.cache.fetch("cached_doi_count/#{id}", expires_in: 6.hours, force: options[:force]) do
+      Rails.cache.fetch("cached_doi_count/#{id}", expires_in: 24.hours, force: options[:force]) do
         return [] if Rails.env.test?
 
         if self.class.name == "Provider" && symbol != "ADMIN"
