@@ -237,10 +237,10 @@ class Doi < ActiveRecord::Base
   end
 
   def self.index(options={})
-    from_date = (options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current).beginning_of_month
-    until_date = (options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current).end_of_month
+    from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
+    until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
 
-    # get first day of every month between from_date and until_date
+    # get every day between from_date and until_date
     (from_date..until_date).each do |d|
       DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"))
     end
