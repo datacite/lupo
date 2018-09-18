@@ -8,7 +8,7 @@ describe "doi:index", elasticsearch: true do
   ENV['UNTIL_DATE'] = "2018-08-05"
 
   let!(:doi)  { create_list(:doi, 10) }
-  let(:output) { "Queued indexing for DOIs updated from 2018-01-01 until 2018-08-31.\n" }
+  let(:output) { "Queued indexing for DOIs updated from 2018-01-04 until 2018-08-05.\n" }
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")
@@ -21,7 +21,7 @@ describe "doi:index", elasticsearch: true do
   it "should enqueue an DoiIndexByDayJob" do
     expect {
       capture_stdout { subject.invoke }
-    }.to change(enqueued_jobs, :size).by(243)
+    }.to change(enqueued_jobs, :size).by(214)
     expect(enqueued_jobs.last[:job]).to be(DoiIndexByDayJob)
   end
 end
