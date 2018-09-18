@@ -26,7 +26,7 @@ class MembersController < ApplicationController
     elsif params[:ids].present?
       response = Provider.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      response = Provider.query(params[:query], year: params[:year], region: params[:region], page: page, sort: sort)
+      response = Provider.query(params[:query], all_members: true, year: params[:year], region: params[:region], page: page, sort: sort)
     end
 
     total = response.results.total
@@ -34,7 +34,7 @@ class MembersController < ApplicationController
     years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
     regions = total > 0 ? facet_by_region(response.response.aggregations.regions.buckets) : nil
 
-    @providers = response.results.results
+    @members = response.results.results
 
     options = {}
     options[:meta] = {
@@ -47,7 +47,7 @@ class MembersController < ApplicationController
 
     options[:links] = {
       self: request.original_url,
-      next: @providers.blank? ? nil : request.base_url + "/providers?" + {
+      next: @members.blank? ? nil : request.base_url + "/members?" + {
         query: params[:query],
         year: params[:year],
         region: params[:region],
@@ -58,7 +58,7 @@ class MembersController < ApplicationController
     options[:include] = @include
     options[:is_collection] = true
 
-    render json: MemberSerializer.new(@providers, options).serialized_json, status: :ok
+    render json: MemberSerializer.new(@members, options).serialized_json, status: :ok
   end
 
   def show
