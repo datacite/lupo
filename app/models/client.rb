@@ -96,14 +96,20 @@ class Client < ActiveRecord::Base
         repository_url: { type: :text },
         repository_contacts: { type: :text },
         description: { type: :text },
-        certificates: { type: :object },
-        types: { type: :object },
-        additional_names: { type: :object },
-        subjects: { type: :object },
-        content_types: { type: :object },
-        provider_types: { type: :object },
-        keywords: { type: :object },
-        software: { type: :object },
+        certificates: { type: :text },
+        types: { type: :text },
+        additional_names: { type: :text },
+        subjects: { type: :text },
+        content_types: { type: :text },
+        provider_types: { type: :text },
+        keywords: { type: :text },
+        institutions: { type: :text },
+        data_accesses: { type: :text },
+        data_uploads: { type: :text },
+        data_upload_licenses: { type: :text },
+        pid_systems: { type: :text },
+        apis: { type: :text },
+        software: { type: :text },
         created: { type: :date },
         updated: { type: :date }
       }
@@ -136,7 +142,7 @@ class Client < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['symbol^10', 'name^10', 'contact_name^10', 'contact_email^10', 'domains', 'url', 'repository.software.name^3', '_all']
+    ['symbol^10', 'name^10', 'contact_name^10', 'contact_email^10', 'domains', 'url', 'repository.software.name^3', 'repository.subjects.text^3', 'repository.certificates.text^3', '_all']
   end
 
   def self.query_aggregations
