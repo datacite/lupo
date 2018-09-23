@@ -88,31 +88,7 @@ class Client < ActiveRecord::Base
 
       # include parent objects
       indexes :provider,      type: :object
-      indexes :repository,    type: :object, properties: {
-        type: { type: :keyword },
-        id: { type: :keyword },
-        url: { type: :text },
-        repository_name: { type: :text },
-        repository_url: { type: :text },
-        repository_contacts: { type: :text },
-        description: { type: :text },
-        certificates: { type: :text },
-        types: { type: :text },
-        additional_names: { type: :text },
-        subjects: { type: :text },
-        content_types: { type: :text },
-        provider_types: { type: :text },
-        keywords: { type: :text },
-        institutions: { type: :text },
-        data_accesses: { type: :text },
-        data_uploads: { type: :text },
-        data_upload_licenses: { type: :text },
-        pid_systems: { type: :text },
-        apis: { type: :text },
-        software: { type: :text },
-        created: { type: :date },
-        updated: { type: :date }
-      }
+      indexes :repository,    type: :object
     end
   end
 
@@ -136,8 +112,9 @@ class Client < ActiveRecord::Base
       "created" => created,
       "updated" => updated,
       "deleted_at" => deleted_at,
+      "cached_doi_count" => cached_doi_count,
       "provider" => provider.as_indexed_json,
-      "repository" => repository
+      "repository" => cached_repository
     }
   end
 
@@ -180,8 +157,12 @@ class Client < ActiveRecord::Base
     write_attribute(:re3data, value)
   end
 
+  def cached_repository
+    cached_repository_response(re3data) if re3data.present?
+  end
+
   def repository
-    OpenStruct.new(cached_repository_response(re3data)) if re3data.present?
+    OpenStruct.new(cached_repository)
   end
 
   def target_id=(value)
