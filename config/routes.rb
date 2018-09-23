@@ -48,10 +48,6 @@ Rails.application.routes.draw do
   end
   resources :providers, constraints: { :id => /.+/ }
 
-  # re3data
-  resources :repositories, only: [:show, :index]
-  get "/repositories/:id/badge", to: "repositories#badge", format: :svg
-
   resources :resource_types, path: 'resource-types', only: [:show, :index]
 
   # custom routes for maintenance tasks

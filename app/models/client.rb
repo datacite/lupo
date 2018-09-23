@@ -113,12 +113,12 @@ class Client < ActiveRecord::Base
       "updated" => updated,
       "deleted_at" => deleted_at,
       "provider" => provider.as_indexed_json,
-      "repository" => repository.try(:as_indexed_json)
+      "repository" => repository
     }
   end
 
   def self.query_fields
-    ['symbol^10', 'name^10', 'contact_name^10', 'contact_email^10', 'domains', 'url', '_all']
+    ['symbol^10', 'name^10', 'contact_name^10', 'contact_email^10', 'domains', 'url', 'repository.software.name^3', '_all']
   end
 
   def self.query_aggregations
