@@ -157,7 +157,7 @@ class Client < ActiveRecord::Base
   end
 
   def repository
-    cached_repository_response(re3data) if re3data.present?
+    OpenStruct.new(cached_repository_response(re3data)) if re3data.present?
   end
 
   def target_id=(value)
