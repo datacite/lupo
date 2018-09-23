@@ -88,7 +88,25 @@ class Client < ActiveRecord::Base
 
       # include parent objects
       indexes :provider,      type: :object
-      indexes :repository,    type: :object
+      indexes :repository,    type: :object, properties: {
+        type: { type: :keyword },
+        id: { type: :keyword },
+        url: { type: :text },
+        repository_name: { type: :text },
+        repository_url: { type: :text },
+        repository_contacts: { type: :text },
+        description: { type: :text },
+        certificates: { type: :object },
+        types: { type: :object },
+        additional_names: { type: :object },
+        subjects: { type: :object },
+        content_types: { type: :object },
+        provider_types: { type: :object },
+        keywords: { type: :object },
+        software: { type: :object },
+        created: { type: :date },
+        updated: { type: :date }
+      }
     end
   end
 
