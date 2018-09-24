@@ -26,26 +26,19 @@ class Doi < ActiveRecord::Base
   include Elasticsearch::Model
 
   aasm :whiny_transitions => false do
-    # initial is default state for new DOIs. This is needed to handle DOIs created
-    # outside of this application (i.e. the MDS API)
-    state :undetermined, :initial => true
-    state :draft, :tombstoned, :registered, :findable, :flagged, :broken
-
-    event :start do
-      transitions :from => :undetermined, :to => :draft
-    end
+    # draft is initial istate for new DOIs.
+    state :draft, :initial => true
+    state :tombstoned, :registered, :findable, :flagged, :broken
 
     event :register do
       # can't register test prefix
-      transitions :from => [:undetermined, :draft], :to => :registered, :unless => :is_test_prefix?
-      transitions :from => :undetermined, :to => :draft
+      transitions :from => [:draft], :to => :registered, :unless => :is_test_prefix?
     end
 
     event :publish do
       # can't index test prefix
-      transitions :from => [:undetermined, :draft], :to => :findable, :unless => :is_test_prefix?
+      transitions :from => [:draft], :to => :findable, :unless => :is_test_prefix?
       transitions :from => :registered, :to => :findable
-      transitions :from => :undetermined, :to => :draft
     end
 
     event :hide do
@@ -427,7 +420,7 @@ class Doi < ActiveRecord::Base
   end
 
   def event=(value)
-    self.send(value) if %w(start register publish hide).include?(value)
+    self.send(value) if %w(register publish hide).include?(value)
   end
 
   def timestamp
@@ -494,7 +487,6 @@ class Doi < ActiveRecord::Base
   end
 
   def set_defaults
-    self.start if aasm_state == "undetermined"
     self.is_active = (aasm_state == "findable") ? "\x01" : "\x00"
     self.version = version.present? ? version + 1 : 0
     self.updated = Time.zone.now.utc.iso8601

@@ -1933,7 +1933,7 @@ describe "dois", type: :request do
   end
 
   describe 'GET /dois/DOI/get-url draft doi', vcr: true do
-    let(:doi) { create(:doi, client: client, doi: "10.14454/61y1-e521", event: "start") }
+    let(:doi) { create(:doi, client: client, doi: "10.14454/61y1-e521") }
 
     before { get "/dois/#{doi.doi}/get-url", headers: headers }
 

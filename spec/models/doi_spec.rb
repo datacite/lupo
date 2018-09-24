@@ -8,9 +8,8 @@ describe Doi, type: :model, vcr: true do
   describe "state" do
     subject { create(:doi) }
 
-    describe "start" do
-      it "can start" do
-        subject.start
+    describe "draft" do
+      it "default" do
         expect(subject).to have_state(:draft)
       end
     end
@@ -23,7 +22,6 @@ describe Doi, type: :model, vcr: true do
 
       it "can't register with test prefix" do
         subject = create(:doi, doi: "10.5072/x")
-        subject.start
         subject.register
         expect(subject).to have_state(:draft)
       end
@@ -37,7 +35,6 @@ describe Doi, type: :model, vcr: true do
 
       it "can't register with test prefix" do
         subject = create(:doi, doi: "10.5072/x")
-        subject.start
         subject.publish
         expect(subject).to have_state(:draft)
       end
@@ -51,7 +48,6 @@ describe Doi, type: :model, vcr: true do
       end
 
       it "can't flag if draft" do
-        subject.start
         subject.flag
         expect(subject).to have_state(:draft)
       end
@@ -65,8 +61,6 @@ describe Doi, type: :model, vcr: true do
       end
 
       it "can't link_check if draft" do
-        subject.start
-
         subject.link_check
         expect(subject).to have_state(:draft)
       end
@@ -98,13 +92,11 @@ describe Doi, type: :model, vcr: true do
       subject { build(:doi, client: client, current_user: current_user) }
 
       it "don't update state change" do
-        subject.start
         expect { subject.save }.not_to have_enqueued_job(HandleJob)
         expect(subject).to have_state(:draft)
       end
 
       it "don't update url change" do
-        subject.start
         subject.url = url
         expect { subject.save }.not_to have_enqueued_job(HandleJob)
       end

@@ -196,7 +196,7 @@ class DoisController < ApplicationController
 
   def create
    #  Rails.logger.info safe_params.inspect
-    @doi = Doi.new(safe_params.merge(event: safe_params[:event] || "start"))
+    @doi = Doi.new(safe_params.merge(event: safe_params[:event]))
     authorize! :create, @doi
 
     # capture username and password for reuse in the handle system
