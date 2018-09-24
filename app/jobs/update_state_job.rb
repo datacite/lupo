@@ -1,0 +1,16 @@
+class UpdateStateJob < ActiveJob::Base
+  queue_as :lupo_background
+
+  def perform(doi_id, options={})
+    logger = Logger.new(STDOUT)
+    doi = Doi.where(doi: doi_id).first
+
+    if doi.blank?
+      logger.info "[Update State] Error updating state for DOI " + doi_id + ": not found"
+    elsif doi.update_attributes(aasm_state: options[:state])
+      logger.info "[Update State] Successfully update state for DOI " + doi_id
+    else
+      logger.info "[Update State] Error updating state for DOI " + doi_id + ": " + errors.inspect
+    end
+  end
+end

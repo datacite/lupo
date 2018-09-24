@@ -427,15 +427,19 @@ class Doi < ActiveRecord::Base
     updated.utc.iso8601 if updated.present?
   end
 
-  # update state for all DOIs starting from from_date
+  # update state for all DOIs in state "undetermined" starting from from_date
   def self.set_state(from_date: nil)
     from_date ||= Time.zone.now - 1.day
-    collection = Doi.where("updated >= ?", from_date).where("updated < ?", Time.zone.now - 15.minutes).where(aasm_state: '')
-
-    collection.where(is_active: "\x00").where(minted: nil).update_all(aasm_state: "draft")
-    collection.where(is_active: "\x00").where.not(minted: nil).update_all(aasm_state: "registered")
-    collection.where(is_active: "\x01").where.not(minted: nil).update_all(aasm_state: "findable")
-    collection.where("doi LIKE ?", "10.5072%").where.not(aasm_state: "draft").update_all(aasm_state: "draft")
+    Doi.where("updated >= ?", from_date).where(aasm_state: 'undetermined').find_each do |doi|
+      if doi.is_test_prefix? || (doi.is_active == "\x00" && doi.minted.blank?)
+        state = "draft"
+      elsif doi.is_active == "\x00" && doi.minted.present?
+        state = "registered"
+      elsif doi.is_active == "\x01" && doi.minted.present?
+        state = "findable"
+      end
+      UpdateStateJob.perform_later(doi.doi, state: state)
+    end
   rescue ActiveRecord::LockWaitTimeout => exception
     Bugsnag.notify(exception)
   end
