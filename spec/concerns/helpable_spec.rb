@@ -74,7 +74,7 @@ describe Doi, vcr: true do
       response = subject.get_url
 
       expect(response.body.dig("data", "responseCode")).to eq(1)
-      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-science-europe/"}, "ttl"=>86400, "timestamp"=>"2018-07-30T07:53:49Z"}])
+      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/"}, "ttl"=>86400, "timestamp"=>"2018-09-26T08:52:01Z"}])
     end
 
     # it 'should register on save' do
@@ -99,7 +99,7 @@ describe Doi, vcr: true do
       response = subject.get_url
 
       expect(response.body.dig("data", "responseCode")).to eq(1)
-      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-science-europe/"}, "ttl"=>86400, "timestamp"=>"2018-07-30T07:53:49Z"}])
+      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-science-europe/"}, "ttl"=>86400, "timestamp"=>"2018-09-26T08:52:02Z"}])
     end
 
     it 'draft doi' do
@@ -123,10 +123,10 @@ describe Doi, vcr: true do
     let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
     
     it 'should get dois' do
-      options = { prefix: "10.14454", username: client.symbol, password: client.password, role_id: "client_admin" }
+      options = { prefix: "10.5438", username: client.symbol, password: client.password, role_id: "client_admin" }
       dois = Doi.get_dois(options).body.dig("data", "handles")
-      expect(dois.length).to eq(7)
-      expect(dois.first).to eq("10.14454/07243.2013.001")
+      expect(dois.length).to eq(438)
+      expect(dois.first).to eq("10.5438/0000-00SS")
     end
   end
 end

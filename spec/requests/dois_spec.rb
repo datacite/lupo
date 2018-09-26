@@ -1861,12 +1861,12 @@ describe "dois", type: :request do
   end
 
   describe 'GET /dois/DOI/get-url', vcr: true do
-    let(:doi) { create(:doi, client: client, doi: "10.5438/8syz-ym47", event: "publish") }
+    let(:doi) { create(:doi, client: client, doi: "10.5438/fj3w-0shd", event: "publish") }
 
     before { get "/dois/#{doi.doi}/get-url", headers: headers }
 
     it 'returns url' do
-      expect(json["url"]).to eq("https://blog.datacite.org/welcome-helena-cousijn/")
+      expect(json["url"]).to eq("https://blog.datacite.org/data-driven-development/")
     end
 
     it 'returns status code 200' do
@@ -1951,24 +1951,24 @@ describe "dois", type: :request do
 
     before { get "/dois/#{doi.doi}/get-url", headers: headers }
 
-    it 'returns not DataCite DOI' do
-      expect(json['url']).to eq("http://dx.plos.org/10.1371/journal.pbio.2001414")
+    it 'returns nil' do
+      expect(json['url']).to be_nil
     end
 
     it 'returns status code 200' do
-      expect(response).to have_http_status(200)
+      expect(response).to have_http_status(403)
     end
   end
 
   describe 'GET /dois/get-dois', vcr: true do
-    let(:prefix) { create(:prefix, prefix: "10.14454") }
+    let(:prefix) { create(:prefix, prefix: "10.5438") }
     let!(:client_prefix) { create(:client_prefix, prefix: prefix, client: client) }
 
     before { get "/dois/get-dois", headers: headers }
 
     it 'returns all dois' do
-      expect(json["dois"].length).to eq(7)
-      expect(json["dois"].first).to eq("10.14454/07243.2013.001")
+      expect(json["dois"].length).to eq(438)
+      expect(json["dois"].first).to eq("10.5438/0000-00SS")
     end
 
     it 'returns status code 200' do
