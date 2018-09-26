@@ -81,7 +81,7 @@ describe Metadata, type: :model, vcr: true do
     end
 
     it "valid model" do
-      expect(subject.valid?).to be false
+      expect(subject.valid?).to be true
     end
 
     it "validates xml" do
