@@ -3,9 +3,8 @@ class DoiSerializer
   set_key_transform :dash
   set_type :dois
   set_id :uid
-  cache_options enabled: true, cache_length: 24.hours
 
-  attributes :doi, :identifier, :url, :prefix, :suffix, :author, :title, :publisher, :resource_type_subtype, :description, :version, :metadata_version, :schema_version, :reason, :source, :state, :is_active, :landing_page, :published, :created, :registered, :updated, :xml
+  attributes :doi, :identifier, :url, :prefix, :suffix, :author, :title, :publisher, :resource_type_subtype, :description, :version, :metadata_version, :schema_version, :reason, :source, :state, :is_active, :landing_page, :published, :created, :registered, :updated, :xml, :cache_key
 
   belongs_to :client, record_type: :clients
   belongs_to :resource_type, record_type: :resource_types

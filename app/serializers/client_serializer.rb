@@ -3,7 +3,6 @@ class ClientSerializer
   set_key_transform :dash
   set_type :clients
   set_id :uid
-  cache_options enabled: true, cache_length: 24.hours
   
   attributes :name, :symbol, :year, :contact_name, :contact_email, :domains, :url, :created, :updated
 

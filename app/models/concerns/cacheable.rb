@@ -51,8 +51,8 @@ module Cacheable
     end
 
     def fetch_cached_meta
-      if timestamp.present?
-        Rails.cache.fetch("cached_meta/#{doi}-#{timestamp}") do
+      if updated.present?
+        Rails.cache.fetch("cached_meta/#{doi}-#{updated.iso8601}") do
           if from.present? && string.present? 
             send("read_" + from, string: string, sandbox: sandbox)
           else
@@ -73,8 +73,8 @@ module Cacheable
     end
 
     def fetch_cached_xml
-      if timestamp.present?
-        Rails.cache.fetch("cached_xml/#{doi}-#{timestamp}", raw: true) do
+      if updated.present?
+        Rails.cache.fetch("cached_xml/#{doi}-#{updated.iso8601}", raw: true) do
           m = metadata.first
           m.present? ? m.xml : nil
         end
@@ -85,7 +85,11 @@ module Cacheable
     end
 
     def fetch_cached_metadata_version
-      Rails.cache.fetch("cached_metadata_version/#{doi}-#{timestamp}") do
+      if updated.present?
+        Rails.cache.fetch("cached_metadata_version/#{doi}-#{updated.iso8601}") do
+          current_metadata ? current_metadata.metadata_version : 0
+        end
+      else
         current_metadata ? current_metadata.metadata_version : 0
       end
     end

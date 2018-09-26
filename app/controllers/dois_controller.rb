@@ -228,10 +228,8 @@ class DoisController < ApplicationController
     if exists
       if params[:data][:attributes][:mode] == "transfer"
         authorize! :transfer, @doi
-      elsif safe_params[:xml].present? || safe_params[:url].present? || safe_params[:event].present?
-        authorize! :update, @doi
       else
-        fail ActionController::ParameterMissing 
+        authorize! :update, @doi
       end
 
       @doi.assign_attributes(safe_params.except(:doi))

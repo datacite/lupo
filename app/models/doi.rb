@@ -423,10 +423,6 @@ class Doi < ActiveRecord::Base
     self.send(value) if %w(register publish hide).include?(value)
   end
 
-  def timestamp
-    updated.utc.iso8601 if updated.present?
-  end
-
   # update state for all DOIs in state "undetermined" starting from from_date
   def self.set_state(from_date: nil)
     from_date ||= Time.zone.now - 1.day
@@ -477,8 +473,10 @@ class Doi < ActiveRecord::Base
 
   # update metadata when any virtual attribute has changed
   def update_metadata
-    changed_virtual_attributes = changed & %w(author title publisher date_published additional_type resource_type_general description content_size content_format)
+    logger = Logger.new(STDOUT)
 
+    changed_virtual_attributes = changed & %w(author title publisher date_published additional_type resource_type_general description content_size content_format)
+    
     if changed_virtual_attributes.present?
       @xml = datacite_xml
       doc = Nokogiri::XML(xml, nil, 'UTF-8', &:noblanks)
@@ -486,8 +484,8 @@ class Doi < ActiveRecord::Base
       @schema_version = Array.wrap(ns).last || "http://datacite.org/schema/kernel-4"
       attribute_will_change!(:xml)
     end
-    
-    metadata.build(doi: self, xml: xml, namespace: schema_version) if (changed & %w(xml)).present?
+    logger.info xml
+    metadata.build(doi: self, xml: xml, namespace: schema_version) if xml.present?
   end
 
   def set_defaults
