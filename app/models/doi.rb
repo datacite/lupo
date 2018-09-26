@@ -349,7 +349,7 @@ class Doi < ActiveRecord::Base
   def update_url
     return nil if current_user.nil? || !is_registered_or_findable? || %w(europ ethz).include?(provider_id)
 
-    HandleJob.set(wait: 1.minute).perform_later(doi)
+    HandleJob.perform_later(doi)
   end
 
   def update_media
