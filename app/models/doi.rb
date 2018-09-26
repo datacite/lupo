@@ -473,8 +473,6 @@ class Doi < ActiveRecord::Base
 
   # update metadata when any virtual attribute has changed
   def update_metadata
-    logger = Logger.new(STDOUT)
-
     changed_virtual_attributes = changed & %w(author title publisher date_published additional_type resource_type_general description content_size content_format)
     
     if changed_virtual_attributes.present?
@@ -484,7 +482,7 @@ class Doi < ActiveRecord::Base
       @schema_version = Array.wrap(ns).last || "http://datacite.org/schema/kernel-4"
       attribute_will_change!(:xml)
     end
-    logger.info xml
+
     metadata.build(doi: self, xml: xml, namespace: schema_version) if xml.present?
   end
 

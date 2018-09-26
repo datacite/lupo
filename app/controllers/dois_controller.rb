@@ -197,7 +197,7 @@ class DoisController < ApplicationController
 
   def create
     logger = Logger.new(STDOUT)
-    logger.info safe_params.inspect
+    # logger.info safe_params.inspect
     @doi = Doi.new(safe_params)
     authorize! :create, @doi
 
