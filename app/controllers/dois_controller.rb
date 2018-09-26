@@ -291,6 +291,7 @@ class DoisController < ApplicationController
 
   def set_state
     authorize! :set_state, Doi
+    
     Doi.set_state
     render json: { message: "DOI state updated." }.to_json, status: :ok
   end

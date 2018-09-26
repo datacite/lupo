@@ -6,11 +6,11 @@ class UpdateStateJob < ActiveJob::Base
     doi = Doi.where(doi: doi_id).first
 
     if doi.blank?
-      logger.info "[Update State] Error updating state for DOI " + doi_id + ": not found"
+      logger.info "[State] Error updating state for DOI " + doi_id + ": not found"
     elsif doi.update_attributes(aasm_state: options[:state])
-      logger.info "[Update State] Successfully update state for DOI " + doi_id
+      logger.info "[State] Successfully updated state for DOI " + doi_id
     else
-      logger.info "[Update State] Error updating state for DOI " + doi_id + ": " + errors.inspect
+      logger.info "[State] Error updating state for DOI " + doi_id + ": " + errors.inspect
     end
   end
 end

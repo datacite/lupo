@@ -435,7 +435,7 @@ class Doi < ActiveRecord::Base
         state = "draft"
       elsif doi.is_active == "\x00" && doi.minted.present?
         state = "registered"
-      elsif doi.is_active == "\x01" && doi.minted.present?
+      else
         state = "findable"
       end
       UpdateStateJob.perform_later(doi.doi, state: state)
