@@ -483,7 +483,7 @@ class Doi < ActiveRecord::Base
       attribute_will_change!(:xml)
     end
 
-    metadata.build(doi: self, xml: xml, namespace: schema_version) if xml.present?
+    metadata.build(doi: self, xml: xml, namespace: schema_version) if (changed & %w(xml)).present?
   end
 
   def set_defaults
