@@ -117,6 +117,7 @@ class PrefixesController < ApplicationController
   end
 
   def create
+    logger = Logger.new(STDOUT)
     @prefix = Prefix.new(safe_params)
     authorize! :create, @prefix
 
@@ -127,7 +128,7 @@ class PrefixesController < ApplicationController
   
       render json: PrefixSerializer.new(@prefix, options).serialized_json, status: :created, location: @prefix
     else
-      Rails.logger.warn @prefix.errors.inspect
+      logger.warn @prefix.errors.inspect
       render json: serialize(@prefix.errors), status: :unprocessable_entity
     end
   end

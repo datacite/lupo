@@ -75,8 +75,8 @@ class ProvidersController < ApplicationController
     render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
   end
 
-  # POST /providers
   def create
+    logger = Logger.new(STDOUT)
     @provider = Provider.new(safe_params)
     authorize! :create, @provider
 
@@ -87,14 +87,14 @@ class ProvidersController < ApplicationController
   
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
-      Rails.logger.warn @provider.errors.inspect
+      logger.warn @provider.errors.inspect
       render json: serialize(@provider.errors), status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /providers/1
   def update
-    Rails.logger.debug safe_params.inspect
+    logger = Logger.new(STDOUT)
+    # logger.debug safe_params.inspect
     if @provider.update_attributes(safe_params)
       options = {}
       options[:meta] = { 
@@ -106,7 +106,7 @@ class ProvidersController < ApplicationController
   
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
-      Rails.logger.warn @provider.errors.inspect
+      logger.warn @provider.errors.inspect
       render json: serialize(@provider.errors), status: :unprocessable_entity
     end
   end
@@ -114,16 +114,17 @@ class ProvidersController < ApplicationController
   # don't delete, but set deleted_at timestamp
   # a provider with clients or prefixes can't be deleted
   def destroy
+    logger = Logger.new(STDOUT)
     if @provider.client_count.present?
       message = "Can't delete provider that has clients."
       status = 400
-      Rails.logger.warn message
+      logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @provider.update_attributes(is_active: "\x00", deleted_at: Time.zone.now)
       @provider.remove_users(id: "provider_id", jwt: current_user.jwt) unless Rails.env.test?
       head :no_content
     else
-      Rails.logger.warn @provider.errors.inspect
+      logger.warn @provider.errors.inspect
       render json: serialize(@provider.errors), status: :unprocessable_entity
     end
   end

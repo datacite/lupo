@@ -35,8 +35,9 @@ class SessionsController < ApplicationController
   private
 
   def error_response(message)
+    logger = Logger.new(STDOUT)
     status = 400
-    Rails.logger.info message
+    logger.info message
     render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
   end
 

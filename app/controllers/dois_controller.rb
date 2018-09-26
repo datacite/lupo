@@ -175,15 +175,16 @@ class DoisController < ApplicationController
   end
 
   def validate
-    # Rails.logger.info safe_params.inspect
+    logger = Logger.new(STDOUT)
+    # logger.info safe_params.inspect
     @doi = Doi.new(safe_params)
     authorize! :create, @doi
 
     if @doi.errors.present?
-      Rails.logger.info @doi.errors.inspect
+      logger.info @doi.errors.inspect
       render json: serialize(@doi.errors), status: :ok
     elsif @doi.validation_errors?
-      Rails.logger.info @doi.validation_errors.inspect
+      logger.info @doi.validation_errors.inspect
       render json: serialize(@doi.validation_errors), status: :ok
     else
       options = {}
@@ -195,15 +196,16 @@ class DoisController < ApplicationController
   end
 
   def create
-   #  Rails.logger.info safe_params.inspect
-    @doi = Doi.new(safe_params.merge(event: safe_params[:event]))
+    logger = Logger.new(STDOUT)
+    logger.info safe_params.inspect
+    @doi = Doi.new(safe_params)
     authorize! :create, @doi
 
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
 
-    if safe_params[:xml] && @doi.aasm_state != "draft" && @doi.validation_errors?
-      Rails.logger.error @doi.validation_errors.inspect
+    if safe_params[:xml] && safe_params[:event] && @doi.validation_errors?
+      logger.error @doi.validation_errors.inspect
       render json: serialize(@doi.validation_errors), status: :unprocessable_entity
     elsif @doi.save
       options = {}
@@ -212,13 +214,14 @@ class DoisController < ApplicationController
   
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :created, location: @doi
     else
-      Rails.logger.warn @doi.errors.inspect
+      logger.warn @doi.errors.inspect
       render json: serialize(@doi.errors), include: @include, status: :unprocessable_entity
     end
   end
 
   def update
-    #  Rails.logger.info safe_params.inspect
+    logger = Logger.new(STDOUT)
+    # logger.info safe_params.inspect
     @doi = Doi.where(doi: params[:id]).first
     exists = @doi.present?
 
@@ -236,8 +239,7 @@ class DoisController < ApplicationController
       doi_id = validate_doi(params[:id])
       fail ActiveRecord::RecordNotFound unless doi_id.present?
 
-      event = safe_params[:validate] ? "start" : safe_params[:event].presence || "start"
-      @doi = Doi.new(safe_params.merge(doi: doi_id, event: event))
+      @doi = Doi.new(safe_params.merge(doi: doi_id))
 
       authorize! :create, @doi
     end
@@ -245,8 +247,8 @@ class DoisController < ApplicationController
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
 
-    if safe_params[:xml] && (@doi.aasm_state != "draft" || safe_params[:validate]) && @doi.validation_errors?
-      Rails.logger.error @doi.validation_errors.inspect
+    if safe_params[:xml] && (safe_params[:event] || safe_params[:validate]) && @doi.validation_errors?
+      logger.error @doi.validation_errors.inspect
       render json: serialize(@doi.validation_errors), status: :unprocessable_entity
     elsif @doi.save
       options = {}
@@ -255,19 +257,20 @@ class DoisController < ApplicationController
   
       render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
     else
-      Rails.logger.warn @doi.errors.inspect
+      logger.warn @doi.errors.inspect
       render json: serialize(@doi.errors), include: @include, status: :unprocessable_entity
     end
   end
 
   def destroy
+    logger = Logger.new(STDOUT)
     authorize! :destroy, @doi
 
     if @doi.draft?
       if @doi.destroy
         head :no_content
       else
-        Rails.logger.warn @doi.errors.inspect
+        logger.warn @doi.errors.inspect
         render json: serialize(@doi.errors), status: :unprocessable_entity
       end
     else

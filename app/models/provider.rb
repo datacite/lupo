@@ -154,7 +154,6 @@ class Provider < ActiveRecord::Base
   end
 
   # def country=(value)
-  #   Rails.logger.debug value.inspect
   #   write_attribute(:country_code, value["code"]) if value.present?
   # end
 

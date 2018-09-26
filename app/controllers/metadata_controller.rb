@@ -54,6 +54,7 @@ class MetadataController < ApplicationController
   end
 
   def create
+    logger = Logger.new(STDOUT)
     authorize! :update, @doi
 
     # convert back to plain xml
@@ -67,19 +68,20 @@ class MetadataController < ApplicationController
   
       render json: MetadataSerializer.new(@metadata, options).serialized_json, status: :created
     else
-      Rails.logger.warn @metadata.errors.inspect
+      logger.warn @metadata.errors.inspect
       render json: serialize(@metadata.errors), status: :unprocessable_entity
     end
   end
 
   def destroy
+    logger = Logger.new(STDOUT)
     authorize! :update, @doi
 
     if @doi.draft?
       if @metadata.destroy
         head :no_content
       else
-        Rails.logger.warn @metadata.errors.inspect
+        logger.warn @metadata.errors.inspect
         render json: serialize(@metadata.errors), status: :unprocessable_entity
       end
     else

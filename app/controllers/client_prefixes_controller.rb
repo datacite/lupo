@@ -82,6 +82,7 @@ class ClientPrefixesController < ApplicationController
   end
 
   def create
+    logger = Logger.new(STDOUT)
     @client_prefix = ClientPrefix.new(safe_params)
     authorize! :create, @client_prefix
 
@@ -92,7 +93,7 @@ class ClientPrefixesController < ApplicationController
   
       render json: ClientPrefixSerializer.new(@client_prefix, options).serialized_json, status: :created
     else
-      Rails.logger.warn @client_prefix.errors.inspect
+      logger.warn @client_prefix.errors.inspect
       render json: serialize(@client_prefix.errors), status: :unprocessable_entity
     end
   end

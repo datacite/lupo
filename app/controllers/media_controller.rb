@@ -51,6 +51,7 @@ class MediaController < ApplicationController
   end
 
   def create
+    logger = Logger.new(STDOUT)
     authorize! :update, @doi
 
     @media = Media.new(safe_params.merge(doi: @doi))
@@ -62,12 +63,13 @@ class MediaController < ApplicationController
   
       render json: MediaSerializer.new(@media, options).serialized_json, status: :created
     else
-      Rails.logger.warn @media.errors.inspect
+      logger.warn @media.errors.inspect
       render json: serialize(@media.errors), status: :unprocessable_entity
     end
   end
 
   def update
+    logger = Logger.new(STDOUT)
     authorize! :update, @doi
 
     if @media.update_attributes(safe_params.merge(doi: @doi))
@@ -77,18 +79,19 @@ class MediaController < ApplicationController
   
       render json: MediaSerializer.new(@media, options).serialized_json, status: :ok
     else
-      Rails.logger.warn @media.errors.inspect
+      logger.warn @media.errors.inspect
       render json: serialize(@media.errors), status: :unprocessable_entity
     end
   end
 
   def destroy
+    logger = Logger.new(STDOUT)
     authorize! :update, @doi
 
     if @media.destroy
       head :no_content
     else
-      Rails.logger.warn @media.errors.inspect
+      logger.warn @media.errors.inspect
       render json: serialize(@media.errors), status: :unprocessable_entity
     end
   end

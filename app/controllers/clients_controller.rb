@@ -74,6 +74,7 @@ class ClientsController < ApplicationController
   end
 
   def create
+    logger = Logger.new(STDOUT)
     @client = Client.new(safe_params)
     authorize! :create, @client
 
@@ -83,12 +84,13 @@ class ClientsController < ApplicationController
   
       render json: ClientSerializer.new(@client, options).serialized_json, status: :created
     else
-      Rails.logger.warn @client.errors.inspect
+      logger.warn @client.errors.inspect
       render json: serialize(@client.errors), status: :unprocessable_entity
     end
   end
 
   def update
+    logger = Logger.new(STDOUT)
     if @client.update_attributes(safe_params)
       options = {}
       options[:meta] = { dois: @client.cached_doi_count }
@@ -96,7 +98,7 @@ class ClientsController < ApplicationController
   
       render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
     else
-      Rails.logger.warn @client.errors.inspect
+      logger.warn @client.errors.inspect
       render json: serialize(@client.errors), status: :unprocessable_entity
     end
   end
@@ -104,16 +106,17 @@ class ClientsController < ApplicationController
   # don't delete, but set deleted_at timestamp
   # a client with dois or prefixes can't be deleted
   def destroy
+    logger = Logger.new(STDOUT)
     if @client.dois.present?
       message = "Can't delete client that has DOIs."
       status = 400
-      Rails.logger.warn message
+      logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @client.update_attributes(is_active: "\x00", deleted_at: Time.zone.now)
       @client.remove_users(id: "client_id", jwt: current_user.jwt) unless Rails.env.test?
       head :no_content
     else
-      Rails.logger.warn @client.errors.inspect
+      logger.warn @client.errors.inspect
       render json: serialize(@client.errors), status: :unprocessable_entity
     end
   end
