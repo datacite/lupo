@@ -384,8 +384,66 @@ class DoisController < ApplicationController
 
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
-    attributes = [:doi, "confirm-doi", :identifier, :url, :title, :publisher, :published, :created, :prefix, :suffix, "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-status-result", "last-landing-page-content-type", "content-url", "content-size", "content-format", :description, :license, :xml, :validate, :source, :version, "metadata-version", "schema-version", :state, "is-active", :reason, :registered, :updated, :mode, :event, :regenerate, :client, "resource_type", author: [:type, :id, :name, "given-name", "family-name", "givenName", "familyName"]]
-    relationships = [{ client: [data: [:type, :id]] },  { provider: [data: [:type, :id]] }, { "resource-type" => [:data, data: [:type, :id]] }]
+
+    attributes = [
+      :doi,
+      "confirm-doi",
+      :identifier,
+      :url, :title,
+      :publisher,
+      :published,
+      :created,
+      :prefix,
+      :suffix,
+      "resource-type-subtype",
+      "last-landing-page",
+      "last-landing-page-status",
+      "last-landing-page-status-check",
+      {
+        "last-landing-page-status-result" => [
+          "error",
+          "redirect-count",
+          { "redirect-urls" => [] },
+          "download-latency",
+          "has-schema-org",
+          "schema-org-id",
+          "dc-identifier",
+          "citation-doi",
+          { "doi-meta-match" => [] },
+          { "doi-meta-different" => [] },
+          "body-has-pid"
+        ]
+      },
+      "last-landing-page-content-type",
+      "content-url",
+      "content-size",
+      "content-format",
+      :description,
+      :license,
+      :xml,
+      :validate,
+      :source,
+      :version,
+      "metadata-version",
+      "schema-version",
+      :state, "is-active",
+      :reason,
+      :registered,
+      :updated,
+      :mode,
+      :event,
+      :regenerate,
+      :client,
+      "resource_type",
+      author: [:type, :id, :name, "given-name", "family-name", "givenName", "familyName"]
+    ]
+
+    relationships = [
+      { client: [data: [:type, :id]] },
+      { provider: [data: [:type, :id]] },
+      { "resource-type" => [:data, data: [:type, :id]] }
+    ]
+
     p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships)
     p = p.fetch("attributes").merge(client_id: p.dig("relationships", "client", "data", "id"), resource_type_general: camelize_str(p.dig("relationships", "resource-type", "data", "id")))
     p.merge(
@@ -396,7 +454,12 @@ class DoisController < ApplicationController
       last_landing_page_status_check: p["last-landing-page-status-check"],
       last_landing_page_status_result: p["last-landing-page-status-result"],
       last_landing_page_content_type: p["last-landing-page-content-type"]
-    ).except("confirm-doi", :identifier, :prefix, :suffix, "resource-type-subtype", "metadata-version", "schema-version", :state, :mode, "is-active", :created, :registered, :updated, "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-status-result", "last-landing-page-content-type")
+    ).except(
+      "confirm-doi", :identifier, :prefix, :suffix, "resource-type-subtype",
+      "metadata-version", "schema-version", :state, :mode, "is-active",
+      :created, :registered, :updated, "last-landing-page",
+      "last-landing-page-status", "last-landing-page-status-check",
+      "last-landing-page-status-result", "last-landing-page-content-type")
   end
 
   def underscore_str(str)
