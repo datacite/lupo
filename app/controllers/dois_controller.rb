@@ -36,7 +36,7 @@ class DoisController < ApplicationController
       end
 
       page = params[:page] || {}
-      if page[:size].present? 
+      if page[:size].present?
         page[:size] = [page[:size].to_i, 1000].min
         max_number = page[:size] > 0 ? 10000/page[:size] : 1
       else
@@ -61,7 +61,7 @@ class DoisController < ApplicationController
         "total-pages" => total_pages,
         page: page[:number].to_i
       }.compact
-  
+
       options[:links] = {
         self: request.original_url,
         next: @dois.blank? ? nil : request.base_url + "/dois?" + {
@@ -74,7 +74,7 @@ class DoisController < ApplicationController
         }.compact
       options[:include] = @include
       options[:is_collection] = true
-  
+
       render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
     else
       sort = case params[:sort]
@@ -87,7 +87,7 @@ class DoisController < ApplicationController
             end
 
       page = params[:page] || {}
-      if page[:size].present? 
+      if page[:size].present?
         page[:size] = [page[:size].to_i, 1000].min
         max_number = page[:size] > 0 ? 10000/page[:size] : 1
       else
@@ -97,21 +97,21 @@ class DoisController < ApplicationController
       page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
 
       if params[:id].present?
-        response = Doi.find_by_id(params[:id]) 
+        response = Doi.find_by_id(params[:id])
       elsif params[:ids].present?
         response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
       else
-        response = Doi.query(params[:query], 
-                            state: params[:state], 
-                            year: params[:year], 
-                            created: params[:created], 
-                            provider_id: params[:provider_id], 
-                            client_id: params[:client_id], 
-                            prefix: params[:prefix], 
-                            person_id: params[:person_id], 
-                            resource_type_id: camelize_str(params[:resource_type_id]), 
-                            schema_version: params[:schema_version], 
-                            source: params[:source], 
+        response = Doi.query(params[:query],
+                            state: params[:state],
+                            year: params[:year],
+                            created: params[:created],
+                            provider_id: params[:provider_id],
+                            client_id: params[:client_id],
+                            prefix: params[:prefix],
+                            person_id: params[:person_id],
+                            resource_type_id: camelize_str(params[:resource_type_id]),
+                            schema_version: params[:schema_version],
+                            source: params[:source],
                             page: page,
                             sort: sort)
       end
@@ -146,7 +146,7 @@ class DoisController < ApplicationController
         schema_versions: schema_versions,
         sources: sources
       }.compact
-  
+
       options[:links] = {
         self: request.original_url,
         next: @dois.blank? ? nil : request.base_url + "/dois?" + {
@@ -159,7 +159,7 @@ class DoisController < ApplicationController
         }.compact
       options[:include] = @include
       options[:is_collection] = true
-  
+
       render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
     end
   end
@@ -190,7 +190,7 @@ class DoisController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-  
+
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
     end
   end
@@ -211,7 +211,7 @@ class DoisController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-  
+
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :created, location: @doi
     else
       logger.warn @doi.errors.inspect
@@ -252,7 +252,7 @@ class DoisController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-  
+
       render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
     else
       logger.warn @doi.errors.inspect
@@ -292,7 +292,7 @@ class DoisController < ApplicationController
 
   def set_state
     authorize! :set_state, Doi
-    
+
     Doi.set_state
     render json: { message: "DOI state updated." }.to_json, status: :ok
   end
@@ -308,7 +308,7 @@ class DoisController < ApplicationController
 
       if response.status == 200
         url = response.body.dig("data", "values", 0, "data", "value")
-      elsif response.status == 400 && response.body.dig("errors", 0, "title", "responseCode") == 301 
+      elsif response.status == 400 && response.body.dig("errors", 0, "title", "responseCode") == 301
         response = OpenStruct.new(status: 403, body: { "errors" => [{ "status" => 403, "title" => "SERVER NOT RESPONSIBLE FOR HANDLE" }] })
         url = nil
       else
@@ -384,7 +384,7 @@ class DoisController < ApplicationController
 
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
-    attributes = [:doi, "confirm-doi", :identifier, :url, :title, :publisher, :published, :created, :prefix, :suffix, "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type", "content-url", "content-size", "content-format", :description, :license, :xml, :validate, :source, :version, "metadata-version", "schema-version", :state, "is-active", :reason, :registered, :updated, :mode, :event, :regenerate, :client, "resource_type", author: [:type, :id, :name, "given-name", "family-name", "givenName", "familyName"]]
+    attributes = [:doi, "confirm-doi", :identifier, :url, :title, :publisher, :published, :created, :prefix, :suffix, "resource-type-subtype", "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-status-result", "last-landing-page-content-type", "content-url", "content-size", "content-format", :description, :license, :xml, :validate, :source, :version, "metadata-version", "schema-version", :state, "is-active", :reason, :registered, :updated, :mode, :event, :regenerate, :client, "resource_type", author: [:type, :id, :name, "given-name", "family-name", "givenName", "familyName"]]
     relationships = [{ client: [data: [:type, :id]] },  { provider: [data: [:type, :id]] }, { "resource-type" => [:data, data: [:type, :id]] }]
     p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships)
     p = p.fetch("attributes").merge(client_id: p.dig("relationships", "client", "data", "id"), resource_type_general: camelize_str(p.dig("relationships", "resource-type", "data", "id")))
@@ -394,8 +394,9 @@ class DoisController < ApplicationController
       last_landing_page: p["last-landing-page"],
       last_landing_page_status: p["last-landing-page-status"],
       last_landing_page_status_check: p["last-landing-page-status-check"],
+      last_landing_page_status_result: p["last-landing-page-status-result"],
       last_landing_page_content_type: p["last-landing-page-content-type"]
-    ).except("confirm-doi", :identifier, :prefix, :suffix, "resource-type-subtype", "metadata-version", "schema-version", :state, :mode, "is-active", :created, :registered, :updated, "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-content-type")
+    ).except("confirm-doi", :identifier, :prefix, :suffix, "resource-type-subtype", "metadata-version", "schema-version", :state, :mode, "is-active", :created, :registered, :updated, "last-landing-page", "last-landing-page-status", "last-landing-page-status-check", "last-landing-page-status-result", "last-landing-page-content-type")
   end
 
   def underscore_str(str)

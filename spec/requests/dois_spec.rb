@@ -273,7 +273,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
         expect(json.dig('data', 'attributes', 'title')).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
-      
+
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
         expect(xml.dig("titles", "title")).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
       end
@@ -522,7 +522,7 @@ describe "dois", type: :request do
     before(:each) do
       Rails.cache.clear
     end
-    
+
     context 'when the request is valid' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
@@ -594,7 +594,7 @@ describe "dois", type: :request do
     #       }
     #     }
     #   end
-      
+
     #   before { patch "/dois/10.14454/8na3-9s47", params: valid_attributes.to_json, headers: headers }
 
     #   it 'updates the record' do
@@ -1632,6 +1632,7 @@ describe "dois", type: :request do
     context 'landing page' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:xml) { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48cmVzb3VyY2UgeG1sbnM6eHNpPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYS1pbnN0YW5jZSIgeG1sbnM9Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IiB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTQvbWV0YWRhdGEueHNkIj48aWRlbnRpZmllciBpZGVudGlmaWVyVHlwZT0iRE9JIj4xMC4yNTQ5OS94dWRhMnB6cmFocm9lcXBlZnZucTV6dDZkYzwvaWRlbnRpZmllcj48Y3JlYXRvcnM+PGNyZWF0b3I+PGNyZWF0b3JOYW1lPklhbiBQYXJyeTwvY3JlYXRvck5hbWU+PG5hbWVJZGVudGlmaWVyIHNjaGVtZVVSST0iaHR0cDovL29yY2lkLm9yZy8iIG5hbWVJZGVudGlmaWVyU2NoZW1lPSJPUkNJRCI+MDAwMC0wMDAxLTYyMDItNTEzWDwvbmFtZUlkZW50aWZpZXI+PC9jcmVhdG9yPjwvY3JlYXRvcnM+PHRpdGxlcz48dGl0bGU+U3VibWl0dGVkIGNoZW1pY2FsIGRhdGEgZm9yIEluQ2hJS2V5PVlBUFFCWFFZTEpSWFNBLVVIRkZGQU9ZU0EtTjwvdGl0bGU+PC90aXRsZXM+PHB1Ymxpc2hlcj5Sb3lhbCBTb2NpZXR5IG9mIENoZW1pc3RyeTwvcHVibGlzaGVyPjxwdWJsaWNhdGlvblllYXI+MjAxNzwvcHVibGljYXRpb25ZZWFyPjxyZXNvdXJjZVR5cGUgcmVzb3VyY2VUeXBlR2VuZXJhbD0iRGF0YXNldCI+U3Vic3RhbmNlPC9yZXNvdXJjZVR5cGU+PHJpZ2h0c0xpc3Q+PHJpZ2h0cyByaWdodHNVUkk9Imh0dHBzOi8vY3JlYXRpdmVjb21tb25zLm9yZy9zaGFyZS15b3VyLXdvcmsvcHVibGljLWRvbWFpbi9jYzAvIj5ObyBSaWdodHMgUmVzZXJ2ZWQ8L3JpZ2h0cz48L3JpZ2h0c0xpc3Q+PC9yZXNvdXJjZT4=" }
+      let(:raw_result) { {"pid" => "10.5072/exampledoi"}.to_json }
       let(:valid_attributes) do
         {
           "data" => {
@@ -1644,6 +1645,7 @@ describe "dois", type: :request do
               "last-landing-page-status" => 200,
               "last-landing-page-status-check" => Time.zone.now,
               "last-landing-page-content-type" => "text/html",
+              "last-landing-page-status-result" => raw_result,
               "event" => "register"
             },
             "relationships"=> {
@@ -1664,6 +1666,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'landing-page', 'status')).to eq(200)
+        expect(json.dig('data', 'attributes', 'landing-page', 'result')).to eq(raw_result)
       end
 
       it 'returns status code 201' do
@@ -1906,7 +1909,7 @@ describe "dois", type: :request do
   describe 'GET /dois/DOI/get-url no permission', vcr: true do
     let(:other_client) { create(:client, provider: provider) }
     let(:doi) { create(:doi, client: other_client, doi: "10.5438/8syz-ym47", event: "publish") }
-    
+
     before { get "/dois/#{doi.doi}/get-url", headers: headers }
 
     it 'returns error' do
