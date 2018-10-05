@@ -44,6 +44,7 @@ services:
       discovery.type: single-node
       ES_JAVA_OPTS: -Xmx256m -Xms256m
       ELASTIC_PASSWORD: changeme
+      xpack.security.enabled: "false"
     networks:
       - public
     healthcheck:
