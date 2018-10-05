@@ -409,8 +409,6 @@ class DoisController < ApplicationController
           "schema-org-id",
           "dc-identifier",
           "citation-doi",
-          { "doi-meta-match" => [] },
-          { "doi-meta-different" => [] },
           "body-has-pid"
         ]
       },
