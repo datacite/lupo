@@ -5,6 +5,28 @@ describe Doi, type: :model, vcr: true do
     it { should validate_presence_of(:doi) }
   end
 
+  describe "validate doi" do
+    it "using base32 crockford checksum =" do
+      subject = build(:doi, doi: "10.18730/nvb5=")
+      expect(subject).to be_valid
+    end
+
+    it "using base32 crockford checksum $" do
+      subject = build(:doi, doi: "10.18730/nvb4$")
+      expect(subject).to be_valid
+    end
+
+    it "using base32 crockford checksum ~" do
+      subject = build(:doi, doi: "10.18730/nvb3~")
+      expect(subject).to be_valid
+    end
+
+    it "using base32 crockford checksum *" do
+      subject = build(:doi, doi: "10.18730/nvb2*")
+      expect(subject).to be_valid
+    end
+  end
+
   describe "state" do
     subject { create(:doi) }
 
