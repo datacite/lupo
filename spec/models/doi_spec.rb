@@ -387,10 +387,9 @@ describe Doi, type: :model, vcr: true do
     it "works" do
       params = doi.to_jsonapi
       expect(params.dig("id")).to eq(doi.doi)
-      expect(params.dig("attributes","url")).to eq(doi.url)
-      expect(params.dig("attributes","resource-type-id")).to eq("Text")
-      expect(params.dig("attributes","schema-version")).to eq("http://datacite.org/schema/kernel-3")
-      expect(params.dig("attributes","is-active")).to be false
+      expect(params.dig("attributes","state")).to eq("draft")
+      expect(params.dig("attributes","created")).to eq(doi.created)
+      expect(params.dig("attributes","updated")).to eq(doi.updated)
     end
   end
 

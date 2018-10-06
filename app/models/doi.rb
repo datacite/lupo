@@ -26,7 +26,7 @@ class Doi < ActiveRecord::Base
   include Elasticsearch::Model
 
   aasm :whiny_transitions => false do
-    # draft is initial istate for new DOIs.
+    # draft is initial state for new DOIs.
     state :draft, :initial => true
     state :tombstoned, :registered, :findable, :flagged, :broken
 
@@ -366,25 +366,8 @@ class Doi < ActiveRecord::Base
   def to_jsonapi
     attributes = {
       "doi" => doi,
-      "identifier" => identifier,
-      "url" => url,
-      "creator" => author,
-      "title" => title,
-      "publisher" => publisher,
-      "resource-type-subtype" => additional_type,
-      "version" => version,
-      "schema-version" => schema_version,
-      "metadata-version" => metadata_version,
-      "client-id" => client_id,
-      "provider-id" => provider_id,
-      "resource-type-id" => resource_type_general,
-      "prefix" => prefix,
       "state" => aasm_state,
-      "source" => source,
-      "is-active" => is_active == "\x01",
       "created" => created,
-      "published" => date_published,
-      "registered" => date_registered,
       "updated" => date_updated }
 
     { "id" => doi, "type" => "dois", "attributes" => attributes }
