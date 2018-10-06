@@ -471,6 +471,15 @@ class Doi < ActiveRecord::Base
     end
   end
 
+  def self.set_url(from_date: nil)
+    from_date = from_date.present? ? Date.parse(from_date) : Date.current - 1.day
+    Doi.where(url: nil).where(aasm_state: ["registered", "findable"]).where("updated >= ?", from_date).find_each do |doi|
+      UrlJob.perform_later(doi)
+    end
+
+    "Queued storing missing URL in database for DOIs updated since #{from_date.strftime("%F")}."
+  end
+
   # update metadata when any virtual attribute has changed
   def update_metadata
     changed_virtual_attributes = changed & %w(author title publisher date_published additional_type resource_type_general description content_size content_format)
@@ -496,14 +505,5 @@ class Doi < ActiveRecord::Base
 
   def update_doi_count
     Rails.cache.delete("cached_doi_count/#{datacentre}")
-  end
-
-  def set_url
-    response = Maremma.head(identifier, limit: 0)
-    if response.headers.present?
-      update_column(:url, response.headers["location"])
-      logger = Logger.new(STDOUT)
-      logger.debug "Set URL #{response.headers["location"]} for DOI #{doi}"
-    end
   end
 end

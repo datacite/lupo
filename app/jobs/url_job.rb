@@ -8,7 +8,11 @@ class UrlJob < ActiveJob::Base
 
   def perform(doi)
     logger = Logger.new(STDOUT)
-    logger.debug "Set URL for #{doi.doi}"
-    doi.send(:set_url)
+
+    response = Maremma.head(doi.identifier, limit: 0)
+    if response.headers.present?
+      doi.update_attributes(:url, response.headers["location"])
+      logger.debug "Set URL #{response.headers["location"]} for DOI #{doi.doi}"
+    end
   end
 end

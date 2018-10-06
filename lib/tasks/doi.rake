@@ -1,10 +1,9 @@
 namespace :doi do
   desc 'Store handle URL'
   task :set_url => :environment do
-    from_date = ENV['FROM_DATE'] || Time.zone.now - 1.day
-    Doi.where(url: nil).where(aasm_state: ["registered", "findable"]).where("updated >= ?", from_date).find_each do |doi|
-      UrlJob.perform_later(doi)
-    end
+    from_date = ENV['FROM_DATE'] || (Time.zone.now - 1.day).strftime("%F")
+    response = Doi.set_url(from_date: from_date)
+    puts response
   end
 
   desc 'Index all DOIs'
