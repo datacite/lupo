@@ -11,7 +11,7 @@ class UrlJob < ActiveJob::Base
 
     response = Maremma.head(doi.identifier, limit: 0)
     if response.headers.present?
-      doi.update_attributes(:url, response.headers["location"])
+      doi.update_attributes(url: response.headers["location"])
       logger.debug "Set URL #{response.headers["location"]} for DOI #{doi.doi}"
     end
   end
