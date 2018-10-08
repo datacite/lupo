@@ -12,7 +12,7 @@ module Indexable
         logger = Logger.new(STDOUT)
         logger.info "[Elasticsearch] Indexing of DOI #{doi} finished #{index_interval.to_s} seconds after DOI update."
         
-        # send_import_message(self.to_jsonapi)
+        send_import_message(self.to_jsonapi) if aasm_state == "findable"
       end
     end
   

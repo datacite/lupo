@@ -26,7 +26,7 @@ class Doi < ActiveRecord::Base
   include Elasticsearch::Model
 
   aasm :whiny_transitions => false do
-    # draft is initial istate for new DOIs.
+    # draft is initial state for new DOIs.
     state :draft, :initial => true
     state :tombstoned, :registered, :findable, :flagged, :broken
 
@@ -74,7 +74,7 @@ class Doi < ActiveRecord::Base
   # validates_presence_of :url, if: :is_registered_or_findable?
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
-  validates_format_of :doi, :with => /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9]+\z/, :on => :create
+  validates_format_of :doi, :with => /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, :on => :create
   validates_format_of :url, :with => /\A(ftp|http|https):\/\/[\S]+/ , if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
@@ -366,25 +366,8 @@ class Doi < ActiveRecord::Base
   def to_jsonapi
     attributes = {
       "doi" => doi,
-      "identifier" => identifier,
-      "url" => url,
-      "creator" => author,
-      "title" => title,
-      "publisher" => publisher,
-      "resource-type-subtype" => additional_type,
-      "version" => version,
-      "schema-version" => schema_version,
-      "metadata-version" => metadata_version,
-      "client-id" => client_id,
-      "provider-id" => provider_id,
-      "resource-type-id" => resource_type_general,
-      "prefix" => prefix,
       "state" => aasm_state,
-      "source" => source,
-      "is-active" => is_active == "\x01",
       "created" => created,
-      "published" => date_published,
-      "registered" => date_registered,
       "updated" => date_updated }
 
     { "id" => doi, "type" => "dois", "attributes" => attributes }
@@ -471,6 +454,15 @@ class Doi < ActiveRecord::Base
     end
   end
 
+  def self.set_url(from_date: nil)
+    from_date = from_date.present? ? Date.parse(from_date) : Date.current - 1.day
+    Doi.where(url: nil).where(aasm_state: ["registered", "findable"]).where("updated >= ?", from_date).find_each do |doi|
+      UrlJob.perform_later(doi)
+    end
+
+    "Queued storing missing URL in database for DOIs updated since #{from_date.strftime("%F")}."
+  end
+
   # update metadata when any virtual attribute has changed
   def update_metadata
     changed_virtual_attributes = changed & %w(author title publisher date_published additional_type resource_type_general description content_size content_format)
@@ -496,14 +488,5 @@ class Doi < ActiveRecord::Base
 
   def update_doi_count
     Rails.cache.delete("cached_doi_count/#{datacentre}")
-  end
-
-  def set_url
-    response = Maremma.head(identifier, limit: 0)
-    if response.headers.present?
-      update_column(:url, response.headers["location"])
-      logger = Logger.new(STDOUT)
-      logger.debug "Set URL #{response.headers["location"]} for DOI #{doi}"
-    end
   end
 end
