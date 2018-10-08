@@ -45,7 +45,6 @@ class DoiSerializer
   attribute :landing_page do |object|
     { status: object.last_landing_page_status,
       "content-type" => object.last_landing_page_content_type,
-      checked: object.last_landing_page_status_check,
-      "result" => object.last_landing_page_status_result }
+      checked: object.last_landing_page_status_check}
   end
 end
