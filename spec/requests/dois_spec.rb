@@ -1673,7 +1673,6 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a Doi' do
-        puts json
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'landing-page', 'status')).to eq(200)
