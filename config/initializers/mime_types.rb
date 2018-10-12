@@ -34,6 +34,15 @@ ActionController::Renderers.add :datacite do |obj, options|
     disposition: "attachment; filename=#{filename}.xml"
 end
 
+ActionController::Renderers.add :citation do |obj, options|
+  uri = Addressable::URI.parse(obj.identifier)
+  data = obj.citation
+
+  filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
+  send_data data.to_s, type: Mime[:citation],
+    disposition: "attachment; filename=#{filename}.txt"
+end
+
 ActionController::Renderers.add :turtle do |obj, options|
   uri = Addressable::URI.parse(obj.identifier)
   data = obj.send(:turtle)

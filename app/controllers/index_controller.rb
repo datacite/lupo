@@ -16,14 +16,9 @@ class IndexController < ApplicationController
     respond_to do |format|
       format.citation do
         # fetch formatted citation
-        options = {
-          style: params[:style] || "apa",
-          locale: params[:locale] || "en-US" }
-
-        citation_url = ENV["CITEPROC_URL"] + "?" + URI.encode_www_form(options)
-        response = Maremma.post citation_url, content_type: 'json', data: @doi.citeproc
-
-        render plain: CGI.unescapeHTML(response.body.fetch("data", ""))
+        @doi.style = params[:style] || "apa"
+        @doi.locale = params[:locale] || "en-US"
+        render citation: @doi
       end
       format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => @doi }
       format.any { fail ActionController::UnknownFormat }

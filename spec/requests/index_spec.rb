@@ -341,7 +341,7 @@ describe "content_negotation", type: :request do
       before { get "/#{doi.doi}?style=ieee", headers: { "HTTP_ACCEPT" => "text/x-bibliography", 'Authorization' => 'Bearer ' + bearer  } }
 
       it 'returns the Doi' do
-        expect(response.body).to start_with("[1]M. Fenner")
+        expect(response.body).to start_with("M. Fenner")
       end
 
       it 'returns status code 200' do
@@ -355,7 +355,7 @@ describe "content_negotation", type: :request do
       before { get "/text/x-bibliography/#{doi.doi}?style=ieee" }
 
       it 'returns the Doi' do
-        expect(response.body).to start_with("[1]M. Fenner")
+        expect(response.body).to start_with("M. Fenner")
       end
 
       it 'returns status code 200' do
@@ -367,7 +367,7 @@ describe "content_negotation", type: :request do
       before { get "/#{doi.doi}?style=vancouver&locale=de", headers: { "HTTP_ACCEPT" => "text/x-bibliography", 'Authorization' => 'Bearer ' + bearer  } }
 
       it 'returns the Doi' do
-        expect(response.body).to start_with("1. Fenner M")
+        expect(response.body).to start_with("Fenner M")
       end
 
       it 'returns status code 200' do
