@@ -123,6 +123,7 @@ class DoisController < ApplicationController
       resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
       years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
       created = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
+      registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
       providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
       clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
       prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
@@ -140,6 +141,7 @@ class DoisController < ApplicationController
         resource_types: resource_types,
         years: years,
         created: created,
+        registered: registered,
         providers: providers,
         clients: clients,
         prefixes: prefixes,
