@@ -3,7 +3,6 @@
 
 # DataCite REST API
 
-
 Rails API application for managing DataCite providers, clients, prefixes and DOIs. The API is based on the [JSONAPI](http://jsonapi.org/) specification.
 
 ## Installation
