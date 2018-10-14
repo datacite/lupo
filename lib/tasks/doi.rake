@@ -20,7 +20,7 @@ namespace :doi do
     from_date = ENV['FROM_DATE'] || Date.current.strftime("%F")
 
     Doi.index_by_day(from_date: from_date)
-    puts "DOIs updated on #{from_date} indexed."
+    puts "DOIs created on #{from_date} indexed."
   end
 
   desc 'Set state'

@@ -8,7 +8,7 @@ describe "doi:index", elasticsearch: true do
   ENV['UNTIL_DATE'] = "2018-08-05"
 
   let!(:doi)  { create_list(:doi, 10) }
-  let(:output) { "Queued indexing for DOIs updated from 2018-01-04 until 2018-08-05.\n" }
+  let(:output) { "Queued indexing for DOIs created from 2018-01-04 until 2018-08-05.\n" }
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")
@@ -31,7 +31,7 @@ describe "doi:index_by_day", elasticsearch: true do
   include_context "rake"
 
   let!(:doi)  { create_list(:doi, 10) }
-  let(:output) { "DOIs updated on 2018-01-04 indexed.\n" }
+  let(:output) { "DOIs created on 2018-01-04 indexed.\n" }
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")

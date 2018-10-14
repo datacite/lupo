@@ -239,7 +239,7 @@ class Doi < ActiveRecord::Base
       DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"))
     end
 
-    "Queued indexing for DOIs updated from #{from_date.strftime("%F")} until #{until_date.strftime("%F")}."
+    "Queued indexing for DOIs created from #{from_date.strftime("%F")} until #{until_date.strftime("%F")}."
   end
 
   def self.index_by_day(options={})
@@ -250,7 +250,7 @@ class Doi < ActiveRecord::Base
 
     logger = Logger.new(STDOUT)
 
-    Doi.where("updated >= ?", from_date.strftime("%F") + " 00:00:00").where("updated <= ?", until_date.strftime("%F") + " 00:00:00").find_in_batches(batch_size: 100) do |dois|
+    Doi.where("created >= ?", from_date.strftime("%F") + " 00:00:00").where("created < ?", until_date.strftime("%F") + " 00:00:00").find_in_batches(batch_size: 100) do |dois|
       response = Doi.__elasticsearch__.client.bulk \
         index:   Doi.index_name,
         type:    Doi.document_type,
@@ -260,7 +260,7 @@ class Doi < ActiveRecord::Base
       count += dois.length
     end
 
-    logger.info "[Elasticsearch] #{errors} errors indexing #{count} DOIs updated on #{from_date.strftime("%F")}."
+    logger.info "[Elasticsearch] #{errors} errors indexing #{count} DOIs created on #{from_date.strftime("%F")}."
   end
 
   def uid
