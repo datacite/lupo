@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_04_161700) do
+ActiveRecord::Schema.define(version: 2018_10_15_152049) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -110,7 +110,7 @@ ActiveRecord::Schema.define(version: 2018_09_04_161700) do
   end
 
   create_table "dataset", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
-    t.datetime "created"
+    t.datetime "created", precision: 3
     t.string "doi", null: false
     t.binary "is_active", limit: 1, null: false
     t.binary "is_ref_quality", limit: 1
@@ -118,7 +118,7 @@ ActiveRecord::Schema.define(version: 2018_09_04_161700) do
     t.datetime "last_landing_page_status_check"
     t.json "last_landing_page_status_result"
     t.string "last_metadata_status"
-    t.datetime "updated"
+    t.datetime "updated", precision: 3
     t.integer "version"
     t.bigint "datacentre", null: false
     t.datetime "minted"
@@ -128,7 +128,9 @@ ActiveRecord::Schema.define(version: 2018_09_04_161700) do
     t.string "aasm_state"
     t.string "reason"
     t.string "source", limit: 191
+    t.datetime "indexed", precision: 3, default: "1970-01-01 00:00:00", null: false
     t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
+    t.index ["created", "indexed", "updated"], name: "index_dataset_on_created_indexed_updated"
     t.index ["datacentre"], name: "FK5605B47847B5F5FF"
     t.index ["doi"], name: "doi", unique: true
     t.index ["last_landing_page_content_type"], name: "index_dataset_on_last_landing_page_content_type"
