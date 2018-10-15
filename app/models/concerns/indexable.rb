@@ -7,12 +7,9 @@ module Indexable
     after_commit on: [:create, :update] do
       # use index_document instead of update_document to also update virtual attributes
       IndexJob.perform_later(self)
-      if self.class.name == "Doi" && !Rails.env.test?
-        index_interval = (Time.zone.now - updated_at)
-        logger = Logger.new(STDOUT)
-        logger.info "[Elasticsearch] Indexing of DOI #{doi} finished #{index_interval.to_s} seconds after DOI update."
-        
-        send_import_message(self.to_jsonapi) if aasm_state == "findable"
+      if self.class.name == "Doi"
+        update_column(:indexed, Time.zone.now)        
+        send_import_message(self.to_jsonapi) if aasm_state == "findable" unless Rails.env.test?
       end
     end
   

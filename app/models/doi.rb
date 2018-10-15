@@ -250,7 +250,7 @@ class Doi < ActiveRecord::Base
 
     logger = Logger.new(STDOUT)
 
-    Doi.where("created >= ?", from_date.strftime("%F") + " 00:00:00").where("created < ?", until_date.strftime("%F") + " 00:00:00").find_in_batches(batch_size: 100) do |dois|
+    Doi.where("created >= ?", from_date.strftime("%F") + " 00:00:00").where("created < ?", until_date.strftime("%F") + " 00:00:00").where("updated > indexed").find_in_batches(batch_size: 100) do |dois|
       response = Doi.__elasticsearch__.client.bulk \
         index:   Doi.index_name,
         type:    Doi.document_type,
@@ -258,6 +258,7 @@ class Doi < ActiveRecord::Base
 
       errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
       count += dois.length
+      dois.each { |doi| doi.update_column(:indexed, Time.zone.now) }
     end
 
     logger.info "[Elasticsearch] #{errors} errors indexing #{count} DOIs created on #{from_date.strftime("%F")}."
