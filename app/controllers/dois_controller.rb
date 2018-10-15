@@ -105,6 +105,7 @@ class DoisController < ApplicationController
                             state: params[:state],
                             year: params[:year],
                             created: params[:created],
+                            registered: params[:registered],
                             provider_id: params[:provider_id],
                             client_id: params[:client_id],
                             prefix: params[:prefix],
