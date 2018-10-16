@@ -110,7 +110,7 @@ class DoisController < ApplicationController
                             client_id: params[:client_id],
                             prefix: params[:prefix],
                             person_id: params[:person_id],
-                            resource_type_id: camelize_str(params[:resource_type_id]),
+                            resource_type_id: params[:resource_type_id],
                             schema_version: params[:schema_version],
                             source: params[:source],
                             page: page,
@@ -139,14 +139,14 @@ class DoisController < ApplicationController
         "total-pages" => total_pages,
         page: page[:number],
         states: states,
-        resource_types: resource_types,
+        "resource-types" => resource_types,
         years: years,
         created: created,
         registered: registered,
         providers: providers,
         clients: clients,
         prefixes: prefixes,
-        schema_versions: schema_versions,
+        "schema-versions" => schema_versions,
         sources: sources
       }.compact
 
