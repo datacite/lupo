@@ -260,8 +260,12 @@ class Doi < ActiveRecord::Base
       count += dois.length
       dois.each { |doi| doi.update_column(:indexed, Time.zone.now) }
     end
-
-    logger.info "[Elasticsearch] #{errors} errors indexing #{count} DOIs created on #{from_date.strftime("%F")}."
+    
+    if errors > 1
+      logger.info "[Elasticsearch] #{errors} errors indexing #{count} DOIs created on #{from_date.strftime("%F")}."
+    elsif count > 1
+      logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{from_date.strftime("%F")}."
+    end
   end
 
   def uid
