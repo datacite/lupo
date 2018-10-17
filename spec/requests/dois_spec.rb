@@ -1676,7 +1676,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'landing-page', 'status')).to eq(200)
-#        expect(json.dig('data', 'attributes', 'landing-page', 'result')).to eq(link_check_result)
+        expect(json.dig('data', 'attributes', 'landing-page', 'result')).to eq(link_check_result)
       end
 
       it 'returns status code 201' do
