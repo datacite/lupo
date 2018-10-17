@@ -250,7 +250,7 @@ class Doi < ActiveRecord::Base
 
     logger = Logger.new(STDOUT)
 
-    Doi.where("created >= ?", from_date.strftime("%F") + " 00:00:00").where("created < ?", until_date.strftime("%F") + " 00:00:00").where("updated > indexed").find_in_batches(batch_size: 10) do |dois|
+    Doi.where("created >= ?", from_date.strftime("%F") + " 00:00:00").where("created < ?", until_date.strftime("%F") + " 00:00:00").where("updated > indexed").find_in_batches(batch_size: 100) do |dois|
       response = Doi.__elasticsearch__.client.bulk \
         index:   Doi.index_name,
         type:    Doi.document_type,
@@ -260,12 +260,24 @@ class Doi < ActiveRecord::Base
       count += dois.length
       dois.each { |doi| doi.update_column(:indexed, Time.zone.now) }
     end
-    
+
     if errors > 1
       logger.info "[Elasticsearch] #{errors} errors indexing #{count} DOIs created on #{from_date.strftime("%F")}."
     elsif count > 1
       logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{from_date.strftime("%F")}."
     end
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge => error
+    logger.info "[Elasticsearch] Error #{error.message} indexing DOIs created on #{from_date.strftime("%F")}."
+
+    count = 0
+
+    Doi.where("created >= ?", from_date.strftime("%F") + " 00:00:00").where("created < ?", until_date.strftime("%F") + " 00:00:00").where("updated > indexed").find_each do |doi|
+      IndexJob.perform_later(doi)
+      doi.update_column(:indexed, Time.zone.now)  
+      count += 1
+    end
+  
+    logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{from_date.strftime("%F")}."
   end
 
   def uid
