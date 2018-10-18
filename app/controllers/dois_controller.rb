@@ -343,6 +343,7 @@ class DoisController < ApplicationController
           "download-latency",
           "has-schema-org",
           "schema-org-id",
+          { "schema-org-id" => ["@type", "value", "propertyID"] },
           "dc-identifier",
           "citation-doi",
           "body-has-pid"
