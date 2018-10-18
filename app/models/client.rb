@@ -85,6 +85,7 @@ class Client < ActiveRecord::Base
       indexes :created,       type: :date
       indexes :updated,       type: :date
       indexes :deleted_at,    type: :date
+      indexes :cumulative_years, type: :integer, index: "not_analyzed"
 
       # include parent objects
       indexes :provider,      type: :object
@@ -112,6 +113,7 @@ class Client < ActiveRecord::Base
       "created" => created,
       "updated" => updated,
       "deleted_at" => deleted_at,
+      "cumulative_years" => cumulative_years,
       "provider" => provider.as_indexed_json,
       "repository" => cached_repository
     }
@@ -124,6 +126,7 @@ class Client < ActiveRecord::Base
   def self.query_aggregations
     {
       years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
+      cumulative_years: { terms: { field: 'cumulative_years', min_doc_count: 1, order: { _count: "asc" } } },
       providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } }
     }
   end
@@ -223,6 +226,14 @@ class Client < ActiveRecord::Base
 
   def year
     created_at.year if created_at.present?
+  end
+
+  def cumulative_years
+    if deleted_at
+      (created_at.year..[created_at.year, deleted_at.year - 1].max).to_a
+    else
+      (created_at.year..Date.today.year).to_a
+    end
   end
 
   # attributes to be sent to elasticsearch index

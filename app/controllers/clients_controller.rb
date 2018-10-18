@@ -1,4 +1,6 @@
 class ClientsController < ApplicationController
+  include Countable
+
   before_action :set_client, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
@@ -65,12 +67,8 @@ class ClientsController < ApplicationController
   end
 
   def show
-    response = Doi.query(nil, client_id: params[:id], page: { number: 1, size: 0 })
-    total = response.results.total
-    dois = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
-
     options = {}
-    options[:meta] = { dois: dois }
+    options[:meta] = { dois: doi_count(client_id: params[:id]) }
     options[:include] = @include
     options[:is_collection] = false
 
@@ -96,12 +94,8 @@ class ClientsController < ApplicationController
   def update
     logger = Logger.new(STDOUT)
     if @client.update_attributes(safe_params)
-      response = Doi.query(nil, client_id: params[:id], page: { number: 1, size: 0 })
-      total = response.results.total
-      dois = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
-
       options = {}
-      options[:meta] = { dois: dois }
+      options[:meta] = { dois: doi_count(client_id: params[:id]) }
       options[:is_collection] = false
   
       render json: ClientSerializer.new(@client, options).serialized_json, status: :ok

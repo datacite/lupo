@@ -97,6 +97,7 @@ class Provider < ActiveRecord::Base
       indexes :created,       type: :date
       indexes :updated,       type: :date
       indexes :deleted_at,    type: :date
+      indexes :cumulative_years, type: :integer, index: "not_analyzed"
     end
   end
 
@@ -126,7 +127,8 @@ class Provider < ActiveRecord::Base
       "joined" => joined,
       "created" => created,
       "updated" => updated,
-      "deleted_at" => deleted_at
+      "deleted_at" => deleted_at,
+      "cumulative_years" => cumulative_years
     }
   end
 
@@ -137,6 +139,7 @@ class Provider < ActiveRecord::Base
   def self.query_aggregations
     {
       years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
+      cumulative_years: { terms: { field: 'cumulative_years', min_doc_count: 1, order: { _count: "asc" } } },
       regions: { terms: { field: 'region', size: 10, min_doc_count: 1 } }
     }
   end
@@ -151,6 +154,14 @@ class Provider < ActiveRecord::Base
 
   def year
     joined.year if joined.present?
+  end
+
+  def cumulative_years
+    if deleted_at
+      (created_at.year..[created_at.year, deleted_at.year - 1].max).to_a
+    else
+      (created_at.year..Date.today.year).to_a
+    end
   end
 
   # def country=(value)
@@ -202,41 +213,6 @@ class Provider < ActiveRecord::Base
 
   def prefix_ids
     prefixes.pluck(:prefix)
-  end
-
-  # cumulative count clients by year
-  # count until the previous year if client has been deleted
-  # show all clients for admin
-  def client_count
-    c = clients.unscoped
-    c = c.where("datacentre.allocator = ?", id) if symbol != "ADMIN"
-    c = c.pluck(:created, :deleted_at).reduce([]) do |sum, a|
-      from = a[0].year
-      to = a[1] ? a[1].year : Date.today.year + 1
-      sum += (from...to).to_a
-    end
-    return [] if c.empty?
-
-    c += (c.min..Date.today.year).to_a
-    c.group_by { |a| a }
-     .sort { |a, b| a.first <=> b.first }
-     .map { |a| { "id" => a[0], "title" => a[0], "count" => a[1].count - 1 } }
-  end
-
-  # show provider count for admin
-  def provider_count
-    return nil if symbol != "ADMIN"
-
-    p = Provider.unscoped.where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')")
-    p = p.pluck(:created, :deleted_at).reduce([]) do |sum, a|
-      from = a[0].year
-      to = a[1] ? a[1].year : Date.today.year + 1
-      sum += (from...to).to_a
-    end
-    p += (p.min..Date.today.year).to_a
-    p.group_by { |a| a }
-     .sort { |a, b| a.first <=> b.first }
-     .map { |a| { "id" => a[0], "title" => a[0], "count" => a[1].count - 1 } }
   end
 
   def freeze_symbol
