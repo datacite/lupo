@@ -171,9 +171,46 @@ class Client < ActiveRecord::Base
 
     target = c.records.first
 
-    dois.find_each do |doi|
-      TransferJob.perform_later(doi.doi, target_id: target.id)
+    errors = 0
+    count = 0
+
+    logger = Logger.new(STDOUT)
+
+    dois.find_in_batches(batch_size: 100) do |dois|
+      dois.each { |doi| doi.update_column(:datacentre, target.id) }
+
+      response = Doi.__elasticsearch__.client.bulk \
+        index:   Doi.index_name,
+        type:    Doi.document_type,
+        body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
+
+      errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
+      count += dois.length
+      dois.each { |doi| doi.update_column(:indexed, Time.zone.now) }
     end
+
+    if errors > 1
+      logger.info "[Elasticsearch] #{errors} errors transferring #{count} DOIs to account #{value}."
+    elsif count > 1
+      logger.info "[Elasticsearch] Transferred #{count} DOIs to account #{value}."
+    end
+
+    # update DOI count for source and target client
+    cached_doi_count(force: true)
+    target.cached_doi_count(force: true)
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge => error
+    logger.info "[Elasticsearch] Error #{error.message} transferring DOIs to account #{value}."
+
+    count = 0
+
+    dois.find_each do |doi|
+      doi.update_column(:datacentre, target.id)
+      IndexJob.perform_later(doi)
+      doi.update_column(:indexed, Time.zone.now)  
+      count += 1
+    end
+  
+    logger.info "[Elasticsearch] Transferred #{count} DOIs to account #{value}."
 
     # update DOI count for source and target client
     cached_doi_count(force: true)

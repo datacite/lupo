@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-describe TransferJob, type: :job do
+describe DoiIndexByDayJob, type: :job do
   let(:doi) { create(:doi) }
-  subject(:job) { TransferJob.perform_later(doi.doi) }
+  subject(:job) { DoiIndexByDayJob.perform_later(Time.zone.now.strftime("%F")) }
 
   it 'queues the job' do
-    expect { job }.to have_enqueued_job(TransferJob)
+    expect { job }.to have_enqueued_job(DoiIndexByDayJob)
       .on_queue("test_lupo_background")
   end
 
