@@ -202,7 +202,7 @@ class Doi < ActiveRecord::Base
       created: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
       registered: { date_histogram: { field: 'registered', interval: 'year', min_doc_count: 1 } },
       providers: { terms: { field: 'provider_id', size: 10, min_doc_count: 1 } },
-      clients: { terms: { field: 'client_id', size: 10, min_doc_count: 1 } },
+      clients: { terms: { field: 'client_id', size: 25, min_doc_count: 1 } },
       prefixes: { terms: { field: 'prefix', size: 10, min_doc_count: 1 } },
       schema_versions: { terms: { field: 'schema_version', size: 10, min_doc_count: 1 } },
       sources: { terms: { field: 'source', size: 10, min_doc_count: 1 } }
@@ -281,7 +281,7 @@ class Doi < ActiveRecord::Base
   end
 
   def resource_type_id
-    resource_type_general.downcase if resource_type_general.present?
+    resource_type_general.underscore.dasherize if resource_type_general.present?
   end
 
   def media_ids
