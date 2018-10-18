@@ -205,6 +205,7 @@ class Doi < ActiveRecord::Base
       clients: { terms: { field: 'client_id', size: 25, min_doc_count: 1 } },
       prefixes: { terms: { field: 'prefix', size: 10, min_doc_count: 1 } },
       schema_versions: { terms: { field: 'schema_version', size: 10, min_doc_count: 1 } },
+      link_checks: { terms: { field: 'last_landing_page_status', size: 10, min_doc_count: 1 } },
       sources: { terms: { field: 'source', size: 10, min_doc_count: 1 } }
     }
   end

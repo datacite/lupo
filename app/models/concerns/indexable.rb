@@ -123,6 +123,7 @@ module Indexable
       must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
       must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
       must << { term: { source: options[:source] }} if options[:source].present?
+      must << { term: { last_landing_page_status: options[:link_check_status] }} if options[:link_check_status].present?
 
       must_not = []
 

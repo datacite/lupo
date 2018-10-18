@@ -44,6 +44,7 @@ class DoisController < ApplicationController
                           person_id: params[:person_id],
                           resource_type_id: params[:resource_type_id],
                           schema_version: params[:schema_version],
+                          link_check_status: params[:link_check_status],
                           source: params[:source],
                           page: page,
                           sort: sort)
@@ -62,6 +63,7 @@ class DoisController < ApplicationController
     prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
     schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
     sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
+    link_checks = total > 0 ? facet_by_cumuative_year(response.response.aggregations.link_checks.buckets) : nil
 
     @dois = response.results.results
 
@@ -79,7 +81,8 @@ class DoisController < ApplicationController
       clients: clients,
       prefixes: prefixes,
       "schema-versions" => schema_versions,
-      sources: sources
+      sources: sources,
+      link_checks: link_checks
     }.compact
 
     options[:links] = {
