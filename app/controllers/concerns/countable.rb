@@ -11,7 +11,7 @@ module Countable
         response = Doi.query(nil, page: { number: 1, size: 0 })
       end
 
-      response.results.total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
+      response.results.total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : []
     end
 
     # cumulative count clients by year
@@ -21,10 +21,10 @@ module Countable
       if provider_id
         response = Client.query(nil, provider_id: provider_id, include_deleted: true, page: { number: 1, size: 0 })
       else
-        response = Client.query(nil, page: { number: 1, size: 0 })
+        response = Client.query(nil, include_deleted: true, page: { number: 1, size: 0 })
       end
 
-      response.results.total > 0 ? facet_by_cumuative_year(response.response.aggregations.cumulative_years.buckets) : nil
+      response.results.total > 0 ? facet_by_cumuative_year(response.response.aggregations.cumulative_years.buckets) : []
     end
 
     # show provider count for admin
@@ -32,8 +32,8 @@ module Countable
     def provider_count(provider_id: nil)
       return nil if provider_id 
 
-      response = Provider.query(nil, page: { number: 1, size: 0 })
-      response.results.total > 0 ? facet_by_cumuative_year(response.response.aggregations.cumulative_years.buckets) : nil
+      response = Provider.query(nil, include_deleted: true, page: { number: 1, size: 0 })
+      response.results.total > 0 ? facet_by_cumuative_year(response.response.aggregations.cumulative_years.buckets) : []
     end
   end
 end

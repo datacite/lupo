@@ -131,10 +131,10 @@ module Indexable
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { term: { region: options[:region].upcase }} if options[:region].present?
         must << { term: { role_name: "ROLE_ALLOCATOR" }} unless options[:all_members]
-        must_not << { exists: { field: "deleted_at" }}
+        must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
       elsif self.name == "Client"
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
-        must_not << { exists: { field: "deleted_at" }}
+        must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
       elsif self.name == "Doi"
         must << { range: { published: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
       end
