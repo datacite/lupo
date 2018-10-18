@@ -81,10 +81,6 @@ class Doi < ActiveRecord::Base
 
   # validate :validation_errors
 
-  # update cached doi count for client
-  before_destroy :update_doi_count
-  after_create :update_doi_count
-  after_update :update_doi_count, if: :saved_change_to_datacentre?
   after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
 
@@ -266,7 +262,7 @@ class Doi < ActiveRecord::Base
     elsif count > 1
       logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{from_date.strftime("%F")}."
     end
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge => error
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed => error
     logger.info "[Elasticsearch] Error #{error.message} indexing DOIs created on #{from_date.strftime("%F")}."
 
     count = 0
@@ -500,11 +496,5 @@ class Doi < ActiveRecord::Base
     self.is_active = (aasm_state == "findable") ? "\x01" : "\x00"
     self.version = version.present? ? version + 1 : 0
     self.updated = Time.zone.now.utc.iso8601
-  end
-
-  private
-
-  def update_doi_count
-    Rails.cache.delete("cached_doi_count/#{datacentre}")
   end
 end

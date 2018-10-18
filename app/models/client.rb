@@ -112,7 +112,6 @@ class Client < ActiveRecord::Base
       "created" => created,
       "updated" => updated,
       "deleted_at" => deleted_at,
-      "cached_doi_count" => cached_doi_count,
       "provider" => provider.as_indexed_json,
       "repository" => cached_repository
     }
@@ -194,11 +193,7 @@ class Client < ActiveRecord::Base
     elsif count > 1
       logger.info "[Elasticsearch] Transferred #{count} DOIs to account #{value}."
     end
-
-    # update DOI count for source and target client
-    cached_doi_count(force: true)
-    target.cached_doi_count(force: true)
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge => error
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed => error
     logger.info "[Elasticsearch] Error #{error.message} transferring DOIs to account #{value}."
 
     count = 0
@@ -211,10 +206,6 @@ class Client < ActiveRecord::Base
     end
   
     logger.info "[Elasticsearch] Transferred #{count} DOIs to account #{value}."
-
-    # update DOI count for source and target client
-    cached_doi_count(force: true)
-    target.cached_doi_count(force: true)
   end
 
   def cache_key

@@ -64,11 +64,30 @@ class ProvidersController < ApplicationController
   end
 
   def show
+    if params[:id] == "admin"
+      provider_response = Provider.query(nil, page: { number: 1, size: 0 })
+      total = provider_response.results.total
+      providers = total > 0 ? facet_by_year(provider_response.response.aggregations.years.buckets) : nil
+
+      client_response = Client.query(nil, page: { number: 1, size: 0 })
+      doi_response = Doi.query(nil, page: { number: 1, size: 0 })
+    else
+      providers = nil
+      client_response = Client.query(nil, provider_id: params[:id], page: { number: 1, size: 0 })
+      doi_response = Doi.query(nil, provider_id: params[:id], page: { number: 1, size: 0 })
+    end
+
+    total = client_response.results.total
+    clients = total > 0 ? facet_by_year(client_response.response.aggregations.years.buckets) : nil
+
+    total = doi_response.results.total
+    dois = total > 0 ? facet_by_year(doi_response.response.aggregations.created.buckets) : nil
+
     options = {}
     options[:meta] = { 
-      providers: @provider.provider_count,
-      clients: @provider.client_count,
-      dois: @provider.cached_doi_count }.compact
+      providers: providers,
+      clients: clients,
+      dois: dois }.compact
     options[:include] = @include
     options[:is_collection] = false
 
@@ -96,11 +115,30 @@ class ProvidersController < ApplicationController
     logger = Logger.new(STDOUT)
     # logger.debug safe_params.inspect
     if @provider.update_attributes(safe_params)
+      if params[:id] == "admin"
+        provider_response = Provider.query(nil, page: { number: 1, size: 0 })
+        total = provider_response.results.total
+        providers = total > 0 ? facet_by_year(provider_response.response.aggregations.years.buckets) : nil
+  
+        client_response = Client.query(nil, page: { number: 1, size: 0 })
+        doi_response = Doi.query(nil, page: { number: 1, size: 0 })
+      else
+        providers = nil
+        client_response = Client.query(nil, provider_id: params[:id], page: { number: 1, size: 0 })
+        doi_response = Doi.query(nil, provider_id: params[:id], page: { number: 1, size: 0 })
+      end
+  
+      total = client_response.results.total
+      clients = total > 0 ? facet_by_year(client_response.response.aggregations.years.buckets) : nil
+  
+      total = doi_response.results.total
+      dois = total > 0 ? facet_by_year(doi_response.response.aggregations.created.buckets) : nil
+
       options = {}
       options[:meta] = { 
-        providers: @provider.provider_count,
-        clients: @provider.client_count,
-        dois: @provider.cached_doi_count }.compact
+        providers: providers,
+        clients: clients,
+        dois: dois }.compact
       options[:include] = @include
       options[:is_collection] = false
   

@@ -65,8 +65,12 @@ class ClientsController < ApplicationController
   end
 
   def show
+    response = Doi.query(nil, client_id: params[:id], page: { number: 1, size: 0 })
+    total = response.results.total
+    dois = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
+
     options = {}
-    options[:meta] = { dois: @client.cached_doi_count }
+    options[:meta] = { dois: dois }
     options[:include] = @include
     options[:is_collection] = false
 
@@ -92,8 +96,12 @@ class ClientsController < ApplicationController
   def update
     logger = Logger.new(STDOUT)
     if @client.update_attributes(safe_params)
+      response = Doi.query(nil, client_id: params[:id], page: { number: 1, size: 0 })
+      total = response.results.total
+      dois = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
+
       options = {}
-      options[:meta] = { dois: @client.cached_doi_count }
+      options[:meta] = { dois: dois }
       options[:is_collection] = false
   
       render json: ClientSerializer.new(@client, options).serialized_json, status: :ok

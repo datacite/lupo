@@ -2,23 +2,6 @@ module Cacheable
   extend ActiveSupport::Concern
 
   included do
-    def cached_doi_count(options={})
-      Rails.cache.fetch("cached_doi_count/#{id}", expires_in: 24.hours, force: options[:force]) do
-        return [] if Rails.env.test?
-
-        if self.class.name == "Provider" && symbol != "ADMIN"
-          collection = Doi.joins(:client).where("datacentre.allocator = ?", id)
-        elsif self.class.name == "Client"
-          collection = Doi.where(datacentre: id)
-        else
-          collection = Doi
-        end
-
-        years = collection.order("YEAR(dataset.created)").group("YEAR(dataset.created)").count
-        years = years.map { |k,v| { id: k, title: k, count: v } }
-      end
-    end
-
     def cached_metadata_count(options={})
       Rails.cache.fetch("cached_metadata_count/#{id}", expires_in: 6.hours, force: options[:force]) do
         return [] if Rails.env.test?
@@ -202,22 +185,6 @@ module Cacheable
         end
 
         collection.map{|doi| { id: doi[:id],  client_id: doi[:client_id],  name: doi[:client_name] }}.group_by { |d| d[:client_id] }.map{ |k, v| { id: k, title: v.first[:name], count: v.count} }
-      end
-    end
-
-    def cached_years_response
-      Rails.cache.fetch("years_datasets", :expires_in => 1.hour) do
-        collection = cached_datasets
-        collection.map{|doi| { id: doi[:id],  year: doi[:created].year }}.group_by { |d| d[:year] }.map{ |k, v| { id: k, title: k, count: v.count} }
-      end
-    end
-
-    def cached_years_by_provider_response(id, options={})
-      Rails.cache.fetch("years_response", expires_in: 1.day) do
-        query = self.ds.where(is_active: true, allocator: id)
-        years = query.group_and_count(Sequel.extract(:year, :created)).all
-        years.map { |y| { id: y.values.first.to_s, title: y.values.first.to_s, count: y.values.last } }
-             .sort { |a, b| b.fetch(:id) <=> a.fetch(:id) }
       end
     end
 
