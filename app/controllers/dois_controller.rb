@@ -50,7 +50,7 @@ class DoisController < ApplicationController
     end
 
     total = response.results.total
-    total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
+    total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
 
     states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
     resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
