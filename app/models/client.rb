@@ -176,7 +176,7 @@ class Client < ActiveRecord::Base
 
     logger = Logger.new(STDOUT)
 
-    dois.find_in_batches(batch_size: 100) do |dois|
+    dois.find_in_batches(batch_size: 500) do |dois|
       dois.each { |doi| doi.update_column(:datacentre, target.id) }
 
       response = Doi.__elasticsearch__.client.bulk \
