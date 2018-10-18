@@ -82,7 +82,7 @@ class DoisController < ApplicationController
       prefixes: prefixes,
       "schema-versions" => schema_versions,
       sources: sources,
-      link_checks: link_checks
+      "link-checks" => link_checks
     }.compact
 
     options[:links] = {
