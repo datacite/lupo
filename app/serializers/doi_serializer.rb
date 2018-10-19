@@ -42,6 +42,10 @@ class DoiSerializer
     object.xml_encoded
   end
 
+  attribute :landing_page, if: Proc.new { |object, params|
+    params && params[:is_authenticated] == true
+  }
+
   attribute :landing_page do |object|
     { status: object.last_landing_page_status,
       "content-type" => object.last_landing_page_content_type,

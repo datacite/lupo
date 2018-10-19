@@ -97,6 +97,7 @@ class DoisController < ApplicationController
       }.compact
     options[:include] = @include
     options[:is_collection] = true
+    options[:is_authenticated] = !!@dois.current_user
 
     render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
   end
