@@ -88,6 +88,7 @@ class Doi < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
   scope :q, ->(query) { where("dataset.doi = ?", query) }
+  scope :not_indexed, -> { where("updated > indexed") }
 
   # use different index for testing
   index_name Rails.env.test? ? "dois-test" : "dois"
