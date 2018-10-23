@@ -112,7 +112,7 @@ module Indexable
       end
 
       must = []
-      must << { multi_match: { query: query, fields: query_fields, type: "phrase_prefix", max_expansions: 50 }} if query.present?
+      must << { multi_match: { query: query, fields: query_fields, type: "phrase_prefix", slop: 3, max_expansions: 10 }} if query.present?
       must << { term: { aasm_state: options[:state] }} if options[:state].present?
       must << { term: { resource_type_id: options[:resource_type_id] }} if options[:resource_type_id].present?
       must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
