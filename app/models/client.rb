@@ -50,7 +50,6 @@ class Client < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
-  after_create :set_test_prefix, unless: Proc.new { Rails.env.test? }
   after_create :send_welcome_email, unless: Proc.new { Rails.env.test? }
 
   attr_accessor :target_id
@@ -274,10 +273,6 @@ class Client < ActiveRecord::Base
   end
 
   private
-
-  def set_test_prefix
-    prefixes << cached_prefix_response("10.5072")
-  end
 
   def set_defaults
     self.contact_name = "" unless contact_name.present?

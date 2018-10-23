@@ -52,7 +52,6 @@ class Provider < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
-  after_create :set_test_prefix, unless: Proc.new { Rails.env.test? }
   after_create :send_welcome_email, unless: Proc.new { Rails.env.test? }
 
   accepts_nested_attributes_for :prefixes
@@ -265,10 +264,6 @@ class Provider < ActiveRecord::Base
   #   end
   #   write_attribute(:provider_type, r)
   # end
-
-  def set_test_prefix
-    prefixes << cached_prefix_response("10.5072")
-  end
 
   def set_defaults
     self.symbol = symbol.upcase if symbol.present?
