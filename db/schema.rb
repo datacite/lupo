@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_19_133039) do
+ActiveRecord::Schema.define(version: 2018_10_23_235649) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -57,7 +57,10 @@ ActiveRecord::Schema.define(version: 2018_10_19_133039) do
     t.date "joined"
     t.string "institution_type", limit: 191
     t.string "logo"
+    t.string "focus_area", limit: 191
+    t.string "organization_type", limit: 191
     t.index ["institution_type"], name: "index_member_institution_type"
+    t.index ["organization_type"], name: "index_allocator_organization_type"
     t.index ["symbol"], name: "symbol", unique: true
   end
 
