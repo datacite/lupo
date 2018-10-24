@@ -241,13 +241,14 @@ class Doi < ActiveRecord::Base
 
   def self.index_by_day(options={})
     return nil unless options[:from_date].present?
+    from_date = Date.parse(options[:from_date])
     
     errors = 0
     count = 0
 
     logger = Logger.new(STDOUT)
 
-    Doi.where(created: [options[:from_date] + " 00:00:00", options[:from_date] + " 23:59:59"]).not_indexed.find_in_batches(batch_size: 500) do |dois|
+    Doi.where(created: from_date.midnight..from_date.end_of_day).not_indexed.find_in_batches(batch_size: 500) do |dois|
       response = Doi.__elasticsearch__.client.bulk \
         index:   Doi.index_name,
         type:    Doi.document_type,
@@ -268,7 +269,7 @@ class Doi < ActiveRecord::Base
 
     count = 0
 
-    Doi.where(created: [options[:from_date] + " 00:00:00", options[:from_date] + " 23:59:59"]).not_indexed.find_each do |doi|
+    Doi.where(created: from_date.midnight..from_date.end_of_day).not_indexed.find_each do |doi|
       IndexJob.perform_later(doi)
       doi.update_column(:indexed, Time.zone.now)  
       count += 1
