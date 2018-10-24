@@ -36,7 +36,8 @@ class Provider < ActiveRecord::Base
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, message: "contact_email should be an email"
   validates_format_of :website, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be an url"
   validates_inclusion_of :role_name, :in => %w( ROLE_ALLOCATOR ROLE_MEMBER ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
-  validates_inclusion_of :institution_type, :in => %w(national_organization academic_institution research_institution government_organization publisher association service_provider), :message => "Institution type %s is not included in the list", if: :institution_type?
+  validates_inclusion_of :organization_type, :in => %w(national_organization national_library academic_institution academic_library research_institution government_agency publisher professional_society service_provider vendor), :message => "organization type %s is not included in the list", if: :organization_type?
+  validates_inclusion_of :focus_area, :in => %w(biomedical_and_health_sciences earth_sciences humanities mathematics_and_computer_science physical_sciences_and_engineering social_sciences general), :message => "focus area %s is not included in the list", if: :focus_area?
   validate :freeze_symbol, :on => :update
 
   before_validation :set_region
@@ -87,7 +88,8 @@ class Provider < ActiveRecord::Base
       indexes :phone,         type: :text
       indexes :logo_url,      type: :text
       indexes :region,        type: :keyword
-      indexes :institution_type, type: :keyword
+      indexes :focus_area,    type: :keyword
+      indexes :organization_type, type: :keyword
       indexes :member_type,   type: :keyword
       indexes :country_code,  type: :keyword
       indexes :role_name,     type: :keyword
@@ -118,7 +120,8 @@ class Provider < ActiveRecord::Base
       "region" => region,
       "country_code" => country_code,
       "logo_url" => logo_url,
-      "institution_type" => institution_type,
+      "focus_area" => focus_area,
+      "organization_type" => organization_type,
       "member_type" => member_type,
       "role_name" => role_name,
       "password" => password,
@@ -139,7 +142,9 @@ class Provider < ActiveRecord::Base
     {
       years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
       cumulative_years: { terms: { field: 'cumulative_years', min_doc_count: 1, order: { _count: "asc" } } },
-      regions: { terms: { field: 'region', size: 10, min_doc_count: 1 } }
+      regions: { terms: { field: 'region', size: 10, min_doc_count: 1 } },
+      organization_types: { terms: { field: 'organization_type', size: 10, min_doc_count: 1 } },
+      focus_areas: { terms: { field: 'focus_area', size: 10, min_doc_count: 1 } }
     }
   end
 

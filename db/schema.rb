@@ -55,11 +55,9 @@ ActiveRecord::Schema.define(version: 2018_10_23_235649) do
     t.string "phone"
     t.datetime "deleted_at"
     t.date "joined"
-    t.string "institution_type", limit: 191
     t.string "logo"
     t.string "focus_area", limit: 191
     t.string "organization_type", limit: 191
-    t.index ["institution_type"], name: "index_member_institution_type"
     t.index ["organization_type"], name: "index_allocator_organization_type"
     t.index ["symbol"], name: "symbol", unique: true
   end
