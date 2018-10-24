@@ -3,7 +3,7 @@ class ProvidersController < ApplicationController
 
   before_action :set_provider, only: [:show, :update, :destroy]
   before_action :authenticate_user!
-  load_and_authorize_resource :except => [:index, :show, :set_test_prefix]
+  load_and_authorize_resource :except => [:index, :show]
 
   def index
     sort = case params[:sort]
@@ -135,15 +135,6 @@ class ProvidersController < ApplicationController
       logger.warn @provider.errors.inspect
       render json: serialize(@provider.errors), status: :unprocessable_entity
     end
-  end
-
-  def set_test_prefix
-    authorize! :update, Provider
-    Provider.find_each do |p|
-      p.send(:set_test_prefix)
-      p.save
-    end
-    render json: { message: "Test prefix added." }.to_json, status: :ok
   end
 
   protected

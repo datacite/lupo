@@ -4,7 +4,7 @@ class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
-  load_and_authorize_resource :except => [:index, :show, :set_test_prefix]
+  load_and_authorize_resource :except => [:index, :show]
 
   def index
     sort = case params[:sort]
@@ -121,15 +121,6 @@ class ClientsController < ApplicationController
       logger.warn @client.errors.inspect
       render json: serialize(@client.errors), status: :unprocessable_entity
     end
-  end
-
-  def set_test_prefix
-    authorize! :update, Client
-    Client.find_each do |c|
-      c.send(:set_test_prefix)
-      c.save
-    end
-    render json: { message: "Test prefix added." }.to_json, status: :ok
   end
 
   protected

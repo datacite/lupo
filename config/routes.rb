@@ -19,8 +19,6 @@ Rails.application.routes.draw do
   get 'dois/get-dois', :to => 'dois#get_dois'
 
   # manage prefixes, keep database in sync for changes via MDS
-  post 'clients/set-test-prefix', :to => 'clients#set_test_prefix'
-  post 'providers/set-test-prefix', :to => 'providers#set_test_prefix'
   post 'client-prefixes/set-created', :to => 'client_prefixes#set_created'
   post 'client-prefixes/set-provider', :to => 'client_prefixes#set_provider'
   post 'provider-prefixes/set-created', :to => 'provider_prefixes#set_created'
