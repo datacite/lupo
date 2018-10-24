@@ -235,20 +235,19 @@ class Doi < ActiveRecord::Base
     # get every day between from_date and until_date
     (from_date..until_date).each do |d|
       DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"))
-    end
-
-    "Queued indexing for DOIs created from #{from_date.strftime("%F")} until #{until_date.strftime("%F")}."
+      puts "Queued indexing for DOIs created on #{d.strftime("%F")}."
+    end    
   end
 
   def self.index_by_day(options={})
-    from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
-    until_date = from_date + 1.day
+    return nil unless options[:from_date].present?
+    
     errors = 0
     count = 0
 
     logger = Logger.new(STDOUT)
 
-    Doi.where("created >= ?", from_date.strftime("%F") + " 00:00:00").where("created < ?", until_date.strftime("%F") + " 00:00:00").where("updated > indexed").find_in_batches(batch_size: 500) do |dois|
+    Doi.where(created: [options[:from_date] + " 00:00:00", options[:from_date] + " 23:59:59"]).not_indexed.find_in_batches(batch_size: 500) do |dois|
       response = Doi.__elasticsearch__.client.bulk \
         index:   Doi.index_name,
         type:    Doi.document_type,
@@ -260,22 +259,22 @@ class Doi < ActiveRecord::Base
     end
 
     if errors > 1
-      logger.info "[Elasticsearch] #{errors} errors indexing #{count} DOIs created on #{from_date.strftime("%F")}."
+      logger.info "[Elasticsearch] #{errors} errors indexing #{count} DOIs created on #{options[:from_date]}."
     elsif count > 1
-      logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{from_date.strftime("%F")}."
+      logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{options[:from_date]}."
     end
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed => error
-    logger.info "[Elasticsearch] Error #{error.message} indexing DOIs created on #{from_date.strftime("%F")}."
+    logger.info "[Elasticsearch] Error #{error.message} indexing DOIs created on #{options[:from_date]}."
 
     count = 0
 
-    Doi.where("created >= ?", from_date.strftime("%F") + " 00:00:00").where("created < ?", until_date.strftime("%F") + " 00:00:00").where("updated > indexed").find_each do |doi|
+    Doi.where(created: [options[:from_date] + " 00:00:00", options[:from_date] + " 23:59:59"]).not_indexed.find_each do |doi|
       IndexJob.perform_later(doi)
       doi.update_column(:indexed, Time.zone.now)  
       count += 1
     end
   
-    logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{from_date.strftime("%F")}."
+    logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{options[:from_date]}."
   end
 
   def uid
