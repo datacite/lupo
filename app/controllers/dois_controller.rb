@@ -97,7 +97,9 @@ class DoisController < ApplicationController
       }.compact
     options[:include] = @include
     options[:is_collection] = true
-    options[:is_authenticated] = !!@dois.current_user
+    options[:params] = {
+      :read_landing_page_results => current_ability.can?(:read_landing_page_results, @doi)
+    }
 
     render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
   end
@@ -108,6 +110,9 @@ class DoisController < ApplicationController
     options = {}
     options[:include] = @include
     options[:is_collection] = false
+    options[:params] = {
+      :read_landing_page_results => current_ability.can?(:read_landing_page_results, @doi)
+    }
 
     render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
   end
@@ -149,6 +154,9 @@ class DoisController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
+      options[:params] = {
+        :read_landing_page_results => current_ability.can?(:read_landing_page_results, @doi)
+      }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :created, location: @doi
     else
@@ -190,6 +198,9 @@ class DoisController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
+      options[:params] = {
+        :read_landing_page_results => current_ability.can?(:read_landing_page_results, @doi)
+      }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
     else
