@@ -26,7 +26,7 @@ class MembersController < ApplicationController
     elsif params[:ids].present?
       response = Provider.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      response = Provider.query(params[:query], all_members: true, year: params[:year], region: params[:region], organization_type: params[:organization_type], focus_area: params[:focus_area], page: page, sort: sort)
+      response = Provider.query(params[:query], all_members: true, year: params[:year], region: params[:region], organization_type: params[:organization_type], focus_area: params[:focus_area], fields: params[:fields], page: page, sort: sort)
     end
 
     total = response.results.total
@@ -57,6 +57,7 @@ class MembersController < ApplicationController
         region: params[:region],
         "organization-type" => params[:organization_type],
         "focus-area" => params[:focus_area],
+        fields: params[:fields],
         "page[number]" => params.dig(:page, :number),
         "page[size]" => params.dig(:page, :size),
         sort: sort }.compact.to_query

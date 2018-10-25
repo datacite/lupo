@@ -112,6 +112,7 @@ class DoisController < ApplicationController
                             prefix: params[:prefix],
                             person_id: params[:person_id],
                             resource_type_id: params[:resource_type_id],
+                            fields: params[:fields],
                             schema_version: params[:schema_version],
                             link_check_status: params[:link_check_status],
                             source: params[:source],
@@ -161,6 +162,7 @@ class DoisController < ApplicationController
           "provider-id" => params[:provider_id],
           "client-id" => params[:client_id],
           year: params[:year],
+          fields: params[:fields],
           "page[cursor]" => Array.wrap(@dois.last[:sort]).first,
           "page[size]" => params.dig(:page, :size) }.compact.to_query
         }.compact
