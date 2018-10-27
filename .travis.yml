@@ -57,6 +57,11 @@ after_success:
       docker push $REPO;
       echo "Pushed to" $REPO;
       AUTO_DEPLOY=true;
+    elif [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
+      docker build -f Dockerfile -t $REPO:$TRAVIS_PULL_REQUEST_BRANCH .;
+      docker push $REPO:$TRAVIS_PULL_REQUEST_BRANCH;
+      echo "Pushed to" $REPO:$TRAVIS_PULL_REQUEST_BRANCH;
+      AUTO_DEPLOY=true;
     else
       docker build -f Dockerfile -t $REPO:$TRAVIS_BRANCH .;
       docker push $REPO:$TRAVIS_BRANCH;
@@ -88,7 +93,7 @@ after_success:
       fi
 
       git commit -m "Adding lupo git variables for latest commit";
-      git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" master;
+      git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git";
     fi
 
 notifications:
