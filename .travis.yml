@@ -92,7 +92,7 @@ after_success:
         git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" master;
       elif [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
         git add stage/services/client-api/_lupo.auto.tfvars;
-        git commit -m "Adding lupo git variables for pull request #${TRAVIS_PULL_REQUEST}";
+        git commit -m "Adding lupo git variables for pull request ${TRAVIS_PULL_REQUEST}";
         git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" ${TRAVIS_PULL_REQUEST_BRANCH};
       else
         git add stage/services/client-api/_lupo.auto.tfvars;
