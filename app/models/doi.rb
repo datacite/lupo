@@ -472,7 +472,7 @@ class Doi < ActiveRecord::Base
 
   def self.set_url(from_date: nil)
     from_date = from_date.present? ? Date.parse(from_date) : Date.current - 1.day
-    Doi.where(url: nil).where(aasm_state: ["registered", "findable"]).where("updated >= ?", from_date).find_each do |doi|
+    Doi.where(url: nil).where.not(minted: nil).where(aasm_state: ["registered", "findable"]).where("updated >= ?", from_date).find_each do |doi|
       UrlJob.perform_later(doi)
     end
 
