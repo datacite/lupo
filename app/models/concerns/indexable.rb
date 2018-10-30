@@ -111,8 +111,10 @@ module Indexable
         sort = options[:sort]
       end
 
+      fields = options[:fields].presence || query_fields
+
       must = []
-      must << { multi_match: { query: query, fields: query_fields, type: "phrase_prefix", max_expansions: 50 }} if query.present?
+      must << { multi_match: { query: query, fields: fields, type: "phrase_prefix", slop: 3, max_expansions: 10 }} if query.present?
       must << { term: { aasm_state: options[:state] }} if options[:state].present?
       must << { term: { resource_type_id: options[:resource_type_id] }} if options[:resource_type_id].present?
       must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
@@ -131,6 +133,8 @@ module Indexable
       if self.name == "Provider"
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { term: { region: options[:region].upcase }} if options[:region].present?
+        must << { term: { organization_type: options[:organization_type] }} if options[:organization_type].present?
+        must << { term: { focus_area: options[:focus_area] }} if options[:focus_area].present?
         must << { term: { role_name: "ROLE_ALLOCATOR" }} unless options[:all_members]
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
       elsif self.name == "Client"

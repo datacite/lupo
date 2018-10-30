@@ -26,15 +26,6 @@ describe Client, type: :model do
     end
   end
 
-  # describe "prefixes" do
-  #   it "set_test_prefix" do
-  #     provider_prefix = create(:provider_prefix, provider: provider, prefix: prefix)
-  #     client.send(:set_test_prefix)
-  #     expect(client.client_prefixes.first).to be_valid
-  #     expect(client).to be_valid
-  #   end
-  # end
-
   describe "methods" do
     it "should not update the symbol" do
       client.update_attributes :symbol => client.symbol+'foo.bar'

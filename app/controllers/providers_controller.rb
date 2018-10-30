@@ -3,7 +3,7 @@ class ProvidersController < ApplicationController
 
   before_action :set_provider, only: [:show, :update, :destroy]
   before_action :authenticate_user!
-  load_and_authorize_resource :except => [:index, :show, :set_test_prefix]
+  load_and_authorize_resource :except => [:index, :show]
 
   def index
     sort = case params[:sort]
@@ -30,13 +30,15 @@ class ProvidersController < ApplicationController
     elsif params[:ids].present?
       response = Provider.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      response = Provider.query(params[:query], year: params[:year], region: params[:region], page: page, sort: sort)
+      response = Provider.query(params[:query], year: params[:year], region: params[:region], organization_type: params[:organization_type], focus_area: params[:focus_area], fields: params[:fields], page: page, sort: sort)
     end
 
     total = response.results.total
     total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
     years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
     regions = total > 0 ? facet_by_region(response.response.aggregations.regions.buckets) : nil
+    organization_types = total > 0 ? facet_by_key(response.response.aggregations.organization_types.buckets) : nil
+    focus_areas = total > 0 ? facet_by_key(response.response.aggregations.focus_areas.buckets) : nil
 
     @providers = response.results.results
 
@@ -46,7 +48,9 @@ class ProvidersController < ApplicationController
       "total-pages" => total_pages,
       page: page[:number],
       years: years,
-      regions: regions
+      regions: regions,
+      "organization-types" => organization_types,
+      "focus-areas" => focus_areas
     }.compact
 
     options[:links] = {
@@ -55,6 +59,9 @@ class ProvidersController < ApplicationController
         query: params[:query],
         year: params[:year],
         region: params[:region],
+        "organization_type" => params[:organization_type],
+        "focus-area" => params[:focus_area],
+        fields: params[:fields],
         "page[number]" => params.dig(:page, :number),
         "page[size]" => params.dig(:page, :size),
         sort: sort }.compact.to_query
@@ -131,15 +138,6 @@ class ProvidersController < ApplicationController
     end
   end
 
-  def set_test_prefix
-    authorize! :update, Provider
-    Provider.find_each do |p|
-      p.send(:set_test_prefix)
-      p.save
-    end
-    render json: { message: "Test prefix added." }.to_json, status: :ok
-  end
-
   protected
 
   # Use callbacks to share common setup or constraints between actions.
@@ -153,8 +151,8 @@ class ProvidersController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:name, :symbol, :description, :website, :joined, "institution-type", :phone, "contact-name", "contact-email", "is_active", "password-input", :country],
-              keys: { "institution-type" => :institution_type, "contact-name" => :contact_name, "contact-email" => :contact_email, :country => :country_code, "is-active" => :is_active, "password-input" => :password_input }
+      params, only: [:name, :symbol, :description, :website, :joined, "organization-type", "focus-area", :phone, "contact-name", "contact-email", "is_active", "password-input", :country],
+              keys: { "organization-type" => :organization_type, "focus-area" => :focus_area, "contact-name" => :contact_name, "contact-email" => :contact_email, :country => :country_code, "is-active" => :is_active, "password-input" => :password_input }
     )
   end
 end

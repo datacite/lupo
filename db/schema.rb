@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_15_152049) do
+ActiveRecord::Schema.define(version: 2018_10_23_235649) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -55,9 +55,10 @@ ActiveRecord::Schema.define(version: 2018_10_15_152049) do
     t.string "phone"
     t.datetime "deleted_at"
     t.date "joined"
-    t.string "institution_type", limit: 191
     t.string "logo"
-    t.index ["institution_type"], name: "index_member_institution_type"
+    t.string "focus_area", limit: 191
+    t.string "organization_type", limit: 191
+    t.index ["organization_type"], name: "index_allocator_organization_type"
     t.index ["symbol"], name: "symbol", unique: true
   end
 
@@ -110,7 +111,7 @@ ActiveRecord::Schema.define(version: 2018_10_15_152049) do
   end
 
   create_table "dataset", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
-    t.datetime "created", precision: 3
+    t.datetime "created"
     t.string "doi", null: false
     t.binary "is_active", limit: 1, null: false
     t.binary "is_ref_quality", limit: 1
@@ -118,7 +119,7 @@ ActiveRecord::Schema.define(version: 2018_10_15_152049) do
     t.datetime "last_landing_page_status_check"
     t.json "last_landing_page_status_result"
     t.string "last_metadata_status"
-    t.datetime "updated", precision: 3
+    t.datetime "updated"
     t.integer "version"
     t.bigint "datacentre", null: false
     t.datetime "minted"

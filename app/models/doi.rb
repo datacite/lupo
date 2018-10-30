@@ -88,6 +88,7 @@ class Doi < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
   scope :q, ->(query) { where("dataset.doi = ?", query) }
+  scope :not_indexed, -> { where("updated > indexed") }
 
   # use different index for testing
   index_name Rails.env.test? ? "dois-test" : "dois"
@@ -202,7 +203,7 @@ class Doi < ActiveRecord::Base
       created: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
       registered: { date_histogram: { field: 'registered', interval: 'year', min_doc_count: 1 } },
       providers: { terms: { field: 'provider_id', size: 10, min_doc_count: 1 } },
-      clients: { terms: { field: 'client_id', size: 25, min_doc_count: 1 } },
+      clients: { terms: { field: 'client_id', size: 50, min_doc_count: 1 } },
       prefixes: { terms: { field: 'prefix', size: 10, min_doc_count: 1 } },
       schema_versions: { terms: { field: 'schema_version', size: 10, min_doc_count: 1 } },
       link_checks: { terms: { field: 'last_landing_page_status', size: 10, min_doc_count: 1 } },
@@ -234,20 +235,20 @@ class Doi < ActiveRecord::Base
     # get every day between from_date and until_date
     (from_date..until_date).each do |d|
       DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"))
-    end
-
-    "Queued indexing for DOIs created from #{from_date.strftime("%F")} until #{until_date.strftime("%F")}."
+      puts "Queued indexing for DOIs created on #{d.strftime("%F")}."
+    end    
   end
 
   def self.index_by_day(options={})
-    from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
-    until_date = from_date + 1.day
+    return nil unless options[:from_date].present?
+    from_date = Date.parse(options[:from_date])
+    
     errors = 0
     count = 0
 
     logger = Logger.new(STDOUT)
 
-    Doi.where("created >= ?", from_date.strftime("%F") + " 00:00:00").where("created < ?", until_date.strftime("%F") + " 00:00:00").where("updated > indexed").find_in_batches(batch_size: 500) do |dois|
+    Doi.where(created: from_date.midnight..from_date.end_of_day).not_indexed.find_in_batches(batch_size: 500) do |dois|
       response = Doi.__elasticsearch__.client.bulk \
         index:   Doi.index_name,
         type:    Doi.document_type,
@@ -259,22 +260,22 @@ class Doi < ActiveRecord::Base
     end
 
     if errors > 1
-      logger.info "[Elasticsearch] #{errors} errors indexing #{count} DOIs created on #{from_date.strftime("%F")}."
+      logger.info "[Elasticsearch] #{errors} errors indexing #{count} DOIs created on #{options[:from_date]}."
     elsif count > 1
-      logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{from_date.strftime("%F")}."
+      logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{options[:from_date]}."
     end
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed => error
-    logger.info "[Elasticsearch] Error #{error.message} indexing DOIs created on #{from_date.strftime("%F")}."
+    logger.info "[Elasticsearch] Error #{error.message} indexing DOIs created on #{options[:from_date]}."
 
     count = 0
 
-    Doi.where("created >= ?", from_date.strftime("%F") + " 00:00:00").where("created < ?", until_date.strftime("%F") + " 00:00:00").where("updated > indexed").find_each do |doi|
+    Doi.where(created: from_date.midnight..from_date.end_of_day).not_indexed.find_each do |doi|
       IndexJob.perform_later(doi)
       doi.update_column(:indexed, Time.zone.now)  
       count += 1
     end
   
-    logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{from_date.strftime("%F")}."
+    logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{options[:from_date]}."
   end
 
   def uid
@@ -471,7 +472,7 @@ class Doi < ActiveRecord::Base
 
   def self.set_url(from_date: nil)
     from_date = from_date.present? ? Date.parse(from_date) : Date.current - 1.day
-    Doi.where(url: nil).where(aasm_state: ["registered", "findable"]).where("updated >= ?", from_date).find_each do |doi|
+    Doi.where(url: nil).where.not(minted: nil).where("updated >= ?", from_date).find_each do |doi|
       UrlJob.perform_later(doi)
     end
 
