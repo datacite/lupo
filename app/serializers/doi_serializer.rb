@@ -44,7 +44,7 @@ class DoiSerializer
 
   attribute :landing_page, if: Proc.new {
     |object, params|
-    params && params[:current_ability].can?(:read_landing_page_results, object) == true
+    params[:current_ability] && params[:current_ability].can?(:read_landing_page_results, object) == true
   } do |object|
     { status: object.last_landing_page_status,
       "content-type" => object.last_landing_page_content_type,
