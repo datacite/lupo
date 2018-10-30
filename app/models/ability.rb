@@ -88,12 +88,10 @@ class Ability
       end
       can [:read], User, :id => user.id
       can [:read], Phrase
-      can [:read_landing_page_results], Doi, :client_id => user.client_id if user.client_id.present?
     elsif user.role_id == "anonymous"
       can [:read], Doi do |doi|
         doi.findable?
       end
-      cannot [:read_landing_page_results], Doi
     end
   end
 end
