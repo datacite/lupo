@@ -19,19 +19,15 @@ module Checkable
 
       checked = Time.zone.now
 
-      doi.update_columns(last_landing_page_status: response.status,
-                         last_landing_page_content_type: content_type,
-                         last_landing_page_status_check: checked) if doi.present?
-
       { "status" => response.status,
         "content-type" => content_type,
         "checked" => checked.utc.iso8601 }
     rescue URI::InvalidURIError => e
       logger = Logger.new(STDOUT)
       logger.error e.message
-      
-      { "status" => 404, 
-        "content_type" => nil, 
+
+      { "status" => 404,
+        "content_type" => nil,
         "checked" => Time.zone.now.utc.iso8601 }
     end
   end
