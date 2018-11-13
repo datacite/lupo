@@ -7,94 +7,16 @@ module Crosscitable
   included do
     include Bolognese::MetadataUtils
 
-    # track changes of virtual attributes
-
-    def author=(value)
-      return @author if value.blank? || value == author
-
-      attribute_will_change!(:author)
-      @author = value
-    end
-
-    def title=(value)
-      return @title if value.nil? || value == title
-      
-      attribute_will_change!(:title)
-      @title = value
-    end
-
-    def publisher=(value)
-      return @publisher if value.nil? || value == publisher
-
-      attribute_will_change!(:publisher)
-      @publisher = value
-    end
-
-    def date_published=(value)
-      return @date_published if value.nil? || value == date_published
-
-      attribute_will_change!(:date_published)
-      @date_published = value
-    end
-
-    def additional_type=(value)
-      return @additional_type if value.nil? || value == additional_type
-
-      attribute_will_change!(:additional_type)
-      @additional_type = value
-    end
-
-    def resource_type_general=(value)
-      return @resource_type_general if value.nil? || value == resource_type_general
-
-      attribute_will_change!(:resource_type_general)
-      @resource_type_general = value
-    end
-
-    def description=(value)
-      return @description if value.nil? || value == description
-
-      attribute_will_change!(:description)
-      @description = value
-    end
-
-    def content_size=(value)
-      return @content_size if value.nil? || value == content_size
-
-      attribute_will_change!(:content_size)
-      @content_size = value
-    end
-
-    def content_format=(value)
-      return @content_format if value.nil? || value == content_format
-
-      attribute_will_change!(:content_format)
-      @content_format = value
-    end
-
-    # modified bolognese attributes
-
     def sandbox
       !Rails.env.production?
     end
 
-    # cache doi metadata
-    def meta
-      @meta ||= fetch_cached_meta
-    end
-
     def exists?
-      meta.fetch("state", "not_found") != "not_found"
+      true #meta.fetch("state", "not_found") != "not_found"
     end
 
-    # default to DataCite schema 4
-    def schema_version
-      @schema_version ||= meta.fetch("schema_version", nil) || "http://datacite.org/schema/kernel-4"
-    end
-
-    # cache xml
-    def xml
-      @xml || fetch_cached_xml
+    def meta
+      {}
     end
 
     def xml=(value)
@@ -115,15 +37,20 @@ module Crosscitable
         @string = input
       end
 
-      attribute_will_change!(:xml)
+      # generate attributes that have not been set directly
+      meta = @from.present? ? send("read_" + @from, string: raw, sandbox: sandbox) : {}
+      attrs = (%w(creator contributor titles publisher publication_year types descriptions periodical sizes formats version_info language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url) - changed).map do |a|
+        [a.to_sym, meta[a.to_s]]
+      end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4")
+      assign_attributes(attrs)
 
-      @meta = @from.present? ? send("read_" + @from, string: raw, sandbox: sandbox) : {}
-      @xml = (from == "datacite") ? raw : datacite_xml
+      xml = (@from == "datacite") ? raw : datacite_xml
+      write_attribute(:xml, xml)
     rescue NoMethodError, ArgumentError => exception
       Bugsnag.notify(exception)
       logger = Logger.new(STDOUT)
       logger.error "Error " + exception.message + " for doi " + doi + "."
-      @xml = nil
+      write_attribute(:xml, nil)
     end
 
     def well_formed_xml(string)
@@ -166,7 +93,7 @@ module Crosscitable
 
     # validate against DataCite schema
     def validation_errors
-      kernel = schema_version.split("/").last
+      kernel = schema_version.to_s.split("/").last || "kernel-4"
       filepath = Bundler.rubygems.find_name('bolognese').first.full_gem_path + "/resources/#{kernel}/metadata.xsd"
       schema = Nokogiri::XML::Schema(open(filepath))
 
@@ -192,6 +119,14 @@ module Crosscitable
 
     def validation_errors?
       validation_errors.present?
+    end
+
+    def get_type(types, type)
+      types[type]
+    end
+
+    def set_type(types, text, type)
+      types[type] = text
     end
   end
 end

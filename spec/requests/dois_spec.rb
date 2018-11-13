@@ -82,10 +82,7 @@ describe "dois", type: :request do
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
-
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("titles", "title")).to eq("Eating your own Dog Food")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
       end
 
       it 'returns status code 200' do
@@ -131,7 +128,7 @@ describe "dois", type: :request do
     end
 
     context 'when the record exists https://github.com/datacite/lupo/issues/89' do
-      let(:doi) { create(:doi, doi: "10.24425/119496", client: client, state: "registered") }
+      let(:doi) { create(:doi, doi: "10.24425/119496", client: client, aasm_state: "registered") }
       let(:valid_attributes) {file_fixture('datacite_89.json').read}
 
       before { put "/dois/#{doi.doi}", params: valid_attributes, headers: headers }
@@ -205,10 +202,7 @@ describe "dois", type: :request do
       it 'creates the record' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi_id.downcase)
-        expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
-
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("titles", "title")).to eq("Eating your own Dog Food")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
       end
 
       it 'returns status code 201' do
@@ -272,10 +266,7 @@ describe "dois", type: :request do
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'title')).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
-
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("titles", "title")).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
       end
 
       it 'returns status code 200' do
@@ -289,7 +280,7 @@ describe "dois", type: :request do
 
     context 'when the title is changed' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
-      let(:title) { "Submitted chemical data for InChIKey=YAPQBXQYLJRXSA-UHFFFAOYSA-N" }
+      let(:titles) { [{ "title" => "Submitted chemical data for InChIKey=YAPQBXQYLJRXSA-UHFFFAOYSA-N" }] }
       let(:valid_attributes) do
         {
           "data" => {
@@ -297,7 +288,7 @@ describe "dois", type: :request do
             "attributes" => {
               "url" => "http://www.bl.uk/pdf/pat.pdf",
               "xml" => xml,
-              "title" => title,
+              "titles" => titles,
               "event" => "register"
             },
             "relationships"=> {
@@ -316,10 +307,7 @@ describe "dois", type: :request do
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'title')).to eq(title)
-
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("titles", "title")).to eq(title)
+        expect(json.dig('data', 'attributes', 'titles')).to eq(titles)
       end
 
       it 'returns status code 200' do
@@ -331,9 +319,9 @@ describe "dois", type: :request do
       end
     end
 
-    context 'when the author changes' do
+    context 'when the creator changes' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
-      let(:author) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
+      let(:creator) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
       let(:valid_attributes) do
         {
           "data" => {
@@ -341,7 +329,7 @@ describe "dois", type: :request do
             "attributes" => {
               "url" => "http://www.bl.uk/pdf/pat.pdf",
               "xml" => xml,
-              "author" => author,
+              "creator" => creator,
               "event" => "register"
             },
             "relationships"=> {
@@ -360,10 +348,7 @@ describe "dois", type: :request do
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'author')).to eq(author)
-
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("creators", "creator")).to eq([{"creatorName"=>"Ollomi, Benjamin"}, {"creatorName"=>"Duran, Patrick"}])
+        expect(json.dig('data', 'attributes', 'creator')).to eq(creator)
       end
 
       it 'returns status code 200' do
@@ -428,12 +413,12 @@ describe "dois", type: :request do
 
       it 'updates the client id' do
         expect(json.dig('data', 'relationships', 'client','data','id')).to eq(new_client.symbol.downcase)
-        expect(json.dig('data', 'attributes', 'title')).to eq(doi.title)
+        expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
       end
     end
 
     context 'when we transfer a DOI  as staff' do
-      let(:doi) { create(:doi, doi: "10.24425/119495", client: client, state: "registered") }
+      let(:doi) { create(:doi, doi: "10.24425/119495", client: client, aasm_state: "registered") }
       let(:new_client) { create(:client, symbol: "#{provider.symbol}.magic", provider: provider, password: ENV['MDS_PASSWORD']) }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
@@ -470,7 +455,7 @@ describe "dois", type: :request do
 
     context 'when the resource_type_general changes' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
-      let(:resource_type_general) { "data-paper" }
+      let(:types) { { "resource-type-general" => "data-paper", "resource-type" => "BlogPosting" } }
       let(:valid_attributes) do
         {
           "data" => {
@@ -478,6 +463,7 @@ describe "dois", type: :request do
             "attributes" => {
               "url" => "http://www.bl.uk/pdf/pat.pdf",
               "xml" => xml,
+              "types" => types,
               "event" => "register"
             },
             "relationships"=> {
@@ -485,12 +471,6 @@ describe "dois", type: :request do
                 "data"=> {
                   "type"=> "clients",
                   "id"=> client.symbol.downcase
-                }
-              },
-              "resource-type"=>  {
-                "data"=> {
-                  "type"=> "resource-types",
-                  "id"=> resource_type_general
                 }
               }
             }
@@ -502,10 +482,7 @@ describe "dois", type: :request do
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        # expect(json.dig('data', 'relationships', 'resource-type')).to eq(2)
-
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>"DataPaper", "__content__"=>"BlogPosting")
+        expect(json.dig('data', 'attributes', 'types')).to eq("resource-type"=>"BlogPosting", "resource-type-general"=>"data-paper")
       end
 
       it 'returns status code 200' do
@@ -553,7 +530,7 @@ describe "dois", type: :request do
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
         expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
         expect(json.dig('data', 'relationships', 'resource-type', 'data', 'id')).to eq("text")
@@ -646,7 +623,7 @@ describe "dois", type: :request do
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
+        expect(json.dig('data', 'attributes', 'titles')).to eq("Data from: A new malaria agent in African hominids.")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
         # expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-3")
       end
@@ -725,7 +702,7 @@ describe "dois", type: :request do
 
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'title')).to eq("LAMMPS Data-File Generator")
+        expect(json.dig('data', 'attributes', 'titles')).to eq("LAMMPS Data-File Generator")
         # expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-3")
       end
 
@@ -766,7 +743,7 @@ describe "dois", type: :request do
 
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'title')).to eq("Southern Sierra Critical Zone Observatory (SSCZO), Providence Creek\n      meteorological data, soil moisture and temperature, snow depth and air\n      temperature")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Southern Sierra Critical Zone Observatory (SSCZO), Providence Creek\n      meteorological data, soil moisture and temperature, snow depth and air\n      temperature"}])
         expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-4")
       end
 
@@ -780,7 +757,7 @@ describe "dois", type: :request do
     end
 
     context 'when the request uses namespaced xml and the title changes' do
-      let(:title) { "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]" }
+      let(:titles) { { "title" => "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]" } }
       let(:xml) { Base64.strict_encode64(file_fixture('ns0.xml').read) }
       let(:valid_attributes) do
         {
@@ -790,7 +767,7 @@ describe "dois", type: :request do
               "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
-              "title" => title,
+              "titles" => titles,
               "event" => "register"
             },
             "relationships"=> {
@@ -809,7 +786,7 @@ describe "dois", type: :request do
 
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'title')).to eq("Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
+        expect(json.dig('data', 'attributes', 'titles')).to eq("Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
         # expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-3")
       end
 
@@ -824,7 +801,7 @@ describe "dois", type: :request do
 
 
     context 'when the title changes' do
-      let(:title) { "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]" }
+      let(:titles) { { "title" => "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]" } }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
         {
@@ -835,7 +812,7 @@ describe "dois", type: :request do
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
               "source" => "test",
-              "title" => title,
+              "titles" => titles,
               "event" => "register"
             },
             "relationships"=> {
@@ -854,12 +831,9 @@ describe "dois", type: :request do
 
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'title')).to eq("Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
+        expect(json.dig('data', 'attributes', 'titles')).to eq("title"=>"Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
-
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("titles", "title")).to eq(title)
       end
 
       it 'returns status code 201' do
@@ -912,7 +886,7 @@ describe "dois", type: :request do
       end
     end
 
-    context 'when the title changes to nil' do
+    context 'when the titles changes to nil' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
         {
@@ -922,7 +896,7 @@ describe "dois", type: :request do
               "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
-              "title" => nil,
+              "titles" => nil,
               "event" => "register"
             },
             "relationships"=> {
@@ -941,14 +915,11 @@ describe "dois", type: :request do
 
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
-
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("titles", "title")).to eq("Eating your own Dog Food")
       end
 
-      it 'returns status code 201' do
+      it 'returns status code 201' do 
         expect(response).to have_http_status(201)
       end
 
@@ -957,7 +928,7 @@ describe "dois", type: :request do
       end
     end
 
-    context 'when the title changes to blank' do
+    context 'when the titles changes to blank' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
         {
@@ -967,7 +938,7 @@ describe "dois", type: :request do
               "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
-              "title" => '',
+              "titles" => '',
               "event" => "register"
             },
             "relationships"=> {
@@ -1003,8 +974,8 @@ describe "dois", type: :request do
       # end
     end
 
-    context 'when the author changes' do
-      let(:author) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
+    context 'when the creator changes' do
+      let(:creator) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
         {
@@ -1014,7 +985,7 @@ describe "dois", type: :request do
               "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
-              "author" => author,
+              "creator" => creator,
               "event" => "register"
             },
             "relationships"=> {
@@ -1033,11 +1004,8 @@ describe "dois", type: :request do
 
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'author')).to eq(author)
+        expect(json.dig('data', 'attributes', 'creator')).to eq(creator)
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
-
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("creators", "creator")).to eq([{"creatorName"=>"Ollomi, Benjamin"}, {"creatorName"=>"Duran, Patrick"}])
       end
 
       it 'returns status code 201' do
@@ -1049,8 +1017,8 @@ describe "dois", type: :request do
       end
     end
 
-    context 'when the author changes no xml' do
-      let(:author) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
+    context 'when the creator changes no xml' do
+      let(:creator) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
       let(:valid_attributes) do
         {
           "data" => {
@@ -1059,7 +1027,7 @@ describe "dois", type: :request do
               "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => nil,
-              "author" => author,
+              "creator" => creator,
               "event" => "publish"
             },
             "relationships"=> {
@@ -1196,13 +1164,9 @@ describe "dois", type: :request do
 
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
-        expect(json.dig('data', 'attributes', 'author')).to be_blank
-
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("titles", "title")).to eq("Eating your own Dog Food")
-        expect(xml.dig("creators", "creator")).to be_nil
+        expect(json.dig('data', 'attributes', 'creator')).to be_blank
       end
     end
 
@@ -1271,8 +1235,8 @@ describe "dois", type: :request do
 
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-          expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
-          expect(json.dig('data', 'attributes', 'published')).to eq("2016-12-20")
+          expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-12-20", "date_type"=>"Created"}, {"date"=>"2016-12-20", "date_type"=>"Issued"}, {"date"=>"2016-12-20", "date_type"=>"Updated"}])
         end
 
         it 'returns status code 200' do
@@ -1306,8 +1270,8 @@ describe "dois", type: :request do
 
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-          expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
-          expect(json.dig('data', 'attributes', 'published')).to eq("2011")
+          expect(json.dig('data', 'attributes', 'titles')).to eq("Data from: A new malaria agent in African hominids.")
+          expect(json.dig('data', 'attributes', 'dates')).to eq("2011")
         end
 
         it 'returns status code 200' do
@@ -1409,8 +1373,8 @@ describe "dois", type: :request do
 
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-          expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
-          expect(json.dig('data', 'attributes', 'published')).to eq("2016-12-20")
+          expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-12-20", "date_type"=>"Issued"}])
         end
 
         it 'returns status code 200' do
@@ -1444,8 +1408,8 @@ describe "dois", type: :request do
 
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-          expect(json.dig('data', 'attributes', 'title')).to eq("R Interface to the DataONE REST API")
-          expect(json.dig('data', 'attributes', 'published')).to eq("2016-05-27")
+          expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"R Interface to the DataONE REST API"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-05-27", "date_type"=>"Issued"}, {"date"=>"2016-05-27", "date_type"=>"Created"}, {"date"=>"2016-05-27", "date_type"=>"Updated"}])
         end
 
         it 'returns status code 200' do
@@ -1479,8 +1443,8 @@ describe "dois", type: :request do
 
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-          expect(json.dig('data', 'attributes', 'title')).to eq("Analysis Tools for Crossover Experiment of UI using Choice Architecture")
-          expect(json.dig('data', 'attributes', 'published')).to eq("2016-03-27")
+          expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Analysis Tools for Crossover Experiment of UI using Choice Architecture"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq("date"=>"2016-03-27", "date-type"=>"Issued")
         end
 
         it 'returns status code 200' do
@@ -1514,8 +1478,8 @@ describe "dois", type: :request do
 
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-          expect(json.dig('data', 'attributes', 'title')).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
-          expect(json.dig('data', 'attributes', 'published')).to eq("2014")
+          expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2014", "date_type"=>"Issued"}])
         end
 
         it 'returns status code 200' do
@@ -1549,8 +1513,8 @@ describe "dois", type: :request do
 
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-          expect(json.dig('data', 'attributes', 'title')).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
-          expect(json.dig('data', 'attributes', 'published')).to eq("2014")
+          expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2014", "date_type"=>"Issued"}])
         end
 
         it 'returns status code 200' do
@@ -1584,8 +1548,8 @@ describe "dois", type: :request do
 
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-          expect(json.dig('data', 'attributes', 'title')).to eq("Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes")
-          expect(json.dig('data', 'attributes', 'published')).to eq("2006-12-20")
+          expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2006-12-20", "date_type"=>"Issued"}, {"date"=>"2017-01-01T03:37:08Z", "date_type"=>"Updated"}])
         end
 
         it 'returns status code 200' do
@@ -1619,8 +1583,8 @@ describe "dois", type: :request do
 
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-          expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
-          expect(json.dig('data', 'attributes', 'published')).to eq("2016-12-20")
+          expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-12-20", "date_type"=>"Issued"}, {"date"=>"2016-12-20", "date_type"=>"Created"}, {"date"=>"2016-12-20", "date_type"=>"Updated"}])
         end
 
         it 'returns status code 200' do
@@ -1738,7 +1702,6 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a Doi' do
-        puts response.body
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'landing-page', 'status')).to eq(200)

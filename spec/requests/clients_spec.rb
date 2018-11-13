@@ -158,7 +158,6 @@ describe 'Clients', type: :request, elasticsearch: true do
       before { put "/clients/#{client.symbol}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
-        puts response.body
         expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
         expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
       end

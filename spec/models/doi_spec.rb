@@ -253,15 +253,15 @@ describe Doi, type: :model, vcr: true do
     subject  { create(:doi, xml: xml) }
 
     it "title" do
-      expect(subject.title).to eq("Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
+      expect(subject.titles).to eq([{"title"=>"Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]"}])
     end
 
-    it "author" do
-      expect(subject.author).to eq("name"=>"D S")
+    it "creator" do
+      expect(subject.creator).to eq([{"name"=>"D S"}])
     end
 
-    it "date_published" do
-      expect(subject.date_published).to eq("2017")
+    it "dates" do
+      expect(subject.get_date(subject.dates, "Issued")).to eq("2017")
     end
 
     it "publication_year" do
@@ -285,25 +285,25 @@ describe Doi, type: :model, vcr: true do
   describe "change metadata" do
     let(:xml) { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxyZXNvdXJjZSB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC0zIGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTMvbWV0YWRhdGEueHNkIiB4bWxucz0iaHR0cDovL2RhdGFjaXRlLm9yZy9zY2hlbWEva2VybmVsLTMiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiPjxpZGVudGlmaWVyIGlkZW50aWZpZXJUeXBlPSJET0kiPjEwLjUyNTYvZjEwMDByZXNlYXJjaC44NTcwLnI2NDIwPC9pZGVudGlmaWVyPjxjcmVhdG9ycz48Y3JlYXRvcj48Y3JlYXRvck5hbWU+ZCBzPC9jcmVhdG9yTmFtZT48L2NyZWF0b3I+PC9jcmVhdG9ycz48dGl0bGVzPjx0aXRsZT5SZWZlcmVlIHJlcG9ydC4gRm9yOiBSRVNFQVJDSC0zNDgyIFt2ZXJzaW9uIDU7IHJlZmVyZWVzOiAxIGFwcHJvdmVkLCAxIGFwcHJvdmVkIHdpdGggcmVzZXJ2YXRpb25zXTwvdGl0bGU+PC90aXRsZXM+PHB1Ymxpc2hlcj5GMTAwMCBSZXNlYXJjaCBMaW1pdGVkPC9wdWJsaXNoZXI+PHB1YmxpY2F0aW9uWWVhcj4yMDE3PC9wdWJsaWNhdGlvblllYXI+PHJlc291cmNlVHlwZSByZXNvdXJjZVR5cGVHZW5lcmFsPSJUZXh0Ii8+PC9yZXNvdXJjZT4=" }
 
-    subject  { create(:doi, xml: xml) }
+    subject  { build(:doi, xml: xml) }
 
-    it "title" do
-      title = "Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"
-      subject.title = title
+    it "titles" do
+      titles = [{ "title" => "Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes" }]
+      subject.titles = titles
       subject.save
       
-      expect(subject.title).to eq(title)
+      expect(subject.titles).to eq(titles)
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
-      expect(xml.dig("titles", "title")).to eq(title)
+      expect(xml.dig("titles", "title")).to eq(titles)
     end
 
-    it "author" do
-      author = [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }]
-      subject.author = author
+    it "creator" do
+      creator = [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }]
+      subject.creator = creator
       subject.save
 
-      expect(subject.author).to eq(author)
+      expect(subject.creator).to eq(creator)
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
       expect(xml.dig("creators", "creator")).to eq([{"creatorName"=>"Ollomi, Benjamin"}, {"creatorName"=>"Duran, Patrick"}])
@@ -321,23 +321,23 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "date_published" do
-      date_published = "2011-05-26"
-      subject.date_published = date_published
+      subject.set_date(subject.dates, "2011-05-26", "Issued")
+      subject.publication_year = "2011"
       subject.save
 
-      expect(subject.date_published).to eq(date_published)
+      expect(subject.dates).to eq([{"date"=>"2011-05-26", "date_type"=>"Issued"}])
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
-      expect(xml.dig("dates", "date")).to eq("dateType"=>"Issued", "__content__"=>date_published)
+      expect(xml.dig("dates", "date")).to eq("dateType"=>"Issued", "__content__"=>"2011-05-26")
       expect(xml.dig("publicationYear")).to eq("2011")
     end
 
-    it "additional_type" do
-      additional_type = "BlogPosting"
-      subject.additional_type = additional_type
+    it "resource_type" do
+      resource_type = "BlogPosting"
+      subject.types["resource_type"] = resource_type
       subject.save
 
-      expect(subject.additional_type).to eq(additional_type)
+      expect(subject.types["resource_type"]).to eq(resource_type)
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
       expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>"Text", "__content__"=>"BlogPosting")
@@ -345,33 +345,33 @@ describe Doi, type: :model, vcr: true do
 
     it "resource_type_general" do
       resource_type_general = "Software"
-      subject.resource_type_general = resource_type_general
+      subject.types["resource_type_general"] = resource_type_general
       subject.save
 
-      expect(subject.resource_type_general).to eq(resource_type_general)
+      expect(subject.types["resource_type_general"]).to eq(resource_type_general)
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
       expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>resource_type_general, "__content__"=>"ScholarlyArticle")
     end
 
     it "description" do
-      description = "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for..."
-      subject.description = description
+      descriptions = [{ "description" => "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for..." }]
+      subject.descriptions = descriptions
       subject.save
       
-      expect(subject.description).to eq(description)
+      expect(subject.descriptions).to eq(descriptions)
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
       expect(xml.dig("descriptions", "description")).to eq("__content__" => "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for...", "descriptionType" => "Abstract")
     end
 
     it "schema_version" do
-      title = "Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"
-      subject.title = title
+      titles = [{ "title" => "Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes" }]
+      subject.titles = titles
       subject.save
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
-      expect(xml.dig("titles", "title")).to eq(title)
+      expect(xml.dig("titles", "title")).to eq(titles)
 
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
       expect(xml.dig("xmlns")).to eq("http://datacite.org/schema/kernel-4")
@@ -412,20 +412,20 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "title" do
-      expect(subject.title).to eq("Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes")
+      expect(subject.titles).to eq([{"title"=>"Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"}])
     end
 
     it "date_published" do
-      expect(subject.date_published).to eq("2006-12-20")
+      expect(subject.get_date(subject.dates, "Issued")).to eq("2006-12-20")
     end
 
     it "publication_year" do
       expect(subject.publication_year).to eq(2006)
     end
 
-    it "author" do
-      expect(subject.author.length).to eq(5)
-      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Markus Ralser", "givenName"=>"Markus", "familyName"=>"Ralser")
+    it "creator" do
+      expect(subject.creator.length).to eq(5)
+      expect(subject.creator.first).to eq("type"=>"Person", "name"=>"Markus Ralser", "givenName"=>"Markus", "familyName"=>"Ralser")
     end
 
     it "schema_version" do
@@ -462,20 +462,20 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "title" do
-      expect(subject.title).to eq("LAMMPS Data-File Generator")
+      expect(subject.titles).to eq([{"title"=>"LAMMPS Data-File Generator"}])
     end
 
     it "date_published" do
-      expect(subject.date_published).to eq("2018")
+      expect(subject.get_date(subject.dates, "Issued")).to eq("2018")
     end
 
     it "publication_year" do
       expect(subject.publication_year).to eq(2018)
     end
 
-    it "author" do
-      expect(subject.author.length).to eq(5)
-      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Carlos PatiÃ±O", "givenName"=>"Carlos", "familyName"=>"PatiÃ±O")
+    it "creator" do
+      expect(subject.creator.length).to eq(5)
+      expect(subject.creator.first).to eq("type"=>"Person", "name"=>"Carlos PatiÃ±O", "givenName"=>"Carlos", "familyName"=>"PatiÃ±O")
     end
 
     it "schema_version" do
@@ -512,15 +512,15 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "title" do
-      expect(subject.title).to eq("Eating your own Dog Food")
+      expect(subject.titles).to eq([{"title"=>"Eating your own Dog Food"}])
     end
 
-    it "author" do
-      expect(subject.author).to eq("type"=>"Person", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "givenName"=>"Martin", "familyName"=>"Fenner")
+    it "creator" do
+      expect(subject.creator).to eq([{"type"=>"Person", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "givenName"=>"Martin", "familyName"=>"Fenner"}])
     end
 
-    it "date_published" do
-      expect(subject.date_published).to eq("2016-12-20")
+    it "dates" do
+      expect(subject.get_date(subject.dates, "Issued")).to eq("2016-12-20")
     end
 
     it "publication_year" do
@@ -556,16 +556,16 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "title" do
-      expect(subject.title).to eq("Data from: A new malaria agent in African hominids.")
+      expect(subject.titles).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
     end
 
-    it "author" do
-      expect(subject.author.length).to eq(8)
-      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Benjamin Ollomo", "givenName"=>"Benjamin", "familyName"=>"Ollomo")
+    it "creator" do
+      expect(subject.creator.length).to eq(8)
+      expect(subject.creator.first).to eq("type"=>"Person", "name"=>"Benjamin Ollomo", "givenName"=>"Benjamin", "familyName"=>"Ollomo")
     end
 
-    it "date_published" do
-      expect(subject.date_published).to eq("2011")
+    it "dates" do
+      expect(subject.get_date(subject.dates, "Issued")).to eq("2011")
     end
 
     it "publication_year" do
@@ -601,16 +601,16 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "title" do
-      expect(subject.title).to eq(["Właściwości rzutowań podprzestrzeniowych", {"title_type"=>"TranslatedTitle", "text"=>"Translation of Polish titles"}])
+      expect(subject.titles).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "title_type"=>"TranslatedTitle"}])
     end
 
-    it "author" do
-      expect(subject.author.length).to eq(2)
-      expect(subject.author.first).to eq("type"=>"Person", "name"=>"John Smith", "givenName"=>"John", "familyName"=>"Smith")
+    it "creator" do
+      expect(subject.creator.length).to eq(2)
+      expect(subject.creator.first).to eq("type"=>"Person", "name"=>"John Smith", "givenName"=>"John", "familyName"=>"Smith")
     end
 
-    it "date_published" do
-      expect(subject.date_published).to eq("2010")
+    it "dates" do
+      expect(subject.get_date(subject.dates, "Issued")).to eq("2010")
     end
 
     it "publication_year" do
@@ -650,12 +650,12 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "title" do
-      expect(subject.title).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
+      expect(subject.titles).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
     end
 
-    it "author" do
-      expect(subject.author.length).to eq(5)
-      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Martial Sankar", "givenName"=>"Martial", "familyName"=>"Sankar")
+    it "creator" do
+      expect(subject.creator.length).to eq(5)
+      expect(subject.creator.first).to eq("type"=>"Person", "name"=>"Martial Sankar", "givenName"=>"Martial", "familyName"=>"Sankar")
     end
 
     it "creates schema_version" do
@@ -691,12 +691,12 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "title" do
-      expect(subject.title).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
+      expect(subject.titles).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
     end
 
-    it "author" do
-      expect(subject.author.length).to eq(5)
-      expect(subject.author.first).to eq("type"=>"Person", "name"=>"Martial Sankar", "givenName"=>"Martial", "familyName"=>"Sankar")
+    it "creator" do
+      expect(subject.creator.length).to eq(5)
+      expect(subject.creator.first).to eq("type"=>"Person", "name"=>"Martial Sankar", "givenName"=>"Martial", "familyName"=>"Sankar")
     end
 
     it "creates schema_version" do
@@ -732,11 +732,11 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "title" do
-      expect(subject.title).to eq("Eating your own Dog Food")
+      expect(subject.titles).to eq([{"title"=>"Eating your own Dog Food"}])
     end
 
-    it "author" do
-      expect(subject.author).to eq("type"=>"Person", "name"=>"Martin Fenner", "givenName"=>"Martin", "familyName"=>"Fenner")
+    it "creator" do
+      expect(subject.creator).to eq([{"type"=>"Person", "name"=>"Martin Fenner", "givenName"=>"Martin", "familyName"=>"Fenner"}])
     end
 
     it "creates schema_version" do
@@ -772,12 +772,12 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "title" do
-      expect(subject.title).to eq("R Interface to the DataONE REST API")
+      expect(subject.titles).to eq([{"title"=>"R Interface to the DataONE REST API"}])
     end
 
-    it "author" do
-      expect(subject.author.length).to eq(3)
-      expect(subject.author.first).to eq("type"=>"Person", "id"=>"http://orcid.org/0000-0003-0077-4738", "name"=>"Matt Jones", "givenName"=>"Matt", "familyName"=>"Jones")
+    it "creator" do
+      expect(subject.creator.length).to eq(3)
+      expect(subject.creator.first).to eq("type"=>"Person", "id"=>"http://orcid.org/0000-0003-0077-4738", "name"=>"Matt Jones", "givenName"=>"Matt", "familyName"=>"Jones")
     end
 
     it "creates schema_version" do
@@ -813,11 +813,11 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "title" do
-      expect(subject.title).to eq("Analysis Tools for Crossover Experiment of UI using Choice Architecture")
+      expect(subject.titles).to eq([{"title"=>"Analysis Tools for Crossover Experiment of UI using Choice Architecture"}])
     end
 
-    it "author" do
-      expect(subject.author).to eq("type"=>"Person", "name"=>"Kristian Garza", "givenName"=>"Kristian", "familyName"=>"Garza")
+    it "creator" do
+      expect(subject.creator).to eq([{"familyName"=>"Garza", "givenName"=>"Kristian", "name"=>"Kristian Garza", "type"=>"Person"}])
     end
 
     it "creates schema_version" do
@@ -853,11 +853,11 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "title" do
-      expect(subject.title).to eq("Eating your own Dog Food")
+      expect(subject.titles).to eq([{"title"=>"Eating your own Dog Food"}])
     end
 
-    it "author" do
-      expect(subject.author).to eq("type"=>"Person", "id"=>"http://orcid.org/0000-0003-1419-2405", "name"=>"Martin Fenner", "givenName"=>"Martin", "familyName"=>"Fenner")
+    it "creator" do
+      expect(subject.creator).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"http://orcid.org/0000-0003-1419-2405", "name"=>"Martin Fenner", "type"=>"Person"}])
     end
 
     it "creates schema_version" do
@@ -894,27 +894,32 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "title" do
-      expect(subject.title).to eq("NWD165827.recab.cram")
+      expect(subject.titles).to eq([{"title"=>"NWD165827.recab.cram"}])
     end
 
-    it "author" do
-      expect(subject.author).to eq("name"=>"TOPMed IRC", "type"=>"Organization")
+    it "creator" do
+      expect(subject.creator).to eq([{"name"=>"TOPMed IRC", "type"=>"Organization"}])
     end
 
     it "content_url" do
       expect(subject.content_url).to eq(["s3://cgp-commons-public/topmed_open_access/197bc047-e917-55ed-852d-d563cdbc50e4/NWD165827.recab.cram", "gs://topmed-irc-share/public/NWD165827.recab.cram"])
     end
 
-    it "references" do
-      expect(subject.references).to eq("id"=>"https://doi.org/10.23725/2g4s-qv04", "type"=>"Dataset")
+    it "related_identifiers" do
+      expect(subject.related_identifiers).to eq([{"related_identifier"=>"10.23725/2g4s-qv04", "related_identifier_type"=>"DOI", "relation_type"=>"References", "resource_type_general"=>"Dataset"}])
     end
 
-    it "funding" do
-      expect(subject.funding).to eq("id"=>"https://doi.org/10.13039/100000050", "name"=>"National Heart, Lung, and Blood Institute (NHLBI)", "type"=>"Organization")
+    it "funding_references" do
+      expect(subject.funding_references).to eq([{"funder_identifier"=>"https://doi.org/10.13039/100000050", "funder_identifier_type"=>"Crossref Funder ID", "funder_name"=>"National Heart, Lung, and Blood Institute (NHLBI)"}])
     end
 
     it "alternate_identifier" do
-      expect(subject.alternate_identifier).to eq([{"name"=>"3b33f6b9338fccab0901b7d317577ea3", "type"=>"md5"}, {"name"=>"ark:/99999/fk41CrU4eszeLUDe", "type"=>"minid"}, {"name"=>"dg.4503/c3d66dc9-58da-411c-83c4-dd656aa3c4b7", "type"=>"dataguid"}])
+      expect(subject.alternate_identifiers).to eq([{"alternate_identifier"=>"3b33f6b9338fccab0901b7d317577ea3",
+        "alternate_identifier_type"=>"md5"},
+       {"alternate_identifier"=>"ark:/99999/fk41CrU4eszeLUDe",
+        "alternate_identifier_type"=>"minid"},
+       {"alternate_identifier"=>"dg.4503/c3d66dc9-58da-411c-83c4-dd656aa3c4b7",
+        "alternate_identifier_type"=>"dataguid"}])
     end
 
     it "creates schema_version" do
@@ -970,7 +975,7 @@ describe Doi, type: :model, vcr: true do
     it "generates datacite_json" do
       json = JSON.parse(subject.datacite_json)
       expect(json["doi"]).to eq("10.5438/4K3M-NYVG")
-      expect(json["title"]).to eq("Eating your own Dog Food")
+      expect(json["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
     end
 
     it "generates codemeta" do

@@ -93,7 +93,6 @@ describe "Client Prefixes", type: :request do
       before { post '/client-prefixes', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a client-prefix' do
-        puts response.body
         expect(json.dig('data', 'id')).not_to be_nil
       end
 

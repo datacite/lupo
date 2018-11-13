@@ -4,6 +4,7 @@ class Doi < ActiveRecord::Base
   include Metadatable
   include Cacheable
   include Licensable
+  include Dateable
 
   # include helper module for generating random DOI suffixes
   include Helpable
@@ -57,9 +58,9 @@ class Doi < ActiveRecord::Base
   self.table_name = "dataset"
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-  alias_attribute :resource_type_subtype, :additional_type
   alias_attribute :published, :date_published
   alias_attribute :registered, :minted
+  alias_attribute :state, :aasm_state
 
   attr_accessor :current_user
   attr_accessor :validate
@@ -99,17 +100,33 @@ class Doi < ActiveRecord::Base
     indexes :doi,                            type: :keyword
     indexes :identifier,                     type: :keyword
     indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
-    indexes :author_normalized,              type: :object, properties: {
+    indexes :creator,                        type: :object, properties: {
       type: { type: :keyword },
       id: { type: :keyword },
       name: { type: :text },
       "given-name" => { type: :text },
       "family-name" => { type: :text }
     }
-    indexes :author_names,                   type: :text
-    indexes :title_normalized,               type: :text
-    indexes :description_normalized,         type: :text
+    indexes :contributor,                    type: :object, properties: {
+      type: { type: :keyword },
+      id: { type: :keyword },
+      name: { type: :text },
+      "given-name" => { type: :text },
+      "family-name" => { type: :text }
+    }
+    indexes :creator_names,                  type: :text
+    indexes :titles,                         type: :object, properties: {
+      title: { type: :keyword },
+      title_type: { type: :keyword },
+      lang: { type: :keyword }
+    }
+    indexes :descriptions,                   type: :object, properties: {
+      description: { type: :keyword },
+      description_type: { type: :keyword },
+      lang: { type: :keyword }
+    }
     indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" }}
+    indexes :publication_year,               type: :integer
     indexes :client_id,                      type: :keyword
     indexes :provider_id,                    type: :keyword
     indexes :resource_type_id,               type: :keyword
@@ -124,12 +141,51 @@ class Doi < ActiveRecord::Base
       created: { type: :date },
       updated: { type: :date }
     }
-    indexes :alternate_identifier,           type: :object, properties: {
-      type: { type: :keyword },
-      name: { type: :keyword }
+    indexes :alternate_identifiers,          type: :object, properties: {
+      alternate_identifier_type: { type: :keyword },
+      alternate_identifier: { type: :keyword }
     }
-    indexes :resource_type_subtype,          type: :keyword
-    indexes :version,                        type: :integer
+    indexes :related_identifiers,            type: :object, properties: {
+      related_identifier_type: { type: :keyword },
+      related_identifier: { type: :keyword },
+      relation_type: { type: :keyword },
+      resource_type_general: { type: :keyword }
+    }
+    indexes :types,                          type: :object, properties: {
+      type: { type: :keyword },
+      resource_type_general: { type: :keyword },
+      resource_type: { type: :keyword },
+      bibtex: { type: :keyword },
+      citeproc: { type: :keyword },
+      ris: { type: :keyword }
+    }
+    indexes :funding_references,             type: :object, properties: {
+      funder_name: { type: :keyword },
+      funder_identifier: { type: :keyword },
+      funder_identifier_type: { type: :keyword },
+      award_number: { type: :keyword },
+      award_uri: { type: :keyword },
+      award_title: { type: :keyword }
+    }
+    indexes :dates,                          type: :object
+    indexes :geo_locations,                  type: :object
+    indexes :rights_list,                    type: :object, properties: {
+      rights: { type: :keyword },
+      rights_uri: { type: :keyword }
+    }
+    indexes :subjects,                       type: :object, properties: {
+      subject: { type: :keyword },
+      subject_scheme: { type: :keyword },
+      scheme_uri: { type: :keyword },
+      value_uri: { type: :keyword }
+    }
+    indexes :xml,                            type: :text, index: "not_analyzed"
+    indexes :periodical,                     type: :object
+    indexes :content_url,                    type: :keyword
+    indexes :version_info,                   type: :integer
+    indexes :formats,                        type: :keyword
+    indexes :sizes,                          type: :keyword
+    indexes :language,                       type: :keyword
     indexes :is_active,                      type: :keyword
     indexes :aasm_state,                     type: :keyword
     indexes :schema_version,                 type: :keyword
@@ -138,12 +194,11 @@ class Doi < ActiveRecord::Base
     indexes :prefix,                         type: :keyword
     indexes :suffix,                         type: :keyword
     indexes :reason,                         type: :text
-    indexes :xml,                            type: :text, index: "no"
     indexes :last_landing_page_status,       type: :integer
     indexes :last_landing_page_status_check, type: :date
     indexes :last_landing_page_content_type, type: :keyword
     indexes :cache_key,                      type: :keyword
-    indexes :published,                      type: :date, format: "yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true
+    # indexes :published,                      type: :date, format: "yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true
     indexes :registered,                     type: :date
     indexes :created,                        type: :date
     indexes :updated,                        type: :date
@@ -160,32 +215,44 @@ class Doi < ActiveRecord::Base
       "doi" => doi,
       "identifier" => identifier,
       "url" => url,
-      "author_normalized" => author_normalized,
-      "author_names" => author_names,
-      "title_normalized" => title_normalized,
-      "description_normalized" => description_normalized,
+      "creator" => creator,
+      "contributor" => contributor,
+      "creator_names" => creator_names,
+      "titles" => titles,
+      "descriptions" => descriptions,
       "publisher" => publisher,
       "client_id" => client_id,
       "provider_id" => provider_id,
+      "resource_type_id" => resource_type_id,
       "media_ids" => media_ids,
       "prefix" => prefix,
       "suffix" => suffix,
-      "resource_type_id" => resource_type_id,
-      "resource_type_subtype" => resource_type_subtype,
-      "alternate_identifier" => alternate_identifier,
-      "b_version" => b_version,
+      "types" => types,
+      "alternate_identifiers" => alternate_identifiers,
+      "related_identifiers" => related_identifiers,
+      "funding_references" => funding_references,
+      "publication_year" => publication_year,
+      "dates" => dates,
+      "geo_locations" => geo_locations,
+      "rights_list" => rights_list,
+      "periodical" => periodical,
+      "content_url" => content_url,
+      "version_info" => version_info,
+      "formats" => formats,
+      "sizes" => sizes,
+      "language" => language,
+      "subjects" => subjects,
+      "xml" => xml,
       "is_active" => is_active,
       "last_landing_page_status" => last_landing_page_status,
       "last_landing_page_status_check" => last_landing_page_status_check,
       "last_landing_page_content_type" => last_landing_page_content_type,
-      "aasm_state" => aasm_state,
+      "state" => state,
       "schema_version" => schema_version,
       "metadata_version" => metadata_version,
       "reason" => reason,
-      "xml_encoded" => xml_encoded,
       "source" => source,
       "cache_key" => cache_key,
-      "published" => published,
       "registered" => registered,
       "created" => created,
       "updated" => updated,
@@ -212,7 +279,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['doi^10', 'title_normalized^10', 'author_names^10', 'author_normalized.name^10', 'author_normalized.id^10', 'publisher^10', 'description_normalized^10', 'resource_type_id^10', 'resource_type_subtype^10', 'alternate_identifier.name^10', '_all']
+    ['doi^10', 'titles.title^10', 'creator_names^10', 'creator.name^10', 'creator.id^10', 'publisher^10', 'descriptions.description^10', 'resource_type_id^10', 'subjects.subject^10', 'alternate_identifiers.alternate_identifier^10', '_all']
   end
 
   def self.find_by_id(id, options={})
@@ -226,6 +293,41 @@ class Doi < ActiveRecord::Base
       },
       aggregations: query_aggregations
     })
+  end
+
+  def self.import_all(options={})
+    from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
+    until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
+
+    # get every day between from_date and until_date
+    (from_date..until_date).each do |d|
+      DoiImportByDayJob.perform_later(from_date: d.strftime("%F"))
+      puts "Queued importing for DOIs created on #{d.strftime("%F")}."
+    end    
+  end
+
+  def self.import_by_day(options={})
+    return nil unless options[:from_date].present?
+    from_date = Date.parse(options[:from_date])
+    
+    count = 0
+
+    logger = Logger.new(STDOUT)
+
+    Doi.where(created: from_date.midnight..from_date.end_of_day).not_indexed.find_each do |doi|
+      string = doi.current_metadata.present? ? doi.current_metadata.xml : nil
+      meta = doi.read_datacite(string: doi.xml, sandbox: doi.sandbox)
+      attrs = %w(creator contributor titles publisher publication_year types descriptions periodical sizes formats language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
+        [a.to_sym, meta[a.to_s]]
+      end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
+      doi.update_columns(attrs)
+      
+      count += 1
+    end
+
+    if count > 0
+      logger.info "[MySQL] Imported metadata for #{count} DOIs created on #{options[:from_date]}."
+    end
   end
 
   def self.index(options={})
@@ -283,7 +385,7 @@ class Doi < ActiveRecord::Base
   end
 
   def resource_type_id
-    resource_type_general.underscore.dasherize if resource_type_general.present?
+    types["resource_type_general"].underscore.dasherize if types.to_h["resource_type_general"].present?
   end
 
   def media_ids
@@ -295,22 +397,10 @@ class Doi < ActiveRecord::Base
   rescue ArgumentError => exception    
     nil
   end
-  
-  def title_normalized
-    parse_attributes(title, content: "text", first: true)
-  end
-
-  def description_normalized
-    parse_attributes(description, content: "text", first: true)
-  end
-
-  def author_normalized
-    Array.wrap(author)
-  end
  
-  # author name in natural order: "John Smith" instead of "Smith, John"
-  def author_names
-    Array.wrap(author).map do |a| 
+  # creator name in natural order: "John Smith" instead of "Smith, John"
+  def creator_names
+    Array.wrap(creator).map do |a| 
       if a["familyName"].present? 
         [a["givenName"], a["familyName"]].join(" ")
       elsif a["name"].to_s.include?(", ")
@@ -374,7 +464,7 @@ class Doi < ActiveRecord::Base
     media.delete_all
 
     Array.wrap(content_url).each do |c|
-      media << Media.create(url: c, media_type: content_format)
+      media << Media.create(url: c, media_type: formats)
     end
   end
 
@@ -402,7 +492,7 @@ class Doi < ActiveRecord::Base
   end
 
   def resource_type
-    cached_resource_type_response(resource_type_general.underscore.dasherize.downcase) if resource_type_general.present?
+    cached_resource_type_response(types["resource_type_general"].underscore.dasherize.downcase) if types.to_h["resource_type_general"].present?
   end
 
   def date_registered
@@ -422,7 +512,7 @@ class Doi < ActiveRecord::Base
     self.send(value) if %w(register publish hide).include?(value)
   end
 
-  # update state for all DOIs in state "undetermined" starting from from_date
+  # update state for all DOIs in state "" starting from from_date
   def self.set_state(from_date: nil)
     from_date ||= Time.zone.now - 1.day
     Doi.where("updated >= ?", from_date).where(aasm_state: '').find_each do |doi|
@@ -479,19 +569,9 @@ class Doi < ActiveRecord::Base
     "Queued storing missing URL in database for DOIs updated since #{from_date.strftime("%F")}."
   end
 
-  # update metadata when any virtual attribute has changed
+  # update metadata record when xml has changed
   def update_metadata
-    changed_virtual_attributes = changed & %w(author title publisher date_published additional_type resource_type_general description content_size content_format)
-    
-    if changed_virtual_attributes.present?
-      @xml = datacite_xml
-      doc = Nokogiri::XML(xml, nil, 'UTF-8', &:noblanks)
-      ns = doc.collect_namespaces.find { |k, v| v.start_with?("http://datacite.org/schema/kernel") }
-      @schema_version = Array.wrap(ns).last || "http://datacite.org/schema/kernel-4"
-      attribute_will_change!(:xml)
-    end
-
-    metadata.build(doi: self, xml: xml, namespace: schema_version) if (changed & %w(xml)).present?
+    metadata.build(doi: self, xml: xml, namespace: schema_version) if xml.present? && (changed & %w(xml)).present?
   end
 
   def set_defaults

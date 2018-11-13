@@ -50,40 +50,6 @@ module Cacheable
       end
     end
 
-    def fetch_cached_meta
-      if updated.present?
-        Rails.cache.fetch("cached_meta/#{doi}-#{updated.iso8601}") do
-          if from.present? && string.present? 
-            send("read_" + from, string: string, sandbox: sandbox)
-          else
-            read_datacite(string: fetch_cached_xml, sandbox: sandbox)
-          end
-        end
-      else
-        if from.present? && string.present? 
-          send("read_" + from, string: string, sandbox: sandbox)
-        else
-          read_datacite(string: xml, sandbox: sandbox)
-        end
-      end
-    rescue ArgumentError, NoMethodError => e
-      logger = Logger.new(STDOUT)
-      logger.error "Error for " + doi + ": " + e.message
-      return {}
-    end
-
-    def fetch_cached_xml
-      if updated.present?
-        Rails.cache.fetch("cached_xml/#{doi}-#{updated.iso8601}", raw: true) do
-          m = metadata.first
-          m.present? ? m.xml : nil
-        end
-      else
-        m = metadata.first
-        m.present? ? m.xml : nil
-      end
-    end
-
     def fetch_cached_metadata_version
       if updated.present?
         Rails.cache.fetch("cached_metadata_version/#{doi}-#{updated.iso8601}") do

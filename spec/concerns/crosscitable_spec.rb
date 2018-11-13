@@ -70,12 +70,12 @@ describe Doi, vcr: true do
   end
 
   context "get attributes" do
-    it "author" do
-      expect(subject.author).to eq("name"=>"D S")
+    it "creator" do
+      expect(subject.creator).to eq([{ "name"=>"D S" }])
     end
 
     it "title" do
-      expect(subject.title).to eq("Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
+      expect(subject.titles).to eq([{"title"=>"Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]"}])
     end
 
     it "publisher" do
@@ -83,25 +83,25 @@ describe Doi, vcr: true do
     end
 
     it "date_published" do
-      expect(subject.date_published).to eq("2017")
+      expect(subject.dates).to eq([{"date"=>"2017", "date_type"=>"Issued"}])
     end
 
     it "resource_type_general" do
-      expect(subject.resource_type_general).to eq("Text")
+      expect(subject.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resource_type_general"=>"Text", "ris"=>"RPRT", "type"=>"ScholarlyArticle")
     end
   end
 
   context "set attributes" do
-    it "author" do
-      author = { "name" => "Carberry, Josiah"}
-      subject.author = author
-      expect(subject.author).to eq(author)
+    it "creator" do
+      creator = { "name" => "Carberry, Josiah"}
+      subject.creator = creator
+      expect(subject.creator).to eq(creator)
     end
 
-    it "title" do
-      title = "Referee report."
-      subject.title = title
-      expect(subject.title).to eq(title)
+    it "titles" do
+      titles = [{ "title" => "Referee report." }]
+      subject.titles = titles
+      expect(subject.titles).to eq(titles)
     end
 
     it "publisher" do
@@ -111,13 +111,13 @@ describe Doi, vcr: true do
     end
 
     it "date_published" do
-      expect(subject.date_published).to eq("2017")
+      expect(subject.dates).to eq([{"date"=>"2017", "date_type"=>"Issued"}])
     end
 
     it "resource_type_general" do
       resource_type_general = "Software"
-      subject.resource_type_general = resource_type_general
-      expect(subject.resource_type_general).to eq(resource_type_general)
+      subject.set_type(subject.types, resource_type_general, "resource_type_general")
+      expect(subject.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resource_type_general"=>"Software", "ris"=>"RPRT", "type"=>"ScholarlyArticle")
     end
   end
 end

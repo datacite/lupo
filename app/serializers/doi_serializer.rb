@@ -4,7 +4,7 @@ class DoiSerializer
   set_type :dois
   set_id :uid
 
-  attributes :doi, :identifier, :url, :prefix, :suffix, :author, :title, :publisher, :resource_type_subtype, :description, :version, :metadata_version, :schema_version, :reason, :source, :state, :is_active, :landing_page, :published, :created, :registered, :updated, :xml, :cache_key
+  attributes :doi, :identifier, :url, :prefix, :suffix, :types, :creator, :titles, :publisher, :periodical, :publication_year, :subjects, :contributor, :dates, :language, :alternate_identifiers, :related_identifiers, :sizes, :formats, :version, :rights_list, :descriptions, :funding_references, :metadata_version, :schema_version, :reason, :source, :state, :is_active, :landing_page, :created, :registered, :updated, :cache_key
 
   belongs_to :client, record_type: :clients
   belongs_to :resource_type, record_type: :resource_types
@@ -14,32 +14,12 @@ class DoiSerializer
     object.doi.downcase
   end
 
-  attribute :author do |object|
-    object.author_normalized
-  end
-
-  attribute :title do |object|
-    object.title_normalized
-  end
-
-  attribute :description do |object|
-    object.description_normalized
-  end
-
-  attribute :state do |object|
-    object.aasm_state
-  end
-
   attribute :is_active do |object|
     object.is_active == "\u0001" ? true : false
   end
 
   attribute :version do |object|
-    object.b_version
-  end
-
-  attribute :xml do |object|
-    object.xml_encoded
+    object.version_info
   end
 
   attribute :landing_page do |object|

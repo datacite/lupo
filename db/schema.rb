@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_23_235649) do
+ActiveRecord::Schema.define(version: 2018_11_02_094810) do
 
-  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 2018_10_23_235649) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.string "key", limit: 191, null: false
     t.string "filename", limit: 191, null: false
     t.string "content_type", limit: 191
@@ -130,6 +130,28 @@ ActiveRecord::Schema.define(version: 2018_10_23_235649) do
     t.string "reason"
     t.string "source", limit: 191
     t.datetime "indexed", precision: 3, default: "1970-01-01 00:00:00", null: false
+    t.json "creator"
+    t.json "contributor"
+    t.json "titles"
+    t.text "publisher"
+    t.integer "publication_year"
+    t.json "types"
+    t.json "descriptions"
+    t.json "periodical"
+    t.json "sizes"
+    t.json "formats"
+    t.string "version_info", limit: 191
+    t.string "language", limit: 191
+    t.json "dates"
+    t.json "alternate_identifiers"
+    t.json "related_identifiers"
+    t.json "funding_references"
+    t.json "geo_locations"
+    t.json "rights_list"
+    t.json "subjects"
+    t.string "schema_version", limit: 191
+    t.json "content_url"
+    t.binary "xml", limit: 16777215
     t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
     t.index ["created", "indexed", "updated"], name: "index_dataset_on_created_indexed_updated"
     t.index ["datacentre"], name: "FK5605B47847B5F5FF"
