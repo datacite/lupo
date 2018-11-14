@@ -129,7 +129,7 @@ class ProvidersController < ApplicationController
       status = 400
       logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
-    elsif @provider.update_attributes(is_active: "\x00", deleted_at: Time.zone.now)
+    elsif @provider.update_attributes(is_active: nil, deleted_at: Time.zone.now)
       @provider.remove_users(id: "provider_id", jwt: current_user.jwt) unless Rails.env.test?
       head :no_content
     else
@@ -142,7 +142,7 @@ class ProvidersController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_provider
-    @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_ADMIN')").where(deleted_at: nil).where(symbol: params[:id]).first
+    @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_ADMIN')").where(is_active: "\x01").where(deleted_at: nil).where(symbol: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @provider.present?
   end
 
