@@ -1,6 +1,6 @@
 class MemberSerializer
   include FastJsonapi::ObjectSerializer
-  set_key_transform :dash
+  set_key_transform :camel_lower
   set_type :members
   set_id :uid
   # don't cache members, as they use the provider model

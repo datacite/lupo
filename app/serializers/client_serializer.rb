@@ -1,6 +1,6 @@
 class ClientSerializer
   include FastJsonapi::ObjectSerializer
-  set_key_transform :dash
+  set_key_transform :camel_lower
   set_type :clients
   set_id :uid
   

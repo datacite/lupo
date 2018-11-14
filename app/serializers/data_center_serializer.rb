@@ -1,6 +1,6 @@
 class DataCenterSerializer
   include FastJsonapi::ObjectSerializer
-  set_key_transform :dash
+  set_key_transform :camel_lower
   set_type "data-centers"
   set_id :uid
   # don't cache data-centers, as they use the client model
