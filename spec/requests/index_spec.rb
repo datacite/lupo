@@ -363,6 +363,21 @@ describe "content_negotation", type: :request do
       end
     end
 
+    context "apa for datapaper style link" do
+      let(:mxml) { Base64.strict_encode64(file_fixture('datapaper.xml').read) }
+      let(:doi) { create(:doi, xml: mxml, client: client, aasm_state: "findable") }
+      
+      before { get "/#{doi.doi}?style=apa", headers: { "HTTP_ACCEPT" => "text/x-bibliography", 'Authorization' => 'Bearer ' + bearer  }  }
+
+      it 'returns the Doi' do
+        expect(response.body).to end_with(" microPublication Biology. https://doi.org/10.17912/z4z9-ce10")
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
     context "style and locale" do
       before { get "/#{doi.doi}?style=vancouver&locale=de", headers: { "HTTP_ACCEPT" => "text/x-bibliography", 'Authorization' => 'Bearer ' + bearer  } }
 

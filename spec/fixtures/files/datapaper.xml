@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://datacite.org/schema/kernel-4" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4/metadata.xsd">
+    <identifier identifierType="DOI">10.17912/Z4Z9-CE10</identifier>
+    <creators>
+        <creator>
+            <creatorName>McKillop, Alexandra N.</creatorName>
+            <givenName>Alexandra N.</givenName>
+            <familyName>McKillop</familyName>
+        </creator>
+        <creator>
+            <creatorName>Shi, Herong</creatorName>
+            <givenName>Herong</givenName>
+            <familyName>Shi</familyName>
+        </creator>
+        <creator>
+            <creatorName>Liu, Jun</creatorName>
+            <givenName>Jun</givenName>
+            <familyName>Liu</familyName>
+        </creator>
+    </creators>
+    <titles>
+        <title>A new deletion allele of sma-4</title>
+    </titles>
+    <publisher>microPublication Biology </publisher>
+    <publicationYear>2018</publicationYear>
+    <resourceType resourceTypeGeneral="DataPaper">Journal article</resourceType>
+    <dates>
+        <date dateType="Issued">2018</date>
+    </dates>
+    <version/>
+    <descriptions>
+        <description descriptionType="Abstract">sma-4 encodes the co-Smad of the BMP pathway in C. elegans, which is also known as the Sma/Mab pathway (Savage et al. 1996). Null mutations in core components of this pathway, including the BMP ligand DBL-1, the receptors SMA-6 and DAF-4, and the R-Smads SMA-2 and SMA-3, all result in a small body size phenotype without significantly compromising viability (Gumienny and Savage-Dunn 2013). However, we found that even after multiple rounds of out-crossing, two deletion alleles of sma-4, ok3140 and tm4731, caused late larval lethality and embryonic lethality, respectively. This observation suggests that either SMA-4 has DBL-1/BMP-independent functions that are required for viability, or ok3140 and tm4731 have closely linked lethal mutations. To distinguish between these two possibilities, we generated a deletion allele of sma-4 using CRISPR/Cas9-mediated non-homologous end joining. This allele, jj278, contains a 3,556bp deletion (position: Chromosome III: 5,816,203….5,819,759) that deletes almost the entire coding region of sma-4 (Figure 1A) and represents a true molecular null. jj278 animals are viable and fertile, but are smaller than wild-type animals (Figure 1B), like loss-of-function mutants in other core BMP pathway members (SAVAGE et al. 1996; KRISHNA et al. 1999). This result suggests that ok3140 and tm4731 likely have closely linked lethal mutations not caused by their respective sma-4 deletions.</description>
+    </descriptions>
+</resource>
