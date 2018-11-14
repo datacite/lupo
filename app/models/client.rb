@@ -54,6 +54,8 @@ class Client < ActiveRecord::Base
 
   attr_accessor :target_id
 
+  default_scope { where(deleted_at: nil) }
+
   # use different index for testing
   index_name Rails.env.test? ? "clients-test" : "clients"
 
