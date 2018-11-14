@@ -54,6 +54,7 @@ class Provider < ActiveRecord::Base
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
   after_create :send_welcome_email, unless: Proc.new { Rails.env.test? }
+  before_delete :send_delete_email, unless: Proc.new { Rails.env.test? }
 
   accepts_nested_attributes_for :prefixes
 
