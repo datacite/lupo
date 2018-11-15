@@ -38,7 +38,7 @@ module Mailable
         { title: "Contact name", value: contact_name, short: true },
         { title: "Contact email", value: contact_email, short: true }
       ]
-      User.send_notification_to_slack(nil, title: subject, level: "warning", fields: fields)
+      User.send_notification_to_slack(nil, title: subject, level: "good", fields: fields)
 
       response
     end
@@ -56,7 +56,7 @@ module Mailable
         { title: "Contact name", value: contact_name, short: true },
         { title: "Contact email", value: contact_email, short: true }
       ]
-      User.send_notification_to_slack(nil, title: subject, level: "good", fields: fields)
+      User.send_notification_to_slack(nil, title: subject, level: "warning", fields: fields)
 
       response
     end
