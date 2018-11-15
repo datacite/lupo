@@ -51,7 +51,6 @@ class Client < ActiveRecord::Base
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
   after_create :send_welcome_email, unless: Proc.new { Rails.env.test? }
-  before_destroy :send_delete_email, unless: Proc.new { Rails.env.test? }
 
   attr_accessor :target_id
 

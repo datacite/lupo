@@ -130,7 +130,7 @@ class ProvidersController < ApplicationController
       logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @provider.update_attributes(is_active: nil, deleted_at: Time.zone.now)
-      @provider.remove_users(id: "provider_id", jwt: current_user.jwt) unless Rails.env.test?
+      @provider.send_delete_email unless Rails.env.test?
       head :no_content
     else
       logger.warn @provider.errors.inspect

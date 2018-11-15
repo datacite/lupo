@@ -116,7 +116,7 @@ class ClientsController < ApplicationController
       logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @client.update_attributes(is_active: nil, deleted_at: Time.zone.now)
-      @client.remove_users(id: "client_id", jwt: current_user.jwt) unless Rails.env.test?
+      @client.send_delete_email unless Rails.env.test?
       head :no_content
     else
       logger.warn @client.errors.inspect
