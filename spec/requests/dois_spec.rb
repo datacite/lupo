@@ -90,6 +90,7 @@ describe "dois", type: :request do
       end
 
       it 'sets state to draft' do
+        puts json
         expect(json.dig('data', 'attributes', 'state')).to eq("draft")
       end
     end
@@ -455,7 +456,7 @@ describe "dois", type: :request do
 
     context 'when the resource_type_general changes' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
-      let(:types) { { "resource-type-general" => "data-paper", "resource-type" => "BlogPosting" } }
+      let(:types) { { "resourceTypeGeneral" => "data-paper", "resourceType" => "BlogPosting" } }
       let(:valid_attributes) do
         {
           "data" => {
@@ -482,7 +483,7 @@ describe "dois", type: :request do
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'types')).to eq("resource-type"=>"BlogPosting", "resource-type-general"=>"data-paper")
+        expect(json.dig('data', 'attributes', 'types')).to eq("resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"data-paper")
       end
 
       it 'returns status code 200' do
@@ -531,15 +532,13 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
-        expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
-        expect(json.dig('data', 'relationships', 'resource-type', 'data', 'id')).to eq("text")
-
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>"Text", "__content__"=>"BlogPosting")
+        expect(json.dig('data', 'relationships', 'resourceType', 'data', 'id')).to eq("text")
       end
 
       it 'returns status code 201' do
+        puts json
         expect(response).to have_http_status(201)
       end
 
@@ -625,10 +624,11 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'titles')).to eq("Data from: A new malaria agent in African hominids.")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
-        # expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-3")
+        # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
       end
 
       it 'returns status code 201' do
+        puts response.body
         expect(response).to have_http_status(201)
       end
 
@@ -703,10 +703,11 @@ describe "dois", type: :request do
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'titles')).to eq("LAMMPS Data-File Generator")
-        # expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-3")
+        # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
       end
 
       it 'returns status code 201' do
+        puts response.body
         expect(response).to have_http_status(201)
       end
 
@@ -744,7 +745,7 @@ describe "dois", type: :request do
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Southern Sierra Critical Zone Observatory (SSCZO), Providence Creek\n      meteorological data, soil moisture and temperature, snow depth and air\n      temperature"}])
-        expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
       end
 
       it 'returns status code 201' do
@@ -787,7 +788,7 @@ describe "dois", type: :request do
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'titles')).to eq("Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
-        # expect(json.dig('data', 'attributes', 'schema-version')).to eq("http://datacite.org/schema/kernel-3")
+        # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
       end
 
       it 'returns status code 201' do
@@ -1598,14 +1599,14 @@ describe "dois", type: :request do
       let(:xml) { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48cmVzb3VyY2UgeG1sbnM6eHNpPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYS1pbnN0YW5jZSIgeG1sbnM9Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IiB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTQvbWV0YWRhdGEueHNkIj48aWRlbnRpZmllciBpZGVudGlmaWVyVHlwZT0iRE9JIj4xMC4yNTQ5OS94dWRhMnB6cmFocm9lcXBlZnZucTV6dDZkYzwvaWRlbnRpZmllcj48Y3JlYXRvcnM+PGNyZWF0b3I+PGNyZWF0b3JOYW1lPklhbiBQYXJyeTwvY3JlYXRvck5hbWU+PG5hbWVJZGVudGlmaWVyIHNjaGVtZVVSST0iaHR0cDovL29yY2lkLm9yZy8iIG5hbWVJZGVudGlmaWVyU2NoZW1lPSJPUkNJRCI+MDAwMC0wMDAxLTYyMDItNTEzWDwvbmFtZUlkZW50aWZpZXI+PC9jcmVhdG9yPjwvY3JlYXRvcnM+PHRpdGxlcz48dGl0bGU+U3VibWl0dGVkIGNoZW1pY2FsIGRhdGEgZm9yIEluQ2hJS2V5PVlBUFFCWFFZTEpSWFNBLVVIRkZGQU9ZU0EtTjwvdGl0bGU+PC90aXRsZXM+PHB1Ymxpc2hlcj5Sb3lhbCBTb2NpZXR5IG9mIENoZW1pc3RyeTwvcHVibGlzaGVyPjxwdWJsaWNhdGlvblllYXI+MjAxNzwvcHVibGljYXRpb25ZZWFyPjxyZXNvdXJjZVR5cGUgcmVzb3VyY2VUeXBlR2VuZXJhbD0iRGF0YXNldCI+U3Vic3RhbmNlPC9yZXNvdXJjZVR5cGU+PHJpZ2h0c0xpc3Q+PHJpZ2h0cyByaWdodHNVUkk9Imh0dHBzOi8vY3JlYXRpdmVjb21tb25zLm9yZy9zaGFyZS15b3VyLXdvcmsvcHVibGljLWRvbWFpbi9jYzAvIj5ObyBSaWdodHMgUmVzZXJ2ZWQ8L3JpZ2h0cz48L3JpZ2h0c0xpc3Q+PC9yZXNvdXJjZT4=" }
       let(:link_check_result) { {
         "error" => nil,
-        "redirect-count" => 0,
-        "redirect-urls" => [],
-        "download-latency" => 200,
-        "has-schema-org" => true,
-        "schema-org-id" => "10.14454/10703",
-        "dc-identifier" => nil,
-        "citation-doi" => nil,
-        "body-has-pid" => true
+        "redirectCount" => 0,
+        "redirectUrls" => [],
+        "downloadLatency" => 200,
+        "hasSchemaOrg" => true,
+        "schemaOrgId" => "10.14454/10703",
+        "dcIdentifier" => nil,
+        "citationDoi" => nil,
+        "bodyHasPid" => true
       } }
       let(:valid_attributes) do
         {
@@ -1615,11 +1616,11 @@ describe "dois", type: :request do
               "doi" => "10.14454/10703",
               "url" => url,
               "xml" => xml,
-              "last-landing-page" => url,
-              "last-landing-page-status" => 200,
-              "last-landing-page-status-check" => Time.zone.now,
-              "last-landing-page-content-type" => "text/html",
-              "last-landing-page-status-result" => link_check_result,
+              "lastLandingPage" => url,
+              "lastLandingPageStatus" => 200,
+              "lastLandingPageStatusCheck" => Time.zone.now,
+              "lastLandingPageContentType" => "text/html",
+              "lastLandingPageStatusResult" => link_check_result,
               "event" => "register"
             },
             "relationships"=> {
@@ -1639,8 +1640,8 @@ describe "dois", type: :request do
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'landing-page', 'status')).to eq(200)
-        expect(json.dig('data', 'attributes', 'landing-page', 'result')).to eq(link_check_result)
+        expect(json.dig('data', 'attributes', 'landingPage', 'status')).to eq(200)
+        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(link_check_result)
       end
 
       it 'returns status code 201' do
@@ -1657,20 +1658,20 @@ describe "dois", type: :request do
       let(:xml) { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48cmVzb3VyY2UgeG1sbnM6eHNpPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYS1pbnN0YW5jZSIgeG1sbnM9Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IiB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTQvbWV0YWRhdGEueHNkIj48aWRlbnRpZmllciBpZGVudGlmaWVyVHlwZT0iRE9JIj4xMC4yNTQ5OS94dWRhMnB6cmFocm9lcXBlZnZucTV6dDZkYzwvaWRlbnRpZmllcj48Y3JlYXRvcnM+PGNyZWF0b3I+PGNyZWF0b3JOYW1lPklhbiBQYXJyeTwvY3JlYXRvck5hbWU+PG5hbWVJZGVudGlmaWVyIHNjaGVtZVVSST0iaHR0cDovL29yY2lkLm9yZy8iIG5hbWVJZGVudGlmaWVyU2NoZW1lPSJPUkNJRCI+MDAwMC0wMDAxLTYyMDItNTEzWDwvbmFtZUlkZW50aWZpZXI+PC9jcmVhdG9yPjwvY3JlYXRvcnM+PHRpdGxlcz48dGl0bGU+U3VibWl0dGVkIGNoZW1pY2FsIGRhdGEgZm9yIEluQ2hJS2V5PVlBUFFCWFFZTEpSWFNBLVVIRkZGQU9ZU0EtTjwvdGl0bGU+PC90aXRsZXM+PHB1Ymxpc2hlcj5Sb3lhbCBTb2NpZXR5IG9mIENoZW1pc3RyeTwvcHVibGlzaGVyPjxwdWJsaWNhdGlvblllYXI+MjAxNzwvcHVibGljYXRpb25ZZWFyPjxyZXNvdXJjZVR5cGUgcmVzb3VyY2VUeXBlR2VuZXJhbD0iRGF0YXNldCI+U3Vic3RhbmNlPC9yZXNvdXJjZVR5cGU+PHJpZ2h0c0xpc3Q+PHJpZ2h0cyByaWdodHNVUkk9Imh0dHBzOi8vY3JlYXRpdmVjb21tb25zLm9yZy9zaGFyZS15b3VyLXdvcmsvcHVibGljLWRvbWFpbi9jYzAvIj5ObyBSaWdodHMgUmVzZXJ2ZWQ8L3JpZ2h0cz48L3JpZ2h0c0xpc3Q+PC9yZXNvdXJjZT4=" }
       let(:link_check_result) { {
         "error" => nil,
-        "redirect-count" => 0,
-        "redirect-urls" => [],
-        "download-latency" => 200,
-        "has-schema-org" => true,
-        "schema-org-id" => [
+        "redirectCount" => 0,
+        "redirectUrls" => [],
+        "downloadLatency" => 200,
+        "hasSchemaOrg" => true,
+        "schemaOrgId" => [
           {
             "@type" => "PropertyValue",
             "value" => "http://dx.doi.org/10.4225/06/564AB348340D5",
             "propertyID" => "URL"
           }
         ],
-        "dc-identifier" => nil,
-        "citation-doi" => nil,
-        "body-has-pid" => true
+        "dcIdentifier" => nil,
+        "citationDoi" => nil,
+        "bodyHasPid" => true
       } }
       let(:valid_attributes) do
         {
@@ -1680,11 +1681,11 @@ describe "dois", type: :request do
               "doi" => "10.14454/10703",
               "url" => url,
               "xml" => xml,
-              "last-landing-page" => url,
-              "last-landing-page-status" => 200,
-              "last-landing-page-status-check" => Time.zone.now,
-              "last-landing-page-content-type" => "text/html",
-              "last-landing-page-status-result" => link_check_result,
+              "lastLandingPage" => url,
+              "lastLandingPageStatus" => 200,
+              "lastLandingPageStatusCheck" => Time.zone.now,
+              "lastLandingPageContentType" => "text/html",
+              "lastLandingPageStatusResult" => link_check_result,
               "event" => "register"
             },
             "relationships"=> {
@@ -1704,8 +1705,8 @@ describe "dois", type: :request do
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'landing-page', 'status')).to eq(200)
-        expect(json.dig('data', 'attributes', 'landing-page', 'result')).to eq(link_check_result)
+        expect(json.dig('data', 'attributes', 'landingPage', 'status')).to eq(200)
+        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(link_check_result)
       end
 
       it 'returns status code 201' do

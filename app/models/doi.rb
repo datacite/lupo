@@ -210,6 +210,7 @@ class Doi < ActiveRecord::Base
     indexes :last_landing_page_status,       type: :integer
     indexes :last_landing_page_status_check, type: :date
     indexes :last_landing_page_content_type, type: :keyword
+    indexes :last_landing_page_status_result, type: :object
     indexes :cache_key,                      type: :keyword
     indexes :registered,                     type: :date
     indexes :created,                        type: :date
@@ -259,6 +260,7 @@ class Doi < ActiveRecord::Base
       "last_landing_page_status" => last_landing_page_status,
       "last_landing_page_status_check" => last_landing_page_status_check,
       "last_landing_page_content_type" => last_landing_page_content_type,
+      "last_landing_page_status_result" => last_landing_page_status_result,
       "state" => state,
       "schema_version" => schema_version,
       "metadata_version" => metadata_version,

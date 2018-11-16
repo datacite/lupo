@@ -260,6 +260,7 @@ class DoisController < ApplicationController
       logger.error @doi.validation_errors.inspect
       render json: serialize(@doi.validation_errors), status: :unprocessable_entity
     elsif @doi.save
+      puts @doi.inspect
       options = {}
       options[:include] = @include
       options[:is_collection] = false
@@ -397,52 +398,52 @@ class DoisController < ApplicationController
 
     attributes = [
       :doi,
-      "confirm-doi",
+      :confirmDoi,
       :identifier,
       :url,
       :titles,
-      { titles: [:title, "title-type", :lang] },
+      { titles: [:title, :titleType, :lang] },
       :publisher,
       :created,
       :prefix,
       :suffix,
       :types,
-      { types: [:type, "resource-type-general", "resource-type", :bibtex, :citeproc, :ris] },
+      { types: [:resourceTypeGeneral, :resourceType, :schemaOrg, :bibtex, :citeproc, :ris] },
       :dates,
-      { dates: [:date, "date-type", "date-information"] },
-      "last-landing-page",
-      "last-landing-page-status",
-      "last-landing-page-status-check",
+      { dates: [:date, :dateType, :dateInformation] },
+      :lastLandingPage,
+      :lastLandingPageStatus,
+      :lastLandingPageStatusCheck,
       {
-        "last-landing-page-status-result" => [
-          "error",
-          "redirect-count",
-          { "redirect-urls" => [] },
-          "download-latency",
-          "has-schema-org",
-          "schema-org-id",
-          { "schema-org-id" => ["@type", "value", "propertyID"] },
-          "dc-identifier",
-          "citation-doi",
-          "body-has-pid"
+        lastLandingPageStatusResult: [
+          :error,
+          :redirectCount,
+          { redirectUrls: [] },
+          :downloadLatency,
+          :hasSchemaOrg,
+          :schemaOrgId,
+          { schemaOrgId: ["@type", :value, :propertyID] },
+          :dcIdentifier,
+          :citationDoi,
+          :bodyHasPid
         ]
       },
-      "last-landing-page-content-type",
-      "content-url",
+      :lastLandingPageContentType,
+      :contentUrl,
       :size,
       :format,
       :descriptions,
-      { descriptions: [:description, "description-type", :lang] },
-      "rights-list",
-      { "rights-list" => [:rights, "rights-uri"] },
+      { descriptions: [:description, :descriptionType, :lang] },
+      :rightsList,
+      { rightsList: [:rights, :rightsUri] },
       :xml,
       :validate,
       :source,
       :version,
-      "metadata-version",
-      "schema-version",
+      :metadataVersion,
+      :schemaVersion,
       :state, 
-      "is-active",
+      :isActive,
       :reason,
       :registered,
       :updated,
@@ -451,9 +452,9 @@ class DoisController < ApplicationController
       :regenerate,
       :client,
       :creator,
-      { creator: [:type, :id, :name, "given-name", "family-name", "givenName", "familyName"] },
+      { creator: [:type, :id, :name, :givenName, :familyName, :affiliation] },
       :contributor,
-      { contributor: [:type, :id, :name, "given-name", "family-name", "contributor-type", "givenName", "familyName", "contributorType"] }
+      { contributor: [:type, :id, :name, :givenName, :familyName, :contributorType] }
     ]
 
     relationships = [
@@ -464,19 +465,19 @@ class DoisController < ApplicationController
     p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships)
     p = p.fetch("attributes").merge(client_id: p.dig("relationships", "client", "data", "id"))
     p.merge(
-      aasm_state: p["state"],
-      schema_version: p["schema-version"],
-      last_landing_page: p["last-landing-page"],
-      last_landing_page_status: p["last-landing-page-status"],
-      last_landing_page_status_check: p["last-landing-page-status-check"],
-      last_landing_page_status_result: p["last-landing-page-status-result"],
-      last_landing_page_content_type: p["last-landing-page-content-type"]
+      aasm_state: p[:state],
+      schema_version: p[:schemaVersion],
+      last_landing_page: p[:lastLandingPage],
+      last_landing_page_status: p[:lastLandingPageStatus],
+      last_landing_page_status_check: p[:lastLandingPageStatusCheck],
+      last_landing_page_status_result: p[:lastLandingPageStatusResult],
+      last_landing_page_content_type: p[:lastLandingPageContentType]
     ).except(
-      "confirm-doi", :identifier, :prefix, :suffix,
-      "metadata-version", "schema-version", :state, :mode, "is-active",
-      :created, :registered, :updated, "last-landing-page",
-      "last-landing-page-status", "last-landing-page-status-check",
-      "last-landing-page-status-result", "last-landing-page-content-type")
+      :confirmDoi, :identifier, :prefix, :suffix,
+      :metadataVersion, :schemaVersion, :state, :mode, :isActive,
+      :created, :registered, :updated, :lastLandingPage,
+      :lastLandingPageStatus, :lastLandingPageStatusCheck,
+      :lastLandingPageStatusResult, :lastLandingPageContentType)
   end
 
   def underscore_str(str)

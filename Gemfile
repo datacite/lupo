@@ -32,7 +32,7 @@ gem 'api-pagination'
 gem 'cancancan', '~> 2.0'
 gem 'country_select', '~> 3.1'
 gem 'countries', '~> 2.1', '>= 2.1.2'
-gem 'aasm', '~> 4.12', '>= 4.12.3'
+gem 'aasm', '~> 5.0', '>= 5.0.1'
 gem "facets", require: false
 gem 'shoryuken', '~> 3.2', '>= 3.2.2'
 gem "aws-sdk-s3", require: false

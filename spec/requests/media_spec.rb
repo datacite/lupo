@@ -18,7 +18,7 @@ describe "Media", type: :request, :order => :defined, elasticsearch: true do
       expect(json).not_to be_empty
       expect(json['data'].size).to eq(6)
       result = json['data'].first
-      expect(result.dig("attributes", "media-type")).to eq("application/json")
+      expect(result.dig("attributes", "mediaType")).to eq("application/json")
     end
 
     it 'returns status code 200' do
@@ -68,12 +68,13 @@ describe "Media", type: :request, :order => :defined, elasticsearch: true do
 
   describe 'POST /media' do
     context 'when the request is valid' do
+      let(:media_type) { "application/xml" }
       let(:valid_attributes) do
         {
           "data" => {
             "type" => "media",
             "attributes"=> {
-        			"media-type" => media_type,
+        			"mediaType" => media_type,
               "url" => url
         		}
           }
@@ -82,7 +83,7 @@ describe "Media", type: :request, :order => :defined, elasticsearch: true do
       before { post "/dois/#{doi.doi}/media", params: valid_attributes.to_json, headers: headers }
 
       it 'creates a media record' do
-        expect(json.dig('data', 'attributes', 'media-type')).to eq(media_type)
+        expect(json.dig('data', 'attributes', 'mediaType')).to eq(media_type)
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
       end
 
@@ -91,13 +92,13 @@ describe "Media", type: :request, :order => :defined, elasticsearch: true do
       end
     end
 
-    context 'when the media-type is missing' do
+    context 'when the mediaType is missing' do
       let(:valid_attributes) do
         {
           "data" => {
             "type" => "media",
             "attributes"=> {
-        			"media-type" => nil,
+        			"mediaType" => nil,
               "url" => url
         		}
           }
@@ -122,7 +123,7 @@ describe "Media", type: :request, :order => :defined, elasticsearch: true do
           "data" => {
             "type" => "media",
             "attributes"=> {
-              "media-type"=> media_type,
+              "mediaType"=> media_type,
               "url"=> url
             },
             "relationships"=>  {
@@ -155,7 +156,7 @@ describe "Media", type: :request, :order => :defined, elasticsearch: true do
           "data" => {
             "type" => "media",
             "attributes"=> {
-              "media-type"=> media_type,
+              "mediaType"=> media_type,
               "url"=> url
             },
             "relationships"=>  {
@@ -173,7 +174,7 @@ describe "Media", type: :request, :order => :defined, elasticsearch: true do
       before { patch "/dois/#{doi.doi}/media/#{media.uid}", params: valid_attributes.to_json, headers: headers }
 
       it 'updates the record' do
-        expect(json.dig('data', 'attributes', 'media-type')).to eq(media_type)
+        expect(json.dig('data', 'attributes', 'mediaType')).to eq(media_type)
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
         expect(json.dig('data', 'attributes', 'version')).to eq(1)
       end
@@ -190,7 +191,7 @@ describe "Media", type: :request, :order => :defined, elasticsearch: true do
           "data" => {
             "type" => "media",
             "attributes"=> {
-              "media-type"=> media_type,
+              "mediaType"=> media_type,
               "url"=> url
             },
             "relationships"=>  {
