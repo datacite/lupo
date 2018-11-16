@@ -137,7 +137,7 @@ class ClientsController < ApplicationController
 
   def set_client
     # params[:id] = params[:id][/.+?(?=\/)/]
-    @client = Client.where(symbol: params[:id]).where(is_active: "\x01").first
+    @client = Client.where(symbol: params[:id]).where(deleted_at: nil).first
     fail ActiveRecord::RecordNotFound unless @client.present?
   end
 
