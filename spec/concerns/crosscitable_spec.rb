@@ -83,11 +83,11 @@ describe Doi, vcr: true do
     end
 
     it "date_published" do
-      expect(subject.dates).to eq([{"date"=>"2017", "date_type"=>"Issued"}])
+      expect(subject.dates).to eq([{"date"=>"2017", "dateType"=>"Issued"}])
     end
 
     it "resource_type_general" do
-      expect(subject.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resource_type_general"=>"Text", "ris"=>"RPRT", "type"=>"ScholarlyArticle")
+      expect(subject.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
     end
   end
 
@@ -111,13 +111,13 @@ describe Doi, vcr: true do
     end
 
     it "date_published" do
-      expect(subject.dates).to eq([{"date"=>"2017", "date_type"=>"Issued"}])
+      expect(subject.dates).to eq([{"date"=>"2017", "dateType"=>"Issued"}])
     end
 
     it "resource_type_general" do
       resource_type_general = "Software"
       subject.set_type(subject.types, resource_type_general, "resource_type_general")
-      expect(subject.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resource_type_general"=>"Software", "ris"=>"RPRT", "type"=>"ScholarlyArticle")
+      expect(subject.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceTypeGeneral"=>"Text", "resource_type_general"=>"Software", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
     end
   end
 end

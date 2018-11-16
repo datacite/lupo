@@ -104,25 +104,26 @@ class Doi < ActiveRecord::Base
       type: { type: :keyword },
       id: { type: :keyword },
       name: { type: :text },
-      "given-name" => { type: :text },
-      "family-name" => { type: :text }
+      givenName: { type: :text },
+      familyName: { type: :text }
     }
     indexes :contributor,                    type: :object, properties: {
       type: { type: :keyword },
       id: { type: :keyword },
       name: { type: :text },
-      "given-name" => { type: :text },
-      "family-name" => { type: :text }
+      givenName: { type: :text },
+      familyName: { type: :text },
+      contributorType: { type: :keyword }
     }
     indexes :creator_names,                  type: :text
     indexes :titles,                         type: :object, properties: {
       title: { type: :keyword },
-      title_type: { type: :keyword },
+      titleType: { type: :keyword },
       lang: { type: :keyword }
     }
     indexes :descriptions,                   type: :object, properties: {
       description: { type: :keyword },
-      description_type: { type: :keyword },
+      descriptionType: { type: :keyword },
       lang: { type: :keyword }
     }
     indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" }}
@@ -142,47 +143,59 @@ class Doi < ActiveRecord::Base
       updated: { type: :date }
     }
     indexes :alternate_identifiers,          type: :object, properties: {
-      alternate_identifier_type: { type: :keyword },
-      alternate_identifier: { type: :keyword }
+      alternateIdentifierType: { type: :keyword },
+      alternateIdentifier: { type: :keyword }
     }
     indexes :related_identifiers,            type: :object, properties: {
-      related_identifier_type: { type: :keyword },
-      related_identifier: { type: :keyword },
-      relation_type: { type: :keyword },
-      resource_type_general: { type: :keyword }
+      relatedIdentifierType: { type: :keyword },
+      relatedIdentifier: { type: :keyword },
+      relationType: { type: :keyword },
+      resourceTypeGeneral: { type: :keyword }
     }
     indexes :types,                          type: :object, properties: {
-      type: { type: :keyword },
-      resource_type_general: { type: :keyword },
-      resource_type: { type: :keyword },
+      resourceTypeGeneral: { type: :keyword },
+      resourceType: { type: :keyword },
+      schemaOrg: { type: :keyword },
       bibtex: { type: :keyword },
       citeproc: { type: :keyword },
       ris: { type: :keyword }
     }
     indexes :funding_references,             type: :object, properties: {
-      funder_name: { type: :keyword },
-      funder_identifier: { type: :keyword },
-      funder_identifier_type: { type: :keyword },
-      award_number: { type: :keyword },
-      award_uri: { type: :keyword },
-      award_title: { type: :keyword }
+      funderName: { type: :keyword },
+      funderIdentifier: { type: :keyword },
+      funderIdentifierType: { type: :keyword },
+      awardNumber: { type: :keyword },
+      awardUri: { type: :keyword },
+      awardTitle: { type: :keyword }
     }
-    indexes :dates,                          type: :object
-    indexes :geo_locations,                  type: :object
+    indexes :dates,                          type: :object, properties: {
+      date: { type: :date, format: "yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true },
+      dateType: { type: :keyword }
+    }
+    indexes :geo_locations,                  type: :object, properties: {
+      geoLocationPoint: { type: :object },
+      geoLocationBox: { type: :object },
+      geoLocationPlace: { type: :keyword }
+    }
     indexes :rights_list,                    type: :object, properties: {
       rights: { type: :keyword },
-      rights_uri: { type: :keyword }
+      rightsUri: { type: :keyword }
     }
     indexes :subjects,                       type: :object, properties: {
       subject: { type: :keyword },
-      subject_scheme: { type: :keyword },
-      scheme_uri: { type: :keyword },
-      value_uri: { type: :keyword }
+      subjectScheme: { type: :keyword },
+      schemeUri: { type: :keyword },
+      valueUri: { type: :keyword }
+    }
+    indexes :periodical,                     type: :object, properties: {
+      type: { type: :keyword },
+      id: { type: :keyword },
+      title: { type: :keyword },
+      issn: { type: :keyword }
     }
     indexes :xml,                            type: :text, index: "not_analyzed"
-    indexes :periodical,                     type: :object
     indexes :content_url,                    type: :keyword
-    indexes :version_info,                   type: :integer
+    indexes :version_info,                   type: :keyword
     indexes :formats,                        type: :keyword
     indexes :sizes,                          type: :keyword
     indexes :language,                       type: :keyword
@@ -198,7 +211,6 @@ class Doi < ActiveRecord::Base
     indexes :last_landing_page_status_check, type: :date
     indexes :last_landing_page_content_type, type: :keyword
     indexes :cache_key,                      type: :keyword
-    # indexes :published,                      type: :date, format: "yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true
     indexes :registered,                     type: :date
     indexes :created,                        type: :date
     indexes :updated,                        type: :date
@@ -314,15 +326,20 @@ class Doi < ActiveRecord::Base
 
     logger = Logger.new(STDOUT)
 
-    Doi.where(created: from_date.midnight..from_date.end_of_day).not_indexed.find_each do |doi|
-      string = doi.current_metadata.present? ? doi.current_metadata.xml : nil
-      meta = doi.read_datacite(string: doi.xml, sandbox: doi.sandbox)
-      attrs = %w(creator contributor titles publisher publication_year types descriptions periodical sizes formats language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
-        [a.to_sym, meta[a.to_s]]
-      end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
-      doi.update_columns(attrs)
-      
-      count += 1
+    Doi.where(created: from_date.midnight..from_date.end_of_day).find_each do |doi|
+      begin
+        string = doi.current_metadata.present? ? doi.current_metadata.xml : nil
+        meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
+        attrs = %w(creator contributor titles publisher publication_year types descriptions periodical sizes formats language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
+          [a.to_sym, meta[a]]
+        end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
+        
+        doi.update_columns(attrs)
+      rescue TypeError, NoMethodError => error
+        logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
+      else
+        count += 1
+      end
     end
 
     if count > 0
@@ -356,13 +373,18 @@ class Doi < ActiveRecord::Base
         type:    Doi.document_type,
         body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
 
+      # log errors
       errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
-      count += dois.length
+      response['items'].select { |k, v| k.values.first['error'].present? }.each do |err|
+        logger.error "[Elasticsearch] " + err.inspect
+      end
+
       dois.each { |doi| doi.update_column(:indexed, Time.zone.now) }
+      count += dois.length
     end
 
     if errors > 1
-      logger.info "[Elasticsearch] #{errors} errors indexing #{count} DOIs created on #{options[:from_date]}."
+      logger.error "[Elasticsearch] #{errors} errors indexing #{count} DOIs created on #{options[:from_date]}."
     elsif count > 1
       logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{options[:from_date]}."
     end

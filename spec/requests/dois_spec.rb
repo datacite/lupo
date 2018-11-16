@@ -1236,7 +1236,7 @@ describe "dois", type: :request do
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
-          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-12-20", "date_type"=>"Created"}, {"date"=>"2016-12-20", "date_type"=>"Issued"}, {"date"=>"2016-12-20", "date_type"=>"Updated"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-12-20", "dateType"=>"Created"}, {"date"=>"2016-12-20", "dateType"=>"Issued"}, {"date"=>"2016-12-20", "dateType"=>"Updated"}])
         end
 
         it 'returns status code 200' do
@@ -1374,7 +1374,7 @@ describe "dois", type: :request do
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
-          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-12-20", "date_type"=>"Issued"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-12-20", "dateType"=>"Issued"}])
         end
 
         it 'returns status code 200' do
@@ -1409,7 +1409,7 @@ describe "dois", type: :request do
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"R Interface to the DataONE REST API"}])
-          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-05-27", "date_type"=>"Issued"}, {"date"=>"2016-05-27", "date_type"=>"Created"}, {"date"=>"2016-05-27", "date_type"=>"Updated"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-05-27", "dateType"=>"Issued"}, {"date"=>"2016-05-27", "dateType"=>"Created"}, {"date"=>"2016-05-27", "dateType"=>"Updated"}])
         end
 
         it 'returns status code 200' do
@@ -1444,7 +1444,7 @@ describe "dois", type: :request do
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Analysis Tools for Crossover Experiment of UI using Choice Architecture"}])
-          expect(json.dig('data', 'attributes', 'dates')).to eq("date"=>"2016-03-27", "date-type"=>"Issued")
+          expect(json.dig('data', 'attributes', 'dates')).to eq("date"=>"2016-03-27", "dateType"=>"Issued")
         end
 
         it 'returns status code 200' do
@@ -1479,7 +1479,7 @@ describe "dois", type: :request do
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
-          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2014", "date_type"=>"Issued"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2014", "dateType"=>"Issued"}])
         end
 
         it 'returns status code 200' do
@@ -1514,7 +1514,7 @@ describe "dois", type: :request do
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
-          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2014", "date_type"=>"Issued"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2014", "dateType"=>"Issued"}])
         end
 
         it 'returns status code 200' do
@@ -1549,7 +1549,7 @@ describe "dois", type: :request do
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"}])
-          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2006-12-20", "date_type"=>"Issued"}, {"date"=>"2017-01-01T03:37:08Z", "date_type"=>"Updated"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2006-12-20", "dateType"=>"Issued"}, {"date"=>"2017-01-01T03:37:08Z", "dateType"=>"Updated"}])
         end
 
         it 'returns status code 200' do
@@ -1584,7 +1584,7 @@ describe "dois", type: :request do
         it 'validates a Doi' do
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
-          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-12-20", "date_type"=>"Issued"}, {"date"=>"2016-12-20", "date_type"=>"Created"}, {"date"=>"2016-12-20", "date_type"=>"Updated"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-12-20", "dateType"=>"Issued"}, {"date"=>"2016-12-20", "dateType"=>"Created"}, {"date"=>"2016-12-20", "dateType"=>"Updated"}])
         end
 
         it 'returns status code 200' do

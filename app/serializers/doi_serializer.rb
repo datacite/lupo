@@ -18,34 +18,6 @@ class DoiSerializer
     object.version_info
   end
 
-  attribute :titles do |object|
-    Array.wrap(object.titles).map { |i| i.transform_keys { |key| key.to_s.camelize(uppercase_first_letter = false) }
-  end
-
-  attribute :subjects do |object|
-    Array.wrap(object.subjects).map { |i| i.transform_keys { |key| key.to_s.camelize(uppercase_first_letter = false) } }
-  end
-
-  attribute :alternate_identifiers do |object|
-    Array.wrap(object.alternate_identifiers).map { |i| i.transform_keys { |key| key.to_s.camelize(uppercase_first_letter = false) } }
-  end
-
-  attribute :related_identifiers do |object|
-    Array.wrap(object.related_identifiers).map { |i| i.transform_keys { |key| key.to_s.camelize(uppercase_first_letter = false) } }
-  end
-
-  attribute :types do |object|
-    object.types.to_h.transform_keys { |key| key.to_s.camelize(uppercase_first_letter = false) }
-  end
-
-  attribute :dates do |object|
-    object.dates.to_h.transform_keys { |key| key.to_s.camelize(uppercase_first_letter = false) }
-  end
-
-  attribute :descriptions do |object|
-    Array.wrap(object.descriptions).map { |i| i.transform_keys { |key| key.to_s.camelize(uppercase_first_letter = false) } }
-  end
-
   attribute :landing_page do |object|
     { status: object.last_landing_page_status,
       contentType: object.last_landing_page_content_type,

@@ -325,7 +325,7 @@ describe Doi, type: :model, vcr: true do
       subject.publication_year = "2011"
       subject.save
 
-      expect(subject.dates).to eq([{"date"=>"2011-05-26", "date_type"=>"Issued"}])
+      expect(subject.dates).to eq([{"date"=>"2011-05-26", "dateType"=>"Issued"}])
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
       expect(xml.dig("dates", "date")).to eq("dateType"=>"Issued", "__content__"=>"2011-05-26")
@@ -601,7 +601,7 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "title" do
-      expect(subject.titles).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "title_type"=>"TranslatedTitle"}])
+      expect(subject.titles).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
     end
 
     it "creator" do
@@ -906,20 +906,20 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "related_identifiers" do
-      expect(subject.related_identifiers).to eq([{"related_identifier"=>"10.23725/2g4s-qv04", "related_identifier_type"=>"DOI", "relation_type"=>"References", "resource_type_general"=>"Dataset"}])
+      expect(subject.related_identifiers).to eq([{"relatedIdentifier"=>"10.23725/2g4s-qv04", "relatedIdentifierType"=>"DOI", "relationType"=>"References", "resourceTypeGeneral"=>"Dataset"}])
     end
 
     it "funding_references" do
-      expect(subject.funding_references).to eq([{"funder_identifier"=>"https://doi.org/10.13039/100000050", "funder_identifier_type"=>"Crossref Funder ID", "funder_name"=>"National Heart, Lung, and Blood Institute (NHLBI)"}])
+      expect(subject.funding_references).to eq([{"funderIdentifier"=>"https://doi.org/10.13039/100000050", "funderIdentifierType"=>"Crossref Funder ID", "funderName"=>"National Heart, Lung, and Blood Institute (NHLBI)"}])
     end
 
     it "alternate_identifier" do
-      expect(subject.alternate_identifiers).to eq([{"alternate_identifier"=>"3b33f6b9338fccab0901b7d317577ea3",
-        "alternate_identifier_type"=>"md5"},
-       {"alternate_identifier"=>"ark:/99999/fk41CrU4eszeLUDe",
-        "alternate_identifier_type"=>"minid"},
-       {"alternate_identifier"=>"dg.4503/c3d66dc9-58da-411c-83c4-dd656aa3c4b7",
-        "alternate_identifier_type"=>"dataguid"}])
+      expect(subject.alternate_identifiers).to eq([{"alternateIdentifier"=>"3b33f6b9338fccab0901b7d317577ea3",
+         "alternateIdentifierType"=>"md5"},
+        {"alternateIdentifier"=>"ark:/99999/fk41CrU4eszeLUDe",
+         "alternateIdentifierType"=>"minid"},
+        {"alternateIdentifier"=>"dg.4503/c3d66dc9-58da-411c-83c4-dd656aa3c4b7",
+         "alternateIdentifierType"=>"dataguid"}])
     end
 
     it "creates schema_version" do
