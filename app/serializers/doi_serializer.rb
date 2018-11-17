@@ -5,13 +5,13 @@ class DoiSerializer
   set_id :uid
 
   attributes :doi, :prefix, :suffix, :identifier, :creator, :titles, :publisher, :periodical, :publication_year, :subjects, :contributor, :dates, :language, :types, :alternate_identifiers, :related_identifiers, :sizes, :formats, :version, :rights_list, :descriptions, :geo_locations, :funding_references, :xml, :url, :content_url, :metadata_version, :schema_version, :source, :state, :reason, :landing_page, :created, :registered, :updated
-  attributes :prefix, :suffix, if: Proc.new { |record, params| params && params[:source] == "fabrica" }
+  attributes :prefix, :suffix, if: Proc.new { |record, params| params && params[:detail]}
 
   belongs_to :client, record_type: :clients
   belongs_to :resource_type, record_type: :resource_types
   has_many :media
 
-  attribute :xml, if: Proc.new { |record, params| params && params[:source] == "fabrica" } do |record|
+  attribute :xml, if: Proc.new { |record, params| params && params[:detail] } do |record|
     record.xml_encoded
   end
 
