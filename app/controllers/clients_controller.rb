@@ -115,8 +115,8 @@ class ClientsController < ApplicationController
       status = 400
       logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
-    elsif @client.update_attributes(is_active: "\x00", deleted_at: Time.zone.now)
-      @client.remove_users(id: "client_id", jwt: current_user.jwt) unless Rails.env.test?
+    elsif @client.update_attributes(is_active: nil, deleted_at: Time.zone.now)
+      @client.send_delete_email unless Rails.env.test?
       head :no_content
     else
       logger.warn @client.errors.inspect
@@ -137,7 +137,7 @@ class ClientsController < ApplicationController
 
   def set_client
     # params[:id] = params[:id][/.+?(?=\/)/]
-    @client = Client.where(symbol: params[:id]).first
+    @client = Client.where(symbol: params[:id]).where(deleted_at: nil).first
     fail ActiveRecord::RecordNotFound unless @client.present?
   end
 

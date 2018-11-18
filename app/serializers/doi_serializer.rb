@@ -22,10 +22,14 @@ class DoiSerializer
     object.version_info
   end
 
-  attribute :landing_page do |object|
+  attribute :landing_page, if: Proc.new {
+    |object, params|
+    params[:current_ability] && params[:current_ability].can?(:read_landing_page_results, object) == true
+  } do |object|
     { status: object.last_landing_page_status,
       contentType: object.last_landing_page_content_type,
       checked: object.last_landing_page_status_check,
       result: object.try(:last_landing_page_status_result) }
   end
+
 end

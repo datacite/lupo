@@ -42,6 +42,24 @@ module Mailable
 
       response
     end
+
+    def send_delete_email
+      title = Rails.env.stage? ? "DataCite DOI Fabrica Test" : "DataCite DOI Fabrica"
+      subject = "#{title}: Account Deleted"
+      text = User.format_message_text(template: "users/delete.text.erb", title: title, contact_name: contact_name, name: symbol)
+      html = User.format_message_html(template: "users/delete.html.erb", title: title, contact_name: contact_name, name: symbol)
+
+      response = User.send_message(name: contact_name, email: contact_email, subject: subject, text: text, html: html)
+
+      fields = [
+        { title: "Account ID", value: symbol},
+        { title: "Contact name", value: contact_name, short: true },
+        { title: "Contact email", value: contact_email, short: true }
+      ]
+      User.send_notification_to_slack(nil, title: subject, level: "warning", fields: fields)
+
+      response
+    end
   end
 
   module ClassMethods

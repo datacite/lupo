@@ -144,6 +144,36 @@ describe "dois", type: :request do
       end
     end
 
+    context 'when the record exists 2.2' do
+      let(:doi) { create(:doi, doi: "10.24425/119497", client: client, state: "registered") }
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite_schema_2.2.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "xml" => xml,
+              "title" => "Eating your own Dog Food",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+      before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+
+      it 'updates the record' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("titles", "title")).to eq("Eating your own Dog Food")
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
     context 'NoMethodError https://github.com/datacite/lupo/issues/84' do
       let(:doi_id) { "10.14454/m9.figshare.6839054.v1" }
       let(:valid_attributes) do
@@ -1667,7 +1697,7 @@ describe "dois", type: :request do
       #   expect(json.dig('data', 'attributes', 'state')).to eq("registered")
       # end
     end
-  
+
     context 'landing page schema-org-id hash' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:xml) { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48cmVzb3VyY2UgeG1sbnM6eHNpPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYS1pbnN0YW5jZSIgeG1sbnM9Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IiB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTQvbWV0YWRhdGEueHNkIj48aWRlbnRpZmllciBpZGVudGlmaWVyVHlwZT0iRE9JIj4xMC4yNTQ5OS94dWRhMnB6cmFocm9lcXBlZnZucTV6dDZkYzwvaWRlbnRpZmllcj48Y3JlYXRvcnM+PGNyZWF0b3I+PGNyZWF0b3JOYW1lPklhbiBQYXJyeTwvY3JlYXRvck5hbWU+PG5hbWVJZGVudGlmaWVyIHNjaGVtZVVSST0iaHR0cDovL29yY2lkLm9yZy8iIG5hbWVJZGVudGlmaWVyU2NoZW1lPSJPUkNJRCI+MDAwMC0wMDAxLTYyMDItNTEzWDwvbmFtZUlkZW50aWZpZXI+PC9jcmVhdG9yPjwvY3JlYXRvcnM+PHRpdGxlcz48dGl0bGU+U3VibWl0dGVkIGNoZW1pY2FsIGRhdGEgZm9yIEluQ2hJS2V5PVlBUFFCWFFZTEpSWFNBLVVIRkZGQU9ZU0EtTjwvdGl0bGU+PC90aXRsZXM+PHB1Ymxpc2hlcj5Sb3lhbCBTb2NpZXR5IG9mIENoZW1pc3RyeTwvcHVibGlzaGVyPjxwdWJsaWNhdGlvblllYXI+MjAxNzwvcHVibGljYXRpb25ZZWFyPjxyZXNvdXJjZVR5cGUgcmVzb3VyY2VUeXBlR2VuZXJhbD0iRGF0YXNldCI+U3Vic3RhbmNlPC9yZXNvdXJjZVR5cGU+PHJpZ2h0c0xpc3Q+PHJpZ2h0cyByaWdodHNVUkk9Imh0dHBzOi8vY3JlYXRpdmVjb21tb25zLm9yZy9zaGFyZS15b3VyLXdvcmsvcHVibGljLWRvbWFpbi9jYzAvIj5ObyBSaWdodHMgUmVzZXJ2ZWQ8L3JpZ2h0cz48L3JpZ2h0c0xpc3Q+PC9yZXNvdXJjZT4=" }
@@ -1831,6 +1861,94 @@ describe "dois", type: :request do
     it 'returns status code 200' do
       expect(response).to have_http_status(200)
     end
+  end
+
+  describe 'GET /dois/<doi> linkcheck results' do
+    let(:last_landing_page_status_result) { {
+      "error" => nil,
+      "redirect-count" => 0,
+      "redirect-urls" => [],
+      "download-latency" => 200,
+      "has-schema-org" => true,
+      "schema-org-id" => "10.14454/10703",
+      "dc-identifier" => nil,
+      "citation-doi" => nil,
+      "body-has-pid" => true
+    } }
+
+    # Setup an initial DOI with results will check permissions against.
+    let(:doi) {
+      create(
+        :doi, doi: "10.24425/2210181332",
+        client: client,
+        state: "findable",
+        event: 'publish',
+        last_landing_page_status_result: last_landing_page_status_result
+        )
+    }
+
+    # Create a different dummy client and a doi with entry associated
+    # This is so we can test clients accessing others information
+    let(:other_client) { create(:client, provider: provider, symbol: 'DATACITE.DOESNTEXIST', password: 'notarealpassword') }
+    let(:other_doi) {
+      create(
+        :doi, doi: "10.24425/2210181332",
+        client: other_client,
+        state: "findable",
+        event: 'publish',
+        last_landing_page_status_result: last_landing_page_status_result
+        )
+    }
+
+    context 'anonymous get' do
+      let(:headers) { { 'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json' } }
+      before { get "/dois/#{doi.doi}", headers: headers}
+
+      it 'returns without link_check_results' do
+        puts json
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
+        expect(json.dig('data', 'attributes', 'landing-page', 'result')).to eq(nil)
+      end
+    end
+
+    context 'client authorised get own dois' do
+      let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }
+      let(:headers) { { 'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer } }
+
+      before { get "/dois/#{doi.doi}", headers: headers }
+
+      it 'returns with link_check_results' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
+        expect(json.dig('data', 'attributes', 'landing-page', 'result')).to eq(last_landing_page_status_result)
+      end
+    end
+
+
+    context 'client authorised try get diff dois landing data' do
+      let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }
+      let(:headers) { { 'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer } }
+
+      before { get "/dois/#{other_doi.doi}", headers: headers }
+
+      it 'returns with link_check_results' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq(other_doi.doi)
+        expect(json.dig('data', 'attributes', 'landing-page', 'result')).to eq(nil)
+      end
+    end
+
+
+    context 'authorised staff admin read' do
+      let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }
+      let(:headers) { { 'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + admin_bearer } }
+
+      before { get "/dois/#{doi.doi}", headers: headers }
+
+      it 'returns with link_check_results' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
+        expect(json.dig('data', 'attributes', 'landing-page', 'result')).to eq(last_landing_page_status_result)
+      end
+    end
+
   end
 
   describe 'GET /dois/random?prefix' do
