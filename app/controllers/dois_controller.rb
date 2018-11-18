@@ -181,7 +181,10 @@ class DoisController < ApplicationController
     options = {}
     options[:include] = @include
     options[:is_collection] = false
-    options[:params] = { detail: true }
+    options[:params] = { 
+      current_ability: current_ability,
+      detail: true 
+    }
 
     render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
   end
@@ -223,7 +226,10 @@ class DoisController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-      options[:params] = { detail: true }
+      options[:params] = { 
+        current_ability: current_ability,
+        detail: true 
+      }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :created, location: @doi
     else
@@ -266,7 +272,10 @@ class DoisController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-      options[:params] = { detail: true }
+      options[:params] = { 
+        current_ability: current_ability,
+        detail: true 
+      }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
     else
