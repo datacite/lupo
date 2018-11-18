@@ -52,11 +52,6 @@ after_success:
       docker push $REPO:$TRAVIS_TAG;
       echo "Pushed to" $REPO:$TRAVIS_TAG;
       AUTO_DEPLOY=true;
-    elif [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
-      docker build -f Dockerfile -t $REPO:$TRAVIS_PULL_REQUEST_BRANCH .;
-      docker push $REPO:$TRAVIS_PULL_REQUEST_BRANCH;
-      echo "Pushed to" $REPO:$TRAVIS_PULL_REQUEST_BRANCH;
-      AUTO_DEPLOY=true;
     elif [ "$TRAVIS_BRANCH" == "master" ]; then
       docker build -f Dockerfile -t $REPO .;
       docker push $REPO;
@@ -66,6 +61,7 @@ after_success:
       docker build -f Dockerfile -t $REPO:$TRAVIS_BRANCH .;
       docker push $REPO:$TRAVIS_BRANCH;
       echo "Pushed to" $REPO:$TRAVIS_BRANCH;
+      AUTO_DEPLOY=true;
     fi
 
   - if [ "$AUTO_DEPLOY" == "true" ]; then
@@ -90,10 +86,6 @@ after_success:
         git add prod-eu-west/services/client-api/_lupo.auto.tfvars;
         git commit -m "Adding lupo git variables for commit tagged ${TRAVIS_TAG?}";
         git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" master;
-      elif [ "$TRAVIS_PULL_REQUEST" == "true" ]; then
-        git add stage/services/client-api/_lupo.auto.tfvars;
-        git commit -m "Adding lupo git variables for pull request ${TRAVIS_PULL_REQUEST}";
-        git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" ${TRAVIS_PULL_REQUEST_BRANCH};
       else
         git add stage/services/client-api/_lupo.auto.tfvars;
         git commit -m "Adding lupo git variables for latest commit";
