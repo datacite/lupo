@@ -456,7 +456,7 @@ describe "dois", type: :request do
 
     context 'when the resource_type_general changes' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
-      let(:types) { { "resourceTypeGeneral" => "data-paper", "resourceType" => "BlogPosting" } }
+      let(:types) { { "resourceTypeGeneral" => "DataPaper", "resourceType" => "BlogPosting" } }
       let(:valid_attributes) do
         {
           "data" => {
@@ -483,7 +483,7 @@ describe "dois", type: :request do
       it 'updates the record' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'types')).to eq("resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"data-paper")
+        expect(json.dig('data', 'attributes', 'types')).to eq("resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"DataPaper")
       end
 
       it 'returns status code 200' do
@@ -534,7 +534,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
-        expect(json.dig('data', 'relationships', 'resourceType', 'data', 'id')).to eq("text")
+        expect(json.dig('data', 'attributes', 'types')).to eq(2)
       end
 
       it 'returns status code 201' do

@@ -320,7 +320,7 @@ describe Doi, type: :model, vcr: true do
       expect(xml.dig("publisher")).to eq(publisher)
     end
 
-    it "date_published" do
+    it "publication_year" do
       subject.set_date(subject.dates, "2011-05-26", "Issued")
       subject.publication_year = "2011"
       subject.save
@@ -334,10 +334,10 @@ describe Doi, type: :model, vcr: true do
 
     it "resource_type" do
       resource_type = "BlogPosting"
-      subject.types["resource_type"] = resource_type
+      subject.types["resourceType"] = resource_type
       subject.save
 
-      expect(subject.types["resource_type"]).to eq(resource_type)
+      expect(subject.types["resourceType"]).to eq(resource_type)
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
       expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>"Text", "__content__"=>"BlogPosting")
@@ -345,16 +345,16 @@ describe Doi, type: :model, vcr: true do
 
     it "resource_type_general" do
       resource_type_general = "Software"
-      subject.types["resource_type_general"] = resource_type_general
+      subject.types["resourceTypeGeneral"] = resource_type_general
       subject.save
 
-      expect(subject.types["resource_type_general"]).to eq(resource_type_general)
+      expect(subject.types["resourceTypeGeneral"]).to eq(resource_type_general)
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
       expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>resource_type_general, "__content__"=>"ScholarlyArticle")
     end
 
-    it "description" do
+    it "descriptions" do
       descriptions = [{ "description" => "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for..." }]
       subject.descriptions = descriptions
       subject.save

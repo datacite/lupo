@@ -399,20 +399,21 @@ class DoisController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
 
+    # default values for attributes stored as JSON
+    defaults = { data: { titles: [], descriptions: [], types: {}, dates: [], rightsList: [], creator: [], contributor: [] }}
+
     attributes = [
       :doi,
       :confirmDoi,
       :identifier,
       :url,
-      :titles,
       { titles: [:title, :titleType, :lang] },
       :publisher,
+      :publicationYear,
       :created,
       :prefix,
       :suffix,
-      :types,
       { types: [:resourceTypeGeneral, :resourceType, :schemaOrg, :bibtex, :citeproc, :ris] },
-      :dates,
       { dates: [:date, :dateType, :dateInformation] },
       :lastLandingPage,
       :lastLandingPageStatus,
@@ -435,9 +436,7 @@ class DoisController < ApplicationController
       :contentUrl,
       :size,
       :format,
-      :descriptions,
       { descriptions: [:description, :descriptionType, :lang] },
-      :rightsList,
       { rightsList: [:rights, :rightsUri] },
       :xml,
       :validate,
@@ -454,45 +453,38 @@ class DoisController < ApplicationController
       :event,
       :regenerate,
       :client,
-      :creator,
       { creator: [:type, :id, :name, :givenName, :familyName, :affiliation] },
-      :contributor,
-      { contributor: [:type, :id, :name, :givenName, :familyName, :contributorType] }
+      { contributor: [:type, :id, :name, :givenName, :familyName, :contributorType] },
+      { alternateIdentifiers: [:alternateIdentifier, :alternateIdentifierType] },
+      { relatedIdentifiers: [:relatedIdentifier, :relatedIdentifierType, :relationType, :resourceTypeGeneral, :relatedMetadataScheme, :schemeUri, :schemeType] },
+      { fundingReferences: [:funderName, :funderIdentifier, :funderIdentifierType, :awardNumber, :awardUri, :awardTitle] },
+      { geoLocations: [{ geolocationPoint: [:pointLongitude, :pointLatitude] }, { geolocationBox: [:westBoundLongitude, :eastBoundLongitude, :southBoundLatitude, :northBoundLatitude] }, :geoLocationPlace] },
     ]
+    relationships = [{ client: [data: [:type, :id]] }]
 
-    relationships = [
-      { client: [data: [:type, :id]] },
-      { provider: [data: [:type, :id]] }
-    ]
-
-    p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships)
+    p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships).reverse_merge(defaults)
     p = p.fetch("attributes").merge(client_id: p.dig("relationships", "client", "data", "id"))
     p.merge(
       aasm_state: p[:state],
       schema_version: p[:schemaVersion],
+      publication_year: p[:publicationYear],
+      rights_list: p[:rightsList],
+      alternate_identifiers: p[:alternateIdentifiers],
+      related_identifiers: p[:relatedIdentifiers],
+      funding_references: p[:fundingReferences],
+      geo_locations: p[:geoLocations],
       last_landing_page: p[:lastLandingPage],
       last_landing_page_status: p[:lastLandingPageStatus],
       last_landing_page_status_check: p[:lastLandingPageStatusCheck],
       last_landing_page_status_result: p[:lastLandingPageStatusResult],
       last_landing_page_content_type: p[:lastLandingPageContentType]
     ).except(
-      :confirmDoi, :identifier, :prefix, :suffix,
+      :confirmDoi, :identifier, :prefix, :suffix, :publicationYear,
+      :rightsList, :alternateIdentifiers, :relatedIdentifiers, :fundingReferences, :geoLocations,
       :metadataVersion, :schemaVersion, :state, :mode, :isActive,
       :created, :registered, :updated, :lastLandingPage,
       :lastLandingPageStatus, :lastLandingPageStatusCheck,
       :lastLandingPageStatusResult, :lastLandingPageContentType)
-  end
-
-  def underscore_str(str)
-    return str unless str.present?
-
-    str.underscore
-  end
-
-  def camelize_str(str)
-    return str unless str.present?
-
-    str.underscore.camelize
   end
 
   def add_metadata_to_bugsnag(report)

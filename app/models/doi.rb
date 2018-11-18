@@ -127,10 +127,9 @@ class Doi < ActiveRecord::Base
       lang: { type: :keyword }
     }
     indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" }}
-    indexes :publication_year,               type: :integer
+    indexes :publication_year,               type: :date, format: "yyyy", ignore_malformed: true
     indexes :client_id,                      type: :keyword
     indexes :provider_id,                    type: :keyword
-    indexes :resource_type_id,               type: :keyword
     indexes :media_ids,                      type: :keyword
     indexes :media,                          type: :object, properties: {
       type: { type: :keyword },
@@ -218,7 +217,6 @@ class Doi < ActiveRecord::Base
 
     # include parent objects
     indexes :client,        type: :object
-    indexes :resource_type, type: :object
   end
 
   def as_indexed_json(options={})
@@ -236,7 +234,6 @@ class Doi < ActiveRecord::Base
       "publisher" => publisher,
       "client_id" => client_id,
       "provider_id" => provider_id,
-      "resource_type_id" => resource_type_id,
       "media_ids" => media_ids,
       "prefix" => prefix,
       "suffix" => suffix,
@@ -271,16 +268,15 @@ class Doi < ActiveRecord::Base
       "created" => created,
       "updated" => updated,
       "client" => client.as_indexed_json,
-      "resource_type" => resource_type.try(:as_indexed_json),
       "media" => media.map { |m| m.try(:as_indexed_json) }
     }
   end
 
   def self.query_aggregations
     {
-      resource_types: { terms: { field: 'resource_type_id', size: 15, min_doc_count: 1 } },
+      resource_types: { terms: { field: 'types.resourceTypeGeneral', size: 15, min_doc_count: 1 } },
       states: { terms: { field: 'aasm_state', size: 10, min_doc_count: 1 } },
-      years: { date_histogram: { field: 'published', interval: 'year', min_doc_count: 1 } },
+      years: { date_histogram: { field: 'publicationYear', interval: 'year', min_doc_count: 1 } },
       created: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
       registered: { date_histogram: { field: 'registered', interval: 'year', min_doc_count: 1 } },
       providers: { terms: { field: 'provider_id', size: 10, min_doc_count: 1 } },
@@ -293,7 +289,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['doi^10', 'titles.title^10', 'creator_names^10', 'creator.name^10', 'creator.id^10', 'publisher^10', 'descriptions.description^10', 'resource_type_id^10', 'subjects.subject^10', 'alternate_identifiers.alternate_identifier^10', '_all']
+    ['doi^10', 'titles.title^10', 'creator_names^10', 'creator.name^10', 'creator.id^10', 'publisher^10', 'descriptions.description^10', 'types.resourceTypeGeneral^10', 'subjects.subject^10', 'alternate_identifiers.alternateIdentifier^10', 'related_identifiers.relatedIdentifier^10', '_all']
   end
 
   def self.find_by_id(id, options={})
@@ -513,10 +509,6 @@ class Doi < ActiveRecord::Base
 
   def current_media
     media.order('media.created DESC').first
-  end
-
-  def resource_type
-    cached_resource_type_response(types["resource_type_general"].underscore.dasherize.downcase) if types.to_h["resource_type_general"].present?
   end
 
   def date_registered
