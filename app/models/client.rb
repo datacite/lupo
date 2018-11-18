@@ -247,7 +247,7 @@ class Client < ActiveRecord::Base
       "domains" => domains,
       "provider-id" => provider_id,
       "prefixes" => prefixes.map { |p| p.prefix },
-      "is-active" => is_active == "\x01",
+      "is-active" => is_active.getbyte(0) == 1,
       "version" => version,
       "created" => created.iso8601,
       "updated" => updated.iso8601,

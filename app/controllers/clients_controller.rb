@@ -31,7 +31,7 @@ class ClientsController < ApplicationController
     elsif params[:ids].present?
       response = Client.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      response = Client.query(params[:query], year: params[:year], provider_id: params[:provider_id], fields: params[:fields], page: page, sort: sort)
+      response = Client.query(params[:query], year: params[:year], provider_id: params[:provider_id], query_fields: params[:query_fields], page: page, sort: sort)
     end
 
     total = response.results.total

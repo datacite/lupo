@@ -532,9 +532,9 @@ class Doi < ActiveRecord::Base
   def self.set_state(from_date: nil)
     from_date ||= Time.zone.now - 1.day
     Doi.where("updated >= ?", from_date).where(aasm_state: '').find_each do |doi|
-      if doi.is_test_prefix? || (doi.is_active == "\x00" && doi.minted.blank?)
+      if doi.is_test_prefix? || (doi.is_active.getbyte(0) == 0 && doi.minted.blank?)
         state = "draft"
-      elsif doi.is_active == "\x00" && doi.minted.present?
+      elsif doi.is_active.getbyte(0) == 0 && doi.minted.present?
         state = "registered"
       else
         state = "findable"
