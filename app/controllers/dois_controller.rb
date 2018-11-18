@@ -117,7 +117,7 @@ class DoisController < ApplicationController
                             prefix: params[:prefix],
                             person_id: params[:person_id],
                             resource_type_id: params[:resource_type_id],
-                            fields: params[:fields],
+                            query_fields: params[:query_fields],
                             schema_version: params[:schema_version],
                             link_check_status: params[:link_check_status],
                             source: params[:source],
