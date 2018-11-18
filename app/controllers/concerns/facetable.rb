@@ -60,8 +60,8 @@ module Facetable
 
     def facet_by_resource_type(arr)
       arr.map do |hsh|
-        { "id" => hsh["key"],
-          "title" => hsh["key"].underscore.humanize,
+        { "id" => hsh["key"].underscore.dasherize,
+          "title" => hsh["key"],
           "count" => hsh["doc_count"] }
       end
     end

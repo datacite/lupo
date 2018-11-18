@@ -116,7 +116,7 @@ module Indexable
       must = []
       must << { multi_match: { query: query, fields: fields, type: "phrase_prefix", slop: 3, max_expansions: 10 }} if query.present?
       must << { term: { aasm_state: options[:state] }} if options[:state].present?
-      must << { term: { resource_type_id: options[:resource_type_id] }} if options[:resource_type_id].present?
+      must << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
       must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
       must << { terms: { client_id: options[:client_id].split(",") }} if options[:client_id].present?
       must << { term: { prefix: options[:prefix] }} if options[:prefix].present?
