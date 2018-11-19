@@ -22,6 +22,10 @@ class DoiSerializer
     object.version_info
   end
 
+  attribute :is_active do |object|
+    object.is_active.getbyte(0) == 1 ? true : false
+  end
+
   attribute :landing_page, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_landing_page_results, object) == true } do |object|
     { status: object.last_landing_page_status,
       contentType: object.last_landing_page_content_type,
