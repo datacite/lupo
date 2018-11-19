@@ -209,7 +209,17 @@ class Doi < ActiveRecord::Base
     indexes :last_landing_page_status,       type: :integer
     indexes :last_landing_page_status_check, type: :date
     indexes :last_landing_page_content_type, type: :keyword
-    indexes :last_landing_page_status_result, type: :object
+    indexes :last_landing_page_status_result, type: :object, properties: {
+      error: { type: :keyword },
+      redirectCount: { type: :integer },
+      redirectUrls: { type: :keyword },
+      downloadLatency: { type: :scaled_float, scaling_factor: 100 },
+      hasSchemaOrg: { type: :boolean },
+      schemaOrgId: { type: :object },
+      dcIdentifier: { type: :keyword },
+      citationDoi: { type: :keyword },
+      bodyHasPid: { type: :boolean }
+    }
     indexes :cache_key,                      type: :keyword
     indexes :registered,                     type: :date
     indexes :created,                        type: :date
