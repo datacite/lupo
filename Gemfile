@@ -34,7 +34,7 @@ gem 'country_select', '~> 3.1'
 gem 'countries', '~> 2.1', '>= 2.1.2'
 gem 'aasm', '~> 5.0', '>= 5.0.1'
 gem "facets", require: false
-gem 'shoryuken', '~> 3.2', '>= 3.2.2'
+gem 'shoryuken', '~> 4.0'
 gem "aws-sdk-s3", require: false
 gem 'aws-sdk-sqs', '~> 1.3'
 gem 'bergamasco', '~> 0.3.10'

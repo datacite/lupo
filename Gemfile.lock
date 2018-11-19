@@ -413,7 +413,7 @@ GEM
       i18n
     ruby_dep (1.5.0)
     safe_yaml (1.0.4)
-    shoryuken (3.3.1)
+    shoryuken (4.0.0)
       aws-sdk-core (>= 2)
       concurrent-ruby
       thor
@@ -531,7 +531,7 @@ DEPENDENCIES
   rack-utf8_sanitizer (~> 1.6)
   rails (~> 5.2.0)
   rspec-rails (~> 3.5, >= 3.5.2)
-  shoryuken (~> 3.2, >= 3.2.2)
+  shoryuken (~> 4.0)
   shoulda-matchers (~> 3.1)
   simple_command
   slack-notifier (~> 2.1)

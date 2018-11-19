@@ -1279,6 +1279,7 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
+          puts response.body
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
           expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-12-20", "dateType"=>"Created"}, {"date"=>"2016-12-20", "dateType"=>"Issued"}, {"date"=>"2016-12-20", "dateType"=>"Updated"}])

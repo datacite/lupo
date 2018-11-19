@@ -23,7 +23,7 @@ class DoiSerializer
   end
 
   attribute :is_active do |object|
-    object.is_active.getbyte(0) == 1 ? true : false
+    object.is_active.to_s.getbyte(0) == 1 ? true : false
   end
 
   attribute :landing_page, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_landing_page_results, object) == true } do |object|
