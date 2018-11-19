@@ -1,22 +1,20 @@
 { "data": 
   {
     "type": "dois",
+    "id": "10.14454/119496",
     "attributes": {
-      "doi": "10.24425/119496",
+      "doi": "10.14454/119496",
       "xml": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48cmVzb3VyY2UgeG1sbnM9Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IiB4bWxuczp4c2k9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvWE1MU2NoZW1hLWluc3RhbmNlIiB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTQuMS9tZXRhZGF0YS54c2QiPjxpZGVudGlmaWVyIGlkZW50aWZpZXJUeXBlPSJET0kiPjEwLjI0NDI1LzExOTQ5NjwvaWRlbnRpZmllcj48Y3JlYXRvcnM+PGNyZWF0b3I+PGNyZWF0b3JOYW1lPig6dW5hdik8L2NyZWF0b3JOYW1lPjwvY3JlYXRvcj48L2NyZWF0b3JzPjx0aXRsZXM+PHRpdGxlPjMyPC90aXRsZT48L3RpdGxlcz48cHVibGlzaGVyPkNvbW1pdHRlZSBmb3IgUHN5Y2hvbG9naWNhbCBTY2llbmNlIFBBUzwvcHVibGlzaGVyPjxwdWJsaWNhdGlvblllYXI+MjAxODwvcHVibGljYXRpb25ZZWFyPjxyZXNvdXJjZVR5cGUgcmVzb3VyY2VUeXBlR2VuZXJhbD0iVGV4dCI+QXJ0eWt1xYI8L3Jlc291cmNlVHlwZT48ZGF0ZXM+PGRhdGUgZGF0ZVR5cGU9Iklzc3VlZCI+MjAxODwvZGF0ZT48L2RhdGVzPjwvcmVzb3VyY2U+",
-      "validate": "true"
+      "validate": "true",
+      "event": "register"
     },
     "relationships": {
       "client": {
         "data": {
           "type": "clients",
-          "id": "PSNC.PAN-CC"
+          "id": "datacite.datacite"
         }
       }
     }
-  },
-  "controller": "dois",
-  "action": "update",
-  "id": "10.24425/119496",
-  "format": "jsonapi"
+  }
 }

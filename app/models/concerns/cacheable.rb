@@ -51,7 +51,7 @@ module Cacheable
     end
 
     def fetch_cached_metadata_version
-      if updated.present?
+      if updated.present? && Rails.application.config.action_controller.perform_caching
         Rails.cache.fetch("cached_metadata_version/#{doi}-#{updated.iso8601}") do
           current_metadata ? current_metadata.metadata_version : 0
         end
@@ -61,19 +61,31 @@ module Cacheable
     end
 
     def cached_client_response(id, options={})
-      Rails.cache.fetch("client_response/#{id}", expires_in: 1.day) do
+      if Rails.application.config.action_controller.perform_caching
+        Rails.cache.fetch("client_response/#{id}", expires_in: 1.day) do
+          Client.where(symbol: id).first
+        end
+      else
         Client.where(symbol: id).first
       end
     end
 
     def cached_prefix_response(prefix, options={})
-      Rails.cache.fetch("prefix_response/#{prefix}", expires_in: 7.days) do
+      if Rails.application.config.action_controller.perform_caching
+        Rails.cache.fetch("prefix_response/#{prefix}", expires_in: 7.days) do
+          Prefix.where(prefix: prefix).first
+        end
+      else
         Prefix.where(prefix: prefix).first
       end
     end
 
     def cached_provider_response(id, options={})
-      Rails.cache.fetch("provider_response/#{id}", expires_in: 1.day) do
+      if Rails.application.config.action_controller.perform_caching
+        Rails.cache.fetch("provider_response/#{id}", expires_in: 1.day) do
+          Provider.where(symbol: id).first
+        end
+      else
         Provider.where(symbol: id).first
       end
     end

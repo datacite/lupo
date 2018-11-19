@@ -33,12 +33,12 @@ class Doi < ActiveRecord::Base
 
     event :register do
       # can't register test prefix
-      transitions :from => [:draft], :to => :registered, :unless => :is_test_prefix?
+      transitions :from => [:draft], :to => :registered, :if => [:is_valid?, :not_is_test_prefix?]
     end
 
     event :publish do
       # can't index test prefix
-      transitions :from => [:draft], :to => :findable, :unless => :is_test_prefix?
+      transitions :from => [:draft], :to => :findable, :if => [:is_valid?, :not_is_test_prefix?]
       transitions :from => :registered, :to => :findable
     end
 
@@ -58,7 +58,6 @@ class Doi < ActiveRecord::Base
   self.table_name = "dataset"
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-  alias_attribute :published, :date_published
   alias_attribute :registered, :minted
   alias_attribute :state, :aasm_state
 
@@ -454,8 +453,9 @@ class Doi < ActiveRecord::Base
   end
 
   def client_id=(value)
-    r = cached_client_response(value)
-    return @client_id unless r.present?
+    r = ::Client.where(symbol: value).first
+    #r = cached_client_response(value)
+    fail ActiveRecord::RecordNotFound unless r.present?
 
     write_attribute(:datacentre, r.id)
   end
@@ -474,6 +474,14 @@ class Doi < ActiveRecord::Base
 
   def is_test_prefix?
     prefix == "10.5072"
+  end
+
+  def not_is_test_prefix?
+    prefix != "10.5072"
+  end
+
+  def is_valid?
+    validation_errors.blank?
   end
 
   def is_registered_or_findable?
@@ -544,7 +552,7 @@ class Doi < ActiveRecord::Base
     Doi.where("updated >= ?", from_date).where(aasm_state: '').find_each do |doi|
       if doi.is_test_prefix? || (doi.is_active.getbyte(0) == 0 && doi.minted.blank?)
         state = "draft"
-      elsif doi.is_active.getbyte(0) == 0 && doi.minted.present?
+      elsif doi.is_active.to_s.getbyte(0) == 0 && doi.minted.present?
         state = "registered"
       else
         state = "findable"

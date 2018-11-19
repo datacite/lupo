@@ -213,6 +213,7 @@ describe 'Clients', type: :request, elasticsearch: true do
     before { delete "/clients/#{client.uid}", headers: headers }
 
     it 'returns status code 204' do
+      puts response.body
       expect(response).to have_http_status(204)
     end
 

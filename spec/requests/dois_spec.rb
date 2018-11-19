@@ -7,27 +7,27 @@ describe "dois", type: :request do
 
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
-  let(:prefix) { create(:prefix, prefix: "10.14454") }
+  let!(:prefix) { create(:prefix, prefix: "10.14454") }
   let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
   let!(:dois) { create_list(:doi, 3, client: client) }
   let(:doi) { create(:doi, client: client) }
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
   let(:headers) { { 'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer }}
 
-  # describe 'GET /dois', elasticsearch: true do
-  #   before do
-  #     sleep 1
-  #     get '/dois', headers: headers
-  #   end
+  describe 'GET /dois', elasticsearch: true do
+    before do
+      sleep 1
+      get '/dois', headers: headers
+    end
 
-  #   it 'returns dois' do
-  #     expect(json['data'].size).to eq(3)
-  #   end
+    # it 'returns dois' do
+    #   expect(json['data'].size).to eq(0)
+    # end
 
-  #   it 'returns status code 200' do
-  #     expect(response).to have_http_status(200)
-  #   end
-  # end
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
 
   describe 'GET /dois/:id' do
     context 'when the record exists' do
@@ -54,47 +54,154 @@ describe "dois", type: :request do
         expect(json).to eq("errors"=>[{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
       end
     end
+
+    context 'anonymous user' do
+      before { get "/dois/#{doi.doi}" }
+
+      it 'returns the Doi' do
+        expect(json).not_to be_empty
+        expect(json.fetch('errors')).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
+      end
+
+      it 'returns status code 401' do
+        expect(response).to have_http_status(401)
+      end
+    end
+
+    context 'invalid password' do
+      let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: "abc") }
+      let(:headers) { { 'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer }}
+
+      before { get "/dois/#{doi.doi}" }
+
+      it 'returns the Doi' do
+        expect(json).not_to be_empty
+        expect(json.fetch('errors')).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
+      end
+
+      it 'returns status code 401' do
+        expect(response).to have_http_status(401)
+      end
+    end
   end
 
-  describe 'PATCH /dois/:id' do
+  describe 'state' do
     let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }
     let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
 
-    before(:each) do
-      Rails.cache.clear
-    end
+    context 'initial state draft' do
+      before { get "/dois/#{doi.doi}", headers: headers }
 
-    context 'when the record exists' do
-      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "url" => "http://www.bl.uk/pdf/pat.pdf",
-              "xml" => xml
-            }
-          }
-        }
-      end
-      before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
-
-      it 'updates the record' do
-        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
+      it 'fetches the record' do
+        expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+        expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+        expect(json.dig('data', 'attributes', 'isActive')).to be false
       end
 
       it 'returns status code 200' do
         expect(response).to have_http_status(200)
       end
 
-      # TODO: db-fields-for-attributes
-      # it 'sets state to draft' do
-      #   puts json
-      #   expect(json.dig('data', 'attributes', 'state')).to eq("draft")
-      # end
+      it 'initial state' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+      end
     end
+
+    # TODO: db-fields-for-attributes
+    # context 'register' do
+    #   let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+    #   let(:valid_attributes) do
+    #     {
+    #       "data" => {
+    #         "type" => "dois",
+    #         "attributes" => {
+    #           "doi" => "10.14454/10703",
+    #           "xml" => xml,
+    #           "url" => "http://www.bl.uk/pdf/pat.pdf",
+    #           "event" => "register"
+    #         }
+    #       }
+    #     }
+    #   end
+    #   before { post "/dois", params: valid_attributes.to_json, headers: headers }
+
+    #   it 'updates the record' do
+    #     expect(json.dig('data', 'attributes', 'doi')).to eq(2)
+    #     expect(json.dig('data', 'attributes', 'isActive')).to be false
+    #   end
+
+    #   it 'returns status code 200' do
+    #     expect(response).to have_http_status(200)
+    #   end
+
+    #   it 'sets state to registered' do
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("registered")
+    #   end
+    # end
+
+    # context 'publish' do
+    #   let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+    #   let(:valid_attributes) do
+    #     {
+    #       "data" => {
+    #         "type" => "dois",
+    #         "attributes" => {
+    #           "url" => "http://www.bl.uk/pdf/pat.pdf",
+    #           "xml" => xml,
+    #           "event" => "publish"
+    #         }
+    #       }
+    #     }
+    #   end
+    #   before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+
+    #   it 'updates the record' do
+    #     expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+    #     expect(json.dig('data', 'attributes', 'isActive')).to be true
+    #   end
+
+    #   it 'returns status code 200' do
+    #     expect(response).to have_http_status(200)
+    #   end
+
+    #   it 'sets state to findable' do
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+    #   end
+    # end
+  end
+
+  describe 'PATCH /dois/:id' do
+    # TODO: db-fields-for-attributes
+    # context 'when the record exists' do
+    #   let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+    #   let(:valid_attributes) do
+    #     {
+    #       "data" => {
+    #         "type" => "dois",
+    #         "attributes" => {
+    #           "url" => "http://www.bl.uk/pdf/pat.pdf",
+    #           "xml" => xml
+    #         }
+    #       }
+    #     }
+    #   end
+    #   before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+
+    #   it 'updates the record' do
+    #     expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
+    #     expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+    #     expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+    #   end
+
+    #   it 'returns status code 200' do
+    #     expect(response).to have_http_status(200)
+    #   end
+
+    #   it 'sets state to draft' do
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+    #   end
+    # end
 
     context 'when the record exists no data attribute' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
@@ -149,8 +256,8 @@ describe "dois", type: :request do
     end
 
     context 'when the record exists https://github.com/datacite/lupo/issues/89' do
-      let(:doi) { create(:doi, doi: "10.24425/119496", client: client, aasm_state: "registered") }
-      let(:valid_attributes) {file_fixture('datacite_89.json').read}
+      let(:doi) { create(:doi, doi: "10.14454/119496", client: client) }
+      let(:valid_attributes) { file_fixture('datacite_89.json').read }
 
       before { put "/dois/#{doi.doi}", params: valid_attributes, headers: headers }
 
@@ -165,7 +272,7 @@ describe "dois", type: :request do
 
     # TODO: db-fields-for-attributes
     # context 'when the record exists 2.2' do
-    #   let(:doi) { create(:doi, doi: "10.24425/119497", client: client, state: "registered") }
+    #   let(:doi) { create(:doi, doi: "10.14454/119497", client: client, state: "registered") }
     #   let(:xml) { Base64.strict_encode64(file_fixture('datacite_schema_2.2.xml').read) }
     #   let(:valid_attributes) do
     #     {
@@ -173,7 +280,7 @@ describe "dois", type: :request do
     #         "type" => "dois",
     #         "attributes" => {
     #           "xml" => xml,
-    #           "title" => "Eating your own Dog Food",
+    #           "titles" => [{ "title" => "Eating your own Dog Food" }],
     #           "event" => "publish"
     #         }
     #       }
@@ -195,13 +302,13 @@ describe "dois", type: :request do
     # end
 
     context 'NoMethodError https://github.com/datacite/lupo/issues/84' do
-      let(:doi_id) { "10.14454/m9.figshare.6839054.v1" }
+      let(:doi) { create(:doi, client: client, url: "https://figshare.com/articles/Additional_file_1_of_Contemporary_ancestor_Adaptive_divergence_from_standing_genetic_variation_in_Pacific_marine_threespine_stickleback/6839054/1") }
       let(:valid_attributes) do
         {
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "url"=> "https://figshare.com/articles/Additional_file_1_of_Contemporary_ancestor_Adaptive_divergence_from_standing_genetic_variation_in_Pacific_marine_threespine_stickleback/6839054/1",
+              "url"=> doi.url,
               "event" => "publish"
             },
             "relationships" => {
@@ -216,14 +323,14 @@ describe "dois", type: :request do
         }
       end
 
-      before { put "/dois/#{doi_id}", params: valid_attributes.to_json, headers: headers }
+      before { put "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
 
       it 'returns no errors' do
-        expect(json.dig('data', 'attributes', 'doi')).to eq(doi_id)
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       end
 
-      it 'returns status code 201' do
-        expect(response).to have_http_status(201)
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
       end
     end
 
@@ -236,7 +343,8 @@ describe "dois", type: :request do
             "type" => "dois",
             "attributes" => {
               "url" => "http://www.bl.uk/pdf/pat.pdf",
-              "xml" => xml
+              "xml" => xml,
+              "event" => "publish"
             },
             "relationships"=> {
               "client"=>  {
@@ -261,8 +369,8 @@ describe "dois", type: :request do
         expect(response).to have_http_status(201)
       end
 
-      it 'sets state to draft' do
-        expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+      it 'sets state to findable' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
       end
     end
 
@@ -300,36 +408,36 @@ describe "dois", type: :request do
       end
     end
 
-    context 'when the record exists with conversion' do
-      let(:xml) { Base64.strict_encode64(file_fixture('crossref.bib').read) }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "url" => "http://www.bl.uk/pdf/pat.pdf",
-              "xml" => xml
-            }
-          }
-        }
-      end
-      before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+    # TODO: db-fields-for-attributes
+    # context 'when the record exists with conversion' do
+    #   let(:xml) { Base64.strict_encode64(file_fixture('crossref.bib').read) }
+    #   let(:valid_attributes) do
+    #     {
+    #       "data" => {
+    #         "type" => "dois",
+    #         "attributes" => {
+    #           "url" => "http://www.bl.uk/pdf/pat.pdf",
+    #           "xml" => xml
+    #         }
+    #       }
+    #     }
+    #   end
+    #   before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
 
-      it 'updates the record' do
-        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
-        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
-      end
+    #   it 'updates the record' do
+    #     expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
+    #     expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+    #     expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
+    #   end
 
-      it 'returns status code 200' do
-        expect(response).to have_http_status(200)
-      end
+    #   it 'returns status code 200' do
+    #     expect(response).to have_http_status(200)
+    #   end
 
-      # TODO: db-fields-for-attributes
-      # it 'sets state to registered' do
-      #   expect(json.dig('data', 'attributes', 'state')).to eq("draft")
-      # end
-    end
+    #   it 'sets state to registered' do
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+    #   end
+    # end
 
     context 'when the title is changed' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
@@ -342,7 +450,7 @@ describe "dois", type: :request do
               "url" => "http://www.bl.uk/pdf/pat.pdf",
               "xml" => xml,
               "titles" => titles,
-              "event" => "register"
+              "event" => "publish"
             },
             "relationships"=> {
               "client"=>  {
@@ -367,10 +475,9 @@ describe "dois", type: :request do
         expect(response).to have_http_status(200)
       end
 
-      # TODO: db-fields-for-attributes
-      # it 'sets state to registered' do
-      #   expect(json.dig('data', 'attributes', 'state')).to eq("registered")
-      # end
+      it 'sets state to findable' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
     end
 
     context 'when the creator changes' do
@@ -384,7 +491,7 @@ describe "dois", type: :request do
               "url" => "http://www.bl.uk/pdf/pat.pdf",
               "xml" => xml,
               "creator" => creator,
-              "event" => "register"
+              "event" => "publish"
             },
             "relationships"=> {
               "client"=>  {
@@ -409,10 +516,9 @@ describe "dois", type: :request do
         expect(response).to have_http_status(200)
       end
 
-      # TODO: db-fields-for-attributes
-      # it 'sets state to registered' do
-      #   expect(json.dig('data', 'attributes', 'state')).to eq("registered")
-      # end
+      it 'sets state to findable' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
     end
 
     context 'fail when we transfer a DOI as provider' do
@@ -422,7 +528,8 @@ describe "dois", type: :request do
 
       let(:doi) { create(:doi, client: client) }
       let(:new_client) { create(:client, symbol: "#{provider.symbol}.magic", provider: provider, password: ENV['MDS_PASSWORD']) }
-      ## Attributes MUST be empty
+      
+      # attributes MUST be empty
       let(:valid_attributes) {file_fixture('transfer.json').read }
 
       before { put "/dois/#{doi.doi}", params: valid_attributes, headers: provider_headers }
@@ -432,14 +539,14 @@ describe "dois", type: :request do
       end
     end
 
-    context 'passeswhen we transfer a DOI as provider' do
-
+    context 'passes when we transfer a DOI as provider' do
       let(:provider_bearer) { User.generate_token(uid: "datacite", role_id: "provider_admin", name: "DataCite", email:"support@datacite.org", provider_id: "datacite") }
       let(:provider_headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + provider_bearer}}
 
       let(:doi) { create(:doi, client: client) }
       let(:new_client) { create(:client, symbol: "#{provider.symbol}.magic", provider: provider, password: ENV['MDS_PASSWORD']) }
-      ## Attributes MUST be empty
+
+      # attributes MUST be empty
       let(:valid_attributes) do
         {
           "data" => {
@@ -467,13 +574,14 @@ describe "dois", type: :request do
       end
 
       it 'updates the client id' do
+        # TODO: db-fields-for-attributes relates to delay in Elasticsearch indexing
         expect(json.dig('data', 'relationships', 'client','data','id')).to eq(new_client.symbol.downcase)
         expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
       end
     end
 
-    context 'when we transfer a DOI  as staff' do
-      let(:doi) { create(:doi, doi: "10.24425/119495", client: client, aasm_state: "registered") }
+    context 'when we transfer a DOI as staff' do
+      let(:doi) { create(:doi, doi: "10.14454/119495", client: client, aasm_state: "registered") }
       let(:new_client) { create(:client, symbol: "#{provider.symbol}.magic", provider: provider, password: ENV['MDS_PASSWORD']) }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
@@ -504,6 +612,7 @@ describe "dois", type: :request do
       end
 
       it 'updates the client id' do
+        # TODO: db-fields-for-attributes relates to delay in Elasticsearch indexing
         expect(json.dig('data', 'relationships', 'client','data','id')).to eq(new_client.symbol.downcase)
       end
     end
@@ -519,7 +628,7 @@ describe "dois", type: :request do
               "url" => "http://www.bl.uk/pdf/pat.pdf",
               "xml" => xml,
               "types" => types,
-              "event" => "register"
+              "event" => "publish"
             },
             "relationships"=> {
               "client"=>  {
@@ -544,65 +653,60 @@ describe "dois", type: :request do
         expect(response).to have_http_status(200)
       end
 
-      # TODO: db-fields-for-attributes
-      # it 'sets state to registered' do
-      #   expect(json.dig('data', 'attributes', 'state')).to eq("registered")
-      # end
+      it 'sets state to findable' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
     end
   end
 
   describe 'POST /dois' do
-    before(:each) do
-      Rails.cache.clear
+    # TODO: db-fields-for-attributes
+    context 'when the request is valid' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "source" => "test",
+              "event" => "publish"
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+
+      before { post '/dois', params: valid_attributes.to_json, headers: headers }
+
+      it 'creates a Doi' do
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+        # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig('data', 'attributes', 'source')).to eq("test")
+        expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'sets state to findable' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
     end
 
     # TODO: db-fields-for-attributes
-    # context 'when the request is valid' do
-    #   let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
-    #   let(:valid_attributes) do
-    #     {
-    #       "data" => {
-    #         "type" => "dois",
-    #         "attributes" => {
-    #           "doi" => "10.14454/10703",
-    #           "url" => "http://www.bl.uk/pdf/patspec.pdf",
-    #           "xml" => xml,
-    #           "source" => "test",
-    #           "event" => "register"
-    #         },
-    #         "relationships"=> {
-    #           "client"=>  {
-    #             "data"=> {
-    #               "type"=> "clients",
-    #               "id"=> client.symbol.downcase
-    #             }
-    #           }
-    #         }
-    #       }
-    #     }
-    #   end
-
-    #   before { post '/dois', params: valid_attributes.to_json, headers: headers }
-
-    #   it 'creates a Doi' do
-    #     expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
-    #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-    #     expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
-    #     expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
-    #     expect(json.dig('data', 'attributes', 'source')).to eq("test")
-    #     expect(json.dig('data', 'attributes', 'types')).to eq(2)
-    #   end
-
-    #   it 'returns status code 201' do
-    #     puts json
-    #     expect(response).to have_http_status(201)
-    #   end
-
-    #   it 'sets state to registered' do
-    #     expect(json.dig('data', 'attributes', 'state')).to eq("registered")
-    #   end
-    # end
-
     # context 'schema_org' do
     #   let(:xml) { Base64.strict_encode64(file_fixture('schema_org_topmed.json').read) }
     #   let(:valid_attributes) do
@@ -613,7 +717,7 @@ describe "dois", type: :request do
     #           "url" => "https://ors.datacite.org/doi:/10.14454/8na3-9s47",
     #           "xml" => xml,
     #           "source" => "test",
-    #           "event" => "register"
+    #           "event" => "publish"
     #         }
     #       },
     #       "relationships"=> {
@@ -639,12 +743,11 @@ describe "dois", type: :request do
     #   end
 
     #   it 'returns status code 200' do
-    #     puts response.body
     #     expect(response).to have_http_status(200)
     #   end
 
-    #   it 'sets state to draft' do
-    #     expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+    #   it 'sets state to findable' do
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("findable")
     #   end
     # end
 
@@ -660,7 +763,7 @@ describe "dois", type: :request do
     #           "url" => "http://www.bl.uk/pdf/patspec.pdf",
     #           "xml" => xml,
     #           "source" => "test",
-    #           "event" => "register"
+    #           "event" => "publish"
     #         },
     #         "relationships"=> {
     #           "client"=>  {
@@ -681,55 +784,54 @@ describe "dois", type: :request do
     #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
     #     expect(json.dig('data', 'attributes', 'titles')).to eq("Data from: A new malaria agent in African hominids.")
     #     expect(json.dig('data', 'attributes', 'source')).to eq("test")
-    #     # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
-    #   end
-
-    #   it 'returns status code 201' do
-    #     puts response.body
-    #     expect(response).to have_http_status(201)
-    #   end
-
-    #   it 'sets state to registered' do
-    #     expect(json.dig('data', 'attributes', 'state')).to eq("registered")
-    #   end
-    # end
-
-    # context 'when the request is a large xml file' do
-    #   let(:xml) { Base64.strict_encode64(file_fixture('large_file.xml').read) }
-    #   let(:valid_attributes) do
-    #     {
-    #       "data" => {
-    #         "type" => "dois",
-    #         "attributes" => {
-    #           "doi" => "10.14454/10703",
-    #           "url" => "http://www.bl.uk/pdf/patspec.pdf",
-    #           "xml" => xml,
-    #           "event" => "register"
-    #         },
-    #         "relationships"=> {
-    #           "client"=>  {
-    #             "data"=> {
-    #               "type"=> "clients",
-    #               "id"=> client.symbol.downcase
-    #             }
-    #           }
-    #         }
-    #       }
-    #     }
-    #   end
-
-    #   before { post '/dois', params: valid_attributes.to_json, headers: headers }
-
-    #   it 'creates a Doi' do
-    #     expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
-    #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-    #     expect(json.dig('data', 'attributes', 'title')).to eq("A dataset with a large file for testing purpose. Will be a but over 2.5 MB")
+    #     expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
     #   end
 
     #   it 'returns status code 201' do
     #     expect(response).to have_http_status(201)
     #   end
+
+    #   it 'sets state to findable' do
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+    #   end
     # end
+
+    context 'when the request is a large xml file' do
+      let(:xml) { Base64.strict_encode64(file_fixture('large_file.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "event" => "publish"
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+
+      before { post '/dois', params: valid_attributes.to_json, headers: headers }
+
+      it 'creates a Doi' do
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"A dataset with a large file for testing purpose. Will be a but over 2.5 MB"}])
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+    end
 
     # TODO: db-fields-for-attributes
     # context 'when the request uses namespaced xml' do
@@ -742,7 +844,7 @@ describe "dois", type: :request do
     #           "doi" => "10.14454/10703",
     #           "url" => "http://www.bl.uk/pdf/patspec.pdf",
     #           "xml" => xml,
-    #           "event" => "register"
+    #           "event" => "publish"
     #         },
     #         "relationships"=> {
     #           "client"=>  {
@@ -761,60 +863,59 @@ describe "dois", type: :request do
     #   it 'creates a Doi' do
     #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
     #     expect(json.dig('data', 'attributes', 'titles')).to eq("LAMMPS Data-File Generator")
-    #     # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
+    #     expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
     #   end
 
     #   it 'returns status code 201' do
-    #     puts response.body
     #     expect(response).to have_http_status(201)
     #   end
 
-    #   it 'sets state to registered' do
-    #     expect(json.dig('data', 'attributes', 'state')).to eq("registered")
+    #   it 'sets state to findable' do
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("findable")
     #   end
     # end
 
     # TODO: db-fields-for-attributes
-    # context 'when the request uses schema 4.0' do
-    #   let(:xml) { Base64.strict_encode64(file_fixture('schema_4.0.xml').read) }
-    #   let(:valid_attributes) do
-    #     {
-    #       "data" => {
-    #         "type" => "dois",
-    #         "attributes" => {
-    #           "doi" => "10.14454/10703",
-    #           "url" => "http://www.bl.uk/pdf/patspec.pdf",
-    #           "xml" => xml,
-    #           "event" => "register"
-    #         },
-    #         "relationships"=> {
-    #           "client"=>  {
-    #             "data"=> {
-    #               "type"=> "clients",
-    #               "id"=> client.symbol.downcase
-    #             }
-    #           }
-    #         }
-    #       }
-    #     }
-    #   end
+    context 'when the request uses schema 4.0' do
+      let(:xml) { Base64.strict_encode64(file_fixture('schema_4.0.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "event" => "publish"
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
 
-    #   before { post '/dois', params: valid_attributes.to_json, headers: headers }
+      before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
-    #   it 'creates a Doi' do
-    #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-    #     expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Southern Sierra Critical Zone Observatory (SSCZO), Providence Creek\n      meteorological data, soil moisture and temperature, snow depth and air\n      temperature"}])
-    #     expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
-    #   end
+      it 'creates a Doi' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Southern Sierra Critical Zone Observatory (SSCZO), Providence Creek\n      meteorological data, soil moisture and temperature, snow depth and air\n      temperature"}])
+        # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
+      end
 
-    #   it 'returns status code 201' do
-    #     expect(response).to have_http_status(201)
-    #   end
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
 
-    #   it 'sets state to registered' do
-    #     expect(json.dig('data', 'attributes', 'state')).to eq("registered")
-    #   end
-    # end
+      it 'sets state to findable' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
+    end
 
     # TODO: db-fields-for-attributes
     # context 'when the request uses namespaced xml and the title changes' do
@@ -829,7 +930,7 @@ describe "dois", type: :request do
     #           "url" => "http://www.bl.uk/pdf/patspec.pdf",
     #           "xml" => xml,
     #           "titles" => titles,
-    #           "event" => "register"
+    #           "event" => "publish"
     #         },
     #         "relationships"=> {
     #           "client"=>  {
@@ -848,15 +949,15 @@ describe "dois", type: :request do
     #   it 'creates a Doi' do
     #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
     #     expect(json.dig('data', 'attributes', 'titles')).to eq("Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
-    #     # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
+    #     expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
     #   end
 
     #   it 'returns status code 201' do
     #     expect(response).to have_http_status(201)
     #   end
 
-    #   it 'sets state to registered' do
-    #     expect(json.dig('data', 'attributes', 'state')).to eq("registered")
+    #   it 'sets state to findable' do
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("findable")
     #   end
     # end
 
@@ -873,7 +974,7 @@ describe "dois", type: :request do
               "xml" => xml,
               "source" => "test",
               "titles" => titles,
-              "event" => "register"
+              "event" => "publish"
             },
             "relationships"=> {
               "client"=>  {
@@ -900,10 +1001,9 @@ describe "dois", type: :request do
         expect(response).to have_http_status(201)
       end
 
-      # TODO: db-fields-for-attributes
-      # it 'sets state to registered' do
-      #   expect(json.dig('data', 'attributes', 'state')).to eq("registered")
-      # end
+      it 'sets state to findable' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
     end
 
     context 'when the url changes ftp url' do
@@ -917,7 +1017,7 @@ describe "dois", type: :request do
               "doi" => "10.14454/10703",
               "url" => url,
               "xml" => xml,
-              "event" => "register"
+              "event" => "publish"
             },
             "relationships"=> {
               "client"=>  {
@@ -942,54 +1042,54 @@ describe "dois", type: :request do
         expect(response).to have_http_status(201)
       end
 
-      # TODO: db-fields-for-attributes
-      # it 'sets state to registered' do
-      #   expect(json.dig('data', 'attributes', 'state')).to eq("registered")
-      # end
+      it 'sets state to findable' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
     end
 
     # TODO: db-fields-for-attributes
-    # context 'when the titles changes to nil' do
-    #   let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
-    #   let(:valid_attributes) do
-    #     {
-    #       "data" => {
-    #         "type" => "dois",
-    #         "attributes" => {
-    #           "doi" => "10.14454/10703",
-    #           "url" => "http://www.bl.uk/pdf/patspec.pdf",
-    #           "xml" => xml,
-    #           "titles" => nil,
-    #           "event" => "register"
-    #         },
-    #         "relationships"=> {
-    #           "client"=>  {
-    #             "data"=> {
-    #               "type"=> "clients",
-    #               "id"=> client.symbol.downcase
-    #             }
-    #           }
-    #         }
-    #       }
-    #     }
-    #   end
+    context 'when the titles changes to nil' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "titles" => nil,
+              "event" => "publish"
+            },
+            "relationships"=> {
+              "client"=>  {
+                "data"=> {
+                  "type"=> "clients",
+                  "id"=> client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
 
-    #   before { post '/dois', params: valid_attributes.to_json, headers: headers }
+      before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
-    #   it 'creates a Doi' do
-    #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-    #     expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
-    #     expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
-    #   end
+      it 'creates a Doi' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+      end
 
-    #   it 'returns status code 201' do 
-    #     expect(response).to have_http_status(201)
-    #   end
+      it 'returns status code 201' do 
 
-    #   it 'sets state to registered' do
-    #     expect(json.dig('data', 'attributes', 'state')).to eq("registered")
-    #   end
-    # end
+        expect(response).to have_http_status(201)
+      end
+
+      it 'sets state to findable' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
+    end
 
     context 'when the titles changes to blank' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
@@ -1001,8 +1101,8 @@ describe "dois", type: :request do
               "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
-              "titles" => '',
-              "event" => "register"
+              "titles" => nil,
+              "event" => "publish"
             },
             "relationships"=> {
               "client"=>  {
@@ -1018,23 +1118,19 @@ describe "dois", type: :request do
 
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
-      # it 'creates a Doi' do
-      #   expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-      #   expect(json.dig('data', 'attributes', 'title')).to eq("")
-      #   expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+      it 'creates a Doi' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+      end
 
-      #   xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-      #   expect(xml.dig("titles", "title")).to be_nil
-      # end
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
 
-      # it 'returns status code 201' do
-      #   expect(response.body).to eq(2)
-      #   expect(response).to have_http_status(201)
-      # end
-
-      # it 'sets state to registered' do
-      #   expect(json.dig('data', 'attributes', 'state')).to eq("registered")
-      # end
+      it 'sets state to findable' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
     end
 
     context 'when the creator changes' do
@@ -1049,7 +1145,7 @@ describe "dois", type: :request do
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
               "creator" => creator,
-              "event" => "register"
+              "event" => "publish"
             },
             "relationships"=> {
               "client"=>  {
@@ -1075,10 +1171,9 @@ describe "dois", type: :request do
         expect(response).to have_http_status(201)
       end
 
-      # TODO: db-fields-for-attributes
-      # it 'sets state to registered' do
-      #   expect(json.dig('data', 'attributes', 'state')).to eq("registered")
-      # end
+      it 'sets state to findable' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
     end
 
     context 'when the creator changes no xml' do
@@ -1108,23 +1203,19 @@ describe "dois", type: :request do
 
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
-      # it 'creates a Doi' do
-      #   expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-      #   expect(json.dig('data', 'attributes', 'author')).to eq(author)
-      #   expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+      it 'creates a Doi' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'creator')).to eq(creator)
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+      end
 
-      #   xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-      #   expect(xml.dig("creators", "creator")).to eq([{"creatorName"=>"Ollomi, Benjamin"}, {"creatorName"=>"Duran, Patrick"}])
-      # end
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
 
-      # it 'returns status code 201' do
-      #   expect(response.body).to eq(2)
-      #   expect(response).to have_http_status(201)
-      # end
-
-      # it 'sets state to registered' do
-      #   expect(json.dig('data', 'attributes', 'state')).to eq("draft")
-      # end
+      it 'sets state to draft' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+      end
     end
 
     context 'state change with test prefix' do
@@ -1138,7 +1229,7 @@ describe "dois", type: :request do
             "attributes" => {
               "doi" => "10.5072/10704",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
-              "event" => "register"
+              "event" => "publish"
             },
             "relationships"=> {
               "client"=>  {
@@ -1270,9 +1361,6 @@ describe "dois", type: :request do
     end
 
     describe 'POST /dois/validate' do
-      let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }
-      let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
-
       context 'validates' do
         let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('datacite.xml'))) }
         let(:params) do
@@ -1308,41 +1396,41 @@ describe "dois", type: :request do
         end
       end
 
-      context 'validates schema 3' do
-        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('datacite_schema_3.xml'))) }
-        let(:params) do
-          {
-            "data" => {
-              "type" => "dois",
-              "attributes" => {
-                "doi" => "10.14454/10703",
-                "xml" => xml,
-              },
-              "relationships"=> {
-                "client"=>  {
-                  "data"=> {
-                    "type"=> "clients",
-                    "id"=> client.symbol.downcase
-                  }
-                }
-              }
-            }
-          }
-        end
+      # context 'validates schema 3' do
+      #   let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('datacite_schema_3.xml'))) }
+      #   let(:params) do
+      #     {
+      #       "data" => {
+      #         "type" => "dois",
+      #         "attributes" => {
+      #           "doi" => "10.14454/10703",
+      #           "xml" => xml,
+      #         },
+      #         "relationships"=> {
+      #           "client"=>  {
+      #             "data"=> {
+      #               "type"=> "clients",
+      #               "id"=> client.symbol.downcase
+      #             }
+      #           }
+      #         }
+      #       }
+      #     }
+      #   end
 
-        before { post '/dois/validate', params: params.to_json, headers: headers }
+      #   before { post '/dois/validate', params: params.to_json, headers: headers }
 
-        # TODO: db-fields-for-attributes
-        # it 'validates a Doi' do
-        #   expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        #   expect(json.dig('data', 'attributes', 'titles')).to eq("Data from: A new malaria agent in African hominids.")
-        #   expect(json.dig('data', 'attributes', 'dates')).to eq("2011")
-        # end
+      #   # TODO: db-fields-for-attributes
+      #   it 'validates a Doi' do
+      #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+      #     expect(json.dig('data', 'attributes', 'titles')).to eq("Data from: A new malaria agent in African hominids.")
+      #     expect(json.dig('data', 'attributes', 'dates')).to eq("2011")
+      #   end
 
-        it 'returns status code 200' do
-          expect(response).to have_http_status(200)
-        end
-      end
+      #   it 'returns status code 200' do
+      #     expect(response).to have_http_status(200)
+      #   end
+      # end
 
       context 'when the creator is missing' do
         let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('datacite_missing_creator.xml'))) }
@@ -1622,6 +1710,7 @@ describe "dois", type: :request do
         end
       end
 
+      # TODO: db-fields-for-attributes
       context 'validates schema.org' do
         let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('schema_org.json'))) }
         let(:params) do
@@ -1658,6 +1747,7 @@ describe "dois", type: :request do
       end
     end
 
+    # TODO: db-fields-for-attributes
     context 'landing page' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:xml) { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48cmVzb3VyY2UgeG1sbnM6eHNpPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYS1pbnN0YW5jZSIgeG1sbnM9Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IiB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTQvbWV0YWRhdGEueHNkIj48aWRlbnRpZmllciBpZGVudGlmaWVyVHlwZT0iRE9JIj4xMC4yNTQ5OS94dWRhMnB6cmFocm9lcXBlZnZucTV6dDZkYzwvaWRlbnRpZmllcj48Y3JlYXRvcnM+PGNyZWF0b3I+PGNyZWF0b3JOYW1lPklhbiBQYXJyeTwvY3JlYXRvck5hbWU+PG5hbWVJZGVudGlmaWVyIHNjaGVtZVVSST0iaHR0cDovL29yY2lkLm9yZy8iIG5hbWVJZGVudGlmaWVyU2NoZW1lPSJPUkNJRCI+MDAwMC0wMDAxLTYyMDItNTEzWDwvbmFtZUlkZW50aWZpZXI+PC9jcmVhdG9yPjwvY3JlYXRvcnM+PHRpdGxlcz48dGl0bGU+U3VibWl0dGVkIGNoZW1pY2FsIGRhdGEgZm9yIEluQ2hJS2V5PVlBUFFCWFFZTEpSWFNBLVVIRkZGQU9ZU0EtTjwvdGl0bGU+PC90aXRsZXM+PHB1Ymxpc2hlcj5Sb3lhbCBTb2NpZXR5IG9mIENoZW1pc3RyeTwvcHVibGlzaGVyPjxwdWJsaWNhdGlvblllYXI+MjAxNzwvcHVibGljYXRpb25ZZWFyPjxyZXNvdXJjZVR5cGUgcmVzb3VyY2VUeXBlR2VuZXJhbD0iRGF0YXNldCI+U3Vic3RhbmNlPC9yZXNvdXJjZVR5cGU+PHJpZ2h0c0xpc3Q+PHJpZ2h0cyByaWdodHNVUkk9Imh0dHBzOi8vY3JlYXRpdmVjb21tb25zLm9yZy9zaGFyZS15b3VyLXdvcmsvcHVibGljLWRvbWFpbi9jYzAvIj5ObyBSaWdodHMgUmVzZXJ2ZWQ8L3JpZ2h0cz48L3JpZ2h0c0xpc3Q+PC9yZXNvdXJjZT4=" }
@@ -1685,7 +1775,7 @@ describe "dois", type: :request do
               "lastLandingPageStatusCheck" => Time.zone.now,
               "lastLandingPageContentType" => "text/html",
               "lastLandingPageStatusResult" => link_check_result,
-              "event" => "register"
+              "event" => "publish"
             },
             "relationships"=> {
               "client"=>  {
@@ -1701,7 +1791,7 @@ describe "dois", type: :request do
 
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
-      it 'creates a Doi' do
+      it 'creates a doi' do
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'landingPage', 'status')).to eq(200)
@@ -1712,12 +1802,12 @@ describe "dois", type: :request do
         expect(response).to have_http_status(201)
       end
 
-      # TODO: db-fields-for-attributes
-      # it 'sets state to registered' do
-      #   expect(json.dig('data', 'attributes', 'state')).to eq("registered")
-      # end
+      it 'sets state to registered' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
     end
 
+    # TODO: db-fields-for-attributes
     context 'landing page schema-org-id hash' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:xml) { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48cmVzb3VyY2UgeG1sbnM6eHNpPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYS1pbnN0YW5jZSIgeG1sbnM9Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IiB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTQvbWV0YWRhdGEueHNkIj48aWRlbnRpZmllciBpZGVudGlmaWVyVHlwZT0iRE9JIj4xMC4yNTQ5OS94dWRhMnB6cmFocm9lcXBlZnZucTV6dDZkYzwvaWRlbnRpZmllcj48Y3JlYXRvcnM+PGNyZWF0b3I+PGNyZWF0b3JOYW1lPklhbiBQYXJyeTwvY3JlYXRvck5hbWU+PG5hbWVJZGVudGlmaWVyIHNjaGVtZVVSST0iaHR0cDovL29yY2lkLm9yZy8iIG5hbWVJZGVudGlmaWVyU2NoZW1lPSJPUkNJRCI+MDAwMC0wMDAxLTYyMDItNTEzWDwvbmFtZUlkZW50aWZpZXI+PC9jcmVhdG9yPjwvY3JlYXRvcnM+PHRpdGxlcz48dGl0bGU+U3VibWl0dGVkIGNoZW1pY2FsIGRhdGEgZm9yIEluQ2hJS2V5PVlBUFFCWFFZTEpSWFNBLVVIRkZGQU9ZU0EtTjwvdGl0bGU+PC90aXRsZXM+PHB1Ymxpc2hlcj5Sb3lhbCBTb2NpZXR5IG9mIENoZW1pc3RyeTwvcHVibGlzaGVyPjxwdWJsaWNhdGlvblllYXI+MjAxNzwvcHVibGljYXRpb25ZZWFyPjxyZXNvdXJjZVR5cGUgcmVzb3VyY2VUeXBlR2VuZXJhbD0iRGF0YXNldCI+U3Vic3RhbmNlPC9yZXNvdXJjZVR5cGU+PHJpZ2h0c0xpc3Q+PHJpZ2h0cyByaWdodHNVUkk9Imh0dHBzOi8vY3JlYXRpdmVjb21tb25zLm9yZy9zaGFyZS15b3VyLXdvcmsvcHVibGljLWRvbWFpbi9jYzAvIj5ObyBSaWdodHMgUmVzZXJ2ZWQ8L3JpZ2h0cz48L3JpZ2h0c0xpc3Q+PC9yZXNvdXJjZT4=" }
@@ -1751,7 +1841,7 @@ describe "dois", type: :request do
               "lastLandingPageStatusCheck" => Time.zone.now,
               "lastLandingPageContentType" => "text/html",
               "lastLandingPageStatusResult" => link_check_result,
-              "event" => "register"
+              "event" => "publish"
             },
             "relationships"=> {
               "client"=>  {
@@ -1778,10 +1868,9 @@ describe "dois", type: :request do
         expect(response).to have_http_status(201)
       end
 
-      # TODO: db-fields-for-attributes
-      # it 'sets state to registered' do
-      #   expect(json.dig('data', 'attributes', 'state')).to eq("registered")
-      # end
+      it 'sets state to findable' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
     end
   end
 
@@ -2101,7 +2190,7 @@ describe "dois", type: :request do
 
   describe 'GET /dois/DOI/get-url no permission', vcr: true do
     let(:other_client) { create(:client, provider: provider) }
-    let(:doi) { create(:doi, client: other_client, doi: "10.5438/8syz-ym47", event: "publish") }
+    let(:doi) { create(:doi, client: other_client, doi: "10.14454/8syz-ym47", event: "publish") }
 
     before { get "/dois/#{doi.doi}/get-url", headers: headers }
 

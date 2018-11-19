@@ -199,7 +199,7 @@ class DoisController < ApplicationController
     logger = Logger.new(STDOUT)
     # logger.info safe_params.inspect
     @doi = Doi.new(safe_params)
-    authorize! :create, @doi
+    authorize! :validate, @doi
 
     if @doi.errors.present?
       logger.info @doi.errors.inspect
@@ -222,11 +222,13 @@ class DoisController < ApplicationController
   def create
     logger = Logger.new(STDOUT)
     # logger.info safe_params.inspect
-    @doi = Doi.new(safe_params)
-    authorize! :create, @doi
 
+    @doi = Doi.new(safe_params)
+    
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
+
+    authorize! :new, @doi
 
     if safe_params[:xml] && safe_params[:event] && @doi.validation_errors?
       logger.error @doi.validation_errors.inspect
@@ -250,10 +252,14 @@ class DoisController < ApplicationController
   def update
     logger = Logger.new(STDOUT)
     # logger.info safe_params.inspect
+
     @doi = Doi.where(doi: params[:id]).first
     exists = @doi.present?
 
     if exists
+      # capture username and password for reuse in the handle system
+      @doi.current_user = current_user
+
       if params.dig(:data, :attributes, :mode) == "transfer"
         authorize! :transfer, @doi
       else
@@ -266,12 +272,11 @@ class DoisController < ApplicationController
       fail ActiveRecord::RecordNotFound unless doi_id.present?
 
       @doi = Doi.new(safe_params.merge(doi: doi_id))
+      # capture username and password for reuse in the handle system
+      @doi.current_user = current_user
 
-      authorize! :create, @doi
+      authorize! :new, @doi
     end
-
-    # capture username and password for reuse in the handle system
-    @doi.current_user = current_user
 
     if safe_params[:xml] && (safe_params[:event] || safe_params[:validate]) && @doi.validation_errors?
       logger.error @doi.validation_errors.inspect
@@ -424,17 +429,21 @@ class DoisController < ApplicationController
       :confirmDoi,
       :identifier,
       :url,
+      :titles,
       { titles: [:title, :titleType, :lang] },
       :publisher,
       :publicationYear,
       :created,
       :prefix,
       :suffix,
+      :types,
       { types: [:resourceTypeGeneral, :resourceType, :schemaOrg, :bibtex, :citeproc, :ris] },
+      :dates,
       { dates: [:date, :dateType, :dateInformation] },
       :lastLandingPage,
       :lastLandingPageStatus,
       :lastLandingPageStatusCheck,
+      :lastLandingPageStatusResult,
       {
         lastLandingPageStatusResult: [
           :error,
@@ -453,7 +462,9 @@ class DoisController < ApplicationController
       :contentUrl,
       :size,
       :format,
+      :descriptions,
       { descriptions: [:description, :descriptionType, :lang] },
+      :rightsList,
       { rightsList: [:rights, :rightsUri] },
       :xml,
       :validate,
@@ -470,19 +481,24 @@ class DoisController < ApplicationController
       :event,
       :regenerate,
       :client,
+      :creator,
       { creator: [:type, :id, :name, :givenName, :familyName, :affiliation] },
+      :contributor,
       { contributor: [:type, :id, :name, :givenName, :familyName, :contributorType] },
+      :altenateIdentifiers,
       { alternateIdentifiers: [:alternateIdentifier, :alternateIdentifierType] },
+      :relatedIdentifiers,
       { relatedIdentifiers: [:relatedIdentifier, :relatedIdentifierType, :relationType, :resourceTypeGeneral, :relatedMetadataScheme, :schemeUri, :schemeType] },
+      :fundingReferences,
       { fundingReferences: [:funderName, :funderIdentifier, :funderIdentifierType, :awardNumber, :awardUri, :awardTitle] },
-      { geoLocations: [{ geolocationPoint: [:pointLongitude, :pointLatitude] }, { geolocationBox: [:westBoundLongitude, :eastBoundLongitude, :southBoundLatitude, :northBoundLatitude] }, :geoLocationPlace] },
+      :geoLocations,
+      { geoLocations: [{ geolocationPoint: [:pointLongitude, :pointLatitude] }, { geolocationBox: [:westBoundLongitude, :eastBoundLongitude, :southBoundLatitude, :northBoundLatitude] }, :geoLocationPlace] }
     ]
     relationships = [{ client: [data: [:type, :id]] }]
 
     p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships).reverse_merge(defaults)
     p = p.fetch("attributes").merge(client_id: p.dig("relationships", "client", "data", "id"))
     p.merge(
-      aasm_state: p[:state],
       schema_version: p[:schemaVersion],
       publication_year: p[:publicationYear],
       rights_list: p[:rightsList],

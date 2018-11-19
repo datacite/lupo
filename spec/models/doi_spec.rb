@@ -55,7 +55,7 @@ describe Doi, type: :model, vcr: true do
         expect(subject).to have_state(:findable)
       end
 
-      it "can't register with test prefix" do
+      it "can't publish with test prefix" do
         subject = create(:doi, doi: "10.5072/x")
         subject.publish
         expect(subject).to have_state(:draft)
@@ -64,7 +64,7 @@ describe Doi, type: :model, vcr: true do
 
     describe "flagged" do
       it "can flag" do
-        subject.register
+        subject.publish
         subject.flag
         expect(subject).to have_state(:flagged)
       end
@@ -77,7 +77,7 @@ describe Doi, type: :model, vcr: true do
 
     describe "broken" do
       it "can link_check" do
-        subject.register
+        subject.publish
         subject.link_check
         expect(subject).to have_state(:broken)
       end
