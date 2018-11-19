@@ -226,7 +226,7 @@ class Doi < ActiveRecord::Base
     indexes :updated,                        type: :date
 
     # include parent objects
-    indexes :client,        type: :object
+    indexes :client,                         type: :object
   end
 
   def as_indexed_json(options={})

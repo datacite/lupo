@@ -96,6 +96,25 @@ describe "dois", type: :request do
       # end
     end
 
+    context 'when the record exists no data attribute' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "url" => "http://www.bl.uk/pdf/pat.pdf",
+          "xml" => xml
+        }
+      end
+      before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+
+      it 'raises an error' do
+        expect(json.dig('errors')).to eq([{"status"=>"400", "title"=>"You need to provide a payload following the JSONAPI spec"}])
+      end
+
+      it 'returns status code 400' do
+        expect(response).to have_http_status(400)
+      end
+    end
+
     context 'when the record exists no creator validate' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite_missing_creator.xml').read) }
       let(:valid_attributes) do
@@ -1279,7 +1298,6 @@ describe "dois", type: :request do
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
         it 'validates a Doi' do
-          puts response.body
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
           expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-12-20", "dateType"=>"Created"}, {"date"=>"2016-12-20", "dateType"=>"Issued"}, {"date"=>"2016-12-20", "dateType"=>"Updated"}])
@@ -1907,7 +1925,6 @@ describe "dois", type: :request do
       before { get "/dois/#{doi.doi}", headers: headers}
 
       it 'returns without link_check_results' do
-        puts json
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
         expect(json.dig('data', 'attributes', 'landing-page', 'result')).to eq(nil)
       end

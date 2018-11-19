@@ -88,6 +88,8 @@ class ApplicationController < ActionController::API
         message = "The resource you are looking for doesn't exist."
       elsif status == 406
         message = "The content type is not recognized."
+      elsif exception.class.to_s == "JSON::ParserError"
+        message = exception.message
       else
         Bugsnag.notify(exception)
 

@@ -254,7 +254,7 @@ class DoisController < ApplicationController
     exists = @doi.present?
 
     if exists
-      if params[:data][:attributes][:mode] == "transfer"
+      if params.dig(:data, :attributes, :mode) == "transfer"
         authorize! :transfer, @doi
       else
         authorize! :update, @doi
@@ -277,7 +277,6 @@ class DoisController < ApplicationController
       logger.error @doi.validation_errors.inspect
       render json: serialize(@doi.validation_errors), status: :unprocessable_entity
     elsif @doi.save
-      puts @doi.inspect
       options = {}
       options[:include] = @include
       options[:is_collection] = false
