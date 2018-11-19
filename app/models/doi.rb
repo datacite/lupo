@@ -198,7 +198,7 @@ class Doi < ActiveRecord::Base
     indexes :sizes,                          type: :keyword
     indexes :language,                       type: :keyword
     indexes :is_active,                      type: :keyword
-    indexes :aasm_state,                     type: :keyword
+    indexes :state,                          type: :keyword
     indexes :schema_version,                 type: :keyword
     indexes :metadata_version,               type: :keyword
     indexes :source,                         type: :keyword
