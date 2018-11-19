@@ -1886,14 +1886,14 @@ describe "dois", type: :request do
   describe 'GET /dois/<doi> linkcheck results' do
     let(:last_landing_page_status_result) { {
       "error" => nil,
-      "redirect-count" => 0,
-      "redirect-urls" => [],
-      "download-latency" => 200,
-      "has-schema-org" => true,
-      "schema-org-id" => "10.14454/10703",
-      "dc-identifier" => nil,
-      "citation-doi" => nil,
-      "body-has-pid" => true
+      "redirectCount" => 0,
+      "redirectUrls" => [],
+      "downloadLatency" => 200,
+      "hasSchemaOrg" => true,
+      "schemaOrgId" => "10.14454/10703",
+      "dcIdentifier" => nil,
+      "citationDoi" => nil,
+      "bodyHasPid" => true
     } }
 
     # Setup an initial DOI with results will check permissions against.
@@ -1926,7 +1926,7 @@ describe "dois", type: :request do
 
       it 'returns without link_check_results' do
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
-        expect(json.dig('data', 'attributes', 'landing-page', 'result')).to eq(nil)
+        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(nil)
       end
     end
 
@@ -1938,8 +1938,7 @@ describe "dois", type: :request do
 
       it 'returns with link_check_results' do
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
-        # TODO: db-fields-for-attributes
-        # expect(json.dig('data', 'attributes', 'landing-page', 'result')).to eq(last_landing_page_status_result)
+        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(last_landing_page_status_result)
       end
     end
 
@@ -1952,7 +1951,7 @@ describe "dois", type: :request do
 
       it 'returns with link_check_results' do
         expect(json.dig('data', 'attributes', 'doi')).to eq(other_doi.doi)
-        expect(json.dig('data', 'attributes', 'landing-page', 'result')).to eq(nil)
+        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(nil)
       end
     end
 
@@ -1965,9 +1964,7 @@ describe "dois", type: :request do
 
       it 'returns with link_check_results' do
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
-
-        # TODO: db-fields-for-attributes
-        # expect(json.dig('data', 'attributes', 'landing-page', 'result')).to eq(last_landing_page_status_result)
+        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(last_landing_page_status_result)
       end
     end
 
