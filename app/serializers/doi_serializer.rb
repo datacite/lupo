@@ -18,6 +18,10 @@ class DoiSerializer
     object.doi.downcase
   end
 
+  attribute :state do |object|
+    object.aasm_state
+  end
+
   attribute :version do |object|
     object.version_info
   end

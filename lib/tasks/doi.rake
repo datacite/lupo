@@ -37,7 +37,9 @@ namespace :doi do
       until_date = ENV['UNTIL_DATE'] || Date.current.strftime("%F")
     end
 
-    Doi.index(from_date: from_date, until_date: until_date)
+    index_time = Time.zone.now.utc.iso8601
+
+    Doi.index(from_date: from_date, until_date: until_date, index_time: index_time)
   end
 
   desc 'Index DOIs per day'

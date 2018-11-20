@@ -88,7 +88,6 @@ class Doi < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
   scope :q, ->(query) { where("dataset.doi = ?", query) }
-  scope :not_indexed, -> { where("updated > indexed") }
 
   # use different index for testing
   index_name Rails.env.test? ? "dois-test" : "dois"
@@ -198,7 +197,7 @@ class Doi < ActiveRecord::Base
     indexes :sizes,                          type: :keyword
     indexes :language,                       type: :keyword
     indexes :is_active,                      type: :keyword
-    indexes :state,                          type: :keyword
+    indexes :aasm_state,                     type: :keyword
     indexes :schema_version,                 type: :keyword
     indexes :metadata_version,               type: :keyword
     indexes :source,                         type: :keyword
@@ -267,7 +266,7 @@ class Doi < ActiveRecord::Base
       "last_landing_page_status_check" => last_landing_page_status_check,
       "last_landing_page_content_type" => last_landing_page_content_type,
       "last_landing_page_status_result" => last_landing_page_status_result,
-      "state" => state,
+      "aasm_state" => aasm_state,
       "schema_version" => schema_version,
       "metadata_version" => metadata_version,
       "reason" => reason,
@@ -357,10 +356,11 @@ class Doi < ActiveRecord::Base
   def self.index(options={})
     from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
     until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
+    index_time = options[:index_time].presence || Time.zone.now.utc.iso8601
 
     # get every day between from_date and until_date
     (from_date..until_date).each do |d|
-      DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"))
+      DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"), index_time: index_time)
       puts "Queued indexing for DOIs created on #{d.strftime("%F")}."
     end    
   end
@@ -368,13 +368,14 @@ class Doi < ActiveRecord::Base
   def self.index_by_day(options={})
     return nil unless options[:from_date].present?
     from_date = Date.parse(options[:from_date])
+    index_time = options[:index_time].presence || Time.zone.now.utc.iso8601
     
     errors = 0
     count = 0
 
     logger = Logger.new(STDOUT)
 
-    Doi.where(created: from_date.midnight..from_date.end_of_day).not_indexed.find_in_batches(batch_size: 500) do |dois|
+    Doi.where(created: from_date.midnight..from_date.end_of_day).where("indexed < ?", index_time).find_in_batches(batch_size: 500) do |dois|
       response = Doi.__elasticsearch__.client.bulk \
         index:   Doi.index_name,
         type:    Doi.document_type,
@@ -400,7 +401,7 @@ class Doi < ActiveRecord::Base
 
     count = 0
 
-    Doi.where(created: from_date.midnight..from_date.end_of_day).not_indexed.find_each do |doi|
+    Doi.where(created: from_date.midnight..from_date.end_of_day).where("indexed < ?", index_time).find_each do |doi|
       IndexJob.perform_later(doi)
       doi.update_column(:indexed, Time.zone.now)  
       count += 1
