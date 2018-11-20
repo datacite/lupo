@@ -481,7 +481,7 @@ class Doi < ActiveRecord::Base
   end
 
   def is_valid?
-    validation_errors.blank?
+    validation_errors.blank? && url.present?
   end
 
   def is_registered_or_findable?
