@@ -227,24 +227,24 @@ describe Doi, type: :model, vcr: true do
       end
     end
 
-    context "no url" do
-      let(:provider)  { create(:provider, symbol: "ADMIN") }
-      let(:client)  { create(:client, provider: provider) }
-      let(:url) { "https://www.example.org" }
-      subject { build(:doi, client: client, url: nil, current_user: current_user) }
+    # context "no url" do
+    #   let(:provider)  { create(:provider, symbol: "ADMIN") }
+    #   let(:client)  { create(:client, provider: provider) }
+    #   let(:url) { "https://www.example.org" }
+    #   subject { build(:doi, client: client, url: nil, current_user: current_user) }
 
-      # it "don't update state change" do
-      #   subject.publish
-      #   expect { subject.save }.not_to have_enqueued_job(HandleJob)
-      #   expect(subject).to have_state(:findable)
-      # end
+    #   it "don't update state change" do
+    #     subject.publish
+    #     expect { subject.save }.not_to have_enqueued_job(HandleJob)
+    #     expect(subject).to have_state(:findable)
+    #   end
 
-      it "update url change" do
-        subject.publish
-        subject.url = url
-        expect { subject.save }.to have_enqueued_job(HandleJob)
-      end
-    end
+    #   it "update url change" do
+    #     subject.publish
+    #     subject.url = url
+    #     expect { subject.save }.to have_enqueued_job(HandleJob)
+    #   end
+    # end
   end
 
   describe "metadata" do
