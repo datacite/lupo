@@ -1710,7 +1710,6 @@ describe "dois", type: :request do
         end
       end
 
-      # TODO: db-fields-for-attributes
       context 'validates schema.org' do
         let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('schema_org.json'))) }
         let(:params) do
