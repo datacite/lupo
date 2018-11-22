@@ -287,16 +287,16 @@ class Doi < ActiveRecord::Base
   def self.query_aggregations
     {
       resource_types: { terms: { field: 'types.resourceTypeGeneral', size: 15, min_doc_count: 1 } },
-      states: { terms: { field: 'aasm_state', size: 10, min_doc_count: 1 } },
+      states: { terms: { field: 'aasm_state', size: 15, min_doc_count: 1 } },
       years: { date_histogram: { field: 'publication_year', interval: 'year', min_doc_count: 1 } },
       created: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
       registered: { date_histogram: { field: 'registered', interval: 'year', min_doc_count: 1 } },
-      providers: { terms: { field: 'provider_id', size: 10, min_doc_count: 1 } },
-      clients: { terms: { field: 'client_id', size: 50, min_doc_count: 1 } },
-      prefixes: { terms: { field: 'prefix', size: 10, min_doc_count: 1 } },
-      schema_versions: { terms: { field: 'schema_version', size: 10, min_doc_count: 1 } },
-      link_checks: { terms: { field: 'last_landing_page_status', size: 10, min_doc_count: 1 } },
-      sources: { terms: { field: 'source', size: 10, min_doc_count: 1 } }
+      providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } },
+      clients: { terms: { field: 'client_id', size: 15, min_doc_count: 1 } },
+      prefixes: { terms: { field: 'prefix', size: 15, min_doc_count: 1 } },
+      schema_versions: { terms: { field: 'schema_version', size: 15, min_doc_count: 1 } },
+      link_checks: { terms: { field: 'last_landing_page_status', size: 15, min_doc_count: 1 } },
+      sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } }
     }
   end
 
