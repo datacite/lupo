@@ -22,7 +22,7 @@ module Facetable
       end
     end
 
-    def facet_by_cumuative_year(arr)
+    def facet_by_cumulative_year(arr)
       arr.map do |hsh|
         { "id" => hsh["key"].to_s,
           "title" => hsh["key"].to_s,

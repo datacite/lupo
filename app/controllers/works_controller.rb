@@ -35,7 +35,6 @@ class WorksController < ApplicationController
     else
       response = Doi.query(params[:query],
                           state: "findable",
-                          year: params[:year],
                           created: params[:created],
                           registered: params[:registered],
                           provider_id: params[:member_id],
@@ -51,26 +50,18 @@ class WorksController < ApplicationController
     total = response.results.total
     total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
 
-    states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
     resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
-    years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
-    created = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
     registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
     providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
     clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
-    prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
-    schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
-    sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
 
     @dois = response.results.results
 
     options = {}
     options[:meta] = {
       "resource-types" => resource_types,
-      years: years,
       registered: registered,
       "data-centers" => clients,
-      "schema-versions" => schema_versions,
       total: total,
       "total-pages" => total_pages,
       page: page[:number]
@@ -80,10 +71,8 @@ class WorksController < ApplicationController
       self: request.original_url,
       next: @dois.blank? ? nil : request.base_url + "/dois?" + {
         query: params[:query],
-        "provider-id" => params[:provider_id],
-        "client-id" => params[:client_id],
-        year: params[:year],
-        fields: params[:fields],
+        "member-id" => params[:provider_id],
+        "data-center-id" => params[:client_id],
         "page[size]" => params.dig(:page, :size) }.compact.to_query
       }.compact
     options[:include] = @include
