@@ -43,7 +43,11 @@ class WorkSerializer
 
   attribute :resource_type_id do |object|
     rt = object.types.fetch("resourceTypeGeneral", nil)
-    rt.downcase.dasherize if rt
+    if rt
+      rt.downcase.dasherize
+    else
+      nil
+    end
   end
 
   attribute :data_center_id do |object|
@@ -63,7 +67,7 @@ class WorkSerializer
   end
 
   attribute :license do |object|
-    object.rights_list.first.try(:rightsUri)
+    object.rights_list.first.to_h.fetch("rightsUri", nil)
   end
 
   attribute :results do |object|
