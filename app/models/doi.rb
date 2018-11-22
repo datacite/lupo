@@ -226,6 +226,7 @@ class Doi < ActiveRecord::Base
 
     # include parent objects
     indexes :client,                         type: :object
+    indexes :provider,                       type: :object
     indexes :resource_type,                  type: :object
   end
 
@@ -279,6 +280,7 @@ class Doi < ActiveRecord::Base
       "created" => created,
       "updated" => updated,
       "client" => client.as_indexed_json,
+      "provider" => provider.as_indexed_json,
       "resource_type" => resource_type.try(:as_indexed_json),
       "media" => media.map { |m| m.try(:as_indexed_json) }
     }

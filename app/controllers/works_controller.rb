@@ -122,10 +122,18 @@ class WorksController < ApplicationController
 
   def set_include
     if params[:include].present?
-      @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:client, :resource_type]
+      include_keys = {
+        "data_center" => :client,
+        "member" => :provider,
+        "resource_type" => :resource_type
+      }
+      @include = params[:include].split(",").reduce([]) do |sum, i|
+        k = include_keys[i.downcase.underscore]
+        sum << k if k.present?
+        sum
+      end
     else
-      @include = [:client, :resource_type]
+      @include = nil
     end
   end
 
