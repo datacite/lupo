@@ -54,6 +54,7 @@ Rails.application.routes.draw do
   # support for legacy routes
   resources :members, only: [:show, :index]
   resources :data_centers, only: [:show, :index], constraints: { :id => /.+/ }, path: "/data-centers"
+  resources :works, only: [:show, :index], constraints: { :id => /.+/ }
 
   # content negotiation
   get '/application/vnd.datacite.datacite+xml/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :datacite }
