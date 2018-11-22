@@ -26,11 +26,11 @@ class WorkSerializer
   end
 
   attribute :title do |object|
-    object.titles.first.to_h.fetch("title", nil)
+    Array.wrap(object.titles).first.to_h.fetch("title", nil)
   end
 
   attribute :description do |object|
-    object.descriptions.first.to_h.fetch("title", nil)
+    Array.wrap(object.descriptions).first.to_h.fetch("title", nil)
   end
 
   attribute :container_title do |object|
@@ -38,11 +38,11 @@ class WorkSerializer
   end
 
   attribute :resource_type_subtype do |object|
-    object.types.fetch("resourceType", nil)
+    object.types.to_h.fetch("resourceType", nil)
   end
 
   attribute :resource_type_id do |object|
-    rt = object.types.fetch("resourceTypeGeneral", nil)
+    rt = object.types.to_h.fetch("resourceTypeGeneral", nil)
     if rt
       rt.downcase.dasherize
     else
@@ -63,11 +63,11 @@ class WorkSerializer
   end
 
   attribute :schema_version do |object|
-    object.schema_version.split("-", 2).last
+    object.schema_version.to_s.split("-", 2).last.presence
   end
 
   attribute :license do |object|
-    object.rights_list.first.to_h.fetch("rightsUri", nil)
+    Array.wrap(object.rights_list).first.to_h.fetch("rightsUri", nil)
   end
 
   attribute :results do |object|
@@ -79,7 +79,7 @@ class WorkSerializer
   end
 
   attribute :published do |object|
-    object.publication_year.to_s
+    object.publication_year.to_s.presence
   end
 
   attribute :xml do |object|
