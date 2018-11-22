@@ -128,6 +128,7 @@ class Doi < ActiveRecord::Base
     indexes :publication_year,               type: :date, format: "yyyy", ignore_malformed: true
     indexes :client_id,                      type: :keyword
     indexes :provider_id,                    type: :keyword
+    indexes :resource_type_id,               type: :keyword
     indexes :media_ids,                      type: :keyword
     indexes :media,                          type: :object, properties: {
       type: { type: :keyword },
@@ -225,6 +226,7 @@ class Doi < ActiveRecord::Base
 
     # include parent objects
     indexes :client,                         type: :object
+    indexes :resource_type,                  type: :object
   end
 
   def as_indexed_json(options={})
@@ -242,6 +244,7 @@ class Doi < ActiveRecord::Base
       "publisher" => publisher,
       "client_id" => client_id,
       "provider_id" => provider_id,
+      "resource_type_id" => resource_type_id,
       "media_ids" => media_ids,
       "prefix" => prefix,
       "suffix" => suffix,
@@ -276,6 +279,7 @@ class Doi < ActiveRecord::Base
       "created" => created,
       "updated" => updated,
       "client" => client.as_indexed_json,
+      "resource_type" => resource_type.try(:as_indexed_json),
       "media" => media.map { |m| m.try(:as_indexed_json) }
     }
   end
@@ -415,7 +419,7 @@ class Doi < ActiveRecord::Base
   end
 
   def resource_type_id
-    types["resource_type_general"].underscore.dasherize if types.to_h["resource_type_general"].present?
+    types["resourceTypeGeneral"].underscore.dasherize if types.to_h["resourceTypeGeneral"].present?
   end
 
   def media_ids
@@ -528,6 +532,10 @@ class Doi < ActiveRecord::Base
 
   def current_media
     media.order('media.created DESC').first
+  end
+
+  def resource_type
+    cached_resource_type_response(types["resourceTypeGeneral"].underscore.dasherize.downcase) if types["resourceTypeGeneral"].present?
   end
 
   def date_registered
