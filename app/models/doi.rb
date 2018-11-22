@@ -137,8 +137,8 @@ class Doi < ActiveRecord::Base
       url: { type: :text },
       media_type: { type: :keyword },
       version: { type: :keyword },
-      created: { type: :date },
-      updated: { type: :date }
+      created: { type: :date, ignore_malformed: true },
+      updated: { type: :date, ignore_malformed: true }
     }
     indexes :alternate_identifiers,          type: :object, properties: {
       alternateIdentifierType: { type: :keyword },
@@ -206,7 +206,7 @@ class Doi < ActiveRecord::Base
     indexes :suffix,                         type: :keyword
     indexes :reason,                         type: :text
     indexes :last_landing_page_status,       type: :integer
-    indexes :last_landing_page_status_check, type: :date
+    indexes :last_landing_page_status_check, type: :date, ignore_malformed: true
     indexes :last_landing_page_content_type, type: :keyword
     indexes :last_landing_page_status_result, type: :object, properties: {
       error: { type: :keyword },
@@ -220,9 +220,9 @@ class Doi < ActiveRecord::Base
       bodyHasPid: { type: :boolean }
     }
     indexes :cache_key,                      type: :keyword
-    indexes :registered,                     type: :date
-    indexes :created,                        type: :date
-    indexes :updated,                        type: :date
+    indexes :registered,                     type: :date, ignore_malformed: true
+    indexes :created,                        type: :date, ignore_malformed: true
+    indexes :updated,                        type: :date, ignore_malformed: true
 
     # include parent objects
     indexes :client,                         type: :object
