@@ -7,7 +7,7 @@ class DataCenterSerializer
   
   attributes :title, :other_names, :prefixes, :member_id, :year, :created, :updated
 
-  belongs_to :member, record_type: :members, id_method_name: :provider_id
+  belongs_to :provider, key: :member, record_type: :members, serializer: :Member
 
   attribute :title do |object|
     object.name
