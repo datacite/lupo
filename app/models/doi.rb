@@ -535,7 +535,7 @@ class Doi < ActiveRecord::Base
   end
 
   def resource_type
-    cached_resource_type_response(types["resourceTypeGeneral"].underscore.dasherize.downcase) if types["resourceTypeGeneral"].present?
+    cached_resource_type_response(types["resourceTypeGeneral"].underscore.dasherize.downcase) if types.to_h["resourceTypeGeneral"].present?
   end
 
   def date_registered
