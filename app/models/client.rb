@@ -81,7 +81,7 @@ class Client < ActiveRecord::Base
       indexes :domains,       type: :text
       indexes :year,          type: :integer
       indexes :url,           type: :text, fields: { keyword: { type: "keyword" }}
-      indexes :software,     type: :keyword
+      indexes :software,      type: :keyword
       indexes :cache_key,     type: :keyword
       indexes :created,       type: :date
       indexes :updated,       type: :date
