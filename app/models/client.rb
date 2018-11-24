@@ -62,7 +62,12 @@ class Client < ActiveRecord::Base
       analyzer: {
         string_lowercase: { tokenizer: 'keyword', filter: %w(lowercase ascii_folding) }
       },
-      filter: { ascii_folding: { type: 'asciifolding', preserve_original: true } }
+      normalizer: {
+        keyword_lowercase: { type: "custom", filter: %w(lowercase) }
+      },
+      filter: { 
+        ascii_folding: { type: 'asciifolding', preserve_original: true } 
+      }
     }
   } do
     mapping dynamic: 'false' do
@@ -71,7 +76,7 @@ class Client < ActiveRecord::Base
       indexes :provider_id,   type: :keyword
       indexes :repository_id, type: :keyword
       indexes :prefix_ids,    type: :keyword
-      indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }}
+      indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
       indexes :description,   type: :text
       indexes :contact_name,  type: :text
       indexes :contact_email, type: :text, fields: { keyword: { type: "keyword" }}
@@ -81,7 +86,7 @@ class Client < ActiveRecord::Base
       indexes :domains,       type: :text
       indexes :year,          type: :integer
       indexes :url,           type: :text, fields: { keyword: { type: "keyword" }}
-      indexes :software,      type: :keyword
+      indexes :software,      type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
       indexes :cache_key,     type: :keyword
       indexes :created,       type: :date
       indexes :updated,       type: :date
@@ -131,7 +136,7 @@ class Client < ActiveRecord::Base
       years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
       cumulative_years: { terms: { field: 'cumulative_years', min_doc_count: 1, order: { _count: "asc" } } },
       providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } },
-      software: { terms: { field: 'software', size: 15, min_doc_count: 1 } }
+      software: { terms: { field: 'software.keyword', size: 15, min_doc_count: 1 } }
     }
   end
 

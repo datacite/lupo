@@ -57,6 +57,7 @@ class ClientsController < ApplicationController
       next: @clients.blank? ? nil : request.base_url + "/clients?" + {
         query: params[:query],
         "provider-id" => params[:provider_id],
+        software: params[:software],
         year: params[:year],
         fields: params[:fields],
         "page[number]" => page[:number] + 1,

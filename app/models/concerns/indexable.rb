@@ -138,7 +138,7 @@ module Indexable
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
       elsif self.name == "Client"
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
-        must << { term: { software: options[:software] }} if options[:software].present?
+        must << { terms: { "software.raw" => options[:software].split(",") }} if options[:software].present?
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
       elsif self.name == "Doi"
         must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
