@@ -72,6 +72,7 @@ class Client < ActiveRecord::Base
       indexes :repository_id, type: :keyword
       indexes :prefix_ids,    type: :keyword
       indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }}
+      indexes :description,   type: :text
       indexes :contact_name,  type: :text
       indexes :contact_email, type: :text, fields: { keyword: { type: "keyword" }}
       indexes :re3data,       type: :keyword
@@ -80,6 +81,7 @@ class Client < ActiveRecord::Base
       indexes :domains,       type: :text
       indexes :year,          type: :integer
       indexes :url,           type: :text, fields: { keyword: { type: "keyword" }}
+      indexes :software,     type: :keyword
       indexes :cache_key,     type: :keyword
       indexes :created,       type: :date
       indexes :updated,       type: :date
@@ -88,7 +90,15 @@ class Client < ActiveRecord::Base
 
       # include parent objects
       indexes :provider,      type: :object
-      indexes :repository,    type: :object
+      indexes :repository,    type: :object, properties: {
+        repositoryName: { type: :text },
+        repositoryUrl: { type: :text },
+        repositoryContacts: { type: :text },
+        description: { type: :text },
+        startDate: { type: :date },
+        endDate: { type: :date },
+        certificates: { type: :keyword },
+      }
     end
   end
 
@@ -100,12 +110,14 @@ class Client < ActiveRecord::Base
       "repository_id" => repository_id,
       "prefix_ids" => prefix_ids,
       "name" => name,
+      "description" => description,
       "symbol" => symbol,
       "year" => year,
       "contact_name" => contact_name,
       "contact_email" => contact_email,
       "domains" => domains,
       "url" => url,
+      "software" => software,
       "is_active" => is_active,
       "password" => password,
       "cache_key" => cache_key,
@@ -119,14 +131,15 @@ class Client < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['symbol^10', 'name^10', 'contact_name^10', 'contact_email^10', 'domains', 'url', 'repository.software.name^3', 'repository.subjects.text^3', 'repository.certificates.text^3', '_all']
+    ['symbol^10', 'name^10', 'description^10', 'contact_name^10', 'contact_email^10', 'domains', 'url', 'software^3', 'repository.subjects.text^3', 'repository.certificates.text^3', '_all']
   end
 
   def self.query_aggregations
     {
       years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
       cumulative_years: { terms: { field: 'cumulative_years', min_doc_count: 1, order: { _count: "asc" } } },
-      providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } }
+      providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } },
+      software: { terms: { field: 'software', size: 15, min_doc_count: 1 } }
     }
   end
 

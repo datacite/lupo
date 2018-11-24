@@ -38,6 +38,14 @@ module Facetable
       end
     end
 
+    def facet_by_software(arr)
+      arr.map do |hsh|
+        { "id" => hsh["key"].downcase,
+          "title" => hsh["key"],
+          "count" => hsh["doc_count"] }
+      end
+    end
+
     def facet_by_schema(arr)
       arr.map do |hsh|
         id = hsh["key"].split("-").last

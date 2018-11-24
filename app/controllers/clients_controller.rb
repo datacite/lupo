@@ -31,13 +31,14 @@ class ClientsController < ApplicationController
     elsif params[:ids].present?
       response = Client.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      response = Client.query(params[:query], year: params[:year], provider_id: params[:provider_id], query_fields: params[:query_fields], page: page, sort: sort)
+      response = Client.query(params[:query], year: params[:year], provider_id: params[:provider_id], software: params[:software], query_fields: params[:query_fields], page: page, sort: sort)
     end
 
     total = response.results.total
     total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
     years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
     providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+    software = total > 0 ? facet_by_software(response.response.aggregations.software.buckets) : nil
 
     @clients = response.results.results
 
@@ -47,7 +48,8 @@ class ClientsController < ApplicationController
       "total-pages" => total_pages,
       page: page[:number],
       years: years,
-      providers: providers
+      providers: providers,
+      software: software
     }.compact
 
     options[:links] = {
@@ -146,7 +148,7 @@ class ClientsController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:symbol, :name, "contactName", "contactEmail", :domains, :provider, :url, :repository, "targetId", "isActive", "passwordInput"],
+      params, only: [:symbol, :name, "contactName", "contactEmail", :domains, :provider, :url, :repository, :description, :software, "targetId", "isActive", "passwordInput"],
               keys: { "contactName" => :contact_name, "contactEmail" => :contact_email, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input }
     )
   end
