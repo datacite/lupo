@@ -26,7 +26,46 @@ FactoryBot.define do
 
     doi { ("10.14454/" + Faker::Internet.password(8)).downcase }
     url { Faker::Internet.url }
-    xml { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxyZXNvdXJjZSB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC0zIGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTMvbWV0YWRhdGEueHNkIiB4bWxucz0iaHR0cDovL2RhdGFjaXRlLm9yZy9zY2hlbWEva2VybmVsLTMiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiPjxpZGVudGlmaWVyIGlkZW50aWZpZXJUeXBlPSJET0kiPjEwLjUyNTYvZjEwMDByZXNlYXJjaC44NTcwLnI2NDIwPC9pZGVudGlmaWVyPjxjcmVhdG9ycz48Y3JlYXRvcj48Y3JlYXRvck5hbWU+ZCBzPC9jcmVhdG9yTmFtZT48L2NyZWF0b3I+PC9jcmVhdG9ycz48dGl0bGVzPjx0aXRsZT5SZWZlcmVlIHJlcG9ydC4gRm9yOiBSRVNFQVJDSC0zNDgyIFt2ZXJzaW9uIDU7IHJlZmVyZWVzOiAxIGFwcHJvdmVkLCAxIGFwcHJvdmVkIHdpdGggcmVzZXJ2YXRpb25zXTwvdGl0bGU+PC90aXRsZXM+PHB1Ymxpc2hlcj5GMTAwMCBSZXNlYXJjaCBMaW1pdGVkPC9wdWJsaXNoZXI+PHB1YmxpY2F0aW9uWWVhcj4yMDE3PC9wdWJsaWNhdGlvblllYXI+PHJlc291cmNlVHlwZSByZXNvdXJjZVR5cGVHZW5lcmFsPSJUZXh0Ii8+PC9yZXNvdXJjZT4=" }
+    xml { '<?xml version="1.0" encoding="UTF-8"?>
+      <resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-4" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4/metadata.xsd">
+        <identifier identifierType="DOI">10.14454/4K3M-NYVG</identifier>
+        <creators>
+          <creator>
+            <creatorName>Fenner, Martin</creatorName>
+            <givenName>Martin</givenName>
+            <familyName>Fenner</familyName>
+            <nameIdentifier schemeURI="http://orcid.org/" nameIdentifierScheme="ORCID">0000-0003-1419-2405</nameIdentifier>
+          </creator>
+        </creators>
+        <titles>
+          <title>Eating your own Dog Food</title>
+        </titles>
+        <publisher>DataCite</publisher>
+        <publicationYear>2016</publicationYear>
+        <resourceType resourceTypeGeneral="Text">BlogPosting</resourceType>
+        <alternateIdentifiers>
+          <alternateIdentifier alternateIdentifierType="Local accession number">MS-49-3632-5083</alternateIdentifier>
+        </alternateIdentifiers>
+        <subjects>
+          <subject>datacite</subject>
+          <subject>doi</subject>
+          <subject>metadata</subject>
+        </subjects>
+        <dates>
+          <date dateType="Created">2016-12-20</date>
+          <date dateType="Issued">2016-12-20</date>
+          <date dateType="Updated">2016-12-20</date>
+        </dates>
+        <relatedIdentifiers>
+          <relatedIdentifier relatedIdentifierType="DOI" relationType="References">10.5438/0012</relatedIdentifier>
+          <relatedIdentifier relatedIdentifierType="DOI" relationType="References">10.5438/55E5-T5C0</relatedIdentifier>
+          <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5438/0000-00SS</relatedIdentifier>
+        </relatedIdentifiers>
+        <version>1.0</version>
+        <descriptions>
+          <description descriptionType="Abstract">Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for...</description>
+        </descriptions>
+      </resource>' }
     aasm_state { "draft" }
     source { "test" }
     created { Faker::Time.backward(14, :evening) }

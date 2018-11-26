@@ -4,7 +4,7 @@ describe "content_negotation", type: :request do
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
-  let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+  let(:xml) { file_fixture('datacite.xml').read }
   let(:doi) { create(:doi, xml: xml, client: client) }
 
   context "no permission" do
@@ -96,7 +96,7 @@ describe "content_negotation", type: :request do
   end
 
   context "application/vnd.datacite.datacite+xml schema 3" do
-    let(:xml) { Base64.strict_encode64(file_fixture('datacite_schema_3.xml').read) }
+    let(:xml) { file_fixture('datacite_schema_3.xml').read }
     let(:doi) { create(:doi, xml: xml, client: client) }
 
     before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml", 'Authorization' => 'Bearer ' + bearer  } }
@@ -296,7 +296,7 @@ describe "content_negotation", type: :request do
   end
 
   context "application/x-bibtex nasa gsfc" do
-    let(:xml) { Base64.strict_encode64(file_fixture('datacite_gsfc.xml').read) }
+    let(:xml) { file_fixture('datacite_gsfc.xml').read }
     let(:doi) { create(:doi, xml: xml, client: client) }
 
     before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/x-bibtex", 'Authorization' => 'Bearer ' + bearer  } }

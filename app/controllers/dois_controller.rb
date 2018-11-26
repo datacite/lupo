@@ -1,4 +1,5 @@
 require 'uri'
+require 'base64'
 
 class DoisController < ApplicationController
   prepend_before_action :authenticate_user!
@@ -495,6 +496,7 @@ class DoisController < ApplicationController
     p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships).reverse_merge(defaults)
     p = p.fetch("attributes").merge(client_id: p.dig("relationships", "client", "data", "id"))
     p.merge(
+      xml: p[:xml].present? ? Base64.decode64(p[:xml]).force_encoding("UTF-8") : nil,
       schema_version: p[:schemaVersion],
       publication_year: p[:publicationYear],
       rights_list: p[:rightsList],

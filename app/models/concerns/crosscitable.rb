@@ -12,16 +12,16 @@ module Crosscitable
     end
 
     def exists?
-      true #meta.fetch("state", "not_found") != "not_found"
+      aasm_state != "not_found"
     end
 
     def meta
-      {}
+      @meta || {}
     end
 
-    def xml=(value)
+    def update_metadata   
       # check that input is well-formed if xml or json
-      input = well_formed_xml(value)
+      input = well_formed_xml(xml)
 
       # check whether input is id and we need to fetch the content
       id = normalize_id(input, sandbox: sandbox)
@@ -37,26 +37,28 @@ module Crosscitable
         @string = input
       end
 
-      # generate attributes that have not been set directly
-      meta = @from.present? ? send("read_" + @from, string: raw, sandbox: sandbox) : {}
-      attrs = (%w(creator contributor titles publisher publication_year types descriptions periodical sizes formats version_info language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url) - changed).map do |a|
-        [a.to_sym, meta[a.to_s]]
-      end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4")
-      assign_attributes(attrs)
+      # generate xml with attributes that have been set directly
+      read_attrs = %w(creator contributor titles publisher publication_year types descriptions periodical sizes formats version_info language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
+        [a.to_sym, send(a.to_s)]
+      end.to_h.compact
+      meta = @from.present? ? send("read_" + @from, { string: raw, doi: doi, sandbox: sandbox }.merge(read_attrs)) : {}
+      output = (@from != "datacite" || read_attrs.present?) ? datacite_xml : raw
 
-      xml = (@from == "datacite") ? raw : datacite_xml
-      write_attribute(:xml, xml)
+      # generate attributes based on xml
+      attrs = %w(creator contributor titles publisher publication_year types descriptions periodical sizes formats version_info language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
+        [a.to_sym, meta[a.to_s]]
+      end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", xml: output)
+
+      assign_attributes(attrs)
     rescue NoMethodError, ArgumentError => exception
       Bugsnag.notify(exception)
       logger = Logger.new(STDOUT)
       logger.error "Error " + exception.message + " for doi " + doi + "."
-      write_attribute(:xml, nil)
+      logger.error exception
     end
 
     def well_formed_xml(string)
       return '' unless string.present?
-
-      string = Base64.decode64(string).force_encoding("UTF-8")
   
       from_xml(string) || from_json(string)
 

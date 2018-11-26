@@ -61,8 +61,7 @@ class Doi < ActiveRecord::Base
   alias_attribute :registered, :minted
   alias_attribute :state, :aasm_state
 
-  attr_accessor :current_user
-  attr_accessor :validate
+  attr_accessor :current_user, :validate, :agency
 
   belongs_to :client, foreign_key: :datacentre
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
@@ -84,7 +83,8 @@ class Doi < ActiveRecord::Base
   after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
 
-  before_save :set_defaults, :update_metadata
+  before_validation :update_metadata
+  before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
   scope :q, ->(query) { where("dataset.doi = ?", query) }
@@ -614,8 +614,8 @@ class Doi < ActiveRecord::Base
     "Queued storing missing URL in database for DOIs updated since #{from_date.strftime("%F")}."
   end
 
-  # update metadata record when xml has changed
-  def update_metadata
+  # save to metadata table when xml has changed
+  def save_metadata
     metadata.build(doi: self, xml: xml, namespace: schema_version) if xml.present? && (changed & %w(xml)).present?
   end
 

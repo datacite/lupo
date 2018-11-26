@@ -248,28 +248,26 @@ describe Doi, type: :model, vcr: true do
   end
 
   describe "metadata" do
-    let(:xml) { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxyZXNvdXJjZSB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC0zIGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTMvbWV0YWRhdGEueHNkIiB4bWxucz0iaHR0cDovL2RhdGFjaXRlLm9yZy9zY2hlbWEva2VybmVsLTMiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiPjxpZGVudGlmaWVyIGlkZW50aWZpZXJUeXBlPSJET0kiPjEwLjUyNTYvZjEwMDByZXNlYXJjaC44NTcwLnI2NDIwPC9pZGVudGlmaWVyPjxjcmVhdG9ycz48Y3JlYXRvcj48Y3JlYXRvck5hbWU+ZCBzPC9jcmVhdG9yTmFtZT48L2NyZWF0b3I+PC9jcmVhdG9ycz48dGl0bGVzPjx0aXRsZT5SZWZlcmVlIHJlcG9ydC4gRm9yOiBSRVNFQVJDSC0zNDgyIFt2ZXJzaW9uIDU7IHJlZmVyZWVzOiAxIGFwcHJvdmVkLCAxIGFwcHJvdmVkIHdpdGggcmVzZXJ2YXRpb25zXTwvdGl0bGU+PC90aXRsZXM+PHB1Ymxpc2hlcj5GMTAwMCBSZXNlYXJjaCBMaW1pdGVkPC9wdWJsaXNoZXI+PHB1YmxpY2F0aW9uWWVhcj4yMDE3PC9wdWJsaWNhdGlvblllYXI+PHJlc291cmNlVHlwZSByZXNvdXJjZVR5cGVHZW5lcmFsPSJUZXh0Ii8+PC9yZXNvdXJjZT4=" }
-
-    subject  { create(:doi, xml: xml) }
+    subject  { create(:doi) }
 
     it "title" do
-      expect(subject.titles).to eq([{"title"=>"Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]"}])
+      expect(subject.titles).to eq([{"title"=>"Eating your own Dog Food"}])
     end
 
     it "creator" do
-      expect(subject.creator).to eq([{"name"=>"D S"}])
+      expect(subject.creator).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "type"=>"Person"}])
     end
 
     it "dates" do
-      expect(subject.get_date(subject.dates, "Issued")).to eq("2017")
+      expect(subject.get_date(subject.dates, "Issued")).to eq("2016-12-20")
     end
 
     it "publication_year" do
-      expect(subject.publication_year).to eq(2017)
+      expect(subject.publication_year).to eq(2016)
     end
 
     it "schema_version" do
-      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-3")
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
     end
 
     it "metadata" do
@@ -278,107 +276,85 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "namespace" do
-      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-3")
+      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
     end
   end
 
-  # TODO: db-fields-for-attributes
-  # describe "change metadata" do
-  #   let(:xml) { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxyZXNvdXJjZSB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC0zIGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTMvbWV0YWRhdGEueHNkIiB4bWxucz0iaHR0cDovL2RhdGFjaXRlLm9yZy9zY2hlbWEva2VybmVsLTMiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiPjxpZGVudGlmaWVyIGlkZW50aWZpZXJUeXBlPSJET0kiPjEwLjUyNTYvZjEwMDByZXNlYXJjaC44NTcwLnI2NDIwPC9pZGVudGlmaWVyPjxjcmVhdG9ycz48Y3JlYXRvcj48Y3JlYXRvck5hbWU+ZCBzPC9jcmVhdG9yTmFtZT48L2NyZWF0b3I+PC9jcmVhdG9ycz48dGl0bGVzPjx0aXRsZT5SZWZlcmVlIHJlcG9ydC4gRm9yOiBSRVNFQVJDSC0zNDgyIFt2ZXJzaW9uIDU7IHJlZmVyZWVzOiAxIGFwcHJvdmVkLCAxIGFwcHJvdmVkIHdpdGggcmVzZXJ2YXRpb25zXTwvdGl0bGU+PC90aXRsZXM+PHB1Ymxpc2hlcj5GMTAwMCBSZXNlYXJjaCBMaW1pdGVkPC9wdWJsaXNoZXI+PHB1YmxpY2F0aW9uWWVhcj4yMDE3PC9wdWJsaWNhdGlvblllYXI+PHJlc291cmNlVHlwZSByZXNvdXJjZVR5cGVHZW5lcmFsPSJUZXh0Ii8+PC9yZXNvdXJjZT4=" }
+  describe "change metadata" do
+    let(:xml) { File.read(file_fixture('datacite_f1000.xml')) }
+    let(:title) { "Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes" }
+    let(:creator) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
+    let(:publisher) { "Zenodo" }
+    let(:publication_year) { 2011 }
+    let(:types) { { "resourceTypeGeneral" => "Software", "resourceType" => "BlogPosting", "schemaOrg" => "BlogPosting" } }
+    let(:description) { "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for..." }
+    subject  { create(:doi, 
+      xml: xml, 
+      titles: [{ "title" => title }], 
+      creator: creator,
+      publisher: publisher,
+      publication_year: publication_year,
+      types: types,
+      descriptions: [{ "description" => description }],
+      event: "publish")
+    }
 
-  #   subject  { build(:doi, xml: xml) }
+    it "titles" do
+      expect(subject.titles).to eq([{ "title" => title }])
 
-  #   it "titles" do
-  #     titles = [{ "title" => "Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes" }]
-  #     subject.titles = titles
-  #     subject.save
-      
-  #     expect(subject.titles).to eq(titles)
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
+      expect(xml.dig("titles", "title")).to eq(title)
+    end
 
-  #     xml = Maremma.from_xml(subject.xml).fetch("resource", {})
-  #     expect(xml.dig("titles", "title")).to eq(titles)
-  #   end
+    it "creator" do
+      expect(subject.creator).to eq(creator)
 
-  #   it "creator" do
-  #     creator = [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }]
-  #     subject.creator = creator
-  #     subject.save
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
+      expect(xml.dig("creators", "creator")).to eq([{"creatorName"=>"Ollomi, Benjamin"}, {"creatorName"=>"Duran, Patrick"}])
+    end
 
-  #     expect(subject.creator).to eq(creator)
+    it "publisher" do
+      expect(subject.publisher).to eq(publisher)
 
-  #     xml = Maremma.from_xml(subject.xml).fetch("resource", {})
-  #     expect(xml.dig("creators", "creator")).to eq([{"creatorName"=>"Ollomi, Benjamin"}, {"creatorName"=>"Duran, Patrick"}])
-  #   end
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
+      expect(xml.dig("publisher")).to eq(publisher)
+    end
 
-  #   it "publisher" do
-  #     publisher = "Zenodo"
-  #     subject.publisher = publisher
-  #     subject.save
+    it "publication_year" do
+      expect(subject.publication_year).to eq(2011)
 
-  #     expect(subject.publisher).to eq(publisher)
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
+      expect(xml.dig("publicationYear")).to eq("2011")
+    end
 
-  #     xml = Maremma.from_xml(subject.xml).fetch("resource", {})
-  #     expect(xml.dig("publisher")).to eq(publisher)
-  #   end
+    it "resource_type" do
+      expect(subject.types["resourceType"]).to eq("BlogPosting")
 
-  #   it "publication_year" do
-  #     subject.set_date(subject.dates, "2011-05-26", "Issued")
-  #     subject.publication_year = "2011"
-  #     subject.save
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
+      expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>"Software", "__content__"=>"BlogPosting")
+    end
 
-  #     expect(subject.dates).to eq([{"date"=>"2011-05-26", "dateType"=>"Issued"}])
+    it "resource_type_general" do
+      expect(subject.types["resourceTypeGeneral"]).to eq("Software")
 
-  #     xml = Maremma.from_xml(subject.xml).fetch("resource", {})
-  #     expect(xml.dig("dates", "date")).to eq("dateType"=>"Issued", "__content__"=>"2011-05-26")
-  #     expect(xml.dig("publicationYear")).to eq("2011")
-  #   end
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
+      expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>"Software", "__content__"=>"BlogPosting")
+    end
 
-  #   it "resource_type" do
-  #     resource_type = "BlogPosting"
-  #     subject.types["resourceType"] = resource_type
-  #     subject.save
+    it "descriptions" do
+      expect(subject.descriptions).to eq([{ "description" => description }])
 
-  #     expect(subject.types["resourceType"]).to eq(resource_type)
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
+      expect(xml.dig("descriptions", "description")).to eq("__content__" => "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for...", "descriptionType" => "Abstract")
+    end
 
-  #     xml = Maremma.from_xml(subject.xml).fetch("resource", {})
-  #     expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>"Text", "__content__"=>"BlogPosting")
-  #   end
-
-  #   it "resource_type_general" do
-  #     resource_type_general = "Software"
-  #     subject.types["resourceTypeGeneral"] = resource_type_general
-  #     subject.save
-
-  #     expect(subject.types["resourceTypeGeneral"]).to eq(resource_type_general)
-
-  #     xml = Maremma.from_xml(subject.xml).fetch("resource", {})
-  #     expect(xml.dig("resourceType")).to eq("resourceTypeGeneral"=>resource_type_general, "__content__"=>"ScholarlyArticle")
-  #   end
-
-  #   it "descriptions" do
-  #     descriptions = [{ "description" => "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for..." }]
-  #     subject.descriptions = descriptions
-  #     subject.save
-      
-  #     expect(subject.descriptions).to eq(descriptions)
-
-  #     xml = Maremma.from_xml(subject.xml).fetch("resource", {})
-  #     expect(xml.dig("descriptions", "description")).to eq("__content__" => "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for...", "descriptionType" => "Abstract")
-  #   end
-
-  #   it "schema_version" do
-  #     titles = [{ "title" => "Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes" }]
-  #     subject.titles = titles
-  #     subject.save
-
-  #     xml = Maremma.from_xml(subject.xml).fetch("resource", {})
-  #     expect(xml.dig("titles", "title")).to eq(titles)
-
-  #     expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
-  #     expect(xml.dig("xmlns")).to eq("http://datacite.org/schema/kernel-4")
-  #     #expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
-  #   end
-  # end
+    it "schema_version" do
+      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
+      xml = Maremma.from_xml(subject.xml).fetch("resource", {})
+      expect(xml.dig("xmlns")).to eq("http://datacite.org/schema/kernel-4")
+      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
+    end
+  end
 
   describe "to_jsonapi" do
     let(:provider)  { create(:provider, symbol: "ADMIN") }
@@ -395,7 +371,7 @@ describe Doi, type: :model, vcr: true do
   end
 
   context "parses Crossref xml" do
-    let(:xml) { Base64.strict_encode64(file_fixture('crossref.xml').read) }
+    let(:xml) { file_fixture('crossref.xml').read }
 
     subject { create(:doi, xml: xml, event: "publish") }
 
@@ -444,7 +420,7 @@ describe Doi, type: :model, vcr: true do
   end
 
   context "parses namespaced xml" do
-    let(:xml) { Base64.strict_encode64(file_fixture('ns0.xml').read) }
+    let(:xml) { file_fixture('ns0.xml').read }
 
     subject { create(:doi, doi: "10.4231/D38G8FK8B", xml: xml, event: "publish") }
 
@@ -495,7 +471,7 @@ describe Doi, type: :model, vcr: true do
   end
 
   context "parses schema" do
-    let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+    let(:xml) { file_fixture('datacite.xml').read }
 
     subject { create(:doi, xml: xml, event: "publish") }
 
@@ -543,7 +519,7 @@ describe Doi, type: :model, vcr: true do
   end
 
   context "parses schema 3" do
-    let(:xml) { Base64.strict_encode64(file_fixture('datacite_schema_3.xml').read) }
+    let(:xml) { file_fixture('datacite_schema_3.xml').read }
 
     subject { create(:doi, xml: xml, event: "publish") }
 
@@ -588,7 +564,7 @@ describe Doi, type: :model, vcr: true do
   end
 
   context "parses schema 2.2" do
-    let(:xml) { Base64.strict_encode64(file_fixture('datacite_schema_2.2.xml').read) }
+    let(:xml) { file_fixture('datacite_schema_2.2.xml').read }
 
     subject { create(:doi, xml: xml, event: "publish") }
 
@@ -633,7 +609,7 @@ describe Doi, type: :model, vcr: true do
   end
 
   context "parses bibtex" do
-    let(:xml) { Base64.strict_encode64(file_fixture('crossref.bib').read) }
+    let(:xml) { file_fixture('crossref.bib').read }
 
     subject { create(:doi, xml: xml, event: "publish") }
 
@@ -674,7 +650,7 @@ describe Doi, type: :model, vcr: true do
   end
 
   context "parses ris" do
-    let(:xml) { ::Base64.strict_encode64(file_fixture('crossref.ris').read) }
+    let(:xml) { file_fixture('crossref.ris').read }
 
     subject { create(:doi, xml: xml, event: "publish") }
 
@@ -715,7 +691,7 @@ describe Doi, type: :model, vcr: true do
   end
 
   context "parses citeproc" do
-    let(:xml) { ::Base64.strict_encode64(file_fixture('citeproc.json').read) }
+    let(:xml) { file_fixture('citeproc.json').read }
 
     subject { create(:doi, xml: xml, event: "publish") }
 
@@ -755,7 +731,7 @@ describe Doi, type: :model, vcr: true do
   end
 
   context "parses codemeta" do
-    let(:xml) { ::Base64.strict_encode64(file_fixture('codemeta.json').read) }
+    let(:xml) { file_fixture('codemeta.json').read }
 
     subject { create(:doi, xml: xml, event: "publish") }
 
@@ -796,7 +772,7 @@ describe Doi, type: :model, vcr: true do
   end
 
   context "parses crosscite" do
-    let(:xml) { ::Base64.strict_encode64(file_fixture('crosscite.json').read) }
+    let(:xml) { file_fixture('crosscite.json').read }
 
     subject { create(:doi, xml: xml, event: "publish") }
 
@@ -836,7 +812,7 @@ describe Doi, type: :model, vcr: true do
   end
 
   context "parses schema.org" do
-    let(:xml) { ::Base64.strict_encode64(file_fixture('schema_org.json').read) }
+    let(:xml) { file_fixture('schema_org.json').read }
 
     subject { create(:doi, xml: xml, event: "publish") }
 
@@ -876,7 +852,7 @@ describe Doi, type: :model, vcr: true do
   end
 
   context "parses schema.org topmed" do
-    let(:xml) { ::Base64.strict_encode64(file_fixture('schema_org_topmed.json').read) }
+    let(:xml) { file_fixture('schema_org_topmed.json').read }
 
     subject { create(:doi, xml: xml, event: "publish") }
 
@@ -943,7 +919,7 @@ describe Doi, type: :model, vcr: true do
   end
 
   describe "content negotiation" do
-    let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+    let(:xml) { file_fixture('datacite.xml').read }
 
     subject { create(:doi, doi: "10.5438/4k3m-nyvg", xml: xml, event: "publish") }
 
