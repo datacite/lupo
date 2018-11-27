@@ -3,12 +3,12 @@ module Dateable
 
   included do
     def get_date(dates, date_type)
-      dd = dates.find { |d| d["dateType"] == date_type } || {}
+      dd = Array.wrap(dates).find { |d| d["dateType"] == date_type } || {}
       dd.fetch("date", nil)
     end
 
     def set_date(dates, date, date_type)
-      dd = dates.find { |d| d["dateType"] == date_type } || { "dateType" => date_type }
+      dd = Array.wrap(dates).find { |d| d["dateType"] == date_type } || { "dateType" => date_type }
       dd["date"] = date
     end
   end
