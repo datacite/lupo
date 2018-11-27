@@ -438,7 +438,7 @@ class DoisController < ApplicationController
       :dates,
       { dates: [:date, :dateType, :dateInformation] },
       :landingPage,
-      { landingPage: [:status, :contentType, :checked, :result, result: [
+      { landingPage: [:status, :contentType, :checked, result: [
         :error,
         :redirectCount,
         { redirectUrls: [] },
@@ -525,7 +525,7 @@ class DoisController < ApplicationController
     ).except(
       :confirmDoi, :identifier, :prefix, :suffix, :publicationYear,
       :rightsList, :alternateIdentifiers, :relatedIdentifiers, :fundingReferences, :geoLocations,
-      :metadataVersion, :schemaVersion, :state, :mode, :isActive,
+      :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage, 
       :created, :registered, :updated, :lastLandingPage,
       :lastLandingPageStatus, :lastLandingPageStatusCheck,
       :lastLandingPageStatusResult, :lastLandingPageContentType)
