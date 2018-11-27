@@ -214,7 +214,7 @@ class Doi < ActiveRecord::Base
       redirectUrls: { type: :keyword },
       downloadLatency: { type: :scaled_float, scaling_factor: 100 },
       hasSchemaOrg: { type: :boolean },
-      schemaOrgId: { type: :object },
+      schemaOrgId: { type: :keyword },
       dcIdentifier: { type: :keyword },
       citationDoi: { type: :keyword },
       bodyHasPid: { type: :boolean }
