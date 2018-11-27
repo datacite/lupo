@@ -438,7 +438,7 @@ class DoisController < ApplicationController
       :dates,
       { dates: [:date, :dateType, :dateInformation] },
       :landingPage,
-      { landingPage: [:status, :contentType, :checked, result: [
+      { landingPage: [:status, :contentType, :checked, :result, result: [
         :error,
         :redirectCount,
         { redirectUrls: [] },
