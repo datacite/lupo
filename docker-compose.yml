@@ -45,6 +45,8 @@ services:
       ES_JAVA_OPTS: -Xmx256m -Xms256m
       ELASTIC_PASSWORD: changeme
       xpack.security.enabled: "false"
+      http.cors.enabled: "true"
+      http.cors.allow-origin: "*"
     networks:
       - public
     healthcheck:
