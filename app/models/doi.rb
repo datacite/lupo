@@ -33,12 +33,12 @@ class Doi < ActiveRecord::Base
 
     event :register do
       # can't register test prefix
-      transitions :from => [:draft], :to => :registered, :if => [:is_valid?, :not_is_test_prefix?]
+      transitions :from => [:draft], :to => :registered, :if => [:valid?, :not_is_test_prefix?]
     end
 
     event :publish do
       # can't index test prefix
-      transitions :from => [:draft], :to => :findable, :if => [:is_valid?, :not_is_test_prefix?]
+      transitions :from => [:draft], :to => :findable, :if => [:valid?, :not_is_test_prefix?]
       transitions :from => :registered, :to => :findable
     end
 
@@ -77,8 +77,7 @@ class Doi < ActiveRecord::Base
   validates_format_of :url, :with => /\A(ftp|http|https):\/\/[\S]+/ , if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken"
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
-
-  # validate :validation_errors
+  validates :xml, presence: true, xml_schema: true, :unless => Proc.new { |doi| doi.draft? }
 
   after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
@@ -487,9 +486,9 @@ class Doi < ActiveRecord::Base
     prefix != "10.5072"
   end
 
-  def is_valid?
-    validation_errors.blank? && url.present?
-  end
+  # def is_valid?
+  #   valid? && url.present?
+  # end
 
   def is_registered_or_findable?
     %w(registered findable).include?(aasm_state)
@@ -621,7 +620,7 @@ class Doi < ActiveRecord::Base
 
   def set_defaults
     self.is_active = (aasm_state == "findable") ? "\x01" : "\x00"
-    self.version = version.present? ? version + 1 : 0
+    self.version = version.present? ? version + 1 : 1
     self.updated = Time.zone.now.utc.iso8601
   end
 end
