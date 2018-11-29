@@ -5,6 +5,7 @@ services:
     env_file: .env
     environment:
       - ELASTIC_PASSWORD=changeme
+    build: .
     image: datacite/lupo
     ports:
       - "8065:80"
