@@ -184,9 +184,9 @@ class DoisController < ApplicationController
     options = {}
     options[:include] = @include
     options[:is_collection] = false
-    options[:params] = { 
+    options[:params] = {
       current_ability: current_ability,
-      detail: true 
+      detail: true
     }
 
     render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
@@ -221,7 +221,7 @@ class DoisController < ApplicationController
     # logger.info safe_params.inspect
 
     @doi = Doi.new(safe_params)
-    
+
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
 
@@ -234,9 +234,9 @@ class DoisController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-      options[:params] = { 
+      options[:params] = {
         current_ability: current_ability,
-        detail: true 
+        detail: true
       }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :created, location: @doi
@@ -282,9 +282,9 @@ class DoisController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-      options[:params] = { 
+      options[:params] = {
         current_ability: current_ability,
-        detail: true 
+        detail: true
       }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
@@ -437,12 +437,13 @@ class DoisController < ApplicationController
       { types: [:resourceTypeGeneral, :resourceType, :schemaOrg, :bibtex, :citeproc, :ris] },
       :dates,
       { dates: [:date, :dateType, :dateInformation] },
-      :lastLandingPage,
-      :lastLandingPageStatus,
-      :lastLandingPageStatusCheck,
-      :lastLandingPageStatusResult,
+      :landingPage,
       {
-        lastLandingPageStatusResult: [
+        landingPage: [
+          :checked,
+          :url,
+          :status,
+          :contentType,
           :error,
           :redirectCount,
           { redirectUrls: [] },
@@ -455,7 +456,6 @@ class DoisController < ApplicationController
           :bodyHasPid
         ]
       },
-      :lastLandingPageContentType,
       :contentUrl,
       :size,
       :format,
@@ -469,7 +469,7 @@ class DoisController < ApplicationController
       :version,
       :metadataVersion,
       :schemaVersion,
-      :state, 
+      :state,
       :isActive,
       :reason,
       :registered,
@@ -504,6 +504,7 @@ class DoisController < ApplicationController
       related_identifiers: p[:relatedIdentifiers],
       funding_references: p[:fundingReferences],
       geo_locations: p[:geoLocations],
+      landing_page: p[:landingPage],
       last_landing_page: p[:lastLandingPage],
       last_landing_page_status: p[:lastLandingPageStatus],
       last_landing_page_status_check: p[:lastLandingPageStatusCheck],
@@ -512,7 +513,7 @@ class DoisController < ApplicationController
     ).except(
       :confirmDoi, :identifier, :prefix, :suffix, :publicationYear,
       :rightsList, :alternateIdentifiers, :relatedIdentifiers, :fundingReferences, :geoLocations,
-      :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage, 
+      :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage,
       :created, :registered, :updated, :lastLandingPage,
       :lastLandingPageStatus, :lastLandingPageStatusCheck,
       :lastLandingPageStatusResult, :lastLandingPageContentType)

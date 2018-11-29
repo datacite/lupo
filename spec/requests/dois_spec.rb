@@ -528,7 +528,7 @@ describe "dois", type: :request do
 
       let(:doi) { create(:doi, client: client) }
       let(:new_client) { create(:client, symbol: "#{provider.symbol}.magic", provider: provider, password: ENV['MDS_PASSWORD']) }
-      
+
       # attributes MUST be empty
       let(:valid_attributes) {file_fixture('transfer.json').read }
 
@@ -747,7 +747,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
         expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
-        
+
         doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10703")
       end
@@ -1135,7 +1135,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
       end
 
-      it 'returns status code 201' do 
+      it 'returns status code 201' do
 
         expect(response).to have_http_status(201)
       end
@@ -1804,7 +1804,11 @@ describe "dois", type: :request do
     context 'landing page' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:xml) { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48cmVzb3VyY2UgeG1sbnM6eHNpPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYS1pbnN0YW5jZSIgeG1sbnM9Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IiB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTQvbWV0YWRhdGEueHNkIj48aWRlbnRpZmllciBpZGVudGlmaWVyVHlwZT0iRE9JIj4xMC4yNTQ5OS94dWRhMnB6cmFocm9lcXBlZnZucTV6dDZkYzwvaWRlbnRpZmllcj48Y3JlYXRvcnM+PGNyZWF0b3I+PGNyZWF0b3JOYW1lPklhbiBQYXJyeTwvY3JlYXRvck5hbWU+PG5hbWVJZGVudGlmaWVyIHNjaGVtZVVSST0iaHR0cDovL29yY2lkLm9yZy8iIG5hbWVJZGVudGlmaWVyU2NoZW1lPSJPUkNJRCI+MDAwMC0wMDAxLTYyMDItNTEzWDwvbmFtZUlkZW50aWZpZXI+PC9jcmVhdG9yPjwvY3JlYXRvcnM+PHRpdGxlcz48dGl0bGU+U3VibWl0dGVkIGNoZW1pY2FsIGRhdGEgZm9yIEluQ2hJS2V5PVlBUFFCWFFZTEpSWFNBLVVIRkZGQU9ZU0EtTjwvdGl0bGU+PC90aXRsZXM+PHB1Ymxpc2hlcj5Sb3lhbCBTb2NpZXR5IG9mIENoZW1pc3RyeTwvcHVibGlzaGVyPjxwdWJsaWNhdGlvblllYXI+MjAxNzwvcHVibGljYXRpb25ZZWFyPjxyZXNvdXJjZVR5cGUgcmVzb3VyY2VUeXBlR2VuZXJhbD0iRGF0YXNldCI+U3Vic3RhbmNlPC9yZXNvdXJjZVR5cGU+PHJpZ2h0c0xpc3Q+PHJpZ2h0cyByaWdodHNVUkk9Imh0dHBzOi8vY3JlYXRpdmVjb21tb25zLm9yZy9zaGFyZS15b3VyLXdvcmsvcHVibGljLWRvbWFpbi9jYzAvIj5ObyBSaWdodHMgUmVzZXJ2ZWQ8L3JpZ2h0cz48L3JpZ2h0c0xpc3Q+PC9yZXNvdXJjZT4=" }
-      let(:link_check_result) { {
+      let(:landingPage) { {
+        "checked" => Time.zone.now.utc.iso8601,
+        "status" => 200,
+        "url" => url,
+        "contentType" => "text/html",
         "error" => nil,
         "redirectCount" => 0,
         "redirectUrls" => [],
@@ -1823,11 +1827,7 @@ describe "dois", type: :request do
               "doi" => "10.14454/10703",
               "url" => url,
               "xml" => xml,
-              "lastLandingPage" => url,
-              "lastLandingPageStatus" => 200,
-              "lastLandingPageStatusCheck" => Time.zone.now,
-              "lastLandingPageContentType" => "text/html",
-              "lastLandingPageStatusResult" => link_check_result,
+              "landingPage" => landingPage,
               "event" => "publish"
             },
             "relationships"=> {
@@ -1845,10 +1845,10 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a doi' do
+        puts json.dig('data', 'attributes')
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'landingPage', 'status')).to eq(200)
-        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(link_check_result)
+        expect(json.dig('data', 'attributes', 'landingPage')).to eq(landingPage)
       end
 
       it 'returns status code 201' do
@@ -1864,7 +1864,11 @@ describe "dois", type: :request do
     context 'landing page schema-org-id hash' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:xml) { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48cmVzb3VyY2UgeG1sbnM6eHNpPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYS1pbnN0YW5jZSIgeG1sbnM9Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IiB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC00IGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTQvbWV0YWRhdGEueHNkIj48aWRlbnRpZmllciBpZGVudGlmaWVyVHlwZT0iRE9JIj4xMC4yNTQ5OS94dWRhMnB6cmFocm9lcXBlZnZucTV6dDZkYzwvaWRlbnRpZmllcj48Y3JlYXRvcnM+PGNyZWF0b3I+PGNyZWF0b3JOYW1lPklhbiBQYXJyeTwvY3JlYXRvck5hbWU+PG5hbWVJZGVudGlmaWVyIHNjaGVtZVVSST0iaHR0cDovL29yY2lkLm9yZy8iIG5hbWVJZGVudGlmaWVyU2NoZW1lPSJPUkNJRCI+MDAwMC0wMDAxLTYyMDItNTEzWDwvbmFtZUlkZW50aWZpZXI+PC9jcmVhdG9yPjwvY3JlYXRvcnM+PHRpdGxlcz48dGl0bGU+U3VibWl0dGVkIGNoZW1pY2FsIGRhdGEgZm9yIEluQ2hJS2V5PVlBUFFCWFFZTEpSWFNBLVVIRkZGQU9ZU0EtTjwvdGl0bGU+PC90aXRsZXM+PHB1Ymxpc2hlcj5Sb3lhbCBTb2NpZXR5IG9mIENoZW1pc3RyeTwvcHVibGlzaGVyPjxwdWJsaWNhdGlvblllYXI+MjAxNzwvcHVibGljYXRpb25ZZWFyPjxyZXNvdXJjZVR5cGUgcmVzb3VyY2VUeXBlR2VuZXJhbD0iRGF0YXNldCI+U3Vic3RhbmNlPC9yZXNvdXJjZVR5cGU+PHJpZ2h0c0xpc3Q+PHJpZ2h0cyByaWdodHNVUkk9Imh0dHBzOi8vY3JlYXRpdmVjb21tb25zLm9yZy9zaGFyZS15b3VyLXdvcmsvcHVibGljLWRvbWFpbi9jYzAvIj5ObyBSaWdodHMgUmVzZXJ2ZWQ8L3JpZ2h0cz48L3JpZ2h0c0xpc3Q+PC9yZXNvdXJjZT4=" }
-      let(:link_check_result) { {
+      let(:landingPage) { {
+        "checked" => Time.zone.now.utc.iso8601,
+        "status" => 200,
+        "url" => url,
+        "contentType" => "text/html",
         "error" => nil,
         "redirectCount" => 0,
         "redirectUrls" => [],
@@ -1889,11 +1893,7 @@ describe "dois", type: :request do
               "doi" => "10.14454/10703",
               "url" => url,
               "xml" => xml,
-              "lastLandingPage" => url,
-              "lastLandingPageStatus" => 200,
-              "lastLandingPageStatusCheck" => Time.zone.now,
-              "lastLandingPageContentType" => "text/html",
-              "lastLandingPageStatusResult" => link_check_result,
+              "landingPage" => landingPage,
               "event" => "publish"
             },
             "relationships"=> {
@@ -1913,8 +1913,7 @@ describe "dois", type: :request do
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'landingPage', 'status')).to eq(200)
-        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(link_check_result)
+        expect(json.dig('data', 'attributes', 'landingPage')).to eq(landingPage)
       end
 
       it 'returns status code 201' do
@@ -2026,7 +2025,11 @@ describe "dois", type: :request do
   end
 
   describe 'GET /dois/<doi> linkcheck results' do
-    let(:last_landing_page_status_result) { {
+    let(:landing_page) { {
+      "checked" => Time.zone.now.utc.iso8601,
+      "status" => 200,
+      "url" => "http://example.com",
+      "contentType" => "text/html",
       "error" => nil,
       "redirectCount" => 0,
       "redirectUrls" => [],
@@ -2045,7 +2048,7 @@ describe "dois", type: :request do
         client: client,
         state: "findable",
         event: 'publish',
-        last_landing_page_status_result: last_landing_page_status_result
+        landing_page: landing_page
         )
     }
 
@@ -2058,7 +2061,7 @@ describe "dois", type: :request do
         client: other_client,
         state: "findable",
         event: 'publish',
-        last_landing_page_status_result: last_landing_page_status_result
+        landing_page: landing_page
         )
     }
 
@@ -2066,9 +2069,9 @@ describe "dois", type: :request do
       let(:headers) { { 'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json' } }
       before { get "/dois/#{doi.doi}", headers: headers}
 
-      it 'returns without link_check_results' do
+      it 'returns without landing page results' do
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
-        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(nil)
+        expect(json.dig('data', 'attributes', 'landingPage')).to eq(nil)
       end
     end
 
@@ -2078,9 +2081,9 @@ describe "dois", type: :request do
 
       before { get "/dois/#{doi.doi}", headers: headers }
 
-      it 'returns with link_check_results' do
+      it 'returns with landing page results' do
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
-        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(last_landing_page_status_result)
+        expect(json.dig('data', 'attributes', 'landingPage')).to eq(landing_page)
       end
     end
 
@@ -2091,9 +2094,9 @@ describe "dois", type: :request do
 
       before { get "/dois/#{other_doi.doi}", headers: headers }
 
-      it 'returns with link_check_results' do
+      it 'returns with landing page results' do
         expect(json.dig('data', 'attributes', 'doi')).to eq(other_doi.doi)
-        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(nil)
+        expect(json.dig('data', 'attributes', 'landingPage')).to eq(nil)
       end
     end
 
@@ -2104,9 +2107,9 @@ describe "dois", type: :request do
 
       before { get "/dois/#{doi.doi}", headers: headers }
 
-      it 'returns with link_check_results' do
+      it 'returns with landing page results' do
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
-        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(last_landing_page_status_result)
+        expect(json.dig('data', 'attributes', 'landingPage')).to eq(landing_page)
       end
     end
 
