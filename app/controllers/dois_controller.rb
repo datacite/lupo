@@ -198,13 +198,7 @@ class DoisController < ApplicationController
     @doi = Doi.new(safe_params)
     authorize! :validate, @doi
 
-    if @doi.errors.present?
-      logger.info @doi.errors.inspect
-      render json: serialize(@doi.errors), status: :ok
-    elsif @doi.validation_errors?
-      logger.info @doi.validation_errors.inspect
-      render json: serialize(@doi.validation_errors), status: :ok
-    else
+    if @doi.valid?
       options = {}
       options[:include] = @include
       options[:is_collection] = false
@@ -213,6 +207,9 @@ class DoisController < ApplicationController
       }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
+    else
+      logger.info @doi.errors.inspect
+      render json: serialize(@doi.errors), status: :ok
     end
   end
 
@@ -227,10 +224,7 @@ class DoisController < ApplicationController
 
     authorize! :new, @doi
 
-    if safe_params[:xml] && safe_params[:event] && @doi.validation_errors?
-      logger.error @doi.validation_errors.inspect
-      render json: serialize(@doi.validation_errors), status: :unprocessable_entity
-    elsif @doi.save
+    if @doi.save
       options = {}
       options[:include] = @include
       options[:is_collection] = false
@@ -275,10 +269,9 @@ class DoisController < ApplicationController
       authorize! :new, @doi
     end
 
-    if safe_params[:xml] && (safe_params[:event] || safe_params[:validate]) && @doi.validation_errors?
-      logger.error @doi.validation_errors.inspect
-      render json: serialize(@doi.validation_errors), status: :unprocessable_entity
-    elsif @doi.save
+   # if safe_params[:xml] && (safe_params[:event] || safe_params[:validate]) && @doi.validation_errors?
+
+    if @doi.save
       options = {}
       options[:include] = @include
       options[:is_collection] = false
@@ -498,6 +491,7 @@ class DoisController < ApplicationController
     p.merge(
       xml: p[:xml].present? ? Base64.decode64(p[:xml]).force_encoding("UTF-8") : nil,
       schema_version: p[:schemaVersion],
+      version_info: p[:version],
       publication_year: p[:publicationYear],
       rights_list: p[:rightsList],
       alternate_identifiers: p[:alternateIdentifiers],
@@ -513,7 +507,7 @@ class DoisController < ApplicationController
       :confirmDoi, :identifier, :prefix, :suffix, :publicationYear,
       :rightsList, :alternateIdentifiers, :relatedIdentifiers, :fundingReferences, :geoLocations,
       :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage, 
-      :created, :registered, :updated, :lastLandingPage,
+      :created, :registered, :updated, :lastLandingPage, :version,
       :lastLandingPageStatus, :lastLandingPageStatusCheck,
       :lastLandingPageStatusResult, :lastLandingPageContentType)
   end
