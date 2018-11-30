@@ -4,11 +4,10 @@ describe "content_negotation", type: :request do
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
-  let(:xml) { file_fixture('datacite.xml').read }
-  let(:doi) { create(:doi, xml: xml, client: client) }
+  let(:doi) { create(:doi, client: client, aasm_state: "findable") }
 
   context "no permission" do
-    let(:doi) { create(:doi, xml: xml) }
+    let(:doi) { create(:doi) }
 
     before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.jats+xml", 'Authorization' => 'Bearer ' + bearer } }
 
@@ -21,7 +20,8 @@ describe "content_negotation", type: :request do
     end
   end
 
-  context "no authentication" do      
+  context "no authentication" do
+    let(:doi) { create(:doi) }  
     before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.jats+xml" } }
 
     it 'returns error message' do
@@ -38,8 +38,8 @@ describe "content_negotation", type: :request do
 
     it 'returns the Doi' do
       jats = Maremma.from_xml(response.body).fetch("element_citation", {})
-      expect(jats.dig("publication_type")).to eq("journal")
-      expect(jats.dig("article_title")).to eq("Eating your own Dog Food")
+      expect(jats.dig("publication_type")).to eq("data")
+      expect(jats.dig("data_title")).to eq("Data from: A new malaria agent in African hominids.")
     end
 
     it 'returns status code 200' do
@@ -48,14 +48,12 @@ describe "content_negotation", type: :request do
   end
 
   context "application/vnd.jats+xml link" do
-    let(:doi) { create(:doi, xml: xml, client: client, aasm_state: "findable") }
-
     before { get "/application/vnd.jats+xml/#{doi.doi}" }
 
     it 'returns the Doi' do
       jats = Maremma.from_xml(response.body).fetch("element_citation", {})
-      expect(jats.dig("publication_type")).to eq("journal")
-      expect(jats.dig("article_title")).to eq("Eating your own Dog Food")
+      expect(jats.dig("publication_type")).to eq("data")
+      expect(jats.dig("data_title")).to eq("Data from: A new malaria agent in African hominids.")
     end
 
     it 'returns status code 200' do
@@ -69,8 +67,8 @@ describe "content_negotation", type: :request do
     it 'returns the Doi' do
       data = Maremma.from_xml(response.body).to_h.fetch("resource", {})
       expect(data.dig("xmlns")).to eq("http://datacite.org/schema/kernel-4")
-      expect(data.dig("publisher")).to eq("DataCite")
-      expect(data.dig("titles", "title")).to eq("Eating your own Dog Food")
+      expect(data.dig("publisher")).to eq("Dryad Digital Repository")
+      expect(data.dig("titles", "title")).to eq("Data from: A new malaria agent in African hominids.")
     end
 
     it 'returns status code 200' do
@@ -79,15 +77,13 @@ describe "content_negotation", type: :request do
   end
 
   context "application/vnd.datacite.datacite+xml link" do
-    let(:doi) { create(:doi, xml: xml, client: client, aasm_state: "findable") }
-
     before { get "/application/vnd.datacite.datacite+xml/#{doi.doi}" }
 
     it 'returns the Doi' do
       data = Maremma.from_xml(response.body).to_h.fetch("resource", {})
       expect(data.dig("xmlns")).to eq("http://datacite.org/schema/kernel-4")
-      expect(data.dig("publisher")).to eq("DataCite")
-      expect(data.dig("titles", "title")).to eq("Eating your own Dog Food")
+      expect(data.dig("publisher")).to eq("Dryad Digital Repository")
+      expect(data.dig("titles", "title")).to eq("Data from: A new malaria agent in African hominids.")
     end
 
     it 'returns status code 200' do
@@ -97,7 +93,7 @@ describe "content_negotation", type: :request do
 
   context "application/vnd.datacite.datacite+xml schema 3" do
     let(:xml) { file_fixture('datacite_schema_3.xml').read }
-    let(:doi) { create(:doi, xml: xml, client: client) }
+    let(:doi) { create(:doi, xml: xml, client: client, regenerate: false) }
 
     before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml", 'Authorization' => 'Bearer ' + bearer  } }
 
@@ -152,8 +148,6 @@ describe "content_negotation", type: :request do
   end
 
   context "application/vnd.datacite.datacite+json link" do
-    let(:doi) { create(:doi, xml: xml, client: client, aasm_state: "findable") }
-
     before { get "/application/vnd.datacite.datacite+json/#{doi.doi}" }
 
     it 'returns the Doi' do
@@ -178,8 +172,6 @@ describe "content_negotation", type: :request do
   end
 
   context "application/vnd.crosscite.crosscite+json link" do
-    let(:doi) { create(:doi, xml: xml, client: client, aasm_state: "findable") }
-
     before { get "/application/vnd.crosscite.crosscite+json/#{doi.doi}" }
 
     it 'returns the Doi' do
@@ -195,7 +187,7 @@ describe "content_negotation", type: :request do
     before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.schemaorg.ld+json", 'Authorization' => 'Bearer ' + bearer  } }
 
     it 'returns the Doi' do
-      expect(json["@type"]).to eq("ScholarlyArticle")
+      expect(json["@type"]).to eq("Dataset")
     end
 
     it 'returns status code 200' do
@@ -204,12 +196,10 @@ describe "content_negotation", type: :request do
   end
 
   context "application/vnd.schemaorg.ld+json link" do
-    let(:doi) { create(:doi, xml: xml, client: client, aasm_state: "findable") }
-
     before { get "/application/vnd.schemaorg.ld+json/#{doi.doi}" }
 
     it 'returns the Doi' do
-      expect(json["@type"]).to eq("ScholarlyArticle")
+      expect(json["@type"]).to eq("Dataset")
     end
 
     it 'returns status code 200' do
@@ -221,7 +211,7 @@ describe "content_negotation", type: :request do
     before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.citationstyles.csl+json", 'Authorization' => 'Bearer ' + bearer  } }
 
     it 'returns the Doi' do
-      expect(json["type"]).to eq("article-journal")
+      expect(json["type"]).to eq("dataset")
     end
 
     it 'returns status code 200' do
@@ -230,12 +220,10 @@ describe "content_negotation", type: :request do
   end
 
   context "application/vnd.citationstyles.csl+json link" do
-    let(:doi) { create(:doi, xml: xml, client: client, aasm_state: "findable") }
-
     before { get "/application/vnd.citationstyles.csl+json/#{doi.doi}" }
 
     it 'returns the Doi' do
-      expect(json["type"]).to eq("article-journal")
+      expect(json["type"]).to eq("dataset")
     end
 
     it 'returns status code 200' do
@@ -247,7 +235,7 @@ describe "content_negotation", type: :request do
     before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/x-research-info-systems", 'Authorization' => 'Bearer ' + bearer  } }
 
     it 'returns the Doi' do
-      expect(response.body).to start_with("TY  - RPRT")
+      expect(response.body).to start_with("TY  - DATA")
     end
 
     it 'returns status code 200' do
@@ -256,12 +244,10 @@ describe "content_negotation", type: :request do
   end
 
   context "application/x-research-info-systems link" do
-    let(:doi) { create(:doi, xml: xml, client: client, aasm_state: "findable") }
-
     before { get "/application/x-research-info-systems/#{doi.doi}" }
 
     it 'returns the Doi' do
-      expect(response.body).to start_with("TY  - RPRT")
+      expect(response.body).to start_with("TY  - DATA")
     end
 
     it 'returns status code 200' do
@@ -273,7 +259,7 @@ describe "content_negotation", type: :request do
     before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/x-bibtex", 'Authorization' => 'Bearer ' + bearer  } }
 
     it 'returns the Doi' do
-      expect(response.body).to start_with("@article{https://handle.test.datacite.org/#{doi.doi.downcase}")
+      expect(response.body).to start_with("@misc{https://handle.test.datacite.org/#{doi.doi.downcase}")
     end
 
     it 'returns status code 200' do
@@ -282,24 +268,7 @@ describe "content_negotation", type: :request do
   end
 
   context "application/x-bibtex link" do
-    let(:doi) { create(:doi, xml: xml, client: client, aasm_state: "findable") }
-
     before { get "/application/x-bibtex/#{doi.doi}" }
-
-    it 'returns the Doi' do
-      expect(response.body).to start_with("@article{https://handle.test.datacite.org/#{doi.doi.downcase}")
-    end
-
-    it 'returns status code 200' do
-      expect(response).to have_http_status(200)
-    end
-  end
-
-  context "application/x-bibtex nasa gsfc" do
-    let(:xml) { file_fixture('datacite_gsfc.xml').read }
-    let(:doi) { create(:doi, xml: xml, client: client) }
-
-    before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/x-bibtex", 'Authorization' => 'Bearer ' + bearer  } }
 
     it 'returns the Doi' do
       expect(response.body).to start_with("@misc{https://handle.test.datacite.org/#{doi.doi.downcase}")
@@ -315,7 +284,7 @@ describe "content_negotation", type: :request do
       before { get "/#{doi.doi}", headers: { "HTTP_ACCEPT" => "text/x-bibliography", 'Authorization' => 'Bearer ' + bearer  } }
 
       it 'returns the Doi' do
-        expect(response.body).to start_with("Fenner, M. (2016)")
+        expect(response.body).to start_with("Ollomo, B.")
       end
 
       it 'returns status code 200' do
@@ -324,12 +293,10 @@ describe "content_negotation", type: :request do
     end
 
     context "default style link" do
-      let(:doi) { create(:doi, xml: xml, client: client, aasm_state: "findable") }
-
       before { get "/text/x-bibliography/#{doi.doi}" }
 
       it 'returns the Doi' do
-        expect(response.body).to start_with("Fenner, M. (2016)")
+        expect(response.body).to start_with("Ollomo, B.")
       end
 
       it 'returns status code 200' do
@@ -341,7 +308,7 @@ describe "content_negotation", type: :request do
       before { get "/#{doi.doi}?style=ieee", headers: { "HTTP_ACCEPT" => "text/x-bibliography", 'Authorization' => 'Bearer ' + bearer  } }
 
       it 'returns the Doi' do
-        expect(response.body).to start_with("M. Fenner")
+        expect(response.body).to start_with("B. Ollomo")
       end
 
       it 'returns status code 200' do
@@ -349,13 +316,11 @@ describe "content_negotation", type: :request do
       end
     end
 
-    context "ieee style link" do
-      let(:doi) { create(:doi, xml: xml, client: client, aasm_state: "findable") }
-      
+    context "ieee style link" do      
       before { get "/text/x-bibliography/#{doi.doi}?style=ieee" }
 
       it 'returns the Doi' do
-        expect(response.body).to start_with("M. Fenner")
+        expect(response.body).to start_with("B. Ollomo")
       end
 
       it 'returns status code 200' do
@@ -367,7 +332,7 @@ describe "content_negotation", type: :request do
       before { get "/#{doi.doi}?style=vancouver&locale=de", headers: { "HTTP_ACCEPT" => "text/x-bibliography", 'Authorization' => 'Bearer ' + bearer  } }
 
       it 'returns the Doi' do
-        expect(response.body).to start_with("Fenner M")
+        expect(response.body).to start_with("Ollomo B")
       end
 
       it 'returns status code 200' do
