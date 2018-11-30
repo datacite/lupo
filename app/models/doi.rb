@@ -621,4 +621,65 @@ class Doi < ActiveRecord::Base
     self.version = version.present? ? version + 1 : 0
     self.updated = Time.zone.now.utc.iso8601
   end
+
+  def self.migrate_landing_page(options={})
+    logger = Logger.new(STDOUT)
+    logger.info "Starting migration"
+
+    # Handle camel casing first.
+    Doi.where.not('last_landing_page_status_result' => nil).find_each do |doi|
+      begin
+        # First we try and fix into camel casing
+        result = doi.last_landing_page_status_result
+        mappings = {
+          "body-has-pid" => "bodyHasPid",
+          "dc-identifier" => "dcIdentifier",
+          "citation-doi" => "citationDoi",
+          "redirect-urls" => "redirectUrls",
+          "schema-org-id" => "schemaOrgId",
+          "has-schema-org" => "hasSchemaOrg",
+          "redirect-count" => "redirectCount",
+          "download-latency" => "downloadLatency"
+        }
+        result = result.map {|k, v| [mappings[k] || k, v] }.to_h
+#        doi.update_columns("last_landing_page_status_result": result)
+
+        # Do a fix of the stored download Latency
+        # Sometimes was floating point precision, we dont need this
+        download_latency = result['downloadLatency']
+        download_latency = download_latency.nil? ? download_latency : download_latency.round
+
+        # Try to put the checked date into ISO8601
+        # If we dont have one (there was legacy reasons) then set to unix epoch
+        checked = doi.last_landing_page_status_check
+        checked = checked.nil? ? Time.at(0) : checked
+        checked = checked.iso8601
+
+        # Next we want to build a new landing_page result.
+        landing_page = {
+          "checked" => checked,
+          "status" => doi.last_landing_page_status,
+          "url" => doi.last_landing_page,
+          "contentType" => doi.last_landing_page_content_type,
+          "error" => result['error'],
+          "redirectCount" => result['redirectCount'],
+          "redirectUrls" => result['redirectUrls'],
+          "downloadLatency" => download_latency,
+          "hasSchemaOrg" => result['hasSchemaOrg'],
+          "schemaOrgId" => result['schemaOrgId'],
+          "dcIdentifier" => result['dcIdentifier'],
+          "citationDoi" => result['citationDoi'],
+          "bodyHasPid" => result['bodyHasPid'],
+        }
+
+        doi.update_columns("landing_page": landing_page)
+
+        logger.info "Updated " + doi.doi
+
+      rescue TypeError, NoMethodError => error
+        logger.error "Error updating landing page " + doi.doi + ": " + error.message
+      end
+    end
+  end
+
 end
