@@ -11,7 +11,7 @@ class WorkSerializer
   belongs_to :resource_type, record_type: "resource-types", serializer: :ResourceType
 
   attribute :author do |object|
-    Array.wrap(object.creator).map do |c| 
+    Array.wrap(object.creators).map do |c| 
       if (c["givenName"].present? || c["familyName"].present?)
         { "given" => c["givenName"],
           "family" => c["familyName"] }.compact

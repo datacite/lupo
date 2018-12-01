@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_24_062253) do
+ActiveRecord::Schema.define(version: 2018_11_30_182349) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -132,8 +132,8 @@ ActiveRecord::Schema.define(version: 2018_11_24_062253) do
     t.string "reason"
     t.string "source", limit: 191
     t.datetime "indexed", precision: 3, default: "1970-01-01 00:00:00", null: false
-    t.json "creator"
-    t.json "contributor"
+    t.json "creators"
+    t.json "contributors"
     t.json "titles"
     t.text "publisher"
     t.integer "publication_year"
@@ -154,6 +154,7 @@ ActiveRecord::Schema.define(version: 2018_11_24_062253) do
     t.string "schema_version", limit: 191
     t.json "content_url"
     t.binary "xml", limit: 16777215
+    t.string "agency", limit: 191, default: "DataCite"
     t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
     t.index ["created", "indexed", "updated"], name: "index_dataset_on_created_indexed_updated"
     t.index ["datacentre"], name: "FK5605B47847B5F5FF"

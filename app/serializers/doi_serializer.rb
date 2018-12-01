@@ -4,7 +4,7 @@ class DoiSerializer
   set_type :dois
   set_id :uid
 
-  attributes :doi, :prefix, :suffix, :identifier, :creator, :titles, :publisher, :periodical, :publication_year, :subjects, :contributor, :dates, :language, :types, :alternate_identifiers, :related_identifiers, :sizes, :formats, :version, :rights_list, :descriptions, :geo_locations, :funding_references, :xml, :url, :content_url, :metadata_version, :schema_version, :source, :is_active, :state, :reason, :landing_page, :created, :registered, :updated
+  attributes :doi, :prefix, :suffix, :identifier, :creators, :titles, :publisher, :periodical, :publication_year, :subjects, :contributors, :dates, :language, :types, :alternate_identifiers, :related_identifiers, :sizes, :formats, :version, :rights_list, :descriptions, :geo_locations, :funding_references, :xml, :url, :content_url, :metadata_version, :schema_version, :source, :is_active, :state, :reason, :landing_page, :created, :registered, :updated
   attributes :prefix, :suffix, if: Proc.new { |object, params| params && params[:detail] }
 
   belongs_to :client, record_type: :clients

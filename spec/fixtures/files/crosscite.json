@@ -9,7 +9,7 @@
         "bibtex": "misc",
         "ris": "COMP"
     },
-    "creator": [{
+    "creators": [{
         "type": "Person",
         "name": "Kristian Garza",
         "givenName": "Kristian",

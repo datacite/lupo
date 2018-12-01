@@ -36,10 +36,11 @@ describe "works", type: :request do
       it 'returns the Doi' do
         expect(json).not_to be_empty
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'author')).to eq([{"family"=>"Fenner", "given"=>"Martin"}])
-        expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
-        expect(json.dig('data', 'attributes', 'container-title')).to eq("DataCite")
-        expect(json.dig('data', 'attributes', 'published')).to eq("2016")
+        expect(json.dig('data', 'attributes', 'author').length).to eq(8)
+        expect(json.dig('data', 'attributes', 'author').first).to eq("family"=>"Ollomo", "given"=>"Benjamin")
+        expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
+        expect(json.dig('data', 'attributes', 'container-title')).to eq("Dryad Digital Repository")
+        expect(json.dig('data', 'attributes', 'published')).to eq("2011")
       end
 
       it 'returns status code 200' do

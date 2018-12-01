@@ -2,7 +2,6 @@ class XmlSchemaValidator < ActiveModel::EachValidator
   # mapping of DataCite schema properties to database fields
   def schema_attributes(el)
     schema = {
-      "creators" => "creator",
       "date" => "dates",
       "publicationYear" => "publication_year",
       "alternateIdentifiers" => "alternate_identifiers",
