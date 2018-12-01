@@ -86,6 +86,8 @@ describe "dois", type: :request do
   end
 
   describe 'state' do
+    let(:doi_id) { "10.14454/4K3M-NYVG" }
+    let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
     let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }
     let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
 
@@ -109,7 +111,6 @@ describe "dois", type: :request do
     end
 
     context 'register' do
-      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
         {
           "data" => {
@@ -122,15 +123,16 @@ describe "dois", type: :request do
           }
         }
       end
-      before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+      before { patch "/dois/#{doi_id}", params: valid_attributes.to_json, headers: headers }
 
       it 'creates the record' do
-        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi_id.downcase)
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'isActive')).to be false
       end
 
-      it 'returns status code 200' do
-        expect(response).to have_http_status(200)
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
       end
 
       it 'sets state to registered' do
@@ -138,8 +140,36 @@ describe "dois", type: :request do
       end
     end
 
+    context 'register no url' do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "xml" => xml,
+              "event" => "register"
+            }
+          }
+        }
+      end
+      before { patch "/dois/#{doi_id}", params: valid_attributes.to_json, headers: headers }
+
+      it 'creates the record' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi_id.downcase)
+        expect(json.dig('data', 'attributes', 'url')).to be_nil
+        expect(json.dig('data', 'attributes', 'isActive')).to be false
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'state remains draft' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+      end
+    end
+
     context 'publish' do
-      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
         {
           "data" => {
@@ -152,19 +182,49 @@ describe "dois", type: :request do
           }
         }
       end
-      before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+      before { patch "/dois/#{doi_id}", params: valid_attributes.to_json, headers: headers }
 
       it 'updates the record' do
-        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi_id.downcase)
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'isActive')).to be true
       end
 
-      it 'returns status code 200' do
-        expect(response).to have_http_status(200)
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
       end
 
       it 'sets state to findable' do
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
+    end
+
+    context 'publish no url' do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "xml" => xml,
+              "event" => "publish"
+            }
+          }
+        }
+      end
+      before { patch "/dois/#{doi_id}", params: valid_attributes.to_json, headers: headers }
+
+      it 'updates the record' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi_id.downcase)
+        expect(json.dig('data', 'attributes', 'url')).to be_nil
+        expect(json.dig('data', 'attributes', 'isActive')).to be false
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'state remains draft' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("draft")
       end
     end
   end

@@ -33,12 +33,12 @@ class Doi < ActiveRecord::Base
 
     event :register do
       # can't register test prefix
-      transitions :from => [:draft], :to => :registered, :if => [:not_is_test_prefix?]
+      transitions :from => [:draft], :to => :registered, :if => [:registerable?]
     end
 
     event :publish do
       # can't index test prefix
-      transitions :from => [:draft], :to => :findable, :if => [:not_is_test_prefix?]
+      transitions :from => [:draft], :to => :findable, :if => [:registerable?]
       transitions :from => :registered, :to => :findable
     end
 
@@ -485,8 +485,8 @@ class Doi < ActiveRecord::Base
     prefix == "10.5072"
   end
 
-  def not_is_test_prefix?
-    prefix != "10.5072"
+  def registerable?
+    prefix != "10.5072" && url.present?
   end
 
   # def is_valid?
