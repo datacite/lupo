@@ -800,13 +800,12 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
 
-        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
-        expect(json.dig('data', 'attributes', 'creator')).to eq( [{"familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "type"=>"Person"}])
-        expect(json.dig('data', 'attributes', 'publisher')).to eq("DataCite")
-        expect(json.dig('data', 'attributes', 'publicationYear')).to eq(2016)
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"A dataset with a large file for testing purpose. Will be a but over 2.5 MB"}])
+        expect(json.dig('data', 'attributes', 'creators')).to eq([{"familyName"=>"Testing", "givenName"=>"Chris Baars At DANS For", "name"=>"Chris Baars At DANS For Testing", "type"=>"Person"}])
+        expect(json.dig('data', 'attributes', 'publisher')).to eq("DANS/KNAW")
+        expect(json.dig('data', 'attributes', 'publicationYear')).to eq(2018)
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
-        expect(json.dig('data', 'attributes', 'source')).to eq("test")
-        expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
+        expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"misc", "citeproc"=>"dataset", "resourceType"=>"Dataset", "resourceTypeGeneral"=>"Dataset", "ris"=>"DATA", "schemaOrg"=>"Dataset")
 
         doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10703")
