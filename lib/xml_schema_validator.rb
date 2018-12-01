@@ -16,10 +16,25 @@ class XmlSchemaValidator < ActiveModel::EachValidator
     schema[el] || el
   end
 
-  def validate_each(record, attribute, value)
-    return false unless record.schema_version.present?
+  def get_valid_kernel(sv)
+    kernels = {
+      "http://datacite.org/schema/kernel-2.1" => "kernel-2.1",
+      "http://datacite.org/schema/kernel-2.2" => "kernel-2.2",
+      "http://datacite.org/schema/kernel-3.0" => "kernel-3",
+      "http://datacite.org/schema/kernel-3.1" => "kernel-3",
+      "http://datacite.org/schema/kernel-3" => "kernel-3",
+      "http://datacite.org/schema/kernel-4.0" => "kernel-4",
+      "http://datacite.org/schema/kernel-4.1" => "kernel-4",
+      "http://datacite.org/schema/kernel-4" => "kernel-4"
+    }
 
-    kernel = record.schema_version.split("/").last
+    kernels[sv]
+  end
+
+  def validate_each(record, attribute, value)
+    kernel = get_valid_kernel(record.schema_version)
+    return false unless kernel.present?
+    
     filepath = Bundler.rubygems.find_name('bolognese').first.full_gem_path + "/resources/#{kernel}/metadata.xsd"
     schema = Nokogiri::XML::Schema(open(filepath))
   
