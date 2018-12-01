@@ -337,6 +337,8 @@ class DoisController < ApplicationController
   private
 
   def safe_params
+    logger = Logger.new(STDOUT)
+
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
 
     # default values for attributes stored as JSON
@@ -421,7 +423,7 @@ class DoisController < ApplicationController
 
     # extract attributes from xml field and merge with attributes provided directly
     xml = p[:xml].present? ? Base64.decode64(p[:xml]).force_encoding("UTF-8") : nil
-    xml = well_formed_xml(xml)
+    
     meta = parse_xml(xml, doi: p[:doi])
 
     read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher], 
@@ -430,8 +432,9 @@ class DoisController < ApplicationController
       p[:relatedIdentifiers], p[:fundingReferences], p[:geoLocations], p[:rightsList],
       p[:subjects], p[:contentUrl], p[:schemaVersion]].compact
 
-    if meta["from"] == "datacite" && p[:doi].present? && read_attrs.blank?
-      xml = replace_doi(xml, doi: p[:doi])
+    # replace DOI, but otherwise don't touch the XML
+    if meta["from"] == "datacite" && read_attrs.blank?
+      xml = replace_doi(xml, doi: p[:doi] || meta["doi"])
     else
      regenerate = true
     end

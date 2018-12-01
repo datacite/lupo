@@ -24,17 +24,17 @@ module Crosscitable
     def parse_xml(input, options={})
       return {} unless input.present?
 
-      # detect metadata format
-      from = find_from_format(string: input)
+      # check whether input is id and we need to fetch the content
+      id = normalize_id(input, sandbox: sandbox)
 
-      if from.nil?
-        # check whether input is valid id and we need to fetch the content
-        id = normalize_id(input, sandbox: sandbox)
+      if id.present?
         from = find_from_format(id: id)
 
         # generate name for method to call dynamically
         hsh = from.present? ? send("get_" + from, id: id, sandbox: sandbox) : {}
-        input = hsh.fetch("string", nil)        
+        input = hsh.fetch("string", nil)
+      else
+        from = find_from_format(string: input)
       end
 
       meta = from.present? ? send("read_" + from, { string: input, doi: options[:doi], sandbox: sandbox }).compact : {}
@@ -49,6 +49,8 @@ module Crosscitable
     end
 
     def replace_doi(input, options={})
+      return input unless options[:doi].present?
+      
       doc = Nokogiri::XML(input, nil, 'UTF-8', &:noblanks)
       node = doc.at_css("identifier")
       node.content = options[:doi].to_s.upcase if node.present? && options[:doi].present?
@@ -57,17 +59,17 @@ module Crosscitable
 
     def update_xml
       if regenerate
-        # detect metadata format
-        from = find_from_format(string: xml)
+        # check whether input is id and we need to fetch the content
+        id = normalize_id(xml, sandbox: sandbox)
 
-        if from.nil?
-          # check whether input is valid id and we need to fetch the content
-          id = normalize_id(xml, sandbox: sandbox)
+        if id.present?
           from = find_from_format(id: id)
 
           # generate name for method to call dynamically
           hsh = from.present? ? send("get_" + from, id: id, sandbox: sandbox) : {}
-          xml = hsh.fetch("string", nil)        
+          xml = hsh.fetch("string", nil)
+        else
+          from = find_from_format(string: xml)
         end
 
         # generate new xml if attributes have been set directly and/or from metadata are not DataCite XML
@@ -83,7 +85,7 @@ module Crosscitable
     end
 
     def well_formed_xml(string)
-      return '' unless string.present?
+      return nil unless string.present?
   
       from_xml(string) || from_json(string)
 
@@ -93,20 +95,11 @@ module Crosscitable
     def from_xml(string)
       return nil unless string.start_with?('<?xml version=')
 
-      Nokogiri::XML(string) { |config| config.options = Nokogiri::XML::ParseOptions::STRICT }
-
-      nil
-    rescue Nokogiri::XML::SyntaxError => e
-      line, column, level, text = e.message.split(":", 4)
-      message = text.strip + " at line #{line}, column #{column}"
-      errors.add(:xml, message)
-
-      string
+      doc = Nokogiri::XML(string) { |config| config.strict.noblanks }
+      doc.to_xml.strip
     end
   
     def from_json(string)
-      return nil unless string.start_with?('[', '{')
-
       linter = JsonLint::Linter.new
       errors_array = []
 
@@ -114,8 +107,20 @@ module Crosscitable
       valid &&= linter.send(:check_syntax_valid?, string, errors_array)
       valid &&= linter.send(:check_overlapping_keys?, string, errors_array)
 
-      errors_array.each { |e| errors.add(:xml, e.capitalize) }
-      errors_array.empty? ? nil : string
+      raise JSON::ParserError, errors_array.join("\n") if errors_array.present?
+
+      string
+    end
+
+    def get_content_type(string)
+      return "xml" if Nokogiri::XML(string).errors.empty?
+
+      begin
+        JSON.parse(string)
+        return "json"
+      rescue
+        "string"
+      end
     end
   end
 end

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://datacite.org/schema/kernel-4" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4/metadata.xsd">
+    <identifier identifierType="DOI">10.20387/BONARES-R0P3-X8GN</identifier>
+    <creators>
+        <creator>
+            <creatorName>Schucknecht, Anne</creatorName>
+            <givenName>Anne</givenName>
+            <familyName>Schucknecht</familyName>
+            <affiliation>Karlsruhe Institute für Technologie, Institut für Meteorologie und Klimafor-schung, IMK-IFU, Garmisch-Partenkirchen, Deutschland</affiliation>
+        </creator>
+        <creator>
+            <creatorName>Schneider, Katrin</creatorName>
+            <givenName>Katrin</givenName>
+            <familyName>Schneider</familyName>
+            <affiliation>Karlsruhe Institute für Technologie, Institut für Meteorologie und Klimafor-schung, IMK-IFU, Garmisch-Partenkirchen, Deutschland</affiliation>
+        </creator>
+        <creator>
+            <creatorName>Kiese, Ralf</creatorName>
+            <givenName>Ralf</givenName>
+            <familyName>Kiese</familyName>
+            <affiliation>Karlsruhe Institute für Technologie, Institut für Meteorologie und Klimafor-schung, IMK-IFU, Garmisch-Partenkirchen, Deutschland</affiliation>
+        </creator>
+        <creator>
+            <creatorName>Wiesmeier, Martin</creatorName>
+            <givenName>Martin</givenName>
+            <familyName>Wiesmeier</familyName>
+            <affiliation>Technische Universität München, Lehrstuhl für Bodenkunde, Freising, Deutschland; Bayrische Landesanstalt für Landwirtschaft, Institut für Ökologischen Landbau, Bodenkultur und Ressourcenschutz, Freising, Deutschland</affiliation>
+        </creator>
+        <creator>
+            <creatorName>Schloter, Michael</creatorName>
+            <givenName>Michael</givenName>
+            <familyName>Schloter</familyName>
+            <affiliation>Technische Universität München, Lehrstuhl für Bodenkunde, Freising, Deutschland; Helmholtz Zentrum München, Abteilung für vergleichende Mikrobiom-analysen, Neuherberg, Deutschland</affiliation>
+        </creator>
+        <creator>
+            <creatorName>Jentsch, Anke</creatorName>
+            <givenName>Anke</givenName>
+            <familyName>Jentsch</familyName>
+            <affiliation>Universität Bayreuth, Professur für Störungsökologie, Bayreuth, Deutschland</affiliation>
+        </creator>
+        <creator>
+            <creatorName>Köllner, Thomas</creatorName>
+            <givenName>Thomas</givenName>
+            <familyName>Köllner</familyName>
+            <affiliation>Universität Bayreuth, Professur für ökologische Dienstleistungen, Bayreuth, Deutschland</affiliation>
+        </creator>
+        <creator>
+            <creatorName>Dannenmann, Michael</creatorName>
+            <givenName>Michael</givenName>
+            <familyName>Dannenmann</familyName>
+            <affiliation>Karlsruher Institut für Technologie (KIT) – Campus Alpin Institut für Meteorologie und Klimaforschung, Atmosphärische Umweltforschung (IMK-IFU)</affiliation>
+        </creator>
+    </creators>
+    <titles>
+        <title> SUSALPS Conference 2018 – Book of Abstracts: Montane and alpine grasslands under climate change – ways in a sustainable future</title>
+    </titles>
+    <publisher>BonaRes Centre for Soil Research</publisher>
+    <publicationYear>2018</publicationYear>
+    <subjects>
+        <subject>BonaRes</subject>
+        <subject>montane and alpine grasslands</subject>
+        <subject>soil organic matter</subject>
+        <subject>microbiome</subject>
+        <subject>plant diversity and productivity</subject>
+        <subject>biogeochemical cycles</subject>
+        <subject>remote sensing</subject>
+        <subject>ecosystem services</subject>
+        <subject>alpine farming</subject>
+    </subjects>
+    <contributors>
+        <contributor contributorType="ContactPerson">
+            <contributorName>Kiese, Ralf</contributorName>
+            <givenName>Ralf</givenName>
+            <familyName>Kiese</familyName>
+            <affiliation>Karlsruhe Institute für Technologie, Institut für Meteorologie und Klimafor-schung, IMK-IFU, Garmisch-Partenkirchen, Deutschland</affiliation>
+        </contributor>
+    </contributors>
+    <dates>
+        <date dateType="Issued">
+
+
+2018-11-23</date>
+    </dates>
+    <language>en</language>
+    <resourceType resourceTypeGeneral="Text">Document</resourceType>
+    <sizes>
+        <size>1270</size>
+    </sizes>
+    <formats>
+        <format>PDF</format>
+    </formats>
+    <rightsList>
+        <rights rightsURI="https://creativecommons.org/licenses/by/4.0/legalcode">Creative Commons Attribution 4.0 International</rights>
+    </rightsList>
+    <descriptions>
+        <description descriptionType="Abstract">
+From 18 to 20 September 2018, the SUSALPS Conference "Montane and alpine grasslands under climate change – ways in a sustainable future" was held in Garmisch-Partenkirchen, Germany. More than 60 participants from nine nations attended the conference. The event covered a broad scope and offered the opportunity to discuss both fundamental research and practical approaches in grassland management. At the conference's closing day, ex-cursions took place to the SUSALPS experimental areas in Fendt and on the Brunnenkopfalm. This publication provides the abstracts of all oral and poster presentations.</description>
+    </descriptions>
+    <fundingReferences>
+        <fundingReference>
+            <funderName>German Federal Ministry of Education and Research</funderName>
+            <funderIdentifier funderIdentifierType="Crossref Funder ID">https://doi.org/10.13039/501100002347</funderIdentifier>
+            <awardNumber>031B0027A</awardNumber>
+            <awardTitle>Sustainable use of alpine and pre-alpine grassland soils in a changing climate - Subproject A</awardTitle>
+        </fundingReference>
+        <fundingReference>
+            <funderName>Federal Ministry of Education and Research</funderName>
+            <funderIdentifier funderIdentifierType="Crossref Funder ID">https://doi.org/10.13039/501100002347</funderIdentifier>
+            <awardNumber>031B0027B</awardNumber>
+            <awardTitle>Sustainable use of alpine and pre-alpine grassland soils in a changing climate - Subproject B</awardTitle>
+        </fundingReference>
+        <fundingReference>
+            <funderName>Federal Ministry of Education and Research</funderName>
+            <funderIdentifier funderIdentifierType="Crossref Funder ID">https://doi.org/10.13039/501100002347</funderIdentifier>
+            <awardNumber>031B0027C</awardNumber>
+            <awardTitle>Sustainable use of alpine and pre-alpine grassland soils in a changing climate - Subproject C</awardTitle>
+        </fundingReference>
+        <fundingReference>
+            <funderName>Federal Ministry of Education and Research</funderName>
+            <funderIdentifier funderIdentifierType="Crossref Funder ID">https://doi.org/10.13039/501100002347</funderIdentifier>
+            <awardNumber>031B0027D</awardNumber>
+            <awardTitle>Sustainable use of alpine and pre-alpine grassland soils in a changing climate - Subproject D</awardTitle>
+        </fundingReference>
+        <fundingReference>
+            <funderName>Federal Ministry of Education and Research</funderName>
+            <funderIdentifier funderIdentifierType="Crossref Funder ID">https://doi.org/10.13039/501100002347</funderIdentifier>
+            <awardNumber>031B0027E</awardNumber>
+            <awardTitle>Sustainable use of alpine and pre-alpine grassland soils in a changing climate - Subproject E</awardTitle>
+        </fundingReference>
+    </fundingReferences>
+</resource>

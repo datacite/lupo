@@ -3,39 +3,39 @@ require 'rails_helper'
 describe Doi, vcr: true do
   let(:xml) { file_fixture('datacite.xml').read }
 
-  subject { create(:doi, xml: xml) }
+  subject { DoisController.new }
 
   context "from_xml" do
     it "from_xml" do
       string = file_fixture('datacite.xml').read
-      expect(subject.from_xml(string)).to be_nil
-      expect(subject.errors).to be_empty
+      expect(subject.from_xml(string)).to eq(string)
     end
 
     it "from_xml malformed" do
       string = file_fixture('datacite_malformed.xml').read
-      expect(subject.from_xml(string)).to eq(string)
-      expect(subject.errors.messages).to eq(xml: ["Premature end of data in tag resource line 2 at line 40, column 1"])
+      expect { subject.from_xml(string) }.to raise_error(Nokogiri::XML::SyntaxError, "40:1: FATAL: Premature end of data in tag resource line 2")
     end
   end
 
   context "from_json" do
     it "from_json" do
       string = file_fixture('citeproc.json').read
-      expect(subject.from_json(string)).to be_nil
-      expect(subject.errors).to be_empty
+      expect(subject.from_json(string)).to eq(string)
+    end
+
+    it "from_json starts with unexpected character" do
+      string = file_fixture('datacite.xml').read
+      expect { subject.from_json(string) }.to raise_error(JSON::ParserError, "unexpected character at line 1, column 1 [parse.c:671]")
     end
 
     it "from_json malformed" do
       string = file_fixture('citeproc_malformed.json').read
-      expect(subject.from_json(string)).to eq(string)
-      expect(subject.errors.messages).to eq(xml: ["Expected comma, not a string at line 4, column 9 [parse.c:381]"])
+      expect { subject.from_json(string) }.to raise_error(JSON::ParserError, "expected comma, not a string at line 4, column 9 [parse.c:381]")
     end
 
     it "from_json duplicate keys" do
       string = file_fixture('citeproc_duplicate_keys.json').read
-      expect(subject.from_json(string)).to eq(string)
-      expect(subject.errors.messages).to eq(xml: ["The same key is defined more than once: id"])
+      expect { subject.from_json(string) }.to raise_error(JSON::ParserError, "The same key is defined more than once: id")
     end
   end
 
@@ -43,31 +43,73 @@ describe Doi, vcr: true do
     it "from_xml" do
       string = file_fixture('datacite.xml').read
       expect(subject.well_formed_xml(string)).to eq(string)
-      expect(subject.errors).to be_empty
     end
 
     it "from_xml malformed" do
       string = file_fixture('datacite_malformed.xml').read
-      expect(subject.well_formed_xml(string)).to eq(string)
-      expect(subject.errors.messages).to eq(xml: ["Premature end of data in tag resource line 2 at line 40, column 1"])
+      expect { subject.well_formed_xml(string) }.to raise_error(Nokogiri::XML::SyntaxError, "40:1: FATAL: Premature end of data in tag resource line 2")
     end
 
     it "from_json" do
       string = file_fixture('citeproc.json').read
       expect(subject.well_formed_xml(string)).to eq(string)
-      expect(subject.errors).to be_empty
+    end
+
+    it "from_json starts with unexpected character" do
+      string = 'abc'
+      expect { subject.well_formed_xml(string) }.to raise_error(JSON::ParserError, "unexpected character at line 1, column 1 [parse.c:671]")
     end
 
     it "from_json malformed" do
       string = file_fixture('citeproc_malformed.json').read
-      expect(subject.well_formed_xml(string)).to eq(string)
-      expect(subject.errors.messages).to eq(xml: ["Expected comma, not a string at line 4, column 9 [parse.c:381]"])
+      expect { subject.well_formed_xml(string) }.to raise_error(JSON::ParserError, "expected comma, not a string at line 4, column 9 [parse.c:381]")
     end
 
     it "from_json duplicate keys" do
       string = file_fixture('citeproc_duplicate_keys.json').read
-      expect(subject.well_formed_xml(string)).to eq(string)
-      expect(subject.errors.messages).to eq(xml: ["The same key is defined more than once: id"])
+      expect { subject.well_formed_xml(string) }.to raise_error(JSON::ParserError, "The same key is defined more than once: id")
+    end
+  end
+
+  context "get_content_type" do
+    it "datacite" do
+      string = file_fixture('datacite.xml').read
+      expect(subject.get_content_type(string)).to eq("xml")
+    end
+
+    it "crossref" do
+      string = file_fixture('crossref.xml').read
+      expect(subject.get_content_type(string)).to eq("xml")
+    end
+
+    it "crosscite" do
+      string = file_fixture('crosscite.json').read
+      expect(subject.get_content_type(string)).to eq("json")
+    end
+
+    it "schema_org" do
+      string = file_fixture('schema_org.json').read
+      expect(subject.get_content_type(string)).to eq("json")
+    end
+
+    it "codemeta" do
+      string = file_fixture('codemeta.json').read
+      expect(subject.get_content_type(string)).to eq("json")
+    end
+
+    it "datacite_json" do
+      string = file_fixture('datacite.json').read
+      expect(subject.get_content_type(string)).to eq("json")
+    end
+
+    it "bibtex" do
+      string = file_fixture('crossref.bib').read
+      expect(subject.get_content_type(string)).to eq("string")
+    end
+
+    it "ris" do
+      string = file_fixture('crossref.ris').read
+      expect(subject.get_content_type(string)).to eq("string")
     end
   end
 
@@ -154,20 +196,20 @@ describe Doi, vcr: true do
       expect(meta["periodical"]).to eq("issn"=>"1932-6203", "title"=>"PLoS ONE", "type"=>"Periodical")
     end
 
-    # it "from crossref url" do
-    #   string = "https://doi.org/10.7554/elife.01567"
-    #   meta = subject.parse_xml(string)
+    it "from crossref url" do
+      string = "https://doi.org/10.7554/elife.01567"
+      meta = subject.parse_xml(string)
 
-    #   expect(meta["string"]).to eq(string)
-    #   expect(meta["from"]).to eq("crossref")
-    #   expect(meta["doi"]).to eq("10.1371/journal.pone.0000030")
-    #   expect(meta["creators"].length).to eq(5)
-    #   expect(meta["creators"].first).to eq("familyName"=>"Ralser", "givenName"=>"Markus", "name"=>"Markus Ralser", "type"=>"Person")
-    #   expect(meta["titles"]).to eq([{"title"=>"Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"}])
-    #   expect(meta["publication_year"]).to eq("2006")
-    #   expect(meta["publisher"]).to eq("(:unav)")
-    #   expect(meta["periodical"]).to eq("issn"=>"1932-6203", "title"=>"PLoS ONE", "type"=>"Periodical")
-    # end
+      expect(meta["from"]).to eq("crossref")
+      expect(meta["doi"]).to eq("10.7554/elife.01567")
+      expect(meta["creators"].length).to eq(5)
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Martial Sankar", "type"=>"Person")
+      expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
+      expect(meta["publication_year"]).to eq("2014")
+      expect(meta["publisher"]).to eq("(:unav)")
+      expect(meta["periodical"]).to eq("issn"=>"2050-084X", "title"=>"eLife", "type"=>"Periodical")
+      expect(meta["agency"]).to eq("Crossref")
+    end
 
     it "from bibtex" do
       string = file_fixture('crossref.bib').read

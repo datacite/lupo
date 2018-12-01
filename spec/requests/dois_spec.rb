@@ -259,34 +259,35 @@ describe "dois", type: :request do
       end
     end
 
-    context 'when the record exists 2.2' do
-      let(:doi) { create(:doi, doi: "10.14454/119497", client: client, state: "registered") }
+    context 'schema 2.2' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite_schema_2.2.xml').read) }
       let(:valid_attributes) do
         {
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "xml" => xml
+              "xml" => xml,
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "event" => "publish"
             }
           }
         }
       end
-      before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+      before { patch "/dois/10.14454/10703", params: valid_attributes.to_json, headers: headers }
 
-      # TODO
-      # it 'updates the record' do
-      #   expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-      #   expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+      it 'updates the record' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
+        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-2.2")
 
-      #   xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-      #   expect(xml.dig("titles", "title")).to eq("Eating your own Dog Food")
-      # end
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("titles", "title")).to eq(["Właściwości rzutowań podprzestrzeniowych", {"__content__"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
+      end
 
-      # it 'returns status code 200' do
-      #   puts response.body
-      #   expect(response).to have_http_status(200)
-      # end
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
     end
 
     context 'NoMethodError https://github.com/datacite/lupo/issues/84' do
@@ -707,8 +708,8 @@ describe "dois", type: :request do
 
       before { patch "/dois/10.14454/8na3-9s47", params: valid_attributes.to_json, headers: headers }
 
-      # TODO
-      # it 'updates the record' dos
+      # TODO register media
+      # it 'updates the record' do
       #   expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
       #   expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       #   expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
@@ -874,8 +875,7 @@ describe "dois", type: :request do
       end
     end
 
-    context 'when the request uses namespaced xml and the title changes' do
-      let(:titles) { { "title" => "Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]" } }
+    context 'when the request uses namespaced xml' do
       let(:xml) { Base64.strict_encode64(file_fixture('ns0.xml').read) }
       let(:valid_attributes) do
         {
@@ -885,7 +885,6 @@ describe "dois", type: :request do
               "doi" => "10.14454/10703",
               "url" => "http://www.bl.uk/pdf/patspec.pdf",
               "xml" => xml,
-              "titles" => titles,
               "event" => "publish"
             }
           }
@@ -894,20 +893,20 @@ describe "dois", type: :request do
 
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
-      # TODO
-      # it 'creates a Doi' do
-      #   expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-      #   expect(json.dig('data', 'attributes', 'titles')).to eq("Referee report. For: RESEARCH-3482 [version 5; referees: 1 approved, 1 approved with reservations]")
-      #   expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
-      # end
+      it 'creates a Doi' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"LAMMPS Data-File Generator"}])
+        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-2.2")
+      end
 
-      # it 'returns status code 201' do
-      #   expect(response).to have_http_status(201)
-      # end
+      it 'returns status code 201' do
+        puts response.status
+        expect(response).to have_http_status(201)
+      end
 
-      # it 'sets state to findable' do
-      #   expect(json.dig('data', 'attributes', 'state')).to eq("findable")
-      # end
+      it 'sets state to findable' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
     end
 
     context 'when the title changes' do
@@ -1344,16 +1343,15 @@ describe "dois", type: :request do
 
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
-        # TODO
-        # it 'validates a Doi' do
-        #   expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        #   expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
-        #   expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-12-20", "dateType"=>"Issued"}])
-        # end
+        it 'validates a Doi' do
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+          expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-12-20", "dateType"=>"Issued"}])
+        end
 
-        # it 'returns status code 200' do
-        #   expect(response).to have_http_status(200)
-        # end
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
       end
 
       context 'validates codemeta' do
@@ -1453,16 +1451,15 @@ describe "dois", type: :request do
 
         before { post '/dois/validate', params: params.to_json, headers: headers }
 
-        # TODO
-        # it 'validates a Doi' do
-        #   expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        #   expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
-        #   expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2014", "dateType"=>"Issued"}])
-        # end
+        it 'validates a Doi' do
+          expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+          expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2014", "dateType"=>"Issued"}])
+        end
 
-        # it 'returns status code 200' do
-        #   expect(response).to have_http_status(200)
-        # end
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
       end
 
       context 'validates crossref xml' do
