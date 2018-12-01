@@ -33,12 +33,12 @@ class Doi < ActiveRecord::Base
 
     event :register do
       # can't register test prefix
-      transitions :from => [:draft], :to => :registered, :if => [:valid?, :not_is_test_prefix?]
+      transitions :from => [:draft], :to => :registered, :if => [:not_is_test_prefix?]
     end
 
     event :publish do
       # can't index test prefix
-      transitions :from => [:draft], :to => :findable, :if => [:valid?, :not_is_test_prefix?]
+      transitions :from => [:draft], :to => :findable, :if => [:not_is_test_prefix?]
       transitions :from => :registered, :to => :findable
     end
 
@@ -61,7 +61,11 @@ class Doi < ActiveRecord::Base
   alias_attribute :registered, :minted
   alias_attribute :state, :aasm_state
 
-  attr_accessor :current_user, :validate, :agency
+  attr_accessor :current_user
+
+  attribute :regenerate, :boolean, default: false
+  attribute :only_validate, :boolean, default: false
+  attribute :agency, :string, default: "DataCite"
 
   belongs_to :client, foreign_key: :datacentre
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
@@ -75,14 +79,14 @@ class Doi < ActiveRecord::Base
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, :with => /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, :on => :create
   validates_format_of :url, :with => /\A(ftp|http|https):\/\/[\S]+/ , if: :url?, message: "URL is not valid"
-  validates_uniqueness_of :doi, message: "This DOI has already been taken"
+  validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
-  validates :xml, presence: true, xml_schema: true, :unless => Proc.new { |doi| doi.draft? }
+  validates :xml, presence: true, xml_schema: true, :if => Proc.new { |doi| doi.validatable? }
 
   after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
 
-  before_validation :update_metadata
+  before_validation :update_xml, if: :regenerate
   before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
@@ -97,14 +101,14 @@ class Doi < ActiveRecord::Base
     indexes :doi,                            type: :keyword
     indexes :identifier,                     type: :keyword
     indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
-    indexes :creator,                        type: :object, properties: {
+    indexes :creators,                        type: :object, properties: {
       type: { type: :keyword },
       id: { type: :keyword },
       name: { type: :text },
       givenName: { type: :text },
       familyName: { type: :text }
     }
-    indexes :contributor,                    type: :object, properties: {
+    indexes :contributors,                    type: :object, properties: {
       type: { type: :keyword },
       id: { type: :keyword },
       name: { type: :text },
@@ -236,8 +240,8 @@ class Doi < ActiveRecord::Base
       "doi" => doi,
       "identifier" => identifier,
       "url" => url,
-      "creator" => creator,
-      "contributor" => contributor,
+      "creators" => creators,
+      "contributors" => contributors,
       "creator_names" => creator_names,
       "titles" => titles,
       "descriptions" => descriptions,
@@ -302,7 +306,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['doi^10', 'titles.title^10', 'creator_names^10', 'creator.name^10', 'creator.id^10', 'publisher^10', 'descriptions.description^10', 'types.resourceTypeGeneral^10', 'subjects.subject^10', 'alternate_identifiers.alternateIdentifier^10', 'related_identifiers.relatedIdentifier^10', '_all']
+    ['doi^10', 'titles.title^10', 'creator_names^10', 'creators.name^10', 'creators.id^10', 'publisher^10', 'descriptions.description^10', 'types.resourceTypeGeneral^10', 'subjects.subject^10', 'alternate_identifiers.alternateIdentifier^10', 'related_identifiers.relatedIdentifier^10', '_all']
   end
 
   def self.find_by_id(id, options={})
@@ -341,7 +345,7 @@ class Doi < ActiveRecord::Base
       begin
         string = doi.current_metadata.present? ? doi.current_metadata.xml : nil
         meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
-        attrs = %w(creator contributor titles publisher publication_year types descriptions periodical sizes formats language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
+        attrs = %w(creators contributors titles publisher publication_year types descriptions periodical sizes formats language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
           [a.to_sym, meta[a]]
         end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
         
@@ -435,7 +439,7 @@ class Doi < ActiveRecord::Base
  
   # creator name in natural order: "John Smith" instead of "Smith, John"
   def creator_names
-    Array.wrap(creator).map do |a| 
+    Array.wrap(creators).map do |a| 
       if a["familyName"].present? 
         [a["givenName"], a["familyName"]].join(" ")
       elsif a["name"].to_s.include?(", ")
@@ -492,6 +496,10 @@ class Doi < ActiveRecord::Base
 
   def is_registered_or_findable?
     %w(registered findable).include?(aasm_state)
+  end
+
+  def validatable?
+    %w(registered findable).include?(aasm_state) || only_validate
   end
 
   # update URL in handle system for registered and findable state
@@ -615,7 +623,7 @@ class Doi < ActiveRecord::Base
 
   # save to metadata table when xml has changed
   def save_metadata
-    metadata.build(doi: self, xml: xml, namespace: schema_version) if xml.present? && (changed & %w(xml)).present?
+    metadata.build(doi: self, xml: xml, namespace: schema_version) if xml.present? && xml_changed?
   end
 
   def set_defaults

@@ -7,6 +7,8 @@ module Crosscitable
   included do
     include Bolognese::MetadataUtils
 
+    attr_accessor :issue, :volume, :style, :locale
+
     def sandbox
       !Rails.env.production?
     end
@@ -19,42 +21,65 @@ module Crosscitable
       @meta || {}
     end
 
-    def update_metadata   
-      # check that input is well-formed if xml or json
-      input = well_formed_xml(xml)
+    def parse_xml(input, options={})
+      return {} unless input.present?
 
-      # check whether input is id and we need to fetch the content
-      id = normalize_id(input, sandbox: sandbox)
+      # detect metadata format
+      from = find_from_format(string: input)
 
-      if id.present?
-        @from = find_from_format(id: id)
+      if from.nil?
+        # check whether input is valid id and we need to fetch the content
+        id = normalize_id(input, sandbox: sandbox)
+        from = find_from_format(id: id)
 
         # generate name for method to call dynamically
-        hsh = @from.present? ? send("get_" + @from, id: id, sandbox: sandbox) : {}
-        @string = hsh.fetch("string", nil)
-      else
-        @from = find_from_format(string: input)
-        @string = input
+        hsh = from.present? ? send("get_" + from, id: id, sandbox: sandbox) : {}
+        input = hsh.fetch("string", nil)        
       end
 
-      # generate xml with attributes that have been set directly
-      read_attrs = %w(creator contributor titles publisher publication_year types descriptions periodical sizes formats version_info language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
-        [a.to_sym, send(a.to_s)]
-      end.to_h.compact
-      meta = @from.present? ? send("read_" + @from, { string: raw, doi: doi, sandbox: sandbox }.merge(read_attrs)) : {}
-      output = (@from != "datacite" || read_attrs.present?) ? datacite_xml : raw
-
-      # generate attributes based on xml
-      attrs = %w(creator contributor titles publisher publication_year types descriptions periodical sizes formats version_info language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
-        [a.to_sym, meta[a.to_s]]
-      end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", xml: output)
-
-      assign_attributes(attrs)
+      meta = from.present? ? send("read_" + from, { string: input, doi: options[:doi], sandbox: sandbox }).compact : {}
+      meta.merge("string" => input, "from" => from)
     rescue NoMethodError, ArgumentError => exception
       Bugsnag.notify(exception)
       logger = Logger.new(STDOUT)
       logger.error "Error " + exception.message + " for doi " + doi + "."
       logger.error exception
+
+      {}
+    end
+
+    def replace_doi(input, options={})
+      doc = Nokogiri::XML(input, nil, 'UTF-8', &:noblanks)
+      node = doc.at_css("identifier")
+      node.content = options[:doi].to_s.upcase if node.present? && options[:doi].present?
+      doc.to_xml.strip
+    end
+
+    def update_xml
+      if regenerate
+        # detect metadata format
+        from = find_from_format(string: xml)
+
+        if from.nil?
+          # check whether input is valid id and we need to fetch the content
+          id = normalize_id(xml, sandbox: sandbox)
+          from = find_from_format(id: id)
+
+          # generate name for method to call dynamically
+          hsh = from.present? ? send("get_" + from, id: id, sandbox: sandbox) : {}
+          xml = hsh.fetch("string", nil)        
+        end
+
+        # generate new xml if attributes have been set directly and/or from metadata are not DataCite XML
+        read_attrs = %w(creators contributors titles publisher publication_year types descriptions periodical sizes formats version_info language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url schema_version).map do |a|
+          [a.to_sym, send(a.to_s)]
+        end.to_h.compact
+
+        meta = from.present? ? send("read_" + from, { string: xml, doi: doi, sandbox: sandbox }.merge(read_attrs)) : {}
+        xml = datacite_xml
+      end
+
+      write_attribute(:xml, xml)
     end
 
     def well_formed_xml(string)
@@ -91,44 +116,6 @@ module Crosscitable
 
       errors_array.each { |e| errors.add(:xml, e.capitalize) }
       errors_array.empty? ? nil : string
-    end
-
-    # validate against DataCite schema
-    def validation_errors
-      kernel = schema_version.to_s.split("/").last || "kernel-4"
-      filepath = Bundler.rubygems.find_name('bolognese').first.full_gem_path + "/resources/#{kernel}/metadata.xsd"
-      schema = Nokogiri::XML::Schema(open(filepath))
-
-      schema.validate(Nokogiri::XML(xml, nil, 'UTF-8')).reduce({}) do |sum, error|
-        location, level, source, text = error.message.split(": ", 4)
-        line, column = location.split(":", 2)
-        title = text.to_s.strip + " at line #{line}, column #{column}" if line.present?
-        source = source.split("}").last[0..-2] if line.present?
-
-        errors.add(source.to_sym, title)
-
-        sum[source.to_sym] = Array(sum[source.to_sym]) + [title]
-
-        sum
-      end
-    rescue Nokogiri::XML::SyntaxError => e
-      line, column, level, text = e.message.split(":", 4)
-      message = text.strip + " at line #{line}, column #{column}"
-      errors.add(:xml, message)
-
-      errors
-    end
-
-    def validation_errors?
-      validation_errors.present?
-    end
-
-    def get_type(types, type)
-      types[type]
-    end
-
-    def set_type(types, text, type)
-      types[type] = text
     end
   end
 end

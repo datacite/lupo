@@ -2,6 +2,8 @@ require 'uri'
 require 'base64'
 
 class DoisController < ApplicationController
+  include Crosscitable
+
   prepend_before_action :authenticate_user!
   before_action :set_doi, only: [:show, :destroy, :get_url]
   before_action :set_include, only: [:index, :show, :create, :update]
@@ -195,7 +197,8 @@ class DoisController < ApplicationController
   def validate
     logger = Logger.new(STDOUT)
     # logger.info safe_params.inspect
-    @doi = Doi.new(safe_params)
+    @doi = Doi.new(safe_params.merge(only_validate: true))
+    
     authorize! :validate, @doi
 
     if @doi.valid?
@@ -218,7 +221,7 @@ class DoisController < ApplicationController
     # logger.info safe_params.inspect
 
     @doi = Doi.new(safe_params)
-    
+
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
 
@@ -268,8 +271,6 @@ class DoisController < ApplicationController
 
       authorize! :new, @doi
     end
-
-   # if safe_params[:xml] && (safe_params[:event] || safe_params[:validate]) && @doi.validation_errors?
 
     if @doi.save
       options = {}
@@ -412,7 +413,7 @@ class DoisController < ApplicationController
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
 
     # default values for attributes stored as JSON
-    defaults = { data: { titles: [], descriptions: [], types: {}, dates: [], rightsList: [], creator: [], contributor: [] }}
+    defaults = { data: { titles: [], descriptions: [], types: {}, dates: [], rightsList: [], creators: [], contributors: [] }}
 
     attributes = [
       :doi,
@@ -457,7 +458,7 @@ class DoisController < ApplicationController
       :rightsList,
       { rightsList: [:rights, :rightsUri] },
       :xml,
-      :validate,
+      :regenerate,
       :source,
       :version,
       :metadataVersion,
@@ -471,10 +472,10 @@ class DoisController < ApplicationController
       :event,
       :regenerate,
       :client,
-      :creator,
-      { creator: [:type, :id, :name, :givenName, :familyName, :affiliation] },
-      :contributor,
-      { contributor: [:type, :id, :name, :givenName, :familyName, :contributorType] },
+      :creators,
+      { creators: [:type, :id, :name, :givenName, :familyName, :affiliation] },
+      :contributors,
+      { contributors: [:type, :id, :name, :givenName, :familyName, :contributorType] },
       :altenateIdentifiers,
       { alternateIdentifiers: [:alternateIdentifier, :alternateIdentifierType] },
       :relatedIdentifiers,
@@ -487,17 +488,50 @@ class DoisController < ApplicationController
     relationships = [{ client: [data: [:type, :id]] }]
 
     p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships).reverse_merge(defaults)
-    p = p.fetch("attributes").merge(client_id: p.dig("relationships", "client", "data", "id"))
+    client_id = p.dig("relationships", "client", "data", "id") || current_user.try(:client_id)
+    p = p.fetch("attributes").merge(client_id: client_id)
+
+    # extract attributes from xml field and merge with attributes provided directly
+    xml = p[:xml].present? ? Base64.decode64(p[:xml]).force_encoding("UTF-8") : nil
+    xml = well_formed_xml(xml)
+    meta = parse_xml(xml, doi: p[:doi])
+
+    read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher], 
+      p[:publicationYear], p[:types], p[:descriptions], p[:periodical], p[:sizes],
+      p[:formats], p[:version], p[:language], p[:dates], p[:alternateIdentifiers],
+      p[:relatedIdentifiers], p[:fundingReferences], p[:geoLocations], p[:rightsList],
+      p[:subjects], p[:contentUrl], p[:schemaVersion]].compact
+
+    if meta["from"] == "datacite" && p[:doi].present? && read_attrs.blank?
+      xml = replace_doi(xml, doi: p[:doi])
+    else
+     regenerate = true
+    end
+
     p.merge(
-      xml: p[:xml].present? ? Base64.decode64(p[:xml]).force_encoding("UTF-8") : nil,
-      schema_version: p[:schemaVersion],
-      version_info: p[:version],
-      publication_year: p[:publicationYear],
-      rights_list: p[:rightsList],
-      alternate_identifiers: p[:alternateIdentifiers],
-      related_identifiers: p[:relatedIdentifiers],
-      funding_references: p[:fundingReferences],
-      geo_locations: p[:geoLocations],
+      xml: xml,
+      creators: p[:creators] || meta["creators"],
+      contributors: p[:contributors] || meta["contributors"],
+      titles: p[:titles] || meta["titles"],
+      publisher: p[:publisher] || meta["publisher"],
+      publication_year: p[:publicationYear] || meta["publication_year"],
+      types: p[:types] || meta["types"],
+      descriptions: p[:descriptions] || meta["descriptions"],
+      periodical: p[:periodical] || meta["periodical"],
+      sizes: p[:sizes] || meta["sizes"],
+      formats: p[:formats] || meta["formats"],
+      version_info: p[:version] || meta["version_info"],
+      language: p[:language] || meta["language"],
+      dates: p[:dates] || meta["dates"],
+      alternate_identifiers: p[:alternateIdentifiers] || meta["alternate_identifiers"],
+      related_identifiers: p[:relatedIdentifiers] || meta["related_identifiers"],
+      funding_references: p[:fundingReferences] || meta["funding_references"],
+      geo_locations: p[:geoLocations] || meta["geo_locations"],
+      rights_list: p[:rightsList] || meta["rights_list"],
+      subjects: p[:subjects] || meta["subjects"],
+      content_url: p[:contentUrl] || meta["content_url"],
+      schema_version: p[:schemaVersion] || meta["schema_version"],
+      regenerate: p[:regenerate] || regenerate,
       last_landing_page: p[:lastLandingPage],
       last_landing_page_status: p[:lastLandingPageStatus],
       last_landing_page_status_check: p[:lastLandingPageStatusCheck],

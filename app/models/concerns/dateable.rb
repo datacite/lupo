@@ -11,6 +11,14 @@ module Dateable
       dd = Array.wrap(dates).find { |d| d["dateType"] == date_type } || { "dateType" => date_type }
       dd["date"] = date
     end
+
+    def get_resource_type(types, type)
+      types[type]
+    end
+
+    def set_resource_type(types, text, type)
+      types[type] = text
+    end
   end
 
   module ClassMethods

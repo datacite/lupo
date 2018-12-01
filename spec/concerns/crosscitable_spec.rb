@@ -71,57 +71,285 @@ describe Doi, vcr: true do
     end
   end
 
-  context "get attributes" do
-    it "creator" do
-      expect(subject.creator).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "type"=>"Person"}])
+  context "parse_xml" do
+    it "from schema 4" do
+      string = file_fixture('datacite.xml').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["string"]).to eq(string)
+      expect(meta["from"]).to eq("datacite")
+      expect(meta["doi"]).to eq("10.14454/4k3m-nyvg")
+      expect(meta["creators"]).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "type"=>"Person"}])
+      expect(meta["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
+      expect(meta["publication_year"]).to eq("2016")
+      expect(meta["publisher"]).to eq("DataCite")
     end
 
-    it "title" do
-      expect(subject.titles).to eq([{"title"=>"Eating your own Dog Food"}])
+    it "from schema 3" do
+      string = file_fixture('datacite_schema_3.xml').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["string"]).to eq(string)
+      expect(meta["from"]).to eq("datacite")
+      expect(meta["doi"]).to eq("10.5061/dryad.8515")
+      expect(meta["creators"].length).to eq(8)
+      expect(meta["creators"].first).to eq("familyName"=>"Ollomo", "givenName"=>"Benjamin", "name"=>"Benjamin Ollomo", "type"=>"Person")
+      expect(meta["titles"]).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
+      expect(meta["publication_year"]).to eq("2011")
+      expect(meta["publisher"]).to eq("Dryad Digital Repository")
     end
 
-    it "publisher" do
-      expect(subject.publisher).to eq("DataCite")
+    it "from schema 2.2" do
+      string = file_fixture('datacite_schema_2.2.xml').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["string"]).to eq(string)
+      expect(meta["from"]).to eq("datacite")
+      expect(meta["doi"]).to eq("10.5072/testpub")
+      expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"John Smith", "type"=>"Person"}, {"name"=>"つまらないものですが"}])
+      expect(meta["titles"]).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
+      expect(meta["publication_year"]).to eq("2010")
+      expect(meta["publisher"]).to eq("Springer")
     end
 
-    it "date_published" do
-      expect(subject.dates).to eq([{"date"=>"2016-12-20", "dateType"=>"Created"}, {"date"=>"2016-12-20", "dateType"=>"Issued"}, {"date"=>"2016-12-20", "dateType"=>"Updated"}])
+    it "from schema 4 missing creators" do
+      string = file_fixture('datacite_missing_creator.xml').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["string"]).to eq(string)
+      expect(meta["from"]).to eq("datacite")
+      expect(meta["doi"]).to eq("10.5438/4k3m-nyvg")
+      expect(meta["creators"]).to be_empty
+      expect(meta["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
+      expect(meta["publication_year"]).to eq("2016")
+      expect(meta["publisher"]).to eq("DataCite")
     end
 
-    it "resource_type_general" do
-      expect(subject.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
+    it "from namespaced xml" do
+      string = file_fixture('ns0.xml').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["string"]).to eq(string)
+      expect(meta["from"]).to eq("datacite")
+      # TODO
+      # expect(meta["doi"]).to eq("10.5438/4k3m-nyvg")
+      # expect(meta["creators"]).to be_empty
+      # expect(meta["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
+      # expect(meta["publication_year"]).to eq("2016")
+      # expect(meta["publisher"]).to eq("DataCite")
+    end
+
+    it "from crossref" do
+      string = file_fixture('crossref.xml').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["string"]).to eq(string)
+      expect(meta["from"]).to eq("crossref")
+      expect(meta["doi"]).to eq("10.1371/journal.pone.0000030")
+      expect(meta["creators"].length).to eq(5)
+      expect(meta["creators"].first).to eq("familyName"=>"Ralser", "givenName"=>"Markus", "name"=>"Markus Ralser", "type"=>"Person")
+      expect(meta["titles"]).to eq([{"title"=>"Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"}])
+      expect(meta["publication_year"]).to eq("2006")
+      expect(meta["publisher"]).to eq("(:unav)")
+      expect(meta["periodical"]).to eq("issn"=>"1932-6203", "title"=>"PLoS ONE", "type"=>"Periodical")
+    end
+
+    # it "from crossref url" do
+    #   string = "https://doi.org/10.7554/elife.01567"
+    #   meta = subject.parse_xml(string)
+
+    #   expect(meta["string"]).to eq(string)
+    #   expect(meta["from"]).to eq("crossref")
+    #   expect(meta["doi"]).to eq("10.1371/journal.pone.0000030")
+    #   expect(meta["creators"].length).to eq(5)
+    #   expect(meta["creators"].first).to eq("familyName"=>"Ralser", "givenName"=>"Markus", "name"=>"Markus Ralser", "type"=>"Person")
+    #   expect(meta["titles"]).to eq([{"title"=>"Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"}])
+    #   expect(meta["publication_year"]).to eq("2006")
+    #   expect(meta["publisher"]).to eq("(:unav)")
+    #   expect(meta["periodical"]).to eq("issn"=>"1932-6203", "title"=>"PLoS ONE", "type"=>"Periodical")
+    # end
+
+    it "from bibtex" do
+      string = file_fixture('crossref.bib').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["string"]).to eq(string)
+      expect(meta["from"]).to eq("bibtex")
+      expect(meta["doi"]).to eq("10.7554/elife.01567")
+      expect(meta["creators"].length).to eq(5)
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Martial Sankar", "type"=>"Person")
+      expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
+      expect(meta["publication_year"]).to eq("2014")
+      expect(meta["publisher"]).to eq("{eLife} Sciences Organisation, Ltd.")
+      expect(meta["periodical"]).to eq("issn"=>"2050-084X", "title"=>"eLife", "type"=>"Periodical")
+    end
+
+    it "from ris" do
+      string = file_fixture('crossref.ris').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["string"]).to eq(string)
+      expect(meta["from"]).to eq("ris")
+      expect(meta["doi"]).to eq("10.7554/elife.01567")
+      expect(meta["creators"].length).to eq(5)
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Martial Sankar", "type"=>"Person")
+      expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
+      expect(meta["publication_year"]).to eq("2014")
+      expect(meta["publisher"]).to eq("(:unav)")
+      expect(meta["periodical"]).to eq("title"=>"eLife", "type"=>"Periodical")
+    end
+
+    it "from codemeta" do
+      string = file_fixture('codemeta.json').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["string"]).to eq(string)
+      expect(meta["from"]).to eq("codemeta")
+      expect(meta["doi"]).to eq("10.5063/f1m61h5x")
+      expect(meta["creators"].length).to eq(3)
+      expect(meta["creators"].first).to eq("familyName"=>"Jones", "givenName"=>"Matt", "id"=>"http://orcid.org/0000-0003-0077-4738", "name"=>"Matt Jones", "type"=>"Person")
+      expect(meta["titles"]).to eq([{"title"=>"R Interface to the DataONE REST API"}])
+      expect(meta["publication_year"]).to eq("2016")
+      expect(meta["publisher"]).to eq("https://cran.r-project.org")
+    end
+
+    it "from schema_org" do
+      string = file_fixture('schema_org.json').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["string"]).to eq(string)
+      expect(meta["from"]).to eq("schema_org")
+      expect(meta["doi"]).to eq("10.5438/4k3m-nyvg")
+      expect(meta["creators"].length).to eq(1)
+      expect(meta["creators"].first).to eq("familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"http://orcid.org/0000-0003-1419-2405", "name"=>"Martin Fenner", "type"=>"Person")
+      expect(meta["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
+      expect(meta["publication_year"]).to eq("2016")
+      expect(meta["publisher"]).to eq("DataCite")
+    end
+
+    it "from schema_org url" do
+      string = "https://doi.pangaea.de/10.1594/PANGAEA.836178"
+      meta = subject.parse_xml(string)
+
+      expect(meta["string"]).to start_with("{\"@context\":\"http://schema.org")
+      expect(meta["from"]).to eq("schema_org")
+      expect(meta["doi"]).to eq("10.1594/pangaea.836178")
+      expect(meta["creators"].length).to eq(8)
+      expect(meta["creators"].first).to eq("familyName"=>"Johansson", "givenName"=>"Emma", "name"=>"Johansson, Emma", "type"=>"Person")
+      expect(meta["titles"]).to eq([{"title"=>"Hydrological and meteorological investigations in a lake near Kangerlussuaq, west Greenland"}])
+      expect(meta["publication_year"]).to eq("2014")
+      expect(meta["publisher"]).to eq("PANGAEA")
     end
   end
 
-  context "set attributes" do
-    it "creator" do
-      creator = { "name" => "Carberry, Josiah"}
-      subject.creator = creator
-      expect(subject.creator).to eq(creator)
+  context "update_xml" do
+    it "from schema 4" do
+      string = file_fixture('datacite.xml').read
+      subject = create(:doi, xml: string)
+
+      # TODO
+      # expect(subject.doi).to eq("10.14454/4k3m-nyvg")
+      # expect(subject.creators).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "type"=>"Person"}])
+      # expect(subject.titles).to eq([{"title"=>"Eating your own Dog Food"}])
+      # expect(subject.publication).to eq("2016")
+      # expect(meta["publisher"]).to eq("DataCite")
     end
 
-    it "titles" do
-      titles = [{ "title" => "Referee report." }]
-      subject.titles = titles
-      expect(subject.titles).to eq(titles)
+    it "from schema 3" do
+      string = file_fixture('datacite_schema_3.xml').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["doi"]).to eq("10.5061/dryad.8515")
+      expect(meta["creators"].length).to eq(8)
+      expect(meta["creators"].first).to eq("familyName"=>"Ollomo", "givenName"=>"Benjamin", "name"=>"Benjamin Ollomo", "type"=>"Person")
+      expect(meta["titles"]).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
+      expect(meta["publication_year"]).to eq("2011")
+      expect(meta["publisher"]).to eq("Dryad Digital Repository")
     end
 
-    it "publisher" do
-      publisher = "Zenodo"
-      subject.publisher = publisher
-      expect(subject.publisher).to eq(publisher)
+    it "from schema 2.2" do
+      string = file_fixture('datacite_schema_2.2.xml').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["doi"]).to eq("10.5072/testpub")
+      expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"John Smith", "type"=>"Person"}, {"name"=>"つまらないものですが"}])
+      expect(meta["titles"]).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
+      expect(meta["publication_year"]).to eq("2010")
+      expect(meta["publisher"]).to eq("Springer")
     end
 
-    it "date_published" do
-      date = "2018-03-01"
-      subject.set_date(subject.dates, date, "Issued")
-      expect(subject.dates).to eq([{"date"=>"2016-12-20", "dateType"=>"Created"}, {"date"=>"2018-03-01", "dateType"=>"Issued"}, {"date"=>"2016-12-20", "dateType"=>"Updated"}])
+    it "from schema 4 missing creators" do
+      string = file_fixture('datacite_missing_creator.xml').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["doi"]).to eq("10.5438/4k3m-nyvg")
+      expect(meta["creators"]).to be_empty
+      expect(meta["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
+      expect(meta["publication_year"]).to eq("2016")
+      expect(meta["publisher"]).to eq("DataCite")
     end
 
-    it "resource_type_general" do
-      resource_type_general = "Software"
-      subject.set_type(subject.types, resource_type_general, "resource_type_general")
-      expect(subject.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "resource_type_general"=>"Software", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
+    it "from crossref" do
+      string = file_fixture('crossref.xml').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["doi"]).to eq("10.1371/journal.pone.0000030")
+      expect(meta["creators"].length).to eq(5)
+      expect(meta["creators"].first).to eq("familyName"=>"Ralser", "givenName"=>"Markus", "name"=>"Markus Ralser", "type"=>"Person")
+      expect(meta["titles"]).to eq([{"title"=>"Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"}])
+      expect(meta["publication_year"]).to eq("2006")
+      expect(meta["publisher"]).to eq("(:unav)")
+      expect(meta["periodical"]).to eq("issn"=>"1932-6203", "title"=>"PLoS ONE", "type"=>"Periodical")
+    end
+
+    it "from bibtex" do
+      string = file_fixture('crossref.bib').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["doi"]).to eq("10.7554/elife.01567")
+      expect(meta["creators"].length).to eq(5)
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Martial Sankar", "type"=>"Person")
+      expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
+      expect(meta["publication_year"]).to eq("2014")
+      expect(meta["publisher"]).to eq("{eLife} Sciences Organisation, Ltd.")
+      expect(meta["periodical"]).to eq("issn"=>"2050-084X", "title"=>"eLife", "type"=>"Periodical")
+    end
+
+    it "from ris" do
+      string = file_fixture('crossref.ris').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["doi"]).to eq("10.7554/elife.01567")
+      expect(meta["creators"].length).to eq(5)
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Martial Sankar", "type"=>"Person")
+      expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
+      expect(meta["publication_year"]).to eq("2014")
+      expect(meta["publisher"]).to eq("(:unav)")
+      expect(meta["periodical"]).to eq("title"=>"eLife", "type"=>"Periodical")
+    end
+
+    it "from codemeta" do
+      string = file_fixture('codemeta.json').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["doi"]).to eq("10.5063/f1m61h5x")
+      expect(meta["creators"].length).to eq(3)
+      expect(meta["creators"].first).to eq("familyName"=>"Jones", "givenName"=>"Matt", "id"=>"http://orcid.org/0000-0003-0077-4738", "name"=>"Matt Jones", "type"=>"Person")
+      expect(meta["titles"]).to eq([{"title"=>"R Interface to the DataONE REST API"}])
+      expect(meta["publication_year"]).to eq("2016")
+      expect(meta["publisher"]).to eq("https://cran.r-project.org")
+    end
+
+    it "from schema_org" do
+      string = file_fixture('schema_org.json').read
+      meta = subject.parse_xml(string)
+
+      expect(meta["doi"]).to eq("10.5438/4k3m-nyvg")
+      expect(meta["creators"].length).to eq(1)
+      expect(meta["creators"].first).to eq("familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"http://orcid.org/0000-0003-1419-2405", "name"=>"Martin Fenner", "type"=>"Person")
+      expect(meta["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
+      expect(meta["publication_year"]).to eq("2016")
+      expect(meta["publisher"]).to eq("DataCite")
     end
   end
 end

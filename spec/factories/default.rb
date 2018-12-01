@@ -26,48 +26,146 @@ FactoryBot.define do
 
     doi { ("10.14454/" + Faker::Internet.password(8)).downcase }
     url { Faker::Internet.url }
-    xml { '<?xml version="1.0" encoding="UTF-8"?>
-      <resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-4" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4/metadata.xsd">
-        <identifier identifierType="DOI">10.14454/4K3M-NYVG</identifier>
-        <creators>
-          <creator>
-            <creatorName>Fenner, Martin</creatorName>
-            <givenName>Martin</givenName>
-            <familyName>Fenner</familyName>
-            <nameIdentifier schemeURI="http://orcid.org/" nameIdentifierScheme="ORCID">0000-0003-1419-2405</nameIdentifier>
-          </creator>
-        </creators>
-        <titles>
-          <title>Eating your own Dog Food</title>
-        </titles>
-        <publisher>DataCite</publisher>
-        <publicationYear>2016</publicationYear>
-        <resourceType resourceTypeGeneral="Text">BlogPosting</resourceType>
-        <alternateIdentifiers>
-          <alternateIdentifier alternateIdentifierType="Local accession number">MS-49-3632-5083</alternateIdentifier>
-        </alternateIdentifiers>
-        <subjects>
-          <subject>datacite</subject>
-          <subject>doi</subject>
-          <subject>metadata</subject>
-        </subjects>
-        <dates>
-          <date dateType="Created">2016-12-20</date>
-          <date dateType="Issued">2016-12-20</date>
-          <date dateType="Updated">2016-12-20</date>
-        </dates>
-        <relatedIdentifiers>
-          <relatedIdentifier relatedIdentifierType="DOI" relationType="References">10.5438/0012</relatedIdentifier>
-          <relatedIdentifier relatedIdentifierType="DOI" relationType="References">10.5438/55E5-T5C0</relatedIdentifier>
-          <relatedIdentifier relatedIdentifierType="DOI" relationType="IsPartOf">10.5438/0000-00SS</relatedIdentifier>
-        </relatedIdentifiers>
-        <version>1.0</version>
-        <descriptions>
-          <description descriptionType="Abstract">Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for...</description>
-        </descriptions>
-      </resource>' }
-    aasm_state { "draft" }
+    types { {
+      "resourceTypeGeneral": "Dataset",
+      "resourceType": "DataPackage",
+      "schemaOrg": "Dataset",
+      "citeproc": "dataset",
+      "bibtex": "misc",
+      "ris": "DATA"
+    }}
+    creators { [
+      {
+        "type": "Person",
+        "name": "Benjamin Ollomo",
+        "givenName": "Benjamin",
+        "familyName": "Ollomo"
+      },
+      {
+        "type": "Person",
+        "name": "Patrick Durand",
+        "givenName": "Patrick",
+        "familyName": "Durand"
+      },
+      {
+        "type": "Person",
+        "name": "Franck Prugnolle",
+        "givenName": "Franck",
+        "familyName": "Prugnolle"
+      },
+      {
+        "type": "Person",
+        "name": "Emmanuel J. P. Douzery",
+        "givenName": "Emmanuel J. P.",
+        "familyName": "Douzery"
+      },
+      {
+        "type": "Person",
+        "name": "Céline Arnathau",
+        "givenName": "Céline",
+        "familyName": "Arnathau"
+      },
+      {
+        "type": "Person",
+        "name": "Dieudonné Nkoghe",
+        "givenName": "Dieudonné",
+        "familyName": "Nkoghe"
+      },
+      {
+        "type": "Person",
+        "name": "Eric Leroy",
+        "givenName": "Eric",
+        "familyName": "Leroy"
+      },
+      {
+        "type": "Person",
+        "name": "François Renaud",
+        "givenName": "François",
+        "familyName": "Renaud"
+      }
+    ] }
+    titles {[
+        {
+          "title": "Data from: A new malaria agent in African hominids."
+        }] }
+    publisher {"Dryad Digital Repository" }
+    subjects {[
+        {
+          "subject": "Phylogeny"
+        },
+        {
+          "subject": "Malaria"
+        },
+        {
+          "subject": "Parasites"
+        },
+        {
+          "subject": "Taxonomy"
+        },
+        {
+          "subject": "Mitochondrial genome"
+        },
+        {
+          "subject": "Africa"
+        },
+        {
+          "subject": "Plasmodium"
+        }
+    ]}
+    dates { [
+      {
+        "date": "2011",
+        "dateType": "Issued"
+      }
+    ]}
+    publication_year { 2011 }
+    alternate_identifiers { [
+      {
+        "alternateIdentifierType": "citation",
+        "alternateIdentifier": "Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446."
+      }
+    ]}
+    version { "1" }
+    rights_list {[
+      {
+        "rightsUri": "http://creativecommons.org/publicdomain/zero/1.0"
+      }
+    ]}
+    related_identifiers {[
+      {
+        "relatedIdentifier": "10.5061/dryad.8515/1",
+        "relatedIdentifierType": "DOI",
+        "relationType": "HasPart"
+      },
+      {
+        "relatedIdentifier": "10.5061/dryad.8515/2",
+        "relatedIdentifierType": "DOI",
+        "relationType": "HasPart"
+      },
+      {
+        "relatedIdentifier": "10.1371/journal.ppat.1000446",
+        "relatedIdentifierType": "DOI",
+        "relationType": "IsReferencedBy"
+      },
+      {
+        "relatedIdentifier": "10.1371/journal.ppat.1000446",
+        "relatedIdentifierType": "DOI",
+        "relationType": "IsSupplementTo"
+      },
+      {
+        "relatedIdentifier": "19478877",
+        "relatedIdentifierType": "PMID",
+        "relationType": "IsReferencedBy"
+      },
+      {
+        "relatedIdentifier": "19478877",
+        "relatedIdentifierType": "PMID",
+        "relationType": "IsSupplementTo"
+      }
+    ]}
+    schema_version { "http://datacite.org/schema/kernel-4" }
     source { "test" }
+    regenerate { true }
     created { Faker::Time.backward(14, :evening) }
     minted { Faker::Time.backward(15, :evening) }
     updated { Faker::Time.backward(5, :evening) }

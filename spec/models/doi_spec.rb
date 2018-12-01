@@ -250,24 +250,34 @@ describe Doi, type: :model, vcr: true do
   describe "metadata" do
     subject  { create(:doi) }
 
-    it "title" do
-      expect(subject.titles).to eq([{"title"=>"Eating your own Dog Food"}])
+    it "valid" do
+      expect(subject.valid?).to be true
     end
 
-    it "creator" do
-      expect(subject.creator).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "type"=>"Person"}])
+    it "titles" do
+      expect(subject.titles).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
+    end
+
+    it "creators" do
+      expect(subject.creators.length).to eq(8)
+      expect(subject.creators.first).to eq("familyName"=>"Ollomo", "givenName"=>"Benjamin", "name"=>"Benjamin Ollomo", "type"=>"Person")
     end
 
     it "dates" do
-      expect(subject.get_date(subject.dates, "Issued")).to eq("2016-12-20")
+      expect(subject.get_date(subject.dates, "Issued")).to eq("2011")
     end
 
     it "publication_year" do
-      expect(subject.publication_year).to eq(2016)
+      expect(subject.publication_year).to eq(2011)
     end
 
     it "schema_version" do
       expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
+    end
+
+    it "xml" do
+      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(subject.doi)
     end
 
     it "metadata" do
@@ -283,7 +293,7 @@ describe Doi, type: :model, vcr: true do
   describe "change metadata" do
     let(:xml) { File.read(file_fixture('datacite_f1000.xml')) }
     let(:title) { "Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes" }
-    let(:creator) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
+    let(:creators) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
     let(:publisher) { "Zenodo" }
     let(:publication_year) { 2011 }
     let(:types) { { "resourceTypeGeneral" => "Software", "resourceType" => "BlogPosting", "schemaOrg" => "BlogPosting" } }
@@ -291,7 +301,7 @@ describe Doi, type: :model, vcr: true do
     subject  { create(:doi, 
       xml: xml, 
       titles: [{ "title" => title }], 
-      creator: creator,
+      creators: creators,
       publisher: publisher,
       publication_year: publication_year,
       types: types,
@@ -306,8 +316,8 @@ describe Doi, type: :model, vcr: true do
       expect(xml.dig("titles", "title")).to eq(title)
     end
 
-    it "creator" do
-      expect(subject.creator).to eq(creator)
+    it "creators" do
+      expect(subject.creators).to eq(creators)
 
       xml = Maremma.from_xml(subject.xml).fetch("resource", {})
       expect(xml.dig("creators", "creator")).to eq([{"creatorName"=>"Ollomi, Benjamin"}, {"creatorName"=>"Duran, Patrick"}])
@@ -370,561 +380,11 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
-  context "parses Crossref xml" do
-    let(:xml) { file_fixture('crossref.xml').read }
-
-    subject { create(:doi, xml: xml, event: "publish") }
-
-    it "creates xml" do
-      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "valid model" do
-      expect(subject.valid?).to be true
-    end
-
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
-
-    it "title" do
-      expect(subject.titles).to eq([{"title"=>"Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"}])
-    end
-
-    it "date_published" do
-      expect(subject.get_date(subject.dates, "Issued")).to eq("2006-12-20")
-    end
-
-    it "publication_year" do
-      expect(subject.publication_year).to eq(2006)
-    end
-
-    it "creator" do
-      expect(subject.creator.length).to eq(5)
-      expect(subject.creator.first).to eq("type"=>"Person", "name"=>"Markus Ralser", "givenName"=>"Markus", "familyName"=>"Ralser")
-    end
-
-    it "schema_version" do
-      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
-    end
-
-    it "metadata" do
-      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "namespace" do
-      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
-    end
-  end
-
-  context "parses namespaced xml" do
-    let(:xml) { file_fixture('ns0.xml').read }
-
-    subject { create(:doi, doi: "10.4231/D38G8FK8B", xml: xml, event: "publish") }
-
-    it "creates xml" do
-      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
-      doc.remove_namespaces!
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "valid model" do
-      expect(subject.valid?).to be true
-    end
-
-    it "validates against schema" do
-      expect(subject.validation_errors).to be_empty
-    end
-
-    it "title" do
-      expect(subject.titles).to eq([{"title"=>"LAMMPS Data-File Generator"}])
-    end
-
-    it "date_published" do
-      expect(subject.get_date(subject.dates, "Issued")).to eq("2018")
-    end
-
-    it "publication_year" do
-      expect(subject.publication_year).to eq(2018)
-    end
-
-    it "creator" do
-      expect(subject.creator.length).to eq(5)
-      expect(subject.creator.first).to eq("type"=>"Person", "name"=>"Carlos PatiÃ±O", "givenName"=>"Carlos", "familyName"=>"PatiÃ±O")
-    end
-
-    # it "schema_version" do
-    #   expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-2.2")
-    # end
-
-    it "metadata" do
-      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
-      doc.remove_namespaces!
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "namespace" do
-      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-2.2")
-    end
-  end
-
-  context "parses schema" do
-    let(:xml) { file_fixture('datacite.xml').read }
-
-    subject { create(:doi, xml: xml, event: "publish") }
-
-    it "creates xml" do
-      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "valid model" do
-      expect(subject.valid?).to be true
-    end
-
-    it "validates against schema" do
-      expect(subject.validation_errors).to be_empty
-    end
-
-    it "title" do
-      expect(subject.titles).to eq([{"title"=>"Eating your own Dog Food"}])
-    end
-
-    it "creator" do
-      expect(subject.creator).to eq([{"type"=>"Person", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "givenName"=>"Martin", "familyName"=>"Fenner"}])
-    end
-
-    it "dates" do
-      expect(subject.get_date(subject.dates, "Issued")).to eq("2016-12-20")
-    end
-
-    it "publication_year" do
-      expect(subject.publication_year).to eq(2016)
-    end
-
-    it "creates schema_version" do
-      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
-    end
-
-    it "metadata" do
-      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "namespace" do
-      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
-    end
-  end
-
-  context "parses schema 3" do
-    let(:xml) { file_fixture('datacite_schema_3.xml').read }
-
-    subject { create(:doi, xml: xml, event: "publish") }
-
-    it "creates xml" do
-      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "valid model" do
-      expect(subject.valid?).to be true
-    end
-
-    it "title" do
-      expect(subject.titles).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
-    end
-
-    it "creator" do
-      expect(subject.creator.length).to eq(8)
-      expect(subject.creator.first).to eq("type"=>"Person", "name"=>"Benjamin Ollomo", "givenName"=>"Benjamin", "familyName"=>"Ollomo")
-    end
-
-    it "dates" do
-      expect(subject.get_date(subject.dates, "Issued")).to eq("2011")
-    end
-
-    it "publication_year" do
-      expect(subject.publication_year).to eq(2011)
-    end
-
-    # it "creates schema_version" do
-    #   expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-3")
-    # end
-
-    it "metadata" do
-      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "namespace" do
-      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-3")
-    end
-  end
-
-  context "parses schema 2.2" do
-    let(:xml) { file_fixture('datacite_schema_2.2.xml').read }
-
-    subject { create(:doi, xml: xml, event: "publish") }
-
-    it "creates xml" do
-      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "valid model" do
-      expect(subject.valid?).to be true
-    end
-
-    it "title" do
-      expect(subject.titles).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
-    end
-
-    it "creator" do
-      expect(subject.creator.length).to eq(2)
-      expect(subject.creator.first).to eq("type"=>"Person", "name"=>"John Smith", "givenName"=>"John", "familyName"=>"Smith")
-    end
-
-    it "dates" do
-      expect(subject.get_date(subject.dates, "Issued")).to eq("2010")
-    end
-
-    it "publication_year" do
-      expect(subject.publication_year).to eq(2010)
-    end
-
-    # it "creates schema_version" do
-    #   expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-2.2")
-    # end
-
-    it "metadata" do
-      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "namespace" do
-      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-2.2")
-    end
-  end
-
-  context "parses bibtex" do
-    let(:xml) { file_fixture('crossref.bib').read }
-
-    subject { create(:doi, xml: xml, event: "publish") }
-
-    it "creates xml" do
-      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "valid model" do
-      expect(subject.valid?).to be true
-    end
-
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
-
-    it "title" do
-      expect(subject.titles).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
-    end
-
-    it "creator" do
-      expect(subject.creator.length).to eq(5)
-      expect(subject.creator.first).to eq("type"=>"Person", "name"=>"Martial Sankar", "givenName"=>"Martial", "familyName"=>"Sankar")
-    end
-
-    it "creates schema_version" do
-      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
-    end
-
-    it "metadata" do
-      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "namespace" do
-      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
-    end
-  end
-
-  context "parses ris" do
-    let(:xml) { file_fixture('crossref.ris').read }
-
-    subject { create(:doi, xml: xml, event: "publish") }
-
-    it "creates xml" do
-      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "valid model" do
-      expect(subject.valid?).to be true
-    end
-
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
-
-    it "title" do
-      expect(subject.titles).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
-    end
-
-    it "creator" do
-      expect(subject.creator.length).to eq(5)
-      expect(subject.creator.first).to eq("type"=>"Person", "name"=>"Martial Sankar", "givenName"=>"Martial", "familyName"=>"Sankar")
-    end
-
-    it "creates schema_version" do
-      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
-    end
-
-    it "metadata" do
-      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "namespace" do
-      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
-    end
-  end
-
-  context "parses citeproc" do
-    let(:xml) { file_fixture('citeproc.json').read }
-
-    subject { create(:doi, xml: xml, event: "publish") }
-
-    it "creates xml" do
-      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "valid model" do
-      expect(subject.valid?).to be true
-    end
-
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
-
-    it "title" do
-      expect(subject.titles).to eq([{"title"=>"Eating your own Dog Food"}])
-    end
-
-    it "creator" do
-      expect(subject.creator).to eq([{"type"=>"Person", "name"=>"Martin Fenner", "givenName"=>"Martin", "familyName"=>"Fenner"}])
-    end
-
-    it "creates schema_version" do
-      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
-    end
-
-    it "metadata" do
-      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "namespace" do
-      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
-    end
-  end
-
-  context "parses codemeta" do
-    let(:xml) { file_fixture('codemeta.json').read }
-
-    subject { create(:doi, xml: xml, event: "publish") }
-
-    it "creates xml" do
-      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "valid model" do
-      expect(subject.valid?).to be true
-    end
-
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
-
-    it "title" do
-      expect(subject.titles).to eq([{"title"=>"R Interface to the DataONE REST API"}])
-    end
-
-    it "creator" do
-      expect(subject.creator.length).to eq(3)
-      expect(subject.creator.first).to eq("type"=>"Person", "id"=>"http://orcid.org/0000-0003-0077-4738", "name"=>"Matt Jones", "givenName"=>"Matt", "familyName"=>"Jones")
-    end
-
-    it "creates schema_version" do
-      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
-    end
-
-    it "metadata" do
-      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "namespace" do
-      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
-    end
-  end
-
-  context "parses crosscite" do
-    let(:xml) { file_fixture('crosscite.json').read }
-
-    subject { create(:doi, xml: xml, event: "publish") }
-
-    it "creates xml" do
-      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "valid model" do
-      expect(subject.valid?).to be true
-    end
-
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
-
-    it "title" do
-      expect(subject.titles).to eq([{"title"=>"Analysis Tools for Crossover Experiment of UI using Choice Architecture"}])
-    end
-
-    it "creator" do
-      expect(subject.creator).to eq([{"familyName"=>"Garza", "givenName"=>"Kristian", "name"=>"Kristian Garza", "type"=>"Person"}])
-    end
-
-    it "creates schema_version" do
-      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
-    end
-
-    it "metadata" do
-      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "namespace" do
-      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
-    end
-  end
-
-  context "parses schema.org" do
-    let(:xml) { file_fixture('schema_org.json').read }
-
-    subject { create(:doi, xml: xml, event: "publish") }
-
-    it "creates xml" do
-      doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "valid model" do
-      expect(subject.valid?).to be true
-    end
-
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
-
-    it "title" do
-      expect(subject.titles).to eq([{"title"=>"Eating your own Dog Food"}])
-    end
-
-    it "creator" do
-      expect(subject.creator).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"http://orcid.org/0000-0003-1419-2405", "name"=>"Martin Fenner", "type"=>"Person"}])
-    end
-
-    it "creates schema_version" do
-      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
-    end
-
-    it "metadata" do
-      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "namespace" do
-      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
-    end
-  end
-
-  context "parses schema.org topmed" do
-    let(:xml) { file_fixture('schema_org_topmed.json').read }
-
-    subject { create(:doi, xml: xml, event: "publish") }
-
-    # it "creates xml" do
-    #   doc = Nokogiri::XML(subject.xml, nil, 'UTF-8', &:noblanks)
-    #   expect(doc.at_css("identifier").content).to eq(subject.doi)
-    #   expect(doc.at_css("relatedIdentifiers").content).to eq("10.23725/2g4s-qv04")
-    # end
-
-    # TODO: db-fields-for-attributes
-    # it "valid model" do
-    #   expect(subject.valid?).to be true
-    # end
-
-    # it "validates against schema" do
-    #   expect(subject.validation_errors).to be_empty
-    # end
-
-    it "title" do
-      expect(subject.titles).to eq([{"title"=>"NWD165827.recab.cram"}])
-    end
-
-    it "creator" do
-      expect(subject.creator).to eq([{"name"=>"TOPMed IRC", "type"=>"Organization"}])
-    end
-
-    it "content_url" do
-      expect(subject.content_url).to eq(["s3://cgp-commons-public/topmed_open_access/197bc047-e917-55ed-852d-d563cdbc50e4/NWD165827.recab.cram", "gs://topmed-irc-share/public/NWD165827.recab.cram"])
-    end
-
-    it "related_identifiers" do
-      expect(subject.related_identifiers).to eq([{"relatedIdentifier"=>"10.23725/2g4s-qv04", "relatedIdentifierType"=>"DOI", "relationType"=>"References", "resourceTypeGeneral"=>"Dataset"}])
-    end
-
-    it "funding_references" do
-      expect(subject.funding_references).to eq([{"funderIdentifier"=>"https://doi.org/10.13039/100000050", "funderIdentifierType"=>"Crossref Funder ID", "funderName"=>"National Heart, Lung, and Blood Institute (NHLBI)"}])
-    end
-
-    it "alternate_identifier" do
-      expect(subject.alternate_identifiers).to eq([{"alternateIdentifier"=>"3b33f6b9338fccab0901b7d317577ea3",
-         "alternateIdentifierType"=>"md5"},
-        {"alternateIdentifier"=>"ark:/99999/fk41CrU4eszeLUDe",
-         "alternateIdentifierType"=>"minid"},
-        {"alternateIdentifier"=>"dg.4503/c3d66dc9-58da-411c-83c4-dd656aa3c4b7",
-         "alternateIdentifierType"=>"dataguid"}])
-    end
-
-    it "creates schema_version" do
-      expect(subject.schema_version).to eq("http://datacite.org/schema/kernel-4")
-    end
-
-    it "metadata" do
-      doc = Nokogiri::XML(subject.metadata.first.xml, nil, 'UTF-8', &:noblanks)
-      expect(doc.at_css("identifier").content).to eq(subject.doi)
-    end
-
-    it "namespace" do
-      expect(subject.metadata.first.namespace).to eq("http://datacite.org/schema/kernel-4")
-    end
-
-    it "media" do
-      expect(subject.media.pluck(:url)).to eq(["s3://cgp-commons-public/topmed_open_access/197bc047-e917-55ed-852d-d563cdbc50e4/NWD165827.recab.cram", "gs://topmed-irc-share/public/NWD165827.recab.cram"])
-    end
-  end
-
   describe "content negotiation" do
-    let(:xml) { file_fixture('datacite.xml').read }
-
-    subject { create(:doi, doi: "10.5438/4k3m-nyvg", xml: xml, event: "publish") }
+    subject { create(:doi, doi: "10.5438/4k3m-nyvg", event: "publish") }
 
     it "validates against schema" do
-      expect(subject.validation_errors).to be_empty
+      expect(subject.valid?).to be true
     end
 
     it "generates datacite_xml" do
@@ -934,49 +394,49 @@ describe Doi, type: :model, vcr: true do
 
     it "generates bibtex" do
       bibtex = BibTeX.parse(subject.bibtex).to_a(quotes: '').first
-      expect(bibtex[:bibtex_type].to_s).to eq("article")
-      expect(bibtex[:title].to_s).to eq("Eating your own Dog Food")
+      expect(bibtex[:bibtex_type].to_s).to eq("misc")
+      expect(bibtex[:title].to_s).to eq("Data from: A new malaria agent in African hominids.")
     end
 
     it "generates ris" do
       ris = subject.ris.split("\r\n")
-      expect(ris[0]).to eq("TY  - RPRT")
-      expect(ris[1]).to eq("T1  - Eating your own Dog Food")
+      expect(ris[0]).to eq("TY  - DATA")
+      expect(ris[1]).to eq("T1  - Data from: A new malaria agent in African hominids.")
     end
 
     it "generates schema_org" do
       json = JSON.parse(subject.schema_org)
-      expect(json["@type"]).to eq("ScholarlyArticle")
-      expect(json["name"]).to eq("Eating your own Dog Food")
+      expect(json["@type"]).to eq("Dataset")
+      expect(json["name"]).to eq("Data from: A new malaria agent in African hominids.")
     end
 
     it "generates datacite_json" do
       json = JSON.parse(subject.datacite_json)
       expect(json["doi"]).to eq("10.5438/4K3M-NYVG")
-      expect(json["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
+      expect(json["titles"]).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
     end
 
     it "generates codemeta" do
       json = JSON.parse(subject.codemeta)
-      expect(json["@type"]).to eq("ScholarlyArticle")
-      expect(json["title"]).to eq("Eating your own Dog Food")
+      expect(json["@type"]).to eq("Dataset")
+      expect(json["title"]).to eq("Data from: A new malaria agent in African hominids.")
     end
 
     it "generates jats" do
       jats = Maremma.from_xml(subject.jats).fetch("element_citation", {})
-      expect(jats.dig("publication_type")).to eq("journal")
-      expect(jats.dig("article_title")).to eq("Eating your own Dog Food")
+      expect(jats.dig("publication_type")).to eq("data")
+      expect(jats.dig("data_title")).to eq("Data from: A new malaria agent in African hominids.")
     end
 
     it "generates rdf_xml" do
       rdf_xml = Maremma.from_xml(subject.rdf_xml).fetch("RDF", {})
-      expect(rdf_xml.dig("ScholarlyArticle", "rdf:about")).to eq(subject.identifier)
+      expect(rdf_xml.dig("CreativeWork", 0, "rdf:about")).to eq("https://doi.org/10.1371/journal.ppat.1000446")
     end
 
     it "generates turtle" do
       ttl = subject.turtle.split("\n")
       expect(ttl[0]).to eq("@prefix schema: <http://schema.org/> .")
-      expect(ttl[2]).to eq("<https://handle.test.datacite.org/10.5438/4k3m-nyvg> a schema:ScholarlyArticle;")
+      expect(ttl[2]).to eq("<https://doi.org/10.1371/journal.ppat.1000446> a schema:CreativeWork;")
     end
   end
 end
