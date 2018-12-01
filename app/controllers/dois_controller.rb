@@ -186,9 +186,9 @@ class DoisController < ApplicationController
     options = {}
     options[:include] = @include
     options[:is_collection] = false
-    options[:params] = { 
+    options[:params] = {
       current_ability: current_ability,
-      detail: true 
+      detail: true
     }
 
     render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
@@ -231,9 +231,9 @@ class DoisController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-      options[:params] = { 
+      options[:params] = {
         current_ability: current_ability,
-        detail: true 
+        detail: true
       }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :created, location: @doi
@@ -276,9 +276,9 @@ class DoisController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-      options[:params] = { 
+      options[:params] = {
         current_ability: current_ability,
-        detail: true 
+        detail: true
       }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
@@ -431,12 +431,13 @@ class DoisController < ApplicationController
       { types: [:resourceTypeGeneral, :resourceType, :schemaOrg, :bibtex, :citeproc, :ris] },
       :dates,
       { dates: [:date, :dateType, :dateInformation] },
-      :lastLandingPage,
-      :lastLandingPageStatus,
-      :lastLandingPageStatusCheck,
-      :lastLandingPageStatusResult,
+      :landingPage,
       {
-        lastLandingPageStatusResult: [
+        landingPage: [
+          :checked,
+          :url,
+          :status,
+          :contentType,
           :error,
           :redirectCount,
           { redirectUrls: [] },
@@ -449,7 +450,6 @@ class DoisController < ApplicationController
           :bodyHasPid
         ]
       },
-      :lastLandingPageContentType,
       :contentUrl,
       :size,
       :format,
@@ -463,7 +463,7 @@ class DoisController < ApplicationController
       :version,
       :metadataVersion,
       :schemaVersion,
-      :state, 
+      :state,
       :isActive,
       :reason,
       :registered,
@@ -527,6 +527,7 @@ class DoisController < ApplicationController
       related_identifiers: p[:relatedIdentifiers] || meta["related_identifiers"],
       funding_references: p[:fundingReferences] || meta["funding_references"],
       geo_locations: p[:geoLocations] || meta["geo_locations"],
+      landing_page: p[:landingPage],
       rights_list: p[:rightsList] || meta["rights_list"],
       subjects: p[:subjects] || meta["subjects"],
       content_url: p[:contentUrl] || meta["content_url"],

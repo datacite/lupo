@@ -478,7 +478,7 @@ describe "dois", type: :request do
 
       let(:doi) { create(:doi, client: client) }
       let(:new_client) { create(:client, symbol: "#{provider.symbol}.magic", provider: provider, password: ENV['MDS_PASSWORD']) }
-      
+
       # attributes MUST be empty
       let(:valid_attributes) {file_fixture('transfer.json').read }
 
@@ -799,7 +799,17 @@ describe "dois", type: :request do
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"A dataset with a large file for testing purpose. Will be a but over 2.5 MB"}])
+
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+        expect(json.dig('data', 'attributes', 'creator')).to eq( [{"familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "type"=>"Person"}])
+        expect(json.dig('data', 'attributes', 'publisher')).to eq("DataCite")
+        expect(json.dig('data', 'attributes', 'publicationYear')).to eq(2016)
+        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig('data', 'attributes', 'source')).to eq("test")
+        expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
+        expect(doc.at_css("identifier").content).to eq("10.14454/10703")
       end
 
       it 'returns status code 201' do
@@ -1004,7 +1014,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
       end
 
-      it 'returns status code 201' do 
+      it 'returns status code 201' do
 
         expect(response).to have_http_status(201)
       end
@@ -1522,7 +1532,11 @@ describe "dois", type: :request do
     context 'landing page' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
-      let(:link_check_result) { {
+      let(:landingPage) { {
+        "checked" => Time.zone.now.utc.iso8601,
+        "status" => 200,
+        "url" => url,
+        "contentType" => "text/html",
         "error" => nil,
         "redirectCount" => 0,
         "redirectUrls" => [],
@@ -1541,11 +1555,7 @@ describe "dois", type: :request do
               "doi" => "10.14454/10703",
               "url" => url,
               "xml" => xml,
-              "lastLandingPage" => url,
-              "lastLandingPageStatus" => 200,
-              "lastLandingPageStatusCheck" => Time.zone.now,
-              "lastLandingPageContentType" => "text/html",
-              "lastLandingPageStatusResult" => link_check_result,
+              "landingPage" => landingPage,
               "event" => "publish"
             }
           }
@@ -1555,10 +1565,10 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a doi' do
+        puts json.dig('data', 'attributes')
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'landingPage', 'status')).to eq(200)
-        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(link_check_result)
+        expect(json.dig('data', 'attributes', 'landingPage')).to eq(landingPage)
       end
 
       it 'returns status code 201' do
@@ -1573,7 +1583,11 @@ describe "dois", type: :request do
     context 'landing page schema-org-id hash' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
-      let(:link_check_result) { {
+      let(:landingPage) { {
+        "checked" => Time.zone.now.utc.iso8601,
+        "status" => 200,
+        "url" => url,
+        "contentType" => "text/html",
         "error" => nil,
         "redirectCount" => 0,
         "redirectUrls" => [],
@@ -1598,11 +1612,7 @@ describe "dois", type: :request do
               "doi" => "10.14454/10703",
               "url" => url,
               "xml" => xml,
-              "lastLandingPage" => url,
-              "lastLandingPageStatus" => 200,
-              "lastLandingPageStatusCheck" => Time.zone.now,
-              "lastLandingPageContentType" => "text/html",
-              "lastLandingPageStatusResult" => link_check_result,
+              "landingPage" => landingPage,
               "event" => "publish"
             }
           }
@@ -1614,8 +1624,7 @@ describe "dois", type: :request do
       it 'creates a Doi' do
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'landingPage', 'status')).to eq(200)
-        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(link_check_result)
+        expect(json.dig('data', 'attributes', 'landingPage')).to eq(landingPage)
       end
 
       it 'returns status code 201' do
@@ -1727,7 +1736,11 @@ describe "dois", type: :request do
   end
 
   describe 'GET /dois/<doi> linkcheck results' do
-    let(:last_landing_page_status_result) { {
+    let(:landing_page) { {
+      "checked" => Time.zone.now.utc.iso8601,
+      "status" => 200,
+      "url" => "http://example.com",
+      "contentType" => "text/html",
       "error" => nil,
       "redirectCount" => 0,
       "redirectUrls" => [],
@@ -1746,7 +1759,7 @@ describe "dois", type: :request do
         client: client,
         state: "findable",
         event: 'publish',
-        last_landing_page_status_result: last_landing_page_status_result
+        landing_page: landing_page
         )
     }
 
@@ -1759,7 +1772,7 @@ describe "dois", type: :request do
         client: other_client,
         state: "findable",
         event: 'publish',
-        last_landing_page_status_result: last_landing_page_status_result
+        landing_page: landing_page
         )
     }
 
@@ -1767,9 +1780,9 @@ describe "dois", type: :request do
       let(:headers) { { 'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json' } }
       before { get "/dois/#{doi.doi}", headers: headers}
 
-      it 'returns without link_check_results' do
+      it 'returns without landing page results' do
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
-        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(nil)
+        expect(json.dig('data', 'attributes', 'landingPage')).to eq(nil)
       end
     end
 
@@ -1779,9 +1792,9 @@ describe "dois", type: :request do
 
       before { get "/dois/#{doi.doi}", headers: headers }
 
-      it 'returns with link_check_results' do
+      it 'returns with landing page results' do
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
-        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(last_landing_page_status_result)
+        expect(json.dig('data', 'attributes', 'landingPage')).to eq(landing_page)
       end
     end
 
@@ -1792,9 +1805,9 @@ describe "dois", type: :request do
 
       before { get "/dois/#{other_doi.doi}", headers: headers }
 
-      it 'returns with link_check_results' do
+      it 'returns with landing page results' do
         expect(json.dig('data', 'attributes', 'doi')).to eq(other_doi.doi)
-        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(nil)
+        expect(json.dig('data', 'attributes', 'landingPage')).to eq(nil)
       end
     end
 
@@ -1805,9 +1818,9 @@ describe "dois", type: :request do
 
       before { get "/dois/#{doi.doi}", headers: headers }
 
-      it 'returns with link_check_results' do
+      it 'returns with landing page results' do
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
-        expect(json.dig('data', 'attributes', 'landingPage', 'result')).to eq(last_landing_page_status_result)
+        expect(json.dig('data', 'attributes', 'landingPage')).to eq(landing_page)
       end
     end
 

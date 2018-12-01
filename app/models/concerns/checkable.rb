@@ -7,8 +7,8 @@ module Checkable
       return { "status" => 404, "content-type" => nil, "checked" => Time.zone.now.utc.iso8601 } unless
         uri.present?
 
-      return { "status" => doi.last_landing_page_status, "content-type" => doi.last_landing_page_content_type, "checked" => doi.last_landing_page_status_check } if
-        doi.present? && keep && doi.last_landing_page_status_check.present? && doi.last_landing_page_status_check > (Time.zone.now - 7.days)
+      return { "status" => doi.landing_page['status'], "content-type" => doi.landing_page['content_type'], "checked" => doi.landing_page['checked'] } if
+        doi.present? && keep && doi.landing_page.present? && doi.landing_page['checked'].present? && doi.landing_page['checked'] > (Time.zone.now - 7.days)
 
       response = Maremma.head(uri, timeout: 5)
       if response.headers && response.headers["Content-Type"].present?

@@ -298,6 +298,7 @@ describe Doi, type: :model, vcr: true do
     let(:publication_year) { 2011 }
     let(:types) { { "resourceTypeGeneral" => "Software", "resourceType" => "BlogPosting", "schemaOrg" => "BlogPosting" } }
     let(:description) { "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for..." }
+
     subject  { create(:doi, 
       xml: xml, 
       titles: [{ "title" => title }], 
@@ -437,6 +438,63 @@ describe Doi, type: :model, vcr: true do
       ttl = subject.turtle.split("\n")
       expect(ttl[0]).to eq("@prefix schema: <http://schema.org/> .")
       expect(ttl[2]).to eq("<https://doi.org/10.1371/journal.ppat.1000446> a schema:CreativeWork;")
+    end
+  end
+
+  describe "migrates landing page" do
+    let(:provider)  { create(:provider, symbol: "ADMIN") }
+    let(:client)  { create(:client, provider: provider) }
+
+    let(:last_landing_page_status_result) { {
+      "error" => nil,
+      "redirect-count" => 0,
+      "redirect-urls" => ["http://example.com", "https://example.com"],
+      "download-latency" => 200.323232,
+      "has-schema-org" => true,
+      "schema-org-id" => "10.14454/10703",
+      "dc-identifier" => nil,
+      "citation-doi" => nil,
+      "body-has-pid" => true
+    } }
+
+    let(:timeNow) { Time.zone.now.iso8601 }
+
+    let(:doi) {
+      create(
+        :doi,
+        client: client,
+        last_landing_page_status: 200,
+        last_landing_page_status_check: timeNow,
+        last_landing_page_content_type: "text/html",
+        last_landing_page: "http://example.com",
+        last_landing_page_status_result: last_landing_page_status_result
+        )
+    }
+
+    let(:landing_page) { {
+      "checked" => timeNow,
+      "status" => 200,
+      "url" => "http://example.com",
+      "contentType" => "text/html",
+      "error" => nil,
+      "redirectCount" => 0,
+      "redirectUrls" => ["http://example.com", "https://example.com"],
+      "downloadLatency" => 200,
+      "hasSchemaOrg" => true,
+      "schemaOrgId" => "10.14454/10703",
+      "dcIdentifier" => nil,
+      "citationDoi" => nil,
+      "bodyHasPid" => true
+    } }
+
+    before { doi.save }
+
+    it "migrates and corrects data" do
+      Doi.migrate_landing_page
+
+      changed_doi = Doi.find(doi.id)
+
+      expect(changed_doi.landing_page).to eq(landing_page)
     end
   end
 end

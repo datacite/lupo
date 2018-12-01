@@ -208,10 +208,11 @@ class Doi < ActiveRecord::Base
     indexes :prefix,                         type: :keyword
     indexes :suffix,                         type: :keyword
     indexes :reason,                         type: :text
-    indexes :last_landing_page_status,       type: :integer
-    indexes :last_landing_page_status_check, type: :date, ignore_malformed: true
-    indexes :last_landing_page_content_type, type: :keyword
-    indexes :last_landing_page_status_result, type: :object, properties: {
+    indexes :landing_page, type: :object, properties: {
+      checked: { type: :date, ignore_malformed: true },
+      url: { type: :string },
+      status: { type: :integer },
+      contentType: { type: :string },
       error: { type: :keyword },
       redirectCount: { type: :integer },
       redirectUrls: { type: :keyword },
@@ -269,10 +270,7 @@ class Doi < ActiveRecord::Base
       "subjects" => subjects,
       "xml" => xml,
       "is_active" => is_active,
-      "last_landing_page_status" => last_landing_page_status,
-      "last_landing_page_status_check" => last_landing_page_status_check,
-      "last_landing_page_content_type" => last_landing_page_content_type,
-      "last_landing_page_status_result" => last_landing_page_status_result,
+      "landing_page" => landing_page,
       "aasm_state" => aasm_state,
       "schema_version" => schema_version,
       "metadata_version" => metadata_version,
@@ -300,7 +298,7 @@ class Doi < ActiveRecord::Base
       clients: { terms: { field: 'client_id', size: 15, min_doc_count: 1 } },
       prefixes: { terms: { field: 'prefix', size: 15, min_doc_count: 1 } },
       schema_versions: { terms: { field: 'schema_version', size: 15, min_doc_count: 1 } },
-      link_checks: { terms: { field: 'last_landing_page_status', size: 15, min_doc_count: 1 } },
+      link_checks: { terms: { field: 'landing_page.status', size: 15, min_doc_count: 1 } },
       sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } }
     }
   end
@@ -330,13 +328,13 @@ class Doi < ActiveRecord::Base
     (from_date..until_date).each do |d|
       DoiImportByDayJob.perform_later(from_date: d.strftime("%F"))
       puts "Queued importing for DOIs created on #{d.strftime("%F")}."
-    end    
+    end
   end
 
   def self.import_by_day(options={})
     return nil unless options[:from_date].present?
     from_date = Date.parse(options[:from_date])
-    
+
     count = 0
 
     logger = Logger.new(STDOUT)
@@ -348,7 +346,7 @@ class Doi < ActiveRecord::Base
         attrs = %w(creators contributors titles publisher publication_year types descriptions periodical sizes formats language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
           [a.to_sym, meta[a]]
         end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
-        
+
         doi.update_columns(attrs)
       rescue TypeError, NoMethodError => error
         logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
@@ -371,14 +369,14 @@ class Doi < ActiveRecord::Base
     (from_date..until_date).each do |d|
       DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"), index_time: index_time)
       puts "Queued indexing for DOIs created on #{d.strftime("%F")}."
-    end    
+    end
   end
 
   def self.index_by_day(options={})
     return nil unless options[:from_date].present?
     from_date = Date.parse(options[:from_date])
     index_time = options[:index_time].presence || Time.zone.now.utc.iso8601
-    
+
     errors = 0
     count = 0
 
@@ -412,10 +410,10 @@ class Doi < ActiveRecord::Base
 
     Doi.where(created: from_date.midnight..from_date.end_of_day).where("indexed < ?", index_time).find_each do |doi|
       IndexJob.perform_later(doi)
-      doi.update_column(:indexed, Time.zone.now)  
+      doi.update_column(:indexed, Time.zone.now)
       count += 1
     end
-  
+
     logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{options[:from_date]}."
   end
 
@@ -433,10 +431,10 @@ class Doi < ActiveRecord::Base
 
   def xml_encoded
     Base64.strict_encode64(xml) if xml.present?
-  rescue ArgumentError => exception    
+  rescue ArgumentError => exception
     nil
   end
- 
+
   # creator name in natural order: "John Smith" instead of "Smith, John"
   def creator_names
     Array.wrap(creators).map do |a| 
@@ -631,4 +629,65 @@ class Doi < ActiveRecord::Base
     self.version = version.present? ? version + 1 : 1
     self.updated = Time.zone.now.utc.iso8601
   end
+
+  def self.migrate_landing_page(options={})
+    logger = Logger.new(STDOUT)
+    logger.info "Starting migration"
+
+    # Handle camel casing first.
+    Doi.where.not('last_landing_page_status_result' => nil).find_each do |doi|
+      begin
+        # First we try and fix into camel casing
+        result = doi.last_landing_page_status_result
+        mappings = {
+          "body-has-pid" => "bodyHasPid",
+          "dc-identifier" => "dcIdentifier",
+          "citation-doi" => "citationDoi",
+          "redirect-urls" => "redirectUrls",
+          "schema-org-id" => "schemaOrgId",
+          "has-schema-org" => "hasSchemaOrg",
+          "redirect-count" => "redirectCount",
+          "download-latency" => "downloadLatency"
+        }
+        result = result.map {|k, v| [mappings[k] || k, v] }.to_h
+#        doi.update_columns("last_landing_page_status_result": result)
+
+        # Do a fix of the stored download Latency
+        # Sometimes was floating point precision, we dont need this
+        download_latency = result['downloadLatency']
+        download_latency = download_latency.nil? ? download_latency : download_latency.round
+
+        # Try to put the checked date into ISO8601
+        # If we dont have one (there was legacy reasons) then set to unix epoch
+        checked = doi.last_landing_page_status_check
+        checked = checked.nil? ? Time.at(0) : checked
+        checked = checked.iso8601
+
+        # Next we want to build a new landing_page result.
+        landing_page = {
+          "checked" => checked,
+          "status" => doi.last_landing_page_status,
+          "url" => doi.last_landing_page,
+          "contentType" => doi.last_landing_page_content_type,
+          "error" => result['error'],
+          "redirectCount" => result['redirectCount'],
+          "redirectUrls" => result['redirectUrls'],
+          "downloadLatency" => download_latency,
+          "hasSchemaOrg" => result['hasSchemaOrg'],
+          "schemaOrgId" => result['schemaOrgId'],
+          "dcIdentifier" => result['dcIdentifier'],
+          "citationDoi" => result['citationDoi'],
+          "bodyHasPid" => result['bodyHasPid'],
+        }
+
+        doi.update_columns("landing_page": landing_page)
+
+        logger.info "Updated " + doi.doi
+
+      rescue TypeError, NoMethodError => error
+        logger.error "Error updating landing page " + doi.doi + ": " + error.message
+      end
+    end
+  end
+
 end

@@ -74,27 +74,8 @@ namespace :doi do
     Doi.delete_test_dois(from_date: from_date)
   end
 
-  desc 'Update ALL DOIs link check landing page result to camelCase'
-  task :update_landing_page_result_to_camel_Case => :environment do
-    Doi.where.not('last_landing_page_status_result' => nil).find_each do |doi|
-      begin
-        result = doi.last_landing_page_status_result
-        mappings = {
-          "body-has-pid" => "bodyHasPid",
-          "dc-identifier" => "dcIdentifier",
-          "citation-doi" => "citationDoi",
-          "redirect-urls" => "redirectUrls",
-          "schema-org-id" => "schemaOrgId",
-          "has-schema-org" => "hasSchemaOrg",
-          "redirect-count" => "redirectCount",
-          "download-latency" => "downloadLatency"
-        }
-        result = result.map {|k, v| [mappings[k] || k, v] }.to_h
-
-        doi.update_columns("last_landing_page_status_result": result)
-      rescue TypeError, NoMethodError => error
-        logger.error "[MySQL] Error updating landing page result for " + doi.doi + ": " + error.message
-      end
-    end
+  desc 'Migrates landing page data handling camelCase changes at same time'
+  task :migrate_landing_page => :environment do
+    Doi.migrate_landing_page
   end
 end
