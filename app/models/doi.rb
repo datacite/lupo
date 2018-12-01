@@ -65,6 +65,7 @@ class Doi < ActiveRecord::Base
 
   attribute :regenerate, :boolean, default: false
   attribute :only_validate, :boolean, default: false
+  attribute :should_validate, :boolean, default: false
   attribute :agency, :string, default: "DataCite"
 
   belongs_to :client, foreign_key: :datacentre
@@ -497,7 +498,7 @@ class Doi < ActiveRecord::Base
   end
 
   def validatable?
-    %w(registered findable).include?(aasm_state) || only_validate
+    %w(registered findable).include?(aasm_state) || should_validate || only_validate
   end
 
   # update URL in handle system for registered and findable state
