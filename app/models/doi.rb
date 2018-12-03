@@ -102,14 +102,14 @@ class Doi < ActiveRecord::Base
     indexes :doi,                            type: :keyword
     indexes :identifier,                     type: :keyword
     indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
-    indexes :creators,                        type: :object, properties: {
+    indexes :creators,                       type: :object, properties: {
       type: { type: :keyword },
       id: { type: :keyword },
       name: { type: :text },
       givenName: { type: :text },
       familyName: { type: :text }
     }
-    indexes :contributors,                    type: :object, properties: {
+    indexes :contributors,                   type: :object, properties: {
       type: { type: :keyword },
       id: { type: :keyword },
       name: { type: :text },

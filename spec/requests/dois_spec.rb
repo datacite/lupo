@@ -227,6 +227,64 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'state')).to eq("draft")
       end
     end
+
+    context 'hide' do
+      let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "event" => "hide"
+            }
+          }
+        }
+      end
+      before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+
+      it 'updates the record' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'isActive')).to be false
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'state changes to register' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("registered")
+      end
+    end
+
+    context 'hide with reason' do
+      let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "event" => "hide",
+              "reason" => "withdrawn by author"
+            }
+          }
+        }
+      end
+      before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+
+      it 'updates the record' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'isActive')).to be false
+        expect(json.dig('data', 'attributes', 'reason')).to eq("withdrawn by author")
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'state changes to register' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("registered")
+      end
+    end
   end
 
   describe 'PATCH /dois/:id' do

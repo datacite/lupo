@@ -424,7 +424,7 @@ class DoisController < ApplicationController
     # extract attributes from xml field and merge with attributes provided directly
     xml = p[:xml].present? ? Base64.decode64(p[:xml]).force_encoding("UTF-8") : nil
     
-    meta = parse_xml(xml, doi: p[:doi])
+    meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
 
     read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher], 
       p[:publicationYear], p[:types], p[:descriptions], p[:periodical], p[:sizes],
@@ -435,12 +435,13 @@ class DoisController < ApplicationController
     # replace DOI, but otherwise don't touch the XML
     if meta["from"] == "datacite" && read_attrs.blank?
       xml = replace_doi(xml, doi: p[:doi] || meta["doi"])
-    else
-     regenerate = true
+    elsif xml.present? || read_attrs.present?
+      regenerate = true
     end
 
+    p.merge!(xml: xml) if xml.present?
+
     p.merge(
-      xml: xml,
       creators: p[:creators] || meta["creators"],
       contributors: p[:contributors] || meta["contributors"],
       titles: p[:titles] || meta["titles"],
