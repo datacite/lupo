@@ -825,23 +825,23 @@ describe "dois", type: :request do
 
       before { patch "/dois/10.14454/8na3-9s47", params: valid_attributes.to_json, headers: headers }
 
-      # TODO register media
-      # it 'updates the record' do
-      #   expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
-      #   expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-      #   expect(json.dig('data', 'attributes', 'title')).to eq("Eating your own Dog Food")
+      it 'updates the record' do
+        expect(json.dig('data', 'attributes', 'url')).to eq("https://ors.datacite.org/doi:/10.14454/8na3-9s47")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/8na3-9s47")
+        expect(json.dig('data', 'attributes', 'contentUrl')).to eq(["s3://cgp-commons-public/topmed_open_access/197bc047-e917-55ed-852d-d563cdbc50e4/NWD165827.recab.cram", "gs://topmed-irc-share/public/NWD165827.recab.cram"])
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"NWD165827.recab.cram"}])
 
-      #   xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-      #   expect(xml.dig("titles", "title")).to eq("Eating your own Dog Food")
-      # end
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("titles", "title")).to eq("NWD165827.recab.cram")
+      end
 
-      # it 'returns status code 200' do
-      #   expect(response).to have_http_status(200)
-      # end
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
 
-      # it 'sets state to findable' do
-      #   expect(json.dig('data', 'attributes', 'state')).to eq("findable")
-      # end
+      it 'sets state to findable' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
     end
 
     context 'when the request uses schema 3' do
