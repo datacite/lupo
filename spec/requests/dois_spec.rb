@@ -644,8 +644,8 @@ describe "dois", type: :request do
 
       it 'updates the client id' do
         # TODO: db-fields-for-attributes relates to delay in Elasticsearch indexing
-        # expect(json.dig('data', 'relationships', 'client','data','id')).to eq(new_client.symbol.downcase)
-        # expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+        expect(json.dig('data', 'relationships', 'client','data','id')).to eq(new_client.symbol.downcase)
+        expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
       end
     end
 
@@ -754,7 +754,6 @@ describe "dois", type: :request do
       end
 
       it 'returns status code 201' do
-        puts response.body
         expect(response).to have_http_status(201)
       end
 
@@ -1018,7 +1017,6 @@ describe "dois", type: :request do
       end
 
       it 'returns status code 201' do
-        puts response.status
         expect(response).to have_http_status(201)
       end
 
@@ -1671,7 +1669,6 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'creates a doi' do
-        puts json.dig('data', 'attributes')
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'landingPage')).to eq(landingPage)

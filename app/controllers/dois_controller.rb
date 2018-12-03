@@ -441,30 +441,22 @@ class DoisController < ApplicationController
 
     p.merge!(xml: xml) if xml.present?
 
+    read_attrs_keys = [:creators, :contributors, :titles, :publisher, 
+      :publicationYear, :types, :descriptions, :periodical, :sizes,
+      :formats, :language, :dates, :alternateIdentifiers,
+      :relatedIdentifiers, :fundingReferences, :geoLocations, :rightsList,
+      :subjects, :contentUrl, :schemaVersion]
+
+    # merge attributes from xml into regular attributes
+    # make sure we don't accidentally set any attributes to nil
+    read_attrs_keys.each do |attr|
+      p.merge!(attr.to_s.underscore => p[attr] || meta[attr.to_s.underscore]) if p.has_key?(attr) || meta[attr.to_s.underscore].present?
+    end
+    p.merge!(version_info: p[:version] || meta["version_info"]) if p.has_key?(:version_info) || meta["version_info"].present?
+
     p.merge(
-      creators: p[:creators] || meta["creators"],
-      contributors: p[:contributors] || meta["contributors"],
-      titles: p[:titles] || meta["titles"],
-      publisher: p[:publisher] || meta["publisher"],
-      publication_year: p[:publicationYear] || meta["publication_year"],
-      types: p[:types] || meta["types"],
-      descriptions: p[:descriptions] || meta["descriptions"],
-      periodical: p[:periodical] || meta["periodical"],
-      sizes: p[:sizes] || meta["sizes"],
-      formats: p[:formats] || meta["formats"],
-      version_info: p[:version] || meta["version_info"],
-      language: p[:language] || meta["language"],
-      dates: p[:dates] || meta["dates"],
-      alternate_identifiers: p[:alternateIdentifiers] || meta["alternate_identifiers"],
-      related_identifiers: p[:relatedIdentifiers] || meta["related_identifiers"],
-      funding_references: p[:fundingReferences] || meta["funding_references"],
-      geo_locations: p[:geoLocations] || meta["geo_locations"],
-      landing_page: p[:landingPage],
-      rights_list: p[:rightsList] || meta["rights_list"],
-      subjects: p[:subjects] || meta["subjects"],
-      content_url: p[:contentUrl] || meta["content_url"],
-      schema_version: p[:schemaVersion] || meta["schema_version"],
       regenerate: p[:regenerate] || regenerate,
+      landing_page: p[:landingPage],
       last_landing_page: p[:lastLandingPage],
       last_landing_page_status: p[:lastLandingPageStatus],
       last_landing_page_status_check: p[:lastLandingPageStatusCheck],
