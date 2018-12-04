@@ -9,7 +9,7 @@ class DoisController < ApplicationController
   def index
     authorize! :read, Doi
 
-    if Rails.env.production? && !current_user.try(:is_admin_or_staff?)
+    if Rails.env.production? && !Flipper.enabled?(:elasticsearch)
       # don't use elasticsearch
 
       # support nested routes
