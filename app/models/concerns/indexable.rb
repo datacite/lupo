@@ -127,6 +127,11 @@ module Indexable
       must << { term: { "landing_page.status": options[:link_check_status] }} if options[:link_check_status].present?
       must << { exists: { field: "landing_page.checked" }} if options[:link_checked].present?
       must << { term: { "landing_page.hasSchemaOrg": options[:link_check_has_schema_org] }} if options[:link_check_has_schema_org].present?
+      must << { term: { "landing_page.bodyHasPid": options[:link_check_body_has_pid] }} if options[:link_check_body_has_pid].present?
+      must << { exists: { field: "landing_page.schemaOrgId" }} if options[:link_check_found_schema_org_id].present?
+      must << { exists: { field: "landing_page.dcIdentifier" }} if options[:link_check_found_dc_identifier].present?
+      must << { exists: { field: "landing_page.citationDoi" }} if options[:link_check_found_citation_doi].present?
+      must << { range: { "landing_page.redirectCount": { "gte": options[:link_check_redirect_count_gte] } } } if options[:link_check_redirect_count_gte].present?
 
       must_not = []
 

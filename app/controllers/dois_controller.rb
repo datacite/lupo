@@ -52,6 +52,11 @@ class DoisController < ApplicationController
                           link_check_status: params[:link_check_status],
                           link_checked: params[:link_checked],
                           link_check_has_schema_org: params[:link_check_has_schema_org],
+                          link_check_body_has_pid: params[:link_check_body_has_pid],
+                          link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
+                          link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
+                          link_check_found_citation_doi: params[:link_check_found_citation_doi],
+                          link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
                           source: params[:source],
                           page: page,
                           sort: sort)
