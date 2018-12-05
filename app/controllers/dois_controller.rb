@@ -74,7 +74,7 @@ class DoisController < ApplicationController
     prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
     schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
     sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
-    link_checks = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks.buckets) : nil
+    link_checks_status = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_status.buckets) : nil
 
     @dois = response.results.results
 
@@ -92,7 +92,7 @@ class DoisController < ApplicationController
       prefixes: prefixes,
       "schema-versions" => schema_versions,
       sources: sources,
-      "link-checks" => link_checks
+      "link-checks-status" => link_checks_status
     }.compact
 
     options[:links] = {
