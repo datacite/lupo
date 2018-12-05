@@ -12,115 +12,187 @@ class DoisController < ApplicationController
   def index
     authorize! :read, Doi
 
-    sort = case params[:sort]
-          when "name" then { "doi" => { order: 'asc' }}
-          when "-name" then { "doi" => { order: 'desc' }}
-          when "created" then { created: { order: 'asc' }}
-          when "-created" then { created: { order: 'desc' }}
-          when "updated" then { updated: { order: 'asc' }}
-          when "-updated" then { updated: { order: 'desc' }}
-          when "relevance" then { "_score": { "order": "desc" }}
-          else { updated: { order: 'desc' }}
-          end
+    if Rails.env.production? && !Flipper.enabled?(:elasticsearch)
+      # don't use elasticsearch
 
-    page = params[:page] || {}
-    if page[:size].present?
-      page[:size] = [page[:size].to_i, 1000].min
-      max_number = page[:size] > 0 ? 10000/page[:size] : 1
-    else
-      page[:size] = 25
-      max_number = 10000/page[:size]
-    end
-    page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
+      # support nested routes
+      if params[:client_id].present?
+        client = Client.where('datacentre.symbol = ?', params[:client_id]).first
+        collection = client.present? ? client.dois : Doi.none
+        total = client.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
+      elsif params[:provider_id].present? && params[:provider_id] != "admin"
+        provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
+        collection = provider.present? ? Doi.joins(:client).where("datacentre.allocator = ?", provider.id) : Doi.none
+        total = provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
+      elsif params[:id].present?
+        collection = Doi.where(doi: params[:id])
+        total = collection.all.size
+      else
+        provider = Provider.unscoped.where('allocator.symbol = ?', "ADMIN").first
+        total = provider.present? ? provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i } : 0
+        collection = Doi
+      end
 
-    if params[:id].present?
-      response = Doi.find_by_id(params[:id])
-    elsif params[:ids].present?
-      response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
-    else
-      response = Doi.query(params[:query],
-                          state: params[:state],
-                          created: params[:created],
-                          registered: params[:registered],
-                          provider_id: params[:provider_id],
-                          client_id: params[:client_id],
-                          prefix: params[:prefix],
-                          person_id: params[:person_id],
-                          resource_type_id: params[:resource_type_id],
-                          query_fields: params[:query_fields],
-                          schema_version: params[:schema_version],
-                          link_check_status: params[:link_check_status],
-                          link_checked: params[:link_checked],
-                          link_check_has_schema_org: params[:link_check_has_schema_org],
-                          link_check_body_has_pid: params[:link_check_body_has_pid],
-                          link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
-                          link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
-                          link_check_found_citation_doi: params[:link_check_found_citation_doi],
-                          link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
-                          source: params[:source],
-                          page: page,
-                          sort: sort)
-    end
+      if params[:query].present?
+        collection = Doi.q(params[:query])
+        total = collection.all.size
+      end
 
-    total = response.results.total
-    total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
-    states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
-    resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
-    created = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
-    registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
-    providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
-    clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
-    prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
-    schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
-    sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
-    link_checks_status = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_status.buckets) : nil
-    links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_has_schema_org.buckets) : nil
-    link_checks_schema_org_id = total > 0 ? response.response.aggregations.link_checks_schema_org_id.value : nil
-    link_checks_dc_identifier = total > 0 ? response.response.aggregations.link_checks_dc_identifier.value : nil
-    link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
-    links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
+      page = params[:page] || {}
+      if page[:size].present?
+        page[:size] = [page[:size].to_i, 1000].min
+        max_number = page[:size] > 0 ? 10000/page[:size] : 1
+      else
+        page[:size] = 25
+        max_number = 10000/page[:size]
+      end
+      page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
+      total_pages = (total.to_f / page[:size]).ceil
 
-    @dois = response.results.results
+      order = case params[:sort]
+              when "name" then "dataset.doi"
+              when "-name" then "dataset.doi DESC"
+              when "created" then "dataset.created"
+              else "dataset.created DESC"
+              end
 
-    options = {}
-    options[:meta] = {
-      total: total,
-      "total-pages" => total_pages,
-      page: page[:number],
-      states: states,
-      "resource-types" => resource_types,
-      created: created,
-      registered: registered,
-      providers: providers,
-      clients: clients,
-      prefixes: prefixes,
-      "schema-versions" => schema_versions,
-      sources: sources,
-      "link-checks-status" => link_checks_status,
-      "links-checked" => links_checked,
-      "links-with-schema-org" => links_with_schema_org,
-      "link-checks-schema-org-id" => link_checks_schema_org_id,
-      "link-checks-dc-identifier" => link_checks_dc_identifier,
-      "link-checks-citation-doi" => link_checks_citation_doi
-    }.compact
+      @dois = collection.order(order).page(page[:number]).per(page[:size]).without_count
 
-    options[:links] = {
-      self: request.original_url,
-      next: @dois.blank? ? nil : request.base_url + "/dois?" + {
-        query: params[:query],
-        "provider-id" => params[:provider_id],
-        "client-id" => params[:client_id],
-        fields: params[:fields],
-        "page[cursor]" => Array.wrap(@dois.last[:sort]).first,
-        "page[size]" => params.dig(:page, :size) }.compact.to_query
+      options = {}
+      options[:meta] = {
+        total: total,
+        "total-pages" => total_pages,
+        page: page[:number].to_i
       }.compact
-    options[:include] = @include
-    options[:is_collection] = true
-    options[:params] = {
-      :current_ability => current_ability,
-    }
 
-    render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
+      options[:links] = {
+        self: request.original_url,
+        next: @dois.blank? ? nil : request.base_url + "/dois?" + {
+          query: params[:query],
+          "provider-id" => params[:provider_id],
+          "client-id" => params[:client_id],
+          "page[number]" => page[:number] + 1,
+          "page[size]" => page[:size],
+          sort: params[:sort] }.compact.to_query
+        }.compact
+      options[:include] = @include
+      options[:is_collection] = true
+      options[:params] = {
+        :current_ability => current_ability,
+      }
+
+      render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
+    else
+      sort = case params[:sort]
+            when "name" then { "doi" => { order: 'asc' }}
+            when "-name" then { "doi" => { order: 'desc' }}
+            when "created" then { created: { order: 'asc' }}
+            when "-created" then { created: { order: 'desc' }}
+            when "updated" then { updated: { order: 'asc' }}
+            when "-updated" then { updated: { order: 'desc' }}
+            when "relevance" then { "_score": { "order": "desc" }}
+            else { updated: { order: 'desc' }}
+            end
+
+      page = params[:page] || {}
+      if page[:size].present?
+        page[:size] = [page[:size].to_i, 1000].min
+        max_number = page[:size] > 0 ? 10000/page[:size] : 1
+      else
+        page[:size] = 25
+        max_number = 10000/page[:size]
+      end
+      page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
+
+      if params[:id].present?
+        response = Doi.find_by_id(params[:id])
+      elsif params[:ids].present?
+        response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
+      else
+        response = Doi.query(params[:query],
+                            state: params[:state],
+                            created: params[:created],
+                            registered: params[:registered],
+                            provider_id: params[:provider_id],
+                            client_id: params[:client_id],
+                            prefix: params[:prefix],
+                            person_id: params[:person_id],
+                            resource_type_id: params[:resource_type_id],
+                            query_fields: params[:query_fields],
+                            schema_version: params[:schema_version],
+                            link_check_status: params[:link_check_status],
+                            link_check_has_schema_org: params[:link_check_has_schema_org],
+                            link_check_body_has_pid: params[:link_check_body_has_pid],
+                            link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
+                            link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
+                            link_check_found_citation_doi: params[:link_check_found_citation_doi],
+                            link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
+                            source: params[:source],
+                            page: page,
+                            sort: sort)
+      end
+
+      total = response.results.total
+      total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
+
+      states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
+      resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
+      created = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
+      registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
+      providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+      clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
+      prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
+      schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
+      sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
+      link_checks_status = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_status.buckets) : nil
+      links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_has_schema_org.buckets) : nil
+      link_checks_schema_org_id = total > 0 ? response.response.aggregations.link_checks_schema_org_id.value : nil
+      link_checks_dc_identifier = total > 0 ? response.response.aggregations.link_checks_dc_identifier.value : nil
+      link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
+      links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
+
+      @dois = response.results.results
+
+      options = {}
+      options[:meta] = {
+        total: total,
+        "total-pages" => total_pages,
+        page: page[:number],
+        states: states,
+        "resource-types" => resource_types,
+        created: created,
+        registered: registered,
+        providers: providers,
+        clients: clients,
+        prefixes: prefixes,
+        "schema-versions" => schema_versions,
+        sources: sources,
+        "link-checks-status" => link_checks_status,
+        "links-checked" => links_checked,
+        "links-with-schema-org" => links_with_schema_org,
+        "link-checks-schema-org-id" => link_checks_schema_org_id,
+        "link-checks-dc-identifier" => link_checks_dc_identifier,
+        "link-checks-citation-doi" => link_checks_citation_doi
+      }.compact
+
+      options[:links] = {
+        self: request.original_url,
+        next: @dois.blank? ? nil : request.base_url + "/dois?" + {
+          query: params[:query],
+          "provider-id" => params[:provider_id],
+          "client-id" => params[:client_id],
+          fields: params[:fields],
+          "page[cursor]" => Array.wrap(@dois.last[:sort]).first,
+          "page[size]" => params.dig(:page, :size) }.compact.to_query
+        }.compact
+      options[:include] = @include
+      options[:is_collection] = true
+      options[:params] = {
+        :current_ability => current_ability,
+      }
+
+      render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
+    end
   end
 
   def show
