@@ -300,7 +300,12 @@ class Doi < ActiveRecord::Base
       prefixes: { terms: { field: 'prefix', size: 15, min_doc_count: 1 } },
       schema_versions: { terms: { field: 'schema_version', size: 15, min_doc_count: 1 } },
       link_checks_status: { terms: { field: 'landing_page.status', size: 15, min_doc_count: 1 } },
-      sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } }
+      link_checks_has_schema_org: { terms: { field: 'landing_page.hasSchemaOrg', size: 2, min_doc_count: 1 } },
+      link_checks_schema_org_id: { value_count: { field: "landing_page.schemaOrgId" } },
+      link_checks_dc_identifier: { value_count: { field: "landing_page.dcIdentifier" } },
+      link_checks_citation_doi: { value_count: { field: "landing_page.citationDoi" } },
+      links_checked: { value_count: { field: "landing_page.checked" } },
+      sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
     }
   end
 
