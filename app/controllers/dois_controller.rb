@@ -50,6 +50,7 @@ class DoisController < ApplicationController
                           query_fields: params[:query_fields],
                           schema_version: params[:schema_version],
                           link_check_status: params[:link_check_status],
+                          link_checked: params[:link_checked],
                           source: params[:source],
                           page: page,
                           sort: sort)
@@ -125,7 +126,7 @@ class DoisController < ApplicationController
     logger = Logger.new(STDOUT)
     # logger.info safe_params.inspect
     @doi = Doi.new(safe_params.merge(only_validate: true))
-    
+
     authorize! :validate, @doi
 
     if @doi.valid?
@@ -423,10 +424,10 @@ class DoisController < ApplicationController
 
     # extract attributes from xml field and merge with attributes provided directly
     xml = p[:xml].present? ? Base64.decode64(p[:xml]).force_encoding("UTF-8") : nil
-    
+
     meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
 
-    read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher], 
+    read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher],
       p[:publicationYear], p[:types], p[:descriptions], p[:periodical], p[:sizes],
       p[:formats], p[:version], p[:language], p[:dates], p[:alternateIdentifiers],
       p[:relatedIdentifiers], p[:fundingReferences], p[:geoLocations], p[:rightsList],
@@ -441,7 +442,7 @@ class DoisController < ApplicationController
 
     p.merge!(xml: xml) if xml.present?
 
-    read_attrs_keys = [:creators, :contributors, :titles, :publisher, 
+    read_attrs_keys = [:creators, :contributors, :titles, :publisher,
       :publicationYear, :types, :descriptions, :periodical, :sizes,
       :formats, :language, :dates, :alternateIdentifiers,
       :relatedIdentifiers, :fundingReferences, :geoLocations, :rightsList,
@@ -465,7 +466,7 @@ class DoisController < ApplicationController
     ).except(
       :confirmDoi, :identifier, :prefix, :suffix, :publicationYear,
       :rightsList, :alternateIdentifiers, :relatedIdentifiers, :fundingReferences, :geoLocations,
-      :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage, 
+      :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage,
       :created, :registered, :updated, :lastLandingPage, :version,
       :lastLandingPageStatus, :lastLandingPageStatusCheck,
       :lastLandingPageStatusResult, :lastLandingPageContentType)

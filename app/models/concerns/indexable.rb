@@ -125,6 +125,7 @@ module Indexable
       must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
       must << { term: { source: options[:source] }} if options[:source].present?
       must << { term: { "landing_page.status": options[:link_check_status] }} if options[:link_check_status].present?
+      must << { exists: { field: "landing_page.checked" }} if options[:link_checked].present?
 
       must_not = []
 
