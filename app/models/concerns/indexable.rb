@@ -8,11 +8,11 @@ module Indexable
       # use index_document instead of update_document to also update virtual attributes
       IndexJob.perform_later(self)
       if self.class.name == "Doi"
-        update_column(:indexed, Time.zone.now)        
+        update_column(:indexed, Time.zone.now)
         send_import_message(self.to_jsonapi) if aasm_state == "findable" unless Rails.env.test?
       end
     end
-  
+
     before_destroy do
       begin
         __elasticsearch__.delete_document
@@ -29,7 +29,7 @@ module Indexable
     def send_import_message(data)
       send_message(data, shoryuken_class: "DoiImportWorker")
     end
-    
+
     # shoryuken_class is needed for the consumer to process the message
     # we use the AWS SQS client directly as there is no consumer in this app
     def send_message(body, options={})
@@ -85,7 +85,7 @@ module Indexable
 
     def find_by_ids(ids, options={})
       options[:sort] ||= { "_doc" => { order: 'asc' }}
-    
+
       __elasticsearch__.search({
         from: options[:page].present? ? (options.dig(:page, :number) - 1) * options.dig(:page, :size) : 0,
         size: options[:size] || 25,
@@ -124,7 +124,14 @@ module Indexable
       must << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
       must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
       must << { term: { source: options[:source] }} if options[:source].present?
-      must << { term: { last_landing_page_status: options[:link_check_status] }} if options[:link_check_status].present?
+      must << { term: { "landing_page.status": options[:link_check_status] }} if options[:link_check_status].present?
+      must << { exists: { field: "landing_page.checked" }} if options[:link_checked].present?
+      must << { term: { "landing_page.hasSchemaOrg": options[:link_check_has_schema_org] }} if options[:link_check_has_schema_org].present?
+      must << { term: { "landing_page.bodyHasPid": options[:link_check_body_has_pid] }} if options[:link_check_body_has_pid].present?
+      must << { exists: { field: "landing_page.schemaOrgId" }} if options[:link_check_found_schema_org_id].present?
+      must << { exists: { field: "landing_page.dcIdentifier" }} if options[:link_check_found_dc_identifier].present?
+      must << { exists: { field: "landing_page.citationDoi" }} if options[:link_check_found_citation_doi].present?
+      must << { range: { "landing_page.redirectCount": { "gte": options[:link_check_redirect_count_gte] } } } if options[:link_check_redirect_count_gte].present?
 
       must_not = []
 

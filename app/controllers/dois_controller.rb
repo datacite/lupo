@@ -121,6 +121,12 @@ class DoisController < ApplicationController
                             query_fields: params[:query_fields],
                             schema_version: params[:schema_version],
                             link_check_status: params[:link_check_status],
+                            link_check_has_schema_org: params[:link_check_has_schema_org],
+                            link_check_body_has_pid: params[:link_check_body_has_pid],
+                            link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
+                            link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
+                            link_check_found_citation_doi: params[:link_check_found_citation_doi],
+                            link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
                             source: params[:source],
                             page: page,
                             sort: sort)
@@ -138,7 +144,12 @@ class DoisController < ApplicationController
       prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
       schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
       sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
-      link_checks = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks.buckets) : nil
+      link_checks_status = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_status.buckets) : nil
+      links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_has_schema_org.buckets) : nil
+      link_checks_schema_org_id = total > 0 ? response.response.aggregations.link_checks_schema_org_id.value : nil
+      link_checks_dc_identifier = total > 0 ? response.response.aggregations.link_checks_dc_identifier.value : nil
+      link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
+      links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
 
       @dois = response.results.results
 
@@ -156,7 +167,12 @@ class DoisController < ApplicationController
         prefixes: prefixes,
         "schema-versions" => schema_versions,
         sources: sources,
-        "link-checks" => link_checks
+        "link-checks-status" => link_checks_status,
+        "links-checked" => links_checked,
+        "links-with-schema-org" => links_with_schema_org,
+        "link-checks-schema-org-id" => link_checks_schema_org_id,
+        "link-checks-dc-identifier" => link_checks_dc_identifier,
+        "link-checks-citation-doi" => link_checks_citation_doi
       }.compact
 
       options[:links] = {
@@ -197,7 +213,7 @@ class DoisController < ApplicationController
     logger = Logger.new(STDOUT)
     # logger.info safe_params.inspect
     @doi = Doi.new(safe_params.merge(only_validate: true))
-    
+
     authorize! :validate, @doi
 
     if @doi.valid?
@@ -495,10 +511,10 @@ class DoisController < ApplicationController
 
     # extract attributes from xml field and merge with attributes provided directly
     xml = p[:xml].present? ? Base64.decode64(p[:xml]).force_encoding("UTF-8") : nil
-    
+
     meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
 
-    read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher], 
+    read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher],
       p[:publicationYear], p[:types], p[:descriptions], p[:periodical], p[:sizes],
       p[:formats], p[:version], p[:language], p[:dates], p[:alternateIdentifiers],
       p[:relatedIdentifiers], p[:fundingReferences], p[:geoLocations], p[:rightsList],
@@ -514,7 +530,7 @@ class DoisController < ApplicationController
 
     p.merge!(xml: xml) if xml.present?
 
-    read_attrs_keys = [:creators, :contributors, :titles, :publisher, 
+    read_attrs_keys = [:creators, :contributors, :titles, :publisher,
       :publicationYear, :types, :descriptions, :periodical, :sizes,
       :formats, :language, :dates, :alternateIdentifiers,
       :relatedIdentifiers, :fundingReferences, :geoLocations, :rightsList,
@@ -538,7 +554,7 @@ class DoisController < ApplicationController
     ).except(
       :confirmDoi, :identifier, :prefix, :suffix, :publicationYear,
       :rightsList, :alternateIdentifiers, :relatedIdentifiers, :fundingReferences, :geoLocations,
-      :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage, 
+      :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage,
       :created, :registered, :updated, :lastLandingPage, :version,
       :lastLandingPageStatus, :lastLandingPageStatusCheck,
       :lastLandingPageStatusResult, :lastLandingPageContentType)
