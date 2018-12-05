@@ -126,6 +126,7 @@ module Indexable
       must << { term: { source: options[:source] }} if options[:source].present?
       must << { term: { "landing_page.status": options[:link_check_status] }} if options[:link_check_status].present?
       must << { exists: { field: "landing_page.checked" }} if options[:link_checked].present?
+      must << { term: { "landing_page.hasSchemaOrg": options[:link_check_has_schema_org] }} if options[:link_check_has_schema_org].present?
 
       must_not = []
 

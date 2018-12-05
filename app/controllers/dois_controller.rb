@@ -51,6 +51,7 @@ class DoisController < ApplicationController
                           schema_version: params[:schema_version],
                           link_check_status: params[:link_check_status],
                           link_checked: params[:link_checked],
+                          link_check_has_schema_org: params[:link_check_has_schema_org],
                           source: params[:source],
                           page: page,
                           sort: sort)
