@@ -58,28 +58,27 @@ module Crosscitable
     end
 
     def update_xml
-      if regenerate
-        # check whether input is id and we need to fetch the content
-        id = normalize_id(xml, sandbox: sandbox)
+      # check whether input is id and we need to fetch the content
+      id = normalize_id(xml, sandbox: sandbox)
 
-        if id.present?
-          from = find_from_format(id: id)
+      if id.present?
+        from = find_from_format(id: id)
 
-          # generate name for method to call dynamically
-          hsh = from.present? ? send("get_" + from, id: id, sandbox: sandbox) : {}
-          xml = hsh.fetch("string", nil)
-        else
-          from = find_from_format(string: xml)
-        end
-
-        # generate new xml if attributes have been set directly and/or from metadata are not DataCite XML
-        read_attrs = %w(creators contributors titles publisher publication_year types descriptions periodical sizes formats version_info language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url schema_version).map do |a|
-          [a.to_sym, send(a.to_s)]
-        end.to_h.compact
-
-        meta = from.present? ? send("read_" + from, { string: xml, doi: doi, sandbox: sandbox }.merge(read_attrs)) : {}
-        xml = datacite_xml
+        # generate name for method to call dynamically
+        hsh = from.present? ? send("get_" + from, id: id, sandbox: sandbox) : {}
+        xml = hsh.fetch("string", nil)
+      else
+        from = find_from_format(string: xml)
       end
+
+      # generate new xml if attributes have been set directly and/or from metadata that are not DataCite XML
+      read_attrs = %w(creators contributors titles publisher publication_year types descriptions periodical sizes formats version_info language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url schema_version).map do |a|
+        [a.to_sym, send(a.to_s)]
+      end.to_h.compact
+
+      meta = from.present? ? send("read_" + from, { string: xml, doi: doi, sandbox: sandbox }.merge(read_attrs)) : {}
+      
+      xml = datacite_xml
 
       write_attribute(:xml, xml)
     end

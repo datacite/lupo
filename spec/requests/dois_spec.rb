@@ -1219,7 +1219,7 @@ describe "dois", type: :request do
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
       it 'returns validation error' do
-        expect(json.dig('errors')).to eq([{"source"=>"metadata", "title"=>"Is invalid"}, {"source"=>"metadata", "title"=>"Is invalid"}])
+        expect(json.dig('errors')).to eq([{"source"=>"metadata", "title"=>"Is invalid"}])
       end
 
       it 'returns status code 422' do

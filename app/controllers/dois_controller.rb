@@ -477,7 +477,7 @@ class DoisController < ApplicationController
       :creators,
       { creators: [:type, :id, :name, :givenName, :familyName, :affiliation] },
       :contributors,
-      { contributors: [:type, :id, :name, :givenName, :familyName, :contributorType] },
+      { contributors: [:type, :id, :name, :givenName, :familyName, :affiliation, :contributorType] },
       :altenateIdentifiers,
       { alternateIdentifiers: [:alternateIdentifier, :alternateIdentifierType] },
       :relatedIdentifiers,
@@ -505,9 +505,10 @@ class DoisController < ApplicationController
       p[:subjects], p[:contentUrl], p[:schemaVersion]].compact
 
     # replace DOI, but otherwise don't touch the XML
-    if meta["from"] == "datacite" && read_attrs.blank?
+    # use Array.wrap(read_attrs.first) as read_attrs may also be [[]]
+    if meta["from"] == "datacite" && Array.wrap(read_attrs.first).blank?
       xml = replace_doi(xml, doi: p[:doi] || meta["doi"])
-    elsif xml.present? || read_attrs.present?
+    elsif xml.present? || Array.wrap(read_attrs.first).present?
       regenerate = true
     end
 
