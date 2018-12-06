@@ -26,68 +26,37 @@ Mime::Type.register "text/x-bibliography", :citation
 # register renderers for these Mime types
 # :citation and :datacite is handled differently
 ActionController::Renderers.add :datacite do |obj, options|
-  uri = Addressable::URI.parse(obj.identifier)
-  data = obj.xml
-
-  filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
-  send_data data.to_s, type: Mime[:datacite],
-    disposition: "attachment; filename=#{filename}.xml"
+  Array.wrap(obj).map { |o| o.xml }.join("\n")
 end
 
 ActionController::Renderers.add :citation do |obj, options|
-  uri = Addressable::URI.parse(obj.identifier)
-  data = obj.citation
-
-  filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
-  send_data data.to_s, type: Mime[:citation],
-    disposition: "attachment; filename=#{filename}.txt"
-end
-
-ActionController::Renderers.add :turtle do |obj, options|
-  uri = Addressable::URI.parse(obj.identifier)
-  data = obj.send(:turtle)
-
-  filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
-  send_data data.to_s, type: Mime[:turtle],
-    disposition: "attachment; filename=#{filename}.ttl"
+  Array.wrap(obj).map do |o|
+    o.style = options[:style] || "apa"
+    o.locale = options[:locale] || "en-US"
+    o.citation
+  end.join("\n\n")
 end
 
 %w(datacite_json schema_org crosscite citeproc codemeta).each do |f|
   ActionController::Renderers.add f.to_sym do |obj, options|
-    uri = Addressable::URI.parse(obj.identifier)
-    data = obj.send(f)
-
-    filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
-    send_data data.to_s, type: Mime[f.to_sym],
-      disposition: "attachment; filename=#{filename}.json"
+    if obj.is_a?(Array)
+      "[\n" + Array.wrap(obj).map { |o| o.send(f) }.join(",\n") + "\n]"
+    else
+      obj.send(f)
+    end
   end
 end
 
-%w(crossref rdf_xml jats).each do |f|
+%w(jats).each do |f|
   ActionController::Renderers.add f.to_sym do |obj, options|
-    uri = Addressable::URI.parse(obj.identifier)
-    data = obj.send(f)
-
-    filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
-    send_data data.to_s, type: Mime[f.to_sym],
-      disposition: "attachment; filename=#{filename}.xml"
+    Array.wrap(obj).map { |o| o.send(f) }.join("\n")
   end
 end
 
 ActionController::Renderers.add :bibtex do |obj, options|
-  uri = Addressable::URI.parse(obj.identifier)
-  data = obj.send("bibtex")
-
-  filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
-  send_data data.to_s, type: Mime[:bibtex],
-    disposition: "attachment; filename=#{filename}.bib"
+  Array.wrap(obj).map { |o| o.send("bibtex") }.join("\n")
 end
 
 ActionController::Renderers.add :ris do |obj, options|
-  uri = Addressable::URI.parse(obj.identifier)
-  data = obj.send("ris")
-
-  filename = uri.path.gsub(/[^0-9A-Za-z.\-]/, '_')
-  send_data data.to_s, type: Mime[:ris],
-    disposition: "attachment; filename=#{filename}.ris"
+  Array.wrap(obj).map { |o| o.send("ris") }.join("\n\n")
 end
