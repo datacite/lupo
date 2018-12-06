@@ -7,6 +7,29 @@ Rails.application.routes.draw do
   # send reset link
   post 'reset', :to => 'sessions#reset'
 
+  # content negotiation
+  get '/dois/application/vnd.datacite.datacite+xml/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :datacite }
+  get '/dois/application/vnd.datacite.datacite+json/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :datacite_json }
+  get '/dois/application/vnd.crosscite.crosscite+json/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :crosscite }
+  get '/dois/application/vnd.schemaorg.ld+json/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :schema_org }
+  get '/dois/application/vnd.codemeta.ld+json/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :codemeta }
+  get '/dois/application/vnd.citationstyles.csl+json/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :citeproc }
+  get '/dois/application/vnd.jats+xml/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :jats }
+  get '/dois/application/x-bibtex/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :bibtex }
+  get '/dois/application/x-research-info-systems/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :ris }
+  get '/dois/text/x-bibliography/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :citation }
+
+  get '/dois/application/vnd.datacite.datacite+xml', :to => 'dois#index', defaults: { format: :datacite }
+  get '/dois/application/vnd.datacite.datacite+json', :to => 'dois#index', defaults: { format: :datacite_json }
+  get '/dois/application/vnd.crosscite.crosscite+json', :to => 'dois#index', defaults: { format: :crosscite }
+  get '/dois/application/vnd.schemaorg.ld+json', :to => 'dois#index', defaults: { format: :schema_org }
+  get '/dois/application/vnd.codemeta.ld+json', :to => 'dois#index', defaults: { format: :codemeta }
+  get '/dois/application/vnd.citationstyles.csl+json', :to => 'dois#index', defaults: { format: :citeproc }
+  get '/dois/application/vnd.jats+xml', :to => 'dois#index', defaults: { format: :jats }
+  get '/dois/application/x-bibtex', :to => 'dois#index', defaults: { format: :bibtex }
+  get '/dois/application/x-research-info-systems', :to => 'dois#index', defaults: { format: :ris }
+  get '/dois/text/x-bibliography', :to => 'dois#index', defaults: { format: :citation }
+
   # manage DOIs
   post 'dois/validate', :to => 'dois#validate'
   post 'dois/status', :to => 'dois#status'
@@ -56,18 +79,7 @@ Rails.application.routes.draw do
   resources :data_centers, only: [:show, :index], constraints: { :id => /.+/ }, path: "/data-centers"
   resources :works, only: [:show, :index], constraints: { :id => /.+/ }
 
-  # content negotiation
-  get '/application/vnd.datacite.datacite+xml/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :datacite }
-  get '/application/vnd.datacite.datacite+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :datacite_json }
-  get '/application/vnd.crosscite.crosscite+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :crosscite }
-  get '/application/vnd.schemaorg.ld+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :schema_org }
-  get '/application/vnd.codemeta.ld+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :codemeta }
-  get '/application/vnd.citationstyles.csl+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :citeproc }
-  get '/application/vnd.jats+xml/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :jats }
-  get '/application/x-bibtex/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :bibtex }
-  get '/application/x-research-info-systems/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :ris }
-  get '/text/x-bibliography/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :citation }
-  resources :index, path: '/', constraints: { :id => /.+/ }, only: [:show, :index]
+  resources :index, path: '/', constraints: { :id => /.+/ }, only: [:index]
 
   # rescue routing errors
   #match "*path", to: "index#routing_error", via: :all

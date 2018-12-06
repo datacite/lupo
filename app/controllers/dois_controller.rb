@@ -2,6 +2,7 @@ require 'uri'
 require 'base64'
 
 class DoisController < ApplicationController
+  include ActionController::MimeResponds
   include Crosscitable
 
   prepend_before_action :authenticate_user!
@@ -153,60 +154,82 @@ class DoisController < ApplicationController
 
       @dois = response.results.results
 
-      options = {}
-      options[:meta] = {
-        total: total,
-        "total-pages" => total_pages,
-        page: page[:number],
-        states: states,
-        "resource-types" => resource_types,
-        created: created,
-        registered: registered,
-        providers: providers,
-        clients: clients,
-        prefixes: prefixes,
-        "schema-versions" => schema_versions,
-        sources: sources,
-        "link-checks-status" => link_checks_status,
-        "links-checked" => links_checked,
-        "links-with-schema-org" => links_with_schema_org,
-        "link-checks-schema-org-id" => link_checks_schema_org_id,
-        "link-checks-dc-identifier" => link_checks_dc_identifier,
-        "link-checks-citation-doi" => link_checks_citation_doi
-      }.compact
-
-      options[:links] = {
-        self: request.original_url,
-        next: @dois.blank? ? nil : request.base_url + "/dois?" + {
-          query: params[:query],
-          "provider-id" => params[:provider_id],
-          "client-id" => params[:client_id],
-          fields: params[:fields],
-          "page[cursor]" => Array.wrap(@dois.last[:sort]).first,
-          "page[size]" => params.dig(:page, :size) }.compact.to_query
-        }.compact
-      options[:include] = @include
-      options[:is_collection] = true
-      options[:params] = {
-        :current_ability => current_ability,
-      }
-
-      render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
+      respond_to do |format|
+        # format.citation do
+        #   # fetch formatted citations
+        #   @doi.style = params[:style] || "apa"
+        #   @doi.locale = params[:locale] || "en-US"
+        #   render citation: @doi
+        # end
+        # format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => @dois }
+        format.any do
+          options = {}
+          options[:meta] = {
+            total: total,
+            "total-pages" => total_pages,
+            page: page[:number],
+            states: states,
+            "resource-types" => resource_types,
+            created: created,
+            registered: registered,
+            providers: providers,
+            clients: clients,
+            prefixes: prefixes,
+            "schema-versions" => schema_versions,
+            sources: sources,
+            "link-checks-status" => link_checks_status,
+            "links-checked" => links_checked,
+            "links-with-schema-org" => links_with_schema_org,
+            "link-checks-schema-org-id" => link_checks_schema_org_id,
+            "link-checks-dc-identifier" => link_checks_dc_identifier,
+            "link-checks-citation-doi" => link_checks_citation_doi
+          }.compact
+    
+          options[:links] = {
+            self: request.original_url,
+            next: @dois.blank? ? nil : request.base_url + "/dois?" + {
+              query: params[:query],
+              "provider-id" => params[:provider_id],
+              "client-id" => params[:client_id],
+              fields: params[:fields],
+              "page[cursor]" => Array.wrap(@dois.last[:sort]).first,
+              "page[size]" => params.dig(:page, :size) }.compact.to_query
+            }.compact
+          options[:include] = @include
+          options[:is_collection] = true
+          options[:params] = {
+            :current_ability => current_ability,
+          }
+    
+          render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
+        end
+      end
     end
   end
 
   def show
     authorize! :read, @doi
 
-    options = {}
-    options[:include] = @include
-    options[:is_collection] = false
-    options[:params] = {
-      current_ability: current_ability,
-      detail: true
-    }
-
-    render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
+    respond_to do |format|
+      format.json do
+        options = {}
+        options[:include] = @include
+        options[:is_collection] = false
+        options[:params] = {
+          current_ability: current_ability,
+          detail: true
+        }
+    
+        render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
+      end
+      format.citation do
+        # fetch formatted citation
+        @doi.style = params[:style] || "apa"
+        @doi.locale = params[:locale] || "en-US"
+        render citation: @doi
+      end
+      format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => @doi }
+    end
   end
 
   def validate
