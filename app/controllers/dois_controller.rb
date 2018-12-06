@@ -223,9 +223,7 @@ class DoisController < ApplicationController
       end
       format.citation do
         # fetch formatted citation
-        @doi.style = params[:style] || "apa"
-        @doi.locale = params[:locale] || "en-US"
-        render citation: @doi
+        render citation: @doi, style: params[:style] || "apa", locale: params[:locale] || "en-US"
       end
       format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => @doi }
     end
