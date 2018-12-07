@@ -97,8 +97,7 @@ class DoisController < ApplicationController
 
       page = params[:page] || {}
       
-      # only support page[:size] = 25 for content types other than json
-      if page[:size].present? && request.format == :json
+      if page[:size].present?
         page[:size] = [page[:size].to_i, 1000].min
         max_number = page[:size] > 0 ? 10000/page[:size] : 1
       else
@@ -155,12 +154,7 @@ class DoisController < ApplicationController
       links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
 
       respond_to do |format|
-        format.citation do
-          # fetch formatted citations
-          render citation: response.records.to_a, style: params[:style] || "apa", locale: params[:locale] || "en-US"
-        end
-        format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => response.records.to_a }
-        format.any do
+        format.json do
           @dois = response.results.results
           options = {}
           options[:meta] = {
@@ -202,6 +196,11 @@ class DoisController < ApplicationController
     
           render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
         end
+        format.citation do
+          # fetch formatted citations
+          render citation: response.records.to_a, style: params[:style] || "apa", locale: params[:locale] || "en-US"
+        end
+        format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => response.records.to_a }
       end
     end
   end
