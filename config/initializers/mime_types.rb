@@ -28,11 +28,19 @@ ActionController::Renderers.add :datacite do |obj, options|
 end
 
 ActionController::Renderers.add :citation do |obj, options|
-  Array.wrap(obj).map do |o|
-    o.style = options[:style] || "apa"
-    o.locale = options[:locale] || "en-US"
-    o.citation
-  end.join("\n\n")
+  begin
+    Array.wrap(obj).map do |o|
+      o.style = options[:style] || "apa"
+      o.locale = options[:locale] || "en-US"
+      o.citation
+    end.join("\n\n")
+  rescue CSL::ParseError # unknown style and/or location
+    Array.wrap(obj).map do |o|
+      o.style = "apa"
+      o.locale = "en-US"
+      o.citation
+    end.join("\n\n")
+  end
 end
 
 %w(datacite_json schema_org crosscite citeproc codemeta).each do |f|
