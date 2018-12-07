@@ -532,6 +532,7 @@ class DoisController < ApplicationController
     xml = p[:xml].present? ? Base64.decode64(p[:xml]).force_encoding("UTF-8") : nil
 
     meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
+    xml = meta["string"]
 
     read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher],
       p[:publicationYear], p[:types], p[:descriptions], p[:periodical], p[:sizes],

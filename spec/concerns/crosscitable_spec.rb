@@ -211,6 +211,20 @@ describe Doi, vcr: true do
       expect(meta["agency"]).to eq("Crossref")
     end
 
+    it "from datacite url" do
+      string = "https://doi.org/10.7272/q6g15xs4"
+      meta = subject.parse_xml(string)
+
+      expect(meta["from"]).to eq("datacite")
+      expect(meta["doi"]).to eq("10.7272/q6g15xs4")
+      expect(meta["creators"].length).to eq(2)
+      expect(meta["creators"].first).to eq("familyName"=>"Rodriguez", "givenName"=>"Robert", "name"=>"Robert Rodriguez", "type"=>"Person")
+      expect(meta["titles"]).to eq([{"title"=>"NEXUS Head CT"}])
+      expect(meta["publication_year"]).to eq("2017")
+      expect(meta["publisher"]).to eq("UC San Francisco")
+      expect(meta["agency"]).to eq("DataCite")
+    end
+
     it "from bibtex" do
       string = file_fixture('crossref.bib').read
       meta = subject.parse_xml(string)
