@@ -535,8 +535,8 @@ class DoisController < ApplicationController
     xml = meta["string"]
 
     read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher],
-      p[:publicationYear], p[:types], p[:descriptions], p[:periodical], p[:sizes],
-      p[:formats], p[:version], p[:language], p[:dates], p[:alternateIdentifiers],
+      p[:publicationYear], p[:types], p[:descriptions], p[:container], p[:sizes],
+      p[:formats], p[:version], p[:language], p[:dates], p[:identifiers],
       p[:relatedIdentifiers], p[:fundingReferences], p[:geoLocations], p[:rightsList],
       p[:subjects], p[:contentUrl], p[:schemaVersion]].compact
 
@@ -551,8 +551,8 @@ class DoisController < ApplicationController
     p.merge!(xml: xml) if xml.present?
 
     read_attrs_keys = [:creators, :contributors, :titles, :publisher,
-      :publicationYear, :types, :descriptions, :periodical, :sizes,
-      :formats, :language, :dates, :alternateIdentifiers,
+      :publicationYear, :types, :descriptions, :container, :sizes,
+      :formats, :language, :dates, :identifiers,
       :relatedIdentifiers, :fundingReferences, :geoLocations, :rightsList,
       :subjects, :contentUrl, :schemaVersion]
 

@@ -428,17 +428,6 @@ describe Doi, type: :model, vcr: true do
       expect(jats.dig("publication_type")).to eq("data")
       expect(jats.dig("data_title")).to eq("Data from: A new malaria agent in African hominids.")
     end
-
-    it "generates rdf_xml" do
-      rdf_xml = Maremma.from_xml(subject.rdf_xml).fetch("RDF", {})
-      expect(rdf_xml.dig("CreativeWork", 0, "rdf:about")).to eq("https://doi.org/10.1371/journal.ppat.1000446")
-    end
-
-    it "generates turtle" do
-      ttl = subject.turtle.split("\n")
-      expect(ttl[0]).to eq("@prefix schema: <http://schema.org/> .")
-      expect(ttl[2]).to eq("<https://doi.org/10.1371/journal.ppat.1000446> a schema:CreativeWork;")
-    end
   end
 
   describe "migrates landing page" do

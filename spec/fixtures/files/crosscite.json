@@ -35,10 +35,16 @@
         "dateType": "Issued"
     },
     "publication_year": "2016",
-    "alternate_identifiers": [{
-        "alternativeIdentifierType": "URL",
-        "alternativeIdentifier": "http://zenodo.org/record/48440"
-    }],
+    "identifiers": [
+      {
+        "identifierType": "URL",
+        "identifier": "http://zenodo.org/record/48440"
+      },
+      {
+        "identifierType": "DOI",
+        "identifier": "https://doi.org/10.5281/zenodo.48440"
+      }
+    ],
     "rights_list": [{
             "rights": "Open Access"
         },

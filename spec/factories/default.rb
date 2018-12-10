@@ -119,10 +119,10 @@ FactoryBot.define do
       }
     ]}
     publication_year { 2011 }
-    alternate_identifiers { [
+    identifiers { [
       {
-        "alternateIdentifierType": "citation",
-        "alternateIdentifier": "Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446."
+        "identifierType": "citation",
+        "identifier": "Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446."
       }
     ]}
     version { "1" }

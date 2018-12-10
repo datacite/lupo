@@ -103,18 +103,26 @@ class Doi < ActiveRecord::Base
     indexes :identifier,                     type: :keyword
     indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
     indexes :creators,                       type: :object, properties: {
-      type: { type: :keyword },
-      id: { type: :keyword },
-      name: { type: :text },
-      givenName: { type: :text },
-      familyName: { type: :text }
-    }
-    indexes :contributors,                   type: :object, properties: {
-      type: { type: :keyword },
-      id: { type: :keyword },
+      nameType: { type: :keyword },
+      nameIdentifiers: { type: :object, properties: {
+        nameIdentifier: { type: :keyword },
+        nameIdentifierType: { type: :keyword }
+      }},
       name: { type: :text },
       givenName: { type: :text },
       familyName: { type: :text },
+      affiliation: { type: :text }
+    }
+    indexes :contributors,                   type: :object, properties: {
+      nameType: { type: :keyword },
+      nameIdentifiers: { type: :object, properties: {
+        nameIdentifier: { type: :keyword },
+        nameIdentifierType: { type: :keyword }
+      }},
+      name: { type: :text },
+      givenName: { type: :text },
+      familyName: { type: :text },
+      affiliation: { type: :text },
       contributorType: { type: :keyword }
     }
     indexes :creator_names,                  type: :text
@@ -144,9 +152,9 @@ class Doi < ActiveRecord::Base
       created: { type: :date, ignore_malformed: true },
       updated: { type: :date, ignore_malformed: true }
     }
-    indexes :alternate_identifiers,          type: :object, properties: {
-      alternateIdentifierType: { type: :keyword },
-      alternateIdentifier: { type: :keyword }
+    indexes :identifiers,                    type: :object, properties: {
+      identifierType: { type: :keyword },
+      identifier: { type: :keyword }
     }
     indexes :related_identifiers,            type: :object, properties: {
       relatedIdentifierType: { type: :keyword },
@@ -189,12 +197,17 @@ class Doi < ActiveRecord::Base
       schemeUri: { type: :keyword },
       valueUri: { type: :keyword }
     }
-    indexes :periodical,                     type: :object, properties: {
+    indexes :container,                     type: :object, properties: {
       type: { type: :keyword },
-      id: { type: :keyword },
+      identifier: { type: :keyword },
+      identifierType: { type: :keyword },
       title: { type: :keyword },
-      issn: { type: :keyword }
+      volume: { type: :keyword },
+      issue: { type: :keyword },
+      firstPage: { type: :keyword },
+      lastPage: { type: :keyword }
     }
+
     indexes :xml,                            type: :text, index: "not_analyzed"
     indexes :content_url,                    type: :keyword
     indexes :version_info,                   type: :keyword
@@ -255,14 +268,14 @@ class Doi < ActiveRecord::Base
       "prefix" => prefix,
       "suffix" => suffix,
       "types" => types,
-      "alternate_identifiers" => alternate_identifiers,
+      "identifiers" => identifiers,
       "related_identifiers" => related_identifiers,
       "funding_references" => funding_references,
       "publication_year" => publication_year,
       "dates" => dates,
       "geo_locations" => geo_locations,
       "rights_list" => rights_list,
-      "periodical" => periodical,
+      "container" => container,
       "content_url" => content_url,
       "version_info" => version_info,
       "formats" => formats,
@@ -310,7 +323,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['doi^10', 'titles.title^10', 'creator_names^10', 'creators.name^10', 'creators.id^10', 'publisher^10', 'descriptions.description^10', 'types.resourceTypeGeneral^10', 'subjects.subject^10', 'alternate_identifiers.alternateIdentifier^10', 'related_identifiers.relatedIdentifier^10', '_all']
+    ['doi^10', 'titles.title^10', 'creator_names^10', 'creators.name^10', 'creators.id^10', 'publisher^10', 'descriptions.description^10', 'types.resourceTypeGeneral^10', 'subjects.subject^10', 'identifiers.alternateIdentifier^10', 'related_identifiers.relatedIdentifier^10', '_all']
   end
 
   def self.find_by_id(id, options={})
@@ -349,7 +362,7 @@ class Doi < ActiveRecord::Base
       begin
         string = doi.current_metadata.present? ? doi.current_metadata.xml : nil
         meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
-        attrs = %w(creators contributors titles publisher publication_year types descriptions periodical sizes formats language dates alternate_identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
+        attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
           [a.to_sym, meta[a]]
         end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
 

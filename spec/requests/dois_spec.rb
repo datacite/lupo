@@ -744,7 +744,13 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
-        expect(json.dig('data', 'attributes', 'creators')).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "type"=>"Person"}])
+        expect(json.dig('data', 'attributes', 'creators')).to eq([{"familyName"=>"Fenner",
+          "givenName"=>"Martin",
+          "name"=>"Fenner, Martin",
+          "nameIdentifiers"=>
+            [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405",
+              "nameIdentifierScheme"=>"ORCID"}],
+          "nameType"=>"Personal"}])
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
         expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
@@ -2475,7 +2481,7 @@ describe "dois", type: :request do
       before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/x-bibtex", 'Authorization' => 'Bearer ' + bearer  } }
   
       it 'returns the Doi' do
-        expect(response.body).to start_with("@misc{https://handle.test.datacite.org/#{doi.doi.downcase}")
+        expect(response.body).to start_with("@misc{https://doi.org/#{doi.doi.downcase}")
       end
   
       it 'returns status code 200' do
@@ -2487,7 +2493,7 @@ describe "dois", type: :request do
       before { get "/dois/application/x-bibtex/#{doi.doi}" }
   
       it 'returns the Doi' do
-        expect(response.body).to start_with("@misc{https://handle.test.datacite.org/#{doi.doi.downcase}")
+        expect(response.body).to start_with("@misc{https://doi.org/#{doi.doi.downcase}")
       end
   
       it 'returns status code 200' do

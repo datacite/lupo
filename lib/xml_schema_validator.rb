@@ -4,7 +4,7 @@ class XmlSchemaValidator < ActiveModel::EachValidator
     schema = {
       "date" => "dates",
       "publicationYear" => "publication_year",
-      "alternateIdentifiers" => "alternate_identifiers",
+      "alternateIdentifiers" => "identifiers",
       "relatedIdentifiers" => "related_identifiers",
       "geoLocations" => "geo_locations",
       "rightsList" => "rights_list",

@@ -121,7 +121,11 @@ describe Doi, vcr: true do
       expect(meta["string"]).to eq(string)
       expect(meta["from"]).to eq("datacite")
       expect(meta["doi"]).to eq("10.14454/4k3m-nyvg")
-      expect(meta["creators"]).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Fenner, Martin", "type"=>"Person"}])
+      expect(meta["creators"]).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin","name"=>"Fenner, Martin",
+        "nameIdentifiers"=>
+          [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405",
+            "nameIdentifierScheme"=>"ORCID"}],
+        "nameType"=>"Personal"}])
       expect(meta["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
       expect(meta["publication_year"]).to eq("2016")
       expect(meta["publisher"]).to eq("DataCite")
@@ -135,7 +139,7 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("datacite")
       expect(meta["doi"]).to eq("10.5061/dryad.8515")
       expect(meta["creators"].length).to eq(8)
-      expect(meta["creators"].first).to eq("familyName"=>"Ollomo", "givenName"=>"Benjamin", "name"=>"Benjamin Ollomo", "type"=>"Person")
+      expect(meta["creators"].first).to eq("familyName"=>"Ollomo", "givenName"=>"Benjamin", "name"=>"Ollomo, Benjamin", "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
       expect(meta["publication_year"]).to eq("2011")
       expect(meta["publisher"]).to eq("Dryad Digital Repository")
@@ -148,7 +152,7 @@ describe Doi, vcr: true do
       expect(meta["string"]).to eq(string)
       expect(meta["from"]).to eq("datacite")
       expect(meta["doi"]).to eq("10.5072/testpub")
-      expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"John Smith", "type"=>"Person"}, {"name"=>"つまらないものですが"}])
+      expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"Smith, John", "nameType"=>"Personal"}, {"name"=>"つまらないものですが"}])
       expect(meta["titles"]).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
       expect(meta["publication_year"]).to eq("2010")
       expect(meta["publisher"]).to eq("Springer")
@@ -189,11 +193,11 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("crossref")
       expect(meta["doi"]).to eq("10.1371/journal.pone.0000030")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq("familyName"=>"Ralser", "givenName"=>"Markus", "name"=>"Markus Ralser", "type"=>"Person")
+      expect(meta["creators"].first).to eq("familyName"=>"Ralser", "givenName"=>"Markus", "name"=>"Ralser, Markus", "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"}])
       expect(meta["publication_year"]).to eq("2006")
       expect(meta["publisher"]).to eq("(:unav)")
-      expect(meta["periodical"]).to eq("issn"=>"1932-6203", "title"=>"PLoS ONE", "type"=>"Periodical")
+      expect(meta["container"]).to eq("firstPage"=>"e30", "identifier"=>"1932-6203", "identifierType"=>"ISSN", "issue"=>"1", "title"=>"PLoS ONE", "type"=>"Journal", "volume"=>"1")
     end
 
     it "from crossref url" do
@@ -203,11 +207,11 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("crossref")
       expect(meta["doi"]).to eq("10.7554/elife.01567")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Martial Sankar", "type"=>"Person")
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("(:unav)")
-      expect(meta["periodical"]).to eq("issn"=>"2050-084X", "title"=>"eLife", "type"=>"Periodical")
+      expect(meta["container"]).to eq("identifier"=>"2050-084X", "identifierType"=>"ISSN", "title"=>"eLife", "type"=>"Journal", "volume"=>"3")
       expect(meta["agency"]).to eq("Crossref")
     end
 
@@ -218,7 +222,7 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("datacite")
       expect(meta["doi"]).to eq("10.7272/q6g15xs4")
       expect(meta["creators"].length).to eq(2)
-      expect(meta["creators"].first).to eq("familyName"=>"Rodriguez", "givenName"=>"Robert", "name"=>"Robert Rodriguez", "type"=>"Person")
+      expect(meta["creators"].first).to eq("affiliation"=>"UC San Francisco", "familyName"=>"Rodriguez", "givenName"=>"Robert", "name"=>"Rodriguez, Robert", "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"NEXUS Head CT"}])
       expect(meta["publication_year"]).to eq("2017")
       expect(meta["publisher"]).to eq("UC San Francisco")
@@ -233,11 +237,11 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("bibtex")
       expect(meta["doi"]).to eq("10.7554/elife.01567")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Martial Sankar", "type"=>"Person")
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("{eLife} Sciences Organisation, Ltd.")
-      expect(meta["periodical"]).to eq("issn"=>"2050-084X", "title"=>"eLife", "type"=>"Periodical")
+      expect(meta["container"]).to eq("identifier"=>"2050-084X", "identifierType"=>"ISSN", "title"=>"eLife", "type"=>"Journal", "volume"=>"3")
     end
 
     it "from ris" do
@@ -248,11 +252,11 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("ris")
       expect(meta["doi"]).to eq("10.7554/elife.01567")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Martial Sankar", "type"=>"Person")
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("(:unav)")
-      expect(meta["periodical"]).to eq("title"=>"eLife", "type"=>"Periodical")
+      expect(meta["container"]).to eq("title"=>"eLife", "type"=>"Journal", "volume"=>"3")
     end
 
     it "from codemeta" do
@@ -263,7 +267,12 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("codemeta")
       expect(meta["doi"]).to eq("10.5063/f1m61h5x")
       expect(meta["creators"].length).to eq(3)
-      expect(meta["creators"].first).to eq("familyName"=>"Jones", "givenName"=>"Matt", "id"=>"http://orcid.org/0000-0003-0077-4738", "name"=>"Matt Jones", "type"=>"Person")
+      expect(meta["creators"].first).to eq("affiliation" => "NCEAS",
+        "familyName" => "Jones",
+        "givenName" => "Matt",
+        "name" => "Jones, Matt",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-0077-4738", "nameIdentifierScheme"=>"ORCID"}],
+        "nameType" => "Personal")
       expect(meta["titles"]).to eq([{"title"=>"R Interface to the DataONE REST API"}])
       expect(meta["publication_year"]).to eq("2016")
       expect(meta["publisher"]).to eq("https://cran.r-project.org")
@@ -277,7 +286,9 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("schema_org")
       expect(meta["doi"]).to eq("10.5438/4k3m-nyvg")
       expect(meta["creators"].length).to eq(1)
-      expect(meta["creators"].first).to eq("familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"http://orcid.org/0000-0003-1419-2405", "name"=>"Martin Fenner", "type"=>"Person")
+      expect(meta["creators"].first).to eq("familyName"=>"Fenner", "givenName"=>"Martin", "name" => "Fenner, Martin",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme"=>"ORCID"}],
+        "nameType" => "Personal")
       expect(meta["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
       expect(meta["publication_year"]).to eq("2016")
       expect(meta["publisher"]).to eq("DataCite")
@@ -291,7 +302,7 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("schema_org")
       expect(meta["doi"]).to eq("10.1594/pangaea.836178")
       expect(meta["creators"].length).to eq(8)
-      expect(meta["creators"].first).to eq("familyName"=>"Johansson", "givenName"=>"Emma", "name"=>"Johansson, Emma", "type"=>"Person")
+      expect(meta["creators"].first).to eq("familyName"=>"Johansson", "givenName"=>"Emma", "name"=>"Johansson, Emma", "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"Hydrological and meteorological investigations in a lake near Kangerlussuaq, west Greenland"}])
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("PANGAEA")
@@ -317,7 +328,7 @@ describe Doi, vcr: true do
 
       expect(meta["doi"]).to eq("10.5061/dryad.8515")
       expect(meta["creators"].length).to eq(8)
-      expect(meta["creators"].first).to eq("familyName"=>"Ollomo", "givenName"=>"Benjamin", "name"=>"Benjamin Ollomo", "type"=>"Person")
+      expect(meta["creators"].first).to eq("familyName"=>"Ollomo", "givenName"=>"Benjamin", "name"=>"Ollomo, Benjamin", "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
       expect(meta["publication_year"]).to eq("2011")
       expect(meta["publisher"]).to eq("Dryad Digital Repository")
@@ -328,7 +339,7 @@ describe Doi, vcr: true do
       meta = subject.parse_xml(string)
 
       expect(meta["doi"]).to eq("10.5072/testpub")
-      expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"John Smith", "type"=>"Person"}, {"name"=>"つまらないものですが"}])
+      expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"Smith, John", "nameType"=>"Personal"}, {"name"=>"つまらないものですが"}])
       expect(meta["titles"]).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
       expect(meta["publication_year"]).to eq("2010")
       expect(meta["publisher"]).to eq("Springer")
@@ -351,11 +362,11 @@ describe Doi, vcr: true do
 
       expect(meta["doi"]).to eq("10.1371/journal.pone.0000030")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq("familyName"=>"Ralser", "givenName"=>"Markus", "name"=>"Markus Ralser", "type"=>"Person")
+      expect(meta["creators"].first).to eq("familyName"=>"Ralser", "givenName"=>"Markus", "name"=>"Ralser, Markus", "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"}])
       expect(meta["publication_year"]).to eq("2006")
       expect(meta["publisher"]).to eq("(:unav)")
-      expect(meta["periodical"]).to eq("issn"=>"1932-6203", "title"=>"PLoS ONE", "type"=>"Periodical")
+      expect(meta["container"]).to eq("firstPage"=>"e30", "identifier"=>"1932-6203", "identifierType"=>"ISSN", "issue"=>"1", "title"=>"PLoS ONE", "type"=>"Journal", "volume"=>"1")
     end
 
     it "from bibtex" do
@@ -364,11 +375,11 @@ describe Doi, vcr: true do
 
       expect(meta["doi"]).to eq("10.7554/elife.01567")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Martial Sankar", "type"=>"Person")
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("{eLife} Sciences Organisation, Ltd.")
-      expect(meta["periodical"]).to eq("issn"=>"2050-084X", "title"=>"eLife", "type"=>"Periodical")
+      expect(meta["container"]).to eq("identifier"=>"2050-084X", "identifierType"=>"ISSN", "title"=>"eLife", "type"=>"Journal", "volume"=>"3")
     end
 
     it "from ris" do
@@ -377,11 +388,11 @@ describe Doi, vcr: true do
 
       expect(meta["doi"]).to eq("10.7554/elife.01567")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Martial Sankar", "type"=>"Person")
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("(:unav)")
-      expect(meta["periodical"]).to eq("title"=>"eLife", "type"=>"Periodical")
+      expect(meta["container"]).to eq("title"=>"eLife", "type"=>"Journal", "volume"=>"3")
     end
 
     it "from codemeta" do
@@ -390,7 +401,12 @@ describe Doi, vcr: true do
 
       expect(meta["doi"]).to eq("10.5063/f1m61h5x")
       expect(meta["creators"].length).to eq(3)
-      expect(meta["creators"].first).to eq("familyName"=>"Jones", "givenName"=>"Matt", "id"=>"http://orcid.org/0000-0003-0077-4738", "name"=>"Matt Jones", "type"=>"Person")
+      expect(meta["creators"].first).to eq("affiliation" => "NCEAS",
+        "familyName" => "Jones",
+        "givenName" => "Matt",
+        "name" => "Jones, Matt",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-0077-4738", "nameIdentifierScheme"=>"ORCID"}],
+        "nameType" => "Personal")
       expect(meta["titles"]).to eq([{"title"=>"R Interface to the DataONE REST API"}])
       expect(meta["publication_year"]).to eq("2016")
       expect(meta["publisher"]).to eq("https://cran.r-project.org")
@@ -402,7 +418,9 @@ describe Doi, vcr: true do
 
       expect(meta["doi"]).to eq("10.5438/4k3m-nyvg")
       expect(meta["creators"].length).to eq(1)
-      expect(meta["creators"].first).to eq("familyName"=>"Fenner", "givenName"=>"Martin", "id"=>"http://orcid.org/0000-0003-1419-2405", "name"=>"Martin Fenner", "type"=>"Person")
+      expect(meta["creators"].first).to eq("familyName"=>"Fenner", "givenName"=>"Martin", "name" => "Fenner, Martin",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme"=>"ORCID"}],
+        "nameType" => "Personal")
       expect(meta["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
       expect(meta["publication_year"]).to eq("2016")
       expect(meta["publisher"]).to eq("DataCite")
