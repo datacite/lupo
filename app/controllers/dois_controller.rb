@@ -289,12 +289,13 @@ class DoisController < ApplicationController
       @doi.current_user = current_user
 
       if params.dig(:data, :attributes, :mode) == "transfer"
+        # only update client_id
         authorize! :transfer, @doi
+        @doi.assign_attributes(safe_params.slice(:client_id))
       else
         authorize! :update, @doi
+        @doi.assign_attributes(safe_params.except(:doi, :client_id))
       end
-
-      @doi.assign_attributes(safe_params.except(:doi))
     else
       doi_id = validate_doi(params[:id])
       fail ActiveRecord::RecordNotFound unless doi_id.present?

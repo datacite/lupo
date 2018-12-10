@@ -650,7 +650,7 @@ describe "dois", type: :request do
     end
 
     context 'when we transfer a DOI as staff' do
-      let(:doi) { create(:doi, doi: "10.14454/119495", client: client, aasm_state: "registered") }
+      let(:doi) { create(:doi, doi: "10.14454/119495", url: "http://www.bl.uk/pdf/pat.pdf", client: client, aasm_state: "registered") }
       let(:new_client) { create(:client, symbol: "#{provider.symbol}.magic", provider: provider, password: ENV['MDS_PASSWORD']) }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
@@ -658,8 +658,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "url" => "http://www.bl.uk/pdf/pat.pdf",
-              "xml" => xml
+              "mode" => "transfer"
             },
             "relationships"=> {
               "client"=>  {
@@ -676,6 +675,7 @@ describe "dois", type: :request do
       before { put "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: admin_headers }
 
       it 'returns no errors' do
+        puts response.body
         expect(response).to have_http_status(200)
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
       end
@@ -1758,6 +1758,52 @@ describe "dois", type: :request do
       end
 
       it 'sets state to registered' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
+    end
+
+    context 'update with landing page info as admin' do
+      let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
+      let(:doi) { create(:doi, doi: "10.14454/10703", url: url, client: client) }
+      let(:landingPage) { {
+        "checked" => Time.zone.now.utc.iso8601,
+        "status" => 200,
+        "url" => url,
+        "contentType" => "text/html",
+        "error" => nil,
+        "redirectCount" => 0,
+        "redirectUrls" => [],
+        "downloadLatency" => 200,
+        "hasSchemaOrg" => true,
+        "schemaOrgId" => "10.14454/10703",
+        "dcIdentifier" => nil,
+        "citationDoi" => nil,
+        "bodyHasPid" => true
+      } }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "landingPage" => landingPage,
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      before { put "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: admin_headers }
+
+      it 'creates a doi' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'landingPage')).to eq(landingPage)
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'sets state to findable' do
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
       end
     end

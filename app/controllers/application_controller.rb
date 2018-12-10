@@ -75,6 +75,7 @@ class ApplicationController < ActionController::API
                when "ActionController::UnknownFormat" then 406
                when "ActiveRecord::RecordNotUnique" then 409
                when "ActiveModel::ForbiddenAttributesError", "ActionController::ParameterMissing", "ActionController::UnpermittedParameters", "ActiveModelSerializers::Adapter::JsonApi::Deserialization::InvalidDocument" then 422
+               when "SocketError" then 500 
                else 400
                end
 
@@ -91,7 +92,7 @@ class ApplicationController < ActionController::API
         message = "The content type is not recognized."
       elsif status == 409
         message = "The resource already exists."
-      elsif exception.class.to_s == "JSON::ParserError"
+      elsif ["JSON::ParserError", "Nokogiri::XML::SyntaxError"].include?(exception.class.to_s)
         message = exception.message
       else
         Bugsnag.notify(exception)
