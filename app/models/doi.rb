@@ -106,7 +106,7 @@ class Doi < ActiveRecord::Base
       nameType: { type: :keyword },
       nameIdentifiers: { type: :object, properties: {
         nameIdentifier: { type: :keyword },
-        nameIdentifierType: { type: :keyword }
+        nameIdentifierScheme: { type: :keyword }
       }},
       name: { type: :text },
       givenName: { type: :text },
@@ -117,7 +117,7 @@ class Doi < ActiveRecord::Base
       nameType: { type: :keyword },
       nameIdentifiers: { type: :object, properties: {
         nameIdentifier: { type: :keyword },
-        nameIdentifierType: { type: :keyword }
+        nameIdentifierScheme: { type: :keyword }
       }},
       name: { type: :text },
       givenName: { type: :text },
