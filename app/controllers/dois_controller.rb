@@ -290,6 +290,7 @@ class DoisController < ApplicationController
 
       if params.dig(:data, :attributes, :mode) == "transfer"
         # only update client_id
+        
         authorize! :transfer, @doi
         @doi.assign_attributes(safe_params.slice(:client_id))
       else
@@ -455,7 +456,6 @@ class DoisController < ApplicationController
     attributes = [
       :doi,
       :confirmDoi,
-      :identifier,
       :url,
       :titles,
       { titles: [:title, :titleType, :lang] },
@@ -514,8 +514,8 @@ class DoisController < ApplicationController
       { creators: [:type, :id, :name, :givenName, :familyName, :affiliation] },
       :contributors,
       { contributors: [:type, :id, :name, :givenName, :familyName, :affiliation, :contributorType] },
-      :altenateIdentifiers,
-      { alternateIdentifiers: [:alternateIdentifier, :alternateIdentifierType] },
+      :identifiers,
+      { identifiers: [:identifier, :identifierType] },
       :relatedIdentifiers,
       { relatedIdentifiers: [:relatedIdentifier, :relatedIdentifierType, :relationType, :resourceTypeGeneral, :relatedMetadataScheme, :schemeUri, :schemeType] },
       :fundingReferences,
@@ -560,7 +560,7 @@ class DoisController < ApplicationController
     # merge attributes from xml into regular attributes
     # make sure we don't accidentally set any attributes to nil
     read_attrs_keys.each do |attr|
-      p.merge!(attr.to_s.underscore => p[attr] || meta[attr.to_s.underscore]) if p.has_key?(attr) || meta[attr.to_s.underscore].present?
+      p.merge!(attr.to_s.underscore => p[attr].presence || meta[attr.to_s.underscore]) if p.has_key?(attr) || meta[attr.to_s.underscore].present?
     end
     p.merge!(version_info: p[:version] || meta["version_info"]) if p.has_key?(:version_info) || meta["version_info"].present?
 
@@ -573,8 +573,8 @@ class DoisController < ApplicationController
       last_landing_page_status_result: p[:lastLandingPageStatusResult],
       last_landing_page_content_type: p[:lastLandingPageContentType]
     ).except(
-      :confirmDoi, :identifier, :prefix, :suffix, :publicationYear,
-      :rightsList, :alternateIdentifiers, :relatedIdentifiers, :fundingReferences, :geoLocations,
+      :confirmDoi, :prefix, :suffix, :publicationYear,
+      :rightsList, :identifiers, :relatedIdentifiers, :fundingReferences, :geoLocations,
       :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage,
       :created, :registered, :updated, :lastLandingPage, :version,
       :lastLandingPageStatus, :lastLandingPageStatusCheck,
