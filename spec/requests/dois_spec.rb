@@ -1712,6 +1712,33 @@ describe "dois", type: :request do
       end
     end
 
+    context 'update individual attribute' do
+      let(:xml) { file_fixture('datacite_schema_3.xml').read }
+      let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
+      let(:doi) { create(:doi, doi: "10.14454/10703", xml: xml, url: url, schema_version: "http://datacite.org/schema/kernel-3", client: client) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "schemaVersion" => "http://datacite.org/schema/kernel-4"
+            }
+          }
+        }
+      end
+
+      it "uses schema 3.0" do
+        expect(doi.schema_version).to eq("http://datacite.org/schema/kernel-3")
+      end
+
+      it 'updates to schema 4.0' do
+        put "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: admin_headers
+
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
+      end
+    end
+
     context 'landing page' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
