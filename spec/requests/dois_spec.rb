@@ -935,14 +935,6 @@ describe "dois", type: :request do
               "xml" => xml,
               "source" => "test",
               "event" => "publish"
-            },
-            "relationships"=> {
-              "client"=>  {
-                "data"=> {
-                  "type"=> "clients",
-                  "id"=> client.symbol.downcase
-                }
-              }
             }
           }
         }
@@ -1713,29 +1705,52 @@ describe "dois", type: :request do
     end
 
     context 'update individual attribute' do
-      let(:xml) { file_fixture('datacite_schema_3.xml').read }
-      let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
-      let(:doi) { create(:doi, doi: "10.14454/10703", xml: xml, url: url, schema_version: "http://datacite.org/schema/kernel-3", client: client) }
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite_schema_3.xml').read) }
       let(:valid_attributes) do
         {
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "schemaVersion" => "http://datacite.org/schema/kernel-4"
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "source" => "test",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "schemaVersion" => "http://datacite.org/schema/kernel-4",
+              "regenerate" => true
             }
           }
         }
       end
 
-      it "uses schema 3.0" do
-        expect(doi.schema_version).to eq("http://datacite.org/schema/kernel-3")
+      before { post '/dois', params: valid_attributes.to_json, headers: headers }
+
+      it 'creates a Doi' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
+        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
+        expect(doc.collect_namespaces).to eq("xmlns" => "http://datacite.org/schema/kernel-3","xmlns:dim" => "http://www.dspace.org/xmlns/dspace/dim","xmlns:dryad" => "http://purl.org/dryad/terms/","xmlns:dspace" => "http://www.dspace.org/xmlns/dspace/dim","xmlns:mets" => "http://www.loc.gov/METS/","xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance")
       end
 
       it 'updates to schema 4.0' do
-        put "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: admin_headers
+        put "/dois/10.14454/10703", params: update_attributes.to_json, headers: headers
 
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
+        expect(doc.collect_namespaces).to eq("xmlns"=>"http://datacite.org/schema/kernel-4", "xmlns:xsi"=>"http://www.w3.org/2001/XMLSchema-instance")
       end
     end
 
