@@ -42,7 +42,7 @@ module Crosscitable
     rescue NoMethodError, ArgumentError => exception
       Bugsnag.notify(exception)
       logger = Logger.new(STDOUT)
-      logger.error "Error " + exception.message + " for doi " + doi + "."
+      logger.error "Error " + exception.message + " for doi " + @doi + "."
       logger.error exception
 
       {}
