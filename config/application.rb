@@ -32,7 +32,7 @@ end
 ENV['APPLICATION'] ||= "client-api"
 ENV['HOSTNAME'] ||= "lupo"
 ENV['MEMCACHE_SERVERS'] ||= "memcached:11211"
-ENV['SITE_TITLE'] ||= "REST API"
+ENV['SITE_TITLE'] ||= "DataCite REST API"
 ENV['LOG_LEVEL'] ||= "info"
 ENV['CONCURRENCY'] ||= "25"
 ENV['CDN_URL'] ||= "https://assets.datacite.org"

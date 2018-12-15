@@ -1,0 +1,61 @@
+<footer class='row footer'>
+      <div class="container-fluid">
+        <div class='col-md-3 col-sm-4'>
+          <h4>About DataCite</h4>
+          <ul>
+          {{#each about_links}}
+            <li><a href="{{this.url}}">{{this.name}}</a></li>
+          {{/each}}
+          </ul>
+        </div>
+        <div class='col-md-3 col-sm-4'>
+          <h4>Services</h4>
+          <ul>
+          {{#each services_links}}
+            <li><a href="{{this.url}}">{{this.name}}</a></li>
+          {{/each}}
+          </ul>
+        </div>
+        <div class='col-md-3 col-sm-4'>
+          <h4>Resources</h4>
+          <ul>
+          {{#each resources_links}}
+            <li><a href="{{this.url}}">{{this.name}}</a></li>
+          {{/each}}
+          </ul>
+          <h4>Community</h4>
+          <ul>
+          {{#each community_links}}
+            <li><a href="{{this.url}}">{{this.name}}</a></li>
+          {{/each}}
+          </ul>
+        </div>
+        <div class='col-md-3'>
+          <h4 class="share">Contact us</h4>
+          <a href='mailto:support@datacite.org' class="share">
+            <i class='fa fa-at'></i>
+          </a>
+          <a href='https://blog.datacite.org' class="share">
+            <i class='fa fa-rss'></i>
+          </a>
+          <a href='https://twitter.com/datacite' class="share">
+            <i class='fa fa-twitter'></i>
+          </a>
+          <a href='https://github.com/datacite/datacite' class="share">
+            <i class='fa fa-github'></i>
+          </a>
+          <a href='https://www.linkedin.com/company/datacite' class="share">
+            <i class='fa fa-linkedin'></i>
+          </a>
+          <ul>
+          {{#each contact_links}}
+            <li><a href="{{this.url}}">{{this.name}}</a></li>
+          {{/each}}
+          </ul>
+          <a href="http://status.datacite.org" target="_blank">
+            <span class="color-dot"></span>
+            <span class="color-description"></span>
+          </a>
+        </div>
+      </div>
+    </footer>

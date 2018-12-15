@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+    <meta charset="utf-8">
+    <!-- (1) Optimize for mobile versions: http://goo.gl/EOpFl -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- (1) force latest IE rendering engine: bit.ly/1c8EiC9 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title><%= ENV['SITE_TITLE'] %></title>
+    <meta name="description" content="<%= ENV['SITE_DESCRIPTION'] %>" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- DublinCore Metadata -->
+    <meta property="dc:title" content="<%= ENV['SITE_TITLE'] %>" />
+    <meta property="dc:format" content="text/html" />
+    <meta property="dc:language" content="en" />
+    <meta property="dc:rights" content="CC-BY" />
+    <meta property="dc:source" content="<%= ENV['SITE_TITLE'] %>" />
+    <meta property="dc:subject" content="Scholarly Communication" />
+    <meta property="dc:type" content="website" />
+
+    <% if ENV['TWITTER_HANDLE'] %>
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="<%= ENV['TWITTER_HANDLE'] %>" />
+    <meta name="twitter:title" content="<%= ENV['SITE_TITLE'] %>" />
+    <meta name="twitter:image" content="/images/datacite.png" />
+    <meta name="twitter:description" content="<%= ENV['SITE_DESCRIPTION'] %>" />
+    <% end %>
+
+    <meta property="og:site_name" content="<%= ENV['SITE_TITLE'] %>" />
+    <meta property="og:description" content="<%= ENV['SITE_DESCRIPTION'] %>" />
+    <meta property="og:image" content="/images/datacite.png" />
+    <meta property="og:type" content="blog" />
+
+    <link href='//fonts.googleapis.com/css?family=Raleway:400,600,400italic,600italic' rel='stylesheet' type='text/css'>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet" type='text/css'>
+    <link href="<%= ENV['CDN_URL'] %>/stylesheets/datacite.css" rel='stylesheet' type='text/css'>
+
+    <link href="<%= ENV['CDN_URL'] %>/images/favicon.ico" rel="icon" type="image/ico" />
+
+    <% if ENV['BUGSNAG_JS_KEY'] %>
+      <script
+        src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js"
+        data-apikey="<%= ENV['BUGSNAG_JS_KEY'] %>">
+      </script>
+    <% end -%>
+  </head>
+  <body>
+    <% header_links = development? ? data.links.development_links : (stage? ? data.links.stage_links : data.links.production_links) %>
+    <%= partial "includes/header.html.hbs", locals:
+      { site_title: ENV['SITE_TITLE'],
+        stage: stage?,
+        development: development?,
+        header_links: header_links } -%>
+    <%= yield -%>
+    <%= partial "includes/footer.html.hbs", locals:
+      { about_links: data.links.about_links,
+        services_links: data.links.services_links,
+        resources_links: data.links.resources_links,
+        community_links: data.links.community_links,
+        contact_links: data.links.contact_links } -%>
+    <%= partial "includes/javascripts.html.hbs", locals: { cdn_url: ENV['CDN_URL'] } -%>
+    <%= partial "includes/google_analytics.html.hbs", locals: { site_ga: ENV['SITE_GA'] } -%>
+  </body>
+</html>

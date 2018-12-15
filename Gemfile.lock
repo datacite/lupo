@@ -541,6 +541,7 @@ DEPENDENCIES
   rack-cors (~> 1.0, >= 1.0.2)
   rack-utf8_sanitizer (~> 1.6)
   rails (~> 5.2.0)
+  rake (~> 12.0)
   rspec-rails (~> 3.5, >= 3.5.2)
   shoryuken (~> 4.0)
   shoulda-matchers (~> 3.1)

@@ -16,7 +16,7 @@ RUN bash -lc 'rvm --default use ruby-2.4.4'
 
 # Update installed APT packages
 RUN apt-get update && apt-get upgrade -y -o Dpkg::Options::="--force-confold" && \
-    apt-get install ntp wget tzdata -y && \
+    apt-get install ntp wget tzdata pandoc -y && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # install dockerize
@@ -53,12 +53,18 @@ RUN mkdir -p tmp/pids && \
     chown -R app:app /home/app/webapp && \
     chmod -R 755 /home/app/webapp
 
+# Install Ruby gems for middleman
+WORKDIR /home/app/webapp/vendor/middleman
+RUN /sbin/setuser app bundle install 
+
 # Add Runit script for shoryuken workers
+WORKDIR /home/app/webapp
 RUN mkdir /etc/service/shoryuken
 ADD vendor/docker/shoryuken.sh /etc/service/shoryuken/run
 
 # Run additional scripts during container startup (i.e. not at build time)
 RUN mkdir -p /etc/my_init.d
+COPY vendor/docker/70_index_page.sh /etc/my_init.d/70_index_page.sh
 COPY vendor/docker/80_flush_cache.sh /etc/my_init.d/80_flush_cache.sh
 COPY vendor/docker/90_migrate.sh /etc/my_init.d/90_migrate.sh
 
