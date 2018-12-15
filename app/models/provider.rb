@@ -36,8 +36,8 @@ class Provider < ActiveRecord::Base
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, message: "contact_email should be an email"
   validates_format_of :website, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be an url"
   validates_inclusion_of :role_name, :in => %w( ROLE_ALLOCATOR ROLE_MEMBER ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
-  validates_inclusion_of :organization_type, :in => %w(national_institution national_library academic_institution academic_library research_institution government_agency publisher professional_society service_provider vendor), :message => "organization type %s is not included in the list", if: :organization_type?
-  validates_inclusion_of :focus_area, :in => %w(biomedical_and_health_sciences earth_sciences humanities mathematics_and_computer_science physical_sciences_and_engineering social_sciences general), :message => "focus area %s is not included in the list", if: :focus_area?
+  validates_inclusion_of :organization_type, :in => %w(nationalInstitution nationalLibrary academicInstitution academicLibrary researchInstitution governmentAgency publisher professionalSociety serviceProvider vendor), :message => "organization type %s is not included in the list", if: :organization_type?
+  validates_inclusion_of :focus_area, :in => %w(biomedicalAndHealthSciences earthSciences humanities mathematicsAndComputerScience physicalSciencesAndEngineering socialSciences general), :message => "focus area %s is not included in the list", if: :focus_area?
   validate :freeze_symbol, :on => :update
 
   before_validation :set_region

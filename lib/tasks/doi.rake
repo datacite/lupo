@@ -6,6 +6,27 @@ namespace :doi do
     puts response
   end
 
+  desc 'Import all DOIs'
+  task :import_all => :environment do
+    if ENV['YEAR'].present?
+      from_date = "#{ENV['YEAR']}-01-01"
+      until_date = "#{ENV['YEAR']}-12-31"
+    else
+      from_date = ENV['FROM_DATE'] || Date.current.strftime("%F")
+      until_date = ENV['UNTIL_DATE'] || Date.current.strftime("%F")
+    end
+
+    Doi.import_all(from_date: from_date, until_date: until_date)
+  end
+
+  desc 'Import DOIs per day'
+  task :import_by_day => :environment do
+    from_date = ENV['FROM_DATE'] || Date.current.strftime("%F")
+
+    Doi.import_by_day(from_date: from_date)
+    puts "DOIs created on #{from_date} imported."
+  end
+
   desc 'Index all DOIs'
   task :index => :environment do
     if ENV['YEAR'].present?
@@ -16,7 +37,9 @@ namespace :doi do
       until_date = ENV['UNTIL_DATE'] || Date.current.strftime("%F")
     end
 
-    Doi.index(from_date: from_date, until_date: until_date)
+    index_time = Time.zone.now.utc.iso8601
+
+    Doi.index(from_date: from_date, until_date: until_date, index_time: index_time)
   end
 
   desc 'Index DOIs per day'
@@ -49,5 +72,10 @@ namespace :doi do
   task :delete_test_dois => :environment do
     from_date = ENV['FROM_DATE'] || Time.zone.now - 1.month
     Doi.delete_test_dois(from_date: from_date)
+  end
+
+  desc 'Migrates landing page data handling camelCase changes at same time'
+  task :migrate_landing_page => :environment do
+    Doi.migrate_landing_page
   end
 end

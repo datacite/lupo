@@ -10,8 +10,8 @@ describe "Providers", type: :request, elasticsearch: true  do
                   "attributes" => {
                     "symbol" => "BL",
                     "name" => "British Library",
-                    "contact-email" => "bob@example.com",
-                    "country-code" => "GB" } } }
+                    "contactEmail" => "bob@example.com",
+                    "countryCode" => "GB" } } }
   end
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + token } }
 
@@ -64,15 +64,15 @@ describe "Providers", type: :request, elasticsearch: true  do
   #                       "symbol" => "BL",
   #                       "name" => "British Library",
   #                       "region" => "EMEA",
-  #                       "contact-email" => "doe@joe.joe",
-  #                       "contact-name" => "timAus",
-  #                       "country-code" => "GB" } } }
+  #                       "contactEmail" => "doe@joe.joe",
+  #                       "contactName" => "timAus",
+  #                       "countryCode" => "GB" } } }
   #     end
 
   #     before { post '/providers', params: params.to_json, headers: headers }
 
   #     it 'creates a provider' do
-  #       expect(json.dig('data', 'attributes', 'contact-email')).to eq("doe@joe.joe")
+  #       expect(json.dig('data', 'attributes', 'contactEmail')).to eq("doe@joe.joe")
   #     end
 
   #     it 'returns status code 201' do
@@ -88,15 +88,15 @@ describe "Providers", type: :request, elasticsearch: true  do
   #                       "name" => "Admin",
   #                       "region" => "EMEA",
   #                       "role_name" => "ROLE_ADMIN",
-  #                       "contact-email" => "doe@joe.joe",
-  #                       "contact-name" => "timAus",
-  #                       "country-code" => "GB" } } }
+  #                       "contactEmail" => "doe@joe.joe",
+  #                       "contactName" => "timAus",
+  #                       "countryCode" => "GB" } } }
   #     end
 
   #     before { post '/providers', params: params.to_json, headers: headers }
 
   #     it 'creates a provider' do
-  #       expect(json.dig('data', 'attributes', 'contact-email')).to eq("doe@joe.joe")
+  #       expect(json.dig('data', 'attributes', 'contactEmail')).to eq("doe@joe.joe")
   #     end
 
   #     it 'returns status code 201' do
@@ -111,9 +111,9 @@ describe "Providers", type: :request, elasticsearch: true  do
   #                       "symbol" => "BL",
   #                       "name" => "British Library",
   #                       "region" => "EMEA",
-  #                       "contact-email" => "doe@joe.joe",
-  #                       "contact-name" => "timAus",
-  #                       "country-code" => "GB" } } }
+  #                       "contactEmail" => "doe@joe.joe",
+  #                       "contactName" => "timAus",
+  #                       "countryCode" => "GB" } } }
   #     end
   #     let(:admin) { create(:provider, symbol: "ADMIN", role_name: "ROLE_ADMIN", password_input: "12345") }
   #     let(:credentials) { admin.encode_auth_param(username: "ADMIN", password: "12345") }
@@ -122,7 +122,7 @@ describe "Providers", type: :request, elasticsearch: true  do
   #     before { post '/providers', params: params.to_json, headers: headers }
 
   #     it 'creates a provider' do
-  #       expect(json.dig('data', 'attributes', 'contact-email')).to eq("doe@joe.joe")
+  #       expect(json.dig('data', 'attributes', 'contactEmail')).to eq("doe@joe.joe")
   #     end
 
   #     it 'returns status code 201' do
@@ -136,8 +136,8 @@ describe "Providers", type: :request, elasticsearch: true  do
   #                     "attributes" => {
   #                       "symbol" => "BL",
   #                       "name" => "British Library",
-  #                       "contact-name" => "timAus",
-  #                       "country-code" => "GB" } } }
+  #                       "contactName" => "timAus",
+  #                       "countryCode" => "GB" } } }
   #     end
 
   #     before { post '/providers', params: params.to_json, headers: headers }
@@ -156,7 +156,7 @@ describe "Providers", type: :request, elasticsearch: true  do
   #       { "type" => "providers",
   #         "attributes" => {
   #           "symbol" => "BL",
-  #           "contact-name" => "timAus",
+  #           "contactName" => "timAus",
   #           "name" => "British Library",
   #           "country-code" => "GB" } }
   #     end
@@ -180,14 +180,14 @@ describe "Providers", type: :request, elasticsearch: true  do
                       "attributes" => {
                         "name" => "British Library",
                         "region" => "Americas",
-                        "contact-email" => "Pepe@mdm.cod",
-                        "contact-name" => "timAus",
-                        "country-code" => "GB" } } }
+                        "contactEmail" => "Pepe@mdm.cod",
+                        "contactName" => "timAus",
+                        "countryCode" => "GB" } } }
       end
       before { put "/providers/#{provider.symbol}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
-        expect(json.dig('data', 'attributes', 'contact-name')).to eq("timAus")
+        expect(json.dig('data', 'attributes', 'contactName')).to eq("timAus")
       end
 
       it 'returns status code 200' do
@@ -201,9 +201,9 @@ describe "Providers", type: :request, elasticsearch: true  do
                       "attributes" => {
                         "name" => "British Library",
                         "region" => "Americas",
-                        "contact-email" => "Pepe@mdm.cod",
-                        "contact-name" => "timAus",
-                        "country-code" => "GB" } } }
+                        "contactEmail" => "Pepe@mdm.cod",
+                        "contactName" => "timAus",
+                        "countryCode" => "GB" } } }
       end
       let(:admin) { create(:provider, symbol: "ADMIN", role_name: "ROLE_ADMIN", password_input: "12345") }
       let(:credentials) { admin.encode_auth_param(username: "ADMIN", password: "12345") }
@@ -212,7 +212,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       before { put "/providers/#{provider.symbol}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
-        expect(json.dig('data', 'attributes', 'contact-name')).to eq("timAus")
+        expect(json.dig('data', 'attributes', 'contactName')).to eq("timAus")
       end
 
       it 'returns status code 200' do
@@ -226,9 +226,9 @@ describe "Providers", type: :request, elasticsearch: true  do
                       "attributes" => {
                         "name" => "British Library",
                         "region" => "Americas",
-                        "contact-email" => "Pepe@mdm.cod",
-                        "contact-name" => "timAus",
-                        "country-code" => "GB" } } }
+                        "contactEmail" => "Pepe@mdm.cod",
+                        "contactName" => "timAus",
+                        "countryCode" => "GB" } } }
       end
 
       before { put '/providers/xxx', params: params.to_json, headers: headers }

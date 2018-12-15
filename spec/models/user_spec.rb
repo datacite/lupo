@@ -46,8 +46,9 @@ describe User, type: :model do
         expect(user.role_id).to eq("provider_admin")
       end
 
-      it "has provider_id" do
+      it "has provider" do
         expect(user.provider_id).to eq(provider.symbol.downcase)
+        expect(user.provider.name).to eq(provider.name)
       end
 
       it "has name" do
@@ -70,8 +71,9 @@ describe User, type: :model do
         expect(user.provider_id).to eq(client.symbol.downcase.split(".").first)
       end
 
-      it "has client_id" do
+      it "has client" do
         expect(user.client_id).to eq(client.symbol.downcase)
+        expect(user.client.name).to eq(client.name)
       end
 
       it "has name" do

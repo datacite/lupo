@@ -1,6 +1,26 @@
 module Dateable
   extend ActiveSupport::Concern
 
+  included do
+    def get_date(dates, date_type)
+      dd = Array.wrap(dates).find { |d| d["dateType"] == date_type } || {}
+      dd.fetch("date", nil)
+    end
+
+    def set_date(dates, date, date_type)
+      dd = Array.wrap(dates).find { |d| d["dateType"] == date_type } || { "dateType" => date_type }
+      dd["date"] = date
+    end
+
+    def get_resource_type(types, type)
+      types[type]
+    end
+
+    def set_resource_type(types, text, type)
+      types[type] = text
+    end
+  end
+
   module ClassMethods
     def get_solr_date_range(from_date, until_date)
       from_date_string = get_datetime_from_input(from_date) || "*"

@@ -1,55 +1,36 @@
 class DoiSerializer
   include FastJsonapi::ObjectSerializer
-  set_key_transform :dash
+  set_key_transform :camel_lower
   set_type :dois
   set_id :uid
 
-  attributes :doi, :identifier, :url, :prefix, :suffix, :author, :title, :publisher, :resource_type_subtype, :description, :version, :metadata_version, :schema_version, :reason, :source, :state, :is_active, :landing_page, :published, :created, :registered, :updated, :xml, :cache_key
+  attributes :doi, :prefix, :suffix, :identifiers, :creators, :titles, :publisher, :container, :publication_year, :subjects, :contributors, :dates, :language, :types, :related_identifiers, :sizes, :formats, :version, :rights_list, :descriptions, :geo_locations, :funding_references, :xml, :url, :content_url, :metadata_version, :schema_version, :source, :is_active, :state, :reason, :landing_page, :created, :registered, :updated
+  attributes :prefix, :suffix, if: Proc.new { |object, params| params && params[:detail] }
 
   belongs_to :client, record_type: :clients
-  belongs_to :resource_type, record_type: :resource_types
   has_many :media
+
+  attribute :xml, if: Proc.new { |object, params| params && params[:detail] } do |object|
+    object.xml_encoded
+  end
 
   attribute :doi do |object|
     object.doi.downcase
-  end
-
-  attribute :author do |object|
-    object.author_normalized
-  end
-
-  attribute :title do |object|
-    object.title_normalized
-  end
-
-  attribute :description do |object|
-    object.description_normalized
   end
 
   attribute :state do |object|
     object.aasm_state
   end
 
-  attribute :is_active do |object|
-    object.is_active == "\u0001" ? true : false
-  end
-
   attribute :version do |object|
-    object.b_version
+    object.version_info
   end
 
-  attribute :xml do |object|
-    object.xml_encoded
+  attribute :is_active do |object|
+    object.is_active.to_s.getbyte(0) == 1 ? true : false
   end
 
-  attribute :landing_page, if: Proc.new {
-    |object, params|
-    params[:current_ability] && params[:current_ability].can?(:read_landing_page_results, object) == true
-  } do |object|
-    { status: object.last_landing_page_status,
-      "content-type" => object.last_landing_page_content_type,
-      checked: object.last_landing_page_status_check,
-      "result" => object.try(:last_landing_page_status_result) }
+  attribute :landing_page, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_landing_page_results, object) == true } do |object|
+    object.landing_page
   end
-
 end

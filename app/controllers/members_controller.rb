@@ -64,6 +64,7 @@ class MembersController < ApplicationController
       }.compact
     options[:include] = @include
     options[:is_collection] = true
+    options[:links] = nil
 
     render json: MemberSerializer.new(@members, options).serialized_json, status: :ok
   end

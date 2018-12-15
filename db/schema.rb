@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_23_235649) do
+ActiveRecord::Schema.define(version: 2018_12_09_231736) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -92,6 +92,8 @@ ActiveRecord::Schema.define(version: 2018_10_23_235649) do
     t.datetime "deleted_at"
     t.string "re3data"
     t.text "url"
+    t.string "software", limit: 191
+    t.text "description"
     t.index ["allocator"], name: "FK6695D60546EBD781"
     t.index ["re3data"], name: "index_datacentre_on_re3data"
     t.index ["symbol"], name: "symbol", unique: true
@@ -130,6 +132,30 @@ ActiveRecord::Schema.define(version: 2018_10_23_235649) do
     t.string "reason"
     t.string "source", limit: 191
     t.datetime "indexed", precision: 3, default: "1970-01-01 00:00:00", null: false
+    t.json "creators"
+    t.json "contributors"
+    t.json "titles"
+    t.text "publisher"
+    t.integer "publication_year"
+    t.json "types"
+    t.json "descriptions"
+    t.json "container"
+    t.json "sizes"
+    t.json "formats"
+    t.string "version_info", limit: 191
+    t.string "language", limit: 191
+    t.json "dates"
+    t.json "identifiers"
+    t.json "related_identifiers"
+    t.json "funding_references"
+    t.json "geo_locations"
+    t.json "rights_list"
+    t.json "subjects"
+    t.string "schema_version", limit: 191
+    t.json "content_url"
+    t.binary "xml", limit: 16777215
+    t.string "agency", limit: 191, default: "DataCite"
+    t.json "landing_page"
     t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
     t.index ["created", "indexed", "updated"], name: "index_dataset_on_created_indexed_updated"
     t.index ["datacentre"], name: "FK5605B47847B5F5FF"

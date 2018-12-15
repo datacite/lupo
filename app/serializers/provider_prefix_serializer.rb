@@ -1,6 +1,6 @@
 class ProviderPrefixSerializer
   include FastJsonapi::ObjectSerializer
-  set_key_transform :dash
+  set_key_transform :camel_lower
   set_type "provider-prefixes"
   set_id :uid
   attributes :created, :updated

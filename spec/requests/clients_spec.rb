@@ -11,8 +11,8 @@ describe 'Clients', type: :request, elasticsearch: true do
                   "attributes" => {
                     "symbol" => provider.symbol + ".IMPERIAL",
                     "name" => "Imperial College",
-                    "contact-name" => "Madonna",
-                    "contact-email" => "bob@example.com"
+                    "contactName" => "Madonna",
+                    "contactEmail" => "bob@example.com"
                   },
                   "relationships": {
               			"provider": {
@@ -107,7 +107,7 @@ describe 'Clients', type: :request, elasticsearch: true do
       it 'creates a client' do
         attributes = json.dig('data', 'attributes')
         expect(attributes["name"]).to eq("Imperial College")
-        expect(attributes["contact-name"]).to eq("Madonna")
+        expect(attributes["contactName"]).to eq("Madonna")
 
         relationships = json.dig('data', 'relationships')
         expect(relationships.dig("provider", "data", "id")).to eq(provider.symbol.downcase)
@@ -124,7 +124,7 @@ describe 'Clients', type: :request, elasticsearch: true do
                       "attributes" => {
                         "symbol" => provider.symbol + ".IMPERIAL",
                         "name" => "Imperial College",
-                        "contact-name" => "Madonna"
+                        "contactName" => "Madonna"
                       },
                       "relationships": {
                   			"provider": {
@@ -158,7 +158,6 @@ describe 'Clients', type: :request, elasticsearch: true do
       before { put "/clients/#{client.symbol}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
-        puts response.body
         expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
         expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
       end
@@ -214,6 +213,7 @@ describe 'Clients', type: :request, elasticsearch: true do
     before { delete "/clients/#{client.uid}", headers: headers }
 
     it 'returns status code 204' do
+      puts response.body
       expect(response).to have_http_status(204)
     end
 

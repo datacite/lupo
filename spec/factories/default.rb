@@ -26,9 +26,146 @@ FactoryBot.define do
 
     doi { ("10.14454/" + Faker::Internet.password(8)).downcase }
     url { Faker::Internet.url }
-    is_active { true }
-    xml { "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/PjxyZXNvdXJjZSB4c2k6c2NoZW1hTG9jYXRpb249Imh0dHA6Ly9kYXRhY2l0ZS5vcmcvc2NoZW1hL2tlcm5lbC0zIGh0dHA6Ly9zY2hlbWEuZGF0YWNpdGUub3JnL21ldGEva2VybmVsLTMvbWV0YWRhdGEueHNkIiB4bWxucz0iaHR0cDovL2RhdGFjaXRlLm9yZy9zY2hlbWEva2VybmVsLTMiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiPjxpZGVudGlmaWVyIGlkZW50aWZpZXJUeXBlPSJET0kiPjEwLjUyNTYvZjEwMDByZXNlYXJjaC44NTcwLnI2NDIwPC9pZGVudGlmaWVyPjxjcmVhdG9ycz48Y3JlYXRvcj48Y3JlYXRvck5hbWU+ZCBzPC9jcmVhdG9yTmFtZT48L2NyZWF0b3I+PC9jcmVhdG9ycz48dGl0bGVzPjx0aXRsZT5SZWZlcmVlIHJlcG9ydC4gRm9yOiBSRVNFQVJDSC0zNDgyIFt2ZXJzaW9uIDU7IHJlZmVyZWVzOiAxIGFwcHJvdmVkLCAxIGFwcHJvdmVkIHdpdGggcmVzZXJ2YXRpb25zXTwvdGl0bGU+PC90aXRsZXM+PHB1Ymxpc2hlcj5GMTAwMCBSZXNlYXJjaCBMaW1pdGVkPC9wdWJsaXNoZXI+PHB1YmxpY2F0aW9uWWVhcj4yMDE3PC9wdWJsaWNhdGlvblllYXI+PHJlc291cmNlVHlwZSByZXNvdXJjZVR5cGVHZW5lcmFsPSJUZXh0Ii8+PC9yZXNvdXJjZT4=" }
-    aasm_state { "draft" }
+    types { {
+      "resourceTypeGeneral": "Dataset",
+      "resourceType": "DataPackage",
+      "schemaOrg": "Dataset",
+      "citeproc": "dataset",
+      "bibtex": "misc",
+      "ris": "DATA"
+    }}
+    creators { [
+      {
+        "type": "Person",
+        "name": "Benjamin Ollomo",
+        "givenName": "Benjamin",
+        "familyName": "Ollomo"
+      },
+      {
+        "type": "Person",
+        "name": "Patrick Durand",
+        "givenName": "Patrick",
+        "familyName": "Durand"
+      },
+      {
+        "type": "Person",
+        "name": "Franck Prugnolle",
+        "givenName": "Franck",
+        "familyName": "Prugnolle"
+      },
+      {
+        "type": "Person",
+        "name": "Emmanuel J. P. Douzery",
+        "givenName": "Emmanuel J. P.",
+        "familyName": "Douzery"
+      },
+      {
+        "type": "Person",
+        "name": "Céline Arnathau",
+        "givenName": "Céline",
+        "familyName": "Arnathau"
+      },
+      {
+        "type": "Person",
+        "name": "Dieudonné Nkoghe",
+        "givenName": "Dieudonné",
+        "familyName": "Nkoghe"
+      },
+      {
+        "type": "Person",
+        "name": "Eric Leroy",
+        "givenName": "Eric",
+        "familyName": "Leroy"
+      },
+      {
+        "type": "Person",
+        "name": "François Renaud",
+        "givenName": "François",
+        "familyName": "Renaud"
+      }
+    ] }
+    titles {[
+        {
+          "title": "Data from: A new malaria agent in African hominids."
+        }] }
+    publisher {"Dryad Digital Repository" }
+    subjects {[
+        {
+          "subject": "Phylogeny"
+        },
+        {
+          "subject": "Malaria"
+        },
+        {
+          "subject": "Parasites"
+        },
+        {
+          "subject": "Taxonomy"
+        },
+        {
+          "subject": "Mitochondrial genome"
+        },
+        {
+          "subject": "Africa"
+        },
+        {
+          "subject": "Plasmodium"
+        }
+    ]}
+    dates { [
+      {
+        "date": "2011",
+        "dateType": "Issued"
+      }
+    ]}
+    publication_year { 2011 }
+    identifiers { [
+      {
+        "identifierType": "citation",
+        "identifier": "Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446."
+      }
+    ]}
+    version { "1" }
+    rights_list {[
+      {
+        "rightsUri": "http://creativecommons.org/publicdomain/zero/1.0"
+      }
+    ]}
+    related_identifiers {[
+      {
+        "relatedIdentifier": "10.5061/dryad.8515/1",
+        "relatedIdentifierType": "DOI",
+        "relationType": "HasPart"
+      },
+      {
+        "relatedIdentifier": "10.5061/dryad.8515/2",
+        "relatedIdentifierType": "DOI",
+        "relationType": "HasPart"
+      },
+      {
+        "relatedIdentifier": "10.1371/journal.ppat.1000446",
+        "relatedIdentifierType": "DOI",
+        "relationType": "IsReferencedBy"
+      },
+      {
+        "relatedIdentifier": "10.1371/journal.ppat.1000446",
+        "relatedIdentifierType": "DOI",
+        "relationType": "IsSupplementTo"
+      },
+      {
+        "relatedIdentifier": "19478877",
+        "relatedIdentifierType": "PMID",
+        "relationType": "IsReferencedBy"
+      },
+      {
+        "relatedIdentifier": "19478877",
+        "relatedIdentifierType": "PMID",
+        "relationType": "IsSupplementTo"
+      }
+    ]}
+    schema_version { "http://datacite.org/schema/kernel-4" }
+    source { "test" }
+    regenerate { true }
     created { Faker::Time.backward(14, :evening) }
     minted { Faker::Time.backward(15, :evening) }
     updated { Faker::Time.backward(5, :evening) }

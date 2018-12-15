@@ -22,7 +22,7 @@ module Facetable
       end
     end
 
-    def facet_by_cumuative_year(arr)
+    def facet_by_cumulative_year(arr)
       arr.map do |hsh|
         { "id" => hsh["key"].to_s,
           "title" => hsh["key"].to_s,
@@ -34,6 +34,14 @@ module Facetable
       arr.map do |hsh|
         { "id" => hsh["key"],
           "title" => hsh["key"].titleize,
+          "count" => hsh["doc_count"] }
+      end
+    end
+
+    def facet_by_software(arr)
+      arr.map do |hsh|
+        { "id" => hsh["key"].downcase,
+          "title" => hsh["key"],
           "count" => hsh["doc_count"] }
       end
     end
@@ -60,8 +68,8 @@ module Facetable
 
     def facet_by_resource_type(arr)
       arr.map do |hsh|
-        { "id" => hsh["key"],
-          "title" => hsh["key"].underscore.humanize,
+        { "id" => hsh["key"].underscore.dasherize,
+          "title" => hsh["key"],
           "count" => hsh["doc_count"] }
       end
     end

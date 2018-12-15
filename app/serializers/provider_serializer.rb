@@ -1,6 +1,6 @@
 class ProviderSerializer
   include FastJsonapi::ObjectSerializer
-  set_key_transform :dash
+  set_key_transform :camel_lower
   set_type :providers
   set_id :uid
 
@@ -13,7 +13,7 @@ class ProviderSerializer
   end
 
   attribute :is_active do |object|
-    object.is_active == "\u0001" ? true : false
+    object.is_active.getbyte(0) == 1 ? true : false
   end
 
   attribute :has_password do |object|

@@ -59,6 +59,7 @@ class DataCentersController < ApplicationController
     }.compact
     options[:include] = @include
     options[:is_collection] = true
+    options[:links] = nil
 
     render json: DataCenterSerializer.new(@clients, options).serialized_json, status: :ok
   end
@@ -75,8 +76,14 @@ class DataCentersController < ApplicationController
 
   def set_include
     if params[:include].present?
-      @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:provider, :repository]
+      include_keys = {
+        "member" => :provider
+      }
+      @include = params[:include].split(",").reduce([]) do |sum, i|
+        k = include_keys[i.downcase.underscore]
+        sum << k if k.present?
+        sum
+      end
     else
       @include = []
     end

@@ -73,7 +73,9 @@ class ApplicationController < ActionController::API
                when "CanCan::AccessDenied" then 403
                when "ActiveRecord::RecordNotFound", "AbstractController::ActionNotFound", "ActionController::RoutingError" then 404
                when "ActionController::UnknownFormat" then 406
+               when "ActiveRecord::RecordNotUnique" then 409
                when "ActiveModel::ForbiddenAttributesError", "ActionController::ParameterMissing", "ActionController::UnpermittedParameters", "ActiveModelSerializers::Adapter::JsonApi::Deserialization::InvalidDocument" then 422
+               when "SocketError" then 500 
                else 400
                end
 
@@ -88,6 +90,10 @@ class ApplicationController < ActionController::API
         message = "The resource you are looking for doesn't exist."
       elsif status == 406
         message = "The content type is not recognized."
+      elsif status == 409
+        message = "The resource already exists."
+      elsif ["JSON::ParserError", "Nokogiri::XML::SyntaxError", "ActionDispatch::Http::Parameters::ParseError"].include?(exception.class.to_s)
+        message = exception.message
       else
         Bugsnag.notify(exception)
 

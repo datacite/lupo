@@ -8,11 +8,11 @@ module Indexable
       # use index_document instead of update_document to also update virtual attributes
       IndexJob.perform_later(self)
       if self.class.name == "Doi"
-        update_column(:indexed, Time.zone.now)        
+        update_column(:indexed, Time.zone.now)
         send_import_message(self.to_jsonapi) if aasm_state == "findable" unless Rails.env.test?
       end
     end
-  
+
     before_destroy do
       begin
         __elasticsearch__.delete_document
@@ -29,7 +29,7 @@ module Indexable
     def send_import_message(data)
       send_message(data, shoryuken_class: "DoiImportWorker")
     end
-    
+
     # shoryuken_class is needed for the consumer to process the message
     # we use the AWS SQS client directly as there is no consumer in this app
     def send_message(body, options={})
@@ -85,7 +85,7 @@ module Indexable
 
     def find_by_ids(ids, options={})
       options[:sort] ||= { "_doc" => { order: 'asc' }}
-    
+
       __elasticsearch__.search({
         from: options[:page].present? ? (options.dig(:page, :number) - 1) * options.dig(:page, :size) : 0,
         size: options[:size] || 25,
@@ -111,21 +111,27 @@ module Indexable
         sort = options[:sort]
       end
 
-      fields = options[:fields].presence || query_fields
+      fields = options[:query_fields].presence || query_fields
 
       must = []
       must << { multi_match: { query: query, fields: fields, type: "phrase_prefix", slop: 3, max_expansions: 10 }} if query.present?
       must << { term: { aasm_state: options[:state] }} if options[:state].present?
-      must << { term: { resource_type_id: options[:resource_type_id] }} if options[:resource_type_id].present?
+      must << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
       must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
       must << { terms: { client_id: options[:client_id].split(",") }} if options[:client_id].present?
       must << { term: { prefix: options[:prefix] }} if options[:prefix].present?
       must << { term: { "author.id" => "https://orcid.org/#{options[:person_id]}" }} if options[:person_id].present?
       must << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
-      must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
       must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
       must << { term: { source: options[:source] }} if options[:source].present?
-      must << { term: { last_landing_page_status: options[:link_check_status] }} if options[:link_check_status].present?
+      must << { term: { "landing_page.status": options[:link_check_status] }} if options[:link_check_status].present?
+      must << { exists: { field: "landing_page.checked" }} if options[:link_checked].present?
+      must << { term: { "landing_page.hasSchemaOrg": options[:link_check_has_schema_org] }} if options[:link_check_has_schema_org].present?
+      must << { term: { "landing_page.bodyHasPid": options[:link_check_body_has_pid] }} if options[:link_check_body_has_pid].present?
+      must << { exists: { field: "landing_page.schemaOrgId" }} if options[:link_check_found_schema_org_id].present?
+      must << { exists: { field: "landing_page.dcIdentifier" }} if options[:link_check_found_dc_identifier].present?
+      must << { exists: { field: "landing_page.citationDoi" }} if options[:link_check_found_citation_doi].present?
+      must << { range: { "landing_page.redirectCount": { "gte": options[:link_check_redirect_count_gte] } } } if options[:link_check_redirect_count_gte].present?
 
       must_not = []
 
@@ -139,9 +145,10 @@ module Indexable
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
       elsif self.name == "Client"
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        must << { terms: { "software.raw" => options[:software].split(",") }} if options[:software].present?
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
       elsif self.name == "Doi"
-        must << { range: { published: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
       end
 
       __elasticsearch__.search({

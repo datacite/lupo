@@ -30,7 +30,7 @@ class ProvidersController < ApplicationController
     elsif params[:ids].present?
       response = Provider.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      response = Provider.query(params[:query], year: params[:year], region: params[:region], organization_type: params[:organization_type], focus_area: params[:focus_area], fields: params[:fields], page: page, sort: sort)
+      response = Provider.query(params[:query], year: params[:year], region: params[:region], organization_type: params[:organization_type], focus_area: params[:focus_area], query_fields: params[:query_fields], page: page, sort: sort)
     end
 
     total = response.results.total
@@ -151,8 +151,8 @@ class ProvidersController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:name, :symbol, :description, :website, :joined, "organization-type", "focus-area", :phone, "contact-name", "contact-email", "is_active", "password-input", :country],
-              keys: { "organization-type" => :organization_type, "focus-area" => :focus_area, "contact-name" => :contact_name, "contact-email" => :contact_email, :country => :country_code, "is-active" => :is_active, "password-input" => :password_input }
+      params, only: [:name, :symbol, :description, :website, :joined, "organizationType", "focusArea", :phone, "contactName", "contactEmail", "isActive", "passwordInput", :country],
+              keys: { "organizationType" => :organization_type, "focusArea" => :focus_area, "contactName" => :contact_name, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input }
     )
   end
 end

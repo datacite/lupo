@@ -8,6 +8,9 @@ class User
   # include helper module for setting emails via Mailgun API
   include Mailable
 
+  # include helper module for caching infrequently changing resources
+  include Cacheable
+
   attr_accessor :name, :uid, :email, :role_id, :jwt, :password, :provider_id, :client_id, :beta_tester, :errors
 
   def initialize(credentials, options={})
@@ -38,6 +41,8 @@ class User
   alias_attribute :orcid, :uid
   alias_attribute :id, :uid
   alias_attribute :flipper_id, :uid
+  alias_attribute :provider, :allocator
+  alias_attribute :client, :datacentre
 
   # Helper method to check for admin user
   def is_admin?
@@ -54,18 +59,16 @@ class User
     beta_tester
   end
 
-  def allocator
+  def provider
     return nil unless provider_id.present?
 
-    p = Provider.where(symbol: provider_id).first
-    p.id if p.present?
+    cached_provider_response(provider_id)
   end
 
-  def datacentre
+  def client
     return nil unless client_id.present?
 
-    c = Client.where(symbol: client_id).first
-    c.id if c.present?
+    cached_client_response(client_id)
   end
 
   def self.reset(username)

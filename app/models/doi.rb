@@ -4,6 +4,7 @@ class Doi < ActiveRecord::Base
   include Metadatable
   include Cacheable
   include Licensable
+  include Dateable
 
   # include helper module for generating random DOI suffixes
   include Helpable
@@ -32,12 +33,12 @@ class Doi < ActiveRecord::Base
 
     event :register do
       # can't register test prefix
-      transitions :from => [:draft], :to => :registered, :unless => :is_test_prefix?
+      transitions :from => [:draft], :to => :registered, :if => [:registerable?]
     end
 
     event :publish do
       # can't index test prefix
-      transitions :from => [:draft], :to => :findable, :unless => :is_test_prefix?
+      transitions :from => [:draft], :to => :findable, :if => [:registerable?]
       transitions :from => :registered, :to => :findable
     end
 
@@ -57,12 +58,15 @@ class Doi < ActiveRecord::Base
   self.table_name = "dataset"
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-  alias_attribute :resource_type_subtype, :additional_type
-  alias_attribute :published, :date_published
   alias_attribute :registered, :minted
+  alias_attribute :state, :aasm_state
 
   attr_accessor :current_user
-  attr_accessor :validate
+
+  attribute :regenerate, :boolean, default: false
+  attribute :only_validate, :boolean, default: false
+  attribute :should_validate, :boolean, default: false
+  attribute :agency, :string, default: "DataCite"
 
   belongs_to :client, foreign_key: :datacentre
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
@@ -76,19 +80,18 @@ class Doi < ActiveRecord::Base
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, :with => /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, :on => :create
   validates_format_of :url, :with => /\A(ftp|http|https):\/\/[\S]+/ , if: :url?, message: "URL is not valid"
-  validates_uniqueness_of :doi, message: "This DOI has already been taken"
+  validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
-
-  # validate :validation_errors
+  validates :xml, presence: true, xml_schema: true, :if => Proc.new { |doi| doi.validatable? }
 
   after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
 
-  before_save :set_defaults, :update_metadata
+  before_validation :update_xml, if: :regenerate
+  before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
   scope :q, ->(query) { where("dataset.doi = ?", query) }
-  scope :not_indexed, -> { where("updated > indexed") }
 
   # use different index for testing
   index_name Rails.env.test? ? "dois-test" : "dois"
@@ -99,17 +102,42 @@ class Doi < ActiveRecord::Base
     indexes :doi,                            type: :keyword
     indexes :identifier,                     type: :keyword
     indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
-    indexes :author_normalized,              type: :object, properties: {
-      type: { type: :keyword },
-      id: { type: :keyword },
+    indexes :creators,                       type: :object, properties: {
+      nameType: { type: :keyword },
+      nameIdentifiers: { type: :object, properties: {
+        nameIdentifier: { type: :keyword },
+        nameIdentifierScheme: { type: :keyword }
+      }},
       name: { type: :text },
-      "given-name" => { type: :text },
-      "family-name" => { type: :text }
+      givenName: { type: :text },
+      familyName: { type: :text },
+      affiliation: { type: :text }
     }
-    indexes :author_names,                   type: :text
-    indexes :title_normalized,               type: :text
-    indexes :description_normalized,         type: :text
+    indexes :contributors,                   type: :object, properties: {
+      nameType: { type: :keyword },
+      nameIdentifiers: { type: :object, properties: {
+        nameIdentifier: { type: :keyword },
+        nameIdentifierScheme: { type: :keyword }
+      }},
+      name: { type: :text },
+      givenName: { type: :text },
+      familyName: { type: :text },
+      affiliation: { type: :text },
+      contributorType: { type: :keyword }
+    }
+    indexes :creator_names,                  type: :text
+    indexes :titles,                         type: :object, properties: {
+      title: { type: :keyword },
+      titleType: { type: :keyword },
+      lang: { type: :keyword }
+    }
+    indexes :descriptions,                   type: :object, properties: {
+      description: { type: :keyword },
+      descriptionType: { type: :keyword },
+      lang: { type: :keyword }
+    }
     indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" }}
+    indexes :publication_year,               type: :date, format: "yyyy", ignore_malformed: true
     indexes :client_id,                      type: :keyword
     indexes :provider_id,                    type: :keyword
     indexes :resource_type_id,               type: :keyword
@@ -121,15 +149,71 @@ class Doi < ActiveRecord::Base
       url: { type: :text },
       media_type: { type: :keyword },
       version: { type: :keyword },
-      created: { type: :date },
-      updated: { type: :date }
+      created: { type: :date, ignore_malformed: true },
+      updated: { type: :date, ignore_malformed: true }
     }
-    indexes :alternate_identifier,           type: :object, properties: {
+    indexes :identifiers,                    type: :object, properties: {
+      identifierType: { type: :keyword },
+      identifier: { type: :keyword }
+    }
+    indexes :related_identifiers,            type: :object, properties: {
+      relatedIdentifierType: { type: :keyword },
+      relatedIdentifier: { type: :keyword },
+      relationType: { type: :keyword },
+      resourceTypeGeneral: { type: :keyword }
+    }
+    indexes :types,                          type: :object, properties: {
+      resourceTypeGeneral: { type: :keyword },
+      resourceType: { type: :keyword },
+      schemaOrg: { type: :keyword },
+      bibtex: { type: :keyword },
+      citeproc: { type: :keyword },
+      ris: { type: :keyword }
+    }
+    indexes :funding_references,             type: :object, properties: {
+      funderName: { type: :keyword },
+      funderIdentifier: { type: :keyword },
+      funderIdentifierType: { type: :keyword },
+      awardNumber: { type: :keyword },
+      awardUri: { type: :keyword },
+      awardTitle: { type: :keyword }
+    }
+    indexes :dates,                          type: :object, properties: {
+      date: { type: :date, format: "yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true },
+      dateType: { type: :keyword }
+    }
+    indexes :geo_locations,                  type: :object, properties: {
+      geoLocationPoint: { type: :object },
+      geoLocationBox: { type: :object },
+      geoLocationPlace: { type: :keyword }
+    }
+    indexes :rights_list,                    type: :object, properties: {
+      rights: { type: :keyword },
+      rightsUri: { type: :keyword }
+    }
+    indexes :subjects,                       type: :object, properties: {
+      subject: { type: :keyword },
+      subjectScheme: { type: :keyword },
+      schemeUri: { type: :keyword },
+      valueUri: { type: :keyword }
+    }
+    indexes :container,                     type: :object, properties: {
       type: { type: :keyword },
-      name: { type: :keyword }
+      identifier: { type: :keyword },
+      identifierType: { type: :keyword },
+      title: { type: :keyword },
+      volume: { type: :keyword },
+      issue: { type: :keyword },
+      firstPage: { type: :keyword },
+      lastPage: { type: :keyword }
     }
-    indexes :resource_type_subtype,          type: :keyword
-    indexes :version,                        type: :integer
+
+    indexes :xml,                            type: :text, index: "not_analyzed"
+    indexes :content_url,                    type: :keyword
+    indexes :version_info,                   type: :keyword
+    indexes :formats,                        type: :keyword
+    indexes :sizes,                          type: :keyword
+    indexes :language,                       type: :keyword
     indexes :is_active,                      type: :keyword
     indexes :aasm_state,                     type: :keyword
     indexes :schema_version,                 type: :keyword
@@ -138,19 +222,30 @@ class Doi < ActiveRecord::Base
     indexes :prefix,                         type: :keyword
     indexes :suffix,                         type: :keyword
     indexes :reason,                         type: :text
-    indexes :xml,                            type: :text, index: "no"
-    indexes :last_landing_page_status,       type: :integer
-    indexes :last_landing_page_status_check, type: :date
-    indexes :last_landing_page_content_type, type: :keyword
+    indexes :landing_page, type: :object, properties: {
+      checked: { type: :date, ignore_malformed: true },
+      url: { type: :string },
+      status: { type: :integer },
+      contentType: { type: :string },
+      error: { type: :keyword },
+      redirectCount: { type: :integer },
+      redirectUrls: { type: :keyword },
+      downloadLatency: { type: :scaled_float, scaling_factor: 100 },
+      hasSchemaOrg: { type: :boolean },
+      schemaOrgId: { type: :keyword },
+      dcIdentifier: { type: :keyword },
+      citationDoi: { type: :keyword },
+      bodyHasPid: { type: :boolean }
+    }
     indexes :cache_key,                      type: :keyword
-    indexes :published,                      type: :date, format: "yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true
-    indexes :registered,                     type: :date
-    indexes :created,                        type: :date
-    indexes :updated,                        type: :date
+    indexes :registered,                     type: :date, ignore_malformed: true
+    indexes :created,                        type: :date, ignore_malformed: true
+    indexes :updated,                        type: :date, ignore_malformed: true
 
     # include parent objects
-    indexes :client,        type: :object
-    indexes :resource_type, type: :object
+    indexes :client,                         type: :object
+    indexes :provider,                       type: :object
+    indexes :resource_type,                  type: :object
   end
 
   def as_indexed_json(options={})
@@ -160,36 +255,47 @@ class Doi < ActiveRecord::Base
       "doi" => doi,
       "identifier" => identifier,
       "url" => url,
-      "author_normalized" => author_normalized,
-      "author_names" => author_names,
-      "title_normalized" => title_normalized,
-      "description_normalized" => description_normalized,
+      "creators" => creators,
+      "contributors" => contributors,
+      "creator_names" => creator_names,
+      "titles" => titles,
+      "descriptions" => descriptions,
       "publisher" => publisher,
       "client_id" => client_id,
       "provider_id" => provider_id,
+      "resource_type_id" => resource_type_id,
       "media_ids" => media_ids,
       "prefix" => prefix,
       "suffix" => suffix,
-      "resource_type_id" => resource_type_id,
-      "resource_type_subtype" => resource_type_subtype,
-      "alternate_identifier" => alternate_identifier,
-      "b_version" => b_version,
+      "types" => types,
+      "identifiers" => identifiers,
+      "related_identifiers" => related_identifiers,
+      "funding_references" => funding_references,
+      "publication_year" => publication_year,
+      "dates" => dates,
+      "geo_locations" => geo_locations,
+      "rights_list" => rights_list,
+      "container" => container,
+      "content_url" => content_url,
+      "version_info" => version_info,
+      "formats" => formats,
+      "sizes" => sizes,
+      "language" => language,
+      "subjects" => subjects,
+      "xml" => xml,
       "is_active" => is_active,
-      "last_landing_page_status" => last_landing_page_status,
-      "last_landing_page_status_check" => last_landing_page_status_check,
-      "last_landing_page_content_type" => last_landing_page_content_type,
+      "landing_page" => landing_page,
       "aasm_state" => aasm_state,
       "schema_version" => schema_version,
       "metadata_version" => metadata_version,
       "reason" => reason,
-      "xml_encoded" => xml_encoded,
       "source" => source,
       "cache_key" => cache_key,
-      "published" => published,
       "registered" => registered,
       "created" => created,
       "updated" => updated,
       "client" => client.as_indexed_json,
+      "provider" => provider.as_indexed_json,
       "resource_type" => resource_type.try(:as_indexed_json),
       "media" => media.map { |m| m.try(:as_indexed_json) }
     }
@@ -197,22 +303,27 @@ class Doi < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      resource_types: { terms: { field: 'resource_type_id', size: 15, min_doc_count: 1 } },
-      states: { terms: { field: 'aasm_state', size: 10, min_doc_count: 1 } },
-      years: { date_histogram: { field: 'published', interval: 'year', min_doc_count: 1 } },
+      resource_types: { terms: { field: 'types.resourceTypeGeneral', size: 15, min_doc_count: 1 } },
+      states: { terms: { field: 'aasm_state', size: 15, min_doc_count: 1 } },
+      years: { date_histogram: { field: 'publication_year', interval: 'year', min_doc_count: 1 } },
       created: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
       registered: { date_histogram: { field: 'registered', interval: 'year', min_doc_count: 1 } },
-      providers: { terms: { field: 'provider_id', size: 10, min_doc_count: 1 } },
-      clients: { terms: { field: 'client_id', size: 50, min_doc_count: 1 } },
-      prefixes: { terms: { field: 'prefix', size: 10, min_doc_count: 1 } },
-      schema_versions: { terms: { field: 'schema_version', size: 10, min_doc_count: 1 } },
-      link_checks: { terms: { field: 'last_landing_page_status', size: 10, min_doc_count: 1 } },
-      sources: { terms: { field: 'source', size: 10, min_doc_count: 1 } }
+      providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } },
+      clients: { terms: { field: 'client_id', size: 15, min_doc_count: 1 } },
+      prefixes: { terms: { field: 'prefix', size: 15, min_doc_count: 1 } },
+      schema_versions: { terms: { field: 'schema_version', size: 15, min_doc_count: 1 } },
+      link_checks_status: { terms: { field: 'landing_page.status', size: 15, min_doc_count: 1 } },
+      link_checks_has_schema_org: { terms: { field: 'landing_page.hasSchemaOrg', size: 2, min_doc_count: 1 } },
+      link_checks_schema_org_id: { value_count: { field: "landing_page.schemaOrgId" } },
+      link_checks_dc_identifier: { value_count: { field: "landing_page.dcIdentifier" } },
+      link_checks_citation_doi: { value_count: { field: "landing_page.citationDoi" } },
+      links_checked: { value_count: { field: "landing_page.checked" } },
+      sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
     }
   end
 
   def self.query_fields
-    ['doi^10', 'title_normalized^10', 'author_names^10', 'author_normalized.name^10', 'author_normalized.id^10', 'publisher^10', 'description_normalized^10', 'resource_type_id^10', 'resource_type_subtype^10', 'alternate_identifier.name^10', '_all']
+    ['doi^10', 'titles.title^10', 'creator_names^10', 'creators.name^10', 'creators.id^10', 'publisher^10', 'descriptions.description^10', 'types.resourceTypeGeneral^10', 'subjects.subject^10', 'identifiers.identifier^10', 'related_identifiers.relatedIdentifier^10', '_all']
   end
 
   def self.find_by_id(id, options={})
@@ -228,39 +339,86 @@ class Doi < ActiveRecord::Base
     })
   end
 
-  def self.index(options={})
+  def self.import_all(options={})
     from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
     until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
 
     # get every day between from_date and until_date
     (from_date..until_date).each do |d|
-      DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"))
+      DoiImportByDayJob.perform_later(from_date: d.strftime("%F"))
+      puts "Queued importing for DOIs created on #{d.strftime("%F")}."
+    end
+  end
+
+  def self.import_by_day(options={})
+    return nil unless options[:from_date].present?
+    from_date = Date.parse(options[:from_date])
+
+    count = 0
+
+    logger = Logger.new(STDOUT)
+
+    Doi.where(created: from_date.midnight..from_date.end_of_day).find_each do |doi|
+      begin
+        string = doi.current_metadata.present? ? doi.current_metadata.xml : nil
+        meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
+        attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
+          [a.to_sym, meta[a]]
+        end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
+
+        doi.update_columns(attrs)
+      rescue TypeError, NoMethodError => error
+        logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
+      else
+        count += 1
+      end
+    end
+
+    if count > 0
+      logger.info "[MySQL] Imported metadata for #{count} DOIs created on #{options[:from_date]}."
+    end
+  end
+
+  def self.index(options={})
+    from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
+    until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
+    index_time = options[:index_time].presence || Time.zone.now.utc.iso8601
+
+    # get every day between from_date and until_date
+    (from_date..until_date).each do |d|
+      DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"), index_time: index_time)
       puts "Queued indexing for DOIs created on #{d.strftime("%F")}."
-    end    
+    end
   end
 
   def self.index_by_day(options={})
     return nil unless options[:from_date].present?
     from_date = Date.parse(options[:from_date])
-    
+    index_time = options[:index_time].presence || Time.zone.now.utc.iso8601
+
     errors = 0
     count = 0
 
     logger = Logger.new(STDOUT)
 
-    Doi.where(created: from_date.midnight..from_date.end_of_day).not_indexed.find_in_batches(batch_size: 500) do |dois|
+    Doi.where(created: from_date.midnight..from_date.end_of_day).where("indexed < ?", index_time).find_in_batches(batch_size: 500) do |dois|
       response = Doi.__elasticsearch__.client.bulk \
         index:   Doi.index_name,
         type:    Doi.document_type,
         body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
 
+      # log errors
       errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
-      count += dois.length
+      response['items'].select { |k, v| k.values.first['error'].present? }.each do |err|
+        logger.error "[Elasticsearch] " + err.inspect
+      end
+
       dois.each { |doi| doi.update_column(:indexed, Time.zone.now) }
+      count += dois.length
     end
 
     if errors > 1
-      logger.info "[Elasticsearch] #{errors} errors indexing #{count} DOIs created on #{options[:from_date]}."
+      logger.error "[Elasticsearch] #{errors} errors indexing #{count} DOIs created on #{options[:from_date]}."
     elsif count > 1
       logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{options[:from_date]}."
     end
@@ -269,12 +427,12 @@ class Doi < ActiveRecord::Base
 
     count = 0
 
-    Doi.where(created: from_date.midnight..from_date.end_of_day).not_indexed.find_each do |doi|
+    Doi.where(created: from_date.midnight..from_date.end_of_day).where("indexed < ?", index_time).find_each do |doi|
       IndexJob.perform_later(doi)
-      doi.update_column(:indexed, Time.zone.now)  
+      doi.update_column(:indexed, Time.zone.now)
       count += 1
     end
-  
+
     logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{options[:from_date]}."
   end
 
@@ -283,7 +441,7 @@ class Doi < ActiveRecord::Base
   end
 
   def resource_type_id
-    resource_type_general.underscore.dasherize if resource_type_general.present?
+    types["resourceTypeGeneral"].underscore.dasherize if types.to_h["resourceTypeGeneral"].present?
   end
 
   def media_ids
@@ -292,26 +450,14 @@ class Doi < ActiveRecord::Base
 
   def xml_encoded
     Base64.strict_encode64(xml) if xml.present?
-  rescue ArgumentError => exception    
+  rescue ArgumentError => exception
     nil
   end
-  
-  def title_normalized
-    parse_attributes(title, content: "text", first: true)
-  end
 
-  def description_normalized
-    parse_attributes(description, content: "text", first: true)
-  end
-
-  def author_normalized
-    Array.wrap(author)
-  end
- 
-  # author name in natural order: "John Smith" instead of "Smith, John"
-  def author_names
-    Array.wrap(author).map do |a| 
-      if a["familyName"].present? 
+  # creator name in natural order: "John Smith" instead of "Smith, John"
+  def creator_names
+    Array.wrap(creators).map do |a|
+      if a["familyName"].present?
         [a["givenName"], a["familyName"]].join(" ")
       elsif a["name"].to_s.include?(", ")
         a["name"].split(", ", 2).reverse.join(" ")
@@ -334,8 +480,9 @@ class Doi < ActiveRecord::Base
   end
 
   def client_id=(value)
-    r = cached_client_response(value)
-    return @client_id unless r.present?
+    r = ::Client.where(symbol: value).first
+    #r = cached_client_response(value)
+    fail ActiveRecord::RecordNotFound unless r.present?
 
     write_attribute(:datacentre, r.id)
   end
@@ -356,8 +503,20 @@ class Doi < ActiveRecord::Base
     prefix == "10.5072"
   end
 
+  def registerable?
+    prefix != "10.5072" && url.present?
+  end
+
+  # def is_valid?
+  #   valid? && url.present?
+  # end
+
   def is_registered_or_findable?
     %w(registered findable).include?(aasm_state)
+  end
+
+  def validatable?
+    %w(registered findable).include?(aasm_state) || should_validate || only_validate
   end
 
   # update URL in handle system for registered and findable state
@@ -374,7 +533,7 @@ class Doi < ActiveRecord::Base
     media.delete_all
 
     Array.wrap(content_url).each do |c|
-      media << Media.create(url: c, media_type: content_format)
+      media << Media.create(url: c, media_type: formats)
     end
   end
 
@@ -402,7 +561,7 @@ class Doi < ActiveRecord::Base
   end
 
   def resource_type
-    cached_resource_type_response(resource_type_general.underscore.dasherize.downcase) if resource_type_general.present?
+    cached_resource_type_response(types["resourceTypeGeneral"].underscore.dasherize.downcase) if types.to_h["resourceTypeGeneral"].present?
   end
 
   def date_registered
@@ -422,13 +581,13 @@ class Doi < ActiveRecord::Base
     self.send(value) if %w(register publish hide).include?(value)
   end
 
-  # update state for all DOIs in state "undetermined" starting from from_date
+  # update state for all DOIs in state "" starting from from_date
   def self.set_state(from_date: nil)
     from_date ||= Time.zone.now - 1.day
     Doi.where("updated >= ?", from_date).where(aasm_state: '').find_each do |doi|
-      if doi.is_test_prefix? || (doi.is_active == "\x00" && doi.minted.blank?)
+      if doi.is_test_prefix? || (doi.is_active.getbyte(0) == 0 && doi.minted.blank?)
         state = "draft"
-      elsif doi.is_active == "\x00" && doi.minted.present?
+      elsif doi.is_active.to_s.getbyte(0) == 0 && doi.minted.present?
         state = "registered"
       else
         state = "findable"
@@ -479,24 +638,75 @@ class Doi < ActiveRecord::Base
     "Queued storing missing URL in database for DOIs updated since #{from_date.strftime("%F")}."
   end
 
-  # update metadata when any virtual attribute has changed
-  def update_metadata
-    changed_virtual_attributes = changed & %w(author title publisher date_published additional_type resource_type_general description content_size content_format)
-    
-    if changed_virtual_attributes.present?
-      @xml = datacite_xml
-      doc = Nokogiri::XML(xml, nil, 'UTF-8', &:noblanks)
-      ns = doc.collect_namespaces.find { |k, v| v.start_with?("http://datacite.org/schema/kernel") }
-      @schema_version = Array.wrap(ns).last || "http://datacite.org/schema/kernel-4"
-      attribute_will_change!(:xml)
-    end
-
-    metadata.build(doi: self, xml: xml, namespace: schema_version) if (changed & %w(xml)).present?
+  # save to metadata table when xml has changed
+  def save_metadata
+    metadata.build(doi: self, xml: xml, namespace: schema_version) if xml.present? && xml_changed?
   end
 
   def set_defaults
     self.is_active = (aasm_state == "findable") ? "\x01" : "\x00"
-    self.version = version.present? ? version + 1 : 0
+    self.version = version.present? ? version + 1 : 1
     self.updated = Time.zone.now.utc.iso8601
   end
+
+  def self.migrate_landing_page(options={})
+    logger = Logger.new(STDOUT)
+    logger.info "Starting migration"
+
+    # Handle camel casing first.
+    Doi.where.not('last_landing_page_status_result' => nil).find_each do |doi|
+      begin
+        # First we try and fix into camel casing
+        result = doi.last_landing_page_status_result
+        mappings = {
+          "body-has-pid" => "bodyHasPid",
+          "dc-identifier" => "dcIdentifier",
+          "citation-doi" => "citationDoi",
+          "redirect-urls" => "redirectUrls",
+          "schema-org-id" => "schemaOrgId",
+          "has-schema-org" => "hasSchemaOrg",
+          "redirect-count" => "redirectCount",
+          "download-latency" => "downloadLatency"
+        }
+        result = result.map {|k, v| [mappings[k] || k, v] }.to_h
+#        doi.update_columns("last_landing_page_status_result": result)
+
+        # Do a fix of the stored download Latency
+        # Sometimes was floating point precision, we dont need this
+        download_latency = result['downloadLatency']
+        download_latency = download_latency.nil? ? download_latency : download_latency.round
+
+        # Try to put the checked date into ISO8601
+        # If we dont have one (there was legacy reasons) then set to unix epoch
+        checked = doi.last_landing_page_status_check
+        checked = checked.nil? ? Time.at(0) : checked
+        checked = checked.iso8601
+
+        # Next we want to build a new landing_page result.
+        landing_page = {
+          "checked" => checked,
+          "status" => doi.last_landing_page_status,
+          "url" => doi.last_landing_page,
+          "contentType" => doi.last_landing_page_content_type,
+          "error" => result['error'],
+          "redirectCount" => result['redirectCount'],
+          "redirectUrls" => result['redirectUrls'],
+          "downloadLatency" => download_latency,
+          "hasSchemaOrg" => result['hasSchemaOrg'],
+          "schemaOrgId" => result['schemaOrgId'],
+          "dcIdentifier" => result['dcIdentifier'],
+          "citationDoi" => result['citationDoi'],
+          "bodyHasPid" => result['bodyHasPid'],
+        }
+
+        doi.update_columns("landing_page": landing_page)
+
+        logger.info "Updated " + doi.doi
+
+      rescue TypeError, NoMethodError => error
+        logger.error "Error updating landing page " + doi.doi + ": " + error.message
+      end
+    end
+  end
+
 end

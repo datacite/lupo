@@ -1,6 +1,10 @@
 require 'uri'
+require 'base64'
 
 class DoisController < ApplicationController
+  include ActionController::MimeResponds
+  include Crosscitable
+
   prepend_before_action :authenticate_user!
   before_action :set_doi, only: [:show, :destroy, :get_url]
   before_action :set_include, only: [:index, :show, :create, :update]
@@ -80,17 +84,19 @@ class DoisController < ApplicationController
 
       render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
     else
-
       sort = case params[:sort]
             when "name" then { "doi" => { order: 'asc' }}
             when "-name" then { "doi" => { order: 'desc' }}
             when "created" then { created: { order: 'asc' }}
             when "-created" then { created: { order: 'desc' }}
+            when "updated" then { updated: { order: 'asc' }}
+            when "-updated" then { updated: { order: 'desc' }}
             when "relevance" then { "_score": { "order": "desc" }}
             else { updated: { order: 'desc' }}
             end
 
       page = params[:page] || {}
+      
       if page[:size].present?
         page[:size] = [page[:size].to_i, 1000].min
         max_number = page[:size] > 0 ? 10000/page[:size] : 1
@@ -107,7 +113,6 @@ class DoisController < ApplicationController
       else
         response = Doi.query(params[:query],
                             state: params[:state],
-                            year: params[:year],
                             created: params[:created],
                             registered: params[:registered],
                             provider_id: params[:provider_id],
@@ -115,9 +120,15 @@ class DoisController < ApplicationController
                             prefix: params[:prefix],
                             person_id: params[:person_id],
                             resource_type_id: params[:resource_type_id],
-                            fields: params[:fields],
+                            query_fields: params[:query_fields],
                             schema_version: params[:schema_version],
                             link_check_status: params[:link_check_status],
+                            link_check_has_schema_org: params[:link_check_has_schema_org],
+                            link_check_body_has_pid: params[:link_check_body_has_pid],
+                            link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
+                            link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
+                            link_check_found_citation_doi: params[:link_check_found_citation_doi],
+                            link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
                             source: params[:source],
                             page: page,
                             sort: sort)
@@ -128,7 +139,6 @@ class DoisController < ApplicationController
 
       states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
       resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
-      years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
       created = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
       registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
       providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
@@ -136,75 +146,96 @@ class DoisController < ApplicationController
       prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
       schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
       sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
-      link_checks = total > 0 ? facet_by_cumuative_year(response.response.aggregations.link_checks.buckets) : nil
+      link_checks_status = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_status.buckets) : nil
+      links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_has_schema_org.buckets) : nil
+      link_checks_schema_org_id = total > 0 ? response.response.aggregations.link_checks_schema_org_id.value : nil
+      link_checks_dc_identifier = total > 0 ? response.response.aggregations.link_checks_dc_identifier.value : nil
+      link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
+      links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
 
-      @dois = response.results.results
-
-      options = {}
-      options[:meta] = {
-        total: total,
-        "total-pages" => total_pages,
-        page: page[:number],
-        states: states,
-        "resource-types" => resource_types,
-        years: years,
-        created: created,
-        registered: registered,
-        providers: providers,
-        clients: clients,
-        prefixes: prefixes,
-        "schema-versions" => schema_versions,
-        sources: sources,
-        "link-checks" => link_checks
-      }.compact
-
-      options[:links] = {
-        self: request.original_url,
-        next: @dois.blank? ? nil : request.base_url + "/dois?" + {
-          query: params[:query],
-          "provider-id" => params[:provider_id],
-          "client-id" => params[:client_id],
-          year: params[:year],
-          fields: params[:fields],
-          "page[cursor]" => Array.wrap(@dois.last[:sort]).first,
-          "page[size]" => params.dig(:page, :size) }.compact.to_query
-        }.compact
-      options[:include] = @include
-      options[:is_collection] = true
-      options[:params] = {
-        :current_ability => current_ability,
-      }
-
-      render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
+      respond_to do |format|
+        format.json do
+          @dois = response.results.results
+          options = {}
+          options[:meta] = {
+            total: total,
+            "total-pages" => total_pages,
+            page: page[:number],
+            states: states,
+            "resource-types" => resource_types,
+            created: created,
+            registered: registered,
+            providers: providers,
+            clients: clients,
+            prefixes: prefixes,
+            "schema-versions" => schema_versions,
+            sources: sources,
+            "link-checks-status" => link_checks_status,
+            "links-checked" => links_checked,
+            "links-with-schema-org" => links_with_schema_org,
+            "link-checks-schema-org-id" => link_checks_schema_org_id,
+            "link-checks-dc-identifier" => link_checks_dc_identifier,
+            "link-checks-citation-doi" => link_checks_citation_doi
+          }.compact
+    
+          options[:links] = {
+            self: request.original_url,
+            next: @dois.blank? ? nil : request.base_url + "/dois?" + {
+              query: params[:query],
+              "provider-id" => params[:provider_id],
+              "client-id" => params[:client_id],
+              fields: params[:fields],
+              "page[cursor]" => Array.wrap(@dois.last[:sort]).first,
+              "page[size]" => params.dig(:page, :size) }.compact.to_query
+            }.compact
+          options[:include] = @include
+          options[:is_collection] = true
+          options[:params] = {
+            :current_ability => current_ability,
+          }
+    
+          render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
+        end
+        format.citation do
+          # fetch formatted citations
+          render citation: response.records.to_a, style: params[:style] || "apa", locale: params[:locale] || "en-US"
+        end
+        format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => response.records.to_a }
+      end
     end
   end
 
   def show
     authorize! :read, @doi
 
-    options = {}
-    options[:include] = @include
-    options[:is_collection] = false
-    options[:params] = {
-      :current_ability => current_ability,
-    }
-
-    render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
+    respond_to do |format|
+      format.json do
+        options = {}
+        options[:include] = @include
+        options[:is_collection] = false
+        options[:params] = {
+          current_ability: current_ability,
+          detail: true
+        }
+    
+        render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
+      end
+      format.citation do
+        # fetch formatted citation
+        render citation: @doi, style: params[:style] || "apa", locale: params[:locale] || "en-US"
+      end
+      format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => @doi }
+    end
   end
 
   def validate
     logger = Logger.new(STDOUT)
     # logger.info safe_params.inspect
-    @doi = Doi.new(safe_params)
-    authorize! :create, @doi
+    @doi = Doi.new(safe_params.merge(only_validate: true))
 
-    if @doi.errors.present?
-      logger.info @doi.errors.inspect
-      render json: serialize(@doi.errors), status: :ok
-    elsif @doi.validation_errors?
-      logger.info @doi.validation_errors.inspect
-      render json: serialize(@doi.validation_errors), status: :ok
-    else
+    authorize! :validate, @doi
+
+    if @doi.valid?
       options = {}
       options[:include] = @include
       options[:is_collection] = false
@@ -213,27 +244,30 @@ class DoisController < ApplicationController
       }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
+    else
+      logger.info @doi.errors.messages
+      render json: serialize(@doi.errors.messages), status: :ok
     end
   end
 
   def create
     logger = Logger.new(STDOUT)
     # logger.info safe_params.inspect
+
     @doi = Doi.new(safe_params)
-    authorize! :create, @doi
 
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
 
-    if safe_params[:xml] && safe_params[:event] && @doi.validation_errors?
-      logger.error @doi.validation_errors.inspect
-      render json: serialize(@doi.validation_errors), status: :unprocessable_entity
-    elsif @doi.save
+    authorize! :new, @doi
+
+    if @doi.save
       options = {}
       options[:include] = @include
       options[:is_collection] = false
       options[:params] = {
-        :current_ability => current_ability,
+        current_ability: current_ability,
+        detail: true
       }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :created, location: @doi
@@ -246,44 +280,47 @@ class DoisController < ApplicationController
   def update
     logger = Logger.new(STDOUT)
     # logger.info safe_params.inspect
+
     @doi = Doi.where(doi: params[:id]).first
     exists = @doi.present?
 
     if exists
-      if params[:data][:attributes][:mode] == "transfer"
+      # capture username and password for reuse in the handle system
+      @doi.current_user = current_user
+
+      if params.dig(:data, :attributes, :mode) == "transfer"
+        # only update client_id
+        
         authorize! :transfer, @doi
+        @doi.assign_attributes(safe_params.slice(:client_id))
       else
         authorize! :update, @doi
+        @doi.assign_attributes(safe_params.except(:doi, :client_id))
       end
-
-      @doi.assign_attributes(safe_params.except(:doi))
     else
       doi_id = validate_doi(params[:id])
       fail ActiveRecord::RecordNotFound unless doi_id.present?
 
       @doi = Doi.new(safe_params.merge(doi: doi_id))
+      # capture username and password for reuse in the handle system
+      @doi.current_user = current_user
 
-      authorize! :create, @doi
+      authorize! :new, @doi
     end
 
-    # capture username and password for reuse in the handle system
-    @doi.current_user = current_user
-
-    if safe_params[:xml] && (safe_params[:event] || safe_params[:validate]) && @doi.validation_errors?
-      logger.error @doi.validation_errors.inspect
-      render json: serialize(@doi.validation_errors), status: :unprocessable_entity
-    elsif @doi.save
+    if @doi.save
       options = {}
       options[:include] = @include
       options[:is_collection] = false
       options[:params] = {
-        :current_ability => current_ability,
+        current_ability: current_ability,
+        detail: true
       }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
     else
-      logger.warn @doi.errors.inspect
-      render json: serialize(@doi.errors), include: @include, status: :unprocessable_entity
+      logger.warn @doi.errors.messages
+      render json: serialize(@doi.errors.messages), include: @include, status: :unprocessable_entity
     end
   end
 
@@ -409,94 +446,139 @@ class DoisController < ApplicationController
   private
 
   def safe_params
+    logger = Logger.new(STDOUT)
+
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
+
+    # default values for attributes stored as JSON
+    defaults = { data: { titles: [], descriptions: [], types: {}, dates: [], rightsList: [], creators: [], contributors: [] }}
 
     attributes = [
       :doi,
-      "confirm-doi",
-      :identifier,
-      :url, :title,
+      :confirmDoi,
+      :url,
+      :titles,
+      { titles: [:title, :titleType, :lang] },
       :publisher,
-      :published,
+      :publicationYear,
       :created,
       :prefix,
       :suffix,
-      "resource-type-subtype",
-      "last-landing-page",
-      "last-landing-page-status",
-      "last-landing-page-status-check",
+      :types,
+      { types: [:resourceTypeGeneral, :resourceType, :schemaOrg, :bibtex, :citeproc, :ris] },
+      :dates,
+      { dates: [:date, :dateType, :dateInformation] },
+      :landingPage,
       {
-        "last-landing-page-status-result" => [
-          "error",
-          "redirect-count",
-          { "redirect-urls" => [] },
-          "download-latency",
-          "has-schema-org",
-          "schema-org-id",
-          { "schema-org-id" => ["@type", "value", "propertyID"] },
-          "dc-identifier",
-          "citation-doi",
-          "body-has-pid"
+        landingPage: [
+          :checked,
+          :url,
+          :status,
+          :contentType,
+          :error,
+          :redirectCount,
+          { redirectUrls: [] },
+          :downloadLatency,
+          :hasSchemaOrg,
+          :schemaOrgId,
+          { schemaOrgId: ["@type", :value, :propertyID] },
+          :dcIdentifier,
+          :citationDoi,
+          :bodyHasPid
         ]
       },
-      "last-landing-page-content-type",
-      "content-url",
-      "content-size",
-      "content-format",
-      :description,
-      :license,
+      :contentUrl,
+      :size,
+      :format,
+      :descriptions,
+      { descriptions: [:description, :descriptionType, :lang] },
+      :rightsList,
+      { rightsList: [:rights, :rightsUri] },
       :xml,
-      :validate,
+      :regenerate,
       :source,
       :version,
-      "metadata-version",
-      "schema-version",
-      :state, "is-active",
+      :metadataVersion,
+      :schemaVersion,
+      :state,
+      :isActive,
       :reason,
       :registered,
       :updated,
       :mode,
       :event,
       :regenerate,
+      :should_validate,
       :client,
-      "resource_type",
-      author: [:type, :id, :name, "given-name", "family-name", "givenName", "familyName"]
+      :creators,
+      { creators: [:type, :id, :name, :givenName, :familyName, :affiliation] },
+      :contributors,
+      { contributors: [:type, :id, :name, :givenName, :familyName, :affiliation, :contributorType] },
+      :identifiers,
+      { identifiers: [:identifier, :identifierType] },
+      :relatedIdentifiers,
+      { relatedIdentifiers: [:relatedIdentifier, :relatedIdentifierType, :relationType, :resourceTypeGeneral, :relatedMetadataScheme, :schemeUri, :schemeType] },
+      :fundingReferences,
+      { fundingReferences: [:funderName, :funderIdentifier, :funderIdentifierType, :awardNumber, :awardUri, :awardTitle] },
+      :geoLocations,
+      { geoLocations: [{ geolocationPoint: [:pointLongitude, :pointLatitude] }, { geolocationBox: [:westBoundLongitude, :eastBoundLongitude, :southBoundLatitude, :northBoundLatitude] }, :geoLocationPlace] }
     ]
+    relationships = [{ client: [data: [:type, :id]] }]
 
-    relationships = [
-      { client: [data: [:type, :id]] },
-      { provider: [data: [:type, :id]] },
-      { "resource-type" => [:data, data: [:type, :id]] }
-    ]
+    p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships).reverse_merge(defaults)
+    client_id = p.dig("relationships", "client", "data", "id") || current_user.try(:client_id)
+    p = p.fetch("attributes").merge(client_id: client_id)
 
-    p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships)
-    p = p.fetch("attributes").merge(client_id: p.dig("relationships", "client", "data", "id"), resource_type_general: camelize_str(p.dig("relationships", "resource-type", "data", "id")))
+    # extract attributes from xml field and merge with attributes provided directly
+    xml = p[:xml].present? ? Base64.decode64(p[:xml]).force_encoding("UTF-8") : nil
+
+    meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
+    xml = meta["string"]
+
+    read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher],
+      p[:publicationYear], p[:types], p[:descriptions], p[:container], p[:sizes],
+      p[:formats], p[:version], p[:language], p[:dates], p[:identifiers],
+      p[:relatedIdentifiers], p[:fundingReferences], p[:geoLocations], p[:rightsList],
+      p[:subjects], p[:contentUrl], p[:schemaVersion]].compact
+
+    # replace DOI, but otherwise don't touch the XML
+    # use Array.wrap(read_attrs.first) as read_attrs may also be [[]]
+    if meta["from"] == "datacite" && Array.wrap(read_attrs.first).blank?
+      xml = replace_doi(xml, doi: p[:doi] || meta["doi"])
+    elsif xml.present? || Array.wrap(read_attrs.first).present?
+      regenerate = true
+    end
+
+    p.merge!(xml: xml) if xml.present?
+
+    read_attrs_keys = [:creators, :contributors, :titles, :publisher,
+      :publicationYear, :types, :descriptions, :container, :sizes,
+      :formats, :language, :dates, :identifiers,
+      :relatedIdentifiers, :fundingReferences, :geoLocations, :rightsList,
+      :subjects, :contentUrl, :schemaVersion]
+
+    # merge attributes from xml into regular attributes
+    # make sure we don't accidentally set any attributes to nil
+    read_attrs_keys.each do |attr|
+      p.merge!(attr.to_s.underscore => p[attr].presence || meta[attr.to_s.underscore]) if p.has_key?(attr) || meta[attr.to_s.underscore].present?
+    end
+    p.merge!(version_info: p[:version] || meta["version_info"]) if p.has_key?(:version_info) || meta["version_info"].present?
+
     p.merge(
-      additional_type: p["resource-type-subtype"],
-      schema_version: p["schema-version"],
-      last_landing_page: p["last-landing-page"],
-      last_landing_page_status: p["last-landing-page-status"],
-      last_landing_page_status_check: p["last-landing-page-status-check"],
-      last_landing_page_status_result: p["last-landing-page-status-result"],
-      last_landing_page_content_type: p["last-landing-page-content-type"]
+      regenerate: p[:regenerate] || regenerate,
+      landing_page: p[:landingPage],
+      last_landing_page: p[:lastLandingPage],
+      last_landing_page_status: p[:lastLandingPageStatus],
+      last_landing_page_status_check: p[:lastLandingPageStatusCheck],
+      last_landing_page_status_result: p[:lastLandingPageStatusResult],
+      last_landing_page_content_type: p[:lastLandingPageContentType]
     ).except(
-      "confirm-doi", :identifier, :prefix, :suffix, "resource-type-subtype",
-      "metadata-version", "schema-version", :state, :mode, "is-active",
-      :created, :registered, :updated, "last-landing-page",
-      "last-landing-page-status", "last-landing-page-status-check",
-      "last-landing-page-status-result", "last-landing-page-content-type")
-  end
-
-  def underscore_str(str)
-    return str unless str.present?
-
-    str.underscore
-  end
-
-  def camelize_str(str)
-    return str unless str.present?
-
-    str.underscore.camelize
+      :confirmDoi, :prefix, :suffix, :publicationYear,
+      :rightsList, :identifiers, :relatedIdentifiers, :fundingReferences, :geoLocations,
+      :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage,
+      :created, :registered, :updated, :lastLandingPage, :version,
+      :lastLandingPageStatus, :lastLandingPageStatusCheck,
+      :lastLandingPageStatusResult, :lastLandingPageContentType)
   end
 
   def add_metadata_to_bugsnag(report)
