@@ -45,12 +45,12 @@ class ProvidersController < ApplicationController
     options = {}
     options[:meta] = {
       total: total,
-      "total-pages" => total_pages,
+      "totalPages" => total_pages,
       page: page[:number],
       years: years,
       regions: regions,
-      "organization-types" => organization_types,
-      "focus-areas" => focus_areas
+      "organizationTypes" => organization_types,
+      "focusAreas" => focus_areas
     }.compact
 
     options[:links] = {

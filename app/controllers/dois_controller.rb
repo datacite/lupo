@@ -62,7 +62,7 @@ class DoisController < ApplicationController
       options = {}
       options[:meta] = {
         total: total,
-        "total-pages" => total_pages,
+        "totalPages" => total_pages,
         page: page[:number].to_i
       }.compact
 
@@ -159,23 +159,23 @@ class DoisController < ApplicationController
           options = {}
           options[:meta] = {
             total: total,
-            "total-pages" => total_pages,
+            "totalPages" => total_pages,
             page: page[:number],
             states: states,
-            "resource-types" => resource_types,
+            "resourceTypes" => resource_types,
             created: created,
             registered: registered,
             providers: providers,
             clients: clients,
             prefixes: prefixes,
-            "schema-versions" => schema_versions,
+            "schemaVersions" => schema_versions,
             sources: sources,
-            "link-checks-status" => link_checks_status,
-            "links-checked" => links_checked,
-            "links-with-schema-org" => links_with_schema_org,
-            "link-checks-schema-org-id" => link_checks_schema_org_id,
-            "link-checks-dc-identifier" => link_checks_dc_identifier,
-            "link-checks-citation-doi" => link_checks_citation_doi
+            "linkChecksStatus" => link_checks_status,
+            "linksChecked" => links_checked,
+            "linksWithSchemaOrg" => links_with_schema_org,
+            "linkChecksSchemaOrgId" => link_checks_schema_org_id,
+            "linkChecksDcIdentifier" => link_checks_dc_identifier,
+            "linkChecksCitationDoi" => link_checks_citation_doi
           }.compact
     
           options[:links] = {

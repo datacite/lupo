@@ -45,7 +45,7 @@ class ClientsController < ApplicationController
     options = {}
     options[:meta] = {
       total: total,
-      "total-pages" => total_pages,
+      "totalPages" => total_pages,
       page: page[:number],
       years: years,
       providers: providers,

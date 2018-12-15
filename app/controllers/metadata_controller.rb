@@ -28,7 +28,7 @@ class MetadataController < ApplicationController
     options = {}
     options[:meta] = {
       total: total,
-      "total-pages" => total_pages,
+      "totalPages" => total_pages,
       page: page[:number].to_i
     }.compact
 

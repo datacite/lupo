@@ -53,7 +53,7 @@ class ClientPrefixesController < ApplicationController
     options = {}
     options[:meta] = {
       total: total,
-      "total-pages" => @client_prefixes.total_pages,
+      "totalPages" => @client_prefixes.total_pages,
       page: page[:number].to_i,
       years: years
     }.compact

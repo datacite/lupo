@@ -84,7 +84,7 @@ class PrefixesController < ApplicationController
     options = {}
     options[:meta] = {
       total: total,
-      "total-pages" => @prefixes.total_pages,
+      "totalPages" => @prefixes.total_pages,
       page: page[:number].to_i,
       states: states,
       providers: providers,
