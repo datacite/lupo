@@ -339,6 +339,22 @@ class Doi < ActiveRecord::Base
     })
   end
 
+  def self.import_one(doi: nil)
+    doi = Doi.where(doi: doi).first
+    return nil unless doi.present?
+
+    string = doi.current_metadata.present? ? doi.current_metadata.xml : nil
+    meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
+    attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
+      [a.to_sym, meta[a]]
+    end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
+
+    doi.update_attributes(attrs)
+    logger.info "[MySQL] Imported metadata for DOI  " + doi.doi + "."
+  rescue TypeError, NoMethodError => error
+    logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
+  end
+
   def self.import_all(options={})
     from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
     until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current

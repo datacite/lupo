@@ -27,6 +27,16 @@ namespace :doi do
     puts "DOIs created on #{from_date} imported."
   end
 
+  desc 'Import one DOI'
+  task :import_one => :environment do
+    if ENV['DOI'].nil?
+      puts "ENV['DOI'] is required"
+      exit
+    end
+
+    Doi.import_one(doi: ENV['DOI'])
+  end
+
   desc 'Index all DOIs'
   task :index => :environment do
     if ENV['YEAR'].present?
