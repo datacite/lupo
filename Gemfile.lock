@@ -55,7 +55,7 @@ GEM
     api-pagination (4.8.2)
     arel (9.0.0)
     aws-eventstream (1.0.1)
-    aws-partitions (1.124.0)
+    aws-partitions (1.125.0)
     aws-sdk-core (3.44.0)
       aws-eventstream (~> 1.0)
       aws-partitions (~> 1.0)
@@ -332,6 +332,8 @@ GEM
       docopt (~> 0.5)
       sysrandom
     rack (2.0.6)
+    rack-accept (0.4.5)
+      rack (>= 0.4)
     rack-cors (1.0.2)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -454,6 +456,11 @@ GEM
     thread_safe (0.3.6)
     tilt (2.0.9)
     trollop (2.9.9)
+    turnout (2.5.0)
+      i18n (>= 0.7, < 2)
+      rack (>= 1.3, < 3)
+      rack-accept (~> 0.4)
+      tilt (>= 1.4, < 3)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     unf (0.1.4)
@@ -543,6 +550,7 @@ DEPENDENCIES
   spring-commands-rspec
   spring-watcher-listen (~> 2.0.0)
   strip_attributes (~> 1.8)
+  turnout (~> 2.5)
   vcr (~> 3.0.3)
   webmock (~> 3.1)
 
