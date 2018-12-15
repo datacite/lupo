@@ -92,7 +92,7 @@ class ApplicationController < ActionController::API
         message = "The content type is not recognized."
       elsif status == 409
         message = "The resource already exists."
-      elsif ["JSON::ParserError", "Nokogiri::XML::SyntaxError"].include?(exception.class.to_s)
+      elsif ["JSON::ParserError", "Nokogiri::XML::SyntaxError", "ActionDispatch::Http::Parameters::ParseError"].include?(exception.class.to_s)
         message = exception.message
       else
         Bugsnag.notify(exception)
