@@ -574,7 +574,7 @@ class DoisController < ApplicationController
       last_landing_page_content_type: p[:lastLandingPageContentType]
     ).except(
       :confirmDoi, :prefix, :suffix, :publicationYear,
-      :rightsList, :identifiers, :relatedIdentifiers, :fundingReferences, :geoLocations,
+      :rightsList, :relatedIdentifiers, :fundingReferences, :geoLocations,
       :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage,
       :created, :registered, :updated, :lastLandingPage, :version,
       :lastLandingPageStatus, :lastLandingPageStatusCheck,
