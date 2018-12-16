@@ -349,9 +349,10 @@ class Doi < ActiveRecord::Base
       [a.to_sym, meta[a]]
     end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
 
+    # update_attributes will trigger validations and Elasticsearch indexing
     doi.update_attributes(attrs)
     logger.info "[MySQL] Imported metadata for DOI  " + doi.doi + "."
-  rescue TypeError, NoMethodError => error
+  rescue TypeError, NoMethodError, ActiveRecord::LockWaitTimeout => error
     logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
   end
 
@@ -382,6 +383,7 @@ class Doi < ActiveRecord::Base
           [a.to_sym, meta[a]]
         end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
 
+        # update_columns will NOT trigger validations and Elasticsearch indexing
         doi.update_columns(attrs)
       rescue TypeError, NoMethodError, ActiveRecord::LockWaitTimeout => error
         logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
@@ -411,7 +413,8 @@ class Doi < ActiveRecord::Base
           [a.to_sym, meta[a]]
         end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
 
-        doi.update_columns(attrs)
+        # update_attributes will trigger validations and Elasticsearch indexing
+        doi.update_attributes(attrs)
       rescue TypeError, NoMethodError, ActiveRecord::LockWaitTimeout => error
         logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
       else
