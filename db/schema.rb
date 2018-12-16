@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_09_231736) do
+ActiveRecord::Schema.define(version: 2018_12_16_071910) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -162,6 +162,7 @@ ActiveRecord::Schema.define(version: 2018_12_09_231736) do
     t.index ["doi"], name: "doi", unique: true
     t.index ["last_landing_page_content_type"], name: "index_dataset_on_last_landing_page_content_type"
     t.index ["last_landing_page_status"], name: "index_dataset_on_last_landing_page_status"
+    t.index ["schema_version"], name: "index_dataset_on_schema_version"
     t.index ["source"], name: "index_dataset_source"
     t.index ["url"], name: "index_dataset_on_url", length: 100
   end

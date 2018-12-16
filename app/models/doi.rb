@@ -395,6 +395,35 @@ class Doi < ActiveRecord::Base
     end
   end
 
+  def self.import_missing(options={})
+    from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
+    until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
+
+    count = 0
+
+    logger = Logger.new(STDOUT)
+
+    Doi.where(schema_version: nil).where(created: from_date.midnight..until_date.end_of_day).find_each do |doi|
+      begin
+        string = doi.current_metadata.present? ? doi.current_metadata.xml : nil
+        meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
+        attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
+          [a.to_sym, meta[a]]
+        end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
+
+        doi.update_columns(attrs)
+      rescue TypeError, NoMethodError, ActiveRecord::LockWaitTimeout => error
+        logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
+      else
+        count += 1
+      end
+    end
+
+    if count > 0
+      logger.info "[MySQL] Imported metadata for #{count} DOIs created #{options[:from_date]} - #{options[:until_date]}."
+    end
+  end
+
   def self.index(options={})
     from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
     until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current

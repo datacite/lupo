@@ -27,6 +27,14 @@ namespace :doi do
     puts "DOIs created on #{from_date} imported."
   end
 
+  desc 'Import missing DOIs'
+  task :import_missing => :environment do
+    from_date = ENV['FROM_DATE'] || Date.current.strftime("%F")
+    until_date = ENV['UNTIL_DATE'] || Date.current.strftime("%F")
+
+    Doi.import_missing(from_date: from_date, until_date: until_date)
+  end
+
   desc 'Import one DOI'
   task :import_one => :environment do
     if ENV['DOI'].nil?
