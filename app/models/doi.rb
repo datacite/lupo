@@ -383,7 +383,7 @@ class Doi < ActiveRecord::Base
         end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
 
         doi.update_columns(attrs)
-      rescue TypeError, NoMethodError => error
+      rescue TypeError, NoMethodError, ActiveRecord::LockWaitTimeout => error
         logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
       else
         count += 1
