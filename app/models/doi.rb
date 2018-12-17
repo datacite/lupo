@@ -367,6 +367,17 @@ class Doi < ActiveRecord::Base
     end
   end
 
+  def self.import_missing(options={})
+    from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
+    until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
+
+    # get every day between from_date and until_date
+    (from_date..until_date).each do |d|
+      DoiImportByDayMissingJob.perform_later(from_date: d.strftime("%F"))
+      puts "Queued importing for missing DOIs created on #{d.strftime("%F")}."
+    end
+  end
+
   def self.import_by_day(options={})
     return nil unless options[:from_date].present?
     from_date = Date.parse(options[:from_date])
@@ -397,15 +408,15 @@ class Doi < ActiveRecord::Base
     end
   end
 
-  def self.import_missing(options={})
-    from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
-    until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
+  def self.import_by_day_missing(options={})
+    return nil unless options[:from_date].present?
+    from_date = Date.parse(options[:from_date])
 
     count = 0
 
     logger = Logger.new(STDOUT)
 
-    Doi.where(schema_version: nil).where(created: from_date.midnight..until_date.end_of_day).find_each do |doi|
+    Doi.where(schema_version: nil).where(created: from_date.midnight..from_date.end_of_day).find_each do |doi|
       begin
         string = doi.current_metadata.present? ? doi.current_metadata.xml : nil
         meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
@@ -413,8 +424,8 @@ class Doi < ActiveRecord::Base
           [a.to_sym, meta[a]]
         end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
 
-        # update_attributes will trigger validations and Elasticsearch indexing
-        doi.update_attributes(attrs)
+        # update_columns will NOT trigger validations and Elasticsearch indexing
+        doi.update_columns(attrs)
       rescue TypeError, NoMethodError, ActiveRecord::LockWaitTimeout => error
         logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
       else
@@ -423,7 +434,7 @@ class Doi < ActiveRecord::Base
     end
 
     if count > 0
-      logger.info "[MySQL] Imported metadata for #{count} DOIs created #{options[:from_date]} - #{options[:until_date]}."
+      logger.info "[MySQL] Imported metadata for #{count} DOIs created on #{options[:from_date]}."
     end
   end
 

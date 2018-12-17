@@ -29,8 +29,13 @@ namespace :doi do
 
   desc 'Import missing DOIs'
   task :import_missing => :environment do
-    from_date = ENV['FROM_DATE'] || Date.current.strftime("%F")
-    until_date = ENV['UNTIL_DATE'] || Date.current.strftime("%F")
+    if ENV['YEAR'].present?
+      from_date = "#{ENV['YEAR']}-01-01"
+      until_date = "#{ENV['YEAR']}-12-31"
+    else
+      from_date = ENV['FROM_DATE'] || Date.current.strftime("%F")
+      until_date = ENV['UNTIL_DATE'] || Date.current.strftime("%F")
+    end
 
     Doi.import_missing(from_date: from_date, until_date: until_date)
   end
