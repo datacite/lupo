@@ -396,7 +396,7 @@ class Doi < ActiveRecord::Base
 
         # update_columns will NOT trigger validations and Elasticsearch indexing
         doi.update_columns(attrs)
-      rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::LockWaitTimeout => error
+      rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
         logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
       else
         count += 1
@@ -426,7 +426,7 @@ class Doi < ActiveRecord::Base
 
         # update_columns will NOT trigger validations and Elasticsearch indexing
         doi.update_columns(attrs)
-      rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::LockWaitTimeout => error
+      rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
         logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
       else
         count += 1
