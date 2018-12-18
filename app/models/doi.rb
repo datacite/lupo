@@ -352,8 +352,9 @@ class Doi < ActiveRecord::Base
     # update_attributes will trigger validations and Elasticsearch indexing
     doi.update_attributes(attrs)
     logger.info "[MySQL] Imported metadata for DOI  " + doi.doi + "."
-  rescue TypeError, NoMethodError, ActiveRecord::LockWaitTimeout => error
+  rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
     logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
+    Bugsnag.notify(error)
   end
 
   def self.import_all(options={})
@@ -398,6 +399,7 @@ class Doi < ActiveRecord::Base
         doi.update_columns(attrs)
       rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
         logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
+        Bugsnag.notify(error)
       else
         count += 1
       end
@@ -428,6 +430,7 @@ class Doi < ActiveRecord::Base
         doi.update_columns(attrs)
       rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
         logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
+        Bugsnag.notify(error)
       else
         count += 1
       end
