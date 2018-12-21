@@ -1,7 +1,11 @@
-polling_strategy: StrictPriority
 concurrency: 10
 delay: 0
 pidfile: tmp/pids/shoryuken.pid
 queues:
-  - [lupo, 4]
-  - [lupo_background, 1]
+  - lupo
+
+groups:
+  background:
+    concurrency: 5
+    queues:
+      - lupo_background
