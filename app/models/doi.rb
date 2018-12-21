@@ -127,12 +127,12 @@ class Doi < ActiveRecord::Base
     }
     indexes :creator_names,                  type: :text
     indexes :titles,                         type: :object, properties: {
-      title: { type: :keyword },
+      title: { type: :text, fields: { keyword: { type: "keyword" }}},
       titleType: { type: :keyword },
       lang: { type: :keyword }
     }
     indexes :descriptions,                   type: :object, properties: {
-      description: { type: :keyword },
+      description: { type: :text },
       descriptionType: { type: :keyword },
       lang: { type: :keyword }
     }
@@ -224,7 +224,7 @@ class Doi < ActiveRecord::Base
     indexes :reason,                         type: :text
     indexes :landing_page, type: :object, properties: {
       checked: { type: :date, ignore_malformed: true },
-      url: { type: :string },
+      url: { type: :text, fields: { keyword: { type: "keyword" }}},
       status: { type: :integer },
       contentType: { type: :string },
       error: { type: :keyword },
@@ -343,7 +343,7 @@ class Doi < ActiveRecord::Base
     doi = Doi.where(doi: doi).first
     return nil unless doi.present?
 
-    string = doi.current_metadata.present? ? doi.current_metadata.xml : nil
+    string = doi.current_metadata.to_s.start_with?('<?xml version=') ? doi.current_metadata.xml.force_encoding("UTF-8") : nil
     meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
     attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
       [a.to_sym, meta[a]]
@@ -389,7 +389,8 @@ class Doi < ActiveRecord::Base
 
     Doi.where(created: from_date.midnight..from_date.end_of_day).find_each do |doi|
       begin
-        string = doi.current_metadata.present? ? doi.current_metadata.xml : nil
+        # ignore broken xml
+        string = doi.current_metadata.to_s.start_with?('<?xml version=') ? doi.current_metadata.xml.force_encoding("UTF-8") : nil
         meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
         attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
           [a.to_sym, meta[a]]
@@ -420,7 +421,7 @@ class Doi < ActiveRecord::Base
 
     Doi.where(schema_version: nil).where(created: from_date.midnight..from_date.end_of_day).find_each do |doi|
       begin
-        string = doi.current_metadata.present? ? doi.current_metadata.xml : nil
+        string = doi.current_metadata.to_s.start_with?('<?xml version=') ? doi.current_metadata.xml.force_encoding("UTF-8") : nil
         meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
         attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
           [a.to_sym, meta[a]]
@@ -484,7 +485,7 @@ class Doi < ActiveRecord::Base
     elsif count > 1
       logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{options[:from_date]}."
     end
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed => error
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
     logger.info "[Elasticsearch] Error #{error.message} indexing DOIs created on #{options[:from_date]}."
 
     count = 0
