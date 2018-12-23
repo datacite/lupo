@@ -142,14 +142,6 @@ class ProviderPrefixesController < ApplicationController
     head :no_content
   end
 
-  def set_created
-    authorize! :update, ProviderPrefix
-    ProviderPrefix.where(created_at: nil).find_each do |pp|
-      pp.update_column(:created_at, pp.prefix.created)
-    end
-    render json: { message: "Provider prefix created timestamp added." }.to_json, status: :ok
-  end
-
   protected
 
   def set_include

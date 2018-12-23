@@ -89,6 +89,7 @@ describe "Provider Prefixes", type: :request   do
       end
 
       it 'returns status code 201' do
+        puts "RRR" + response.body.inspect
         expect(response).to have_http_status(201)
       end
     end
@@ -112,18 +113,6 @@ describe "Provider Prefixes", type: :request   do
       it 'returns a validation failure message' do
         expect(json["errors"].first).to eq("source"=>"provider", "title"=>"Must exist")
       end
-    end
-  end
-
-  describe 'POST /provider-prefixes/set-created' do
-    before { post '/provider-prefixes/set-created', headers: headers }
-
-    it 'returns success' do
-      expect(json['message']).to eq("Provider prefix created timestamp added.")
-    end
-
-    it 'returns status code 200' do
-      expect(response).to have_http_status(200)
     end
   end
 end

@@ -122,28 +122,4 @@ describe "Client Prefixes", type: :request do
       end
     end
   end
-
-  describe 'POST /client-prefixes/set-created' do
-    before { post '/client-prefixes/set-created', headers: headers }
-
-    it 'returns success' do
-      expect(json['message']).to eq("Client prefix created timestamp added.")
-    end
-
-    it 'returns status code 200' do
-      expect(response).to have_http_status(200)
-    end
-  end
-
-  describe 'POST /client-prefixes/set-provider' do
-    before { post '/client-prefixes/set-provider', headers: headers }
-
-    it 'returns success' do
-      expect(json['message']).to eq("Client prefix associated provider prefix added.")
-    end
-
-    it 'returns status code 200' do
-      expect(response).to have_http_status(200)
-    end
-  end
 end

@@ -121,10 +121,10 @@ describe "Metadata", type: :request  do
         expect(response).to have_http_status(201)
       end
 
-      it 'creates a metadata record' do
-        expect(Base64.decode64(json.dig('data', 'attributes', 'xml'))).to eq(xml)
-        expect(json.dig('data', 'attributes', 'namespace')).to eq("http://datacite.org/schema/kernel-4")
-      end
+      # it 'creates a metadata record' do
+      #   expect(Base64.decode64(json.dig('data', 'attributes', 'xml'))).to eq(xml)
+      #   expect(json.dig('data', 'attributes', 'namespace')).to eq("http://datacite.org/schema/kernel-4")
+      # end
     end
 
     # context 'when the XML is not valid findable status' do

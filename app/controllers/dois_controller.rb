@@ -341,24 +341,11 @@ class DoisController < ApplicationController
     end
   end
 
-  def status
-    doi = Doi.where(doi: params[:id]).first
-    status = Doi.get_landing_page_info(doi: doi, url: params[:url])
-    render json: status.to_json, status: :ok
-  end
-
   def random
     prefix = params[:prefix].presence || "10.5072"
     doi = generate_random_doi(prefix, number: params[:number])
 
     render json: { doi: doi }.to_json
-  end
-
-  def set_state
-    authorize! :set_state, Doi
-
-    Doi.set_state
-    render json: { message: "DOI state updated." }.to_json, status: :ok
   end
 
   def get_url

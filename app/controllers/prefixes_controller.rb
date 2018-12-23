@@ -156,7 +156,6 @@ class PrefixesController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_prefix
     @prefix = Prefix.where(prefix: params[:id]).first
 

@@ -12,9 +12,6 @@ class Doi < ActiveRecord::Base
   # include helper module for converting and exposing metadata
   include Crosscitable
 
-  # include helper module for link checking
-  include Checkable
-
   # include state machine
   include AASM
 
@@ -642,23 +639,6 @@ class Doi < ActiveRecord::Base
 
   def event=(value)
     self.send(value) if %w(register publish hide).include?(value)
-  end
-
-  # update state for all DOIs in state "" starting from from_date
-  def self.set_state(from_date: nil)
-    from_date ||= Time.zone.now - 1.day
-    Doi.where("updated >= ?", from_date).where(aasm_state: '').find_each do |doi|
-      if doi.is_test_prefix? || (doi.is_active.getbyte(0) == 0 && doi.minted.blank?)
-        state = "draft"
-      elsif doi.is_active.to_s.getbyte(0) == 0 && doi.minted.present?
-        state = "registered"
-      else
-        state = "findable"
-      end
-      UpdateStateJob.perform_later(doi.doi, state: state)
-    end
-  rescue ActiveRecord::LockWaitTimeout => exception
-    Bugsnag.notify(exception)
   end
 
   # delete all DOIs with test prefix 10.5072 not updated since from_date

@@ -108,23 +108,6 @@ class ClientPrefixesController < ApplicationController
     head :no_content
   end
 
-  def set_created
-    authorize! :update, ClientPrefix
-    ClientPrefix.where(created_at: nil).find_each do |cp|
-      cp.update_column(:created_at, cp.prefix.created)
-    end
-    render json: { message: "Client prefix created timestamp added." }.to_json, status: :ok
-  end
-
-  def set_provider
-    authorize! :update, ClientPrefix
-    ClientPrefix.where(allocator_prefixes: nil).find_each do |cp|
-      cp.send(:set_allocator_prefixes)
-      cp.save
-    end
-    render json: { message: "Client prefix associated provider prefix added." }.to_json, status: :ok
-  end
-
   protected
 
   def set_include

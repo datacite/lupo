@@ -73,12 +73,6 @@ namespace :doi do
     puts "DOIs created on #{from_date} indexed."
   end
 
-  desc 'Set state'
-  task :set_state => :environment do
-    from_date = ENV['FROM_DATE'] || Time.zone.now - 1.day
-    Doi.set_state(from_date: from_date)
-  end
-
   desc 'Set minted'
   task :set_minted => :environment do
     from_date = ENV['FROM_DATE'] || Time.zone.now - 1.day
