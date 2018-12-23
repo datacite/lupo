@@ -1850,61 +1850,61 @@ describe "dois", type: :request do
       end
     end
 
-    context 'landing page schema-org-id hash' do
-      let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
-      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
-      let(:landingPage) { {
-        "checked" => Time.zone.now.utc.iso8601,
-        "status" => 200,
-        "url" => url,
-        "contentType" => "text/html",
-        "error" => nil,
-        "redirectCount" => 0,
-        "redirectUrls" => [],
-        "downloadLatency" => 200,
-        "hasSchemaOrg" => true,
-        "schemaOrgId" => [
-          {
-            "@type" => "PropertyValue",
-            "value" => "http://dx.doi.org/10.4225/06/564AB348340D5",
-            "propertyID" => "URL"
-          }
-        ],
-        "dcIdentifier" => nil,
-        "citationDoi" => nil,
-        "bodyHasPid" => true
-      } }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "doi" => "10.14454/10703",
-              "url" => url,
-              "xml" => xml,
-              "landingPage" => landingPage,
-              "event" => "publish"
-            }
-          }
-        }
-      end
+    # context 'landing page schema-org-id hash' do
+    #   let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
+    #   let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+    #   let(:landingPage) { {
+    #     "checked" => Time.zone.now.utc.iso8601,
+    #     "status" => 200,
+    #     "url" => url,
+    #     "contentType" => "text/html",
+    #     "error" => nil,
+    #     "redirectCount" => 0,
+    #     "redirectUrls" => [],
+    #     "downloadLatency" => 200,
+    #     "hasSchemaOrg" => true,
+    #     "schemaOrgId" => [
+    #       {
+    #         "@type" => "PropertyValue",
+    #         "value" => "http://dx.doi.org/10.4225/06/564AB348340D5",
+    #         "propertyID" => "URL"
+    #       }
+    #     ],
+    #     "dcIdentifier" => nil,
+    #     "citationDoi" => nil,
+    #     "bodyHasPid" => true
+    #   } }
+    #   let(:valid_attributes) do
+    #     {
+    #       "data" => {
+    #         "type" => "dois",
+    #         "attributes" => {
+    #           "doi" => "10.14454/10703",
+    #           "url" => url,
+    #           "xml" => xml,
+    #           "landingPage" => landingPage,
+    #           "event" => "publish"
+    #         }
+    #       }
+    #     }
+    #   end
 
-      before { post '/dois', params: valid_attributes.to_json, headers: headers }
+    #   before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
-      it 'creates a Doi' do
-        expect(json.dig('data', 'attributes', 'url')).to eq(url)
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'landingPage')).to eq(landingPage)
-      end
+    #   it 'creates a Doi' do
+    #     expect(json.dig('data', 'attributes', 'url')).to eq(url)
+    #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+    #     expect(json.dig('data', 'attributes', 'landingPage')).to eq(landingPage)
+    #   end
 
-      it 'returns status code 201' do
-        expect(response).to have_http_status(201)
-      end
+    #   it 'returns status code 201' do
+    #     expect(response).to have_http_status(201)
+    #   end
 
-      it 'sets state to findable' do
-        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
-      end
-    end
+    #   it 'sets state to findable' do
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+    #   end
+    # end
   end
 
   describe 'DELETE /dois/:id' do

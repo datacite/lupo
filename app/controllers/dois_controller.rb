@@ -468,7 +468,6 @@ class DoisController < ApplicationController
           :downloadLatency,
           :hasSchemaOrg,
           :schemaOrgId,
-          { schemaOrgId: ["@type", :value, :propertyID] },
           :dcIdentifier,
           :citationDoi,
           :bodyHasPid
