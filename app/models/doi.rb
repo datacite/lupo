@@ -223,13 +223,16 @@ class Doi < ActiveRecord::Base
       checked: { type: :date, ignore_malformed: true },
       url: { type: :text, fields: { keyword: { type: "keyword" }}},
       status: { type: :integer },
-      contentType: { type: :string },
+      contentType: { type: :keyword },
       error: { type: :keyword },
       redirectCount: { type: :integer },
       redirectUrls: { type: :keyword },
       downloadLatency: { type: :scaled_float, scaling_factor: 100 },
       hasSchemaOrg: { type: :boolean },
-      schemaOrgId: { type: :keyword },
+      schemaOrgId: { type: :object, properties: {
+        "@type": { type: :keyword },
+        value: { type: :keyword },
+        propertyID: { type: :keyword }}},
       dcIdentifier: { type: :keyword },
       citationDoi: { type: :keyword },
       bodyHasPid: { type: :boolean }
