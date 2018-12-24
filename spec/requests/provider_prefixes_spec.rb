@@ -89,7 +89,6 @@ describe "Provider Prefixes", type: :request   do
       end
 
       it 'returns status code 201' do
-        puts "RRR" + response.body.inspect
         expect(response).to have_http_status(201)
       end
     end

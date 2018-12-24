@@ -340,7 +340,7 @@ class Doi < ActiveRecord::Base
     doi = Doi.where(doi: doi).first
     return nil unless doi.present?
 
-    string = doi.current_metadata.to_s.start_with?('<?xml version=') ? doi.current_metadata.xml.force_encoding("UTF-8") : nil
+    string = doi.current_metadata.present? && doi.current_metadata.xml.to_s.start_with?('<?xml version=') ? doi.current_metadata.xml.force_encoding("UTF-8") : nil
     meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
     attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
       [a.to_sym, meta[a]]
@@ -387,7 +387,7 @@ class Doi < ActiveRecord::Base
     Doi.where(created: from_date.midnight..from_date.end_of_day).find_each do |doi|
       begin
         # ignore broken xml
-        string = doi.current_metadata.to_s.start_with?('<?xml version=') ? doi.current_metadata.xml.force_encoding("UTF-8") : nil
+        string = doi.current_metadata.present? && doi.current_metadata.xml.to_s.start_with?('<?xml version=') ? doi.current_metadata.xml.force_encoding("UTF-8") : nil
         meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
         attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
           [a.to_sym, meta[a]]
