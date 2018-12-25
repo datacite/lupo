@@ -11,7 +11,7 @@ class UrlJob < ActiveJob::Base
 
     response = Maremma.head(doi.identifier, limit: 0)
     if response.headers.present?
-      if doi.is_registered_or_findable && doi.minted.blank?
+      if doi.is_registered_or_findable? && doi.minted.blank?
         doi.update_attributes(url: response.headers["location"], minted: Time.zone.now)
       else
         doi.update_attributes(url: response.headers["location"])
