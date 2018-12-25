@@ -693,7 +693,7 @@ class Doi < ActiveRecord::Base
   def set_defaults
     self.is_active = (aasm_state == "findable") ? "\x01" : "\x00"
     self.version = version.present? ? version + 1 : 1
-    self.updated = Time.zone.now.utc.iso8601
+    self.updated = Time.zone.now.utc.iso8601if (url_changed? || xml_changed? || content_url_changed? || minted_changed? || aasm_state_changed? || reason_changed?)
   end
 
   def self.migrate_landing_page(options={})
