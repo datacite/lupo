@@ -351,7 +351,7 @@ class DoisController < ApplicationController
   def get_url
     authorize! :get_url, @doi
 
-    if @doi.aasm_state == "draft"
+    if !@doi.is_registered_or_findable? || %w(europ ethz).include?(@doi.provider_id) || %w(Crossref).include?(@doi.agency)
       url = @doi.url
       head :no_content and return unless url.present?
     else
