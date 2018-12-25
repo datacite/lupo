@@ -6,7 +6,7 @@ describe UrlJob, type: :job do
 
   it 'queues the job' do
     expect { job }.to have_enqueued_job(UrlJob)
-      .on_queue("test_lupo_background")
+      .on_queue("test_lupo")
   end
 
   after do
