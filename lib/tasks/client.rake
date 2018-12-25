@@ -101,8 +101,8 @@ namespace :client do
     end
 
     prefixes.each do |prefix|
-      provider_prefix = ProviderPrefix.create(provider: target.allocator.symbol, prefix: prefix)
-      puts "Provider prefix for provider #{target.allocator.symbol} and prefix #{prefix} created."
+      provider_prefix = ProviderPrefix.create(provider: target.provider.symbol, prefix: prefix)
+      puts "Provider prefix for provider #{target.provider.symbol} and prefix #{prefix} created."
       client_prefix = ClientPrefix.create(client: target.symbol, prefix: prefix, provider_prefix: provider_prefix.id)
       puts "Client prefix for client #{target.symbol} and prefix #{prefix} created."
     end
