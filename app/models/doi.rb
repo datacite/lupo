@@ -585,7 +585,7 @@ class Doi < ActiveRecord::Base
     return nil if current_user.nil? || !is_registered_or_findable?
     
     if %w(europ ethz).include?(provider_id) || %w(Crossref).include?(agency)
-      UrlJob.perform_later(doi)
+      UrlJob.perform_later(self)
     else
       HandleJob.perform_later(doi)
     end
