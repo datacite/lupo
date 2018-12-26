@@ -461,7 +461,7 @@ class Doi < ActiveRecord::Base
 
     logger = Logger.new(STDOUT)
 
-    Doi.where(created: from_date.midnight..from_date.end_of_day).where("indexed < ?", index_time).find_in_batches(batch_size: 500) do |dois|
+    Doi.where(created: from_date.midnight..from_date.end_of_day).where("indexed < ?", index_time).find_in_batches(batch_size: 250) do |dois|
       response = Doi.__elasticsearch__.client.bulk \
         index:   Doi.index_name,
         type:    Doi.document_type,
