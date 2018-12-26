@@ -336,11 +336,21 @@ class Doi < ActiveRecord::Base
     })
   end
 
-  def self.import_one(doi: nil)
-    doi = Doi.where(doi: doi).first
-    return nil unless doi.present?
+  def self.import_one(doi_id: nil)
+    logger = Logger.new(STDOUT)
+
+    doi = Doi.where(doi: doi_id).first
+    unless doi.present?
+      logger.error "[MySQL] DOI " + doi_id + " not found."
+      return nil
+    end
 
     string = doi.current_metadata.present? && doi.current_metadata.xml.to_s.start_with?('<?xml version=') ? doi.current_metadata.xml.force_encoding("UTF-8") : nil
+    unless string.present?
+      logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
+      return nil
+    end
+    
     meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
     attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
       [a.to_sym, meta[a]]
@@ -348,7 +358,7 @@ class Doi < ActiveRecord::Base
 
     # update_attributes will trigger validations and Elasticsearch indexing
     doi.update_attributes(attrs)
-    logger.info "[MySQL] Imported metadata for DOI  " + doi.doi + "."
+    logger.info "[MySQL] Imported metadata for DOI " + doi.doi + "."
   rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
     logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
     Bugsnag.notify(error)
@@ -388,6 +398,11 @@ class Doi < ActiveRecord::Base
       begin
         # ignore broken xml
         string = doi.current_metadata.present? && doi.current_metadata.xml.to_s.start_with?('<?xml version=') ? doi.current_metadata.xml.force_encoding("UTF-8") : nil
+        unless string.present?
+          logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
+          return nil
+        end
+        
         meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
         attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
           [a.to_sym, meta[a]]
@@ -419,6 +434,11 @@ class Doi < ActiveRecord::Base
     Doi.where(schema_version: nil).where(created: from_date.midnight..from_date.end_of_day).find_each do |doi|
       begin
         string = doi.current_metadata.to_s.start_with?('<?xml version=') ? doi.current_metadata.xml.force_encoding("UTF-8") : nil
+        unless string.present?
+          logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
+          return nil
+        end
+        
         meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
         attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
           [a.to_sym, meta[a]]
@@ -444,7 +464,7 @@ class Doi < ActiveRecord::Base
     until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
     index_time = options[:index_time].presence || Time.zone.now.utc.iso8601
     client_id = options[:client_id]
-    
+
     # get every day between from_date and until_date
     (from_date..until_date).each do |d|
       DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"), index_time: index_time, client_id: client_id)

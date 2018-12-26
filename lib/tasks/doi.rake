@@ -47,7 +47,7 @@ namespace :doi do
       exit
     end
 
-    Doi.import_one(doi: ENV['DOI'])
+    Doi.import_one(doi_id: ENV['DOI'])
   end
 
   desc 'Index all DOIs'

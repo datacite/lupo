@@ -125,7 +125,7 @@ namespace :client do
     puts "#{client.dois.length} DOIs will be imported."
     client.dois.find_each do |doi|
       begin
-        Doi.import_one(doi: doi.doi)
+        Doi.import_one(doi_id: doi.doi)
         puts "DOI #{doi.doi} imported."
       rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout, Elasticsearch::Transport::Transport::Errors::BadRequest => error
         puts "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
