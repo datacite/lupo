@@ -90,7 +90,7 @@ class DataCentersController < ApplicationController
   end
 
   def set_client
-    @client = Client.where(symbol: params[:id]).first
+    @client = Client.where(symbol: params[:id]).where(deleted_at: nil).first
     fail ActiveRecord::RecordNotFound unless @client.present?
   end
 end
