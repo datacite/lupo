@@ -551,14 +551,11 @@ class DoisController < ApplicationController
     end
     p.merge!(version_info: p[:version] || meta["version_info"]) if p.has_key?(:version_info) || meta["version_info"].present?
 
+    # only update landing_page info if something is received via API to not overwrite existing data
+    p.merge!(landing_page: p[:landingPage]) if p[:landingPage].present?
+
     p.merge(
-      regenerate: p[:regenerate] || regenerate,
-      landing_page: p[:landingPage],
-      last_landing_page: p[:lastLandingPage],
-      last_landing_page_status: p[:lastLandingPageStatus],
-      last_landing_page_status_check: p[:lastLandingPageStatusCheck],
-      last_landing_page_status_result: p[:lastLandingPageStatusResult],
-      last_landing_page_content_type: p[:lastLandingPageContentType]
+      regenerate: p[:regenerate] || regenerate
     ).except(
       :confirmDoi, :prefix, :suffix, :publicationYear,
       :rightsList, :relatedIdentifiers, :fundingReferences, :geoLocations,
