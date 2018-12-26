@@ -107,4 +107,25 @@ namespace :client do
       puts "Client prefix for client #{target.symbol} and prefix #{prefix} created."
     end
   end
+
+  desc 'Index DOIs by client'
+  task :index_all_dois => :environment do
+    if ENV['CLIENT_ID'].nil?
+      puts "ENV['CLIENT_ID'] is required."
+      exit
+    end
+
+    client = Client.where(deleted_at: nil).where(symbol: ENV['CLIENT_ID']).first
+    if client.nil?
+      puts "Client not found for client ID #{ENV['CLIENT_ID']}."
+      exit
+    end
+
+    # index DOIs for client
+    puts "#{client.dois.length} DOIs will be indexed."
+    client.dois.find_each do |doi|
+      doi.__elasticsearch__.index_document
+      puts "DOI #{doi.doi} indexed."
+    end
+  end
 end
