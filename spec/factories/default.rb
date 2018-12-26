@@ -36,52 +36,58 @@ FactoryBot.define do
     }}
     creators { [
       {
-        "type": "Person",
+        "nameType": "Personal",
         "name": "Benjamin Ollomo",
         "givenName": "Benjamin",
         "familyName": "Ollomo"
       },
       {
-        "type": "Person",
+        "nameType": "Personal",
         "name": "Patrick Durand",
         "givenName": "Patrick",
         "familyName": "Durand"
       },
       {
-        "type": "Person",
+        "nameType": "Personal",
         "name": "Franck Prugnolle",
         "givenName": "Franck",
         "familyName": "Prugnolle"
       },
       {
-        "type": "Person",
+        "nameType": "Personal",
         "name": "Emmanuel J. P. Douzery",
         "givenName": "Emmanuel J. P.",
         "familyName": "Douzery"
       },
       {
-        "type": "Person",
+        "nameType": "Personal",
         "name": "Céline Arnathau",
         "givenName": "Céline",
         "familyName": "Arnathau"
       },
       {
-        "type": "Person",
+        "nameType": "Personal",
         "name": "Dieudonné Nkoghe",
         "givenName": "Dieudonné",
         "familyName": "Nkoghe"
       },
       {
-        "type": "Person",
+        "nameType": "Personal",
         "name": "Eric Leroy",
         "givenName": "Eric",
         "familyName": "Leroy"
       },
       {
-        "type": "Person",
+        "nameType": "Personal",
         "name": "François Renaud",
         "givenName": "François",
-        "familyName": "Renaud"
+        "familyName": "Renaud",
+        "nameIdentifiers": [
+          {
+            "nameIdentifier": "https://orcid.org/0000-0003-1419-2405",
+            "nameIdentifierScheme": "ORCID"
+          }
+        ]
       }
     ] }
     titles {[
