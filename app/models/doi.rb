@@ -443,10 +443,11 @@ class Doi < ActiveRecord::Base
     from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
     until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
     index_time = options[:index_time].presence || Time.zone.now.utc.iso8601
-
+    client_id = options[:client_id]
+    
     # get every day between from_date and until_date
     (from_date..until_date).each do |d|
-      DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"), index_time: index_time)
+      DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"), index_time: index_time, client_id: client_id)
       puts "Queued indexing for DOIs created on #{d.strftime("%F")}."
     end
   end
@@ -455,13 +456,17 @@ class Doi < ActiveRecord::Base
     return nil unless options[:from_date].present?
     from_date = Date.parse(options[:from_date])
     index_time = options[:index_time].presence || Time.zone.now.utc.iso8601
+    client_id = options[:client_id]
 
     errors = 0
     count = 0
 
     logger = Logger.new(STDOUT)
 
-    Doi.where(created: from_date.midnight..from_date.end_of_day).where("indexed < ?", index_time).find_in_batches(batch_size: 250) do |dois|
+    collection = Doi.where(created: from_date.midnight..from_date.end_of_day).where("indexed < ?", index_time)
+    collection = collection.where(client_id: client_id) if client_id.present?
+
+    collection.find_in_batches(batch_size: 250) do |dois|
       response = Doi.__elasticsearch__.client.bulk \
         index:   Doi.index_name,
         type:    Doi.document_type,

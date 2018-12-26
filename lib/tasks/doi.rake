@@ -61,8 +61,9 @@ namespace :doi do
     end
 
     index_time = ENV['INDEX_TIME'] || Time.zone.now.utc.iso8601
+    client_id = ENV['CLIENT_ID']
 
-    Doi.index(from_date: from_date, until_date: until_date, index_time: index_time)
+    Doi.index(from_date: from_date, until_date: until_date, index_time: index_time, client_id: client_id)
   end
 
   desc 'Index DOIs per day'
