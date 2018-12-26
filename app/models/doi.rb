@@ -347,7 +347,7 @@ class Doi < ActiveRecord::Base
 
     string = doi.current_metadata.present? && doi.current_metadata.xml.to_s.start_with?('<?xml version=') ? doi.current_metadata.xml.force_encoding("UTF-8") : nil
     unless string.present?
-      logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
+      logger.error "[MySQL] No metadata for DOI " + doi.doi + " found: " + doi.current_metadata.inspect
       return nil
     end
     
