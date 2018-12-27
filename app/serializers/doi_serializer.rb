@@ -11,7 +11,7 @@ class DoiSerializer
   has_many :media
 
   attribute :xml, if: Proc.new { |object, params| params && params[:detail] } do |object|
-    object.xml_encoded || object.current_metadata.present? ? object.from_xml(object.current_metadata.xml.to_s.force_encoding("UTF-8")) : nil
+    object.xml_encoded
   end
 
   attribute :doi do |object|

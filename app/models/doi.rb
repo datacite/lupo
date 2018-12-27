@@ -431,7 +431,7 @@ class Doi < ActiveRecord::Base
 
     logger = Logger.new(STDOUT)
 
-    Doi.where(schema_version: nil).where(created: from_date.midnight..from_date.end_of_day).find_each do |doi|
+    Doi.where(xml: nil).where(created: from_date.midnight..from_date.end_of_day).find_each do |doi|
       begin
         string = doi.current_metadata.present? ? doi.from_xml(doi.current_metadata.xml.to_s.force_encoding("UTF-8")) : nil
         unless string.present?
