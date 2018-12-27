@@ -89,7 +89,7 @@ module Crosscitable
 
         # enforce utf-8
         string = string.force_encoding("UTF-8")
-      rescue ArgumentError, Encoding::CompatibilityError => error
+      rescue ArgumentError, Encoding::CompatibilityError => exception
         # convert utf-16 to utf-8
         string = string.force_encoding('UTF-16').encode('UTF-8')
         string.gsub!('encoding="UTF-16"', 'encoding="UTF-8"')
@@ -105,7 +105,13 @@ module Crosscitable
 
       # make sure xml is valid
       doc = Nokogiri::XML(string) { |config| config.strict.noblanks }
-      doc.to_xml.strip
+      doc.to_xml
+    rescue ArgumentError, Encoding::CompatibilityError => exception
+      logger = Logger.new(STDOUT)
+      logger.error "Error " + exception.message + "."
+      logger.error exception
+
+      nil
     end
 
     def well_formed_xml(string)
@@ -120,7 +126,7 @@ module Crosscitable
       return nil unless string.start_with?('<?xml version=') || string.start_with?('<resource ')
 
       doc = Nokogiri::XML(string) { |config| config.strict.noblanks }
-      doc.to_xml.strip
+      doc.to_xml
     end
   
     def from_json(string)

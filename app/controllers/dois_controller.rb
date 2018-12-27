@@ -519,6 +519,14 @@ class DoisController < ApplicationController
     # extract attributes from xml field and merge with attributes provided directly
     xml = p[:xml].present? ? Base64.decode64(p[:xml]).force_encoding("UTF-8") : nil
 
+    if xml.present?
+      # remove optional utf-8 bom
+      xml.gsub!("\xEF\xBB\xBF", '')
+
+      # remove leading and trailing whitespace
+      xml = xml.strip
+    end
+
     meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
     xml = meta["string"]
 
