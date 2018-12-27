@@ -345,7 +345,7 @@ class Doi < ActiveRecord::Base
       return nil
     end
 
-    string = doi.current_metadata.present? ? doi.from_xml(doi.current_metadata.xml).to_s.force_encoding("UTF-8").presence : nil
+    string = doi.current_metadata.present? ? doi.from_xml(doi.current_metadata.xml.to_s.force_encoding("UTF-8")) : nil
     unless string.present?
       logger.error "[MySQL] No metadata for DOI " + doi.doi + " found: " + doi.current_metadata.inspect
       return nil
@@ -397,7 +397,7 @@ class Doi < ActiveRecord::Base
     Doi.where(created: from_date.midnight..from_date.end_of_day).find_each do |doi|
       begin
         # ignore broken xml
-        string = doi.current_metadata.present? ? doi.from_xml(doi.current_metadata.xml).to_s.force_encoding("UTF-8").presence : nil
+        string = doi.current_metadata.present? ? doi.from_xml(doi.current_metadata.xml.to_s.force_encoding("UTF-8")) : nil
         unless string.present?
           logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
           return nil
@@ -433,7 +433,7 @@ class Doi < ActiveRecord::Base
 
     Doi.where(schema_version: nil).where(created: from_date.midnight..from_date.end_of_day).find_each do |doi|
       begin
-        string = doi.current_metadata.to_s.start_with?('<?xml version=') ? doi.current_metadata.xml.force_encoding("UTF-8") : nil
+        string = doi.current_metadata.present? ? doi.from_xml(doi.current_metadata.xml.to_s.force_encoding("UTF-8")) : nil
         unless string.present?
           logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
           return nil
