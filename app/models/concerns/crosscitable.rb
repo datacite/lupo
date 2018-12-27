@@ -92,7 +92,7 @@ module Crosscitable
     end
   
     def from_xml(string)
-      return nil unless string.start_with?('<?xml version=')
+      return nil unless string.start_with?('<?xml version=') || string.start_with?('<resource ')
 
       doc = Nokogiri::XML(string) { |config| config.strict.noblanks }
       doc.to_xml.strip
