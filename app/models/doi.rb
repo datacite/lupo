@@ -345,7 +345,7 @@ class Doi < ActiveRecord::Base
       return nil
     end
 
-    string = doi.current_metadata.present? ? doi.from_xml(doi.current_metadata.xml.to_s.force_encoding("UTF-8")) : nil
+    string = doi.current_metadata.present? ? doi.clean_xml(doi.current_metadata.xml) : nil
     unless string.present?
       logger.error "[MySQL] No metadata for DOI " + doi.doi + " found: " + doi.current_metadata.inspect
       return nil
@@ -433,7 +433,7 @@ class Doi < ActiveRecord::Base
 
     Doi.where(xml: nil).where(created: from_date.midnight..from_date.end_of_day).find_each do |doi|
       begin
-        string = doi.current_metadata.present? ? doi.from_xml(doi.current_metadata.xml.to_s.force_encoding("UTF-8")) : nil
+        string = doi.current_metadata.present? ? doi.clean_xml(doi.current_metadata.xml) : nil
         unless string.present?
           logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
           return nil

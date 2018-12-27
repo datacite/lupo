@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-4" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.1/metadata.xsd">
+<identifier identifierType="DOI">10.25664/art-0226</identifier>
+<creators>
+<creator>
+  <creatorName nameType="Personal">Fournier, Jacques</creatorName>
+  <givenName>Jacques</givenName>
+  <familyName>Fournier</familyName>
+</creator>
+<creator>
+  <creatorName nameType="Personal">Lechat, Christian</creatorName>
+  <givenName>Christian</givenName>
+  <familyName>Lechat</familyName>
+</creator>
+<creator>
+  <creatorName nameType="Personal">Courtecuisse, Régis</creatorName>
+  <givenName>Régis</givenName>
+  <familyName>Courtecuisse</familyName>
+</creator>
+</creators>
+<titles>
+  <title xml:lang="en">The genera Kretzschmariella and Nemania (Xylariaceae) in Guadeloupe and Martinique (French West Indies)</title>
+</titles>
+<publisher>Ascomycete.org</publisher>
+<publicationYear>2018</publicationYear>
+<dates>
+  <date dateType="Issued">2018-02-25</date>
+</dates>
+<language>en</language>
+<resourceType resourceTypeGeneral="Text">Journal Article</resourceType>
+<relatedIdentifiers>
+  <relatedIdentifier relatedIdentifierType="EISSN" relationType="IsPartOf">2100-0840</relatedIdentifier>
+</relatedIdentifiers>
+<alternateIdentifiers>
+  <alternateIdentifier alternateIdentifierType="Volume">10</alternateIdentifier>
+  <alternateIdentifier alternateIdentifierType="Issue">1</alternateIdentifier>
+  <alternateIdentifier alternateIdentifierType="Pages">1-47</alternateIdentifier>
+</alternateIdentifiers>
+<sizes>
+  <size>10362 kB</size>
+</sizes>
+<formats>
+  <format>PDF</format>
+</formats>
+<rightsList>
+  <rights xml:lang="fr" rightsURI="https://creativecommons.org/licenses/by-nc-nd/3.0/fr/">Creative Commons BY-NC-ND 3.0 FR</rights>
+</rightsList>
+<descriptions>
+  <description xml:lang="en" descriptionType="Abstract">This survey deals with the Nemania taxa collected in the French West Indies in the course of an ongoing inventorial work on the mycobiota of these islands initiated in 2003. Based on the evaluation and comparison of their morphological characters, sixteen taxa are described, illustrated and discussed, including seven known taxa, viz.: N. beaumontii, N. bipapillata, N. caries, N. chestersii var. microspora, N. diffusa, N. immersidiscus and N. subaenea. Nine new taxa are proposed, including N. albofarcta, N. colubrina, N. discostoma, N. flavoviridis, N. nivea, N. obscura, N. roseolilacina and N. sericata, and the new combination N. sublutea for a taxon formerly placed in Hypoxylon. The monotypic genus Kretzschmariella, represented by K. culmorum, is included for its morphological resemblance and possible confusion with Nemania. With the exception of K. culmorum and N. bipapillata which were already reported from the Caribbean, all other taxa are new to this region. A dichotomous identification key and a synoptic figure plate of stromata are presented</description>
+</descriptions>
+<subjects>
+  <subject xml:lang="en">Xylariales</subject>
+  <subject xml:lang="en">Xylariaceae</subject>
+  <subject xml:lang="en">Kretzschmariella</subject>
+  <subject xml:lang="en">Nemania</subject>
+  <subject xml:lang="en">Martinique</subject>
+  <subject xml:lang="en">Guadeloupe</subject>
+</subjects>
+</resource>

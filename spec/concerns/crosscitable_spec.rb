@@ -5,6 +5,28 @@ describe Doi, vcr: true do
 
   subject { DoisController.new }
 
+  context "clean_xml" do
+    it "clean_xml" do
+      string = file_fixture('datacite.xml').read
+      expect(subject.from_xml(string)).to eq(string)
+    end
+
+    it "clean_xml malformed" do
+      string = file_fixture('datacite_malformed.xml').read
+      expect { subject.clean_xml(string) }.to raise_error(Nokogiri::XML::SyntaxError, "39:18: FATAL: Premature end of data in tag resource line 2")
+    end
+
+    it "clean_xml utf-8 bom" do
+      string = file_fixture('utf-8_bom.xml').read
+      expect(subject.clean_xml(string)).to start_with('<?xml version="1.0" encoding="UTF-8"?>')
+    end
+
+    it "clean_xml utf-16" do
+      string = file_fixture('utf-16.xml').read
+      expect(subject.clean_xml(string)).to start_with('<?xml version="1.0" encoding="UTF-8"?>')
+    end
+  end
+
   context "from_xml" do
     it "from_xml" do
       string = file_fixture('datacite.xml').read

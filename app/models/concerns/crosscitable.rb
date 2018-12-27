@@ -83,6 +83,31 @@ module Crosscitable
       write_attribute(:xml, xml)
     end
 
+    def clean_xml(string)
+      begin
+        return nil unless string.present?
+
+        # enforce utf-8
+        string = string.force_encoding("UTF-8")
+      rescue ArgumentError, Encoding::CompatibilityError => error
+        # convert utf-16 to utf-8
+        string = string.force_encoding('UTF-16').encode('UTF-8')
+        string.gsub!('encoding="UTF-16"', 'encoding="UTF-8"')
+      end
+
+      # remove optional bom
+      string.gsub!("\xEF\xBB\xBF", '')
+
+      # remove leading and trailing whitespace
+      string = string.strip
+
+      return nil unless string.start_with?('<?xml version=') || string.start_with?('<resource ')
+
+      # make sure xml is valid
+      doc = Nokogiri::XML(string) { |config| config.strict.noblanks }
+      doc.to_xml.strip
+    end
+
     def well_formed_xml(string)
       return nil unless string.present?
   
