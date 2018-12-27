@@ -65,7 +65,7 @@ describe "Metadata", type: :request  do
       before { post "/dois/#{doi.doi}/metadata", params: valid_attributes.to_json, headers: headers }
 
       it 'creates a metadata record' do
-        expect(Base64.decode64(json.dig('data', 'attributes', 'xml'))).to eq(xml.rstrip)
+        expect(Base64.decode64(json.dig('data', 'attributes', 'xml'))).to eq(xml)
         expect(json.dig('data', 'attributes', 'namespace')).to eq("http://datacite.org/schema/kernel-4")
       end
 
