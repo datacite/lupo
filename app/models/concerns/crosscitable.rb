@@ -101,7 +101,8 @@ module Crosscitable
       # remove leading and trailing whitespace
       string = string.strip
 
-      return nil unless string.start_with?('<?xml version=') || string.start_with?('<resource ')
+      # handle missing <?xml version="1.0" ?> and additional namespace
+      return nil unless string.start_with?('<?xml version=') || string.start_with?('<resource ') || /\A<.+:resource/.match(string)
 
       # make sure xml is valid
       doc = Nokogiri::XML(string) { |config| config.strict.noblanks }

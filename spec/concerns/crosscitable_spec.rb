@@ -16,6 +16,11 @@ describe Doi, vcr: true do
       expect { subject.clean_xml(string) }.to raise_error(Nokogiri::XML::SyntaxError, "39:18: FATAL: Premature end of data in tag resource line 2")
     end
 
+    it "clean_xml namespace" do
+      string = file_fixture('datacite_namespace.xml').read
+      expect(subject.clean_xml(string)).to start_with('<?xml version="1.0"')
+    end
+
     it "clean_xml utf-8 bom" do
       string = file_fixture('utf-8_bom.xml').read
       expect(subject.clean_xml(string)).to start_with('<?xml version="1.0" encoding="UTF-8"?>')

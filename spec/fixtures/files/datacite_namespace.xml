@@ -1,0 +1,311 @@
+<default:resource xmlns:default="http://datacite.org/schema/kernel-4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4/metadata.xsd">
+  <default:identifier identifierType="DOI">10.5880/PIK.2017.010</default:identifier>
+  <default:creators>
+    <default:creator>
+      <default:creatorName>Gosling, Simon</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-5973-6862</default:nameIdentifier>
+      <default:affiliation>School of Geography, University of Nottingham, UK</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Müller Schmied, Hannes</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-5330-9923</default:nameIdentifier>
+      <default:affiliation>Institute of Physical Geography (IPG), Goethe-University Frankfurt, Germany</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Betts, Richard</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="Researcher.id">P-8976-2015</default:nameIdentifier>
+      <default:affiliation>University of Exeter, UK</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Chang, Jinfeng</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ScopusID">56582989700</default:nameIdentifier>
+      <default:affiliation>Laboratoire des Sciences du Climat et de l'Environnement (LSCE), France</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Ciais, Philippe</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-8560-4943</default:nameIdentifier>
+      <default:affiliation>Institute Pierre Simon Laplace (IPSL), France</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Dankers, Rutger</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0003-2375-5468</default:nameIdentifier>
+      <default:affiliation>Met Office, UK</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Döll, Petra</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0003-2238-4546</default:nameIdentifier>
+      <default:affiliation>Universität Frankfurt, Germany</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Eisner, Stephanie</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ScopusID">37046987400</default:nameIdentifier>
+      <default:affiliation>Center for Environmental Systems Research (CESR), University of Kassel, Germany</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Flörke, Martina</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0003-2943-5289</default:nameIdentifier>
+      <default:affiliation>Center of Environmental Systems Research (CESR), University of Kassel, Germany</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Gerten, Dieter</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="Researcher.id">B-2975-2013</default:nameIdentifier>
+      <default:affiliation>Potsdam-Institute for Climate Impact Research (PIK), Germany</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Grillakis, Manolis</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0002-4228-1803</default:nameIdentifier>
+      <default:affiliation>Technical University of Crete, Greece</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Hanasaki, Naota</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0002-5092-7563</default:nameIdentifier>
+      <default:affiliation>National Institute for Environmental Studies, Japan</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Hagemann, Stefan</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-5444-2945</default:nameIdentifier>
+      <default:affiliation>Max-Planck-Institute for Meteorology, Germany</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Huang, Maoyi</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-9154-9485</default:nameIdentifier>
+      <default:affiliation>Pacific Northwest National Laboratory (PNNL), USA</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Huang, Zhongwei</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="Researcher.id">K-5484-2013</default:nameIdentifier>
+      <default:affiliation>Chinese Academy of Sciences, China</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Jerez, Sonia</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0002-2153-1658</default:nameIdentifier>
+      <default:affiliation>University of Murcia, Spain</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Kim, Hyungjun</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="Researcher.id">I-5099-2014</default:nameIdentifier>
+      <default:affiliation>Institute of Industrial Science, University of Tokyo, Japan</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Koutroulis, Aristeidis</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0002-2999-7575</default:nameIdentifier>
+      <default:affiliation>Technical University of Crete, Greece</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Leng, Guoyong</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ScopusID">55073323400</default:nameIdentifier>
+      <default:affiliation>Pacific Northwest National Laboratory (PNNL), USA</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Liu, Xingcai</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-5726-7353</default:nameIdentifier>
+      <default:affiliation>Chinese Academy of Sciences, China</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Masaki, Yoshimitsu</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ScopusID">55804883700</default:nameIdentifier>
+      <default:affiliation>Hirosaki University, Japan</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Montavez, Pedro</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-6117-3528</default:nameIdentifier>
+      <default:affiliation>University of Murcia, Spain</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Morfopoulos, Catherine</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="Researcher.id">L-2484-2014</default:nameIdentifier>
+      <default:affiliation>University of Exeter, UK</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Oki, Taikan</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0003-4067-4678</default:nameIdentifier>
+      <default:affiliation>Institute of Industrial Science, University of Tokyo, Japan</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Papadimitriou, Lamprini</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ScopusID">55992696200</default:nameIdentifier>
+      <default:affiliation>Technical University of Crete, Greece</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Pokhrel, Yadu</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ScopusID">46461963400</default:nameIdentifier>
+      <default:affiliation>Michigan State University, USA</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Portmann, Felix T.</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ScopusID">24438491200</default:nameIdentifier>
+      <default:affiliation>Universität Frankfurt, Germany</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Orth, Rene</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ScopusID">55346607800</default:nameIdentifier>
+      <default:affiliation>Institute for Atmospheric and Climate Science, ETH Zürich</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Ostberg, Sebastian</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ScopusID">6507766991</default:nameIdentifier>
+      <default:affiliation>Potsdam-Institute for Climate Impact Research (PIK), Germany</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Satoh, Yusuke</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ScopusID">56061688700</default:nameIdentifier>
+      <default:affiliation>International Institute for Applied Systems Analysis, Austria</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Seneviratne, Sonia</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-9528-2917</default:nameIdentifier>
+      <default:affiliation>ETH Zurich, Switzerland</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Sommer, Philipp</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-6171-7716</default:nameIdentifier>
+      <default:affiliation>University of Lausanne, Switzerland</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Stacke, Tobias</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0003-4637-5337</default:nameIdentifier>
+      <default:affiliation>Max Planck Institute for Meteorology, Germany</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Tang, Qiuhong</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ScopusID">14523673200</default:nameIdentifier>
+      <default:affiliation>Institute of Geographic Sciences and Natural Resources Research, Chinese Academy of Sciences, China</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Tsanis, Ioannis</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ScopusID">56840353800</default:nameIdentifier>
+      <default:affiliation>Technical University of Crete, Greece</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Wada, Yoshihide</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ScopusID">57195195518</default:nameIdentifier>
+      <default:affiliation>International Institute for Applied Systems Analysis, Austria</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Zhou, Tian</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ScopusID">7402989545</default:nameIdentifier>
+      <default:affiliation>Pacific Northwest National Laboratory (PNNL), USA</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Büchner, Matthias</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0002-1382-7424</default:nameIdentifier>
+      <default:affiliation>Potsdam-Institute for Climate Impact Research (PIK), Germany</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Schewe, Jacob</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-9455-4159</default:nameIdentifier>
+      <default:affiliation>Potsdam-Institute for Climate Impact Research (PIK), Germany</default:affiliation>
+    </default:creator>
+    <default:creator>
+      <default:creatorName>Zhao, Fang</default:creatorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0002-4819-3724</default:nameIdentifier>
+      <default:affiliation>Potsdam-Institute for Climate Impact Research (PIK), Germany</default:affiliation>
+    </default:creator>
+  </default:creators>
+  <default:titles>
+    <default:title xml:lang="eng">ISIMIP2a Simulation Data from Water (global) Sector</default:title>
+  </default:titles>
+  <default:publisher>GFZ Data Services</default:publisher>
+  <default:publicationYear>2017</default:publicationYear>
+  <default:contributors>
+    <default:contributor contributorType="ProjectMember">
+      <default:contributorName>Gosling, Simon</default:contributorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-5973-6862</default:nameIdentifier>
+      <default:affiliation>School of Geography, University of Nottingham, UK</default:affiliation>
+    </default:contributor>
+    <default:contributor contributorType="Researcher">
+      <default:contributorName>Gosling, Simon</default:contributorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-5973-6862</default:nameIdentifier>
+      <default:affiliation>School of Geography, University of Nottingham, UK</default:affiliation>
+    </default:contributor>
+    <default:contributor contributorType="ProjectMember">
+      <default:contributorName>Müller Schmied, Hannes</default:contributorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-5330-9923</default:nameIdentifier>
+      <default:affiliation>Institute of Physical Geography (IPG), Goethe-University Frankfurt, Germany</default:affiliation>
+    </default:contributor>
+    <default:contributor contributorType="Researcher">
+      <default:contributorName>Müller Schmied, Hannes</default:contributorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-5330-9923</default:nameIdentifier>
+      <default:affiliation>Institute of Physical Geography (IPG), Goethe-University Frankfurt, Germany</default:affiliation>
+    </default:contributor>
+    <default:contributor contributorType="DataManager">
+      <default:contributorName>Büchner, Matthias</default:contributorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0002-1382-7424</default:nameIdentifier>
+      <default:affiliation>Potsdam-Institute for Climate Impact Research (PIK), Germany</default:affiliation>
+    </default:contributor>
+    <default:contributor contributorType="DataCurator">
+      <default:contributorName>Büchner, Matthias</default:contributorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0002-1382-7424</default:nameIdentifier>
+      <default:affiliation>Potsdam-Institute for Climate Impact Research (PIK), Germany</default:affiliation>
+    </default:contributor>
+    <default:contributor contributorType="DataCollector">
+      <default:contributorName>Büchner, Matthias</default:contributorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0002-1382-7424</default:nameIdentifier>
+      <default:affiliation>Potsdam-Institute for Climate Impact Research (PIK), Germany</default:affiliation>
+    </default:contributor>
+    <default:contributor contributorType="ProjectMember">
+      <default:contributorName>Schewe, Jacob</default:contributorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-9455-4159</default:nameIdentifier>
+      <default:affiliation>Potsdam-Institute for Climate Impact Research (PIK), Germany</default:affiliation>
+    </default:contributor>
+    <default:contributor contributorType="Researcher">
+      <default:contributorName>Schewe, Jacob</default:contributorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0001-9455-4159</default:nameIdentifier>
+      <default:affiliation>Potsdam-Institute for Climate Impact Research (PIK), Germany</default:affiliation>
+    </default:contributor>   
+ <default:contributor contributorType="ProjectMember">
+      <default:contributorName>Zhao, Fang</default:contributorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0002-4819-3724</default:nameIdentifier>
+      <default:affiliation>Potsdam-Institute for Climate Impact Research (PIK), Germany</default:affiliation>
+    </default:contributor>
+    <default:contributor contributorType="Researcher">
+      <default:contributorName>Zhao, Fang</default:contributorName>
+      <default:nameIdentifier nameIdentifierScheme="ORCID">0000-0002-4819-3724</default:nameIdentifier>
+      <default:affiliation>Potsdam-Institute for Climate Impact Research (PIK), Germany</default:affiliation>
+    </default:contributor>
+  </default:contributors>
+  <default:dates>
+    <default:date dateType="Created">2017</default:date>
+    <default:date dateType="Collected">1971/2012</default:date>
+  </default:dates>
+  <default:language>eng</default:language>
+  <default:resourceType resourceTypeGeneral="Dataset">Dataset</default:resourceType>
+  <default:relatedIdentifiers>
+    <default:relatedIdentifier relatedIdentifierType="URL" relationType="References">https://esg.pik-potsdam.de/projects/isimip/</default:relatedIdentifier>
+    <default:relatedIdentifier relatedIdentifierType="URL" relationType="References">https://www.earthsystemcog.org/projects/cog/tutorials_web</default:relatedIdentifier>
+    <default:relatedIdentifier relatedIdentifierType="URL" relationType="References">https://www.isimip.org/outcomes/#papers-isimip2a</default:relatedIdentifier>
+    <default:relatedIdentifier relatedIdentifierType="URL" relationType="IsDocumentedBy">https://www.isimip.org/protocol/#isimip2a</default:relatedIdentifier>
+    <default:relatedIdentifier relatedIdentifierType="URL" relationType="IsDocumentedBy">https://www.isimip.org/impactmodels</default:relatedIdentifier>
+    <default:relatedIdentifier relatedIdentifierType="URL" relationType="References">https://www.isimip.org/gettingstarted/#input-data-bias-correction</default:relatedIdentifier>
+  </default:relatedIdentifiers>
+  <default:sizes>
+    <default:size>547 Bytes</default:size>
+    <default:size>2 Files</default:size>
+  </default:sizes>
+  <default:formats>
+    <default:format>text/plain</default:format>
+    <default:format>application/octet-stream</default:format>
+  </default:formats>
+  <default:rightsList>
+    <default:rights rightsURI="http://creativecommons.org/licenses/by/4.0/">Model data are licensed under CC BY 4.0</default:rights>
+    <default:rights rightsURI="http://creativecommons.org/licenses/by-nc/4.0/">EXCEPTIONS: data from model WaterGAP2 and MATSIRO are licensed under CC BY-NC 4.0</default:rights>
+  </default:rightsList>
+  <default:descriptions>
+    <default:description descriptionType="Abstract">The Inter-Sectoral Impact Model Intercomparison Project (ISIMIP) provides a framework for the collation of a set of consistent, multi-sector, multi-scale climate-impact simulations, based on scientifically and politically-relevant historical and future scenarios. This framework serves as a basis for robust projections of climate impacts, as well as facilitating model evaluation and improvement, allowing for improved estimates of the biophysical and socio-economic impacts of climate change at different levels of global warming. It also provides a unique opportunity to consider interactions between climate change impacts across sectors.<default:br/>
+      <default:br/>ISIMIP2a is the second ISIMIP simulation round, focusing on historical simulations (1971-2010 approx.) of climate impacts on agriculture, fisheries, permafrost, biomes, regional and global water and forests. This may serve as a basis for model evaluation and improvement, allowing for improved estimates of the biophysical and socio-economic impacts of climate change at different levels of global warming.<default:br/>
+      <default:br/>The focus topic for ISIMIP2a is model evaluation and validation, in particular with respect to the representation of impacts of extreme weather events and climate variability. During this phase, four common global observational climate data sets were provided across all impact models and sectors. In addition, appropriate observational data sets of impacts for each sector were collected, against which the models can be benchmarked. Access to the input data for the impact models is provided through a central ISIMIP archive (see https://www.isimip.org/gettingstarted/#input-data-bias-correction).<default:br/>
+      <default:br/>This entry refers to the ISIMIP2a simulation data from global hydrology models: CLM4, DBH, H08, JULES_W1, JULES_B1, LPJmL, MATSIRO, MPI-HM, ORCHIDEE, PCR-GLOBWB, SWBM, VIC, WaterGAP2.</default:description>
+    <default:description descriptionType="Methods">The ISIMIP2a water (global) outputs are based on simulations from 13 global hydrology models (see listing) according to the ISIMIP2a protocol (https://www.isimip.org/protocol/#isimip2a). The models simulate hydrological processes and dynamics (part of the models also considering human water abstractions and reservoir regulation) based on climate and physio-geographical information. A more detailed description of the models and model-specific amendments of the protocol are available here: https://www.isimip.org/impactmodels/.</default:description>
+  </default:descriptions>
+  <default:geoLocations>
+    <default:geoLocation>
+      <default:geoLocationBox>
+        <default:westBoundLongitude>-180</default:westBoundLongitude>
+        <default:eastBoundLongitude>180</default:eastBoundLongitude>
+        <default:southBoundLatitude>-90</default:southBoundLatitude>
+        <default:northBoundLatitude>90</default:northBoundLatitude>
+      </default:geoLocationBox>
+      <default:geoLocationPlace>global, annual, monthly, daily</default:geoLocationPlace>
+    </default:geoLocation>
+  </default:geoLocations>
+</default:resource>
