@@ -6,6 +6,6 @@ queues:
 
 groups:
   background:
-    concurrency: 7
+    concurrency: 5
     queues:
       - lupo_background
