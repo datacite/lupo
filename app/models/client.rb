@@ -237,9 +237,12 @@ class Client < ActiveRecord::Base
     created_at.year if created_at.present?
   end
 
+  # count years account has been active. Ignore if deleted the same year as created
   def cumulative_years
-    if deleted_at
-      (created_at.year..[created_at.year, deleted_at.year - 1].max).to_a
+    if deleted_at && deleted_at.year > created_at.year
+      (created_at.year..deleted_at.year).to_a
+    elsif deleted_at
+      []
     else
       (created_at.year..Date.today.year).to_a
     end
