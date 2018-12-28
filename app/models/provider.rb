@@ -163,7 +163,7 @@ class Provider < ActiveRecord::Base
   # count years account has been active. Ignore if deleted the same year as created
   def cumulative_years
     if deleted_at && deleted_at.year > created_at.year
-      (created_at.year..deleted_at.year).to_a
+      (created_at.year...deleted_at.year).to_a
     elsif deleted_at
       []
     else
