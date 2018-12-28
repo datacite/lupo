@@ -205,7 +205,7 @@ class Doi < ActiveRecord::Base
       lastPage: { type: :keyword }
     }
 
-    indexes :xml,                            type: :text, index: "not_analyzed"
+    indexes :xml,                            type: :text, index: "false"
     indexes :content_url,                    type: :keyword
     indexes :version_info,                   type: :keyword
     indexes :formats,                        type: :keyword

@@ -98,7 +98,7 @@ class Provider < ActiveRecord::Base
       indexes :created,       type: :date
       indexes :updated,       type: :date
       indexes :deleted_at,    type: :date
-      indexes :cumulative_years, type: :integer, index: "not_analyzed"
+      indexes :cumulative_years, type: :integer, index: "false"
     end
   end
 
