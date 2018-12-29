@@ -2,7 +2,51 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.datacite.org/prefixes/10.7272
+    uri: https://doi.org/ra/10.7272
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.1.1; +https://github.com/datacite/maremma)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Date:
+      - Sat, 29 Dec 2018 11:59:01 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Length:
+      - '54'
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - __cfduid=db6732bd4d5972515a41844ed74e235071546084741; expires=Sun, 29-Dec-19
+        11:59:01 GMT; path=/; domain=.doi.org; HttpOnly
+      Expect-Ct:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 490c191f88a764ff-FRA
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        [
+          {
+            "DOI": "10.7272",
+            "RA": "DataCite"
+          }
+        ]
+    http_version: 
+  recorded_at: Sat, 29 Dec 2018 11:59:01 GMT
+- request:
+    method: get
+    uri: https://api.test.datacite.org/dois/10.7272/q6g15xs4
     body:
       encoding: US-ASCII
       string: ''
@@ -17,7 +61,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 07 Dec 2018 17:59:13 GMT
+      - Sat, 29 Dec 2018 11:59:01 GMT
       Content-Type:
       - application/json; charset=utf-8
       Connection:
@@ -30,70 +74,20 @@ http_interactions:
       - max-age=0, private, must-revalidate
       Vary:
       - Accept-Encoding, Origin
-      X-Request-Id:
-      - 735adba6-fb5e-4444-be96-bb0a75401b71
       Etag:
-      - W/"434d63d02889e47275389a930375c569"
+      - W/"be47d2fa84faf88552f7bcf475c70d39"
       X-Runtime:
-      - '0.023537'
+      - '0.018000'
+      X-Request-Id:
+      - 412524fb-e00e-4d24-b4e7-f58a78ceac55
       X-Powered-By:
       - Phusion Passenger 6.0.0
       Server:
       - nginx/1.15.7 + Phusion Passenger 6.0.0
     body:
       encoding: ASCII-8BIT
-      string: '{"data":{"id":"10.7272","type":"prefixes","attributes":{"registration-agency":"DataCite","created":"2012-03-15T09:47:35.000Z","updated":null},"relationships":{"clients":{"data":[{"id":"cdl.ucsfctsi","type":"clients"}]},"providers":{"data":[{"id":"cdl","type":"providers"}]}}},"included":[{"id":"cdl.ucsfctsi","type":"clients","attributes":{"name":"UCSF
-        Clinical & Translational Science Institute (CTSI)","symbol":"CDL.UCSFCTSI","year":2012,"contact-name":"EZID
-        Support Desk","contact-email":"ezid@ucop.edu","domains":"*","url":null,"created":"2012-07-10T20:59:53.000Z","updated":"2018-08-26T02:35:12.000Z","is-active":true,"has-password":true},"relationships":{"provider":{"data":{"id":"cdl","type":"providers"}},"prefixes":{"data":[{"id":"10.5072","type":"prefixes"},{"id":"10.7272","type":"prefixes"}]}}},{"id":"cdl","type":"providers","attributes":{"name":"California
-        Digital Library","symbol":"CDL","website":"http://ezid.cdlib.org","contact-name":"EZID
-        Support Desk","contact-email":"ezid@ucop.edu","phone":null,"description":"California
-        Digital Library (CDL) handles scholarly information at every stage of its
-        life. CDL provides technology and expertise to help the University of California
-        (UC) collect, publish, access, and preserve its full range of information
-        resources. CDL partners with organizations outside the UCs on far-reaching
-        problems.\n\nCDL offers DataCite DOIs to University of California scholars
-        and researchers via the EZID service. EZID is also available as a general
-        identifier service to help educational, non-profit, governmental and commercial
-        clients create and manage globally unique identifiers for data and other sources.","region":"AMER","country":"US","logo-url":"https://assets.datacite.org/images/members/cdl.png","organization-type":"academic_institution","focus-area":"general","is-active":true,"has-password":true,"joined":"2009-12-01","created":"2010-01-01T00:00:00.000Z","updated":"2018-10-24T20:47:51.000Z"},"relationships":{"prefixes":{"data":[{"id":"10.5062","type":"prefixes"},{"id":"10.5063","type":"prefixes"},{"id":"10.5065","type":"prefixes"},{"id":"10.5068","type":"prefixes"},{"id":"10.5069","type":"prefixes"},{"id":"10.5070","type":"prefixes"},{"id":"10.5072","type":"prefixes"},{"id":"10.6071","type":"prefixes"},{"id":"10.6072","type":"prefixes"},{"id":"10.6074","type":"prefixes"},{"id":"10.6075","type":"prefixes"},{"id":"10.6076","type":"prefixes"},{"id":"10.6078","type":"prefixes"},{"id":"10.6079","type":"prefixes"},{"id":"10.6080","type":"prefixes"},{"id":"10.6081","type":"prefixes"},{"id":"10.6085","type":"prefixes"},{"id":"10.6086","type":"prefixes"},{"id":"10.7265","type":"prefixes"},{"id":"10.7268","type":"prefixes"},{"id":"10.7269","type":"prefixes"},{"id":"10.7270","type":"prefixes"},{"id":"10.7271","type":"prefixes"},{"id":"10.7272","type":"prefixes"},{"id":"10.7276","type":"prefixes"},{"id":"10.7279","type":"prefixes"},{"id":"10.7280","type":"prefixes"},{"id":"10.7281","type":"prefixes"},{"id":"10.7282","type":"prefixes"},{"id":"10.7284","type":"prefixes"},{"id":"10.7285","type":"prefixes"},{"id":"10.7286","type":"prefixes"},{"id":"10.7288","type":"prefixes"},{"id":"10.7291","type":"prefixes"},{"id":"10.7292","type":"prefixes"},{"id":"10.7293","type":"prefixes"},{"id":"10.7295","type":"prefixes"},{"id":"10.7296","type":"prefixes"},{"id":"10.7297","type":"prefixes"},{"id":"10.7299","type":"prefixes"},{"id":"10.7300","type":"prefixes"},{"id":"10.4246","type":"prefixes"},{"id":"10.7908","type":"prefixes"},{"id":"10.7911","type":"prefixes"},{"id":"10.7913","type":"prefixes"},{"id":"10.7914","type":"prefixes"},{"id":"10.7916","type":"prefixes"},{"id":"10.7918","type":"prefixes"},{"id":"10.7919","type":"prefixes"},{"id":"10.7920","type":"prefixes"},{"id":"10.7921","type":"prefixes"},{"id":"10.7922","type":"prefixes"},{"id":"10.7925","type":"prefixes"},{"id":"10.7927","type":"prefixes"},{"id":"10.7928","type":"prefixes"},{"id":"10.7929","type":"prefixes"},{"id":"10.7932","type":"prefixes"},{"id":"10.7933","type":"prefixes"},{"id":"10.7934","type":"prefixes"},{"id":"10.7939","type":"prefixes"},{"id":"10.7940","type":"prefixes"},{"id":"10.7941","type":"prefixes"},{"id":"10.7942","type":"prefixes"},{"id":"10.7943","type":"prefixes"},{"id":"10.7944","type":"prefixes"},{"id":"10.7945","type":"prefixes"},{"id":"10.7946","type":"prefixes"},{"id":"10.13022","type":"prefixes"},{"id":"10.13026","type":"prefixes"},{"id":"10.13025","type":"prefixes"},{"id":"10.15147","type":"prefixes"},{"id":"10.15146","type":"prefixes"},{"id":"10.15142","type":"prefixes"},{"id":"10.15144","type":"prefixes"},{"id":"10.15145","type":"prefixes"},{"id":"10.15140","type":"prefixes"},{"id":"10.15141","type":"prefixes"},{"id":"10.15139","type":"prefixes"},{"id":"10.1184","type":"prefixes"},{"id":"10.15784","type":"prefixes"},{"id":"10.15779","type":"prefixes"},{"id":"10.15780","type":"prefixes"},{"id":"10.15781","type":"prefixes"},{"id":"10.15782","type":"prefixes"},{"id":"10.17612","type":"prefixes"},{"id":"10.17610","type":"prefixes"},{"id":"10.17611","type":"prefixes"},{"id":"10.17614","type":"prefixes"},{"id":"10.17615","type":"prefixes"},{"id":"10.17602","type":"prefixes"},{"id":"10.17603","type":"prefixes"},{"id":"10.17908","type":"prefixes"},{"id":"10.17916","type":"prefixes"},{"id":"10.17915","type":"prefixes"},{"id":"10.17918","type":"prefixes"},{"id":"10.17919","type":"prefixes"},{"id":"10.17911","type":"prefixes"},{"id":"10.17913","type":"prefixes"},{"id":"10.17920","type":"prefixes"},{"id":"10.18123","type":"prefixes"},{"id":"10.18119","type":"prefixes"},{"id":"10.18118","type":"prefixes"},{"id":"10.18117","type":"prefixes"},{"id":"10.18115","type":"prefixes"},{"id":"10.18431","type":"prefixes"},{"id":"10.18436","type":"prefixes"},{"id":"10.18437","type":"prefixes"},{"id":"10.18439","type":"prefixes"},{"id":"10.18737","type":"prefixes"},{"id":"10.18736","type":"prefixes"},{"id":"10.18739","type":"prefixes"},{"id":"10.18734","type":"prefixes"},{"id":"10.20353","type":"prefixes"},{"id":"10.20354","type":"prefixes"},{"id":"10.20352","type":"prefixes"},{"id":"10.20357","type":"prefixes"},{"id":"10.20358","type":"prefixes"},{"id":"10.20359","type":"prefixes"},{"id":"10.21228","type":"prefixes"},{"id":"10.21229","type":"prefixes"},{"id":"10.21224","type":"prefixes"},{"id":"10.21222","type":"prefixes"},{"id":"10.21223","type":"prefixes"},{"id":"10.21221","type":"prefixes"},{"id":"10.21237","type":"prefixes"},{"id":"10.21238","type":"prefixes"},{"id":"10.21239","type":"prefixes"},{"id":"10.21236","type":"prefixes"},{"id":"10.21430","type":"prefixes"},{"id":"10.21433","type":"prefixes"},{"id":"10.21431","type":"prefixes"},{"id":"10.21421","type":"prefixes"},{"id":"10.21422","type":"prefixes"},{"id":"10.21424","type":"prefixes"},{"id":"10.21425","type":"prefixes"},{"id":"10.21426","type":"prefixes"},{"id":"10.21427","type":"prefixes"},{"id":"10.21428","type":"prefixes"},{"id":"10.21418","type":"prefixes"},{"id":"10.21416","type":"prefixes"},{"id":"10.21414","type":"prefixes"},{"id":"10.21972","type":"prefixes"},{"id":"10.21973","type":"prefixes"},{"id":"10.21975","type":"prefixes"},{"id":"10.21976","type":"prefixes"},{"id":"10.21977","type":"prefixes"},{"id":"10.21978","type":"prefixes"},{"id":"10.21990","type":"prefixes"},{"id":"10.21983","type":"prefixes"},{"id":"10.21980","type":"prefixes"},{"id":"10.21986","type":"prefixes"},{"id":"10.5195","type":"prefixes"},{"id":"10.25334","type":"prefixes"},{"id":"10.25337","type":"prefixes"},{"id":"10.25338","type":"prefixes"},{"id":"10.25342","type":"prefixes"},{"id":"10.25349","type":"prefixes"},{"id":"10.25348","type":"prefixes"},{"id":"10.25347","type":"prefixes"},{"id":"10.25346","type":"prefixes"},{"id":"10.25345","type":"prefixes"},{"id":"10.25344","type":"prefixes"},{"id":"10.25352","type":"prefixes"},{"id":"10.25350","type":"prefixes"},{"id":"10.25351","type":"prefixes"},{"id":"10.26081","type":"prefixes"}]}}}]}'
+      string: !binary |-
+        eyJkYXRhIjp7ImlkIjoiMTAuNzI3Mi9xNmcxNXhzNCIsInR5cGUiOiJkb2lzIiwiYXR0cmlidXRlcyI6eyJkb2kiOiIxMC43MjcyL3E2ZzE1eHM0IiwicHJlZml4IjoiMTAuNzI3MiIsInN1ZmZpeCI6InE2ZzE1eHM0IiwiaWRlbnRpZmllcnMiOlt7ImlkZW50aWZpZXIiOiJodHRwczovL2hhbmRsZS50ZXN0LmRhdGFjaXRlLm9yZy8xMC43MjcyL3E2ZzE1eHM0IiwiaWRlbnRpZmllclR5cGUiOiJET0kifV0sImNyZWF0b3JzIjpbeyJuYW1lIjoiUm9kcmlndWV6LCBSb2JlcnQiLCJuYW1lVHlwZSI6IlBlcnNvbmFsIiwiZ2l2ZW5OYW1lIjoiUm9iZXJ0IiwiZmFtaWx5TmFtZSI6IlJvZHJpZ3VleiIsImFmZmlsaWF0aW9uIjoiVUMgU2FuIEZyYW5jaXNjbyJ9LHsibmFtZSI6Ik1vd2VyLCBXaWxsaWFtIiwibmFtZVR5cGUiOiJQZXJzb25hbCIsImdpdmVuTmFtZSI6IldpbGxpYW0iLCJmYW1pbHlOYW1lIjoiTW93ZXIiLCJhZmZpbGlhdGlvbiI6IlVDTEEifV0sInRpdGxlcyI6W3sidGl0bGUiOiJORVhVUyBIZWFkIENUIn1dLCJwdWJsaXNoZXIiOiJVQyBTYW4gRnJhbmNpc2NvIiwiY29udGFpbmVyIjp7fSwicHVibGljYXRpb25ZZWFyIjoyMDE3LCJzdWJqZWN0cyI6W10sImNvbnRyaWJ1dG9ycyI6W10sImRhdGVzIjpbeyJkYXRlIjoiMjAxNyIsImRhdGVUeXBlIjoiSXNzdWVkIn1dLCJsYW5ndWFnZSI6ImVuIiwidHlwZXMiOnsicmlzIjoiREFUQSIsImJpYnRleCI6Im1pc2MiLCJjaXRlcHJvYyI6ImRhdGFzZXQiLCJzY2hlbWFPcmciOiJEYXRhc2V0IiwicmVzb3VyY2VUeXBlR2VuZXJhbCI6IkRhdGFzZXQifSwicmVsYXRlZElkZW50aWZpZXJzIjpbXSwic2l6ZXMiOlsiMTQ5NTIwNCBieXRlcyJdLCJmb3JtYXRzIjpbXSwidmVyc2lvbiI6bnVsbCwicmlnaHRzTGlzdCI6W3sicmlnaHRzIjoiQ3JlYXRpdmUgQ29tbW9ucyBBdHRyaWJ1dGlvbiA0LjAgSW50ZXJuYXRpb25hbCAoQ0MgQlkgNC4wKSIsInJpZ2h0c1VyaSI6Imh0dHBzOi8vY3JlYXRpdmVjb21tb25zLm9yZy9saWNlbnNlcy9ieS80LjAifV0sImRlc2NyaXB0aW9ucyI6W3siZGVzY3JpcHRpb24iOiJCYWNrZ3JvdW5kIENsaW5pY2lhbnMsIGFmcmFpZCBvZiBtaXNzaW5nIGludHJhY3JhbmlhbCBpbmp1cmllcywgbGliZXJhbGx5XG4gICAgICBvYnRhaW4gY29tcHV0ZWQgdG9tb2dyYXBoaWMgKENUKSBoZWFkIGltYWdpbmcgaW4gYmx1bnQgdHJhdW1hIHBhdGllbnRzLlxuICAgICAgUHJpb3Igd29yayBzdWdnZXN0cyB0aGF0IGNsaW5pY2FsIGNyaXRlcmlhIChORVhVUyBIZWFkIENUIGRlY2lzaW9uXG4gICAgICBpbnN0cnVtZW50KSBjYW4gcmVsaWFibHkgaWRlbnRpZnkgcGF0aWVudHMgd2l0aCBpbXBvcnRhbnQgaW5qdXJpZXMsIHdoaWxlXG4gICAgICBleGNsdWRpbmcgaW5qdXJ5LCBhbmQgdGhlIG5lZWQgZm9yIGltYWdpbmcgaW4gbWFueSBwYXRpZW50cy4gTWV0aG9kcyBXZVxuICAgICAgY29uZHVjdGVkIGEgcHJvc3BlY3RpdmUgb2JzZXJ2YXRpb25hbCBzdHVkeSBvZiB0aGUgTkVYVVMgSGVhZCBDVCBkZWNpc2lvblxuICAgICAgaW5zdHJ1bWVudCAoREkpIHRoYXQgcmVxdWlyZXMgcGF0aWVudHMgdG8gbWVldCBlaWdodCBjcml0ZXJpYSB0byBhY2hpZXZlXG4gICAgICDigJxsb3ctcmlza+KAnSBjbGFzc2lmaWNhdGlvbi4gV2UgZXhhbWluZWQgdGhlIGluc3RydW1lbnTigJlzIHBlcmZvcm1hbmNlIGluXG4gICAgICBpZGVudGlmeWluZyBwYXRpZW50cyByZXF1aXJpbmcgbmV1cm9sb2dpY2FsIGludGVydmVudGlvbiBmcm9tIGFtb25nIGFcbiAgICAgIGNvaG9ydCBvZiAxMSw3NzAgYmx1bnQgaGVhZCBpbmp1cnkgcGF0aWVudHMuIFJlc3VsdHMgVGhlIE5FWFVTIEhlYWQgQ1QgRElcbiAgICAgIGFzc2lnbmVkIGhpZ2gtcmlzayBzdGF0dXMgdG8gNDIwIG9mIDQyMCBwYXRpZW50cyByZXF1aXJpbmcgbmV1cm9sb2dpY2FsXG4gICAgICBpbnRlcnZlbnRpb24gKHNlbnNpdGl2aXR5LCAxMDAuMCUgWzk1JSBjb25maWRlbmNlIGludGVydmFsIFtDSV06IDk5LjElIOKAk1xuICAgICAgMTAwLjAlXSkuIFRoZSBpbnN0cnVtZW50IGFzc2lnbmVkIGxvdy1yaXNrIHN0YXR1cyB0byAyLDgyMyBvZiAxMSwzNTBcbiAgICAgIHBhdGllbnRzIHdobyBkaWQgbm90IHJlcXVpcmUgbmV1cm9sb2dpY2FsIGludGVydmVudGlvbiAoc3BlY2lmaWNpdHksIDI0LjklXG4gICAgICBbOTUlIENJOiAyNC4xJSAtIDI1LjclXSkuIE5vbmUgb2YgdGhlIDIsODIzIGxvdy1yaXNrIHBhdGllbnRzIHJlcXVpcmVkXG4gICAgICBuZXVyb2xvZ2ljYWwgaW50ZXJ2ZW50aW9uIChOUFYsIDEwMC4wJSBbOTUlIENJOiA5OS45JSAtIDEwMC4wJV0pLiBUaGUgRElcbiAgICAgIGFzc2lnbmVkIGhpZ2gtcmlzayBzdGF0dXMgdG8gNzU5IG9mIDc2NyBwYXRpZW50cyB3aXRoIHNpZ25pZmljYW50XG4gICAgICBpbnRyYWNyYW5pYWwgaW5qdXJpZXMgKHNlbnNpdGl2aXR5LCA5OS4wJSBbOTUlIENJOiA5OC4wJSAtIDk5LjYlXSkuIFRoZVxuICAgICAgaW5zdHJ1bWVudCBhc3NpZ25lZCBsb3ctcmlzayBzdGF0dXMgdG8gMiw4MTUgb2YgMTEsMDAzIHBhdGllbnRzIHdobyBkaWRcbiAgICAgIG5vdCBoYXZlIHNpZ25pZmljYW50IGluanVyaWVzIChzcGVjaWZpY2l0eSwgMjUuNiUgWzk1JSBDSTogMjQuOCUgLVxuICAgICAgMjYuNCVdKS4gU2lnbmlmaWNhbnQgaW5qdXJpZXMgd2VyZSBhYnNlbnQgaW4gMiw4MTUgb2YgdGhlIDIsODIzIHBhdGllbnRzXG4gICAgICBhc3NpZ25lZCBsb3ctcmlzayBzdGF0dXMgKE5QViwgOTkuNyUgWzk1JSBDSTogOTkuNCUgLSA5OS45JV0pLiBDb25jbHVzaW9uc1xuICAgICAgVGhlIE5FWFVTIEhlYWQgQ1QgREkgcmVsaWFibHkgaWRlbnRpZmllcyBibHVudCB0cmF1bWEgcGF0aWVudHMgd2hvIHJlcXVpcmVcbiAgICAgIGhlYWQgQ1QgaW1hZ2luZywgYW5kIGNvdWxkIHNpZ25pZmljYW50bHkgcmVkdWNpbmcgdGhlIHVzZSBvZiBDVCBpbWFnaW5nLiIsImRlc2NyaXB0aW9uVHlwZSI6IkFic3RyYWN0In0seyJkZXNjcmlwdGlvbiI6IlByb3NwZWN0aXZlIG11bHRpY2VudGVyIiwiZGVzY3JpcHRpb25UeXBlIjoiTWV0aG9kcyJ9XSwiZ2VvTG9jYXRpb25zIjpbXSwiZnVuZGluZ1JlZmVyZW5jZXMiOltdLCJ4bWwiOiJQRDk0Yld3Z2RtVnljMmx2YmowaU1TNHdJaUJsYm1OdlpHbHVaejBpVlZSR0xUZ2lQejRLUEhKbGMyOTFjbU5sSUhodGJHNXpPbmh6YVQwaWFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNUzlZVFV4VFkyaGxiV0V0YVc1emRHRnVZMlVpSUhodGJHNXpQU0pvZEhSd09pOHZaR0YwWVdOcGRHVXViM0puTDNOamFHVnRZUzlyWlhKdVpXd3RNeUlnZUhOcE9uTmphR1Z0WVV4dlkyRjBhVzl1UFNKb2RIUndPaTh2WkdGMFlXTnBkR1V1YjNKbkwzTmphR1Z0WVM5clpYSnVaV3d0TXlCb2RIUndPaTh2YzJOb1pXMWhMbVJoZEdGamFYUmxMbTl5Wnk5dFpYUmhMMnRsY201bGJDMHpMMjFsZEdGa1lYUmhMbmh6WkNJK0NpQWdQR2xrWlc1MGFXWnBaWElnYVdSbGJuUnBabWxsY2xSNWNHVTlJa1JQU1NJK01UQXVOekkzTWk5Uk5rY3hOVmhUTkR3dmFXUmxiblJwWm1sbGNqNEtJQ0E4WTNKbFlYUnZjbk0rQ2lBZ0lDQThZM0psWVhSdmNqNEtJQ0FnSUNBZ1BHTnlaV0YwYjNKT1lXMWxQbEp2WkhKcFozVmxlaXdnVW05aVpYSjBQQzlqY21WaGRHOXlUbUZ0WlQ0S0lDQWdJQ0FnUEdGbVptbHNhV0YwYVc5dVBsVkRJRk5oYmlCR2NtRnVZMmx6WTI4OEwyRm1abWxzYVdGMGFXOXVQZ29nSUNBZ1BDOWpjbVZoZEc5eVBnb2dJQ0FnUEdOeVpXRjBiM0krQ2lBZ0lDQWdJRHhqY21WaGRHOXlUbUZ0WlQ1TmIzZGxjaXdnVjJsc2JHbGhiVHd2WTNKbFlYUnZjazVoYldVK0NpQWdJQ0FnSUR4aFptWnBiR2xoZEdsdmJqNVZRMHhCUEM5aFptWnBiR2xoZEdsdmJqNEtJQ0FnSUR3dlkzSmxZWFJ2Y2o0S0lDQThMMk55WldGMGIzSnpQZ29nSUR4MGFYUnNaWE0rQ2lBZ0lDQThkR2wwYkdVK1RrVllWVk1nU0dWaFpDQkRWRHd2ZEdsMGJHVStDaUFnUEM5MGFYUnNaWE0rQ2lBZ1BIQjFZbXhwYzJobGNqNVZReUJUWVc0Z1JuSmhibU5wYzJOdlBDOXdkV0pzYVhOb1pYSStDaUFnUEhCMVlteHBZMkYwYVc5dVdXVmhjajR5TURFM1BDOXdkV0pzYVdOaGRHbHZibGxsWVhJK0NpQWdQR3hoYm1kMVlXZGxQbVZ1UEM5c1lXNW5kV0ZuWlQ0S0lDQThjbVZ6YjNWeVkyVlVlWEJsSUhKbGMyOTFjbU5sVkhsd1pVZGxibVZ5WVd3OUlrUmhkR0Z6WlhRaUx6NEtJQ0E4YzJsNlpYTStDaUFnSUNBOGMybDZaVDR4TkRrMU1qQTBJR0o1ZEdWelBDOXphWHBsUGdvZ0lEd3ZjMmw2WlhNK0NpQWdQSFpsY25OcGIyNCtNVHd2ZG1WeWMybHZiajRLSUNBOGNtbG5hSFJ6VEdsemRENEtJQ0FnSUR4eWFXZG9kSE1nY21sbmFIUnpWVkpKUFNKb2RIUndjem92TDJOeVpXRjBhWFpsWTI5dGJXOXVjeTV2Y21jdmJHbGpaVzV6WlhNdllua3ZOQzR3THlJK1EzSmxZWFJwZG1VZ1EyOXRiVzl1Y3lCQmRIUnlhV0oxZEdsdmJpQTBMakFnU1c1MFpYSnVZWFJwYjI1aGJDQW9RME1nUWxrZ05DNHdLVHd2Y21sbmFIUnpQZ29nSUR3dmNtbG5hSFJ6VEdsemRENEtJQ0E4WkdWelkzSnBjSFJwYjI1elBnb2dJQ0FnUEdSbGMyTnlhWEIwYVc5dUlHUmxjMk55YVhCMGFXOXVWSGx3WlQwaVFXSnpkSEpoWTNRaVBnb2dJQ0FnSUNCQ1lXTnJaM0p2ZFc1a0lFTnNhVzVwWTJsaGJuTXNJR0ZtY21GcFpDQnZaaUJ0YVhOemFXNW5JR2x1ZEhKaFkzSmhibWxoYkNCcGJtcDFjbWxsY3l3Z2JHbGlaWEpoYkd4NUNpQWdJQ0FnSUc5aWRHRnBiaUJqYjIxd2RYUmxaQ0IwYjIxdlozSmhjR2hwWXlBb1ExUXBJR2hsWVdRZ2FXMWhaMmx1WnlCcGJpQmliSFZ1ZENCMGNtRjFiV0VnY0dGMGFXVnVkSE11Q2lBZ0lDQWdJRkJ5YVc5eUlIZHZjbXNnYzNWbloyVnpkSE1nZEdoaGRDQmpiR2x1YVdOaGJDQmpjbWwwWlhKcFlTQW9Ua1ZZVlZNZ1NHVmhaQ0JEVkNCa1pXTnBjMmx2YmdvZ0lDQWdJQ0JwYm5OMGNuVnRaVzUwS1NCallXNGdjbVZzYVdGaWJIa2dhV1JsYm5ScFpua2djR0YwYVdWdWRITWdkMmwwYUNCcGJYQnZjblJoYm5RZ2FXNXFkWEpwWlhNc0lIZG9hV3hsQ2lBZ0lDQWdJR1Y0WTJ4MVpHbHVaeUJwYm1wMWNua3NJR0Z1WkNCMGFHVWdibVZsWkNCbWIzSWdhVzFoWjJsdVp5QnBiaUJ0WVc1NUlIQmhkR2xsYm5SekxpQk5aWFJvYjJSeklGZGxDaUFnSUNBZ0lHTnZibVIxWTNSbFpDQmhJSEJ5YjNOd1pXTjBhWFpsSUc5aWMyVnlkbUYwYVc5dVlXd2djM1IxWkhrZ2IyWWdkR2hsSUU1RldGVlRJRWhsWVdRZ1ExUWdaR1ZqYVhOcGIyNEtJQ0FnSUNBZ2FXNXpkSEoxYldWdWRDQW9SRWtwSUhSb1lYUWdjbVZ4ZFdseVpYTWdjR0YwYVdWdWRITWdkRzhnYldWbGRDQmxhV2RvZENCamNtbDBaWEpwWVNCMGJ5QmhZMmhwWlhabENpQWdJQ0FnSU9LQW5HeHZkeTF5YVhOcjRvQ2RJR05zWVhOemFXWnBZMkYwYVc5dUxpQlhaU0JsZUdGdGFXNWxaQ0IwYUdVZ2FXNXpkSEoxYldWdWRPS0FtWE1nY0dWeVptOXliV0Z1WTJVZ2FXNEtJQ0FnSUNBZ2FXUmxiblJwWm5scGJtY2djR0YwYVdWdWRITWdjbVZ4ZFdseWFXNW5JRzVsZFhKdmJHOW5hV05oYkNCcGJuUmxjblpsYm5ScGIyNGdabkp2YlNCaGJXOXVaeUJoQ2lBZ0lDQWdJR052YUc5eWRDQnZaaUF4TVN3M056QWdZbXgxYm5RZ2FHVmhaQ0JwYm1wMWNua2djR0YwYVdWdWRITXVJRkpsYzNWc2RITWdWR2hsSUU1RldGVlRJRWhsWVdRZ1ExUWdSRWtLSUNBZ0lDQWdZWE56YVdkdVpXUWdhR2xuYUMxeWFYTnJJSE4wWVhSMWN5QjBieUEwTWpBZ2IyWWdOREl3SUhCaGRHbGxiblJ6SUhKbGNYVnBjbWx1WnlCdVpYVnliMnh2WjJsallXd0tJQ0FnSUNBZ2FXNTBaWEoyWlc1MGFXOXVJQ2h6Wlc1emFYUnBkbWwwZVN3Z01UQXdMakFsSUZzNU5TVWdZMjl1Wm1sa1pXNWpaU0JwYm5SbGNuWmhiQ0JiUTBsZE9pQTVPUzR4SlNEaWdKTUtJQ0FnSUNBZ01UQXdMakFsWFNrdUlGUm9aU0JwYm5OMGNuVnRaVzUwSUdGemMybG5ibVZrSUd4dmR5MXlhWE5ySUhOMFlYUjFjeUIwYnlBeUxEZ3lNeUJ2WmlBeE1Td3pOVEFLSUNBZ0lDQWdjR0YwYVdWdWRITWdkMmh2SUdScFpDQnViM1FnY21WeGRXbHlaU0J1WlhWeWIyeHZaMmxqWVd3Z2FXNTBaWEoyWlc1MGFXOXVJQ2h6Y0dWamFXWnBZMmwwZVN3Z01qUXVPU1VLSUNBZ0lDQWdXemsxSlNCRFNUb2dNalF1TVNVZ0xTQXlOUzQzSlYwcExpQk9iMjVsSUc5bUlIUm9aU0F5TERneU15QnNiM2N0Y21semF5QndZWFJwWlc1MGN5QnlaWEYxYVhKbFpBb2dJQ0FnSUNCdVpYVnliMnh2WjJsallXd2dhVzUwWlhKMlpXNTBhVzl1SUNoT1VGWXNJREV3TUM0d0pTQmJPVFVsSUVOSk9pQTVPUzQ1SlNBdElERXdNQzR3SlYwcExpQlVhR1VnUkVrS0lDQWdJQ0FnWVhOemFXZHVaV1FnYUdsbmFDMXlhWE5ySUhOMFlYUjFjeUIwYnlBM05Ua2diMllnTnpZM0lIQmhkR2xsYm5SeklIZHBkR2dnYzJsbmJtbG1hV05oYm5RS0lDQWdJQ0FnYVc1MGNtRmpjbUZ1YVdGc0lHbHVhblZ5YVdWeklDaHpaVzV6YVhScGRtbDBlU3dnT1RrdU1DVWdXemsxSlNCRFNUb2dPVGd1TUNVZ0xTQTVPUzQySlYwcExpQlVhR1VLSUNBZ0lDQWdhVzV6ZEhKMWJXVnVkQ0JoYzNOcFoyNWxaQ0JzYjNjdGNtbHpheUJ6ZEdGMGRYTWdkRzhnTWl3NE1UVWdiMllnTVRFc01EQXpJSEJoZEdsbGJuUnpJSGRvYnlCa2FXUUtJQ0FnSUNBZ2JtOTBJR2hoZG1VZ2MybG5ibWxtYVdOaGJuUWdhVzVxZFhKcFpYTWdLSE53WldOcFptbGphWFI1TENBeU5TNDJKU0JiT1RVbElFTkpPaUF5TkM0NEpTQXRDaUFnSUNBZ0lESTJMalFsWFNrdUlGTnBaMjVwWm1sallXNTBJR2x1YW5WeWFXVnpJSGRsY21VZ1lXSnpaVzUwSUdsdUlESXNPREUxSUc5bUlIUm9aU0F5TERneU15QndZWFJwWlc1MGN3b2dJQ0FnSUNCaGMzTnBaMjVsWkNCc2IzY3RjbWx6YXlCemRHRjBkWE1nS0U1UVZpd2dPVGt1TnlVZ1d6azFKU0JEU1RvZ09Ua3VOQ1VnTFNBNU9TNDVKVjBwTGlCRGIyNWpiSFZ6YVc5dWN3b2dJQ0FnSUNCVWFHVWdUa1ZZVlZNZ1NHVmhaQ0JEVkNCRVNTQnlaV3hwWVdKc2VTQnBaR1Z1ZEdsbWFXVnpJR0pzZFc1MElIUnlZWFZ0WVNCd1lYUnBaVzUwY3lCM2FHOGdjbVZ4ZFdseVpRb2dJQ0FnSUNCb1pXRmtJRU5VSUdsdFlXZHBibWNzSUdGdVpDQmpiM1ZzWkNCemFXZHVhV1pwWTJGdWRHeDVJSEpsWkhWamFXNW5JSFJvWlNCMWMyVWdiMllnUTFRZ2FXMWhaMmx1Wnk0S0lDQWdJRHd2WkdWelkzSnBjSFJwYjI0K0NpQWdJQ0E4WkdWelkzSnBjSFJwYjI0Z1pHVnpZM0pwY0hScGIyNVVlWEJsUFNKTlpYUm9iMlJ6SWo1UWNtOXpjR1ZqZEdsMlpTQnRkV3gwYVdObGJuUmxjand2WkdWelkzSnBjSFJwYjI0K0NpQWdQQzlrWlhOamNtbHdkR2x2Ym5NK0NpQWdQR2RsYjB4dlkyRjBhVzl1Y3o0S0lDQWdJRHhuWlc5TWIyTmhkR2x2Ymo0S0lDQWdJQ0FnUEdkbGIweHZZMkYwYVc5dVVHOXBiblErTXpjdU1qVXdNaklnTFRFeE9TNDNOVEV5Tmp3dloyVnZURzlqWVhScGIyNVFiMmx1ZEQ0S0lDQWdJQ0FnUEdkbGIweHZZMkYwYVc5dVVHeGhZMlUrUTJGc2FXWnZjbTVwWVN3Z1ZWTkJQQzluWlc5TWIyTmhkR2x2YmxCc1lXTmxQZ29nSUNBZ1BDOW5aVzlNYjJOaGRHbHZiajRLSUNBOEwyZGxiMHh2WTJGMGFXOXVjejRLUEM5eVpYTnZkWEpqWlQ0SyIsInVybCI6Imh0dHBzOi8vZGF0YXNoYXJlLnVjc2YuZWR1L3N0YXNoL2RhdGFzZXQvZG9pOjEwLjcyNzIvUTZHMTVYUzQiLCJjb250ZW50VXJsIjpudWxsLCJtZXRhZGF0YVZlcnNpb24iOjEsInNjaGVtYVZlcnNpb24iOiJodHRwOi8vZGF0YWNpdGUub3JnL3NjaGVtYS9rZXJuZWwtMyIsInNvdXJjZSI6ImZhYnJpY2EiLCJpc0FjdGl2ZSI6dHJ1ZSwic3RhdGUiOiJmaW5kYWJsZSIsInJlYXNvbiI6bnVsbCwiY3JlYXRlZCI6IjIwMTgtMTItMDdUMDk6NDg6MjAuMDAwWiIsInJlZ2lzdGVyZWQiOiIyMDE4LTEyLTA3VDA5OjQ4OjIwLjAwMFoiLCJ1cGRhdGVkIjoiMjAxOC0xMi0yOVQxMTo1MDozOS4wMDBaIn0sInJlbGF0aW9uc2hpcHMiOnsiY2xpZW50Ijp7ImRhdGEiOnsiaWQiOiJjZGwudWNzZmN0c2kiLCJ0eXBlIjoiY2xpZW50cyJ9fSwibWVkaWEiOnsiZGF0YSI6W119fX0sImluY2x1ZGVkIjpbeyJpZCI6ImNkbC51Y3NmY3RzaSIsInR5cGUiOiJjbGllbnRzIiwiYXR0cmlidXRlcyI6eyJuYW1lIjoiVUNTRiBDbGluaWNhbCAmIFRyYW5zbGF0aW9uYWwgU2NpZW5jZSBJbnN0aXR1dGUgKENUU0kpIiwic3ltYm9sIjoiQ0RMLlVDU0ZDVFNJIiwieWVhciI6MjAxMiwiY29udGFjdE5hbWUiOiJFWklEIFN1cHBvcnQgRGVzayIsImNvbnRhY3RFbWFpbCI6ImV6aWRAdWNvcC5lZHUiLCJkZXNjcmlwdGlvbiI6bnVsbCwiZG9tYWlucyI6IioiLCJ1cmwiOm51bGwsImNyZWF0ZWQiOiIyMDEyLTA3LTEwVDIwOjU5OjUzLjAwMFoiLCJ1cGRhdGVkIjoiMjAxOC0wOC0yNlQwMTozMDozMS4wMDBaIiwiaXNBY3RpdmUiOnRydWUsImhhc1Bhc3N3b3JkIjp0cnVlfSwicmVsYXRpb25zaGlwcyI6eyJwcm92aWRlciI6eyJkYXRhIjp7ImlkIjoiY2RsIiwidHlwZSI6InByb3ZpZGVycyJ9fSwicHJlZml4ZXMiOnsiZGF0YSI6W3siaWQiOiIxMC41MDcyIiwidHlwZSI6InByZWZpeGVzIn0seyJpZCI6IjEwLjcyNzIiLCJ0eXBlIjoicHJlZml4ZXMifV19fX1dfQ==
     http_version: 
-  recorded_at: Fri, 07 Dec 2018 17:59:13 GMT
-- request:
-    method: get
-    uri: https://search.test.datacite.org/api?fl=doi,url,xml,state,allocator_symbol,datacentre_symbol,media,minted,updated&q=doi:10.7272/q6g15xs4&wt=json
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.1.1; +https://github.com/datacite/maremma)
-      Accept:
-      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Fri, 07 Dec 2018 17:59:13 GMT
-      Content-Type:
-      - application/json;charset=UTF-8
-      Connection:
-      - keep-alive
-      Server:
-      - nginx/1.10.3 (Ubuntu)
-      Access-Control-Allow-Origin:
-      - "*"
-      Access-Control-Allow-Methods:
-      - GET, POST, PUT, DELETE, OPTIONS
-      Access-Control-Allow-Headers:
-      - DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range,Authorization
-      Access-Control-Expose-Headers:
-      - DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Content-Range,Range,Authorization
-    body:
-      encoding: ASCII-8BIT
-      string: '{"responseHeader":{"status":0,"QTime":0},"response":{"numFound":1,"start":0,"docs":[{"datacentre_symbol":"CDL.UCSFCTSI","url":"https://datashare.ucsf.edu/stash/dataset/doi:10.7272/Q6G15XS4","xml":"PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHJlc291cmNlIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zPSJodHRwOi8vZGF0YWNpdGUub3JnL3NjaGVtYS9rZXJuZWwtMyIgeHNpOnNjaGVtYUxvY2F0aW9uPSJodHRwOi8vZGF0YWNpdGUub3JnL3NjaGVtYS9rZXJuZWwtMyBodHRwOi8vc2NoZW1hLmRhdGFjaXRlLm9yZy9tZXRhL2tlcm5lbC0zL21ldGFkYXRhLnhzZCI+CiAgPGlkZW50aWZpZXIgaWRlbnRpZmllclR5cGU9IkRPSSI+MTAuNzI3Mi9RNkcxNVhTNDwvaWRlbnRpZmllcj4KICA8Y3JlYXRvcnM+CiAgICA8Y3JlYXRvcj4KICAgICAgPGNyZWF0b3JOYW1lPlJvZHJpZ3VleiwgUm9iZXJ0PC9jcmVhdG9yTmFtZT4KICAgICAgPGFmZmlsaWF0aW9uPlVDIFNhbiBGcmFuY2lzY288L2FmZmlsaWF0aW9uPgogICAgPC9jcmVhdG9yPgogICAgPGNyZWF0b3I+CiAgICAgIDxjcmVhdG9yTmFtZT5Nb3dlciwgV2lsbGlhbTwvY3JlYXRvck5hbWU+CiAgICAgIDxhZmZpbGlhdGlvbj5VQ0xBPC9hZmZpbGlhdGlvbj4KICAgIDwvY3JlYXRvcj4KICA8L2NyZWF0b3JzPgogIDx0aXRsZXM+CiAgICA8dGl0bGU+TkVYVVMgSGVhZCBDVDwvdGl0bGU+CiAgPC90aXRsZXM+CiAgPHB1Ymxpc2hlcj5VQyBTYW4gRnJhbmNpc2NvPC9wdWJsaXNoZXI+CiAgPHB1YmxpY2F0aW9uWWVhcj4yMDE3PC9wdWJsaWNhdGlvblllYXI+CiAgPGxhbmd1YWdlPmVuPC9sYW5ndWFnZT4KICA8cmVzb3VyY2VUeXBlIHJlc291cmNlVHlwZUdlbmVyYWw9IkRhdGFzZXQiLz4KICA8c2l6ZXM+CiAgICA8c2l6ZT4xNDk1MjA0IGJ5dGVzPC9zaXplPgogIDwvc2l6ZXM+CiAgPHZlcnNpb24+MTwvdmVyc2lvbj4KICA8cmlnaHRzTGlzdD4KICAgIDxyaWdodHMgcmlnaHRzVVJJPSJodHRwczovL2NyZWF0aXZlY29tbW9ucy5vcmcvbGljZW5zZXMvYnkvNC4wLyI+Q3JlYXRpdmUgQ29tbW9ucyBBdHRyaWJ1dGlvbiA0LjAgSW50ZXJuYXRpb25hbCAoQ0MgQlkgNC4wKTwvcmlnaHRzPgogIDwvcmlnaHRzTGlzdD4KICA8ZGVzY3JpcHRpb25zPgogICAgPGRlc2NyaXB0aW9uIGRlc2NyaXB0aW9uVHlwZT0iQWJzdHJhY3QiPgogICAgICBCYWNrZ3JvdW5kIENsaW5pY2lhbnMsIGFmcmFpZCBvZiBtaXNzaW5nIGludHJhY3JhbmlhbCBpbmp1cmllcywgbGliZXJhbGx5CiAgICAgIG9idGFpbiBjb21wdXRlZCB0b21vZ3JhcGhpYyAoQ1QpIGhlYWQgaW1hZ2luZyBpbiBibHVudCB0cmF1bWEgcGF0aWVudHMuCiAgICAgIFByaW9yIHdvcmsgc3VnZ2VzdHMgdGhhdCBjbGluaWNhbCBjcml0ZXJpYSAoTkVYVVMgSGVhZCBDVCBkZWNpc2lvbgogICAgICBpbnN0cnVtZW50KSBjYW4gcmVsaWFibHkgaWRlbnRpZnkgcGF0aWVudHMgd2l0aCBpbXBvcnRhbnQgaW5qdXJpZXMsIHdoaWxlCiAgICAgIGV4Y2x1ZGluZyBpbmp1cnksIGFuZCB0aGUgbmVlZCBmb3IgaW1hZ2luZyBpbiBtYW55IHBhdGllbnRzLiBNZXRob2RzIFdlCiAgICAgIGNvbmR1Y3RlZCBhIHByb3NwZWN0aXZlIG9ic2VydmF0aW9uYWwgc3R1ZHkgb2YgdGhlIE5FWFVTIEhlYWQgQ1QgZGVjaXNpb24KICAgICAgaW5zdHJ1bWVudCAoREkpIHRoYXQgcmVxdWlyZXMgcGF0aWVudHMgdG8gbWVldCBlaWdodCBjcml0ZXJpYSB0byBhY2hpZXZlCiAgICAgIOKAnGxvdy1yaXNr4oCdIGNsYXNzaWZpY2F0aW9uLiBXZSBleGFtaW5lZCB0aGUgaW5zdHJ1bWVudOKAmXMgcGVyZm9ybWFuY2UgaW4KICAgICAgaWRlbnRpZnlpbmcgcGF0aWVudHMgcmVxdWlyaW5nIG5ldXJvbG9naWNhbCBpbnRlcnZlbnRpb24gZnJvbSBhbW9uZyBhCiAgICAgIGNvaG9ydCBvZiAxMSw3NzAgYmx1bnQgaGVhZCBpbmp1cnkgcGF0aWVudHMuIFJlc3VsdHMgVGhlIE5FWFVTIEhlYWQgQ1QgREkKICAgICAgYXNzaWduZWQgaGlnaC1yaXNrIHN0YXR1cyB0byA0MjAgb2YgNDIwIHBhdGllbnRzIHJlcXVpcmluZyBuZXVyb2xvZ2ljYWwKICAgICAgaW50ZXJ2ZW50aW9uIChzZW5zaXRpdml0eSwgMTAwLjAlIFs5NSUgY29uZmlkZW5jZSBpbnRlcnZhbCBbQ0ldOiA5OS4xJSDigJMKICAgICAgMTAwLjAlXSkuIFRoZSBpbnN0cnVtZW50IGFzc2lnbmVkIGxvdy1yaXNrIHN0YXR1cyB0byAyLDgyMyBvZiAxMSwzNTAKICAgICAgcGF0aWVudHMgd2hvIGRpZCBub3QgcmVxdWlyZSBuZXVyb2xvZ2ljYWwgaW50ZXJ2ZW50aW9uIChzcGVjaWZpY2l0eSwgMjQuOSUKICAgICAgWzk1JSBDSTogMjQuMSUgLSAyNS43JV0pLiBOb25lIG9mIHRoZSAyLDgyMyBsb3ctcmlzayBwYXRpZW50cyByZXF1aXJlZAogICAgICBuZXVyb2xvZ2ljYWwgaW50ZXJ2ZW50aW9uIChOUFYsIDEwMC4wJSBbOTUlIENJOiA5OS45JSAtIDEwMC4wJV0pLiBUaGUgREkKICAgICAgYXNzaWduZWQgaGlnaC1yaXNrIHN0YXR1cyB0byA3NTkgb2YgNzY3IHBhdGllbnRzIHdpdGggc2lnbmlmaWNhbnQKICAgICAgaW50cmFjcmFuaWFsIGluanVyaWVzIChzZW5zaXRpdml0eSwgOTkuMCUgWzk1JSBDSTogOTguMCUgLSA5OS42JV0pLiBUaGUKICAgICAgaW5zdHJ1bWVudCBhc3NpZ25lZCBsb3ctcmlzayBzdGF0dXMgdG8gMiw4MTUgb2YgMTEsMDAzIHBhdGllbnRzIHdobyBkaWQKICAgICAgbm90IGhhdmUgc2lnbmlmaWNhbnQgaW5qdXJpZXMgKHNwZWNpZmljaXR5LCAyNS42JSBbOTUlIENJOiAyNC44JSAtCiAgICAgIDI2LjQlXSkuIFNpZ25pZmljYW50IGluanVyaWVzIHdlcmUgYWJzZW50IGluIDIsODE1IG9mIHRoZSAyLDgyMyBwYXRpZW50cwogICAgICBhc3NpZ25lZCBsb3ctcmlzayBzdGF0dXMgKE5QViwgOTkuNyUgWzk1JSBDSTogOTkuNCUgLSA5OS45JV0pLiBDb25jbHVzaW9ucwogICAgICBUaGUgTkVYVVMgSGVhZCBDVCBESSByZWxpYWJseSBpZGVudGlmaWVzIGJsdW50IHRyYXVtYSBwYXRpZW50cyB3aG8gcmVxdWlyZQogICAgICBoZWFkIENUIGltYWdpbmcsIGFuZCBjb3VsZCBzaWduaWZpY2FudGx5IHJlZHVjaW5nIHRoZSB1c2Ugb2YgQ1QgaW1hZ2luZy4KICAgIDwvZGVzY3JpcHRpb24+CiAgICA8ZGVzY3JpcHRpb24gZGVzY3JpcHRpb25UeXBlPSJNZXRob2RzIj5Qcm9zcGVjdGl2ZSBtdWx0aWNlbnRlcjwvZGVzY3JpcHRpb24+CiAgPC9kZXNjcmlwdGlvbnM+CiAgPGdlb0xvY2F0aW9ucz4KICAgIDxnZW9Mb2NhdGlvbj4KICAgICAgPGdlb0xvY2F0aW9uUG9pbnQ+MzcuMjUwMjIgLTExOS43NTEyNjwvZ2VvTG9jYXRpb25Qb2ludD4KICAgICAgPGdlb0xvY2F0aW9uUGxhY2U+Q2FsaWZvcm5pYSwgVVNBPC9nZW9Mb2NhdGlvblBsYWNlPgogICAgPC9nZW9Mb2NhdGlvbj4KICA8L2dlb0xvY2F0aW9ucz4KPC9yZXNvdXJjZT4=","allocator_symbol":"CDL","minted":"2018-12-07T09:48:20Z","state":"findable","updated":"2018-12-07T09:48:20Z","doi":"10.7272/Q6G15XS4"}]}}
-
-'
-    http_version: 
-  recorded_at: Fri, 07 Dec 2018 17:59:13 GMT
+  recorded_at: Sat, 29 Dec 2018 11:59:01 GMT
 recorded_with: VCR 3.0.3

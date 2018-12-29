@@ -915,6 +915,7 @@ describe "dois", type: :request do
       end
 
       it 'returns status code 201' do
+        puts response.body
         expect(response).to have_http_status(201)
       end
 

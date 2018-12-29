@@ -245,7 +245,6 @@ describe Doi, vcr: true do
     it "from datacite url" do
       string = "https://doi.org/10.7272/q6g15xs4"
       meta = subject.parse_xml(string)
-
       expect(meta["from"]).to eq("datacite")
       expect(meta["doi"]).to eq("10.7272/q6g15xs4")
       expect(meta["creators"].length).to eq(2)
