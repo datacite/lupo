@@ -3,6 +3,6 @@ if ENV["BUGSNAG_KEY"]
     config.api_key = ENV["BUGSNAG_KEY"]
     config.notify_release_stages = %w(stage production)
     config.app_version = Lupo::Application::VERSION
-    configuration.auto_capture_sessions = true
+    config.auto_capture_sessions = true
   end
 end
