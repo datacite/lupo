@@ -8,7 +8,7 @@ class DoiSerializer
   attributes :prefix, :suffix, if: Proc.new { |object, params| params && params[:detail] }
 
   belongs_to :client, record_type: :clients
-  has_many :media, if: Proc.new { |doi| doi.media_ids }
+  has_many :media, if: Proc.new { |object, params| params && params[:detail] }
 
   attribute :xml, if: Proc.new { |object, params| params && params[:detail] } do |object|
     object.xml_encoded

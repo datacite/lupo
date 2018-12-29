@@ -16,6 +16,17 @@ class Media < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save :set_defaults
 
+  def as_indexed_json(options={})
+    {
+      "id" => uid,
+      "uid" => uid,
+      "version" => version,
+      "url" => url,
+      "media_type" => media_type,
+      "created" => created,
+      "updated" => updated }
+  end
+
   def uid
     Base32::URL.encode(id, split: 4, length: 16)
   end

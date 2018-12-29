@@ -530,7 +530,7 @@ class Doi < ActiveRecord::Base
   end
 
   def media_ids
-    media.pluck(:id).map { |m| Base32::URL.encode(m, split: 4, length: 16) }
+    media.pluck(:id).map { |m| Base32::URL.encode(m, split: 4, length: 16) }.compact
   end
 
   def xml_encoded
