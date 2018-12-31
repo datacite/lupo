@@ -120,6 +120,26 @@ class ProvidersController < ApplicationController
     end
   end
 
+  def totals
+    page ={size: 25, number: 1}
+    logger = Logger.new(STDOUT)
+
+    ttl = Provider.all.map do |provider|
+      response = Doi.query("", provider_id: provider.symbol.downcase, page: page)
+      logger.info response.results.total
+      total = response.results.total
+      states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
+      temporal ={}
+      temporal[:last_thirty] = total > 0 ? facet_by_key(response.response.aggregations.last_thirty_days.buckets) : nil
+      temporal[:last_year] = total > 0 ? facet_by_key(response.response.aggregations.last_year.buckets) : nil
+      temporal[:last_two_year] = total > 0 ? facet_by_key(response.response.aggregations.last_two_year.buckets) : nil
+      id = provider.symbol
+      {id: id, title: id, count: total, states: states, temporal: temporal}
+    end
+    render json: ttl, status: :ok
+  end
+
+
   # don't delete, but set deleted_at timestamp
   # a provider with clients or prefixes can't be deleted
   def destroy

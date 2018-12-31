@@ -127,6 +127,22 @@ class ClientsController < ApplicationController
     end
   end
 
+  def totals
+    page ={size: 25, number: 1}
+    ttl = Client.all.map do |client|
+      response = Doi.query("", client_id: client.symbol.downcase, page: page)
+      total = response.results.total
+      states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
+      temporal ={}
+      temporal[:last_thirty] = total > 0 ? facet_by_key(response.response.aggregations.last_thirty_days.buckets) : nil
+      temporal[:last_year] = total > 0 ? facet_by_key(response.response.aggregations.last_year.buckets) : nil
+      temporal[:last_two_year] = total > 0 ? facet_by_key(response.response.aggregations.last_two_year.buckets) : nil
+      id = client.symbol
+      {id: id, title: id, count: total, states: states, temporal: temporal}
+    end
+    render json: ttl, status: :ok
+  end
+
   protected
 
   def set_include
