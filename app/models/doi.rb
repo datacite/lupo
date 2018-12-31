@@ -316,6 +316,9 @@ class Doi < ActiveRecord::Base
       link_checks_citation_doi: { value_count: { field: "landing_page.citationDoi" } },
       links_checked: { value_count: { field: "landing_page.checked" } },
       sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
+      last_thirty_days: { date_range: { field: 'created', time_zone: "CET", ranges: {from: "now-30d/d", to: "now/d"} } },
+      last_year: { date_range: { field: 'created', time_zone: "CET", ranges: {from: "now-1y/y", to: "now/d"} } },
+      last_two_year: { date_range: { field: 'created', time_zone: "CET", ranges: {from: "now-2y/y", to: "now/d"} } },
     }
   end
 
