@@ -39,6 +39,8 @@ Rails.application.routes.draw do
   get 'dois/random', :to => 'dois#random'
   get 'dois/:id/get-url', :to => 'dois#get_url', constraints: { :id => /.+/ }
   get 'dois/get-dois', :to => 'dois#get_dois'
+  get 'providers/totals', :to => 'providers#totals'
+  get 'clients/totals', :to => 'clients#totals'
 
   # manage prefixes, keep database in sync for changes via MDS
   post 'client-prefixes/set-created', :to => 'client_prefixes#set_created'
