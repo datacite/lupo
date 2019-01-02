@@ -96,7 +96,7 @@ class DoisController < ApplicationController
             end
 
       page = params[:page] || {}
-      
+
       if page[:size].present?
         page[:size] = [page[:size].to_i, 1000].min
         max_number = page[:size] > 0 ? 10000/page[:size] : 1
@@ -131,7 +131,8 @@ class DoisController < ApplicationController
                             link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
                             source: params[:source],
                             page: page,
-                            sort: sort)
+                            sort: sort,
+                            random: params[:random])
       end
 
       total = response.results.total
@@ -177,7 +178,7 @@ class DoisController < ApplicationController
             "linkChecksDcIdentifier" => link_checks_dc_identifier,
             "linkChecksCitationDoi" => link_checks_citation_doi
           }.compact
-    
+
           options[:links] = {
             self: request.original_url,
             next: @dois.blank? ? nil : request.base_url + "/dois?" + {
@@ -193,7 +194,7 @@ class DoisController < ApplicationController
           options[:params] = {
             :current_ability => current_ability,
           }
-    
+
           render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
         end
         format.citation do
@@ -217,7 +218,7 @@ class DoisController < ApplicationController
           current_ability: current_ability,
           detail: true
         }
-    
+
         render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
       end
       format.citation do
@@ -290,7 +291,7 @@ class DoisController < ApplicationController
 
       if params.dig(:data, :attributes, :mode) == "transfer"
         # only update client_id
-        
+
         authorize! :transfer, @doi
         @doi.assign_attributes(safe_params.slice(:client_id))
       else

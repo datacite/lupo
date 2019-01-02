@@ -141,7 +141,7 @@ module Indexable
         must << { term: { region: options[:region].upcase }} if options[:region].present?
         must << { term: { organization_type: options[:organization_type] }} if options[:organization_type].present?
         must << { term: { focus_area: options[:focus_area] }} if options[:focus_area].present?
-        
+
         if options[:all_members]
           must << { terms: { role_name: %w(ROLE_ALLOCATOR ROLE_MEMBER) }}
         else
@@ -157,17 +157,44 @@ module Indexable
         must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
       end
 
+      # ES query can be optionally defined in different ways
+      # So here we build it differently based upon options
+      # This is mostly useful when trying to wrap it in a function_score query
+      es_query = {}
+
+      # The main bool query with filters
+      bool_query = {
+        must: must,
+        must_not: must_not
+      }
+
+      # Function score is used to provide varying score to return different values
+      # We use the bool query above as our principle query
+      # Then apply additional function scoring as appropriate
+      # Note this can be performance intensive.
+      function_score = {
+        query: {
+          bool: bool_query
+        },
+        random_score: {
+          "seed": Rails.env.test? ? "random_1234" : "random_#{rand(1...100000)}"
+        }
+      }
+
+      if options[:random].present?
+        es_query['function_score'] = function_score
+        # Don't do any sorting for random results
+        sort = nil
+      else
+        es_query['bool'] = bool_query
+      end
+
       __elasticsearch__.search({
         size: options.dig(:page, :size),
         from: from,
         search_after: search_after,
         sort: sort,
-        query: {
-          bool: {
-            must: must,
-            must_not: must_not
-          }
-        },
+        query: es_query,
         aggregations: query_aggregations
       }.compact)
     end
