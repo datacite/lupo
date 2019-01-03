@@ -29,44 +29,52 @@ class MembersController < ApplicationController
       response = Provider.query(params[:query], all_members: true, year: params[:year], region: params[:region], organization_type: params[:organization_type], focus_area: params[:focus_area], fields: params[:fields], page: page, sort: sort)
     end
 
-    total = response.results.total
-    total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
-    years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
-    regions = total > 0 ? facet_by_region(response.response.aggregations.regions.buckets) : nil
-    organization_types = total > 0 ? facet_by_key(response.response.aggregations.organization_types.buckets) : nil
-    focus_areas = total > 0 ? facet_by_key(response.response.aggregations.focus_areas.buckets) : nil
+    begin
+      total = response.results.total
+      total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
+      years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
+      regions = total > 0 ? facet_by_region(response.response.aggregations.regions.buckets) : nil
+      organization_types = total > 0 ? facet_by_key(response.response.aggregations.organization_types.buckets) : nil
+      focus_areas = total > 0 ? facet_by_key(response.response.aggregations.focus_areas.buckets) : nil
 
-    @members = response.results.results
+      @members = response.results.results
 
-    options = {}
-    options[:meta] = {
-      total: total,
-      "total-pages" => total_pages,
-      page: page[:number],
-      years: years,
-      regions: regions,
-      "organization-types" => organization_types,
-      "focus-areas" => focus_areas
-    }.compact
-
-    options[:links] = {
-      self: request.original_url,
-      next: @members.blank? ? nil : request.base_url + "/members?" + {
-        query: params[:query],
-        year: params[:year],
-        region: params[:region],
-        "organization-type" => params[:organization_type],
-        "focus-area" => params[:focus_area],
-        fields: params[:fields],
-        "page[number]" => params.dig(:page, :number),
-        "page[size]" => params.dig(:page, :size),
-        sort: sort }.compact.to_query
+      options = {}
+      options[:meta] = {
+        total: total,
+        "total-pages" => total_pages,
+        page: page[:number],
+        years: years,
+        regions: regions,
+        "organization-types" => organization_types,
+        "focus-areas" => focus_areas
       }.compact
-    options[:include] = @include
-    options[:is_collection] = true
-    options[:links] = nil
 
-    render json: MemberSerializer.new(@members, options).serialized_json, status: :ok
+      options[:links] = {
+        self: request.original_url,
+        next: @members.blank? ? nil : request.base_url + "/members?" + {
+          query: params[:query],
+          year: params[:year],
+          region: params[:region],
+          "organization-type" => params[:organization_type],
+          "focus-area" => params[:focus_area],
+          fields: params[:fields],
+          "page[number]" => params.dig(:page, :number),
+          "page[size]" => params.dig(:page, :size),
+          sort: sort }.compact.to_query
+        }.compact
+      options[:include] = @include
+      options[:is_collection] = true
+      options[:links] = nil
+
+      render json: MemberSerializer.new(@members, options).serialized_json, status: :ok
+    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
+      Bugsnag.notify(exception)
+
+      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+
+      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+    end
   end
 
   def show

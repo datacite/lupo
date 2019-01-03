@@ -34,40 +34,48 @@ class ClientsController < ApplicationController
       response = Client.query(params[:query], year: params[:year], provider_id: params[:provider_id], software: params[:software], page: page, sort: sort)
     end
 
-    total = response.results.total
-    total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
-    years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
-    providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
-    software = total > 0 ? facet_by_software(response.response.aggregations.software.buckets) : nil
+    begin
+      total = response.results.total
+      total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
+      years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
+      providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+      software = total > 0 ? facet_by_software(response.response.aggregations.software.buckets) : nil
 
-    @clients = response.results.results
+      @clients = response.results.results
 
-    options = {}
-    options[:meta] = {
-      total: total,
-      "totalPages" => total_pages,
-      page: page[:number],
-      years: years,
-      providers: providers,
-      software: software
-    }.compact
-
-    options[:links] = {
-      self: request.original_url,
-      next: @clients.blank? ? nil : request.base_url + "/clients?" + {
-        query: params[:query],
-        "provider-id" => params[:provider_id],
-        software: params[:software],
-        year: params[:year],
-        fields: params[:fields],
-        "page[number]" => page[:number] + 1,
-        "page[size]" => page[:size],
-        sort: params[:sort] }.compact.to_query
+      options = {}
+      options[:meta] = {
+        total: total,
+        "totalPages" => total_pages,
+        page: page[:number],
+        years: years,
+        providers: providers,
+        software: software
       }.compact
-    options[:include] = @include
-    options[:is_collection] = true
 
-    render json: ClientSerializer.new(@clients, options).serialized_json, status: :ok
+      options[:links] = {
+        self: request.original_url,
+        next: @clients.blank? ? nil : request.base_url + "/clients?" + {
+          query: params[:query],
+          "provider-id" => params[:provider_id],
+          software: params[:software],
+          year: params[:year],
+          fields: params[:fields],
+          "page[number]" => page[:number] + 1,
+          "page[size]" => page[:size],
+          sort: params[:sort] }.compact.to_query
+        }.compact
+      options[:include] = @include
+      options[:is_collection] = true
+
+      render json: ClientSerializer.new(@clients, options).serialized_json, status: :ok
+    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
+      Bugsnag.notify(exception)
+
+      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+
+      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+    end
   end
 
   def show

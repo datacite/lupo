@@ -134,73 +134,81 @@ class DoisController < ApplicationController
                             sort: sort)
       end
 
-      total = response.results.total
-      total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
+      begin
+        total = response.results.total
+        total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
 
-      states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
-      resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
-      created = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
-      registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
-      providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
-      clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
-      prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
-      schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
-      sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
-      link_checks_status = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_status.buckets) : nil
-      links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_has_schema_org.buckets) : nil
-      link_checks_schema_org_id = total > 0 ? response.response.aggregations.link_checks_schema_org_id.value : nil
-      link_checks_dc_identifier = total > 0 ? response.response.aggregations.link_checks_dc_identifier.value : nil
-      link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
-      links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
+        states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
+        resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
+        created = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
+        registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
+        providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+        clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
+        prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
+        schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
+        sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
+        link_checks_status = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_status.buckets) : nil
+        links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_has_schema_org.buckets) : nil
+        link_checks_schema_org_id = total > 0 ? response.response.aggregations.link_checks_schema_org_id.value : nil
+        link_checks_dc_identifier = total > 0 ? response.response.aggregations.link_checks_dc_identifier.value : nil
+        link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
+        links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
 
-      respond_to do |format|
-        format.json do
-          @dois = response.results.results
-          options = {}
-          options[:meta] = {
-            total: total,
-            "totalPages" => total_pages,
-            page: page[:number],
-            states: states,
-            "resourceTypes" => resource_types,
-            created: created,
-            registered: registered,
-            providers: providers,
-            clients: clients,
-            prefixes: prefixes,
-            "schemaVersions" => schema_versions,
-            sources: sources,
-            "linkChecksStatus" => link_checks_status,
-            "linksChecked" => links_checked,
-            "linksWithSchemaOrg" => links_with_schema_org,
-            "linkChecksSchemaOrgId" => link_checks_schema_org_id,
-            "linkChecksDcIdentifier" => link_checks_dc_identifier,
-            "linkChecksCitationDoi" => link_checks_citation_doi
-          }.compact
-    
-          options[:links] = {
-            self: request.original_url,
-            next: @dois.blank? ? nil : request.base_url + "/dois?" + {
-              query: params[:query],
-              "provider-id" => params[:provider_id],
-              "client-id" => params[:client_id],
-              fields: params[:fields],
-              "page[cursor]" => Array.wrap(@dois.last[:sort]).first,
-              "page[size]" => params.dig(:page, :size) }.compact.to_query
+        respond_to do |format|
+          format.json do
+            @dois = response.results.results
+            options = {}
+            options[:meta] = {
+              total: total,
+              "totalPages" => total_pages,
+              page: page[:number],
+              states: states,
+              "resourceTypes" => resource_types,
+              created: created,
+              registered: registered,
+              providers: providers,
+              clients: clients,
+              prefixes: prefixes,
+              "schemaVersions" => schema_versions,
+              sources: sources,
+              "linkChecksStatus" => link_checks_status,
+              "linksChecked" => links_checked,
+              "linksWithSchemaOrg" => links_with_schema_org,
+              "linkChecksSchemaOrgId" => link_checks_schema_org_id,
+              "linkChecksDcIdentifier" => link_checks_dc_identifier,
+              "linkChecksCitationDoi" => link_checks_citation_doi
             }.compact
-          options[:include] = @include
-          options[:is_collection] = true
-          options[:params] = {
-            :current_ability => current_ability,
-          }
-    
-          render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
+      
+            options[:links] = {
+              self: request.original_url,
+              next: @dois.blank? ? nil : request.base_url + "/dois?" + {
+                query: params[:query],
+                "provider-id" => params[:provider_id],
+                "client-id" => params[:client_id],
+                fields: params[:fields],
+                "page[cursor]" => Array.wrap(@dois.last[:sort]).first,
+                "page[size]" => params.dig(:page, :size) }.compact.to_query
+              }.compact
+            options[:include] = @include
+            options[:is_collection] = true
+            options[:params] = {
+              :current_ability => current_ability,
+            }
+      
+            render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
+          end
+          format.citation do
+            # fetch formatted citations
+            render citation: response.records.to_a, style: params[:style] || "apa", locale: params[:locale] || "en-US"
+          end
+          format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => response.records.to_a }
         end
-        format.citation do
-          # fetch formatted citations
-          render citation: response.records.to_a, style: params[:style] || "apa", locale: params[:locale] || "en-US"
-        end
-        format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => response.records.to_a }
+      rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
+        Bugsnag.notify(exception)
+
+        message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+  
+        render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
       end
     end
   end

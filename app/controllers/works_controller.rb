@@ -47,42 +47,50 @@ class WorksController < ApplicationController
                           sort: sort)
     end
 
-    total = response.results.total
-    total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
+    begin
+      total = response.results.total
+      total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
 
-    resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
-    registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
-    providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
-    clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
+      resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
+      registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
+      providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+      clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
 
-    @dois = response.results.results
+      @dois = response.results.results
 
-    options = {}
-    options[:meta] = {
-      "resource-types" => resource_types,
-      registered: registered,
-      "data-centers" => clients,
-      total: total,
-      "total-pages" => total_pages,
-      page: page[:number]
-    }.compact
-
-    options[:links] = {
-      self: request.original_url,
-      next: @dois.blank? ? nil : request.base_url + "/dois?" + {
-        query: params[:query],
-        "member-id" => params[:provider_id],
-        "data-center-id" => params[:client_id],
-        "page[size]" => params.dig(:page, :size) }.compact.to_query
+      options = {}
+      options[:meta] = {
+        "resource-types" => resource_types,
+        registered: registered,
+        "data-centers" => clients,
+        total: total,
+        "total-pages" => total_pages,
+        page: page[:number]
       }.compact
-    options[:include] = @include
-    options[:is_collection] = true
-    options[:links] = nil
-    options[:params] = {
-      :current_ability => current_ability,
-    }
 
-    render json: WorkSerializer.new(@dois, options).serialized_json, status: :ok
+      options[:links] = {
+        self: request.original_url,
+        next: @dois.blank? ? nil : request.base_url + "/dois?" + {
+          query: params[:query],
+          "member-id" => params[:provider_id],
+          "data-center-id" => params[:client_id],
+          "page[size]" => params.dig(:page, :size) }.compact.to_query
+        }.compact
+      options[:include] = @include
+      options[:is_collection] = true
+      options[:links] = nil
+      options[:params] = {
+        :current_ability => current_ability,
+      }
+
+      render json: WorkSerializer.new(@dois, options).serialized_json, status: :ok
+    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
+      Bugsnag.notify(exception)
+
+      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+
+      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+    end
   end
 
   def show
