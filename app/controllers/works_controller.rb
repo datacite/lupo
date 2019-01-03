@@ -28,6 +28,14 @@ class WorksController < ApplicationController
     end
     page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
 
+    sample_group_field = case params[:sample_group]
+                          when "client" then "client_id"
+                          when "data-center" then "client_id"
+                          when "provider" then "provider_id"
+                          when "resource-type" then "types.resourceTypeGeneral"
+                          else nil
+                         end
+
     if params[:id].present?
       response = Doi.find_by_id(params[:id])
     elsif params[:ids].present?
@@ -43,8 +51,11 @@ class WorksController < ApplicationController
                           person_id: params[:person_id],
                           resource_type_id: params[:resource_type_id],
                           schema_version: params[:schema_version],
+                          sample_group: sample_group_field,
+                          sample_size: params[:sample],
                           page: page,
-                          sort: sort)
+                          sort: sort,
+                          random: params[:sample].present? ? true : false)
     end
 
     total = response.results.total
@@ -55,7 +66,22 @@ class WorksController < ApplicationController
     providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
     clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
 
-    @dois = response.results.results
+    # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
+    if sample_group_field.present?
+      sample_dois = []
+      response.response.aggregations.samples.buckets.each do |bucket|
+        bucket.samples_hits.hits.hits.each do |hit|
+          sample_dois << hit._source
+        end
+      end
+    end
+
+    # Results to return are either our sample group dois or the regular hit results
+    if sample_dois.any?
+      @dois = sample_dois
+    else
+      @dois = response.results.results
+    end
 
     options = {}
     options[:meta] = {
@@ -91,9 +117,9 @@ class WorksController < ApplicationController
     options = {}
     options[:include] = @include
     options[:is_collection] = false
-    options[:params] = { 
+    options[:params] = {
       current_ability: current_ability,
-      detail: true 
+      detail: true
     }
 
     render json: WorkSerializer.new(@doi, options).serialized_json, status: :ok
