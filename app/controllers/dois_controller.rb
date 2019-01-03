@@ -121,6 +121,7 @@ class DoisController < ApplicationController
                             person_id: params[:person_id],
                             resource_type_id: params[:resource_type_id],
                             schema_version: params[:schema_version],
+                            subject: params[:subject],
                             link_check_status: params[:link_check_status],
                             link_check_has_schema_org: params[:link_check_has_schema_org],
                             link_check_body_has_pid: params[:link_check_body_has_pid],

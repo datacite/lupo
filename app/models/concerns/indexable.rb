@@ -124,6 +124,7 @@ module Indexable
       must << { term: { "author.id" => "https://orcid.org/#{options[:person_id]}" }} if options[:person_id].present?
       must << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
       must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
+      must << { terms: { "subjects.subject": options[:subject].split(",") }} if options[:subject].present?
       must << { term: { source: options[:source] }} if options[:source].present?
       must << { term: { "landing_page.status": options[:link_check_status] }} if options[:link_check_status].present?
       must << { exists: { field: "landing_page.checked" }} if options[:link_checked].present?
