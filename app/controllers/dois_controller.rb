@@ -138,7 +138,7 @@ class DoisController < ApplicationController
                             link_check_found_citation_doi: params[:link_check_found_citation_doi],
                             link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
                             sample_group: sample_group_field,
-                            sample_size: params[:sample_size],
+                            sample_size: params[:sample],
                             source: params[:source],
                             page: page,
                             sort: sort,
