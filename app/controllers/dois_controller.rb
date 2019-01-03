@@ -106,6 +106,14 @@ class DoisController < ApplicationController
       end
       page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
 
+      sample_group_field = case params[:sample_group]
+                              when "client" then "client_id"
+                              when "data-center" then "client_id"
+                              when "provider" then "provider_id"
+                              when "resource-type" then "types.resourceTypeGeneral"
+                              else nil
+                           end
+
       if params[:id].present?
         response = Doi.find_by_id(params[:id])
       elsif params[:ids].present?
@@ -129,6 +137,8 @@ class DoisController < ApplicationController
                             link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
                             link_check_found_citation_doi: params[:link_check_found_citation_doi],
                             link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
+                            sample_group: sample_group_field,
+                            sample_size: params[:sample_size],
                             source: params[:source],
                             page: page,
                             sort: sort,
@@ -154,9 +164,26 @@ class DoisController < ApplicationController
       link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
       links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
 
+      # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
+      if sample_group_field.present?
+        sample_dois = []
+        response.response.aggregations.samples.buckets.each do |bucket|
+          bucket.samples_hits.hits.hits.each do |hit|
+            sample_dois << hit._source
+          end
+        end
+      end
+
+      # Results to return are either our sample group dois or the regular hit results
+      if sample_dois.any?
+        results = sample_dois
+      else
+        results = response.results.results
+      end
+
       respond_to do |format|
         format.json do
-          @dois = response.results.results
+          @dois = results
           options = {}
           options[:meta] = {
             total: total,

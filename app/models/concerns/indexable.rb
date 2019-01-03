@@ -100,6 +100,8 @@ module Indexable
     end
 
     def query(query, options={})
+      aggregations = query_aggregations
+
       # enable cursor-based pagination for DOIs
       if self.name == "Doi" && options.dig(:page, :cursor).present?
         from = 0
@@ -189,13 +191,30 @@ module Indexable
         es_query['bool'] = bool_query
       end
 
+      # Sample grouping is optional included aggregation
+      if options[:sample_group].present?
+        aggregations[:samples] = {
+          terms: {
+            field: options[:sample_group],
+            size: 10000
+          },
+          aggs: {
+            "samples_hits": {
+              top_hits: {
+                size: options[:sample_size].present? ? options[:sample_size] : 1
+              }
+            }
+          }
+        }
+      end
+
       __elasticsearch__.search({
         size: options.dig(:page, :size),
         from: from,
         search_after: search_after,
         sort: sort,
         query: es_query,
-        aggregations: query_aggregations
+        aggregations: aggregations
       }.compact)
     end
 
