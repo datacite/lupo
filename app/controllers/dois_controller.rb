@@ -175,7 +175,7 @@ class DoisController < ApplicationController
       end
 
       # Results to return are either our sample group dois or the regular hit results
-      if sample_dois.any?
+      if sample_dois
         results = sample_dois
       else
         results = response.results.results

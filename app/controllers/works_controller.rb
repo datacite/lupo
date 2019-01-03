@@ -77,7 +77,7 @@ class WorksController < ApplicationController
     end
 
     # Results to return are either our sample group dois or the regular hit results
-    if sample_dois.any?
+    if sample_dois
       @dois = sample_dois
     else
       @dois = response.results.results
