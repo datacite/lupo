@@ -120,7 +120,6 @@ class DoisController < ApplicationController
                             prefix: params[:prefix],
                             person_id: params[:person_id],
                             resource_type_id: params[:resource_type_id],
-                            query_fields: params[:query_fields],
                             schema_version: params[:schema_version],
                             link_check_status: params[:link_check_status],
                             link_check_has_schema_org: params[:link_check_has_schema_org],

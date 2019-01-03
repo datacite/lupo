@@ -30,7 +30,7 @@ class ProvidersController < ApplicationController
     elsif params[:ids].present?
       response = Provider.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      response = Provider.query(params[:query], year: params[:year], region: params[:region], organization_type: params[:organization_type], focus_area: params[:focus_area], query_fields: params[:query_fields], page: page, sort: sort)
+      response = Provider.query(params[:query], year: params[:year], region: params[:region], organization_type: params[:organization_type], focus_area: params[:focus_area], page: page, sort: sort)
     end
 
     total = response.results.total
