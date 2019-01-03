@@ -411,6 +411,11 @@ class DoisController < ApplicationController
     render json: { message: "Test DOIs deleted." }.to_json, status: :ok
   end
 
+  # legacy method
+  def status
+    render json: { message: "Not Implemented." }.to_json, status: :not_implemented
+  end
+
   protected
 
   def set_doi
