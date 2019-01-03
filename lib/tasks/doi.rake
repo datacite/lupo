@@ -74,6 +74,14 @@ namespace :doi do
     puts "DOIs created on #{from_date} indexed."
   end
 
+  desc 'Index DOIs by ID'
+  task :index_by_ids => :environment do
+    from_id = (ENV['FROM_ID'] || 1).to_i
+    until_id = (ENV['UNTIL_ID'] || from_id + 249).to_i
+
+    Doi.index_by_ids(from_id: from_id, until_id: until_id)
+  end
+
   desc 'Set minted'
   task :set_minted => :environment do
     from_date = ENV['FROM_DATE'] || Time.zone.now - 1.day
