@@ -523,12 +523,12 @@ class Doi < ActiveRecord::Base
 
   def self.index_by_ids(options={})
     from_id = (options[:from_id] || 1).to_i
-    until_id = (options[:until_id] || from_id + 249).to_i
+    until_id = (options[:until_id] || from_id + 499).to_i
 
     # get every id between from_id and end_id
-    (from_id..until_id).step(250).each do |id|
+    (from_id..until_id).step(500).each do |id|
       DoiIndexByIdJob.perform_later(id: id)
-      puts "Queued indexing for DOIs with IDs #{from_id} - #{(until_id)}."
+      puts "Queued indexing for DOIs with IDs starting with #{id}."
     end
   end
 
@@ -541,7 +541,7 @@ class Doi < ActiveRecord::Base
 
     logger = Logger.new(STDOUT)
 
-    Doi.where(id: id..(id + 249)).find_in_batches(batch_size: 250) do |dois|
+    Doi.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |dois|
       response = Doi.__elasticsearch__.client.bulk \
         index:   Doi.index_name,
         type:    Doi.document_type,
@@ -557,21 +557,21 @@ class Doi < ActiveRecord::Base
     end
 
     if errors > 1
-      logger.error "[Elasticsearch] #{errors} errors indexing #{count} DOIs with IDs #{id} - #{(id + 249)}."
+      logger.error "[Elasticsearch] #{errors} errors indexing #{count} DOIs with IDs #{id} - #{(id + 499)}."
     elsif count > 1
-      logger.info "[Elasticsearch] Indexed #{count} DOIs with IDs #{id} - #{(id + 249)}."
+      logger.info "[Elasticsearch] Indexed #{count} DOIs with IDs #{id} - #{(id + 499)}."
     end
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    logger.info "[Elasticsearch] Error #{error.message} indexing DOIs with IDs #{id} - #{(id + 249)}."
+    logger.info "[Elasticsearch] Error #{error.message} indexing DOIs with IDs #{id} - #{(id + 499)}."
 
     count = 0
 
-    Doi.where(id: id..(id + 249)).find_each do |doi|
+    Doi.where(id: id..(id + 499)).find_each do |doi|
       IndexJob.perform_later(doi)
       count += 1
     end
 
-    logger.info "[Elasticsearch] Indexed #{count} DOIs with IDs #{id} - #{(id + 249)}."
+    logger.info "[Elasticsearch] Indexed #{count} DOIs with IDs #{id} - #{(id + 499)}."
   end
 
   def uid
