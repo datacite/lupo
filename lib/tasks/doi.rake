@@ -60,10 +60,10 @@ namespace :doi do
       until_date = ENV['UNTIL_DATE'] || Date.current.strftime("%F")
     end
 
-    from_id = Doi.where(created: from_date).first
-    until_id = Doi.where(created: until_date).last
+    index_time = ENV['INDEX_TIME'] || Time.zone.now.utc.iso8601
+    client_id = ENV['CLIENT_ID']
 
-    Doi.index_by_ids(from_id: from_id, until_id: until_id)
+    Doi.index(from_date: from_date, until_date: until_date, index_time: index_time, client_id: client_id)
   end
 
   desc 'Index DOIs per day'

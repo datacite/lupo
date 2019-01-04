@@ -114,6 +114,9 @@ module Indexable
       # currently not used
       # fields = options[:query_fields].presence || query_fields
 
+      # escape forward slashes in query
+      query = query.gsub("/", '\/') if query.present?
+
       must = []
       must << { query_string: { query: query }} if query.present?
       must << { term: { aasm_state: options[:state] }} if options[:state].present?
