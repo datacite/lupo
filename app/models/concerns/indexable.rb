@@ -114,8 +114,18 @@ module Indexable
       # currently not used
       # fields = options[:query_fields].presence || query_fields
 
+      # make sure field name uses underscore
       # escape forward slashes in query
-      query = query.gsub("/", '\/') if query.present?
+      if query.present?
+        query = query.gsub(/publicationYear/, "publication_year")
+        query = query.gsub(/relatedIdentifiers/, "related_identifiers")
+        query = query.gsub(/rightsList/, "rights_list")
+        query = query.gsub(/fundingReferences/, "funding_references")
+        query = query.gsub(/geoLocations/, "geo_locations")
+        query = query.gsub(/landingPage/, "landing_page")
+        query = query.gsub(/contentUrl/, "content_url")
+        query = query.gsub("/", '\/')
+      end
 
       must = []
       must << { query_string: { query: query }} if query.present?
