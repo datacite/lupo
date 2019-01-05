@@ -3,6 +3,7 @@ class ProviderSerializer
   set_key_transform :camel_lower
   set_type :providers
   set_id :uid
+  cache_options enabled: true, cache_length: 24.hours
 
   attributes :name, :symbol, :website, :contact_name, :contact_email, :phone, :description, :region, :country, :logo_url, :organization_type, :focus_area, :is_active, :has_password, :joined, :created, :updated
 

@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   get '/dois/application/x-research-info-systems/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :ris }
   get '/dois/text/x-bibliography/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :citation }
 
+  # content negotiation for collections
   get '/dois/application/vnd.datacite.datacite+xml', :to => 'dois#index', defaults: { format: :datacite }
   get '/dois/application/vnd.datacite.datacite+json', :to => 'dois#index', defaults: { format: :datacite_json }
   get '/dois/application/vnd.crosscite.crosscite+json', :to => 'dois#index', defaults: { format: :crosscite }
@@ -39,11 +40,6 @@ Rails.application.routes.draw do
   get 'dois/random', :to => 'dois#random'
   get 'dois/:id/get-url', :to => 'dois#get_url', constraints: { :id => /.+/ }
   get 'dois/get-dois', :to => 'dois#get_dois'
-
-  # manage prefixes, keep database in sync for changes via MDS
-  post 'client-prefixes/set-created', :to => 'client_prefixes#set_created'
-  post 'client-prefixes/set-provider', :to => 'client_prefixes#set_provider'
-  post 'provider-prefixes/set-created', :to => 'provider_prefixes#set_created'
 
   resources :heartbeat, only: [:index]
   resources :index, only: [:index]

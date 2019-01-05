@@ -3,6 +3,7 @@ class WorkSerializer
   set_key_transform :dash
   set_type :works
   set_id :identifier
+  cache_options enabled: true, cache_length: 24.hours
 
   attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :data_center_id, :member_id, :resource_type_id, :version, :license, :schema_version, :results, :related_identifiers, :published, :registered, :checked, :updated, :media, :xml
 

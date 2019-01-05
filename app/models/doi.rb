@@ -319,9 +319,9 @@ class Doi < ActiveRecord::Base
     }
   end
 
-  def self.query_fields
-    ['doi^10', 'titles.title^10', 'creator_names^10', 'creators.name^10', 'creators.id^10', 'publisher^10', 'descriptions.description^10', 'types.resourceTypeGeneral^10', 'subjects.subject^10', 'identifiers.identifier^10', 'related_identifiers.relatedIdentifier^10', '_all']
-  end
+  # def self.query_fields
+  #   ['doi^10', 'titles.title^10', 'creator_names^10', 'creators.name^10', 'creators.id^10', 'publisher^10', 'descriptions.description^10', 'types.resourceTypeGeneral^10', 'subjects.subject^10', 'identifiers.identifier^10', 'related_identifiers.relatedIdentifier^10', '_all']
+  # end
 
   def self.find_by_id(id, options={})
     return nil unless id.present?
@@ -519,6 +519,59 @@ class Doi < ActiveRecord::Base
     end
 
     logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{options[:from_date]}."
+  end
+
+  def self.index_by_ids(options={})
+    from_id = (options[:from_id] || 1).to_i
+    until_id = (options[:until_id] || from_id + 499).to_i
+
+    # get every id between from_id and end_id
+    (from_id..until_id).step(500).each do |id|
+      DoiIndexByIdJob.perform_later(id: id)
+      puts "Queued indexing for DOIs with IDs starting with #{id}."
+    end
+  end
+
+  def self.index_by_id(options={})
+    return nil unless options[:id].present?
+    id = options[:id].to_i
+
+    errors = 0
+    count = 0
+
+    logger = Logger.new(STDOUT)
+
+    Doi.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |dois|
+      response = Doi.__elasticsearch__.client.bulk \
+        index:   Doi.index_name,
+        type:    Doi.document_type,
+        body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
+
+      # log errors
+      errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
+      response['items'].select { |k, v| k.values.first['error'].present? }.each do |err|
+        logger.error "[Elasticsearch] " + err.inspect
+      end
+
+      count += dois.length
+    end
+
+    if errors > 1
+      logger.error "[Elasticsearch] #{errors} errors indexing #{count} DOIs with IDs #{id} - #{(id + 499)}."
+    elsif count > 1
+      logger.info "[Elasticsearch] Indexed #{count} DOIs with IDs #{id} - #{(id + 499)}."
+    end
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
+    logger.info "[Elasticsearch] Error #{error.message} indexing DOIs with IDs #{id} - #{(id + 499)}."
+
+    count = 0
+
+    Doi.where(id: id..(id + 499)).find_each do |doi|
+      IndexJob.perform_later(doi)
+      count += 1
+    end
+
+    logger.info "[Elasticsearch] Indexed #{count} DOIs with IDs #{id} - #{(id + 499)}."
   end
 
   def uid

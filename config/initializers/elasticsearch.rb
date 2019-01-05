@@ -9,7 +9,7 @@ if ENV['ES_HOST'] == "elasticsearch:9200"
     }
   }
   Elasticsearch::Model.client = Elasticsearch::Client.new(host: ENV['ES_HOST'], user: "elastic", password: ENV['ELASTIC_PASSWORD']) do |f|
-    f.adapter Faraday.default_adapter
+    f.adapter :excon
   end
 else
   Elasticsearch::Model.client = Elasticsearch::Client.new(host: ENV['ES_HOST'], port: '80', scheme: 'http') do |f|
@@ -18,6 +18,6 @@ else
       service: 'es',
       region: ENV['AWS_REGION']
 
-    f.adapter Faraday.default_adapter
+    f.adapter :excon
   end
 end
