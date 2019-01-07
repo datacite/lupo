@@ -96,7 +96,7 @@ class DoisController < ApplicationController
           end
 
     page = params[:page] || {}
-    
+
     if page[:size].present?
       page[:size] = [page[:size].to_i, 1000].min
       max_number = page[:size] > 0 ? 10000/page[:size] : 1
@@ -105,6 +105,14 @@ class DoisController < ApplicationController
       max_number = 10000/page[:size]
     end
     page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
+
+    sample_group_field = case params[:sample_group]
+      when "client" then "client_id"
+      when "data-center" then "client_id"
+      when "provider" then "provider_id"
+      when "resource-type" then "types.resourceTypeGeneral"
+      else nil
+    end
 
     if params[:id].present?
       response = Doi.find_by_id(params[:id])
@@ -129,14 +137,37 @@ class DoisController < ApplicationController
                           link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
                           link_check_found_citation_doi: params[:link_check_found_citation_doi],
                           link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
+                          sample_group: sample_group_field,
+                          sample_size: params[:sample],
                           source: params[:source],
                           page: page,
-                          sort: sort)
+                          sort: sort,
+                          random: params[:random])
     end
 
     begin
-      total = response.results.total
-      total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
+
+      # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
+      if sample_group_field.present?
+        sample_dois = []
+        response.response.aggregations.samples.buckets.each do |bucket|
+          bucket.samples_hits.hits.hits.each do |hit|
+            sample_dois << hit._source
+          end
+        end
+      end
+
+      # Results to return are either our sample group dois or the regular hit results
+      if sample_dois
+        results = sample_dois
+        # The total is just the length because for sample grouping we get everything back in one shot no pagination.
+        total = sample_dois.length
+        total_pages = 1
+      else
+        results = response.results.results
+        total = response.results.total
+        total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
+      end
 
       states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
       resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
@@ -156,7 +187,7 @@ class DoisController < ApplicationController
 
       respond_to do |format|
         format.json do
-          @dois = response.results.results
+          @dois = results
           options = {}
           options[:meta] = {
             total: total,
@@ -178,7 +209,7 @@ class DoisController < ApplicationController
             "linkChecksDcIdentifier" => link_checks_dc_identifier,
             "linkChecksCitationDoi" => link_checks_citation_doi
           }.compact
-    
+
           options[:links] = {
             self: request.original_url,
             next: @dois.blank? ? nil : request.base_url + "/dois?" + {
@@ -194,7 +225,7 @@ class DoisController < ApplicationController
           options[:params] = {
             :current_ability => current_ability,
           }
-    
+
           render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
         end
         format.citation do
@@ -224,7 +255,7 @@ class DoisController < ApplicationController
           current_ability: current_ability,
           detail: true
         }
-    
+
         render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
       end
       format.citation do
@@ -297,7 +328,7 @@ class DoisController < ApplicationController
 
       if params.dig(:data, :attributes, :mode) == "transfer"
         # only update client_id
-        
+
         authorize! :transfer, @doi
         @doi.assign_attributes(safe_params.slice(:client_id))
       else
