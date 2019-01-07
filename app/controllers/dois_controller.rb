@@ -146,8 +146,28 @@ class DoisController < ApplicationController
     end
 
     begin
-      total = response.results.total
-      total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
+
+      # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
+      if sample_group_field.present?
+        sample_dois = []
+        response.response.aggregations.samples.buckets.each do |bucket|
+          bucket.samples_hits.hits.hits.each do |hit|
+            sample_dois << hit._source
+          end
+        end
+      end
+
+      # Results to return are either our sample group dois or the regular hit results
+      if sample_dois
+        results = sample_dois
+        # The total is just the length because for sample grouping we get everything back in one shot no pagination.
+        total = sample_dois.length
+        total_pages = 1
+      else
+        results = response.results.results
+        total = response.results.total
+        total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
+      end
 
       states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
       resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
@@ -164,23 +184,6 @@ class DoisController < ApplicationController
       link_checks_dc_identifier = total > 0 ? response.response.aggregations.link_checks_dc_identifier.value : nil
       link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
       links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
-
-      # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
-      if sample_group_field.present?
-        sample_dois = []
-        response.response.aggregations.samples.buckets.each do |bucket|
-          bucket.samples_hits.hits.hits.each do |hit|
-            sample_dois << hit._source
-          end
-        end
-      end
-
-      # Results to return are either our sample group dois or the regular hit results
-      if sample_dois
-        results = sample_dois
-      else
-        results = response.results.results
-      end
 
       respond_to do |format|
         format.json do
