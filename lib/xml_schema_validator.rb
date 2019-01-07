@@ -32,8 +32,10 @@ class XmlSchemaValidator < ActiveModel::EachValidator
   end
 
   def validate_each(record, attribute, value)
-    # Only do the schema validation if we have xml to validate
-    return true unless value.present?
+    unless value.present?
+      record.errors[:xml] << "xml should be present"
+      return false
+    end
 
     kernel = get_valid_kernel(record.schema_version)
     return false unless kernel.present?
