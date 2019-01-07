@@ -79,7 +79,7 @@ class Doi < ActiveRecord::Base
   validates_format_of :url, :with => /\A(ftp|http|https):\/\/[\S]+/ , if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
-  validates :xml, xml_schema: true, :if => Proc.new { |doi| doi.validatable? }
+  validates :xml, presence: true, xml_schema: true, :if => Proc.new { |doi| doi.validatable? }
 
   after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
@@ -350,7 +350,7 @@ class Doi < ActiveRecord::Base
       logger.error "[MySQL] No metadata for DOI " + doi.doi + " found: " + doi.current_metadata.inspect
       return nil
     end
-
+    
     meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
     attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
       [a.to_sym, meta[a]]
@@ -402,7 +402,7 @@ class Doi < ActiveRecord::Base
           logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
           return nil
         end
-
+        
         meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
         attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
           [a.to_sym, meta[a]]
@@ -438,7 +438,7 @@ class Doi < ActiveRecord::Base
           logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
           return nil
         end
-
+        
         meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
         attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
           [a.to_sym, meta[a]]
@@ -661,7 +661,7 @@ class Doi < ActiveRecord::Base
   # providers europ and ethz do their own handle registration, so fetch url from handle system instead
   def update_url
     return nil if current_user.nil? || !is_registered_or_findable?
-
+    
     if %w(europ ethz).include?(provider_id) || %w(Crossref).include?(agency)
       UrlJob.perform_later(self)
     else
