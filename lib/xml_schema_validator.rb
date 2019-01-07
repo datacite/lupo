@@ -32,18 +32,23 @@ class XmlSchemaValidator < ActiveModel::EachValidator
   end
 
   def validate_each(record, attribute, value)
+    unless value.present?
+      record.errors[:xml] << "xml should be present"
+      return false
+    end
+
     kernel = get_valid_kernel(record.schema_version)
     return false unless kernel.present?
-    
+
     filepath = Bundler.rubygems.find_name('bolognese').first.full_gem_path + "/resources/#{kernel}/metadata.xsd"
     schema = Nokogiri::XML::Schema(open(filepath))
-  
+
     schema.validate(Nokogiri::XML(value, nil, 'UTF-8')).reduce({}) do |sum, error|
       location, level, source, text = error.message.split(": ", 4)
       line, column = location.split(":", 2)
       title = text.to_s.strip + " at line #{line}, column #{column}" if line.present?
       source = source.split("}").last[0..-2] if line.present?
-      source = schema_attributes(source) if source.present?  
+      source = schema_attributes(source) if source.present?
       record.errors[source.to_sym] << title
     end
   rescue Nokogiri::XML::SyntaxError => e
