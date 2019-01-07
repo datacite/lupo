@@ -558,7 +558,7 @@ class Doi < ActiveRecord::Base
 
     if errors > 1
       logger.error "[Elasticsearch] #{errors} errors indexing #{count} DOIs with IDs #{id} - #{(id + 499)}."
-    elsif count > 1
+    elsif count > 0
       logger.info "[Elasticsearch] Indexed #{count} DOIs with IDs #{id} - #{(id + 499)}."
     end
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
