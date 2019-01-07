@@ -718,6 +718,44 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
       end
     end
+
+    context 'when updating landing page attributes' do
+      let(:doi) { create(:doi, doi: "10.14454/10705", url: "http://www.bl.uk/pdf/pat.pdf", client: client, aasm_state: "findable") }
+
+      let(:landingPage) { {
+        "checked" => Time.zone.now.utc.iso8601,
+        "status" => 200,
+        "url" => doi.url,
+        "contentType" => "text/html",
+        "error" => nil,
+        "redirectCount" => 0,
+        "redirectUrls" => [],
+        "downloadLatency" => 200,
+        "hasSchemaOrg" => true,
+        "schemaOrgId" => doi.doi,
+        "dcIdentifier" => nil,
+        "citationDoi" => nil,
+        "bodyHasPid" => true
+      } }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "landingPage" => landingPage,
+            }
+          }
+        }
+      end
+
+      before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+
+      it 'updating landingPage data' do
+        expect(response).to have_http_status(200)
+        expect(json.dig('data', 'attributes', 'landingPage')).to eq(landingPage)
+      end
+    end
+
   end
 
   describe 'POST /dois' do
@@ -1757,6 +1795,7 @@ describe "dois", type: :request do
 
     context 'landing page' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:landingPage) { {
         "checked" => Time.zone.now.utc.iso8601,
         "status" => 200,
@@ -1779,6 +1818,7 @@ describe "dois", type: :request do
             "attributes" => {
               "doi" => "10.14454/10703",
               "url" => url,
+              "xml" => xml,
               "landingPage" => landingPage,
               "event" => "publish"
             }
