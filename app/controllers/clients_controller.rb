@@ -129,14 +129,16 @@ class ClientsController < ApplicationController
 
   def totals
     page ={size: 25, number: 1}
-    ttl = Client.all.map do |client|
+    page_prov = { size: 2000, number: 1}
+
+    ttl = Client.query("", page: page_prov).map do |client|    
       response = Doi.query("", client_id: client.symbol.downcase, page: page)
       total = response.results.total
       states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
       temporal ={}
-      temporal[:last_thirty] = total > 0 ? facet_by_key(response.response.aggregations.last_thirty_days.buckets) : nil
-      temporal[:last_year] = total > 0 ? facet_by_key(response.response.aggregations.last_year.buckets) : nil
-      temporal[:last_two_year] = total > 0 ? facet_by_key(response.response.aggregations.last_two_year.buckets) : nil
+      temporal[:this_month] = total > 0 ? facet_by_date(response.response.aggregations.this_month.buckets) : nil
+      temporal[:this_year] = total > 0 ? facet_anual(response.response.aggregations.this_year.buckets) : nil
+      temporal[:last_year] = total > 0 ? facet_anual(response.response.aggregations.last_year.buckets) : nil
       id = client.symbol
       {id: id, title: id, count: total, states: states, temporal: temporal}
     end
