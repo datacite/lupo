@@ -79,7 +79,7 @@ class Doi < ActiveRecord::Base
   validates_format_of :url, :with => /\A(ftp|http|https):\/\/[\S]+/ , if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
-  validates :xml, presence: true, xml_schema: true, :if => Proc.new { |doi| doi.validatable? }
+  validates :xml, xml_schema: true, :if => Proc.new { |doi| doi.validatable? }
 
   after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
@@ -326,9 +326,9 @@ class Doi < ActiveRecord::Base
     }
   end
 
-  def self.query_fields
-    ['doi^10', 'titles.title^10', 'creator_names^10', 'creators.name^10', 'creators.id^10', 'publisher^10', 'descriptions.description^10', 'types.resourceTypeGeneral^10', 'subjects.subject^10', 'identifiers.identifier^10', 'related_identifiers.relatedIdentifier^10', '_all']
-  end
+  # def self.query_fields
+  #   ['doi^10', 'titles.title^10', 'creator_names^10', 'creators.name^10', 'creators.id^10', 'publisher^10', 'descriptions.description^10', 'types.resourceTypeGeneral^10', 'subjects.subject^10', 'identifiers.identifier^10', 'related_identifiers.relatedIdentifier^10', '_all']
+  # end
 
   def self.find_by_id(id, options={})
     return nil unless id.present?
@@ -357,7 +357,7 @@ class Doi < ActiveRecord::Base
       logger.error "[MySQL] No metadata for DOI " + doi.doi + " found: " + doi.current_metadata.inspect
       return nil
     end
-    
+
     meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
     attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
       [a.to_sym, meta[a]]
@@ -409,7 +409,7 @@ class Doi < ActiveRecord::Base
           logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
           return nil
         end
-        
+
         meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
         attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
           [a.to_sym, meta[a]]
@@ -445,7 +445,7 @@ class Doi < ActiveRecord::Base
           logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
           return nil
         end
-        
+
         meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
         attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
           [a.to_sym, meta[a]]
@@ -526,6 +526,59 @@ class Doi < ActiveRecord::Base
     end
 
     logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{options[:from_date]}."
+  end
+
+  def self.index_by_ids(options={})
+    from_id = (options[:from_id] || 1).to_i
+    until_id = (options[:until_id] || from_id + 499).to_i
+
+    # get every id between from_id and end_id
+    (from_id..until_id).step(500).each do |id|
+      DoiIndexByIdJob.perform_later(id: id)
+      puts "Queued indexing for DOIs with IDs starting with #{id}."
+    end
+  end
+
+  def self.index_by_id(options={})
+    return nil unless options[:id].present?
+    id = options[:id].to_i
+
+    errors = 0
+    count = 0
+
+    logger = Logger.new(STDOUT)
+
+    Doi.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |dois|
+      response = Doi.__elasticsearch__.client.bulk \
+        index:   Doi.index_name,
+        type:    Doi.document_type,
+        body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
+
+      # log errors
+      errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
+      response['items'].select { |k, v| k.values.first['error'].present? }.each do |err|
+        logger.error "[Elasticsearch] " + err.inspect
+      end
+
+      count += dois.length
+    end
+
+    if errors > 1
+      logger.error "[Elasticsearch] #{errors} errors indexing #{count} DOIs with IDs #{id} - #{(id + 499)}."
+    elsif count > 1
+      logger.info "[Elasticsearch] Indexed #{count} DOIs with IDs #{id} - #{(id + 499)}."
+    end
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
+    logger.info "[Elasticsearch] Error #{error.message} indexing DOIs with IDs #{id} - #{(id + 499)}."
+
+    count = 0
+
+    Doi.where(id: id..(id + 499)).find_each do |doi|
+      IndexJob.perform_later(doi)
+      count += 1
+    end
+
+    logger.info "[Elasticsearch] Indexed #{count} DOIs with IDs #{id} - #{(id + 499)}."
   end
 
   def uid
@@ -615,7 +668,7 @@ class Doi < ActiveRecord::Base
   # providers europ and ethz do their own handle registration, so fetch url from handle system instead
   def update_url
     return nil if current_user.nil? || !is_registered_or_findable?
-    
+
     if %w(europ ethz).include?(provider_id) || %w(Crossref).include?(agency)
       UrlJob.perform_later(self)
     else

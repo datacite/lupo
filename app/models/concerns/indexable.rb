@@ -100,6 +100,8 @@ module Indexable
     end
 
     def query(query, options={})
+      aggregations = query_aggregations
+
       # enable cursor-based pagination for DOIs
       if self.name == "Doi" && options.dig(:page, :cursor).present?
         from = 0
@@ -111,10 +113,24 @@ module Indexable
         sort = options[:sort]
       end
 
-      fields = options[:query_fields].presence || query_fields
+      # currently not used
+      # fields = options[:query_fields].presence || query_fields
+
+      # make sure field name uses underscore
+      # escape forward slashes in query
+      if query.present?
+        query = query.gsub(/publicationYear/, "publication_year")
+        query = query.gsub(/relatedIdentifiers/, "related_identifiers")
+        query = query.gsub(/rightsList/, "rights_list")
+        query = query.gsub(/fundingReferences/, "funding_references")
+        query = query.gsub(/geoLocations/, "geo_locations")
+        query = query.gsub(/landingPage/, "landing_page")
+        query = query.gsub(/contentUrl/, "content_url")
+        query = query.gsub("/", '\/')
+      end
 
       must = []
-      must << { multi_match: { query: query, fields: fields, type: "phrase_prefix", slop: 3, max_expansions: 10 }} if query.present?
+      must << { query_string: { query: query }} if query.present?
       must << { term: { aasm_state: options[:state] }} if options[:state].present?
       must << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
       must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
@@ -123,6 +139,7 @@ module Indexable
       must << { term: { "author.id" => "https://orcid.org/#{options[:person_id]}" }} if options[:person_id].present?
       must << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
       must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
+      must << { terms: { "subjects.subject": options[:subject].split(",") }} if options[:subject].present?
       must << { term: { source: options[:source] }} if options[:source].present?
       must << { term: { "landing_page.status": options[:link_check_status] }} if options[:link_check_status].present?
       must << { exists: { field: "landing_page.checked" }} if options[:link_checked].present?
@@ -141,7 +158,7 @@ module Indexable
         must << { term: { region: options[:region].upcase }} if options[:region].present?
         must << { term: { organization_type: options[:organization_type] }} if options[:organization_type].present?
         must << { term: { focus_area: options[:focus_area] }} if options[:focus_area].present?
-        
+
         if options[:all_members]
           must << { terms: { role_name: %w(ROLE_ALLOCATOR ROLE_MEMBER) }}
         else
@@ -157,18 +174,62 @@ module Indexable
         must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
       end
 
+      # ES query can be optionally defined in different ways
+      # So here we build it differently based upon options
+      # This is mostly useful when trying to wrap it in a function_score query
+      es_query = {}
+
+      # The main bool query with filters
+      bool_query = {
+        must: must,
+        must_not: must_not
+      }
+
+      # Function score is used to provide varying score to return different values
+      # We use the bool query above as our principle query
+      # Then apply additional function scoring as appropriate
+      # Note this can be performance intensive.
+      function_score = {
+        query: {
+          bool: bool_query
+        },
+        random_score: {
+          "seed": Rails.env.test? ? "random_1234" : "random_#{rand(1...100000)}"
+        }
+      }
+
+      if options[:random].present?
+        es_query['function_score'] = function_score
+        # Don't do any sorting for random results
+        sort = nil
+      else
+        es_query['bool'] = bool_query
+      end
+
+      # Sample grouping is optional included aggregation
+      if options[:sample_group].present?
+        aggregations[:samples] = {
+          terms: {
+            field: options[:sample_group],
+            size: 10000
+          },
+          aggs: {
+            "samples_hits": {
+              top_hits: {
+                size: options[:sample_size].present? ? options[:sample_size] : 1
+              }
+            }
+          }
+        }
+      end
+
       __elasticsearch__.search({
         size: options.dig(:page, :size),
         from: from,
         search_after: search_after,
         sort: sort,
-        query: {
-          bool: {
-            must: must,
-            must_not: must_not
-          }
-        },
-        aggregations: query_aggregations
+        query: es_query,
+        aggregations: aggregations
       }.compact)
     end
 

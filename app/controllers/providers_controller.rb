@@ -30,46 +30,54 @@ class ProvidersController < ApplicationController
     elsif params[:ids].present?
       response = Provider.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      response = Provider.query(params[:query], year: params[:year], region: params[:region], organization_type: params[:organization_type], focus_area: params[:focus_area], query_fields: params[:query_fields], page: page, sort: sort)
+      response = Provider.query(params[:query], year: params[:year], region: params[:region], organization_type: params[:organization_type], focus_area: params[:focus_area], page: page, sort: sort)
     end
 
-    total = response.results.total
-    total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
-    years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
-    regions = total > 0 ? facet_by_region(response.response.aggregations.regions.buckets) : nil
-    organization_types = total > 0 ? facet_by_key(response.response.aggregations.organization_types.buckets) : nil
-    focus_areas = total > 0 ? facet_by_key(response.response.aggregations.focus_areas.buckets) : nil
+    begin
+      total = response.results.total
+      total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
+      years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
+      regions = total > 0 ? facet_by_region(response.response.aggregations.regions.buckets) : nil
+      organization_types = total > 0 ? facet_by_key(response.response.aggregations.organization_types.buckets) : nil
+      focus_areas = total > 0 ? facet_by_key(response.response.aggregations.focus_areas.buckets) : nil
 
-    @providers = response.results.results
+      @providers = response.results.results
 
-    options = {}
-    options[:meta] = {
-      total: total,
-      "totalPages" => total_pages,
-      page: page[:number],
-      years: years,
-      regions: regions,
-      "organizationTypes" => organization_types,
-      "focusAreas" => focus_areas
-    }.compact
-
-    options[:links] = {
-      self: request.original_url,
-      next: @providers.blank? ? nil : request.base_url + "/providers?" + {
-        query: params[:query],
-        year: params[:year],
-        region: params[:region],
-        "organization_type" => params[:organization_type],
-        "focus-area" => params[:focus_area],
-        fields: params[:fields],
-        "page[number]" => params.dig(:page, :number),
-        "page[size]" => params.dig(:page, :size),
-        sort: sort }.compact.to_query
+      options = {}
+      options[:meta] = {
+        total: total,
+        "totalPages" => total_pages,
+        page: page[:number],
+        years: years,
+        regions: regions,
+        "organizationTypes" => organization_types,
+        "focusAreas" => focus_areas
       }.compact
-    options[:include] = @include
-    options[:is_collection] = true
 
-    render json: ProviderSerializer.new(@providers, options).serialized_json, status: :ok
+      options[:links] = {
+        self: request.original_url,
+        next: @providers.blank? ? nil : request.base_url + "/providers?" + {
+          query: params[:query],
+          year: params[:year],
+          region: params[:region],
+          "organization_type" => params[:organization_type],
+          "focus-area" => params[:focus_area],
+          fields: params[:fields],
+          "page[number]" => params.dig(:page, :number),
+          "page[size]" => params.dig(:page, :size),
+          sort: sort }.compact.to_query
+        }.compact
+      options[:include] = @include
+      options[:is_collection] = true
+
+      render json: ProviderSerializer.new(@providers, options).serialized_json, status: :ok
+    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
+      Bugsnag.notify(exception)
+
+      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+
+      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+    end
   end
 
   def show

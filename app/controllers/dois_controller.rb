@@ -13,129 +13,161 @@ class DoisController < ApplicationController
   def index
     authorize! :read, Doi
 
-    if Rails.env.production? && !current_user.try(:is_admin_or_staff?)
-      # don't use elasticsearch
+    # if Rails.env.production? && !current_user.try(:is_admin_or_staff?)
+    #   # don't use elasticsearch
 
-      # support nested routes
-      if params[:client_id].present?
-        client = Client.where('datacentre.symbol = ?', params[:client_id]).first
-        collection = client.present? ? client.dois : Doi.none
-        total = client.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
-      elsif params[:provider_id].present? && params[:provider_id] != "admin"
-        provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
-        collection = provider.present? ? Doi.joins(:client).where("datacentre.allocator = ?", provider.id) : Doi.none
-        total = provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
-      elsif params[:id].present?
-        collection = Doi.where(doi: params[:id])
-        total = collection.all.size
-      else
-        provider = Provider.unscoped.where('allocator.symbol = ?', "ADMIN").first
-        total = provider.present? ? provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i } : 0
-        collection = Doi
-      end
+    #   # support nested routes
+    #   if params[:client_id].present?
+    #     client = Client.where('datacentre.symbol = ?', params[:client_id]).first
+    #     collection = client.present? ? client.dois : Doi.none
+    #     total = client.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
+    #   elsif params[:provider_id].present? && params[:provider_id] != "admin"
+    #     provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
+    #     collection = provider.present? ? Doi.joins(:client).where("datacentre.allocator = ?", provider.id) : Doi.none
+    #     total = provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
+    #   elsif params[:id].present?
+    #     collection = Doi.where(doi: params[:id])
+    #     total = collection.all.size
+    #   else
+    #     provider = Provider.unscoped.where('allocator.symbol = ?', "ADMIN").first
+    #     total = provider.present? ? provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i } : 0
+    #     collection = Doi
+    #   end
 
-      if params[:query].present?
-        collection = Doi.q(params[:query])
-        total = collection.all.size
-      end
+    #   if params[:query].present?
+    #     collection = Doi.q(params[:query])
+    #     total = collection.all.size
+    #   end
 
-      page = params[:page] || {}
-      if page[:size].present?
-        page[:size] = [page[:size].to_i, 1000].min
-        max_number = page[:size] > 0 ? 10000/page[:size] : 1
-      else
-        page[:size] = 25
-        max_number = 10000/page[:size]
-      end
-      page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
-      total_pages = (total.to_f / page[:size]).ceil
+    #   page = params[:page] || {}
+    #   if page[:size].present?
+    #     page[:size] = [page[:size].to_i, 1000].min
+    #     max_number = page[:size] > 0 ? 10000/page[:size] : 1
+    #   else
+    #     page[:size] = 25
+    #     max_number = 10000/page[:size]
+    #   end
+    #   page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
+    #   total_pages = (total.to_f / page[:size]).ceil
 
-      order = case params[:sort]
-              when "name" then "dataset.doi"
-              when "-name" then "dataset.doi DESC"
-              when "created" then "dataset.created"
-              else "dataset.created DESC"
-              end
+    #   order = case params[:sort]
+    #           when "name" then "dataset.doi"
+    #           when "-name" then "dataset.doi DESC"
+    #           when "created" then "dataset.created"
+    #           else "dataset.created DESC"
+    #           end
 
-      @dois = collection.order(order).page(page[:number]).per(page[:size]).without_count
+    #   @dois = collection.order(order).page(page[:number]).per(page[:size]).without_count
 
-      options = {}
-      options[:meta] = {
-        total: total,
-        "totalPages" => total_pages,
-        page: page[:number].to_i
-      }.compact
+    #   options = {}
+    #   options[:meta] = {
+    #     total: total,
+    #     "totalPages" => total_pages,
+    #     page: page[:number].to_i
+    #   }.compact
 
-      options[:links] = {
-        self: request.original_url,
-        next: @dois.blank? ? nil : request.base_url + "/dois?" + {
-          query: params[:query],
-          "provider-id" => params[:provider_id],
-          "client-id" => params[:client_id],
-          "page[number]" => page[:number] + 1,
-          "page[size]" => page[:size],
-          sort: params[:sort] }.compact.to_query
-        }.compact
-      options[:include] = @include
-      options[:is_collection] = true
-      options[:params] = {
-        :current_ability => current_ability,
-      }
+    #   options[:links] = {
+    #     self: request.original_url,
+    #     next: @dois.blank? ? nil : request.base_url + "/dois?" + {
+    #       query: params[:query],
+    #       "provider-id" => params[:provider_id],
+    #       "client-id" => params[:client_id],
+    #       "page[number]" => page[:number] + 1,
+    #       "page[size]" => page[:size],
+    #       sort: params[:sort] }.compact.to_query
+    #     }.compact
+    #   options[:include] = @include
+    #   options[:is_collection] = true
+    #   options[:params] = {
+    #     :current_ability => current_ability,
+    #   }
 
-      render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
+    #   render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
+    # else
+    sort = case params[:sort]
+          when "name" then { "doi" => { order: 'asc' }}
+          when "-name" then { "doi" => { order: 'desc' }}
+          when "created" then { created: { order: 'asc' }}
+          when "-created" then { created: { order: 'desc' }}
+          when "updated" then { updated: { order: 'asc' }}
+          when "-updated" then { updated: { order: 'desc' }}
+          when "relevance" then { "_score": { "order": "desc" }}
+          else { updated: { order: 'desc' }}
+          end
+
+    page = params[:page] || {}
+
+    if page[:size].present?
+      page[:size] = [page[:size].to_i, 1000].min
+      max_number = page[:size] > 0 ? 10000/page[:size] : 1
     else
-      sort = case params[:sort]
-            when "name" then { "doi" => { order: 'asc' }}
-            when "-name" then { "doi" => { order: 'desc' }}
-            when "created" then { created: { order: 'asc' }}
-            when "-created" then { created: { order: 'desc' }}
-            when "updated" then { updated: { order: 'asc' }}
-            when "-updated" then { updated: { order: 'desc' }}
-            when "relevance" then { "_score": { "order": "desc" }}
-            else { updated: { order: 'desc' }}
-            end
+      page[:size] = 25
+      max_number = 10000/page[:size]
+    end
+    page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
 
-      page = params[:page] || {}
-      
-      if page[:size].present?
-        page[:size] = [page[:size].to_i, 1000].min
-        max_number = page[:size] > 0 ? 10000/page[:size] : 1
-      else
-        page[:size] = 25
-        max_number = 10000/page[:size]
+    sample_group_field = case params[:sample_group]
+      when "client" then "client_id"
+      when "data-center" then "client_id"
+      when "provider" then "provider_id"
+      when "resource-type" then "types.resourceTypeGeneral"
+      else nil
+    end
+
+    if params[:id].present?
+      response = Doi.find_by_id(params[:id])
+    elsif params[:ids].present?
+      response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
+    else
+      response = Doi.query(params[:query],
+                          state: params[:state],
+                          created: params[:created],
+                          registered: params[:registered],
+                          provider_id: params[:provider_id],
+                          client_id: params[:client_id],
+                          prefix: params[:prefix],
+                          person_id: params[:person_id],
+                          resource_type_id: params[:resource_type_id],
+                          schema_version: params[:schema_version],
+                          subject: params[:subject],
+                          link_check_status: params[:link_check_status],
+                          link_check_has_schema_org: params[:link_check_has_schema_org],
+                          link_check_body_has_pid: params[:link_check_body_has_pid],
+                          link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
+                          link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
+                          link_check_found_citation_doi: params[:link_check_found_citation_doi],
+                          link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
+                          sample_group: sample_group_field,
+                          sample_size: params[:sample],
+                          source: params[:source],
+                          page: page,
+                          sort: sort,
+                          random: params[:random])
+    end
+
+    begin
+
+      # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
+      if sample_group_field.present?
+        sample_dois = []
+        response.response.aggregations.samples.buckets.each do |bucket|
+          bucket.samples_hits.hits.hits.each do |hit|
+            sample_dois << hit._source
+          end
+        end
       end
-      page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
 
-      if params[:id].present?
-        response = Doi.find_by_id(params[:id])
-      elsif params[:ids].present?
-        response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
+      # Results to return are either our sample group dois or the regular hit results
+      if sample_dois
+        results = sample_dois
+        # The total is just the length because for sample grouping we get everything back in one shot no pagination.
+        total = sample_dois.length
+        total_pages = 1
       else
-        response = Doi.query(params[:query],
-                            state: params[:state],
-                            created: params[:created],
-                            registered: params[:registered],
-                            provider_id: params[:provider_id],
-                            client_id: params[:client_id],
-                            prefix: params[:prefix],
-                            person_id: params[:person_id],
-                            resource_type_id: params[:resource_type_id],
-                            query_fields: params[:query_fields],
-                            schema_version: params[:schema_version],
-                            link_check_status: params[:link_check_status],
-                            link_check_has_schema_org: params[:link_check_has_schema_org],
-                            link_check_body_has_pid: params[:link_check_body_has_pid],
-                            link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
-                            link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
-                            link_check_found_citation_doi: params[:link_check_found_citation_doi],
-                            link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
-                            source: params[:source],
-                            page: page,
-                            sort: sort)
+        results = response.results.results
+        total = response.results.total
+        total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
       end
-
-      total = response.results.total
-      total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
 
       states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
       resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
@@ -155,7 +187,7 @@ class DoisController < ApplicationController
 
       respond_to do |format|
         format.json do
-          @dois = response.results.results
+          @dois = results
           options = {}
           options[:meta] = {
             total: total,
@@ -177,7 +209,7 @@ class DoisController < ApplicationController
             "linkChecksDcIdentifier" => link_checks_dc_identifier,
             "linkChecksCitationDoi" => link_checks_citation_doi
           }.compact
-    
+
           options[:links] = {
             self: request.original_url,
             next: @dois.blank? ? nil : request.base_url + "/dois?" + {
@@ -193,7 +225,7 @@ class DoisController < ApplicationController
           options[:params] = {
             :current_ability => current_ability,
           }
-    
+
           render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
         end
         format.citation do
@@ -202,6 +234,12 @@ class DoisController < ApplicationController
         end
         format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => response.records.to_a }
       end
+    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
+      Bugsnag.notify(exception)
+
+      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+
+      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
     end
   end
 
@@ -217,7 +255,7 @@ class DoisController < ApplicationController
           current_ability: current_ability,
           detail: true
         }
-    
+
         render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
       end
       format.citation do
@@ -290,7 +328,7 @@ class DoisController < ApplicationController
 
       if params.dig(:data, :attributes, :mode) == "transfer"
         # only update client_id
-        
+
         authorize! :transfer, @doi
         @doi.assign_attributes(safe_params.slice(:client_id))
       else
@@ -409,6 +447,11 @@ class DoisController < ApplicationController
     authorize! :delete_test_dois, Doi
     Doi.delete_test_dois
     render json: { message: "Test DOIs deleted." }.to_json, status: :ok
+  end
+
+  # legacy method
+  def status
+    render json: { message: "Not Implemented." }.to_json, status: :not_implemented
   end
 
   protected

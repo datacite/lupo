@@ -14,7 +14,6 @@ gem 'nokogiri', '~> 1.8.1'
 gem 'diffy', '~> 3.2', '>= 3.2.1'
 gem 'commonmarker', '~> 0.17.9'
 gem 'iso8601', '~> 0.9.0'
-gem 'patron', '~> 0.13.1', require: false
 gem 'maremma', '>= 4.1'
 gem 'bolognese', '~> 1.0'
 gem 'dalli', '~> 2.7', '>= 2.7.6'
