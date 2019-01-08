@@ -128,8 +128,8 @@ class ClientsController < ApplicationController
   end
 
   def totals
-    page ={size: 25, number: 1}
-    page_prov = { size: 2000, number: 1}
+    page = { size: 25, number: 1 }
+    page_prov = { size: 2000, number: 1 }
 
     ttl = Client.query("", page: page_prov).map do |client|    
       response = Doi.query("", client_id: client.symbol.downcase, page: page)
