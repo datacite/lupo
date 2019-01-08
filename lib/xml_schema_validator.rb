@@ -38,10 +38,7 @@ class XmlSchemaValidator < ActiveModel::EachValidator
     end
 
     kernel = get_valid_kernel(record.schema_version)
-    unless kernel.present?
-      record.errors[:xml] << "schema should be present"
-      return false
-    end
+    return false unless kernel.present?
 
     filepath = Bundler.rubygems.find_name('bolognese').first.full_gem_path + "/resources/#{kernel}/metadata.xsd"
     schema = Nokogiri::XML::Schema(open(filepath))
