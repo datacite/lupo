@@ -67,7 +67,7 @@ class PrefixesController < ApplicationController
     end
 
     # pagination
-    page = params[:page] || {}
+    page = params[:page].is_a?(Hash) ? params[:page] : {}
     page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
     page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
     total = collection.count

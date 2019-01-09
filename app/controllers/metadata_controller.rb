@@ -11,7 +11,7 @@ class MetadataController < ApplicationController
     collection = @doi.metadata
     total = @doi.cached_metadata_count.reduce(0) { |sum, d| sum + d[:count].to_i }
 
-    page = params[:page] || {}
+    page = params[:page].is_a?(Hash) ? params[:page] : {}
     page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
     page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
     total_pages = (total.to_f / page[:size]).ceil

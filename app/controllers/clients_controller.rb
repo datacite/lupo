@@ -16,7 +16,7 @@ class ClientsController < ApplicationController
            else { "name.raw" => { order: 'asc' }}
            end
 
-    page = params[:page] || {}
+    page = params[:page].is_a?(Hash) ? params[:page] : {}
     if page[:size].present? 
       page[:size] = [page[:size].to_i, 1000].min
       max_number = page[:size] > 0 ? 10000/page[:size] : 1
