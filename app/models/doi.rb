@@ -299,6 +299,10 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_aggregations
+    beginning_of_year  = DateTime.current.beginning_of_year.strftime('%Y-%m-%d')
+    beginning_of_last_year  = DateTime.current.beginning_of_year.last_year.strftime('%Y-%m-%d')
+    beginning_of_month = DateTime.current.beginning_of_month.strftime('%Y-%m-%d')
+
     {
       resource_types: { terms: { field: 'types.resourceTypeGeneral', size: 15, min_doc_count: 1 } },
       states: { terms: { field: 'aasm_state', size: 15, min_doc_count: 1 } },
@@ -316,6 +320,9 @@ class Doi < ActiveRecord::Base
       link_checks_citation_doi: { value_count: { field: "landing_page.citationDoi" } },
       links_checked: { value_count: { field: "landing_page.checked" } },
       sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
+      this_month: { date_range: { field: 'created', time_zone: "CET", ranges: {from: beginning_of_month, to: "now/d"} } },
+      this_year: { date_range: { field: 'created', time_zone: "CET", ranges: {from: beginning_of_year, to: "now/d"} } },
+      last_year: { date_range: { field: 'created', time_zone: "CET", ranges: {from: beginning_of_last_year, to: beginning_of_year} } }
     }
   end
 

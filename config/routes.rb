@@ -40,6 +40,8 @@ Rails.application.routes.draw do
   get 'dois/random', :to => 'dois#random'
   get 'dois/:id/get-url', :to => 'dois#get_url', constraints: { :id => /.+/ }
   get 'dois/get-dois', :to => 'dois#get_dois'
+  get 'providers/totals', :to => 'providers#totals'
+  get 'clients/totals', :to => 'clients#totals'
 
   resources :heartbeat, only: [:index]
   resources :index, only: [:index]

@@ -22,6 +22,22 @@ module Facetable
       end
     end
 
+    def facet_anual(arr)
+      arr.map do |hsh|
+        { "id" => hsh["key"][0..3],
+          "title" => hsh["key"][0..3],
+          "count" => hsh["doc_count"] }
+      end
+    end
+
+    def facet_by_date(arr)
+      arr.map do |hsh|
+        { "id" => hsh["key"][0..9],
+          "title" => hsh["key"][0..9],
+          "count" => hsh["doc_count"] }
+      end
+    end
+
     def facet_by_cumulative_year(arr)
       arr.map do |hsh|
         { "id" => hsh["key"].to_s,
@@ -118,6 +134,20 @@ module Facetable
           "count" => hsh["doc_count"] }
       end
     end
+
+    # def get_all_providers_aggs
+    #   page = { size: 25, number: 1}
+    #   response = Doi.query("", page: page)
+    #   after = response.response.aggregations.providers_x.after_key.doi ||=""
+    #   aggs  = response.response.aggregations.providers_x.buckets
+    #   loop do
+    #     resp = Doi.query("", {after_key: after })
+    #     aggs = aggs.concat resp.response.aggregations.providers_x.buckets
+    #     after = response.response.aggregations.providers_x.after_key.doi
+    #     break if after.nil?
+    #   end
+    #   aggs
+    # end
   end
 end
 
