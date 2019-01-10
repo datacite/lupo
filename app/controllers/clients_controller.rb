@@ -132,7 +132,7 @@ class ClientsController < ApplicationController
     page_prov = { size: 2000, number: 1 }
 
     ttl = Client.query("", page: page_prov).map do |client|    
-      response = Doi.query("", client_id: client.symbol.downcase, page: page)
+      response = Doi.query("", client_id: client.symbol.downcase, state: params[:state] || "",page: page)
       total = response.results.total
       states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
       temporal ={}

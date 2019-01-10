@@ -125,7 +125,7 @@ class ProvidersController < ApplicationController
     page_prov = { size: 500, number: 1}
 
     ttl = Provider.query("", page: page_prov).map do |provider|      
-      response = Doi.query("", provider_id: provider.symbol.downcase, page: page)
+      response = Doi.query("", provider_id: provider.symbol.downcase, state: params[:state] || "", page: page)
       total = response.results.total
       states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
       temporal ={}
