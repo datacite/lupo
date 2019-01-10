@@ -65,10 +65,7 @@ class ProviderPrefixesController < ApplicationController
                   count: collection.state("with-client").count }]
     end
 
-    # pagination
-    page = params[:page].is_a?(Hash) ? params[:page] : {}
-    page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
-    page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
+    page = page_from_params(params)
     total = collection.count
 
     order = case params[:sort]
@@ -84,7 +81,7 @@ class ProviderPrefixesController < ApplicationController
     options[:meta] = {
       total: total,
       "totalPages" => @provider_prefixes.total_pages,
-      page: page[:number].to_i,
+      page: page[:number],
       states: states,
       providers: providers,
       years: years
@@ -97,8 +94,8 @@ class ProviderPrefixesController < ApplicationController
         "provider-id" => params[:provider_id],
         "prefix-id" => params[:prefix_id],
         year: params[:year],
-        "page[number]" => params.dig(:page, :number).to_i + 1,
-        "page[size]" => params.dig(:page, :size),
+        "page[number]" => page[:number] + 1,
+        "page[size]" => page[:size],
         sort: params[:sort] }.compact.to_query
       }.compact
     options[:include] = @include

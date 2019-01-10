@@ -11,6 +11,9 @@ class ApplicationController < ActionController::API
   # include helper module for generating random DOI suffixes
   include Helpable
 
+  # include helper module for pagination
+  include Paginatable
+
   attr_accessor :current_user
 
   # pass ability into serializer

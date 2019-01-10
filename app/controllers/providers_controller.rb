@@ -15,15 +15,7 @@ class ProvidersController < ApplicationController
            else { "name.raw" => { order: 'asc' }}
            end
 
-    page = params[:page].is_a?(Hash) ? params[:page] : {}
-    if page[:size].present? 
-      page[:size] = [page[:size].to_i, 1000].min
-      max_number = page[:size] > 0 ? 10000/page[:size] : 1
-    else
-      page[:size] = 25
-      max_number = 10000/page[:size]
-    end
-    page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
+    page = page_from_params(params)
 
     if params[:id].present?
       response = Provider.find_by_id(params[:id])
@@ -63,8 +55,8 @@ class ProvidersController < ApplicationController
           "organization_type" => params[:organization_type],
           "focus-area" => params[:focus_area],
           fields: params[:fields],
-          "page[number]" => params.dig(:page, :number),
-          "page[size]" => params.dig(:page, :size),
+          "page[number]" => page[:number] + 1,
+          "page[size]" => page[:size],
           sort: sort }.compact.to_query
         }.compact
       options[:include] = @include

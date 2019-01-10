@@ -35,10 +35,7 @@ class ClientPrefixesController < ApplicationController
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 
-    # pagination
-    page = params[:page].is_a?(Hash) ? params[:page] : {}
-    page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
-    page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
+    page = page_from_params(params)
     total = collection.count
 
     order = case params[:sort]

@@ -11,9 +11,7 @@ class MetadataController < ApplicationController
     collection = @doi.metadata
     total = @doi.cached_metadata_count.reduce(0) { |sum, d| sum + d[:count].to_i }
 
-    page = params[:page].is_a?(Hash) ? params[:page] : {}
-    page[:number] = page[:number] && page[:number].to_i > 0 ? page[:number].to_i : 1
-    page[:size] = page[:size] && (1..1000).include?(page[:size].to_i) ? page[:size].to_i : 25
+    page = page_from_params(params)
     total_pages = (total.to_f / page[:size]).ceil
 
     order = case params[:sort]
@@ -35,8 +33,8 @@ class MetadataController < ApplicationController
     options[:links] = {
       self: request.original_url,
       next: @metadata.blank? ? nil : request.base_url + "/media?" + {
-        "page[number]" => params.dig(:page, :number).to_i + 1,
-        "page[size]" => params.dig(:page, :size),
+        "page[number]" => page[:number] + 1,
+        "page[size]" => page[:size],
         sort: params[:sort] }.compact.to_query
       }.compact
     options[:include] = @include

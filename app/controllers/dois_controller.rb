@@ -95,16 +95,7 @@ class DoisController < ApplicationController
           else { updated: { order: 'desc' }}
           end
 
-    page = params[:page].is_a?(Hash) ? params[:page] : {}
-
-    if page[:size].present?
-      page[:size] = [page[:size].to_i, 1000].min
-      max_number = page[:size] > 0 ? 10000/page[:size] : 1
-    else
-      page[:size] = 25
-      max_number = 10000/page[:size]
-    end
-    page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
+    page = page_from_params(params)
 
     sample_group_field = case params[:sample_group]
       when "client" then "client_id"
@@ -146,7 +137,6 @@ class DoisController < ApplicationController
     end
 
     begin
-
       # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
       if sample_group_field.present?
         sample_dois = []
@@ -218,7 +208,7 @@ class DoisController < ApplicationController
               "client-id" => params[:client_id],
               fields: params[:fields],
               "page[cursor]" => Array.wrap(@dois.last[:sort]).first,
-              "page[size]" => params.dig(:page, :size) }.compact.to_query
+              "page[size]" => page[:size] }.compact.to_query
             }.compact
           options[:include] = @include
           options[:is_collection] = true
