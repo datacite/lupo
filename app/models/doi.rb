@@ -186,13 +186,15 @@ class Doi < ActiveRecord::Base
     }
     indexes :rights_list,                    type: :object, properties: {
       rights: { type: :keyword },
-      rightsUri: { type: :keyword }
+      rightsUri: { type: :keyword },
+      lang: { type: :keyword }
     }
     indexes :subjects,                       type: :object, properties: {
       subject: { type: :keyword },
       subjectScheme: { type: :keyword },
       schemeUri: { type: :keyword },
-      valueUri: { type: :keyword }
+      valueUri: { type: :keyword },
+      lang: { type: :keyword }
     }
     indexes :container,                     type: :object, properties: {
       type: { type: :keyword },
