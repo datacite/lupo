@@ -2513,6 +2513,30 @@ describe "dois", type: :request do
         expect(response).to have_http_status(200)
       end
     end
+
+    context "text/csv" do
+      before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "text/csv", 'Authorization' => 'Bearer ' + bearer  } }
+  
+      it 'returns the Doi' do
+        expect(response.body).to include(doi.doi)
+      end
+  
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+  
+    context "text/csv link" do
+      before { get "/dois/text/csv/#{doi.doi}" }
+  
+      it 'returns the Doi' do
+        expect(response.body).to include(doi.doi)
+      end
+  
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
   
     context "text/x-bibliography", vcr: true do
       context "default style" do
@@ -2577,7 +2601,7 @@ describe "dois", type: :request do
     end
   
     context "unknown content type" do
-      before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "text/csv", 'Authorization' => 'Bearer ' + bearer  } }
+      before { get "/dois/#{doi.doi}", headers: { "HTTP_ACCEPT" => "application/vnd.ms-excel", 'Authorization' => 'Bearer ' + bearer  } }
   
       it 'returns the Doi' do
         expect(json["errors"]).to eq([{"status"=>"406", "title"=>"The content type is not recognized."}])

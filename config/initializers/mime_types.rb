@@ -7,6 +7,7 @@ end
 Mime::Type.register "text/html", :html, %w( application/xhtml+xml ), %w( xhtml )
 Mime::Type.register "text/plain", :text, [], %w(txt)
 Mime::Type.register "application/json", :json, %w( text/x-json application/jsonrequest application/vnd.api+json )
+Mime::Type.register "text/csv", :csv
 
 # Mime types supported by bolognese gem https://github.com/datacite/bolognese
 Mime::Type.register "application/vnd.crossref.unixref+xml", :crossref
@@ -65,4 +66,9 @@ end
 
 ActionController::Renderers.add :ris do |obj, options|
   Array.wrap(obj).map { |o| o.send("ris") }.join("\n\n")
+end
+
+ActionController::Renderers.add :csv do |obj, options|
+  %w(doi url year registered state resourceTypeGeneral bibtexType title author publisher journal volume issue pages).to_csv +
+  Array.wrap(obj).map { |o| o.send("csv") }.join("\n")
 end

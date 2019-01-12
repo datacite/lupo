@@ -716,7 +716,7 @@ class Doi < ActiveRecord::Base
   end
 
   def date_registered
-    minted
+    minted.iso8601 if minted.present?
   end
 
   def date_updated

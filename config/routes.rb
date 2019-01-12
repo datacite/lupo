@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   get '/dois/application/vnd.jats+xml/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :jats }
   get '/dois/application/x-bibtex/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :bibtex }
   get '/dois/application/x-research-info-systems/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :ris }
+  get '/dois/text/csv/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :csv }
   get '/dois/text/x-bibliography/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :citation }
 
   # content negotiation for collections
@@ -29,6 +30,7 @@ Rails.application.routes.draw do
   get '/dois/application/vnd.jats+xml', :to => 'dois#index', defaults: { format: :jats }
   get '/dois/application/x-bibtex', :to => 'dois#index', defaults: { format: :bibtex }
   get '/dois/application/x-research-info-systems', :to => 'dois#index', defaults: { format: :ris }
+  get '/dois/text/csv', :to => 'dois#index', defaults: { format: :csv }
   get '/dois/text/x-bibliography', :to => 'dois#index', defaults: { format: :citation }
 
   # manage DOIs

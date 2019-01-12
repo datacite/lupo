@@ -222,7 +222,7 @@ class DoisController < ApplicationController
           # fetch formatted citations
           render citation: response.records.to_a, style: params[:style] || "apa", locale: params[:locale] || "en-US"
         end
-        format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => response.records.to_a }
+        format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :csv, :schema_org) { render request.format.to_sym => response.records.to_a }
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Bugsnag.notify(exception)
@@ -252,7 +252,7 @@ class DoisController < ApplicationController
         # fetch formatted citation
         render citation: @doi, style: params[:style] || "apa", locale: params[:locale] || "en-US"
       end
-      format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => @doi }
+      format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :csv, :schema_org) { render request.format.to_sym => @doi }
     end
   end
 
