@@ -69,6 +69,6 @@ ActionController::Renderers.add :ris do |obj, options|
 end
 
 ActionController::Renderers.add :csv do |obj, options|
-  %w(doi url registered state resourceTypeGeneral bibtexType title author publisher publicationYear).to_csv +
+  %w(doi url registered state resourceTypeGeneral resourceType title author publisher publicationYear).to_csv +
   Array.wrap(obj).map { |o| o.send("csv") }.join("")
 end
