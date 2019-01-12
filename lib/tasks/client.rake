@@ -1,4 +1,70 @@
 namespace :client do
+  desc "Create index for clients"
+  task :create_index => :environment do
+    Client.__elasticsearch__.create_index!
+  end
+
+  desc "Delete index for clients"
+  task :delete_index => :environment do
+    Client.__elasticsearch__.delete_index!
+  end
+
+  desc "Refresh index for clients"
+  task :refresh_index => :environment do
+    Client.__elasticsearch__.refresh_index!
+  end
+
+  desc 'Index DOIs by client'
+  task :index_all_dois => :environment do
+    if ENV['CLIENT_ID'].nil?
+      puts "ENV['CLIENT_ID'] is required."
+      exit
+    end
+
+    client = Client.where(deleted_at: nil).where(symbol: ENV['CLIENT_ID']).first
+    if client.nil?
+      puts "Client not found for client ID #{ENV['CLIENT_ID']}."
+      exit
+    end
+
+    # index DOIs for client
+    puts "#{client.dois.length} DOIs will be indexed."
+    client.dois.find_each do |doi|
+      doi.__elasticsearch__.index_document
+      puts "DOI #{doi.doi} indexed."
+    end
+  end
+
+  desc 'Import all clients'
+  task :import => :environment do
+    Client.import
+  end
+
+  desc 'Import DOIs by client'
+  task :import_all_dois => :environment do
+    if ENV['CLIENT_ID'].nil?
+      puts "ENV['CLIENT_ID'] is required."
+      exit
+    end
+
+    client = Client.where(deleted_at: nil).where(symbol: ENV['CLIENT_ID']).first
+    if client.nil?
+      puts "Client not found for client ID #{ENV['CLIENT_ID']}."
+      exit
+    end
+
+    # import DOIs for client
+    puts "#{client.dois.length} DOIs will be imported."
+    client.dois.find_each do |doi|
+      begin
+        Doi.import_one(doi_id: doi.doi)
+        puts "DOI #{doi.doi} imported."
+      rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout, Elasticsearch::Transport::Transport::Errors::BadRequest => error
+        puts "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
+      end
+    end
+  end
+
   desc 'Delete client transferred to other DOI registration agency'
   task :delete => :environment do
     if ENV['CLIENT_ID'].nil?
@@ -105,52 +171,6 @@ namespace :client do
       puts "Provider prefix for provider #{target.provider.symbol} and prefix #{prefix} created."
       client_prefix = ClientPrefix.create(client: target.symbol, prefix: prefix, provider_prefix: provider_prefix.id)
       puts "Client prefix for client #{target.symbol} and prefix #{prefix} created."
-    end
-  end
-
-  desc 'Import DOIs by client'
-  task :import_all_dois => :environment do
-    if ENV['CLIENT_ID'].nil?
-      puts "ENV['CLIENT_ID'] is required."
-      exit
-    end
-
-    client = Client.where(deleted_at: nil).where(symbol: ENV['CLIENT_ID']).first
-    if client.nil?
-      puts "Client not found for client ID #{ENV['CLIENT_ID']}."
-      exit
-    end
-
-    # import DOIs for client
-    puts "#{client.dois.length} DOIs will be imported."
-    client.dois.find_each do |doi|
-      begin
-        Doi.import_one(doi_id: doi.doi)
-        puts "DOI #{doi.doi} imported."
-      rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout, Elasticsearch::Transport::Transport::Errors::BadRequest => error
-        puts "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
-      end
-    end
-  end
-
-  desc 'Index DOIs by client'
-  task :index_all_dois => :environment do
-    if ENV['CLIENT_ID'].nil?
-      puts "ENV['CLIENT_ID'] is required."
-      exit
-    end
-
-    client = Client.where(deleted_at: nil).where(symbol: ENV['CLIENT_ID']).first
-    if client.nil?
-      puts "Client not found for client ID #{ENV['CLIENT_ID']}."
-      exit
-    end
-
-    # index DOIs for client
-    puts "#{client.dois.length} DOIs will be indexed."
-    client.dois.find_each do |doi|
-      doi.__elasticsearch__.index_document
-      puts "DOI #{doi.doi} indexed."
     end
   end
 end
