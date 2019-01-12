@@ -9,6 +9,7 @@ services:
     image: datacite/lupo
     ports:
       - "8065:80"
+      - "2265:22"
     volumes:
       - ./app:/home/app/webapp/app
       - ./config:/home/app/webapp/config

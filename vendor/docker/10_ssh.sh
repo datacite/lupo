@@ -1,2 +1,4 @@
 #!/bin/sh
-dockerize -template /home/app/webapp/vendor/docker/authorized_keys.tmpl:/root/.ssh/authorized_keys
+if [ "${PUBLIC_KEY}" ]; then
+  echo "${PUBLIC_KEY}" > /root/.ssh/authorized_keys
+fi
