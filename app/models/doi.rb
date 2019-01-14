@@ -324,7 +324,8 @@ class Doi < ActiveRecord::Base
       sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
       this_month: { date_range: { field: 'created', time_zone: "CET", ranges: {from: beginning_of_month, to: "now/d"} } },
       this_year: { date_range: { field: 'created', time_zone: "CET", ranges: {from: beginning_of_year, to: "now/d"} } },
-      last_year: { date_range: { field: 'created', time_zone: "CET", ranges: {from: beginning_of_last_year, to: beginning_of_year} } }
+      last_year: { date_range: { field: 'created', time_zone: "CET", ranges: {from: beginning_of_last_year, to: beginning_of_year} } },
+      subjects: { terms: { field: 'subjects.subject', size: 15, min_doc_count: 1 } }
     }
   end
 

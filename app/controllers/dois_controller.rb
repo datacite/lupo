@@ -174,6 +174,8 @@ class DoisController < ApplicationController
       link_checks_dc_identifier = total > 0 ? response.response.aggregations.link_checks_dc_identifier.value : nil
       link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
       links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
+      subjects = total > 0 ? facet_by_key(response.response.aggregations.subjects.buckets) : nil
+
 
       respond_to do |format|
         format.json do
@@ -197,7 +199,8 @@ class DoisController < ApplicationController
             "linksWithSchemaOrg" => links_with_schema_org,
             "linkChecksSchemaOrgId" => link_checks_schema_org_id,
             "linkChecksDcIdentifier" => link_checks_dc_identifier,
-            "linkChecksCitationDoi" => link_checks_citation_doi
+            "linkChecksCitationDoi" => link_checks_citation_doi,
+            subjects: subjects
           }.compact
 
           options[:links] = {
