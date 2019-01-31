@@ -1,0 +1,425 @@
+openapi: 3.0.0
+info:
+  title: DataCite REST API
+  description: The REST API is used for all API interactions with DataCite services.
+  contact:
+    name: DataCite Support
+    url: 'https://support.datacite.org'
+    email: support@datacite.org
+  license:
+    name: MIT
+    url: 'https://raw.githubusercontent.com/datacite/lupo/master/LICENSE'
+  version: 2.0.0
+servers:
+  - url: https://api.datacite.org
+    description: Production server
+  - url: https://api.test.datacite.org
+    description: Staging server
+paths:
+  /clients:
+    get:
+      summary: Returns a list of clients.
+      responses:
+        '200':
+          description: A JSON array of clients.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Client'
+  /dois:
+    get:
+      summary: Return a list of dois.
+      responses:
+        '200':
+          description: A JSON array of dois.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Doi'
+  /heartbeat:
+    get:
+      description: This resource returns the current status of the REST API.
+      responses:
+        '200':
+          description: REST API is operating normally.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+        '500':
+          description: REST API is not working properly.
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: failed
+  /prefixes:
+    get:
+      responses:
+        '200':
+          description: A JSON array of prefixes.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Prefix'
+  /providers:
+    get:
+      description: A JSON array of providers.
+      responses:
+        '200':
+          description: A JSON array of prefixes.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+    
+components:
+  schemas:
+    Client:
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+            symbol:
+              type: string
+            contactName:
+              type: string
+            contactEmail:
+              type: string
+            description:
+              type: string
+            domains:
+              type: string
+            url:
+              type: string
+            created:
+              type: string
+            updated:
+              type: string
+      required:  
+        - id
+        - attributes
+          - name
+          - symbol
+          - contactName
+          - contactEmail
+    Doi:
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        attributes:
+          type: object
+          properties:
+            doi:
+              type: string
+            prefix:
+              type: string
+            suffix:
+              type: string
+            identifiers:
+              type: array
+              items:
+                type: object
+                properties:
+                  identifier:
+                    type: string
+                  identifierType:
+                    type: string
+            creators:
+              type: array
+              items: 
+                type: object
+                properties:
+                  nameType:
+                    type: string
+                  nameIdentifiers:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        nameIdentifier:
+                          type: string
+                        nameIdentifierScheme:
+                          type: string
+                  name:
+                    type: string
+                  givenName:
+                    type: string
+                  familyName:
+                    type: string
+                  affiliation:
+                    type: string
+            titles:
+              type: array
+              items:
+                type: object
+                properties:
+                  title:
+                    type: string
+                  titleType:
+                    type: string
+                  lang:
+                    type: string
+            publisher:
+              type: string
+            container:
+              type: object
+              properties:
+                type: 
+                  type: string
+                identifier:
+                  type: string
+                identifierType:
+                  type: string
+                title:
+                  type: string
+                volume:
+                  type: string
+                issue:
+                  type: string
+                firstPage:
+                  type: string
+                lastPage:
+                  type: string
+            publicationYear:
+              type: number
+            subjects:
+              type: array
+              items: 
+                type: object
+                properties:
+                  subject:
+                    type: string
+                  subjectScheme:
+                    type: string
+                  schemeUri:
+                    type: string
+                  valueUri:
+                    type: string
+                  lang:
+                    type: string
+            contributors:
+              type: array
+              items: 
+                type: object
+                properties:
+                  nameType:
+                    type: string
+                  nameIdentifiers:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        nameIdentifier:
+                          type: string
+                        nameIdentifierScheme:
+                          type: string
+                  name:
+                    type: string
+                  givenName:
+                    type: string
+                  familyName:
+                    type: string
+                  affiliation:
+                    type: string
+                  contributorType:
+                    type: string
+            dates:
+              type: array
+              items:
+                type: object
+                properties:
+                  date:
+                    type: string
+                  dateType:
+                    type: string
+            language:
+              type: string
+            types:
+              type: object
+              properties:
+                resourceTypeGeneral:
+                  type: string
+                resourceType:
+                  type: string
+                schemaOrg:
+                  type: string
+                bibtex:
+                  type: string
+                citeproc:
+                  type: string
+                ris:
+                  type: string
+            relatedIdentifiers:
+              type: array
+              items:
+                type: object
+                properties:
+                  relatedIdentifier:
+                    type: string
+                  relatedIdentifierType:
+                    type: string
+                  relationType:
+                    type: string
+                  resourceTypeGeneral:
+                    type: string
+            sizes:
+              type: array
+              items:
+                type: string
+            formats:
+              type: array
+              items:
+                type: string
+            version:
+              type: string
+            rightsList:
+              type: array
+              items:
+                type: object
+                properties:
+                  rights:
+                    type: string
+                  rightsUri:
+                    type: string
+                  lang:
+                    type: string
+            descriptions:
+              type: array
+              items:
+                type: object
+                properties:
+                  description:
+                    type: string
+                  descriptionType:
+                    type: string
+                  lang:
+                    type: string
+            geoLocations:
+              type: array
+              items:
+                type: object
+                properties:
+                  geoLocationPoint:
+                    type: object
+                  geoLocationBox:
+                    type: object
+                  geoLocationPlace:
+                    type: string
+            fundingReferences:
+              type: array
+              items:
+                type: object
+                properties:
+                  funderName:
+                    type: string
+                  funderIdentifier:
+                    type: string
+                  funderIdentifierType:
+                    type: string
+                  awardNumber:
+                    type: string
+                  awardUri:
+                    type: string
+                  awardTitle:
+                    type: string
+            url:
+              type: string
+            contentUrl:
+              type: array
+              items:
+                type: string
+            metadataVersion:
+              type: number
+            schemaVersion:
+              type: string
+            source:
+              type: string
+            isActive:
+              type: boolean
+            state:
+              type: string
+            reason:
+              type: string
+            landingPage:
+              type: object
+              properties:
+                checked:
+                  type: string
+                url:
+                  type: string
+                contentType:
+                  type: string
+                error:
+                  type: string
+                redirectCount:
+                  type: number
+                redirectUrls:
+                  type: array
+                  items:
+                    type: string
+                downloadLatency:
+                  type: number
+                hasSchemaOrg:
+                  type: boolean
+                schemaOrgid:
+                  type: string
+                dcIdentifier:
+                  type: string
+                citationDoi:
+                  type: string
+                bodyhasPid:
+                  type: boolean
+            created:
+              type: string
+            registered:
+              type: string
+            updated:
+              type: string
+      required:
+        - id
+        - attributes
+          - doi
+          - creators
+          - titles
+          - publisher
+          - publicationYear
+    Prefix:
+      properties:
+        prefix:
+          type: string
+      required:
+        - prefix
+    Provider:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        symbol:
+          type: string
+      required:
+        - id
+        - name
+        - symbol
+    
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+    bearerAuth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT  
+security:
+  - BasicAuth: []
+  - bearerAuth: []
