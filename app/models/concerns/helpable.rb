@@ -123,5 +123,42 @@ module Helpable
         response
       end
     end
+
+    def get_doi(options={})
+      return OpenStruct.new(body: { "errors" => [{ "title" => "DOI missing" }] }) unless options[:doi].present?
+
+      url = "#{ENV['HANDLE_URL']}/api/handles/#{options[:doi]}"
+      response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
+
+      if response.status == 200
+        response
+      else
+        text = "Error " + response.body["errors"].inspect
+
+        logger = Logger.new(STDOUT)
+        logger.error "[Handle] " + text
+        User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
+        response
+      end
+    end
+
+    def delete_doi(options={})
+      return OpenStruct.new(body: { "errors" => [{ "title" => "DOI missing" }] }) unless options[:doi].present?
+      return OpenStruct.new(body: { "errors" => [{ "title" => "Only DOIs with prefix 10.5072 can be deleted" }] }) unless options[:doi].start_with?("10.5072")
+
+      url = "#{ENV['HANDLE_URL']}/api/handles/#{options[:doi]}"
+      response = Maremma.delete(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
+
+      if response.status == 200
+        response
+      else
+        text = "Error " + response.body["errors"].inspect
+
+        logger = Logger.new(STDOUT)
+        logger.error "[Handle] " + text
+        User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
+        response
+      end
+    end
   end
 end
