@@ -117,13 +117,13 @@ module Helpable
       if total > 0
         # walk through paginated results
         total_pages = (total.to_f / 1000).ceil
+        dois = []
   
         (0...total_pages).each do |page|
           url = "#{ENV['HANDLE_URL']}/api/handles?prefix=#{options[:prefix]}&page=#{page}&pageSize=1000"
           response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
-          
           if response.status == 200
-            puts (response.body.dig("data", "handles") || []).join("\n")
+            dois += (response.body.dig("data", "handles") || [])
           else
             text = "Error " + response.body["errors"].inspect
 
@@ -135,6 +135,8 @@ module Helpable
       end
 
       puts "#{total} DOIs found."
+
+      dois
     end
 
     def get_doi(options={})

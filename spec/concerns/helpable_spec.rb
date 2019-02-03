@@ -124,8 +124,8 @@ describe Doi, vcr: true do
     
     it 'should get dois' do
       options = { prefix: "10.5438", username: client.symbol, password: client.password, role_id: "client_admin" }
-      dois = Doi.get_dois(options).body.dig("data", "handles")
-      expect(dois.length).to eq(438)
+      dois = Doi.get_dois(options)
+      expect(dois.length).to eq(442)
       expect(dois.first).to eq("10.5438/0000-00SS")
     end
   end

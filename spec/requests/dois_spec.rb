@@ -2214,7 +2214,7 @@ describe "dois", type: :request do
     before { get "/dois/get-dois", headers: headers }
 
     it 'returns all dois' do
-      expect(json["dois"].length).to eq(438)
+      expect(json["dois"].length).to eq(442)
       expect(json["dois"].first).to eq("10.5438/0000-00SS")
     end
 

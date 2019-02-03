@@ -412,13 +412,11 @@ class DoisController < ApplicationController
     client_prefix = client.prefixes.where.not('prefix.prefix = ?', "10.5072").first
     head :no_content and return unless client_prefix.present?
 
-    response = Doi.get_dois(prefix: client_prefix.prefix, username: current_user.uid.upcase, password: current_user.password)
-    if response.status == 200
-      render json: { dois: response.body.dig("data", "handles") }.to_json, status: :ok
-    elsif response.status == 204
-      head :no_content
+    dois = Doi.get_dois(prefix: client_prefix.prefix, username: current_user.uid.upcase, password: current_user.password)
+    if dois.length > 0 
+      render json: { dois: dois }.to_json, status: :ok
     else
-      render json: serialize(response.body["errors"]), status: :bad_request
+      head :no_content
     end
   end
 
