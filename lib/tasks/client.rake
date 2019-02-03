@@ -28,7 +28,7 @@ namespace :client do
     end
 
     # index DOIs for client
-    puts "#{client.dois.length} DOIs will be indexed."
+    # puts "#{client.dois.length} DOIs will be indexed."
     client.index_all_dois
   end
 
