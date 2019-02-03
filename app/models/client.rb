@@ -182,42 +182,11 @@ class Client < ActiveRecord::Base
 
     target = c.records.first
 
-    errors = 0
-    count = 0
+    Doi.index(from_date: "2011-01-01", client_id: target.id)
+  end
 
-    logger = Logger.new(STDOUT)
-
-    dois.find_in_batches(batch_size: 500) do |dois|
-      dois.each { |doi| doi.update_column(:datacentre, target.id) }
-
-      response = Doi.__elasticsearch__.client.bulk \
-        index:   Doi.index_name,
-        type:    Doi.document_type,
-        body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
-
-      errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
-      count += dois.length
-      dois.each { |doi| doi.update_column(:indexed, Time.zone.now) }
-    end
-
-    if errors > 1
-      logger.info "[Elasticsearch] #{errors} errors transferring #{count} DOIs to account #{value}."
-    elsif count > 1
-      logger.info "[Elasticsearch] Transferred #{count} DOIs to account #{value}."
-    end
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed => error
-    logger.info "[Elasticsearch] Error #{error.message} transferring DOIs to account #{value}."
-
-    count = 0
-
-    dois.find_each do |doi|
-      doi.update_column(:datacentre, target.id)
-      IndexJob.perform_later(doi)
-      doi.update_column(:indexed, Time.zone.now)  
-      count += 1
-    end
-  
-    logger.info "[Elasticsearch] Transferred #{count} DOIs to account #{value}."
+  def index_all_dois
+    Doi.index(from_date: "2011-01-01", client_id: id)
   end
 
   def cache_key

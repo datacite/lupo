@@ -478,7 +478,6 @@ class Doi < ActiveRecord::Base
     # get every day between from_date and until_date
     (from_date..until_date).each do |d|
       DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"), index_time: index_time, client_id: client_id)
-      puts "Queued indexing for DOIs created on #{d.strftime("%F")}."
     end
   end
 
@@ -494,7 +493,7 @@ class Doi < ActiveRecord::Base
     logger = Logger.new(STDOUT)
 
     collection = Doi.where(created: from_date.midnight..from_date.end_of_day).where("indexed < ?", index_time)
-    collection = collection.where(client_id: client_id) if client_id.present?
+    collection = collection.where(datacentre: client_id) if client_id.present?
 
     collection.find_in_batches(batch_size: 250) do |dois|
       response = Doi.__elasticsearch__.client.bulk \

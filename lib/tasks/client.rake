@@ -29,10 +29,7 @@ namespace :client do
 
     # index DOIs for client
     puts "#{client.dois.length} DOIs will be indexed."
-    client.dois.find_each do |doi|
-      doi.__elasticsearch__.index_document
-      puts "DOI #{doi.doi} indexed."
-    end
+    client.index_all_dois
   end
 
   desc 'Import all clients'
@@ -154,17 +151,7 @@ namespace :client do
 
     # update client for DOIs in batches
     puts "#{client.dois.length} DOIs will be transferred."
-    client.dois.find_each do |doi|
-      doi.update_attributes(datacentre: target.id)
-      puts "DOI #{doi.doi} transferred to client #{target.symbol}."
-    end
-
-    if client.update_attributes(is_active: nil, deleted_at: Time.zone.now)
-      client.send_delete_email unless Rails.env.test?
-      puts "Client with client ID #{ENV['CLIENT_ID']} deleted."
-    else
-      puts client.errors.inspect
-    end
+    client.update_attributes(target_id: target.symbol)
 
     prefixes.each do |prefix|
       provider_prefix = ProviderPrefix.create(provider: target.provider.symbol, prefix: prefix)

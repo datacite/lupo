@@ -8,7 +8,7 @@ describe "doi:index", elasticsearch: true do
   ENV['UNTIL_DATE'] = "2018-08-05"
 
   let!(:doi)  { create_list(:doi, 10) }
-  let(:output) { "Queued indexing for DOIs created on 2018-01-04.\n" }
+  let(:output) { "" }
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")

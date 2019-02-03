@@ -34,7 +34,7 @@ describe Client, type: :model do
   end
 
   describe "doi transfer", elasticsearch: true do
-    let!(:dois) {  create_list(:doi, 5, client: client) }
+    let!(:dois) { create_list(:doi, 5, client: client) }
 
     # it "transfer all DOIs" do
     #   original_dois = Doi.where(client: client.symbol)
