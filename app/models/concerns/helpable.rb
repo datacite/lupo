@@ -109,19 +109,32 @@ module Helpable
     def get_dois(options={})
       return OpenStruct.new(body: { "errors" => [{ "title" => "Prefix missing" }] }) unless options[:prefix].present?
 
-      url = "#{ENV['HANDLE_URL']}/api/handles?prefix=#{options[:prefix]}"
-      response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
+      count_url = "#{ENV['HANDLE_URL']}/api/handles?prefix=#{options[:prefix]}&pageSize=0"
+      response = Maremma.get(count_url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
 
-      if response.status == 200
-        response
-      else
-        text = "Error " + response.body["errors"].inspect
+      total = response.body.dig("data", "totalCount").to_i
 
-        logger = Logger.new(STDOUT)
-        logger.error "[Handle] " + text
-        User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
-        response
+      if total > 0
+        # walk through paginated results
+        total_pages = (total.to_f / 1000).ceil
+  
+        (0...total_pages).each do |page|
+          url = "#{ENV['HANDLE_URL']}/api/handles?prefix=#{options[:prefix]}&page=#{page}&pageSize=1000"
+          response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
+          
+          if response.status == 200
+            puts (response.body.dig("data", "handles") || []).join("\n")
+          else
+            text = "Error " + response.body["errors"].inspect
+
+            logger = Logger.new(STDOUT)
+            logger.error "[Handle] " + text
+            User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
+          end
+        end
       end
+
+      puts "#{total} DOIs found."
     end
 
     def get_doi(options={})

@@ -6,9 +6,7 @@ namespace :handle do
       exit
     end
 
-    response = Doi.get_dois(prefix: ENV['PREFIX'])
-    puts (response.body.dig("data", "handles") || []).join("\n")
-    puts "Found " + (response.body.dig("data", "totalCount") || "0") + " DOIs with prefix #{ENV['PREFIX']}."
+    Doi.get_dois(prefix: ENV['PREFIX'])
   end
 
   desc 'Get DOI'
