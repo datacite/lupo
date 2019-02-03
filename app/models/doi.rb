@@ -377,34 +377,38 @@ class Doi < ActiveRecord::Base
   def self.import_all(options={})
     from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
     until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
+    client_id = options[:client_id]
 
     # get every day between from_date and until_date
     (from_date..until_date).each do |d|
-      DoiImportByDayJob.perform_later(from_date: d.strftime("%F"))
-      puts "Queued importing for DOIs created on #{d.strftime("%F")}."
+      DoiImportByDayJob.perform_later(from_date: d.strftime("%F"), client_id: client_id)
     end
   end
 
   def self.import_missing(options={})
     from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
     until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
+    client_id = options[:client_id]
 
     # get every day between from_date and until_date
     (from_date..until_date).each do |d|
-      DoiImportByDayMissingJob.perform_later(from_date: d.strftime("%F"))
-      puts "Queued importing for missing DOIs created on #{d.strftime("%F")}."
+      DoiImportByDayMissingJob.perform_later(from_date: d.strftime("%F"), client_id: client_id)
     end
   end
 
   def self.import_by_day(options={})
     return nil unless options[:from_date].present?
     from_date = Date.parse(options[:from_date])
+    client_id = options[:client_id]
 
     count = 0
 
     logger = Logger.new(STDOUT)
 
-    Doi.where(created: from_date.midnight..from_date.end_of_day).find_each do |doi|
+    collection = Doi.where(created: from_date.midnight..from_date.end_of_day)
+    collection = collection.where(datacentre: client_id) if client_id.present?
+
+    collection.find_each do |doi|
       begin
         # ignore broken xml
         string = doi.current_metadata.present? ? doi.from_xml(doi.current_metadata.xml.to_s.force_encoding("UTF-8")) : nil
@@ -436,12 +440,16 @@ class Doi < ActiveRecord::Base
   def self.import_by_day_missing(options={})
     return nil unless options[:from_date].present?
     from_date = Date.parse(options[:from_date])
+    client_id = options[:client_id]
 
     count = 0
 
     logger = Logger.new(STDOUT)
 
-    Doi.where(xml: nil).where(created: from_date.midnight..from_date.end_of_day).find_each do |doi|
+    collection = Doi.where(xml: nil).where(created: from_date.midnight..from_date.end_of_day)
+    collection = collection.where(datacentre: client_id) if client_id.present?
+
+    collection.find_each do |doi|
       begin
         string = doi.current_metadata.present? ? doi.clean_xml(doi.current_metadata.xml) : nil
         unless string.present?

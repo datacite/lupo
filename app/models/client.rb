@@ -189,6 +189,14 @@ class Client < ActiveRecord::Base
     Doi.index(from_date: "2011-01-01", client_id: id)
   end
 
+  def import_all_dois
+    Doi.import_all(from_date: "2011-01-01", client_id: id)
+  end
+
+  def import_missing_dois
+    Doi.import_missing(from_date: "2011-01-01", client_id: id)
+  end
+
   def cache_key
     "clients/#{uid}-#{updated.iso8601}"
   end

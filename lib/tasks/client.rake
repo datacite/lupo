@@ -51,15 +51,26 @@ namespace :client do
     end
 
     # import DOIs for client
-    puts "#{client.dois.length} DOIs will be imported."
-    client.dois.find_each do |doi|
-      begin
-        Doi.import_one(doi_id: doi.doi)
-        puts "DOI #{doi.doi} imported."
-      rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout, Elasticsearch::Transport::Transport::Errors::BadRequest => error
-        puts "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
-      end
+    # puts "#{client.dois.length} DOIs will be imported."
+    client.import_all_dois
+  end
+
+  desc 'Import missing DOIs by client'
+  task :import_missing_dois => :environment do
+    if ENV['CLIENT_ID'].nil?
+      puts "ENV['CLIENT_ID'] is required."
+      exit
     end
+
+    client = Client.where(deleted_at: nil).where(symbol: ENV['CLIENT_ID']).first
+    if client.nil?
+      puts "Client not found for client ID #{ENV['CLIENT_ID']}."
+      exit
+    end
+
+    # import DOIs for client
+    # puts "#{client.dois.length} DOIs will be imported."
+    client.import_missing_dois
   end
 
   desc 'Delete client transferred to other DOI registration agency'
