@@ -113,12 +113,12 @@ module Helpable
       response = Maremma.get(count_url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
 
       total = response.body.dig("data", "totalCount").to_i
+      dois = []
 
       if total > 0
         # walk through paginated results
         total_pages = (total.to_f / 1000).ceil
-        dois = []
-  
+        
         (0...total_pages).each do |page|
           url = "#{ENV['HANDLE_URL']}/api/handles?prefix=#{options[:prefix]}&page=#{page}&pageSize=1000"
           response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)

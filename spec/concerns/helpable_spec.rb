@@ -128,5 +128,11 @@ describe Doi, vcr: true do
       expect(dois.length).to eq(442)
       expect(dois.first).to eq("10.5438/0000-00SS")
     end
+
+    it 'should handle zero dois' do
+      options = { prefix: "10.70001", username: client.symbol, password: client.password, role_id: "client_admin" }
+      dois = Doi.get_dois(options)
+      expect(dois.length).to eq(0)
+    end
   end
 end

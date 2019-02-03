@@ -1,5 +1,5 @@
 module Lupo
   class Application
-    VERSION = "2.3.15"
+    VERSION = "2.3.16"
   end
 end
