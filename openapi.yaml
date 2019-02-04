@@ -9,7 +9,7 @@ info:
   license:
     name: MIT
     url: 'https://raw.githubusercontent.com/datacite/lupo/master/LICENSE'
-  version: 2.0.0
+  version: 2.3.0
 servers:
   - url: https://api.datacite.org
     description: Production server
@@ -75,9 +75,18 @@ paths:
             type: string
             enum: [ckan, dataverse, dspace, eprints, escidoc, fedora, invenio, mysql, nesstar]
         - in: query
-          name: page
+          name: page[number]
           schema:
             type: number
+        - in: query
+          name: page[size]
+          schema:
+            type: number
+        - in: query
+          name: include
+          schema:
+            type: string
+            enum: [provider, repository]
         - in: query
           name: sort
           schema:
@@ -191,9 +200,22 @@ paths:
             type: string
             enum: [client, provider, resource-type]
         - in: query
-          name: page
+          name: page[number]
           schema:
             type: number
+        - in: query
+          name: page[size]
+          schema:
+            type: number
+        - in: query
+          name: page[cursor]
+          schema:
+            type: number
+        - in: query
+          name: include
+          schema:
+            type: string
+            enum: [client, media]
         - in: query
           name: sort
           schema:
@@ -249,6 +271,143 @@ paths:
           description: OK
     delete:
       summary: Delete a doi.
+      responses:
+        '204':
+          description: No content
+
+  /events:
+    get:
+      summary: Returns a list of events.
+      security: []
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+        - in: query
+          name: subj-id
+          schema:
+            type: string
+        - in: query
+          name: obj-id
+          schema:
+            type: string
+        - in: query
+          name: doi
+          schema:
+            type: string
+        - in: query
+          name: orcid
+          schema:
+            type: string
+        - in: query
+          name: prefix
+          schema:
+            type: string
+        - in: query
+          name: subtype
+          schema:
+            type: string
+        - in: query
+          name: citation-type
+          schema:
+            type: string
+        - in: query
+          name: source-id
+          schema:
+            type: string
+        - in: query
+          name: registrant-id
+          schema:
+            type: string
+        - in: query
+          name: relation-type-id
+          schema:
+            type: string
+        - in: query
+          name: issn
+          schema:
+            type: string
+        - in: query
+          name: publication-year
+          schema:
+            type: string
+        - in: query
+          name: year-month
+          schema:
+            type: string
+        - in: query
+          name: page[number]
+          schema:
+            type: number
+        - in: query
+          name: page[size]
+          schema:
+            type: number
+        - in: query
+          name: page[cursor]
+          schema:
+            type: number
+        - in: query
+          name: include
+          schema:
+            type: string
+            enum: [subj, obj]
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [relevance, name, -name, created, -created]
+      responses:
+        '200':
+          description: A JSON array of events.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Event'
+    post:
+      summary: Add a new event.
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '201':
+          description: Created
+
+  /events/{id}:
+    get:
+      summary: Returns an event.
+      security: []
+      parameters:
+        - name: id
+          in: path
+          description: Event
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A JSON array of events.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Event'
+    put:
+      summary: Update an event.
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: Delete an event.
       responses:
         '204':
           description: No content
@@ -340,7 +499,11 @@ paths:
             type: string
             enum: [amer, apac, emea]
         - in: query
-          name: page
+          name: page[number]
+          schema:
+            type: number
+        - in: query
+          name: page[size]
           schema:
             type: number
         - in: query
@@ -754,6 +917,46 @@ components:
             - title: DataCite Metadata Schema Documentation for the Publication and Citation of Research Data v4.1
           publisher: DataCite
           publicationYear: 2017
+    Event:
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        attributes:
+          type: object
+          properties:
+            subjId: 
+              type: string
+            objId:
+              type: string
+            messageAction:
+              type: string
+              enum: [create, delete]
+            relationTypeId:
+              type: string
+            sourceToken:
+              type: string
+            sourceId:
+              type: string
+            total:
+              type: number
+            license:
+              type: string
+            occuredAt:
+              type: string
+            timestamp:
+              type: string
+            subj:
+              type: object
+            obj:
+              type: object
+      required:  
+        - id
+        - attributes
+          - subjId
+          - sourceToken
+          - sourceId
     Prefix:
       properties:
         prefix:
