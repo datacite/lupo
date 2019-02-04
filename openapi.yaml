@@ -666,6 +666,7 @@ paths:
 components:
   schemas:
     Client:
+      type: object
       properties:
         id:
           type: string
@@ -692,11 +693,20 @@ components:
               type: string
             updated:
               type: string
+      required:  
+        - id
+        - attributes
+          - name
+          - symbol
+          - contactName
+          - contactEmail
       example:
         id: tib.pangaea
         attributes:
           name: Pangaea
+          
     ClientPrefix:
+      type: object
       properties:
         id:
           type: string
@@ -709,7 +719,11 @@ components:
               type: string
             updated:
               type: string
+      required:  
+        - id
+        
     Doi:
+      type: object
       properties:
         id:
           type: string
@@ -984,6 +998,14 @@ components:
               type: string
             updated:
               type: string
+      required:
+        - id
+        - attributes
+          - doi
+          - creators
+          - titles
+          - publisher
+          - publicationYear
       example:
         id: 10.5438/0014
         type: dois
@@ -1000,7 +1022,9 @@ components:
             - title: DataCite Metadata Schema Documentation for the Publication and Citation of Research Data v4.1
           publisher: DataCite
           publicationYear: 2017
+          
     Event:
+      type: object
       properties:
         id:
           type: string
@@ -1034,11 +1058,23 @@ components:
               type: object
             obj:
               type: object
+      required:  
+        - id
+        - attributes
+          - subjId
+          - sourceToken
+          - sourceId
+          
     Prefix:
+      type: object
       properties:
         prefix:
           type: string
+      required:
+        - prefix
+        
     ProviderPrefix:
+      type: object
       properties:
         id:
           type: string
@@ -1049,7 +1085,11 @@ components:
               type: string
             updated:
               type: string
+      required:
+        - id
+        
     Provider:
+      type: object
       properties:
         id:
           type: string
@@ -1057,12 +1097,19 @@ components:
           type: string
         symbol:
           type: string
+      required:
+        - id
+        - attributes
+          - name
+          - symbol
       example:
         id: bl
         attributes:
           name: British Library
           symbol: BL
+          
     Report:
+      type: object
       description: Describes the formatting needs for the COUNTER Dataset Report. Response may include the Report_Header (optional), Report_Datasets (usage stats).
       properties:
         id:
@@ -1102,6 +1149,13 @@ components:
         report-datasets:
           type: string
           description: Defines the output for the Report_Datasets being returned in a Dataset Report. Collection of datasets from the report.
+      required:
+        - report-datasets
+        - report-id
+        - report-name
+        - release
+        - created-by
+        - reporting-period
     
   securitySchemes:
     BasicAuth:
