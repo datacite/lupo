@@ -15,9 +15,31 @@ servers:
     description: Production server
   - url: https://api.test.datacite.org
     description: Staging server
+tags:
+  - name: client-prefixes
+    description: Client Prefixes
+  - name: clients
+    description: Clients
+  - name: dois
+    description: DOIs
+  - name: events
+    description: Events
+  - name: heartbeat
+    description: Heartbeat
+  - name: prefixes
+    description: Prefixes
+  - name: provider-prefixes
+    description: Provider Prefixes
+  - name: providers
+    description: Providers
+  - name: reports
+    description: Reports
+
 paths:
   /client-prefixes:
     get:
+      tags: 
+        - client-prefixes
       summary: Returns a list of client-prefixes.
       parameters:
         - in: query
@@ -54,6 +76,8 @@ paths:
                 $ref: '#/components/schemas/ClientPrefix'
   /clients:
     get:
+      tags: 
+        - clients
       summary: Returns a list of clients.
       security: []
       parameters:
@@ -100,6 +124,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Client'
     post:
+      tags: 
+        - clients
       summary: Add a new client.
       requestBody:
         required: true
@@ -120,6 +146,8 @@ paths:
         schema:
           type: string
     get:
+      tags: 
+        - clients
       summary: Returns a client.
       security: []
       responses:
@@ -130,6 +158,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Client'
     put:
+      tags: 
+        - clients
       summary: Update a client.
       requestBody:
         required: true
@@ -141,12 +171,16 @@ paths:
         '200':
           description: OK
     delete:
+      tags: 
+        - clients
       summary: Delete a client.
       responses:
         '204':
           description: No content
   /dois:
     get:
+      tags: 
+        - dois
       summary: Return a list of dois.
       security: []
       parameters:
@@ -229,6 +263,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Doi'
     post:
+      tags: 
+        - dois
       summary: Add a new doi.
       requestBody:
         required: true
@@ -249,6 +285,8 @@ paths:
       schema:
         type: string
     get:
+      tags: 
+        - dois
       summary: Returns a doi.
       security: []
       responses:
@@ -259,6 +297,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Doi'
     put:
+      tags: 
+        - dois
       summary: Update a doi.
       requestBody:
         required: true
@@ -270,6 +310,8 @@ paths:
         '200':
           description: OK
     delete:
+      tags: 
+        - dois
       summary: Delete a doi.
       responses:
         '204':
@@ -365,7 +407,11 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Event'
+      tags: 
+        - events
     post:
+      tags: 
+        - events
       summary: Add a new event.
       requestBody:
         required: true
@@ -378,16 +424,19 @@ paths:
           description: Created
 
   /events/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: Event
+        required: true
+        schema:
+          type: string
     get:
+      tags: 
+        - events
       summary: Returns an event.
       security: []
-      parameters:
-        - name: id
-          in: path
-          description: Event
-          required: true
-          schema:
-            type: string
+
       responses:
         '200':
           description: A JSON array of events.
@@ -396,6 +445,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
     put:
+      tags: 
+        - events
       summary: Update an event.
       requestBody:
         required: true
@@ -407,6 +458,8 @@ paths:
         '200':
           description: OK
     delete:
+      tags: 
+        - events
       summary: Delete an event.
       responses:
         '204':
@@ -414,6 +467,8 @@ paths:
                 
   /heartbeat:
     get:
+      tags: 
+        - heartbeat
       summary: This resource returns the current status of the REST API.
       security: []
       responses:
@@ -433,6 +488,8 @@ paths:
                 example: failed
   /prefixes:
     get:
+      tags: 
+        - prefixes
       summary: Returns a list of prefixes.
       security: []
       responses:
@@ -444,6 +501,8 @@ paths:
                 $ref: '#/components/schemas/Prefix'
   /prefixes/{id}:
     get:
+      tags: 
+        - prefixes
       summary: A prefix.
       security: []
       parameters:
@@ -462,6 +521,8 @@ paths:
                 $ref: '#/components/schemas/Prefix'
   /provider-prefixes:
     get:
+      tags: 
+        - provider-prefixes
       summary: A JSON array of provider-prefixes.
       responses:
         '200':
@@ -472,6 +533,8 @@ paths:
                 $ref: '#/components/schemas/ProviderPrefix'
   /providers:
     get:
+      tags: 
+        - providers
       summary: A JSON array of providers.
       security: []
       parameters:
@@ -519,6 +582,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Provider'
     post:
+      tags: 
+        - providers
       summary: Add a new provider.
       requestBody:
         required: true
@@ -539,6 +604,8 @@ paths:
         schema:
           type: string
     get:
+      tags: 
+        - providers
       summary: A provider.
       responses:
         '200':
@@ -548,6 +615,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Provider'
     put:
+      tags: 
+        - providers
       summary: Update a provider.
       requestBody:
         required: true
@@ -559,6 +628,8 @@ paths:
         '200':
           description: OK
     delete:
+      tags: 
+        - providers
       summary: Delete a provider.
       responses:
         '204':
@@ -566,6 +637,8 @@ paths:
 
   /reports:
     get:
+      tags: 
+        - reports
       summary: A JSON array of reports.
       security: []
       parameters:
@@ -618,6 +691,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Report'
     post:
+      tags: 
+        - reports
       summary: Add a new report.
       requestBody:
         required: true
@@ -638,6 +713,8 @@ paths:
         schema:
           type: string
     get:
+      tags: 
+        - reports
       summary: A report.
       responses:
         '200':
@@ -647,6 +724,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Report'
     put:
+      tags: 
+        - reports
       summary: Update a report.
       requestBody:
         required: true
@@ -658,6 +737,8 @@ paths:
         '200':
           description: OK
     delete:
+      tags: 
+        - reports
       summary: Delete a report.
       responses:
         '204':
