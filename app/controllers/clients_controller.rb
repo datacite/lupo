@@ -4,7 +4,7 @@ class ClientsController < ApplicationController
   before_action :set_client, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
-  load_and_authorize_resource :except => [:index, :show]
+  load_and_authorize_resource :except => [:index, :show, :totals]
 
   def index
     sort = case params[:sort]
@@ -131,8 +131,8 @@ class ClientsController < ApplicationController
     page = { size: 25, number: 1 }
     page_prov = { size: 2000, number: 1 }
 
-    ttl = Client.query("", page: page_prov).map do |client|    
-      response = Doi.query("", client_id: client.symbol.downcase, state: params[:state] || "",page: page)
+    ttl = Client.query("", page: page_prov, provider_id: params[:provider_id]).map do |client|    
+      response = Doi.query("", provider_id: params[:provider_id], client_id: client.symbol.downcase, state: params[:state] || "",page: page)
       total = response.results.total
       states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
       temporal ={}
