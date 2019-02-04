@@ -9,16 +9,79 @@ info:
   license:
     name: MIT
     url: 'https://raw.githubusercontent.com/datacite/lupo/master/LICENSE'
-  version: 2.0.0
+  version: 2.3.0
 servers:
   - url: https://api.datacite.org
     description: Production server
   - url: https://api.test.datacite.org
     description: Staging server
 paths:
+  /client-prefixes:
+    get:
+      summary: Returns a list of client-prefixes.
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+        - in: query
+          name: year
+          schema:
+            type: number
+        - in: query
+          name: client-id
+          schema:
+            type: string
+        - in: query
+          name: prefix-id
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: number
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [name, -name, created, -created]
+      responses:
+        '200':
+          description: A JSON array of client-prefixes.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ClientPrefix'
   /clients:
     get:
       summary: Returns a list of clients.
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+        - in: query
+          name: year
+          schema:
+            type: number
+        - in: query
+          name: provider-id
+          schema:
+            type: string
+        - in: query
+          name: software
+          schema:
+            type: string
+            enum: [ckan, dataverse, dspace, eprints, escidoc, fedora, invenio, mysql, nesstar]
+        - in: query
+          name: page
+          schema:
+            type: number
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [relevance, name, -name, created, -created]
       responses:
         '200':
           description: A JSON array of clients.
@@ -26,9 +89,113 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Client'
+    post:
+      summary: Add a new client.
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Client'
+      responses:
+        '201':
+          description: Created
+              
+  /clients/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: Client ID
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Returns a client.
+      responses:
+        '200':
+          description: A JSON object.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Client'
+    put:
+      summary: Update a client.
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Client'
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: Delete a client.
+      responses:
+        '204':
+          description: No content
   /dois:
     get:
       summary: Return a list of dois.
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+        - in: query
+          name: created
+          schema:
+            type: number
+        - in: query
+          name: registered
+          schema:
+            type: number
+        - in: query
+          name: provider-id
+          schema:
+            type: string
+        - in: query
+          name: client-id
+          schema:
+            type: string
+        - in: query
+          name: person-id
+          schema:
+            type: string
+        - in: query
+          name: resource-type-id
+          schema:
+            type: string
+        - in: query
+          name: subject
+          schema:
+            type: string
+        - in: query
+          name: schema-version
+          schema:
+            type: string
+        - in: query
+          name: random
+          schema:
+            type: boolean
+        - in: query
+          name: sample-size
+          schema:
+            type: number
+        - in: query
+          name: sample-group
+          schema:
+            type: string
+            enum: [client, provider, resource-type]
+        - in: query
+          name: page
+          schema:
+            type: number
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [relevance, name, -name, created, -created, updated, -updated]
       responses:
         '200':
           description: A JSON array of dois.
@@ -36,6 +203,52 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Doi'
+    post:
+      summary: Add a new doi.
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Doi'
+      responses:
+        '201':
+          description: Created
+          
+  /dois/{id}:
+    parameters:
+    - name: id
+      in: path
+      description: DOI
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Returns a doi.
+      responses:
+        '200':
+          description: A JSON object.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Doi'
+    put:
+      summary: Update a doi.
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Doi'
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: Delete a doi.
+      responses:
+        '204':
+          description: No content
+                
   /heartbeat:
     get:
       description: This resource returns the current status of the REST API.
@@ -63,9 +276,69 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Prefix'
+  /prefixes/{id}:
+    get:
+      summary: A prefix.
+      parameters:
+        - name: id
+          in: path
+          description: DOI
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns a prefix.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Prefix'
+  /provider-prefixes:
+    get:
+      summary: A JSON array of provider-prefixes.
+      responses:
+        '200':
+          description: A JSON array of provider-prefixes.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/ProviderPrefix'
   /providers:
     get:
-      description: A JSON array of providers.
+      summary: A JSON array of providers.
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+        - in: query
+          name: year
+          schema:
+            type: number
+        - in: query
+          name: region
+          schema:
+            type: string
+            enum: [amer, apac, emea]
+        - in: query
+          name: organization-type
+          schema:
+            type: string
+            enum: [academicInstitution, academicLibrary, governmentAgency, nationalInstitution, nationalLibrary, publisher, professionalSociety, researchInstitution, serviceProvider, vendor]
+        - in: query
+          name: focus-area
+          schema:
+            type: string
+            enum: [amer, apac, emea]
+        - in: query
+          name: page
+          schema:
+            type: number
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [relevance, name, -name, created, -created]
       responses:
         '200':
           description: A JSON array of prefixes.
@@ -73,7 +346,51 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Provider'
-    
+    post:
+      summary: Add a new provider.
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Provider'
+      responses:
+        '201':
+          description: Created
+  /providers/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: DOI
+        required: true
+        schema:
+          type: string
+    get:
+      summary: A provider.
+      responses:
+        '200':
+          description: A JSON object.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+    put:
+      summary: Update a provider.
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              $ref: '#/components/schemas/Provider'
+      responses:
+        '200':
+          description: OK
+    delete:
+      summary: Delete a provider.
+      responses:
+        '204':
+          description: No content
+
 components:
   schemas:
     Client:
@@ -110,6 +427,25 @@ components:
           - symbol
           - contactName
           - contactEmail
+      example:
+        id: tib.pangaea
+        attributes:
+          name: Pangaea
+    ClientPrefix:
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        attributes:
+          type: object
+          properties:
+            created:
+              type: string
+            updated:
+              type: string
+      required:  
+        - id
     Doi:
       properties:
         id:
@@ -393,12 +729,41 @@ components:
           - titles
           - publisher
           - publicationYear
+      example:
+        id: 10.5438/0014
+        type: dois
+        attributes:
+          doi: 10.5438/0014
+          prefix: 10.5438
+          suffix: 0014
+          identifiers:
+            - identifier: https://doi.org/10.5438/0014
+              identifierType: DOI
+          creators:
+            - name: DataCite Metadata Working Group
+          titles:
+            - title: DataCite Metadata Schema Documentation for the Publication and Citation of Research Data v4.1
+          publisher: DataCite
+          publicationYear: 2017
     Prefix:
       properties:
         prefix:
           type: string
       required:
         - prefix
+    ProviderPrefix:
+      properties:
+        id:
+          type: string
+        attributes:
+          type: object
+          properties:
+            created:
+              type: string
+            updated:
+              type: string
+      required:
+        - id
     Provider:
       properties:
         id:
@@ -409,8 +774,14 @@ components:
           type: string
       required:
         - id
-        - name
-        - symbol
+        - attributes
+          - name
+          - symbol
+      example:
+        id: bl
+        attributes:
+          name: British Library
+          symbol: BL
     
   securitySchemes:
     BasicAuth:
