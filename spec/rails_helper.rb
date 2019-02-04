@@ -67,6 +67,7 @@ VCR.configure do |c|
   c.filter_sensitive_data("<VOLPINO_TOKEN>") { ENV["VOLPINO_TOKEN"] }
   c.filter_sensitive_data("<SLACK_WEBHOOK_URL>") { ENV["SLACK_WEBHOOK_URL"] }
   c.configure_rspec_metadata!
+  c.default_cassette_options = { :match_requests_on => [:method, :path] }
 end
 
 def capture_stdout(&block)

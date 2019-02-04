@@ -44,6 +44,7 @@ Rails.application.routes.draw do
   get 'dois/get-dois', :to => 'dois#get_dois'
   get 'providers/totals', :to => 'providers#totals'
   get 'clients/totals', :to => 'clients#totals'
+  get 'prefixes/totals', :to => 'prefixes#totals'
 
   resources :heartbeat, only: [:index]
   resources :index, only: [:index]
