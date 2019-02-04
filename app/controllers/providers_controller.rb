@@ -134,7 +134,7 @@ class ProvidersController < ApplicationController
       temporal[:last_year] = total > 0 ? facet_anual(response.response.aggregations.last_year.buckets) : nil
       # temporal[:providers] = total > 0 ? facet_by_key(response.response.aggregations.provider_x.buckets) : nil
       id = provider.symbol
-      {id: id, title: id, count: total, states: states, temporal: temporal}
+      {id: id, title: provider.name, count: total, states: states, temporal: temporal}
     end
     render json: ttl, status: :ok
   end

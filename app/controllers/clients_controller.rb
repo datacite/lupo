@@ -140,7 +140,7 @@ class ClientsController < ApplicationController
       temporal[:this_year] = total > 0 ? facet_anual(response.response.aggregations.this_year.buckets) : nil
       temporal[:last_year] = total > 0 ? facet_anual(response.response.aggregations.last_year.buckets) : nil
       id = client.symbol
-      {id: id, title: id, count: total, states: states, temporal: temporal}
+      {id: id, title: client.name, count: total, states: states, temporal: temporal}
     end
     render json: ttl, status: :ok
   end
