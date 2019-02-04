@@ -572,7 +572,7 @@ paths:
         - in: query
           name: platform
           description: >-
-            Name of the Platform the usage is being requested for.  This can be omitted if the service provides usage for only one platform.
+            Name of the Platform the usage is being requested for. This can be omitted if the service provides usage for only one platform.
           schema:
             type: string
         - in: query
@@ -692,13 +692,6 @@ components:
               type: string
             updated:
               type: string
-      required:  
-        - id
-        - attributes
-          - name
-          - symbol
-          - contactName
-          - contactEmail
       example:
         id: tib.pangaea
         attributes:
@@ -716,8 +709,6 @@ components:
               type: string
             updated:
               type: string
-      required:  
-        - id
     Doi:
       properties:
         id:
@@ -993,14 +984,6 @@ components:
               type: string
             updated:
               type: string
-      required:
-        - id
-        - attributes
-          - doi
-          - creators
-          - titles
-          - publisher
-          - publicationYear
       example:
         id: 10.5438/0014
         type: dois
@@ -1051,18 +1034,10 @@ components:
               type: object
             obj:
               type: object
-      required:  
-        - id
-        - attributes
-          - subjId
-          - sourceToken
-          - sourceId
     Prefix:
       properties:
         prefix:
           type: string
-      required:
-        - prefix
     ProviderPrefix:
       properties:
         id:
@@ -1074,8 +1049,6 @@ components:
               type: string
             updated:
               type: string
-      required:
-        - id
     Provider:
       properties:
         id:
@@ -1084,11 +1057,6 @@ components:
           type: string
         symbol:
           type: string
-      required:
-        - id
-        - attributes
-          - name
-          - symbol
       example:
         id: bl
         attributes:
@@ -1134,13 +1102,6 @@ components:
         report-datasets:
           type: string
           description: Defines the output for the Report_Datasets being returned in a Dataset Report. Collection of datasets from the report.
-      required:
-        - report-datasets
-        - report-id
-        - report-name
-        - release
-        - created-by
-        - reporting-period
     
   securitySchemes:
     BasicAuth:
