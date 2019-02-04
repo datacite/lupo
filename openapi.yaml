@@ -1097,43 +1097,43 @@ components:
     Report:
       description: Describes the formatting needs for the COUNTER Dataset Report. Response may include the Report_Header (optional), Report_Datasets (usage stats).
       properties:
-      id:
-        type: string
-        example: "0000-0000-0000-0000"
-      report-name:
-        type: string
-        description: The long name of the report.
-        example: Dataset Report
-      report-id:
-        type: string
-        description: >-
-          The report ID or code or shortname. Typically this will be the same code provided in the Report parameter of the request.
-        example: DSR
-      release:
-        type: string
-        description: The release or version of the report.
-        example: 'RD1'
-      created:
-        type: string
-        format: dateTime
-        description: Time the report was prepared. Format as defined by date-time - RFC3339
-        example: '2016-09-08T22:47:31Z'
-      created-by:
-        type: string
-        description: Name of the organization producing the report.
-        example: 'DataONE'
-      report-filters:
-        type: string
-        description: Zero or more report filters used for this report. Typically reflect filters provided on the Request. Filters limit the data to be reported on.
-      report-attributes:
-        type: string
-        description: Zero or more additional attributes applied to the report. Attributes inform the level of detail in the report.
-      reporting-period:
-        type: string
-        description: Time the report was prepared.
-      report-datasets:
-        type: string
-        description: Defines the output for the Report_Datasets being returned in a Dataset Report. Collection of datasets from the report.
+        id:
+          type: string
+          example: "0000-0000-0000-0000"
+        report-name:
+          type: string
+          description: The long name of the report.
+          example: Dataset Report
+        report-id:
+          type: string
+          description: >-
+            The report ID or code or shortname. Typically this will be the same code provided in the Report parameter of the request.
+          example: DSR
+        release:
+          type: string
+          description: The release or version of the report.
+          example: 'RD1'
+        created:
+          type: string
+          format: dateTime
+          description: Time the report was prepared. Format as defined by date-time - RFC3339
+          example: '2016-09-08T22:47:31Z'
+        created-by:
+          type: string
+          description: Name of the organization producing the report.
+          example: 'DataONE'
+        report-filters:
+          type: string
+          description: Zero or more report filters used for this report. Typically reflect filters provided on the Request. Filters limit the data to be reported on.
+        report-attributes:
+          type: string
+          description: Zero or more additional attributes applied to the report. Attributes inform the level of detail in the report.
+        reporting-period:
+          type: string
+          description: Time the report was prepared.
+        report-datasets:
+          type: string
+          description: Defines the output for the Report_Datasets being returned in a Dataset Report. Collection of datasets from the report.
       required:
         - report-datasets
         - report-id
