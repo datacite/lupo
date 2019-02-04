@@ -9,7 +9,7 @@ info:
   license:
     name: MIT
     url: 'https://raw.githubusercontent.com/datacite/lupo/master/LICENSE'
-  version: 2.3.0
+  version: 2.0.0
 servers:
   - url: https://api.datacite.org
     description: Production server
@@ -55,6 +55,7 @@ paths:
   /clients:
     get:
       summary: Returns a list of clients.
+      security: []
       parameters:
         - in: query
           name: query
@@ -111,6 +112,7 @@ paths:
           type: string
     get:
       summary: Returns a client.
+      security: []
       responses:
         '200':
           description: A JSON object.
@@ -137,6 +139,7 @@ paths:
   /dois:
     get:
       summary: Return a list of dois.
+      security: []
       parameters:
         - in: query
           name: query
@@ -225,6 +228,7 @@ paths:
         type: string
     get:
       summary: Returns a doi.
+      security: []
       responses:
         '200':
           description: A JSON object.
@@ -251,7 +255,8 @@ paths:
                 
   /heartbeat:
     get:
-      description: This resource returns the current status of the REST API.
+      summary: This resource returns the current status of the REST API.
+      security: []
       responses:
         '200':
           description: REST API is operating normally.
@@ -269,6 +274,8 @@ paths:
                 example: failed
   /prefixes:
     get:
+      summary: Returns a list of prefixes.
+      security: []
       responses:
         '200':
           description: A JSON array of prefixes.
@@ -279,6 +286,7 @@ paths:
   /prefixes/{id}:
     get:
       summary: A prefix.
+      security: []
       parameters:
         - name: id
           in: path
@@ -306,6 +314,7 @@ paths:
   /providers:
     get:
       summary: A JSON array of providers.
+      security: []
       parameters:
         - in: query
           name: query
