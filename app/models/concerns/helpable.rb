@@ -110,7 +110,7 @@ module Helpable
       return OpenStruct.new(body: { "errors" => [{ "title" => "Prefix missing" }] }) unless options[:prefix].present?
 
       count_url = "#{ENV['HANDLE_URL']}/api/handles?prefix=#{options[:prefix]}&pageSize=0"
-      response = Maremma.get(count_url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
+      response = Maremma.get(count_url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 60)
 
       total = response.body.dig("data", "totalCount").to_i
       dois = []
@@ -121,7 +121,7 @@ module Helpable
         
         (0...total_pages).each do |page|
           url = "#{ENV['HANDLE_URL']}/api/handles?prefix=#{options[:prefix]}&page=#{page}&pageSize=1000"
-          response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
+          response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 60)
           if response.status == 200
             dois += (response.body.dig("data", "handles") || [])
           else
