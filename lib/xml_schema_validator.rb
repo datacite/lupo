@@ -34,6 +34,11 @@ class XmlSchemaValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
     kernel = get_valid_kernel(record.schema_version)
     return false unless kernel.present?
+
+    if ["http://datacite.org/schema/kernel-2.2", "http://datacite.org/schema/kernel-2.2"].include?(record.schema_version)
+      record.errors[:xml] << "Schema #{record.schema_version} is no longer supported"
+      return false
+    end
     
     filepath = Bundler.rubygems.find_name('bolognese').first.full_gem_path + "/resources/#{kernel}/metadata.xsd"
     schema = Nokogiri::XML::Schema(open(filepath))

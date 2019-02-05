@@ -393,18 +393,12 @@ describe "dois", type: :request do
       end
       before { patch "/dois/10.14454/10703", params: valid_attributes.to_json, headers: headers }
 
-      it 'updates the record' do
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
-        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
-        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-2.2")
-
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("titles", "title")).to eq(["Właściwości rzutowań podprzestrzeniowych", {"__content__"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
       end
 
-      it 'returns status code 201' do
-        expect(response).to have_http_status(201)
+      it 'returns an error that schema is no longer supported' do
+        expect(json.fetch('errors', nil)).to eq([{"source"=>"xml", "title"=>"Schema http://datacite.org/schema/kernel-2.2 is no longer supported"}])
       end
     end
 
@@ -1016,18 +1010,12 @@ describe "dois", type: :request do
 
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
-      it 'creates a Doi' do
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"LAMMPS Data-File Generator"}])
-        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-2.2")
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
       end
 
-      it 'returns status code 201' do
-        expect(response).to have_http_status(201)
-      end
-
-      it 'sets state to findable' do
-        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      it 'returns an error that schema is no longer supported' do
+        expect(json.fetch('errors', nil)).to eq([{"source"=>"xml", "title"=>"Schema http://datacite.org/schema/kernel-2.2 is no longer supported"}])
       end
     end
 
@@ -1082,18 +1070,12 @@ describe "dois", type: :request do
 
       before { post '/dois', params: valid_attributes.to_json, headers: headers }
 
-      it 'creates a Doi' do
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"LAMMPS Data-File Generator"}])
-        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-2.2")
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
       end
 
-      it 'returns status code 201' do
-        expect(response).to have_http_status(201)
-      end
-
-      it 'sets state to findable' do
-        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      it 'returns an error that schema is no longer supported' do
+        expect(json.fetch('errors', nil)).to eq([{"source"=>"xml", "title"=>"Schema http://datacite.org/schema/kernel-2.2 is no longer supported"}])
       end
     end
 
