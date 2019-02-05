@@ -105,8 +105,6 @@ class WorksController < ApplicationController
       end
       render json: WorkSerializer.new(@dois, options).serialized_json, status: :ok
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
-      Bugsnag.notify(exception)
-
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
       render json: { "errors" => { "title" => message }}.to_json, status: :bad_request

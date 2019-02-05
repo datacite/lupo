@@ -13,77 +13,6 @@ class DoisController < ApplicationController
   def index
     authorize! :read, Doi
 
-    # if Rails.env.production? && !current_user.try(:is_admin_or_staff?)
-    #   # don't use elasticsearch
-
-    #   # support nested routes
-    #   if params[:client_id].present?
-    #     client = Client.where('datacentre.symbol = ?', params[:client_id]).first
-    #     collection = client.present? ? client.dois : Doi.none
-    #     total = client.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
-    #   elsif params[:provider_id].present? && params[:provider_id] != "admin"
-    #     provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
-    #     collection = provider.present? ? Doi.joins(:client).where("datacentre.allocator = ?", provider.id) : Doi.none
-    #     total = provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i }
-    #   elsif params[:id].present?
-    #     collection = Doi.where(doi: params[:id])
-    #     total = collection.all.size
-    #   else
-    #     provider = Provider.unscoped.where('allocator.symbol = ?', "ADMIN").first
-    #     total = provider.present? ? provider.cached_doi_count.reduce(0) { |sum, d| sum + d[:count].to_i } : 0
-    #     collection = Doi
-    #   end
-
-    #   if params[:query].present?
-    #     collection = Doi.q(params[:query])
-    #     total = collection.all.size
-    #   end
-
-    #   page = params[:page] || {}
-    #   if page[:size].present?
-    #     page[:size] = [page[:size].to_i, 1000].min
-    #     max_number = page[:size] > 0 ? 10000/page[:size] : 1
-    #   else
-    #     page[:size] = 25
-    #     max_number = 10000/page[:size]
-    #   end
-    #   page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
-    #   total_pages = (total.to_f / page[:size]).ceil
-
-    #   order = case params[:sort]
-    #           when "name" then "dataset.doi"
-    #           when "-name" then "dataset.doi DESC"
-    #           when "created" then "dataset.created"
-    #           else "dataset.created DESC"
-    #           end
-
-    #   @dois = collection.order(order).page(page[:number]).per(page[:size]).without_count
-
-    #   options = {}
-    #   options[:meta] = {
-    #     total: total,
-    #     "totalPages" => total_pages,
-    #     page: page[:number].to_i
-    #   }.compact
-
-    #   options[:links] = {
-    #     self: request.original_url,
-    #     next: @dois.blank? ? nil : request.base_url + "/dois?" + {
-    #       query: params[:query],
-    #       "provider-id" => params[:provider_id],
-    #       "client-id" => params[:client_id],
-    #       "page[number]" => page[:number] + 1,
-    #       "page[size]" => page[:size],
-    #       sort: params[:sort] }.compact.to_query
-    #     }.compact
-    #   options[:include] = @include
-    #   options[:is_collection] = true
-    #   options[:params] = {
-    #     :current_ability => current_ability,
-    #   }
-
-    #   render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
-    # else
     sort = case params[:sort]
           when "name" then { "doi" => { order: 'asc' }}
           when "-name" then { "doi" => { order: 'desc' }}
@@ -228,8 +157,6 @@ class DoisController < ApplicationController
         format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :csv, :schema_org) { render request.format.to_sym => response.records.to_a }
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
-      Bugsnag.notify(exception)
-
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
       render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
