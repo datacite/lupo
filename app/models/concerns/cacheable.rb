@@ -60,6 +60,36 @@ module Cacheable
       end
     end
 
+    def cached_prefixes_totals params={}
+      if Rails.application.config.action_controller.perform_caching
+        Rails.cache.fetch("cached_prefixes_totals/#{params}", expires_in: 24.hours) do
+          prefixes_totals params
+        end
+      else
+        prefixes_totals params
+      end
+    end
+
+    def cached_providers_totals params={}
+      if Rails.application.config.action_controller.perform_caching
+        Rails.cache.fetch("cached_providers_totals/#{params}", expires_in: 24.hours) do
+          providers_totals params
+        end
+      else
+        providers_totals params
+      end
+    end
+
+    def cached_clients_totals params={}
+      if Rails.application.config.action_controller.perform_caching
+        Rails.cache.fetch("cached_clients_totals/#{params}", expires_in: 24.hours) do
+          clients_totals params
+        end
+      else
+        clients_totals params
+      end
+    end
+
     def cached_client_response(id, options={})
       if Rails.application.config.action_controller.perform_caching
         Rails.cache.fetch("client_response/#{id}", expires_in: 1.day) do
