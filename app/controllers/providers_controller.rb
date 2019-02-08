@@ -121,21 +121,7 @@ class ProvidersController < ApplicationController
   end
 
   def totals
-    page = { size: 25, number: 1}
-    page_prov = { size: 500, number: 1}
-
-    ttl = Provider.query("", page: page_prov).map do |provider|      
-      response = Doi.query("", provider_id: provider.symbol.downcase, state: params[:state] || "", page: page)
-      total = response.results.total
-      states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
-      temporal ={}
-      temporal[:this_month] = total > 0 ? facet_by_date(response.response.aggregations.this_month.buckets) : nil
-      temporal[:this_year] = total > 0 ? facet_anual(response.response.aggregations.this_year.buckets) : nil
-      temporal[:last_year] = total > 0 ? facet_anual(response.response.aggregations.last_year.buckets) : nil
-      # temporal[:providers] = total > 0 ? facet_by_key(response.response.aggregations.provider_x.buckets) : nil
-      id = provider.symbol
-      {id: id, title: provider.name, count: total, states: states, temporal: temporal}
-    end
+    ttl = cached_providers_totals params
     render json: ttl, status: :ok
   end
 
