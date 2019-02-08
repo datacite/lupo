@@ -11,10 +11,10 @@ info:
     url: 'https://raw.githubusercontent.com/datacite/lupo/master/LICENSE'
   version: 2.3.0
 servers:
-  - url: https://api.datacite.org
-    description: Production server
   - url: https://api.test.datacite.org
     description: Staging server
+  - url: https://api.datacite.org
+    description: Production server
 tags:
   - name: client-prefixes
     description: Client Prefixes
