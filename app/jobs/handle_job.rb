@@ -8,7 +8,6 @@ class HandleJob < ActiveJob::Base
 
   def perform(doi_id)
     logger = Logger.new(STDOUT)
-    logger.debug "Update Handle record for #{doi_id}"
     doi = Doi.where(doi: doi_id).first
 
     if doi.present?

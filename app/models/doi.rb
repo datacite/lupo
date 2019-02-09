@@ -764,9 +764,15 @@ class Doi < ActiveRecord::Base
 
   # register DOIs in the handle system that have not been registered yet
   def self.register_all_urls(limit: nil)
-    limit ||= 100
+    logger = Logger.new(STDOUT)
 
-    Doi.where(minted: nil).where.not(url: nil).where.not(aasm_state: "draft").where("updated < ?", Time.zone.now - 15.minutes).order(created: :desc).limit(limit.to_i).find_each do |d|
+    limit ||= 1000
+
+    response = Doi.query("-registered:* +url:* -aasm_state:draft", sort: { updated: { order: 'desc' }}, page: { number: 1, size: limit })
+
+    logger.info "#{response.results.total} DOIs found that are not registered in the Handle system."
+
+    response.results.results.each do |d|
       HandleJob.perform_later(d.doi)
     end
   end

@@ -6,18 +6,26 @@ class UrlJob < ActiveJob::Base
 
   # discard_on ActiveJob::DeserializationError
 
-  def perform(doi)
+  def perform(doi_id)
     logger = Logger.new(STDOUT)
+    doi = Doi.where(doi: doi_id).first
 
-    response = Maremma.head(doi.identifier, limit: 0)
-    if response.headers.present?
-      if doi.is_registered_or_findable? && doi.minted.blank?
-        doi.update_attributes(url: response.headers["location"], minted: Time.zone.now)
+    if doi.present?
+      response = Doi.get_doi(doi: doi.doi)
+      url = response.body.dig('data', 'values', 0, 'data', 'value')
+      if url.present?
+        if doi.is_registered_or_findable? && doi.minted.blank?
+          doi.update_attributes(url: url, minted: Time.zone.now)
+        else
+          doi.update_attributes(url: url)
+        end
+
+        logger.info "[Handle] Set URL #{url} for DOI #{doi.doi}."
       else
-        doi.update_attributes(url: response.headers["location"])
+        logger.error "[Handle] Error updating URL for DOI #{doi.doi}: URL not found."
       end
-
-      logger.debug "Set URL #{response.headers["location"]} for DOI #{doi.doi}"
+    else
+      logger.info "[Handle] Error updating URL for DOI " + doi_id + ": DOI not found"
     end
   end
 end

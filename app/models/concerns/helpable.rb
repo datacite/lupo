@@ -109,7 +109,8 @@ module Helpable
     def get_dois(options={})
       return OpenStruct.new(body: { "errors" => [{ "title" => "Prefix missing" }] }) unless options[:prefix].present?
 
-      count_url = "#{ENV['HANDLE_URL']}/api/handles?prefix=#{options[:prefix]}&pageSize=0"
+      count_url = Rails.env.production? ? "https://doi.org" : "https://handle.test.datacite.org"
+      count_url += "/api/handles?prefix=#{options[:prefix]}&pageSize=0"
       response = Maremma.get(count_url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 60)
 
       total = response.body.dig("data", "totalCount").to_i
@@ -120,7 +121,8 @@ module Helpable
         total_pages = (total.to_f / 1000).ceil
         
         (0...total_pages).each do |page|
-          url = "#{ENV['HANDLE_URL']}/api/handles?prefix=#{options[:prefix]}&page=#{page}&pageSize=1000"
+          url = Rails.env.production? ? "https://doi.org" : "https://handle.test.datacite.org"
+          url += "/api/handles?prefix=#{options[:prefix]}&page=#{page}&pageSize=1000"
           response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 60)
           if response.status == 200
             dois += (response.body.dig("data", "handles") || [])
@@ -142,7 +144,8 @@ module Helpable
     def get_doi(options={})
       return OpenStruct.new(body: { "errors" => [{ "title" => "DOI missing" }] }) unless options[:doi].present?
 
-      url = "#{ENV['HANDLE_URL']}/api/handles/#{options[:doi]}"
+      url = Rails.env.production? ? "https://doi.org" : "https://handle.test.datacite.org"
+      url += "/api/handles/#{options[:doi]}"
       response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
 
       if response.status == 200
