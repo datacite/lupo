@@ -800,6 +800,29 @@ class Doi < ActiveRecord::Base
     end
   end
 
+  def self.set_minted
+    logger = Logger.new(STDOUT)
+
+    response = Doi.query("url:* +provider_id:ethz +aasm_state:draft", page: { size: 0, cursor: 1 })
+    logger.info "#{response.results.total} draft DOIs from provider ETHZ found in the database."
+
+    if response.results.total > 0
+      # walk through results using cursor
+      prev_cursor = 0
+      cursor = 1
+      
+      while cursor > prev_cursor do
+        response = Doi.query("url:* +provider_id:ethz  +aasm_state:draft", page: { size: 1000, cursor: cursor })
+        prev_cursor = cursor
+        cursor = Array.wrap(response.results.results.last[:sort]).first
+
+        response.results.results.each do |d|
+          UrlJob.perform_later(d.doi)
+        end
+      end
+    end
+  end
+
   # save to metadata table when xml has changed
   def save_metadata
     metadata.build(doi: self, xml: xml, namespace: schema_version) if xml.present? && xml_changed?

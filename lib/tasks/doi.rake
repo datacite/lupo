@@ -106,6 +106,11 @@ namespace :doi do
     Doi.set_handle
   end
 
+  desc 'Set minted'
+  task :set_minted => :environment do
+    Doi.set_minted
+  end
+
   desc 'Delete DOIs with test prefix older than one month'
   task :delete_test_dois => :environment do
     from_date = ENV['FROM_DATE'] || Time.zone.now - 1.month
