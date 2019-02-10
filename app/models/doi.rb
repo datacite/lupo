@@ -768,7 +768,7 @@ class Doi < ActiveRecord::Base
       while cursor > prev_cursor do
         response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:ethz -provider_id:europ", page: { size: 1000, cursor: cursor })
         prev_cursor = cursor
-        cursor = Array.wrap(response.results.results.last[:sort]).first
+        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first
 
         response.results.results.each do |d|
           HandleJob.perform_later(d.doi)
@@ -791,7 +791,7 @@ class Doi < ActiveRecord::Base
       while cursor > prev_cursor do
         response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 1000, cursor: cursor })
         prev_cursor = cursor
-        cursor = Array.wrap(response.results.results.last[:sort]).first
+        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first
 
         response.results.results.each do |d|
           UrlJob.perform_later(d.doi)
@@ -814,7 +814,7 @@ class Doi < ActiveRecord::Base
       while cursor > prev_cursor do
         response = Doi.query("url:* +provider_id:ethz  +aasm_state:draft", page: { size: 1000, cursor: cursor })
         prev_cursor = cursor
-        cursor = Array.wrap(response.results.results.last[:sort]).first
+        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first
 
         response.results.results.each do |d|
           UrlJob.perform_later(d.doi)
