@@ -36,7 +36,6 @@ Rails.application.routes.draw do
   # manage DOIs
   post 'dois/validate', :to => 'dois#validate'
   post 'dois/status', :to => 'dois#status'
-  post 'dois/set-minted', :to => 'dois#set_minted'
   post 'dois/set-url', :to => 'dois#set_url'
   post 'dois/delete-test-dois', :to => 'dois#delete_test_dois'
   get 'dois/random', :to => 'dois#random'

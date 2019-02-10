@@ -763,27 +763,51 @@ class Doi < ActiveRecord::Base
   end
 
   # register DOIs in the handle system that have not been registered yet
-  def self.register_all_urls(limit: nil)
+  # providers ethz and europ register their DOIs in the handle system themselves and are ignored
+  def self.register_all_urls
     logger = Logger.new(STDOUT)
 
-    limit ||= 1000
-
-    response = Doi.query("-registered:* +url:* -aasm_state:draft", sort: { updated: { order: 'desc' }}, page: { number: 1, size: limit })
-
+    response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:ethz -provider_id:europ", page: { size: 0, cursor: 1 })
     logger.info "#{response.results.total} DOIs found that are not registered in the Handle system."
 
-    response.results.results.each do |d|
-      HandleJob.perform_later(d.doi)
+    if response.results.total > 0
+      # walk through results using cursor
+      prev_cursor = 0
+      cursor = 1
+      
+      while cursor > prev_cursor do
+        response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:ethz -provider_id:europ", page: { size: 1000, cursor: cursor })
+        prev_cursor = cursor
+        cursor = Array.wrap(response.results.results.last[:sort]).first
+
+        response.results.results.each do |d|
+          HandleJob.perform_later(d.doi)
+        end
+      end
     end
   end
 
-  def self.set_url(from_date: nil)
-    from_date = from_date.present? ? Date.parse(from_date) : Date.current - 1.day
-    Doi.where(url: nil).where.not(minted: nil).where("updated >= ?", from_date).find_each do |doi|
-      UrlJob.perform_later(doi)
-    end
+  def self.set_url
+    logger = Logger.new(STDOUT)
 
-    "Queued storing missing URL in database for DOIs updated since #{from_date.strftime("%F")}."
+    response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 0, cursor: 1 })
+    logger.info "#{response.results.total} DOIs with no URL found in the database."
+
+    if response.results.total > 0
+      # walk through results using cursor
+      prev_cursor = 0
+      cursor = 1
+      
+      while cursor > prev_cursor do
+        response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 1000, cursor: cursor })
+        prev_cursor = cursor
+        cursor = Array.wrap(response.results.results.last[:sort]).first
+
+        response.results.results.each do |d|
+          UrlJob.perform_later(d.doi)
+        end
+      end
+    end
   end
 
   # save to metadata table when xml has changed

@@ -59,6 +59,8 @@ module Helpable
         self.update_attributes(minted: Time.zone.now, updated: Time.zone.now) if minted.blank?
         logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "."
 
+        self.__elasticsearch__.index_document
+
         response
       else
         logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect

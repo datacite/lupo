@@ -98,21 +98,12 @@ namespace :doi do
 
   desc 'Store handle URL'
   task :set_url => :environment do
-    from_date = ENV['FROM_DATE'] || (Time.zone.now - 1.day).strftime("%F")
-    response = Doi.set_url(from_date: from_date)
-    puts response
+    Doi.set_url
   end
 
-  desc 'Set minted'
-  task :set_minted => :environment do
-    from_date = ENV['FROM_DATE'] || Time.zone.now - 1.day
-    Doi.set_minted(from_date: from_date)
-  end
-
-  desc 'Register all URLs'
-  task :register_all_urls => :environment do
-    limit = ENV['LIMIT'] || 100
-    Doi.register_all_urls(limit: limit)
+  desc 'Register handle'
+  task :register_handle => :environment do
+    Doi.register_handle
   end
 
   desc 'Delete DOIs with test prefix older than one month'

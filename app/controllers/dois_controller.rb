@@ -347,12 +347,6 @@ class DoisController < ApplicationController
     end
   end
 
-  def set_minted
-    authorize! :set_minted, Doi
-    Doi.set_minted
-    render json: { message: "DOI minted timestamp added." }.to_json, status: :ok
-  end
-
   def set_url
     authorize! :set_url, Doi
     Doi.set_url

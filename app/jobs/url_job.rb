@@ -20,12 +20,14 @@ class UrlJob < ActiveJob::Base
           doi.update_attributes(url: url)
         end
 
-        logger.info "[Handle] Set URL #{url} for DOI #{doi.doi}."
+        doi.__elasticsearch__.index_document
+
+        logger.info "[Handle] URL #{url} set for DOI #{doi.doi}."
       else
         logger.error "[Handle] Error updating URL for DOI #{doi.doi}: URL not found."
       end
     else
-      logger.info "[Handle] Error updating URL for DOI " + doi_id + ": DOI not found"
+      logger.info "[Handle] Error updating URL for DOI #{doi_id}: DOI not found"
     end
   end
 end
