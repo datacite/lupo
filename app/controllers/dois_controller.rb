@@ -134,12 +134,12 @@ class DoisController < ApplicationController
 
           options[:links] = {
             self: request.original_url,
-            next: @dois.blank? ? nil : request.base_url + "/dois?" + {
+            next: @dois.size < page[:size] ? nil : request.base_url + "/dois?" + {
               query: params[:query],
               "provider-id" => params[:provider_id],
               "client-id" => params[:client_id],
-              fields: params[:fields],
-              "page[cursor]" => Array.wrap(@dois.last[:sort]).first,
+              "page[cursor]" => page[:cursor].present? ? Array.wrap(@dois.last[:sort]).first : nil,
+              "page[number]" => page[:cursor].blank? && page[:number].present? ? page[:number] + 1 : nil,
               "page[size]" => page[:size] }.compact.to_query
             }.compact
           options[:include] = @include
@@ -355,8 +355,7 @@ class DoisController < ApplicationController
 
   def set_url
     authorize! :set_url, Doi
-    from_date = Time.zone.now - 1.day
-    Doi.set_url(from_date: from_date.strftime("%F"))
+    Doi.set_url
 
     render json: { message: "Adding missing URLs queued." }.to_json, status: :ok
   end
