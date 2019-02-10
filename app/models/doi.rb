@@ -440,40 +440,54 @@ class Doi < ActiveRecord::Base
   def self.import_by_day_missing(options={})
     return nil unless options[:from_date].present?
     from_date = Date.parse(options[:from_date])
-    client_id = options[:client_id]
 
     count = 0
 
     logger = Logger.new(STDOUT)
 
-    collection = Doi.where(xml: nil).where(created: from_date.midnight..from_date.end_of_day)
-    collection = collection.where(datacentre: client_id) if client_id.present?
+    response = Doi.query("-creators:* +created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 0, cursor: 1 })
+    logger.info "#{response.results.total} DOIs found with missing metadata created on #{from_date.strftime("%F")}."
 
-    collection.find_each do |doi|
-      begin
-        string = doi.current_metadata.present? ? doi.clean_xml(doi.current_metadata.xml) : nil
-        unless string.present?
-          logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
-          return nil
+    if response.results.total > 0
+      # walk through results using cursor
+      prev_cursor = 0
+      cursor = 1
+      
+      while cursor > prev_cursor do
+        response = Doi.query("-creators:* +created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 1000, cursor: cursor })
+        prev_cursor = cursor
+        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
+
+        response.records.each do |doi|
+          begin
+            # ignore broken xml
+            string = doi.current_metadata.present? ? doi.from_xml(doi.current_metadata.xml.to_s.force_encoding("UTF-8")) : nil
+            unless string.present?
+              logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
+              return nil
+            end
+            
+            meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
+            attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
+              [a.to_sym, meta[a]]
+            end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
+    
+            # update_columns will NOT trigger validations and Elasticsearch indexing
+            doi.update_columns(attrs)
+
+            doi.__elasticsearch__.index_document
+          rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
+            logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
+            Bugsnag.notify(error)
+          else
+            count += 1
+          end
         end
-        
-        meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
-        attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
-          [a.to_sym, meta[a]]
-        end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
-
-        # update_columns will NOT trigger validations and Elasticsearch indexing
-        doi.update_columns(attrs)
-      rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
-        logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
-        Bugsnag.notify(error)
-      else
-        count += 1
+    
+        if count > 0
+          logger.info "[MySQL] Imported metadata for #{count} DOIs created on #{options[:from_date]}."
+        end
       end
-    end
-
-    if count > 0
-      logger.info "[MySQL] Imported metadata for #{count} DOIs created on #{options[:from_date]}."
     end
   end
 
@@ -768,7 +782,7 @@ class Doi < ActiveRecord::Base
       while cursor > prev_cursor do
         response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:ethz -provider_id:europ", page: { size: 1000, cursor: cursor })
         prev_cursor = cursor
-        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first
+        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
 
         response.results.results.each do |d|
           HandleJob.perform_later(d.doi)
@@ -791,7 +805,7 @@ class Doi < ActiveRecord::Base
       while cursor > prev_cursor do
         response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 1000, cursor: cursor })
         prev_cursor = cursor
-        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first
+        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
 
         response.results.results.each do |d|
           UrlJob.perform_later(d.doi)
@@ -814,7 +828,7 @@ class Doi < ActiveRecord::Base
       while cursor > prev_cursor do
         response = Doi.query("url:* +provider_id:ethz  +aasm_state:draft", page: { size: 1000, cursor: cursor })
         prev_cursor = cursor
-        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first
+        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
 
         response.results.results.each do |d|
           UrlJob.perform_later(d.doi)
