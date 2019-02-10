@@ -101,9 +101,9 @@ namespace :doi do
     Doi.set_url
   end
 
-  desc 'Register handle'
-  task :register_handle => :environment do
-    Doi.register_handle
+  desc 'Set handle'
+  task :set_handle => :environment do
+    Doi.set_handle
   end
 
   desc 'Delete DOIs with test prefix older than one month'

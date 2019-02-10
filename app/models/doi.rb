@@ -752,19 +752,9 @@ class Doi < ActiveRecord::Base
     end
   end
 
-  # set minted date for DOIs that have been registered in the handle system (providers ETHZ and EUROP)
-  def self.set_minted(from_date: nil)
-    from_date ||= Time.zone.now - 1.day
-    ids = ENV['HANDLES_MINTED'].to_s.split(",")
-    return nil unless ids.present?
-
-    collection = Doi.where("datacentre in (SELECT id from datacentre where allocator IN (:ids))", ids: ids).where("updated >= ?", from_date).where("updated < ?", Time.zone.now - 15.minutes)
-    collection.where(is_active: "\x01").where(minted: nil).update_all(("minted = updated"))
-  end
-
   # register DOIs in the handle system that have not been registered yet
   # providers ethz and europ register their DOIs in the handle system themselves and are ignored
-  def self.register_all_urls
+  def self.set_handle
     logger = Logger.new(STDOUT)
 
     response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:ethz -provider_id:europ", page: { size: 0, cursor: 1 })
