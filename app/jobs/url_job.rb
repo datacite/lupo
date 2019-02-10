@@ -20,6 +20,8 @@ class UrlJob < ActiveJob::Base
           doi.update_attributes(url: url)
         end
 
+        doi.event = "publish" if %w(europ ethz).include?(doi.provider_id)
+        
         doi.__elasticsearch__.index_document
 
         logger.info "[Handle] URL #{url} set for DOI #{doi.doi}."
