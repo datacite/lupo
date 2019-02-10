@@ -393,8 +393,14 @@ describe "dois", type: :request do
       end
       before { patch "/dois/10.14454/10703", params: valid_attributes.to_json, headers: headers }
 
-      it 'returns status code 422' do
-        expect(response).to have_http_status(422)
+      it 'updates the record' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
+        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-2.2")
+
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("titles", "title")).to eq(["Właściwości rzutowań podprzestrzeniowych", {"__content__"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
       end
 
       it 'returns an error that schema is no longer supported' do
@@ -1917,23 +1923,7 @@ describe "dois", type: :request do
     end
   end
 
-  describe 'POST /dois/set-minted' do
-    let(:provider)  { create(:provider, symbol: "ETHZ") }
-    let(:client)  { create(:client, provider: provider) }
-    let!(:dois) { create_list(:doi, 10, client: client) }
-
-    before { post '/dois/set-minted', headers: admin_headers }
-
-    it 'returns dois' do
-      expect(json['message']).to eq("DOI minted timestamp added.")
-    end
-
-    it 'returns status code 200' do
-      expect(response).to have_http_status(200)
-    end
-  end
-
-  describe 'POST /dois/set-url' do
+  describe 'POST /dois/set-url', elasticsearch: true do
     let!(:dois) { create_list(:doi, 3, client: client, url: nil) }
 
     before { post '/dois/set-url', headers: admin_headers }
