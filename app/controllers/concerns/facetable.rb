@@ -212,7 +212,7 @@ module Facetable
         {id: id, title: item.name, count: total, states: states, temporal: temporal}
     end
 
-    def providers_totals response, params
+    def providers_totals params={}
       page = { size: 0, number: 1}
       page_prov = { size: 500, number: 1}
 
