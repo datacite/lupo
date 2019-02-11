@@ -104,6 +104,8 @@ class DoisController < ApplicationController
       link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
       links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
       subjects = total > 0 ? facet_by_key(response.response.aggregations.subjects.buckets) : nil
+      clients_totals = total > 0 ? facet_by_clients_totals(response.response.aggregations.clients_totals.buckets) : nil
+      providers_totals = total > 0 ? facet_by_clients_totals(response.response.aggregations.providers_totals.buckets) : nil
 
 
       respond_to do |format|
@@ -121,6 +123,8 @@ class DoisController < ApplicationController
             providers: providers,
             clients: clients,
             prefixes: prefixes,
+            totals_client: clients_totals,
+            totals_provider: providers_totals,
             "schemaVersions" => schema_versions,
             sources: sources,
             "linkChecksStatus" => link_checks_status,
