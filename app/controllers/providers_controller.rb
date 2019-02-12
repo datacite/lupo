@@ -121,8 +121,13 @@ class ProvidersController < ApplicationController
   end
 
   def totals
-    ttl = cached_providers_totals params
-    render json: ttl, status: :ok
+    page = { size: 0, number: 1}
+    response = Doi.query("", page: page)
+    total = response.results.total
+
+    registrant = total > 0 ? providers_totals(response.response.aggregations.providers_totals.buckets) : nil
+
+    render json: registrant, status: :ok  
   end
 
 

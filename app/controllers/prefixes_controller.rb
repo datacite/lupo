@@ -137,8 +137,14 @@ class PrefixesController < ApplicationController
   end
 
   def totals
-    ttl = cached_prefixes_totals params
-    render json: ttl, status: :ok
+    page = { size: 0, number: 1}
+    response = Doi.query("", client_id: params[:client_id],page: page)
+    total = response.results.total
+
+    registrant = total > 0 ? prefixes_totals(response.response.aggregations.prefixes_totals.buckets) : nil
+
+    render json: registrant, status: :ok  
+
   end
 
   def destroy

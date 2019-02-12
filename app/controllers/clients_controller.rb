@@ -128,8 +128,13 @@ class ClientsController < ApplicationController
   end
 
   def totals
-    ttl =cached_clients_totals params
-    render json: ttl, status: :ok
+    page = { size: 0, number: 1}
+    response = Doi.query(nil, provider_id: params[:provider_id], page: page)
+    total = response.results.total
+
+    registrant = total > 0 ? clients_totals(response.response.aggregations.clients_totals.buckets) : nil
+
+    render json: registrant, status: :ok  
   end
 
   protected
