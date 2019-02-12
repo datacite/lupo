@@ -301,9 +301,6 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_aggregations
-    beginning_of_year  = DateTime.current.beginning_of_year.strftime('%Y-%m-%d')
-    beginning_of_last_year  = DateTime.current.beginning_of_year.last_year.strftime('%Y-%m-%d')
-    beginning_of_month = DateTime.current.beginning_of_month.strftime('%Y-%m-%d')
 
     {
       resource_types: { terms: { field: 'types.resourceTypeGeneral', size: 15, min_doc_count: 1 } },
@@ -322,11 +319,9 @@ class Doi < ActiveRecord::Base
       link_checks_citation_doi: { value_count: { field: "landing_page.citationDoi" } },
       links_checked: { value_count: { field: "landing_page.checked" } },
       sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
-      providers_totals: { terms: { field: 'provider_id', size: 500, min_doc_count: 0 }, aggs: sub_aggregations},
-      clients_totals: { terms: { field: 'client_id', size: 2000, min_doc_count: 0 }, aggs: sub_aggregations },
-      this_month:{ date_range:{ field: 'created', time_zone: "CET", ranges: {from: beginning_of_month, to: "now/d"} } },
-      this_year: { date_range: { field: 'created', time_zone: "CET", ranges: {from: beginning_of_year, to: "now/d"} } },
-      last_year: { date_range: { field: 'created', time_zone: "CET", ranges: {from: beginning_of_last_year, to: beginning_of_year} } },
+      providers_totals: { terms: { field: 'provider_id', size: 500, min_doc_count: 1 }, aggs: sub_aggregations},
+      clients_totals: { terms: { field: 'client_id', size: 2000, min_doc_count: 1 }, aggs: sub_aggregations },
+      prefixes_totals: { terms: { field: 'prefix', size: 2000, min_doc_count: 1 }, aggs: sub_aggregations },
       subjects: { terms: { field: 'subjects.subject', size: 15, min_doc_count: 1 } }
     }
   end
