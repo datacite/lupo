@@ -149,7 +149,8 @@ module Facetable
       # generate hash with id and name for each provider in facet
 
       ids = arr.map { |hsh| hsh["key"] }.join(",")
-      clients = Client.find_by_ids(ids).results.reduce({}) do |sum, p|
+      clients = Client.find_by_ids(ids, size: 2000).results.reduce({}) do |sum, p|
+        puts sum
         sum[p.symbol.downcase] = p.name
         sum
       end
@@ -170,7 +171,7 @@ module Facetable
     def facet_by_provider_ids(arr)
       # generate hash with id and name for each provider in facet
       ids = arr.map { |hsh| hsh["key"] }.join(",")
-      providers = Provider.find_by_id_list(ids).results.reduce({}) do |sum, p|
+      providers = Provider.find_by_id_list(ids, size: 1000).results.reduce({}) do |sum, p|
         sum[p.id] = p.name
         sum
       end
