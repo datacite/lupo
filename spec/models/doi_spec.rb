@@ -420,7 +420,7 @@ describe Doi, type: :model, vcr: true do
     it "generates codemeta" do
       json = JSON.parse(subject.codemeta)
       expect(json["@type"]).to eq("Dataset")
-      expect(json["title"]).to eq("Data from: A new malaria agent in African hominids.")
+      expect(json["name"]).to eq("Data from: A new malaria agent in African hominids.")
     end
 
     it "generates jats" do
