@@ -106,7 +106,6 @@ class DoisController < ApplicationController
       links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
       subjects = total > 0 ? facet_by_key(response.response.aggregations.subjects.buckets) : nil
 
-
       respond_to do |format|
         format.json do
           @dois = results
