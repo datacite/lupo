@@ -1052,6 +1052,40 @@ describe "dois", type: :request do
       end
     end
 
+    context 'when the request uses schema 4.2' do
+      let(:xml) { Base64.strict_encode64(file_fixture('schema_4.2.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      before { post '/dois', params: valid_attributes.to_json, headers: headers }
+
+      it 'creates a Doi' do
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Southern Sierra Critical Zone Observatory (SSCZO), Providence Creek\n      meteorological data, soil moisture and temperature, snow depth and air\n      temperature"}])
+        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'sets state to findable' do
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
+    end
+
+
     context 'when the request uses namespaced xml' do
       let(:xml) { Base64.strict_encode64(file_fixture('ns0.xml').read) }
       let(:valid_attributes) do
