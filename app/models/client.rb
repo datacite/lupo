@@ -182,7 +182,7 @@ class Client < ActiveRecord::Base
 
     target = c.records.first
 
-    Doi.index(from_date: "2011-01-01", client_id: target.id)
+    Doi.transfer(from_date: "2011-01-01", client_id: id, target_id: target.id)
   end
 
   def index_all_dois

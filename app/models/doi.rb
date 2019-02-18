@@ -847,6 +847,30 @@ class Doi < ActiveRecord::Base
     end
   end
 
+  def self.transfer(options={})
+    logger = Logger.new(STDOUT)
+    query = options[:query] || "*"
+
+    response = Doi.query(query, client_id: options[:client_id], page: { size: 0, cursor: 1 })
+    logger.info "#{response.results.total} DOIs found for client #{options[:client_id]}."
+
+    if options[:client_id] && options[:target_id] && response.results.total > 0
+      # walk through results using cursor
+      prev_cursor = 0
+      cursor = 1
+      
+      while cursor > prev_cursor do
+        response = Doi.query(query, client_id: options[:client_id], page: { size: 1000, cursor: cursor })
+        prev_cursor = cursor
+        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
+
+        response.results.results.each do |d|
+          TransferJob.perform_later(d.doi, target_id: options[:target_id])
+        end
+      end
+    end
+  end
+
   # save to metadata table when xml has changed
   def save_metadata
     metadata.build(doi: self, xml: xml, namespace: schema_version) if xml.present? && xml_changed?

@@ -160,9 +160,8 @@ namespace :client do
       puts "#{response.count} provider prefixes deleted."
     end
 
-    # update client for DOIs in batches
-    puts "#{client.dois.length} DOIs will be transferred."
-    client.update_attributes(target_id: target.symbol)
+    # update dois
+    Doi.transfer(from_date: "2011-01-01", client_id: client.id, target_id: target.id)
 
     prefixes.each do |prefix|
       provider_prefix = ProviderPrefix.create(provider: target.provider.symbol, prefix: prefix)
