@@ -11,9 +11,9 @@ info:
     url: 'https://raw.githubusercontent.com/datacite/lupo/master/LICENSE'
   version: 2.3.0
 servers:
-  - url: https://api.test.datacite.org
+  - url: 'https://api.test.datacite.org'
     description: Staging server
-  - url: https://api.datacite.org
+  - url: 'https://api.datacite.org'
     description: Production server
 tags:
   - name: client-prefixes
@@ -34,11 +34,10 @@ tags:
     description: Providers
   - name: reports
     description: Reports
-
 paths:
   /client-prefixes:
     get:
-      tags: 
+      tags:
         - client-prefixes
       summary: Returns a list of client-prefixes.
       parameters:
@@ -66,7 +65,11 @@ paths:
           name: sort
           schema:
             type: string
-            enum: [name, -name, created, -created]
+            enum:
+              - name
+              - '-name'
+              - created
+              - '-created'
       responses:
         '200':
           description: A JSON array of client-prefixes.
@@ -76,7 +79,7 @@ paths:
                 $ref: '#/components/schemas/ClientPrefix'
   /clients:
     get:
-      tags: 
+      tags:
         - clients
       summary: Returns a list of clients.
       security: []
@@ -97,25 +100,41 @@ paths:
           name: software
           schema:
             type: string
-            enum: [ckan, dataverse, dspace, eprints, escidoc, fedora, invenio, mysql, nesstar]
+            enum:
+              - ckan
+              - dataverse
+              - dspace
+              - eprints
+              - escidoc
+              - fedora
+              - invenio
+              - mysql
+              - nesstar
         - in: query
-          name: page[number]
+          name: 'page[number]'
           schema:
             type: number
         - in: query
-          name: page[size]
+          name: 'page[size]'
           schema:
             type: number
         - in: query
           name: include
           schema:
             type: string
-            enum: [provider, repository]
+            enum:
+              - provider
+              - repository
         - in: query
           name: sort
           schema:
             type: string
-            enum: [relevance, name, -name, created, -created]
+            enum:
+              - relevance
+              - name
+              - '-name'
+              - created
+              - '-created'
       responses:
         '200':
           description: A JSON array of clients.
@@ -124,7 +143,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Client'
     post:
-      tags: 
+      tags:
         - clients
       summary: Add a new client.
       requestBody:
@@ -136,8 +155,7 @@ paths:
       responses:
         '201':
           description: Created
-              
-  /clients/{id}:
+  '/clients/{id}':
     parameters:
       - name: id
         in: path
@@ -146,7 +164,7 @@ paths:
         schema:
           type: string
     get:
-      tags: 
+      tags:
         - clients
       summary: Returns a client.
       security: []
@@ -158,7 +176,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Client'
     put:
-      tags: 
+      tags:
         - clients
       summary: Update a client.
       requestBody:
@@ -171,7 +189,7 @@ paths:
         '200':
           description: OK
     delete:
-      tags: 
+      tags:
         - clients
       summary: Delete a client.
       responses:
@@ -179,7 +197,7 @@ paths:
           description: No content
   /dois:
     get:
-      tags: 
+      tags:
         - dois
       summary: Return a list of dois.
       security: []
@@ -232,29 +250,41 @@ paths:
           name: sample-group
           schema:
             type: string
-            enum: [client, provider, resource-type]
+            enum:
+              - client
+              - provider
+              - resource-type
         - in: query
-          name: page[number]
+          name: 'page[number]'
           schema:
             type: number
         - in: query
-          name: page[size]
+          name: 'page[size]'
           schema:
             type: number
         - in: query
-          name: page[cursor]
+          name: 'page[cursor]'
           schema:
             type: number
         - in: query
           name: include
           schema:
             type: string
-            enum: [client, media]
+            enum:
+              - client
+              - media
         - in: query
           name: sort
           schema:
             type: string
-            enum: [relevance, name, -name, created, -created, updated, -updated]
+            enum:
+              - relevance
+              - name
+              - '-name'
+              - created
+              - '-created'
+              - updated
+              - '-updated'
       responses:
         '200':
           description: A JSON array of dois.
@@ -263,7 +293,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Doi'
     post:
-      tags: 
+      tags:
         - dois
       summary: Add a new doi.
       requestBody:
@@ -275,17 +305,16 @@ paths:
       responses:
         '201':
           description: Created
-          
-  /dois/{id}:
+  '/dois/{id}':
     parameters:
-    - name: id
-      in: path
-      description: DOI
-      required: true
-      schema:
-        type: string
+      - name: id
+        in: path
+        description: DOI
+        required: true
+        schema:
+          type: string
     get:
-      tags: 
+      tags:
         - dois
       summary: Returns a doi.
       security: []
@@ -297,7 +326,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Doi'
     put:
-      tags: 
+      tags:
         - dois
       summary: Update a doi.
       requestBody:
@@ -310,13 +339,12 @@ paths:
         '200':
           description: OK
     delete:
-      tags: 
+      tags:
         - dois
       summary: Delete a doi.
       responses:
         '204':
           description: No content
-
   /events:
     get:
       summary: Returns a list of events.
@@ -379,27 +407,34 @@ paths:
           schema:
             type: string
         - in: query
-          name: page[number]
+          name: 'page[number]'
           schema:
             type: number
         - in: query
-          name: page[size]
+          name: 'page[size]'
           schema:
             type: number
         - in: query
-          name: page[cursor]
+          name: 'page[cursor]'
           schema:
             type: number
         - in: query
           name: include
           schema:
             type: string
-            enum: [subj, obj]
+            enum:
+              - subj
+              - obj
         - in: query
           name: sort
           schema:
             type: string
-            enum: [relevance, name, -name, created, -created]
+            enum:
+              - relevance
+              - name
+              - '-name'
+              - created
+              - '-created'
       responses:
         '200':
           description: A JSON array of events.
@@ -407,10 +442,10 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Event'
-      tags: 
+      tags:
         - events
     post:
-      tags: 
+      tags:
         - events
       summary: Add a new event.
       requestBody:
@@ -422,8 +457,7 @@ paths:
       responses:
         '201':
           description: Created
-
-  /events/{id}:
+  '/events/{id}':
     parameters:
       - name: id
         in: path
@@ -432,11 +466,10 @@ paths:
         schema:
           type: string
     get:
-      tags: 
+      tags:
         - events
       summary: Returns an event.
       security: []
-
       responses:
         '200':
           description: A JSON array of events.
@@ -445,7 +478,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
     put:
-      tags: 
+      tags:
         - events
       summary: Update an event.
       requestBody:
@@ -458,16 +491,15 @@ paths:
         '200':
           description: OK
     delete:
-      tags: 
+      tags:
         - events
       summary: Delete an event.
       responses:
         '204':
           description: No content
-                
   /heartbeat:
     get:
-      tags: 
+      tags:
         - heartbeat
       summary: This resource returns the current status of the REST API.
       security: []
@@ -488,7 +520,7 @@ paths:
                 example: failed
   /prefixes:
     get:
-      tags: 
+      tags:
         - prefixes
       summary: Returns a list of prefixes.
       security: []
@@ -499,9 +531,9 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Prefix'
-  /prefixes/{id}:
+  '/prefixes/{id}':
     get:
-      tags: 
+      tags:
         - prefixes
       summary: A prefix.
       security: []
@@ -521,7 +553,7 @@ paths:
                 $ref: '#/components/schemas/Prefix'
   /provider-prefixes:
     get:
-      tags: 
+      tags:
         - provider-prefixes
       summary: A JSON array of provider-prefixes.
       responses:
@@ -533,7 +565,7 @@ paths:
                 $ref: '#/components/schemas/ProviderPrefix'
   /providers:
     get:
-      tags: 
+      tags:
         - providers
       summary: A JSON array of providers.
       security: []
@@ -550,30 +582,51 @@ paths:
           name: region
           schema:
             type: string
-            enum: [amer, apac, emea]
+            enum:
+              - amer
+              - apac
+              - emea
         - in: query
           name: organization-type
           schema:
             type: string
-            enum: [academicInstitution, academicLibrary, governmentAgency, nationalInstitution, nationalLibrary, publisher, professionalSociety, researchInstitution, serviceProvider, vendor]
+            enum:
+              - academicInstitution
+              - academicLibrary
+              - governmentAgency
+              - nationalInstitution
+              - nationalLibrary
+              - publisher
+              - professionalSociety
+              - researchInstitution
+              - serviceProvider
+              - vendor
         - in: query
           name: focus-area
           schema:
             type: string
-            enum: [amer, apac, emea]
+            enum:
+              - amer
+              - apac
+              - emea
         - in: query
-          name: page[number]
+          name: 'page[number]'
           schema:
             type: number
         - in: query
-          name: page[size]
+          name: 'page[size]'
           schema:
             type: number
         - in: query
           name: sort
           schema:
             type: string
-            enum: [relevance, name, -name, created, -created]
+            enum:
+              - relevance
+              - name
+              - '-name'
+              - created
+              - '-created'
       responses:
         '200':
           description: A JSON array of prefixes.
@@ -582,7 +635,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Provider'
     post:
-      tags: 
+      tags:
         - providers
       summary: Add a new provider.
       requestBody:
@@ -594,8 +647,7 @@ paths:
       responses:
         '201':
           description: Created
-
-  /providers/{id}:
+  '/providers/{id}':
     parameters:
       - name: id
         in: path
@@ -604,7 +656,7 @@ paths:
         schema:
           type: string
     get:
-      tags: 
+      tags:
         - providers
       summary: A provider.
       responses:
@@ -615,7 +667,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Provider'
     put:
-      tags: 
+      tags:
         - providers
       summary: Update a provider.
       requestBody:
@@ -628,16 +680,15 @@ paths:
         '200':
           description: OK
     delete:
-      tags: 
+      tags:
         - providers
       summary: Delete a provider.
       responses:
         '204':
           description: No content
-
   /reports:
     get:
-      tags: 
+      tags:
         - reports
       summary: A JSON array of reports.
       security: []
@@ -645,7 +696,8 @@ paths:
         - in: query
           name: platform
           description: >-
-            Name of the Platform the usage is being requested for. This can be omitted if the service provides usage for only one platform.
+            Name of the Platform the usage is being requested for. This can be
+            omitted if the service provides usage for only one platform.
           schema:
             type: string
         - in: query
@@ -656,7 +708,8 @@ paths:
         - in: query
           name: report-id
           description: >-
-            The report ID or code or shortname. Typically this will be the same code provided in the Report parameter of the request.
+            The report ID or code or shortname. Typically this will be the same
+            code provided in the Report parameter of the request.
           schema:
             type: string
         - in: query
@@ -666,7 +719,9 @@ paths:
             type: string
         - in: query
           name: created
-          description: Time the report was prepared. Format as defined by date-time - RFC3339
+          description: >-
+            Time the report was prepared. Format as defined by date-time -
+            RFC3339
           schema:
             type: string
             format: dateTime
@@ -676,11 +731,11 @@ paths:
           schema:
             type: string
         - in: query
-          name: page[number]
+          name: 'page[number]'
           schema:
             type: number
         - in: query
-          name: page[size]
+          name: 'page[size]'
           schema:
             type: number
       responses:
@@ -691,7 +746,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Report'
     post:
-      tags: 
+      tags:
         - reports
       summary: Add a new report.
       requestBody:
@@ -703,8 +758,7 @@ paths:
       responses:
         '201':
           description: Created
-          
-  /reports/{id}:
+  '/reports/{id}':
     parameters:
       - name: id
         in: path
@@ -713,7 +767,7 @@ paths:
         schema:
           type: string
     get:
-      tags: 
+      tags:
         - reports
       summary: A report.
       responses:
@@ -724,7 +778,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Report'
     put:
-      tags: 
+      tags:
         - reports
       summary: Update a report.
       requestBody:
@@ -737,499 +791,517 @@ paths:
         '200':
           description: OK
     delete:
-      tags: 
+      tags:
         - reports
       summary: Delete a report.
       responses:
         '204':
           description: No content
-
 components:
   schemas:
     Client:
       type: object
       properties:
-        id:
-          type: string
-        type:
-          type: string
-        attributes:
+        data:
           type: object
           properties:
-            name:
+            id:
               type: string
-            symbol:
+            type:
               type: string
-            contactName:
-              type: string
-            contactEmail:
-              type: string
-            description:
-              type: string
-            domains:
-              type: string
-            url:
-              type: string
-            created:
-              type: string
-            updated:
-              type: string
-      required:  
+            attributes:
+              type: object
+              properties:
+                name:
+                  type: string
+                symbol:
+                  type: string
+                contactName:
+                  type: string
+                contactEmail:
+                  type: string
+                description:
+                  type: string
+                domains:
+                  type: string
+                url:
+                  type: string
+                created:
+                  type: string
+                updated:
+                  type: string
+      required:
         - id
-        - attributes
-          - name
-          - symbol
-          - contactName
-          - contactEmail
+        - attributes - name - symbol - contactName - contactEmail
       example:
         id: tib.pangaea
         attributes:
           name: Pangaea
-          
     ClientPrefix:
       type: object
       properties:
-        id:
-          type: string
-        type:
-          type: string
-        attributes:
+        data:
           type: object
           properties:
-            created:
+            id:
               type: string
-            updated:
+            type:
               type: string
-      required:  
+            attributes:
+              type: object
+              properties:
+                created:
+                  type: string
+                updated:
+                  type: string
+      required:
         - id
-        
     Doi:
       type: object
       properties:
-        id:
-          type: string
-        type:
-          type: string
-        attributes:
+        data:
           type: object
           properties:
-            doi:
+            id:
               type: string
-            prefix:
+            type:
               type: string
-            suffix:
-              type: string
-            identifiers:
-              type: array
-              items:
-                type: object
-                properties:
-                  identifier:
-                    type: string
-                  identifierType:
-                    type: string
-            creators:
-              type: array
-              items: 
-                type: object
-                properties:
-                  nameType:
-                    type: string
-                  nameIdentifiers:
-                    type: array
-                    items: 
-                      type: object
-                      properties:
-                        nameIdentifier:
-                          type: string
-                        nameIdentifierScheme:
-                          type: string
-                  name:
-                    type: string
-                  givenName:
-                    type: string
-                  familyName:
-                    type: string
-                  affiliation:
-                    type: string
-            titles:
-              type: array
-              items:
-                type: object
-                properties:
-                  title:
-                    type: string
-                  titleType:
-                    type: string
-                  lang:
-                    type: string
-            publisher:
-              type: string
-            container:
+            attributes:
               type: object
               properties:
-                type: 
+                doi:
                   type: string
-                identifier:
+                prefix:
                   type: string
-                identifierType:
+                suffix:
                   type: string
-                title:
-                  type: string
-                volume:
-                  type: string
-                issue:
-                  type: string
-                firstPage:
-                  type: string
-                lastPage:
-                  type: string
-            publicationYear:
-              type: number
-            subjects:
-              type: array
-              items: 
-                type: object
-                properties:
-                  subject:
-                    type: string
-                  subjectScheme:
-                    type: string
-                  schemeUri:
-                    type: string
-                  valueUri:
-                    type: string
-                  lang:
-                    type: string
-            contributors:
-              type: array
-              items: 
-                type: object
-                properties:
-                  nameType:
-                    type: string
-                  nameIdentifiers:
-                    type: array
-                    items: 
-                      type: object
-                      properties:
-                        nameIdentifier:
-                          type: string
-                        nameIdentifierScheme:
-                          type: string
-                  name:
-                    type: string
-                  givenName:
-                    type: string
-                  familyName:
-                    type: string
-                  affiliation:
-                    type: string
-                  contributorType:
-                    type: string
-            dates:
-              type: array
-              items:
-                type: object
-                properties:
-                  date:
-                    type: string
-                  dateType:
-                    type: string
-            language:
-              type: string
-            types:
-              type: object
-              properties:
-                resourceTypeGeneral:
-                  type: string
-                resourceType:
-                  type: string
-                schemaOrg:
-                  type: string
-                bibtex:
-                  type: string
-                citeproc:
-                  type: string
-                ris:
-                  type: string
-            relatedIdentifiers:
-              type: array
-              items:
-                type: object
-                properties:
-                  relatedIdentifier:
-                    type: string
-                  relatedIdentifierType:
-                    type: string
-                  relationType:
-                    type: string
-                  resourceTypeGeneral:
-                    type: string
-            sizes:
-              type: array
-              items:
-                type: string
-            formats:
-              type: array
-              items:
-                type: string
-            version:
-              type: string
-            rightsList:
-              type: array
-              items:
-                type: object
-                properties:
-                  rights:
-                    type: string
-                  rightsUri:
-                    type: string
-                  lang:
-                    type: string
-            descriptions:
-              type: array
-              items:
-                type: object
-                properties:
-                  description:
-                    type: string
-                  descriptionType:
-                    type: string
-                  lang:
-                    type: string
-            geoLocations:
-              type: array
-              items:
-                type: object
-                properties:
-                  geoLocationPoint:
+                identifiers:
+                  type: array
+                  items:
                     type: object
-                  geoLocationBox:
+                    properties:
+                      identifier:
+                        type: string
+                      identifierType:
+                        type: string
+                creators:
+                  type: array
+                  items:
                     type: object
-                  geoLocationPlace:
-                    type: string
-            fundingReferences:
-              type: array
-              items:
-                type: object
-                properties:
-                  funderName:
-                    type: string
-                  funderIdentifier:
-                    type: string
-                  funderIdentifierType:
-                    type: string
-                  awardNumber:
-                    type: string
-                  awardUri:
-                    type: string
-                  awardTitle:
-                    type: string
-            url:
-              type: string
-            contentUrl:
-              type: array
-              items:
-                type: string
-            metadataVersion:
-              type: number
-            schemaVersion:
-              type: string
-            source:
-              type: string
-            isActive:
-              type: boolean
-            state:
-              type: string
-            reason:
-              type: string
-            landingPage:
-              type: object
-              properties:
-                checked:
+                    properties:
+                      nameType:
+                        type: string
+                      nameIdentifiers:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            nameIdentifier:
+                              type: string
+                            nameIdentifierScheme:
+                              type: string
+                      name:
+                        type: string
+                      givenName:
+                        type: string
+                      familyName:
+                        type: string
+                      affiliation:
+                        type: string
+                titles:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      titleType:
+                        type: string
+                      lang:
+                        type: string
+                publisher:
                   type: string
-                url:
-                  type: string
-                contentType:
-                  type: string
-                error:
-                  type: string
-                redirectCount:
+                container:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    identifier:
+                      type: string
+                    identifierType:
+                      type: string
+                    title:
+                      type: string
+                    volume:
+                      type: string
+                    issue:
+                      type: string
+                    firstPage:
+                      type: string
+                    lastPage:
+                      type: string
+                publicationYear:
                   type: number
-                redirectUrls:
+                subjects:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      subject:
+                        type: string
+                      subjectScheme:
+                        type: string
+                      schemeUri:
+                        type: string
+                      valueUri:
+                        type: string
+                      lang:
+                        type: string
+                contributors:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      nameType:
+                        type: string
+                      nameIdentifiers:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            nameIdentifier:
+                              type: string
+                            nameIdentifierScheme:
+                              type: string
+                      name:
+                        type: string
+                      givenName:
+                        type: string
+                      familyName:
+                        type: string
+                      affiliation:
+                        type: string
+                      contributorType:
+                        type: string
+                dates:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      date:
+                        type: string
+                      dateType:
+                        type: string
+                language:
+                  type: string
+                types:
+                  type: object
+                  properties:
+                    resourceTypeGeneral:
+                      type: string
+                    resourceType:
+                      type: string
+                    schemaOrg:
+                      type: string
+                    bibtex:
+                      type: string
+                    citeproc:
+                      type: string
+                    ris:
+                      type: string
+                relatedIdentifiers:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      relatedIdentifier:
+                        type: string
+                      relatedIdentifierType:
+                        type: string
+                      relationType:
+                        type: string
+                      resourceTypeGeneral:
+                        type: string
+                sizes:
                   type: array
                   items:
                     type: string
-                downloadLatency:
+                formats:
+                  type: array
+                  items:
+                    type: string
+                version:
+                  type: string
+                rightsList:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      rights:
+                        type: string
+                      rightsUri:
+                        type: string
+                      lang:
+                        type: string
+                descriptions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      description:
+                        type: string
+                      descriptionType:
+                        type: string
+                      lang:
+                        type: string
+                geoLocations:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      geoLocationPoint:
+                        type: object
+                      geoLocationBox:
+                        type: object
+                      geoLocationPlace:
+                        type: string
+                fundingReferences:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      funderName:
+                        type: string
+                      funderIdentifier:
+                        type: string
+                      funderIdentifierType:
+                        type: string
+                      awardNumber:
+                        type: string
+                      awardUri:
+                        type: string
+                      awardTitle:
+                        type: string
+                url:
+                  type: string
+                contentUrl:
+                  type: array
+                  items:
+                    type: string
+                metadataVersion:
                   type: number
-                hasSchemaOrg:
+                schemaVersion:
+                  type: string
+                source:
+                  type: string
+                isActive:
                   type: boolean
-                schemaOrgid:
+                state:
                   type: string
-                dcIdentifier:
+                reason:
                   type: string
-                citationDoi:
+                landingPage:
+                  type: object
+                  properties:
+                    checked:
+                      type: string
+                    url:
+                      type: string
+                    contentType:
+                      type: string
+                    error:
+                      type: string
+                    redirectCount:
+                      type: number
+                    redirectUrls:
+                      type: array
+                      items:
+                        type: string
+                    downloadLatency:
+                      type: number
+                    hasSchemaOrg:
+                      type: boolean
+                    schemaOrgid:
+                      type: string
+                    dcIdentifier:
+                      type: string
+                    citationDoi:
+                      type: string
+                    bodyhasPid:
+                      type: boolean
+                created:
                   type: string
-                bodyhasPid:
-                  type: boolean
-            created:
-              type: string
-            registered:
-              type: string
-            updated:
-              type: string
+                registered:
+                  type: string
+                updated:
+                  type: string
       required:
         - id
-        - attributes
-          - doi
-          - creators
-          - titles
-          - publisher
-          - publicationYear
+        - attributes - doi - creators - titles - publisher - publicationYear
       example:
         id: 10.5438/0014
         type: dois
         attributes:
           doi: 10.5438/0014
           prefix: 10.5438
-          suffix: 0014
+          suffix: 12
           identifiers:
-            - identifier: https://doi.org/10.5438/0014
+            - identifier: 'https://doi.org/10.5438/0014'
               identifierType: DOI
           creators:
             - name: DataCite Metadata Working Group
           titles:
-            - title: DataCite Metadata Schema Documentation for the Publication and Citation of Research Data v4.1
+            - title: >-
+                DataCite Metadata Schema Documentation for the Publication and
+                Citation of Research Data v4.1
           publisher: DataCite
           publicationYear: 2017
-          
     Event:
       type: object
       properties:
-        id:
-          type: string
-        type:
-          type: string
-        attributes:
+        data:
           type: object
           properties:
-            subjId: 
+            id:
               type: string
-            objId:
+            type:
               type: string
-            messageAction:
-              type: string
-              enum: [create, delete]
-            relationTypeId:
-              type: string
-            sourceToken:
-              type: string
-            sourceId:
-              type: string
-            total:
-              type: number
-            license:
-              type: string
-            occuredAt:
-              type: string
-            timestamp:
-              type: string
-            subj:
+            attributes:
               type: object
-            obj:
-              type: object
-      required:  
+              properties:
+                subjId:
+                  type: string
+                objId:
+                  type: string
+                messageAction:
+                  type: string
+                  enum:
+                    - create
+                    - delete
+                relationTypeId:
+                  type: string
+                sourceToken:
+                  type: string
+                sourceId:
+                  type: string
+                total:
+                  type: number
+                license:
+                  type: string
+                occuredAt:
+                  type: string
+                timestamp:
+                  type: string
+                subj:
+                  type: object
+                obj:
+                  type: object
+      required:
         - id
-        - attributes
-          - subjId
-          - sourceToken
-          - sourceId
-          
+        - attributes - subjId - sourceToken - sourceId
     Prefix:
       type: object
       properties:
-        prefix:
-          type: string
+        data:
+          type: object
+          properties:
+            prefix:
+              type: string
       required:
         - prefix
-        
     ProviderPrefix:
       type: object
       properties:
-        id:
-          type: string
-        attributes:
+        data:
           type: object
           properties:
-            created:
+            id:
               type: string
-            updated:
-              type: string
+            attributes:
+              type: object
+              properties:
+                created:
+                  type: string
+                updated:
+                  type: string
       required:
         - id
-        
     Provider:
       type: object
       properties:
-        id:
-          type: string
-        name:
-          type: string
-        symbol:
-          type: string
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            symbol:
+              type: string
       required:
         - id
-        - attributes
-          - name
-          - symbol
+        - attributes - name - symbol
       example:
         id: bl
         attributes:
           name: British Library
           symbol: BL
-          
     Report:
       type: object
-      description: Describes the formatting needs for the COUNTER Dataset Report. Response may include the Report_Header (optional), Report_Datasets (usage stats).
+      description: >-
+        Describes the formatting needs for the COUNTER Dataset Report. Response
+        may include the Report_Header (optional), Report_Datasets (usage stats).
       properties:
-        id:
-          type: string
-          example: "0000-0000-0000-0000"
-        report-name:
-          type: string
-          description: The long name of the report.
-          example: Dataset Report
-        report-id:
-          type: string
-          description: >-
-            The report ID or code or shortname. Typically this will be the same code provided in the Report parameter of the request.
-          example: DSR
-        release:
-          type: string
-          description: The release or version of the report.
-          example: 'RD1'
-        created:
-          type: string
-          format: dateTime
-          description: Time the report was prepared. Format as defined by date-time - RFC3339
-          example: '2016-09-08T22:47:31Z'
-        created-by:
-          type: string
-          description: Name of the organization producing the report.
-          example: 'DataONE'
-        report-filters:
-          type: string
-          description: Zero or more report filters used for this report. Typically reflect filters provided on the Request. Filters limit the data to be reported on.
-        report-attributes:
-          type: string
-          description: Zero or more additional attributes applied to the report. Attributes inform the level of detail in the report.
-        reporting-period:
-          type: string
-          description: Time the report was prepared.
-        report-datasets:
-          type: string
-          description: Defines the output for the Report_Datasets being returned in a Dataset Report. Collection of datasets from the report.
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 0000-0000-0000-0000
+            report-name:
+              type: string
+              description: The long name of the report.
+              example: Dataset Report
+            report-id:
+              type: string
+              description: >-
+                The report ID or code or shortname. Typically this will be the same
+                code provided in the Report parameter of the request.
+              example: DSR
+            release:
+              type: string
+              description: The release or version of the report.
+              example: RD1
+            created:
+              type: string
+              format: dateTime
+              description: >-
+                Time the report was prepared. Format as defined by date-time -
+                RFC3339
+              example: '2016-09-08T22:47:31Z'
+            created-by:
+              type: string
+              description: Name of the organization producing the report.
+              example: DataONE
+            report-filters:
+              type: string
+              description: >-
+                Zero or more report filters used for this report. Typically reflect
+                filters provided on the Request. Filters limit the data to be
+                reported on.
+            report-attributes:
+              type: string
+              description: >-
+                Zero or more additional attributes applied to the report. Attributes
+                inform the level of detail in the report.
+            reporting-period:
+              type: string
+              description: Time the report was prepared.
+            report-datasets:
+              type: string
+              description: >-
+                Defines the output for the Report_Datasets being returned in a
+                Dataset Report. Collection of datasets from the report.
       required:
         - report-datasets
         - report-id
@@ -1237,15 +1309,14 @@ components:
         - release
         - created-by
         - reporting-period
-    
   securitySchemes:
     BasicAuth:
       type: http
       scheme: basic
-    bearerAuth:            
+    bearerAuth:
       type: http
       scheme: bearer
-      bearerFormat: JWT  
+      bearerFormat: JWT
 security:
   - BasicAuth: []
   - bearerAuth: []
