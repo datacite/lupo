@@ -62,13 +62,13 @@ class User
   def provider
     return nil unless provider_id.present?
 
-    cached_provider_response(provider_id)
+    Provider.where(symbol: provider_id).first
   end
 
   def client
     return nil unless client_id.present?
 
-    cached_client_response(client_id)
+    ::Client.where(symbol: client_id).first
   end
 
   def self.reset(username)

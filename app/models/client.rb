@@ -150,7 +150,7 @@ class Client < ActiveRecord::Base
   end
 
   def provider_id=(value)
-    r = cached_provider_response(value)
+    r = Provider.where(symbol: value).first
     return nil unless r.present?
 
     write_attribute(:allocator, r.id)
@@ -182,7 +182,7 @@ class Client < ActiveRecord::Base
 
     target = c.records.first
 
-    Doi.transfer(from_date: "2011-01-01", client_id: id, target_id: target.id)
+    Doi.transfer(client_id: symbol.downcase, target_id: target.id)
   end
 
   def index_all_dois
@@ -207,7 +207,7 @@ class Client < ActiveRecord::Base
 
   # backwards compatibility
   def member
-    cached_member_response(provider_id) if provider_id.present?
+    Provider.where(symbol: provider_id).first if provider_id.present?
   end
 
   def year

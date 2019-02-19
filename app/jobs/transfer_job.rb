@@ -15,11 +15,11 @@ class TransferJob < ActiveJob::Base
 
       doi.__elasticsearch__.index_document
 
-      logger.info "[MySQL] Transferred DOI #{doi.doi}."
+      logger.info "[Transfer] Transferred DOI #{doi.doi}."
     elsif doi.present?
-      logger.info "[MySQL] Error transferring DOI " + doi_id + ": no target client"
+      logger.info "[Transfer] Error transferring DOI " + doi_id + ": no target client"
     else
-      logger.info "[MySQL] Error transferring DOI " + doi_id + ": not found"
+      logger.info "[Transfer] Error transferring DOI " + doi_id + ": not found"
     end
   end
 end

@@ -16,13 +16,15 @@ describe "works", type: :request do
 
   describe 'GET /works', elasticsearch: true do
     before do
+      Doi.import
       sleep 1
       get '/works', headers: headers
     end
 
-    # it 'returns dois' do
-    #   expect(json['data'].size).to eq(0)
-    # end
+    it 'returns dois' do
+      expect(json['data'].size).to eq(3)
+      expect(json.dig('meta', 'total')).to eq(3)
+    end
 
     it 'returns status code 200' do
       expect(response).to have_http_status(200)

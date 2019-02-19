@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 describe 'Clients', type: :request, elasticsearch: true do
-  let!(:clients)  { create_list(:client, 10) }
   let(:ids) { clients.map { |c| c.uid }.join(",") }
   let(:bearer) { User.generate_token }
   let(:provider) { create(:provider, password_input: "12345") }
@@ -26,22 +25,24 @@ describe 'Clients', type: :request, elasticsearch: true do
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
   let(:query) { "jamon"}
 
-  # Test suite for GET /clients
-  # describe 'GET /clients', elasticsearch: true do
-  #   before do
-  #     sleep 1
-  #     get '/clients', headers: headers
-  #   end
+  describe 'GET /clients', elasticsearch: true do
+    let!(:clients)  { create_list(:client, 3) }
 
-  #   it 'returns clients' do
-  #     expect(json).not_to be_empty
-  #     expect(json['data'].size).to eq(11)
-  #   end
+    before do
+      Client.import
+      sleep 1
+      get '/clients', headers: headers
+    end
 
-  #   it 'returns status code 200' do
-  #     expect(response).to have_http_status(200)
-  #   end
-  # end
+    it 'returns clients' do
+      expect(json['data'].size).to eq(4)
+      expect(json.dig('meta', 'total')).to eq(4)
+    end
+
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
 
   # # Test suite for GET /clients
   # describe 'GET /clients query' do
@@ -213,7 +214,6 @@ describe 'Clients', type: :request, elasticsearch: true do
     before { delete "/clients/#{client.uid}", headers: headers }
 
     it 'returns status code 204' do
-      puts response.body
       expect(response).to have_http_status(204)
     end
 
@@ -230,19 +230,29 @@ describe 'Clients', type: :request, elasticsearch: true do
     end
   end
 
-  # describe 'POST /clients/set-test-prefix' do
-  #   let(:prefix)  { create(:prefix, prefix: "10.5072") }
-  #   let!(:provider_psrefix)  { create(:provider_prefix, provider: provider, prefix: prefix) }
+  describe "doi transfer", elasticsearch: true do
+    let!(:dois) { create_list(:doi, 3, client: client) }
+    let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
+    let(:params) do
+      { "data" => { "type" => "clients",
+                    "attributes" => {
+                      "targetId" => target.symbol }} }
+    end
 
-  #   before { post '/clients/set-test-prefix', headers: headers }
+    before do
+      Doi.import
+      sleep 1
+      put "/clients/#{client.symbol}", params: params.to_json, headers: headers
+      sleep 1
+    end
 
-  #   it 'returns success' do
-  #     expect(json['message']).to eq("Test prefix added.")
-  #   end
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
 
-  #   it 'returns status code 200' do
-  #     expect(response.body).to eq(2)
-  #     expect(response).to have_http_status(200)
-  #   end
-  # end
+    # it "transfered all DOIs" do
+    #   expect(Doi.query(nil, client_id: client.symbol.downcase).results.total).to eq(0)
+    #   expect(Doi.query(nil, client_id: target.symbol.downcase).results.total).to eq(3)
+    # end
+  end
 end

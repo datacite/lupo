@@ -44,7 +44,7 @@ class ProviderPrefixesController < ApplicationController
       providers = providers
                   .sort { |a, b| b[1] <=> a[1] }
                   .reduce([]) do |sum, i|
-                                if provider = cached_providers.find { |m| m.id == i[0] }
+                                if provider = Provider.where(symbol: i[0]).first
                                   sum << { id: provider.symbol.downcase, title: provider.name, count: i[1] }
                                 end
 

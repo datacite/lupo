@@ -9,20 +9,24 @@ describe "dois", type: :request do
   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
   let!(:prefix) { create(:prefix, prefix: "10.14454") }
   let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
-  let!(:dois) { create_list(:doi, 3, client: client) }
+  
   let(:doi) { create(:doi, client: client) }
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
   let(:headers) { { 'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer }}
 
   describe 'GET /dois', elasticsearch: true do
+    let!(:dois) { create_list(:doi, 3, client: client) }
+
     before do
+      Doi.import
       sleep 1
       get '/dois', headers: headers
     end
 
-    # it 'returns dois' do
-    #   expect(json['data'].size).to eq(0)
-    # end
+    it 'returns dois' do
+      expect(json['data'].size).to eq(3)
+      expect(json.dig('meta', 'total')).to eq(3)
+    end
 
     it 'returns status code 200' do
       expect(response).to have_http_status(200)

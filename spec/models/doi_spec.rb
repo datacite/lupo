@@ -430,6 +430,94 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
+  describe "import", elasticsearch: true do
+    let(:provider)  { create(:provider) }
+    let(:client)  { create(:client, provider: provider) }
+    let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
+    let!(:dois) { create_list(:doi, 3, client: client, creators: nil) }
+    let(:doi) { dois.first }
+
+    before do
+      Doi.import
+      sleep 1
+    end
+
+    it "import one" do
+      response = Doi.import_one(doi_id: doi.doi)
+      expect(response.schema_version).to eq("http://datacite.org/schema/kernel-4")
+    end
+
+    it "import all" do
+      response = Doi.import_all
+      expect(response).to eq(1)
+    end
+
+    it "import missing" do
+      response = Doi.import_missing
+      expect(response).to eq(1)
+    end
+
+    it "import by day" do
+      response = Doi.import_by_day(from_date: Date.today.strftime("%F"))
+      expect(response).to eq(3)
+    end
+
+    it "import by day missing" do
+      response = Doi.import_by_day_missing(from_date: Date.today.strftime("%F"))
+      expect(response).to eq(3)
+    end
+  end
+
+  describe "index", elasticsearch: true do
+    let(:provider)  { create(:provider) }
+    let(:client)  { create(:client, provider: provider) }
+    let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
+    let!(:dois) { create_list(:doi, 3, client: client, creators: nil) }
+    let(:doi) { dois.first }
+
+    before do
+      Doi.import
+      sleep 1
+    end
+
+    it "index" do
+      response = Doi.index
+      expect(response).to eq(1)
+    end
+
+    it "index by day" do
+      response = Doi.index_by_day(from_date: Date.today.strftime("%F"))
+      expect(response).to eq(3)
+    end
+
+    it "index by ids" do
+      response = Doi.index_by_ids
+      expect(response).to eq(500)
+    end
+
+    it "index by id" do
+      response = Doi.index_by_id(id: doi.id)
+      expect(response).to eq(3)
+    end
+  end
+
+  describe "transfer", elasticsearch: true do
+    let(:provider)  { create(:provider) }
+    let(:client)  { create(:client, provider: provider) }
+    let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
+    let!(:dois) { create_list(:doi, 3, client: client) }
+
+    before do
+      Doi.import
+      sleep 1
+    end
+
+    it "transfer all dois" do
+      response = Doi.transfer(client_id: client.symbol.downcase, target_id: target.symbol.downcase)
+      expect(response).to eq(3)
+    end
+  end
+
   describe "migrates landing page" do
     let(:provider)  { create(:provider, symbol: "ADMIN") }
     let(:client)  { create(:client, provider: provider) }

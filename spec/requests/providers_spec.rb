@@ -1,9 +1,7 @@
 require 'rails_helper'
 
 describe "Providers", type: :request, elasticsearch: true  do
-  # initialize test data
-  let!(:providers)  { create_list(:provider, 10) }
-  let!(:provider) { providers.first }
+  let!(:provider) { create(:provider) }
   let(:token) { User.generate_token }
   let(:params) do
     { "data" => { "type" => "providers",
@@ -15,23 +13,28 @@ describe "Providers", type: :request, elasticsearch: true  do
   end
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + token } }
 
-  # # Test suite for GET /providers
-  # describe 'GET /providers' do
-  #   # make HTTP get request before each example
-  #   before { get '/providers', headers: headers }
+  describe 'GET /providers' do
+    let!(:providers)  { create_list(:provider, 3) }
 
-  #   it 'returns providers' do
-  #     expect(json['data'].size).to eq(10)
-  #   end
+    before do
+      Provider.import
+      sleep 1
+      get '/providers', headers: headers
+    end
 
-  #   it 'returns status code 200' do
-  #     expect(response).to have_http_status(200)
-  #   end
-  # end
+    it 'returns providers' do
+      expect(json['data'].size).to eq(4)
+      expect(json.dig('meta', 'total')).to eq(4)
+    end
 
-  # Test suite for GET /providers/:id
+    it 'returns status code 200' do
+      expect(response).to have_http_status(200)
+    end
+  end
+
   describe 'GET /providers/:id' do
     before { get "/providers/#{provider.symbol}" , headers: headers}
+    
     context 'when the record exists' do
       it 'returns the provider' do
         expect(json).not_to be_empty

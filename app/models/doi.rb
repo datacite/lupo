@@ -349,7 +349,7 @@ class Doi < ActiveRecord::Base
     __elasticsearch__.search({
       query: {
         term: {
-          doi: id.downcase
+          doi: id.upcase
         }
       },
       aggregations: query_aggregations
@@ -379,9 +379,11 @@ class Doi < ActiveRecord::Base
     # update_attributes will trigger validations and Elasticsearch indexing
     doi.update_attributes(attrs)
     logger.info "[MySQL] Imported metadata for DOI " + doi.doi + "."
+    doi
   rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
     logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
     Bugsnag.notify(error)
+    doi
   end
 
   def self.import_all(options={})
@@ -393,6 +395,8 @@ class Doi < ActiveRecord::Base
     (from_date..until_date).each do |d|
       DoiImportByDayJob.perform_later(from_date: d.strftime("%F"), client_id: client_id)
     end
+
+    (from_date..until_date).to_a.length
   end
 
   def self.import_missing(options={})
@@ -404,47 +408,64 @@ class Doi < ActiveRecord::Base
     (from_date..until_date).each do |d|
       DoiImportByDayMissingJob.perform_later(from_date: d.strftime("%F"), client_id: client_id)
     end
+
+    (from_date..until_date).to_a.length
   end
 
   def self.import_by_day(options={})
     return nil unless options[:from_date].present?
     from_date = Date.parse(options[:from_date])
-    client_id = options[:client_id]
 
     count = 0
 
     logger = Logger.new(STDOUT)
 
-    collection = Doi.where(created: from_date.midnight..from_date.end_of_day)
-    collection = collection.where(datacentre: client_id) if client_id.present?
+    response = Doi.query("created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 0, cursor: 1 })
+    logger.info "#{response.results.total} DOIs found created on #{from_date.strftime("%F")}."
 
-    collection.find_each do |doi|
-      begin
-        # ignore broken xml
-        string = doi.current_metadata.present? ? doi.from_xml(doi.current_metadata.xml.to_s.force_encoding("UTF-8")) : nil
-        unless string.present?
-          logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
-          return nil
+    if response.results.total > 0
+      # walk through results using cursor
+      prev_cursor = 0
+      cursor = 1
+      
+      while cursor > prev_cursor do
+        response = Doi.query("created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 1000, cursor: cursor })
+        prev_cursor = cursor
+        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
+
+        response.records.each do |doi|
+          begin
+            # ignore broken xml
+            string = doi.current_metadata.present? ? doi.from_xml(doi.current_metadata.xml.to_s.force_encoding("UTF-8")) : nil
+            unless string.present?
+              logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
+              return nil
+            end
+            
+            meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
+            attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
+              [a.to_sym, meta[a]]
+            end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
+    
+            # update_columns will NOT trigger validations and Elasticsearch indexing
+            doi.update_columns(attrs)
+
+            doi.__elasticsearch__.index_document
+          rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
+            logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
+            Bugsnag.notify(error)
+          else
+            count += 1
+          end
         end
-        
-        meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
-        attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
-          [a.to_sym, meta[a]]
-        end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
-
-        # update_columns will NOT trigger validations and Elasticsearch indexing
-        doi.update_columns(attrs)
-      rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
-        logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
-        Bugsnag.notify(error)
-      else
-        count += 1
+    
+        if count > 0
+          logger.info "[MySQL] Imported metadata for #{count} DOIs created on #{options[:from_date]}."
+        end
       end
     end
 
-    if count > 0
-      logger.info "[MySQL] Imported metadata for #{count} DOIs created on #{options[:from_date]}."
-    end
+    count
   end
 
   def self.import_by_day_missing(options={})
@@ -499,6 +520,8 @@ class Doi < ActiveRecord::Base
         end
       end
     end
+
+    count
   end
 
   def self.index(options={})
@@ -511,6 +534,8 @@ class Doi < ActiveRecord::Base
     (from_date..until_date).each do |d|
       DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"), index_time: index_time, client_id: client_id)
     end
+
+    (from_date..until_date).to_a.length
   end
 
   def self.index_by_day(options={})
@@ -548,6 +573,8 @@ class Doi < ActiveRecord::Base
     elsif count > 1
       logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{options[:from_date]}."
     end
+
+    count
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
     logger.info "[Elasticsearch] Error #{error.message} indexing DOIs created on #{options[:from_date]}."
 
@@ -560,6 +587,8 @@ class Doi < ActiveRecord::Base
     end
 
     logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{options[:from_date]}."
+
+    count
   end
 
   def self.index_by_ids(options={})
@@ -569,8 +598,9 @@ class Doi < ActiveRecord::Base
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
       DoiIndexByIdJob.perform_later(id: id)
-      puts "Queued indexing for DOIs with IDs starting with #{id}."
     end
+
+    (from_id..until_id).to_a.length
   end
 
   def self.index_by_id(options={})
@@ -602,6 +632,8 @@ class Doi < ActiveRecord::Base
     elsif count > 0
       logger.info "[Elasticsearch] Indexed #{count} DOIs with IDs #{id} - #{(id + 499)}."
     end
+
+    count
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
     logger.info "[Elasticsearch] Error #{error.message} indexing DOIs with IDs #{id} - #{(id + 499)}."
 
@@ -613,6 +645,8 @@ class Doi < ActiveRecord::Base
     end
 
     logger.info "[Elasticsearch] Indexed #{count} DOIs with IDs #{id} - #{(id + 499)}."
+
+    count
   end
 
   def uid
@@ -660,14 +694,13 @@ class Doi < ActiveRecord::Base
 
   def client_id=(value)
     r = ::Client.where(symbol: value).first
-    #r = cached_client_response(value)
     fail ActiveRecord::RecordNotFound unless r.present?
 
     write_attribute(:datacentre, r.id)
   end
 
   def provider_id
-    provider.symbol.downcase
+    client.provider.symbol.downcase if client.present?
   end
 
   def prefix
@@ -736,7 +769,7 @@ class Doi < ActiveRecord::Base
   end
 
   def metadata_version
-    fetch_cached_metadata_version
+    current_metadata ? current_metadata.metadata_version : 0
   end
 
   def current_media
@@ -849,6 +882,17 @@ class Doi < ActiveRecord::Base
 
   def self.transfer(options={})
     logger = Logger.new(STDOUT)
+
+    if options[:client_id].blank?
+      Logger.error "[Transfer] No client provided."
+      return nil
+    end
+
+    if options[:target_id].blank?
+      Logger.error "[Transfer] No target client provided."
+      return nil
+    end
+
     query = options[:query] || "*"
 
     response = Doi.query(query, client_id: options[:client_id], page: { size: 0, cursor: 1 })
@@ -869,6 +913,8 @@ class Doi < ActiveRecord::Base
         end
       end
     end
+
+    response.results.total
   end
 
   # save to metadata table when xml has changed

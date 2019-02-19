@@ -101,6 +101,7 @@ module Indexable
 
     def query(query, options={})
       aggregations = query_aggregations
+      options[:page] ||= { size: 25, number: 1 }
 
       # enable cursor-based pagination for DOIs
       if self.name == "Doi" && options.dig(:page, :cursor).present?

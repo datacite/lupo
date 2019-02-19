@@ -8,12 +8,6 @@ module Facetable
       "apac" => "Asia Pacific",
       "emea" => "EMEA" }
 
-    def client_year_facet(params, collection)
-      [{ id: params[:year],
-         title: params[:year],
-         count: collection.where('YEAR(datacentre.created) = ?', params[:year]).count }]
-    end
-
     def facet_by_year(arr)
       arr.map do |hsh|
         { "id" => hsh["key_as_string"][0..3],
@@ -94,7 +88,7 @@ module Facetable
       # generate hash with id and name for each provider in facet
 
       ids = arr.map { |hsh| hsh["key"] }.join(",")
-      providers = Provider.find_by_ids(ids).results.reduce({}) do |sum, p|
+      providers = Provider.find_by_ids(ids, size: 1000).results.reduce({}) do |sum, p|
         sum[p.symbol.downcase] = p.name
         sum
       end

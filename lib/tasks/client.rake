@@ -161,12 +161,12 @@ namespace :client do
     end
 
     # update dois
-    Doi.transfer(from_date: "2011-01-01", client_id: client.id, target_id: target.id)
+    Doi.transfer(from_date: "2011-01-01", client_id: client.symbol, target_id: target.symbol)
 
     prefixes.each do |prefix|
-      provider_prefix = ProviderPrefix.create(provider: target.provider.symbol, prefix: prefix)
+      provider_prefix = ProviderPrefix.create(provider: target.provider, prefix: prefix)
       puts "Provider prefix for provider #{target.provider.symbol} and prefix #{prefix} created."
-      client_prefix = ClientPrefix.create(client: target.symbol, prefix: prefix, provider_prefix: provider_prefix.id)
+      client_prefix = ClientPrefix.create(client: target, prefix: prefix, provider_prefix: provider_prefix.id)
       puts "Client prefix for client #{target.symbol} and prefix #{prefix} created."
     end
   end

@@ -34,7 +34,7 @@ class ClientPrefix < ActiveRecord::Base
 
   # workaround for non-standard database column names and association
   def client_id=(value)
-    r = cached_client_response(value)
+    r = ::Client.where(symbol: value).first
     fail ActiveRecord::RecordNotFound unless r.present?
 
     self.datacentre = r.id

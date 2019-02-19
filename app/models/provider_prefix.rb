@@ -34,7 +34,7 @@ class ProviderPrefix < ActiveRecord::Base
 
   # workaround for non-standard database column names and association
   def provider_id=(value)
-    r = cached_provider_response(value)
+    r = Provider.where(symbol: value).first
     fail ActiveRecord::RecordNotFound unless r.present?
 
     self.allocator = r.id
