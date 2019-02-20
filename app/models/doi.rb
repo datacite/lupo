@@ -430,8 +430,9 @@ class Doi < ActiveRecord::Base
       
       while cursor > prev_cursor do
         response = Doi.query("created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 1000, cursor: cursor })
-        prev_cursor = cursor
+        old_cursor = cursor
         cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
+        prev__cursor = old_cursor
 
         response.records.each do |doi|
           begin
@@ -486,8 +487,9 @@ class Doi < ActiveRecord::Base
       
       while cursor > prev_cursor do
         response = Doi.query("-creators:* +created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 1000, cursor: cursor })
-        prev_cursor = cursor
+        old_cursor = cursor
         cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
+        prev_cursor = old_cursor
 
         response.records.each do |doi|
           begin
@@ -824,8 +826,9 @@ class Doi < ActiveRecord::Base
       
       while cursor > prev_cursor do
         response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:ethz -provider_id:europ", page: { size: 1000, cursor: cursor })
-        prev_cursor = cursor
+        old_cursor = cursor
         cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
+        prev_cursor = old_cursor
 
         response.results.results.each do |d|
           HandleJob.perform_later(d.doi)
@@ -847,8 +850,9 @@ class Doi < ActiveRecord::Base
       
       while cursor > prev_cursor do
         response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 1000, cursor: cursor })
-        prev_cursor = cursor
+        old_cursor = cursor
         cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
+        prev_cursor = old_cursor
 
         response.results.results.each do |d|
           UrlJob.perform_later(d.doi)
@@ -870,9 +874,10 @@ class Doi < ActiveRecord::Base
       
       while cursor > prev_cursor do
         response = Doi.query("url:* +provider_id:ethz  +aasm_state:draft", page: { size: 1000, cursor: cursor })
-        prev_cursor = cursor
+        old_cursor = cursor
         cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
-
+        prev_cursor = old_cursor
+        
         response.results.results.each do |d|
           UrlJob.perform_later(d.doi)
         end
@@ -896,7 +901,7 @@ class Doi < ActiveRecord::Base
     query = options[:query] || "*"
 
     response = Doi.query(query, client_id: options[:client_id], page: { size: 0, cursor: 1 })
-    logger.info "#{response.results.total} DOIs found for client #{options[:client_id]}."
+    logger.info "[Transfer] #{response.results.total} DOIs found for client #{options[:client_id]}."
 
     if options[:client_id] && options[:target_id] && response.results.total > 0
       # walk through results using cursor
@@ -905,8 +910,9 @@ class Doi < ActiveRecord::Base
       
       while cursor > prev_cursor do
         response = Doi.query(query, client_id: options[:client_id], page: { size: 1000, cursor: cursor })
-        prev_cursor = cursor
+        old_cursor = cursor
         cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
+        prev_cursor = old_cursor
 
         response.results.results.each do |d|
           TransferJob.perform_later(d.doi, target_id: options[:target_id])
