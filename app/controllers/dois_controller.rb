@@ -113,7 +113,7 @@ class DoisController < ApplicationController
           options[:meta] = {
             total: total,
             "totalPages" => total_pages,
-            page: page[:number],
+            page: page[:cursor].blank? && page[:number].present? ? page[:number] : nil,
             states: states,
             "resourceTypes" => resource_types,
             created: created,

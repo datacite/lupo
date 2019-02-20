@@ -505,7 +505,7 @@ describe Doi, type: :model, vcr: true do
     let(:provider)  { create(:provider) }
     let(:client)  { create(:client, provider: provider) }
     let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
-    let!(:dois) { create_list(:doi, 3, client: client) }
+    let!(:dois) { create_list(:doi, 5, client: client) }
 
     before do
       Doi.import
@@ -513,8 +513,8 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "transfer all dois" do
-      response = Doi.transfer(client_id: client.symbol.downcase, target_id: target.symbol.downcase)
-      expect(response).to eq(3)
+      response = Doi.transfer(client_id: client.symbol.downcase, target_id: target.symbol.downcase, size: 3)
+      expect(response).to eq(5)
     end
   end
 

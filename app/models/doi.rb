@@ -420,19 +420,19 @@ class Doi < ActiveRecord::Base
 
     logger = Logger.new(STDOUT)
 
-    response = Doi.query("created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 0, cursor: 1 })
+    response = Doi.query("created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 1, cursor: 0 })
     logger.info "#{response.results.total} DOIs found created on #{from_date.strftime("%F")}."
 
     if response.results.total > 0
       # walk through results using cursor
-      prev_cursor = 0
-      cursor = 1
-      
-      while cursor > prev_cursor do
+      cursor = 0
+
+      while response.results.results.length > 0 do
         response = Doi.query("created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 1000, cursor: cursor })
-        old_cursor = cursor
-        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
-        prev__cursor = old_cursor
+        break unless response.results.results.length > 0
+
+        logger.info "[MySQL] Importing metadata for #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
+        cursor = response.results.results.last[:sort].first.to_i
 
         response.records.each do |doi|
           begin
@@ -477,19 +477,19 @@ class Doi < ActiveRecord::Base
 
     logger = Logger.new(STDOUT)
 
-    response = Doi.query("-creators:* +created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 0, cursor: 1 })
+    response = Doi.query("-creators:* +created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 1, cursor: 0 })
     logger.info "#{response.results.total} DOIs found with missing metadata created on #{from_date.strftime("%F")}."
 
     if response.results.total > 0
       # walk through results using cursor
-      prev_cursor = 0
       cursor = 1
-      
-      while cursor > prev_cursor do
+
+      while response.results.results.length > 0 do
         response = Doi.query("-creators:* +created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 1000, cursor: cursor })
-        old_cursor = cursor
-        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
-        prev_cursor = old_cursor
+        break unless response.results.results.length > 0
+
+        logger.info "[MySQL] Importing missing metadata for #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
+        cursor = response.results.results.last[:sort].first.to_i
 
         response.records.each do |doi|
           begin
@@ -816,19 +816,19 @@ class Doi < ActiveRecord::Base
   def self.set_handle
     logger = Logger.new(STDOUT)
 
-    response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:ethz -provider_id:europ", page: { size: 0, cursor: 1 })
+    response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:ethz -provider_id:europ", page: { size: 1, cursor: 0 })
     logger.info "#{response.results.total} DOIs found that are not registered in the Handle system."
 
     if response.results.total > 0
       # walk through results using cursor
-      prev_cursor = 0
-      cursor = 1
-      
-      while cursor > prev_cursor do
+      cursor = 0
+
+      while response.results.results.length > 0 do
         response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:ethz -provider_id:europ", page: { size: 1000, cursor: cursor })
-        old_cursor = cursor
-        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
-        prev_cursor = old_cursor
+        break unless response.results.results.length > 0
+
+        logger.info "[Handle] Register #{response.results.results.length} DOIs in the handle system starting with _id #{cursor + 1}."
+        cursor = response.results.results.last[:sort].first.to_i
 
         response.results.results.each do |d|
           HandleJob.perform_later(d.doi)
@@ -840,19 +840,19 @@ class Doi < ActiveRecord::Base
   def self.set_url
     logger = Logger.new(STDOUT)
 
-    response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 0, cursor: 1 })
+    response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 1, cursor: 0 })
     logger.info "#{response.results.total} DOIs with no URL found in the database."
 
     if response.results.total > 0
       # walk through results using cursor
-      prev_cursor = 0
-      cursor = 1
-      
-      while cursor > prev_cursor do
+      cursor = 0
+
+      while response.results.results.length > 0 do
         response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 1000, cursor: cursor })
-        old_cursor = cursor
-        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
-        prev_cursor = old_cursor
+        break unless response.results.results.length > 0
+
+        logger.info "[Handle] Update URL for #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
+        cursor = response.results.results.last[:sort].first.to_i
 
         response.results.results.each do |d|
           UrlJob.perform_later(d.doi)
@@ -864,20 +864,20 @@ class Doi < ActiveRecord::Base
   def self.set_minted
     logger = Logger.new(STDOUT)
 
-    response = Doi.query("url:* +provider_id:ethz +aasm_state:draft", page: { size: 0, cursor: 1 })
+    response = Doi.query("url:* +provider_id:ethz +aasm_state:draft", page: { size: 1, cursor: 0 })
     logger.info "#{response.results.total} draft DOIs from provider ETHZ found in the database."
 
     if response.results.total > 0
       # walk through results using cursor
-      prev_cursor = 0
-      cursor = 1
-      
-      while cursor > prev_cursor do
+      cursor = 0
+
+      while response.results.results.length > 0 do
         response = Doi.query("url:* +provider_id:ethz  +aasm_state:draft", page: { size: 1000, cursor: cursor })
-        old_cursor = cursor
-        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
-        prev_cursor = old_cursor
-        
+        break unless response.results.results.length > 0
+
+        logger.info "[MySQL] Set minted for #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
+        cursor = response.results.results.last[:sort].first.to_i
+
         response.results.results.each do |d|
           UrlJob.perform_later(d.doi)
         end
@@ -899,20 +899,21 @@ class Doi < ActiveRecord::Base
     end
 
     query = options[:query] || "*"
+    size = (options[:size] || 1000).to_i
 
-    response = Doi.query(query, client_id: options[:client_id], page: { size: 0, cursor: 1 })
+    response = Doi.query(query, client_id: options[:client_id], page: { size: 1, cursor: 0 })
     logger.info "[Transfer] #{response.results.total} DOIs found for client #{options[:client_id]}."
 
     if options[:client_id] && options[:target_id] && response.results.total > 0
       # walk through results using cursor
-      prev_cursor = 0
-      cursor = 1
+      cursor = 0
       
-      while cursor > prev_cursor do
-        response = Doi.query(query, client_id: options[:client_id], page: { size: 1000, cursor: cursor })
-        old_cursor = cursor
-        cursor = Array.wrap(response.results.results.last.to_h[:sort]).first.to_i
-        prev_cursor = old_cursor
+      while response.results.results.length > 0 do
+        response = Doi.query(query, client_id: options[:client_id], page: { size: size, cursor: cursor })
+        break unless response.results.results.length > 0
+
+        logger.info "[Transfer] Transferring #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
+        cursor = response.results.results.last[:sort].first.to_i
 
         response.results.results.each do |d|
           TransferJob.perform_later(d.doi, target_id: options[:target_id])
