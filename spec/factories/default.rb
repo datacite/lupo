@@ -94,6 +94,10 @@ FactoryBot.define do
         {
           "title": "Data from: A new malaria agent in African hominids."
         }] }
+    descriptions {[
+      {
+        "description": "Data from: A new malaria agent in African hominids."
+      }] }
     publisher {"Dryad Digital Repository" }
     subjects {[
         {
