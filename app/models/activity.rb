@@ -5,9 +5,10 @@ class Activity < Audited::Audit
   include Indexable
 
   delegate :uid, to: :doi
-  
+
   alias_attribute :created, :created_at
   alias_attribute :doi_id, :uid
+  alias_attribute :changes, :audited_changes
 
   belongs_to :doi, foreign_key: :auditable_id
 
@@ -23,124 +24,126 @@ class Activity < Audited::Audit
     indexes :username,                       type: :keyword
     indexes :action,                         type: :keyword
     indexes :request_uuid,                   type: :keyword
-    indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
-    indexes :creators,                       type: :object, properties: {
-      nameType: { type: :keyword },
-      nameIdentifiers: { type: :object, properties: {
-        nameIdentifier: { type: :keyword },
-        nameIdentifierScheme: { type: :keyword }
-      }},
-      name: { type: :text },
-      givenName: { type: :text },
-      familyName: { type: :text },
-      affiliation: { type: :text }
-    }
-    indexes :contributors,                   type: :object, properties: {
-      nameType: { type: :keyword },
-      nameIdentifiers: { type: :object, properties: {
-        nameIdentifier: { type: :keyword },
-        nameIdentifierScheme: { type: :keyword }
-      }},
-      name: { type: :text },
-      givenName: { type: :text },
-      familyName: { type: :text },
-      affiliation: { type: :text },
-      contributorType: { type: :keyword }
-    }
-    indexes :titles,                         type: :object, properties: {
-      title: { type: :text, fields: { keyword: { type: "keyword" }}},
-      titleType: { type: :keyword },
-      lang: { type: :keyword }
-    }
-    indexes :descriptions,                   type: :object, properties: {
-      description: { type: :text },
-      descriptionType: { type: :keyword },
-      lang: { type: :keyword }
-    }
-    indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" }}
-    indexes :publication_year,               type: :date, format: "yyyy", ignore_malformed: true
-    indexes :client_id,                      type: :keyword
-    indexes :provider_id,                    type: :keyword
-    indexes :identifiers,                    type: :object, properties: {
-      identifierType: { type: :keyword },
-      identifier: { type: :keyword }
-    }
-    indexes :related_identifiers,            type: :object, properties: {
-      relatedIdentifierType: { type: :keyword },
-      relatedIdentifier: { type: :keyword },
-      relationType: { type: :keyword },
-      resourceTypeGeneral: { type: :keyword }
-    }
-    indexes :types,                          type: :object, properties: {
-      resourceTypeGeneral: { type: :keyword },
-      resourceType: { type: :keyword },
-      schemaOrg: { type: :keyword },
-      bibtex: { type: :keyword },
-      citeproc: { type: :keyword },
-      ris: { type: :keyword }
-    }
-    indexes :funding_references,             type: :object, properties: {
-      funderName: { type: :keyword },
-      funderIdentifier: { type: :keyword },
-      funderIdentifierType: { type: :keyword },
-      awardNumber: { type: :keyword },
-      awardUri: { type: :keyword },
-      awardTitle: { type: :keyword }
-    }
-    indexes :dates,                          type: :object, properties: {
-      date: { type: :date, format: "yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true },
-      dateType: { type: :keyword }
-    }
-    indexes :geo_locations,                  type: :object, properties: {
-      geoLocationPoint: { type: :object },
-      geoLocationBox: { type: :object },
-      geoLocationPlace: { type: :keyword }
-    }
-    indexes :rights_list,                    type: :object, properties: {
-      rights: { type: :keyword },
-      rightsUri: { type: :keyword },
-      lang: { type: :keyword }
-    }
-    indexes :subjects,                       type: :object, properties: {
-      subject: { type: :keyword },
-      subjectScheme: { type: :keyword },
-      schemeUri: { type: :keyword },
-      valueUri: { type: :keyword },
-      lang: { type: :keyword }
-    }
-    indexes :container,                     type: :object, properties: {
-      type: { type: :keyword },
-      identifier: { type: :keyword },
-      identifierType: { type: :keyword },
-      title: { type: :keyword },
-      volume: { type: :keyword },
-      issue: { type: :keyword },
-      firstPage: { type: :keyword },
-      lastPage: { type: :keyword }
-    }
-    indexes :content_url,                    type: :keyword
-    indexes :version_info,                   type: :keyword
-    indexes :formats,                        type: :keyword
-    indexes :sizes,                          type: :keyword
-    indexes :language,                       type: :keyword
-    indexes :aasm_state,                     type: :keyword
-    indexes :schema_version,                 type: :keyword
-    indexes :metadata_version,               type: :keyword
-    indexes :source,                         type: :keyword
-    indexes :landing_page, type: :object, properties: {
-      checked: { type: :date, ignore_malformed: true },
+    indexes :changes,                        type: :object, properties: {
       url: { type: :text, fields: { keyword: { type: "keyword" }}},
-      status: { type: :integer },
-      contentType: { type: :keyword },
-      error: { type: :keyword },
-      redirectCount: { type: :integer },
-      redirectUrls: { type: :keyword },
-      downloadLatency: { type: :scaled_float, scaling_factor: 100 },
-      hasSchemaOrg: { type: :boolean },
-      schemaOrgId: { type: :keyword },
-      dcIdentifier: { type: :keyword },
-      citationDoi: { type: :keyword },
-      bodyHasPid: { type: :boolean }
+      creators: { type: :object, properties: {
+        nameType: { type: :keyword },
+        nameIdentifiers: { type: :object, properties: {
+          nameIdentifier: { type: :keyword },
+          nameIdentifierScheme: { type: :keyword }
+        }},
+        name: { type: :text },
+        givenName: { type: :text },
+        familyName: { type: :text },
+        affiliation: { type: :text }
+      }},
+      contributors: { type: :object, properties: {
+        nameType: { type: :keyword },
+        nameIdentifiers: { type: :object, properties: {
+          nameIdentifier: { type: :keyword },
+          nameIdentifierScheme: { type: :keyword }
+        }},
+        name: { type: :text },
+        givenName: { type: :text },
+        familyName: { type: :text },
+        affiliation: { type: :text },
+        contributorType: { type: :keyword }
+      }},
+      titles: { type: :object, properties: {
+        title: { type: :text, fields: { keyword: { type: "keyword" }}},
+        titleType: { type: :keyword },
+        lang: { type: :keyword }
+      }},
+      descriptions: { type: :object, properties: {
+        description: { type: :text },
+        descriptionType: { type: :keyword },
+        lang: { type: :keyword }
+      }},
+      publisher: { type: :text, fields: { keyword: { type: "keyword" }}},
+      publication_year: { type: :date, format: "yyyy", ignore_malformed: true },
+      client_id: { type: :keyword },
+      provider_id: { type: :keyword },
+      identifiers: { type: :object, properties: {
+        identifierType: { type: :keyword },
+        identifier: { type: :keyword }
+      }},
+      related_identifiers: { type: :object, properties: {
+        relatedIdentifierType: { type: :keyword },
+        relatedIdentifier: { type: :keyword },
+        relationType: { type: :keyword },
+        resourceTypeGeneral: { type: :keyword }
+      }},
+      types: { type: :object, properties: {
+        resourceTypeGeneral: { type: :keyword },
+        resourceType: { type: :keyword },
+        schemaOrg: { type: :keyword },
+        bibtex: { type: :keyword },
+        citeproc: { type: :keyword },
+        ris: { type: :keyword }
+      }},
+      funding_references: { type: :object, properties: {
+        funderName: { type: :keyword },
+        funderIdentifier: { type: :keyword },
+        funderIdentifierType: { type: :keyword },
+        awardNumber: { type: :keyword },
+        awardUri: { type: :keyword },
+        awardTitle: { type: :keyword }
+      }},
+      dates: { type: :object, properties: {
+        date: { type: :date, format: "yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true },
+        dateType: { type: :keyword }
+      }},
+      geo_locations: { type: :object, properties: {
+        geoLocationPoint: { type: :object },
+        geoLocationBox: { type: :object },
+        geoLocationPlace: { type: :keyword }
+      }},
+      rights_list: { type: :object, properties: {
+        rights: { type: :keyword },
+        rightsUri: { type: :keyword },
+        lang: { type: :keyword }
+      }},
+      subjects: { type: :object, properties: {
+        subject: { type: :keyword },
+        subjectScheme: { type: :keyword },
+        schemeUri: { type: :keyword },
+        valueUri: { type: :keyword },
+        lang: { type: :keyword }
+      }},
+      container: { type: :object, properties: {
+        type: { type: :keyword },
+        identifier: { type: :keyword },
+        identifierType: { type: :keyword },
+        title: { type: :keyword },
+        volume: { type: :keyword },
+        issue: { type: :keyword },
+        firstPage: { type: :keyword },
+        lastPage: { type: :keyword }
+      }},
+      content_url: { type: :keyword },
+      version_info: { type: :keyword },
+      formats: { type: :keyword },
+      sizes: { type: :keyword },
+      language: { type: :keyword },
+      aasm_state: { type: :keyword },
+      schema_version: { type: :keyword },
+      metadata_version: { type: :keyword },
+      source: { type: :keyword },
+      landing_page: { type: :object, properties: {
+        checked: { type: :date, ignore_malformed: true },
+        url: { type: :text, fields: { keyword: { type: "keyword" }}},
+        status: { type: :integer },
+        contentType: { type: :keyword },
+        error: { type: :keyword },
+        redirectCount: { type: :integer },
+        redirectUrls: { type: :keyword },
+        downloadLatency: { type: :scaled_float, scaling_factor: 100 },
+        hasSchemaOrg: { type: :boolean },
+        schemaOrgId: { type: :keyword },
+        dcIdentifier: { type: :keyword },
+        citationDoi: { type: :keyword },
+        bodyHasPid: { type: :boolean }
+      }}
     }
     indexes :created,                        type: :date, ignore_malformed: true
 
@@ -158,34 +161,7 @@ class Activity < Audited::Audit
       "username" => username,
       "action" => action,
       "request_uuid" => request_uuid,
-      "url" => url,
-      "creators" => creators,
-      "contributors" => contributors,
-      "titles" => titles,
-      "descriptions" => descriptions,
-      "publisher" => publisher,
-      "client_id" => client_id,
-      "provider_id" => provider_id,
-      "types" => types,
-      "identifiers" => identifiers,
-      "related_identifiers" => related_identifiers,
-      "funding_references" => funding_references,
-      "publication_year" => publication_year,
-      "dates" => dates,
-      "geo_locations" => geo_locations,
-      "rights_list" => rights_list,
-      "container" => container,
-      "content_url" => content_url,
-      "version_info" => version_info,
-      "formats" => formats,
-      "sizes" => sizes,
-      "language" => language,
-      "subjects" => subjects,
-      "landing_page" => landing_page,
-      "aasm_state" => aasm_state,
-      "schema_version" => schema_version,
-      "metadata_version" => metadata_version,
-      "source" => source,
+      "changes" => changes,
       "created" => created,
       "doi" => doi.as_indexed_json
     }
@@ -195,121 +171,121 @@ class Activity < Audited::Audit
     {}
   end
 
-  def url
-    audited_changes["url"]
-  end
+  # def url
+  #   audited_changes["url"]
+  # end
 
-  def creators
-    audited_changes["creators"]
-  end
+  # def creators
+  #   audited_changes["creators"]
+  # end
 
-  def contributors
-    audited_changes["contributors"]
-  end
+  # def contributors
+  #   audited_changes["contributors"]
+  # end
 
-  def titles
-    audited_changes["titles"]
-  end
+  # def titles
+  #   audited_changes["titles"]
+  # end
 
-  def descriptions
-    audited_changes["descriptions"]
-  end
+  # def descriptions
+  #   audited_changes["descriptions"]
+  # end
 
-  def contributors
-    audited_changes["contributors"]
-  end
+  # def contributors
+  #   audited_changes["contributors"]
+  # end
 
-  def publisher
-    audited_changes["publisher"]
-  end
+  # def publisher
+  #   audited_changes["publisher"]
+  # end
 
-  def client_id
-    audited_changes["client_id"]
-  end
+  # def client_id
+  #   audited_changes["client_id"]
+  # end
 
-  def provider_id
-    audited_changes["provider_id"]
-  end
+  # def provider_id
+  #   audited_changes["provider_id"]
+  # end
 
-  def types
-    audited_changes["types"]
-  end
+  # def types
+  #   audited_changes["types"]
+  # end
 
-  def identifiers
-    audited_changes["identifiers"]
-  end
+  # def identifiers
+  #   audited_changes["identifiers"]
+  # end
 
-  def related_identifiers
-    audited_changes["related_identifiers"]
-  end
+  # def related_identifiers
+  #   audited_changes["related_identifiers"]
+  # end
 
-  def funding_references
-    audited_changes["funding_references"]
-  end
+  # def funding_references
+  #   audited_changes["funding_references"]
+  # end
 
-  def publication_year
-    audited_changes["publication_year"]
-  end
+  # def publication_year
+  #   audited_changes["publication_year"]
+  # end
 
-  def dates
-    audited_changes["dates"]
-  end
+  # def dates
+  #   audited_changes["dates"]
+  # end
 
-  def geo_locations
-    audited_changes["geo_locations"]
-  end
+  # def geo_locations
+  #   audited_changes["geo_locations"]
+  # end
 
-  def rights_list
-    audited_changes["rights_list"]
-  end
+  # def rights_list
+  #   audited_changes["rights_list"]
+  # end
 
-  def container
-    audited_changes["container"]
-  end
+  # def container
+  #   audited_changes["container"]
+  # end
 
-  def content_url
-    audited_changes["content_url"]
-  end
+  # def content_url
+  #   audited_changes["content_url"]
+  # end
 
-  def version_info
-    audited_changes["version_info"]
-  end
+  # def version_info
+  #   audited_changes["version_info"]
+  # end
 
-  def formats
-    audited_changes["formats"]
-  end
+  # def formats
+  #   audited_changes["formats"]
+  # end
 
-  def sizes
-    audited_changes["sizes"]
-  end
+  # def sizes
+  #   audited_changes["sizes"]
+  # end
 
-  def language
-    audited_changes["language"]
-  end
+  # def language
+  #   audited_changes["language"]
+  # end
 
-  def subjects
-    audited_changes["subjects"]
-  end
+  # def subjects
+  #   audited_changes["subjects"]
+  # end
 
-  def landing_page
-    audited_changes["landing_page"]
-  end
+  # def landing_page
+  #   audited_changes["landing_page"]
+  # end
 
-  def aasm_state
-    audited_changes["aasm_state"]
-  end
+  # def aasm_state
+  #   audited_changes["aasm_state"]
+  # end
 
-  def schema_version
-    audited_changes["schema_version"]
-  end
+  # def schema_version
+  #   audited_changes["schema_version"]
+  # end
 
-  def metadata_version
-    audited_changes["metadata_version"]
-  end
+  # def metadata_version
+  #   audited_changes["metadata_version"]
+  # end
 
-  def source
-    audited_changes["source"]
-  end
+  # def source
+  #   audited_changes["source"]
+  # end
 
   def self.index_by_ids(options={})
     from_id = (options[:from_id] || 1).to_i
