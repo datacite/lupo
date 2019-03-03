@@ -27,6 +27,7 @@ class Activity < Audited::Audit
     indexes :auditable_type,                 type: :keyword
     indexes :username,                       type: :keyword
     indexes :action,                         type: :keyword
+    indexes :version,                        type: :keyword
     indexes :request_uuid,                   type: :keyword
     indexes :changes,                        type: :object, properties: {
       url: { type: :text, fields: { keyword: { type: "keyword" }}},
@@ -164,6 +165,7 @@ class Activity < Audited::Audit
       "auditable_type" => auditable_type,
       "username" => username,
       "action" => action,
+      "version" => version,
       "request_uuid" => request_uuid,
       "changes" => changes,
       "created" => created,
@@ -174,122 +176,6 @@ class Activity < Audited::Audit
   def self.query_aggregations
     {}
   end
-
-  # def url
-  #   audited_changes["url"]
-  # end
-
-  # def creators
-  #   audited_changes["creators"]
-  # end
-
-  # def contributors
-  #   audited_changes["contributors"]
-  # end
-
-  # def titles
-  #   audited_changes["titles"]
-  # end
-
-  # def descriptions
-  #   audited_changes["descriptions"]
-  # end
-
-  # def contributors
-  #   audited_changes["contributors"]
-  # end
-
-  # def publisher
-  #   audited_changes["publisher"]
-  # end
-
-  # def client_id
-  #   audited_changes["client_id"]
-  # end
-
-  # def provider_id
-  #   audited_changes["provider_id"]
-  # end
-
-  # def types
-  #   audited_changes["types"]
-  # end
-
-  # def identifiers
-  #   audited_changes["identifiers"]
-  # end
-
-  # def related_identifiers
-  #   audited_changes["related_identifiers"]
-  # end
-
-  # def funding_references
-  #   audited_changes["funding_references"]
-  # end
-
-  # def publication_year
-  #   audited_changes["publication_year"]
-  # end
-
-  # def dates
-  #   audited_changes["dates"]
-  # end
-
-  # def geo_locations
-  #   audited_changes["geo_locations"]
-  # end
-
-  # def rights_list
-  #   audited_changes["rights_list"]
-  # end
-
-  # def container
-  #   audited_changes["container"]
-  # end
-
-  # def content_url
-  #   audited_changes["content_url"]
-  # end
-
-  # def version_info
-  #   audited_changes["version_info"]
-  # end
-
-  # def formats
-  #   audited_changes["formats"]
-  # end
-
-  # def sizes
-  #   audited_changes["sizes"]
-  # end
-
-  # def language
-  #   audited_changes["language"]
-  # end
-
-  # def subjects
-  #   audited_changes["subjects"]
-  # end
-
-  # def landing_page
-  #   audited_changes["landing_page"]
-  # end
-
-  # def aasm_state
-  #   audited_changes["aasm_state"]
-  # end
-
-  # def schema_version
-  #   audited_changes["schema_version"]
-  # end
-
-  # def metadata_version
-  #   audited_changes["metadata_version"]
-  # end
-
-  # def source
-  #   audited_changes["source"]
-  # end
 
   def self.index_by_ids(options={})
     from_id = (options[:from_id] || 1).to_i

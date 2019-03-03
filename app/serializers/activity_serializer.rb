@@ -4,7 +4,7 @@ class ActivitySerializer
   set_type :activities
   set_id :request_uuid
   
-  attributes "prov:wasGeneratedBy", "prov:generatedAtTime", "prov:WasDerivedFrom", "prov:wasAttributedTo", "prov:type", :changes
+  attributes "prov:wasGeneratedBy", "prov:generatedAtTime", "prov:WasDerivedFrom", "prov:wasAttributedTo", :action, :version, :changes
 
   belongs_to :doi, record_type: :dois
 
@@ -23,12 +23,5 @@ class ActivitySerializer
 
   attribute "prov:generatedAtTime" do |object|
     object.created
-  end
-
-  attribute "prov:type" do |object|
-    case object.action
-    when "create" then "prov:primarySource"
-    when "update" then "prov:Revision"
-    end
   end
 end
