@@ -213,6 +213,7 @@ class DoisController < ApplicationController
     # logger.info safe_params.inspect
 
     @doi = Doi.new(safe_params)
+    puts @doi.inspect
 
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
@@ -276,6 +277,30 @@ class DoisController < ApplicationController
       }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
+    else
+      logger.warn @doi.errors.messages
+      render json: serialize(@doi.errors.messages), include: @include, status: :unprocessable_entity
+    end
+  end
+
+  def undo
+    logger = Logger.new(STDOUT)
+
+    @doi = Doi.where(doi: safe_params[:doi]).first
+    fail ActiveRecord::RecordNotFound unless @doi.present?
+
+    authorize! :undo, @doi
+
+    if @doi.audits.last.undo
+      options = {}
+      options[:include] = @include
+      options[:is_collection] = false
+      options[:params] = {
+        current_ability: current_ability,
+        detail: true
+      }
+
+      render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
     else
       logger.warn @doi.errors.messages
       render json: serialize(@doi.errors.messages), include: @include, status: :unprocessable_entity

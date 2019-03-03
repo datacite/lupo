@@ -35,6 +35,7 @@ Rails.application.routes.draw do
 
   # manage DOIs
   post 'dois/validate', :to => 'dois#validate'
+  post 'dois/undo', :to => 'dois#undo'
   post 'dois/status', :to => 'dois#status'
   post 'dois/set-url', :to => 'dois#set_url'
   post 'dois/delete-test-dois', :to => 'dois#delete_test_dois'

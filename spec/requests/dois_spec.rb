@@ -555,6 +555,101 @@ describe "dois", type: :request do
       end
     end
 
+    context 'when a doi is created ignore reverting back' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "source" => "test",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+      let(:undo_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => doi.doi
+            }
+          }
+        }
+      end
+      before { post '/dois', params: valid_attributes.to_json, headers: headers }
+
+      it 'creates the record' do
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
+      end
+
+      it 'revert the changes' do
+        post "/dois/undo", params: undo_attributes.to_json, headers: headers
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
+      end
+
+      it 'revert the changes with status code 200' do
+        post "/dois/undo", params: undo_attributes.to_json, headers: headers
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context 'when the title is changed and reverted back' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:titles) { [{ "title" => "Submitted chemical data for InChIKey=YAPQBXQYLJRXSA-UHFFFAOYSA-N" }] }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "xml" => xml,
+              "titles" => titles,
+              "event" => "publish"
+            }
+          }
+        }
+      end
+      let(:undo_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => doi.doi
+            }
+          }
+        }
+      end
+      before { patch "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: headers }
+
+      it 'updates the record' do
+        expect(json.dig('data', 'attributes', 'titles')).to eq(titles)
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'revert the changes' do
+        post "/dois/undo", params: undo_attributes.to_json, headers: headers
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
+      end
+
+      it 'revert the changes with status code 200' do
+        post "/dois/undo", params: undo_attributes.to_json, headers: headers
+        puts response.body
+        expect(response).to have_http_status(200)
+      end
+    end
+
     context 'when the creators change' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:creators) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
