@@ -35,7 +35,6 @@ Shoulda::Matchers.configure do |config|
 end
 
 RSpec.configure do |config|
-  # add `FactoryBot` methods
   config.include FactoryBot::Syntax::Methods
   config.include StripAttributes::Matchers
   # don't use transactions, use database_clear gem via support file

@@ -241,5 +241,28 @@ module Indexable
       client.indices.delete index: index_name rescue nil if options[:force]
       client.indices.create index: index_name, body: { settings:  {"index.requests.cache.enable": true }}
     end
+
+    def create_alias(index: nil)
+      return nil unless index.present?
+
+      client     = self.gateway.client
+      index_name = self.index_name
+
+      client.indices.put_alias index: index, name: index_name
+    end
+
+    def update_aliases(old_index: nil, new_index: nil)
+      return nil unless old_index.present? && new_index.present?
+      
+      client     = self.gateway.client
+      index_name = self.index_name
+
+      client.indices.update_aliases body: {
+        actions: [
+          { remove: { index: old_index, alias: index_name } },
+          { add:    { index: new_index, alias: index_name } }
+        ]
+      }
+    end
   end
 end

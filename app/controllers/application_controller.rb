@@ -69,6 +69,10 @@ class ApplicationController < ActionController::API
     end
   end
 
+  def authenticated_user
+    current_user.try(:uid)
+  end
+
   unless Rails.env.development?
     rescue_from *RESCUABLE_EXCEPTIONS do |exception|
       status = case exception.class.to_s

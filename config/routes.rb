@@ -48,6 +48,8 @@ Rails.application.routes.draw do
   resources :heartbeat, only: [:index]
   resources :index, only: [:index]
 
+  resources :activities, only: [:index, :show]
+
   resources :clients, constraints: { :id => /.+/ } do
     resources :prefixes, constraints: { :id => /.+/ }
     resources :dois, constraints: { :id => /.+/ }
@@ -57,6 +59,7 @@ Rails.application.routes.draw do
   resources :dois, constraints: { :id => /.+/ } do
     resources :metadata
     resources :media
+    resources :activities
   end
   resources :prefixes, constraints: { :id => /.+/ }
   resources :provider_prefixes, path: 'provider-prefixes'
