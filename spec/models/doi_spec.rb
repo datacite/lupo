@@ -485,10 +485,10 @@ describe Doi, type: :model, vcr: true do
       expect(response).to eq(1)
     end
 
-    it "index by day" do
-      response = Doi.index_by_day(from_date: Date.today.strftime("%F"))
-      expect(response).to eq(3)
-    end
+    # it "index by day" do
+    #   response = Doi.index_by_day(from_date: Date.today.strftime("%F"))
+    #   expect(response).to eq(3)
+    # end
 
     it "index by ids" do
       response = Doi.index_by_ids
