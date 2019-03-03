@@ -41,6 +41,7 @@ describe "works", type: :request do
         expect(json.dig('data', 'attributes', 'author').length).to eq(8)
         expect(json.dig('data', 'attributes', 'author').first).to eq("family"=>"Ollomo", "given"=>"Benjamin")
         expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
+        expect(json.dig('data', 'attributes', 'description')).to eq("Data from: A new malaria agent in African hominids.")
         expect(json.dig('data', 'attributes', 'container-title')).to eq("Dryad Digital Repository")
         expect(json.dig('data', 'attributes', 'published')).to eq("2011")
       end
