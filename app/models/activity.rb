@@ -12,6 +12,10 @@ class Activity < Audited::Audit
 
   belongs_to :doi, foreign_key: :auditable_id
 
+  def after_audit
+    IndexJob.perform_later(self)
+  end
+
   # use different index for testing
   index_name Rails.env.test? ? "activities-test" : "activities"
 
