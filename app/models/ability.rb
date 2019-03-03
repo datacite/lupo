@@ -34,6 +34,9 @@ class Ability
       end
       can [:read], User
       can [:read], Phrase
+      can [:read], Activity do |activity|
+        activity.doi.findable? || activity.doi.provider_id == user.provider_id
+      end
     elsif user.role_id == "provider_user" && user.provider_id.present?
       can [:read], Provider, :symbol => user.provider_id.upcase
       can [:read], ProviderPrefix, :provider_id => user.provider_id
@@ -45,6 +48,9 @@ class Ability
       end
       can [:read], User
       can [:read], Phrase
+      can [:read], Activity do |activity|
+        activity.doi.findable? || activity.doi.provider_id == user.provider_id
+      end
     elsif user.role_id == "client_admin" && user.client_id.present?
       can [:read, :update], Client, :symbol => user.client_id.upcase
       can [:read], ClientPrefix, :client_id => user.client_id
@@ -55,7 +61,7 @@ class Ability
       #   can [:read, :update], Doi, :client_id => user.client_id
       # end
 
-      can [:read, :destroy, :update, :register_url, :validate, :get_url, :get_urls, :read_landing_page_results], Doi, :client_id => user.client_id
+      can [:read, :destroy, :update, :register_url, :validate, :undo, :get_url, :get_urls, :read_landing_page_results], Doi, :client_id => user.client_id
       can [:new, :create], Doi do |doi| 
         doi.client.prefixes.where(prefix: doi.prefix).present?
       end
@@ -64,6 +70,9 @@ class Ability
       end
       can [:read], User
       can [:read], Phrase
+      can [:read], Activity do |activity|
+        activity.doi.findable? || activity.doi.client_id == user.client_id
+      end
     elsif user.role_id == "client_user" && user.client_id.present?
       can [:read], Client, :symbol => user.client_id.upcase
       can [:read], ClientPrefix, :client_id => user.client_id
@@ -73,6 +82,9 @@ class Ability
       end
       can [:read], User
       can [:read], Phrase
+      can [:read], Activity do |activity|
+        activity.doi.findable? || activity.doi.client_id == user.client_id
+      end
     elsif user.role_id == "user"
       can [:read, :update], Provider, :symbol => user.provider_id.upcase if user.provider_id.present?
       can [:read, :update], Client, :symbol => user.client_id.upcase if user.client_id.present?
@@ -82,9 +94,15 @@ class Ability
       end
       can [:read], User, :id => user.id
       can [:read], Phrase
+      can [:read], Activity do |activity|
+        activity.doi.findable?
+      end
     elsif user.role_id == "anonymous"
       can [:read], Doi do |doi|
         doi.findable?
+      end
+      can [:read], Activity do |activity|
+        activity.doi.findable?
       end
     end
   end
