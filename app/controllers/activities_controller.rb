@@ -25,7 +25,8 @@ class ActivitiesController < ApplicationController
 
     begin
       total = response.results.total
-      total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
+      total_for_pages = page[:cursor].present? ? total.to_f : [total.to_f, 10000].min
+      total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
       
       @activities = response.results.results
 
@@ -33,14 +34,15 @@ class ActivitiesController < ApplicationController
       options[:meta] = {
         total: total,
         "totalPages" => total_pages,
-        page: page[:number]
+        page: page[:cursor].blank? && page[:number].present? ? page[:number] : nil,
       }.compact
 
       options[:links] = {
         self: request.original_url,
-        next: @activities.blank? ? nil : request.base_url + "/activities?" + {
+        next: @activities.size < page[:size] ? nil : request.base_url + "/activities?" + {
           query: params[:query],
-          "page[number]" => page[:number] + 1,
+          "page[cursor]" => page[:cursor].present? ? Array.wrap(@activities.last[:sort]).first : nil,
+          "page[number]" => page[:cursor].blank? && page[:number].present? ? page[:number] + 1 : nil,
           "page[size]" => page[:size],
           sort: params[:sort] }.compact.to_query
         }.compact
