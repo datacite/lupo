@@ -19,7 +19,7 @@ class ApplicationController < ActionController::API
   # pass ability into serializer
   serialization_scope :current_ability
 
-  before_bugsnag_notify :add_user_info_to_bugsnag
+  # before_bugsnag_notify :add_user_info_to_bugsnag
 
   before_action :default_format_json, :transform_params
   after_action :set_jsonp_format, :set_consumer_header
@@ -102,7 +102,7 @@ class ApplicationController < ActionController::API
       elsif ["JSON::ParserError", "Nokogiri::XML::SyntaxError", "ActionDispatch::Http::Parameters::ParseError"].include?(exception.class.to_s)
         message = exception.message
       else
-        Bugsnag.notify(exception)
+        # Bugsnag.notify(exception)
 
         message = exception.message
       end
@@ -124,13 +124,13 @@ class ApplicationController < ActionController::API
     payload[:uid] = current_user.uid.downcase if current_user.try(:uid)
   end
 
-  def add_user_info_to_bugsnag(report)
-    return nil unless current_user.try(:uid)
+  # def add_user_info_to_bugsnag(report)
+  #   return nil unless current_user.try(:uid)
     
-    report.user = {
-      email: current_user.email,
-      name: current_user.name,
-      id: current_user.uid
-    }
-  end
+  #   report.user = {
+  #     email: current_user.email,
+  #     name: current_user.name,
+  #     id: current_user.uid
+  #   }
+  # end
 end

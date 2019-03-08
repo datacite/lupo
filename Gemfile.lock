@@ -57,7 +57,7 @@ GEM
     audited (4.8.0)
       activerecord (>= 4.0, < 5.3)
     aws-eventstream (1.0.1)
-    aws-partitions (1.141.0)
+    aws-partitions (1.143.0)
     aws-sdk-core (3.46.2)
       aws-eventstream (~> 1.0)
       aws-partitions (~> 1.0)
@@ -120,8 +120,6 @@ GEM
       thor (~> 0.19)
     bootsnap (1.4.1)
       msgpack (~> 1.0)
-    bugsnag (6.11.1)
-      concurrent-ruby (~> 1.0)
     builder (3.2.3)
     byebug (11.0.0)
     cancancan (2.3.0)
@@ -417,6 +415,8 @@ GEM
       i18n
     ruby_dep (1.5.0)
     safe_yaml (1.0.5)
+    sentry-raven (2.9.0)
+      faraday (>= 0.7.6, < 1.0)
     shoryuken (4.0.3)
       aws-sdk-core (>= 2)
       concurrent-ruby
@@ -496,7 +496,6 @@ DEPENDENCIES
   binding_of_caller
   bolognese (~> 1.0)
   bootsnap (~> 1.2, >= 1.2.1)
-  bugsnag (~> 6.1, >= 6.1.1)
   byebug
   cancancan (~> 2.0)
   capybara
@@ -544,6 +543,7 @@ DEPENDENCIES
   rails (~> 5.2.0)
   rake (~> 12.0)
   rspec-rails (~> 3.5, >= 3.5.2)
+  sentry-raven (~> 2.9)
   shoryuken (~> 4.0)
   shoulda-matchers (~> 3.1)
   simple_command

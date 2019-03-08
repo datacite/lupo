@@ -8,7 +8,7 @@ class DoisController < ApplicationController
   prepend_before_action :authenticate_user!
   before_action :set_doi, only: [:show, :destroy, :get_url]
   before_action :set_include, only: [:index, :show, :create, :update]
-  before_bugsnag_notify :add_metadata_to_bugsnag
+  # before_bugsnag_notify :add_metadata_to_bugsnag
 
   def index
     authorize! :read, Doi
@@ -552,11 +552,11 @@ class DoisController < ApplicationController
       :lastLandingPageStatusResult, :lastLandingPageContentType)
   end
 
-  def add_metadata_to_bugsnag(report)
-    return nil unless params.dig(:data, :attributes, :xml).present?
+  # def add_metadata_to_bugsnag(report)
+  #   return nil unless params.dig(:data, :attributes, :xml).present?
 
-    report.add_tab(:metadata, {
-      metadata: Base64.decode64(params.dig(:data, :attributes, :xml))
-    })
-  end
+  #   report.add_tab(:metadata, {
+  #     metadata: Base64.decode64(params.dig(:data, :attributes, :xml))
+  #   })
+  # end
 end
