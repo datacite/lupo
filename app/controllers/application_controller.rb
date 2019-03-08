@@ -21,7 +21,7 @@ class ApplicationController < ActionController::API
 
   # before_bugsnag_notify :add_user_info_to_bugsnag
 
-  before_action :default_format_json, :transform_params
+  before_action :default_format_json, :transform_params, :set_raven_context
   after_action :set_jsonp_format, :set_consumer_header
 
   # from https://github.com/spree/spree/blob/master/api/app/controllers/spree/api/base_controller.rb
@@ -133,4 +133,18 @@ class ApplicationController < ActionController::API
   #     id: current_user.uid
   #   }
   # end
+
+  def set_raven_context
+    if current_user.try(:uid)
+      Raven.user_context(
+        email: current_user.email,
+        id: current_user.uid
+        ip_address: request.ip
+      )
+    else
+      Raven.user_context(
+        ip_address: request.ip
+      ) 
+    end
+  end
 end
