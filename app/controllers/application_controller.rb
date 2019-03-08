@@ -138,7 +138,7 @@ class ApplicationController < ActionController::API
     if current_user.try(:uid)
       Raven.user_context(
         email: current_user.email,
-        id: current_user.uid
+        id: current_user.uid,
         ip_address: request.ip
       )
     else
