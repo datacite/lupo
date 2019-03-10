@@ -1,7 +1,6 @@
 class ActivitiesController < ApplicationController
   include Countable
 
-  before_action :set_doi
   before_action :set_activity, only: [:show]
   before_action :set_include
 
@@ -20,7 +19,7 @@ class ActivitiesController < ApplicationController
     elsif params[:ids].present?
       response = Activity.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      response = Activity.query(params[:query], page: page, sort: sort)
+      response = Activity.query(params[:query], uid: params[:doi_id], page: page, sort: sort)
     end
 
     begin
@@ -76,10 +75,6 @@ class ActivitiesController < ApplicationController
     else
       @include = [:doi]
     end
-  end
-
-  def set_doi
-    @doi = Doi.where(doi: params[:doi_id]).first
   end
 
   def set_activity
