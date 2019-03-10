@@ -4,8 +4,6 @@ class Activity < Audited::Audit
   # include helper module for Elasticsearch
   include Indexable
 
-  delegate :uid, to: :doi
-
   alias_attribute :created, :created_at
   alias_attribute :doi_id, :uid
   alias_attribute :changes, :audited_changes
@@ -30,6 +28,7 @@ class Activity < Audited::Audit
     indexes :version,                        type: :keyword
     indexes :request_uuid,                   type: :keyword
     indexes :changes,                        type: :object, properties: {
+      doi: { type: :keyword },
       url: { type: :text, fields: { keyword: { type: "keyword" }}},
       creators: { type: :object, properties: {
         nameType: { type: :keyword },
@@ -233,5 +232,9 @@ class Activity < Audited::Audit
     logger.info "[Elasticsearch] Indexed #{count} activities with IDs #{id} - #{(id + 499)}."
 
     count
+  end
+
+  def uid
+    doi.present? ? doi.uid : changes.to_h['doi']
   end
 end
