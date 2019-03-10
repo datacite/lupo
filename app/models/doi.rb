@@ -178,7 +178,7 @@ class Doi < ActiveRecord::Base
       awardTitle: { type: :keyword }
     }
     indexes :dates,                          type: :object, properties: {
-      date: { type: :date, format: "yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true },
+      date: { type: :date, format: "date_optional_time", ignore_malformed: true, fields: { raw: { type: :text }} },
       dateType: { type: :keyword }
     }
     indexes :geo_locations,                  type: :object, properties: {
