@@ -94,7 +94,7 @@ class Activity < Audited::Audit
         awardTitle: { type: :keyword }
       }},
       dates: { type: :object, properties: {
-        date: { type: :date, format: "yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true },
+        date: { type: :date, format: "date_optional_time", ignore_malformed: true, fields: { raw: { type: :text }} },
         dateType: { type: :keyword }
       }},
       geo_locations: { type: :object, properties: {
