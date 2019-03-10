@@ -168,7 +168,7 @@ class Activity < Audited::Audit
       "request_uuid" => request_uuid,
       "changes" => changes,
       "created" => created,
-      "doi" => doi.as_indexed_json
+      "doi" => doi.present? ? doi.as_indexed_json : nil
     }
   end
 
