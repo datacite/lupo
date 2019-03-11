@@ -454,8 +454,9 @@ class DoisController < ApplicationController
         ]
       },
       :contentUrl,
-      :size,
-      :format,
+      :sizes,
+      :formats,
+      :language,
       :descriptions,
       { descriptions: [:description, :descriptionType, :lang] },
       :rightsList,
@@ -487,7 +488,7 @@ class DoisController < ApplicationController
       :fundingReferences,
       { fundingReferences: [:funderName, :funderIdentifier, :funderIdentifierType, :awardNumber, :awardUri, :awardTitle] },
       :geoLocations,
-      { geoLocations: [{ geolocationPoint: [:pointLongitude, :pointLatitude] }, { geolocationBox: [:westBoundLongitude, :eastBoundLongitude, :southBoundLatitude, :northBoundLatitude] }, :geoLocationPlace] }
+      { geoLocations: [{ geoLocationPoint: [:pointLongitude, :pointLatitude] }, { geoLocationBox: [:westBoundLongitude, :eastBoundLongitude, :southBoundLatitude, :northBoundLatitude] }, :geoLocationPlace] }
     ]
     relationships = [{ client: [data: [:type, :id]] }]
 
