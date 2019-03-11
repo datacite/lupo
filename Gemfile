@@ -55,8 +55,8 @@ gem 'faraday_middleware-aws-sigv4', '~> 0.2.4'
 gem 'rack-utf8_sanitizer', '~> 1.6'
 gem 'oj_mimic_json', '~> 1.0', '>= 1.0.1'
 gem 'turnout', '~> 2.5'
-# gem 'paper_trail', '~> 10.2'
 gem 'audited', '~> 4.8'
+gem 'git', '~> 1.5'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5', '>= 3.5.2'
