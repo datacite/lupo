@@ -71,9 +71,7 @@ after_success:
       rm dockerize-linux-amd64-v0.6.0.tar.gz;
       export GIT_SHA=$(git rev-parse --short HEAD);
       export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1));
-      export VERSION=$(sentry-cli releases propose-version);
-      sentry-cli releases new -p lupo $VERSION
-      sentry-cli releases set-commits --auto $VERSION
+      sentry-cli releases new $GIT_SHA --project lupo
 
       git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git";
       ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/stage/services/client-api/_lupo.auto.tfvars;
