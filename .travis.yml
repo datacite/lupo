@@ -52,16 +52,19 @@ after_success:
       docker build -f Dockerfile -t $REPO:$TRAVIS_TAG .;
       docker push $REPO:$TRAVIS_TAG;
       echo "Pushed to" $REPO:$TRAVIS_TAG;
+      RACK_ENV="production";
       AUTO_DEPLOY=true;
     elif [ "$TRAVIS_BRANCH" == "master" ]; then
       docker build -f Dockerfile -t $REPO .;
       docker push $REPO;
       echo "Pushed to" $REPO;
+      RACK_ENV="stage";
       AUTO_DEPLOY=true;
     else
       docker build -f Dockerfile -t $REPO:$TRAVIS_BRANCH .;
       docker push $REPO:$TRAVIS_BRANCH;
       echo "Pushed to" $REPO:$TRAVIS_BRANCH;
+      RACK_ENV="stage";
       AUTO_DEPLOY=true;
     fi
 
@@ -73,6 +76,8 @@ after_success:
       export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1));
       sentry-cli releases new $GIT_SHA --project lupo
       sentry-cli releases set-commits --auto $GIT_SHA
+      sentry-cli releases deploys $GIT_SHA new -e $RACK_ENV
+
       git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git";
       ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/stage/services/client-api/_lupo.auto.tfvars;
 
