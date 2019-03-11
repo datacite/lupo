@@ -76,6 +76,7 @@ after_success:
       export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1));
       sentry-cli releases new $GIT_SHA --project lupo
       sentry-cli releases set-commits --auto $GIT_SHA
+      sentry-cli releases set-commits "$GIT_SHA" --auto
       sentry-cli releases deploys $GIT_SHA new -e $RACK_ENV
 
       git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git";
