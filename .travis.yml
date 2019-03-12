@@ -53,19 +53,16 @@ after_success:
       docker build -f Dockerfile -t $REPO:$TRAVIS_TAG .;
       docker push $REPO:$TRAVIS_TAG;
       echo "Pushed to" $REPO:$TRAVIS_TAG;
-      RACK_ENV="production";
       AUTO_DEPLOY=true;
     elif [ "$TRAVIS_BRANCH" == "master" ]; then
       docker build -f Dockerfile -t $REPO .;
       docker push $REPO;
       echo "Pushed to" $REPO;
-      RACK_ENV="stage";
       AUTO_DEPLOY=true;
     else
       docker build -f Dockerfile -t $REPO:$TRAVIS_BRANCH .;
       docker push $REPO:$TRAVIS_BRANCH;
       echo "Pushed to" $REPO:$TRAVIS_BRANCH;
-      RACK_ENV="stage";
       AUTO_DEPLOY=true;
     fi
 
@@ -101,6 +98,7 @@ after_success:
 
       if [ "${TRAVIS_TAG?}" ]; then
         sentry-cli releases new lupo:${GIT_TAG} --finalize --project lupo
+        sentry-cli releases deploys lupo:${GIT_TAG} new -e production
       fi
 
       sentry-cli releases set-commits --auto lupo:${GIT_TAG}
