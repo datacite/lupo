@@ -28,6 +28,7 @@ before_install:
   - sudo mysql_upgrade -u root
   - sudo service mysql restart
   - mysql -e 'CREATE DATABASE lupo_test;'
+  - curl -sL https://sentry.io/get-cli/ | bash
 
 install:
   - travis_retry bundle install
@@ -74,7 +75,6 @@ after_success:
       export GIT_SHA=$(git rev-parse --short HEAD);
       export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1));
 
-      curl -sL https://sentry.io/get-cli/ | bash
       VERSION=$(sentry-cli releases propose-version)
       sentry-cli releases new $VERSION --project lupo
       sentry-cli releases set-commits --auto $VERSION
