@@ -76,8 +76,9 @@ after_success:
       export GIT_REVISION=$(git rev-parse HEAD);
       export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1));
 
-      sentry-cli releases new $GIT_REVISION --project lupo --finalize
-      sentry-cli releases set-commits --auto $GIT_REVISION
+      VERSION=`sentry-cli releases propose-version`
+      sentry-cli releases new $VERSION --project lupo --finalize
+      sentry-cli releases set-commits --auto $VERSION
 
       git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git";
       ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/stage/services/client-api/_lupo.auto.tfvars;
