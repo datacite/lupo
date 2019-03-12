@@ -82,10 +82,7 @@ after_success:
 
       if [ "${TRAVIS_TAG?}" ]; then
         ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/prod-eu-west/services/client-api/_lupo.auto.tfvars;
-        sentry-cli releases new levriero:${GIT_TAG} --finalize --project levriero
       fi
-
-      sentry-cli releases set-commits --auto levriero:${GIT_TAG}
       
       cd mastino;
       git remote;
@@ -101,6 +98,12 @@ after_success:
         git commit -m "Adding lupo git variables for latest commit";
         git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" master;
       fi
+
+      if [ "${TRAVIS_TAG?}" ]; then
+        sentry-cli releases new lupo:${GIT_TAG} --finalize --project lupo
+      fi
+
+      sentry-cli releases set-commits --auto lupo:${GIT_TAG}
     fi
 
 notifications:
