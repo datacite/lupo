@@ -151,7 +151,7 @@ describe Doi, vcr: true do
       expect(meta["creators"]).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin","name"=>"Fenner, Martin",
         "nameIdentifiers"=>
           [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405",
-            "nameIdentifierScheme"=>"ORCID"}],
+            "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
         "nameType"=>"Personal"}])
       expect(meta["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
       expect(meta["publication_year"]).to eq("2016")
@@ -297,7 +297,7 @@ describe Doi, vcr: true do
         "familyName" => "Jones",
         "givenName" => "Matt",
         "name" => "Jones, Matt",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-0077-4738", "nameIdentifierScheme"=>"ORCID"}],
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-0077-4738", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
         "nameType" => "Personal")
       expect(meta["titles"]).to eq([{"title"=>"R Interface to the DataONE REST API"}])
       expect(meta["publication_year"]).to eq("2016")
@@ -313,7 +313,7 @@ describe Doi, vcr: true do
       expect(meta["doi"]).to eq("10.5438/4k3m-nyvg")
       expect(meta["creators"].length).to eq(1)
       expect(meta["creators"].first).to eq("familyName"=>"Fenner", "givenName"=>"Martin", "name" => "Fenner, Martin",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme"=>"ORCID"}],
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
         "nameType" => "Personal")
       expect(meta["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
       expect(meta["publication_year"]).to eq("2016")
@@ -431,7 +431,7 @@ describe Doi, vcr: true do
         "familyName" => "Jones",
         "givenName" => "Matt",
         "name" => "Jones, Matt",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-0077-4738", "nameIdentifierScheme"=>"ORCID"}],
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-0077-4738", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
         "nameType" => "Personal")
       expect(meta["titles"]).to eq([{"title"=>"R Interface to the DataONE REST API"}])
       expect(meta["publication_year"]).to eq("2016")
@@ -445,7 +445,7 @@ describe Doi, vcr: true do
       expect(meta["doi"]).to eq("10.5438/4k3m-nyvg")
       expect(meta["creators"].length).to eq(1)
       expect(meta["creators"].first).to eq("familyName"=>"Fenner", "givenName"=>"Martin", "name" => "Fenner, Martin",
-        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme"=>"ORCID"}],
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
         "nameType" => "Personal")
       expect(meta["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
       expect(meta["publication_year"]).to eq("2016")

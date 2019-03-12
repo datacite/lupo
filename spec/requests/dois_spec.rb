@@ -842,7 +842,8 @@ describe "dois", type: :request do
           "name"=>"Fenner, Martin",
           "nameIdentifiers"=>
             [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405",
-              "nameIdentifierScheme"=>"ORCID"}],
+              "nameIdentifierScheme"=>"ORCID",
+              "schemeUri"=>"https://orcid.org"}],
           "nameType"=>"Personal"}])
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
@@ -873,7 +874,7 @@ describe "dois", type: :request do
               "titles" => [{"title"=>"Eating your own Dog Food"}],
               "publisher" => "DataCite",
               "publicationYear" => 2016,
-              "creators" => [{"familyName"=>"Fenner", "givenName"=>"Martin", "nameIdentifiers"=>[{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID" }], "name"=>"Fenner, Martin", "nameType"=>"Personal"}],
+              "creators" => [{"familyName"=>"Fenner", "givenName"=>"Martin", "nameIdentifiers"=>[{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri"=>"https://orcid.org" }], "name"=>"Fenner, Martin", "nameType"=>"Personal"}],
               "source" => "test",
               "event" => "publish"
             }
@@ -887,7 +888,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
-        expect(json.dig('data', 'attributes', 'creators')).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin", "nameIdentifiers"=>[{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405","nameIdentifierScheme"=>"ORCID"}], "name"=>"Fenner, Martin", "nameType"=>"Personal"}])
+        expect(json.dig('data', 'attributes', 'creators')).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin", "nameIdentifiers"=>[{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405","nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}], "name"=>"Fenner, Martin", "nameType"=>"Personal"}])
         expect(json.dig('data', 'attributes', 'publisher')).to eq("DataCite")
         expect(json.dig('data', 'attributes', 'publicationYear')).to eq(2016)
         # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")

@@ -900,6 +900,8 @@ components:
                               type: string
                             nameIdentifierScheme:
                               type: string
+                            schemeUri:
+                              type: string
                       name:
                         type: string
                       givenName:
@@ -972,6 +974,8 @@ components:
                             nameIdentifier:
                               type: string
                             nameIdentifierScheme:
+                              type: string
+                            schemeUri:
                               type: string
                       name:
                         type: string

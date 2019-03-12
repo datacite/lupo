@@ -85,7 +85,8 @@ FactoryBot.define do
         "nameIdentifiers": [
           {
             "nameIdentifier": "https://orcid.org/0000-0003-1419-2405",
-            "nameIdentifierScheme": "ORCID"
+            "nameIdentifierScheme": "ORCID",
+            "schemeUri": "https://orcid.org"
           }
         ]
       }
