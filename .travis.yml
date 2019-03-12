@@ -77,9 +77,10 @@ after_success:
       git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git";
       ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/stage/services/client-api/_lupo.auto.tfvars;
 
+      sentry-cli releases new lupo:${GIT_TAG} --finalize --project lupo;
+
       if [ "${TRAVIS_TAG?}" ]; then
         ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/prod-eu-west/services/client-api/_lupo.auto.tfvars;
-        sentry-cli releases new lupo:${GIT_TAG} --finalize --project lupo;
         sentry-cli releases deploys lupo:${GIT_TAG} new -e production;
       else
         sentry-cli releases deploys lupo:${GIT_TAG} new -e stage;
