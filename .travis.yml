@@ -28,10 +28,11 @@ before_install:
   - sudo mysql_upgrade -u root
   - sudo service mysql restart
   - mysql -e 'CREATE DATABASE lupo_test;'
-  - curl -sL https://sentry.io/get-cli/ | bash
 
 install:
   - travis_retry bundle install
+  - curl -sL https://sentry.io/get-cli/ | bash
+  - sentry-cli --version
 
 before_script:
   - memcached -p 11211 &
@@ -76,16 +77,15 @@ after_success:
       export GIT_REVISION=$(git rev-parse HEAD);
       export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1));
 
-      VERSION=`sentry-cli releases propose-version`
-      sentry-cli releases new $VERSION --project lupo --finalize
-      sentry-cli releases set-commits --auto $VERSION
-
       git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git";
       ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/stage/services/client-api/_lupo.auto.tfvars;
 
       if [ "${TRAVIS_TAG?}" ]; then
         ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/prod-eu-west/services/client-api/_lupo.auto.tfvars;
+        sentry-cli releases new levriero:${GIT_TAG} --finalize --project levriero
       fi
+
+      sentry-cli releases set-commits --auto levriero:${GIT_TAG}
       
       cd mastino;
       git remote;
