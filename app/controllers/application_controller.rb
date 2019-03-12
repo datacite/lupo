@@ -103,6 +103,7 @@ class ApplicationController < ActionController::API
         message = exception.message
       else
         # Bugsnag.notify(exception)
+        Raven.capture_exception(error)
 
         message = exception.message
       end

@@ -50,7 +50,8 @@ class ActivitiesController < ApplicationController
 
       render json: ActivitySerializer.new(@activities, options).serialized_json, status: :ok
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
-      Bugsnag.notify(exception)
+      # Bugsnag.notify(exception)
+      Raven.capture_exception(error)
 
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 

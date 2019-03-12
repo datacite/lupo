@@ -64,7 +64,8 @@ class ProvidersController < ApplicationController
 
       render json: ProviderSerializer.new(@providers, options).serialized_json, status: :ok
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
-      Bugsnag.notify(exception)
+      # Bugsnag.notify(exception)
+      Raven.capture_exception(error)
 
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
