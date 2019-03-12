@@ -28,7 +28,6 @@ before_install:
   - sudo mysql_upgrade -u root
   - sudo service mysql restart
   - mysql -e 'CREATE DATABASE lupo_test;'
-  - curl -sL https://sentry.io/get-cli/ | bash
 
 install:
   - travis_retry bundle install
@@ -74,10 +73,11 @@ after_success:
       rm dockerize-linux-amd64-v0.6.0.tar.gz;
       export GIT_SHA=$(git rev-parse --short HEAD);
       export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1));
-      sentry-cli releases new $GIT_SHA --project lupo
-      sentry-cli releases set-commits --auto $GIT_SHA
-      sentry-cli releases set-commits "$GIT_SHA" --auto
-      sentry-cli releases deploys $GIT_SHA new -e $RACK_ENV
+
+      curl -sL https://sentry.io/get-cli/ | bash
+      VERSION=$(sentry-cli releases propose-version)
+      sentry-cli releases new $VERSION --project lupo
+      sentry-cli releases set-commits --auto $VERSION
 
       git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git";
       ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/stage/services/client-api/_lupo.auto.tfvars;
