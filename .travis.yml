@@ -76,7 +76,7 @@ after_success:
       export GIT_REVISION=$(git rev-parse HEAD);
       export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1));
 
-      sentry-cli releases new $GIT_REVISION --project lupo
+      sentry-cli releases new $GIT_REVISION --project lupo --finalize
       sentry-cli releases set-commits --auto $GIT_REVISION
 
       git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git";
