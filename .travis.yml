@@ -97,11 +97,11 @@ after_success:
       fi
 
       if [ "${TRAVIS_TAG?}" ]; then
-        sentry-cli releases new lupo:${GIT_TAG} --finalize --project lupo
-        sentry-cli releases deploys lupo:${GIT_TAG} new -e production
+        sentry-cli releases new lupo:${GIT_TAG} --finalize --project lupo;
+        sentry-cli releases deploys lupo:${GIT_TAG} new -e production;
       fi
 
-      sentry-cli releases set-commits --auto lupo:${GIT_TAG}
+      sentry-cli releases set-commits --auto lupo:${GIT_TAG};
     fi
 
 notifications:
