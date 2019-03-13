@@ -161,6 +161,9 @@ class Doi < ActiveRecord::Base
       relatedIdentifierType: { type: :keyword },
       relatedIdentifier: { type: :keyword },
       relationType: { type: :keyword },
+      relatedMetadataScheme: { type: :keyword },
+      schemeUri: { type: :keyword },
+      schemeType: { type: :keyword },
       resourceTypeGeneral: { type: :keyword }
     }
     indexes :types,                          type: :object, properties: {

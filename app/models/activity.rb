@@ -77,6 +77,9 @@ class Activity < Audited::Audit
         relatedIdentifierType: { type: :keyword },
         relatedIdentifier: { type: :keyword },
         relationType: { type: :keyword },
+        relatedMetadataScheme: { type: :keyword },
+        schemeUri: { type: :keyword },
+        schemeType: { type: :keyword },
         resourceTypeGeneral: { type: :keyword }
       }},
       types: { type: :object, properties: {

@@ -484,7 +484,7 @@ class DoisController < ApplicationController
       :identifiers,
       { identifiers: [:identifier, :identifierType] },
       :relatedIdentifiers,
-      { relatedIdentifiers: [:relatedIdentifier, :relatedIdentifierType, :relationType, :resourceTypeGeneral, :relatedMetadataScheme, :schemeUri, :schemeType] },
+      { relatedIdentifiers: [:relatedIdentifier, :relatedIdentifierType, :relationType, relatedMetadataScheme, :schemeUri, :schemeType, :resourceTypeGeneral, :relatedMetadataScheme, :schemeUri, :schemeType] },
       :fundingReferences,
       { fundingReferences: [:funderName, :funderIdentifier, :funderIdentifierType, :awardNumber, :awardUri, :awardTitle] },
       :geoLocations,
