@@ -389,7 +389,6 @@ class Doi < ActiveRecord::Base
     doi
   rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
     logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
-    # Bugsnag.notify(error)
     Raven.capture_exception(error)
     doi
   end
@@ -462,7 +461,6 @@ class Doi < ActiveRecord::Base
             doi.__elasticsearch__.index_document
           rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
             logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
-            # Bugsnag.notify(error)
             Raven.capture_exception(error)
           else
             count += 1
@@ -520,7 +518,6 @@ class Doi < ActiveRecord::Base
             doi.__elasticsearch__.index_document
           rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
             logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
-            # Bugsnag.notify(error)
             Raven.capture_exception(error)
           else
             count += 1

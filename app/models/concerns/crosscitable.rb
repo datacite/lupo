@@ -40,9 +40,8 @@ module Crosscitable
       meta = from.present? ? send("read_" + from, { string: input, doi: options[:doi], sandbox: sandbox }).compact : {}
       meta.merge("string" => input, "from" => from)
     rescue NoMethodError, ArgumentError => exception
-      # Bugsnag.notify(exception)
-      Raven.capture_exception(error)
-      
+      Raven.capture_exception(exception)
+
       logger = Logger.new(STDOUT)
       logger.error "Error " + exception.message + " for doi " + @doi + "."
       logger.error exception
