@@ -341,6 +341,58 @@ describe "dois", type: :request do
       end
     end
 
+    context 'update sizes' do
+      let(:doi) { create(:doi, doi: "10.14454/10703", client: client) }
+      let(:sizes) { ["100 samples", "56 pages"] }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "sizes" => sizes,
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      before { put "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: admin_headers }
+
+      it 'updates the doi' do
+        expect(json.dig('data', 'attributes', 'sizes')).to eq(sizes)
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context 'update formats' do
+      let(:doi) { create(:doi, doi: "10.14454/10703", client: client) }
+      let(:formats) { ["application/json"] }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "formats" => formats,
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      before { put "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: admin_headers }
+
+      it 'updates the doi' do
+        expect(json.dig('data', 'attributes', 'formats')).to eq(formats)
+      end
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
     context 'no creators validate' do
       let(:doi) { create(:doi, client: client, creators: nil) }
       let(:valid_attributes) do
