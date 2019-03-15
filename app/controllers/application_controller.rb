@@ -102,8 +102,7 @@ class ApplicationController < ActionController::API
       elsif ["JSON::ParserError", "Nokogiri::XML::SyntaxError", "ActionDispatch::Http::Parameters::ParseError"].include?(exception.class.to_s)
         message = exception.message
       else
-        # Bugsnag.notify(exception)
-        Raven.capture_exception(error)
+        Raven.capture_exception(exception)
 
         message = exception.message
       end
