@@ -1,6 +1,6 @@
 module Lupo
   class Application
-    g = Git.open(Rails.root, :log => Logger.new(STDOUT))
+    g = Git.open(Rails.root)
     begin
       VERSION = g.tags.map { |t| Gem::Version.new(t.name) }.sort.last.to_s
     rescue ArgumentError

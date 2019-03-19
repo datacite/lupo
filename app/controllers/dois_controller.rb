@@ -156,7 +156,11 @@ class DoisController < ApplicationController
         end
         format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :csv, :schema_org) { render request.format.to_sym => response.records.to_a }
       end
+    rescue Elasticsearch::Transport::Transport::Errors::GatewayTimeout => exception
+      head :gateway_timeout
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
+      Raven.capture_exception(exception)
+      
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
       render json: { "errors" => { "title" => message }}.to_json, status: :bad_request

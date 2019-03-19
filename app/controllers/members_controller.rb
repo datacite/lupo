@@ -60,9 +60,11 @@ class MembersController < ApplicationController
       options[:links] = nil
 
       render json: MemberSerializer.new(@members, options).serialized_json, status: :ok
+    rescue Elasticsearch::Transport::Transport::Errors::GatewayTimeout => exception
+      head :gateway_timeout
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
-      # Bugsnag.notify(exception)
-
+      Raven.capture_exception(exception)
+      
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
       render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
