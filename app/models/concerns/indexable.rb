@@ -100,7 +100,7 @@ module Indexable
     end
 
     def query(query, options={})
-      aggregations = query_aggregations
+      aggregations = options[:totals_agg] == true ? totals_aggregations : query_aggregations
       options[:page] ||= { size: 25, number: 1 }
 
       # enable cursor-based pagination for DOIs
