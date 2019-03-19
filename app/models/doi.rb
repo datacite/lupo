@@ -326,10 +326,15 @@ class Doi < ActiveRecord::Base
       link_checks_citation_doi: { value_count: { field: "landing_page.citationDoi" } },
       links_checked: { value_count: { field: "landing_page.checked" } },
       sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
-      providers_totals: { terms: { field: 'provider_id', size: 500, min_doc_count: 1 }, aggs: sub_aggregations},
+      subjects: { terms: { field: 'subjects.subject', size: 15, min_doc_count: 1 } }
+    }
+  end
+
+  def self.totals_aggregations
+    {
+      providers_totals: { terms: { field: 'provider_id', size: 200, min_doc_count: 1 }, aggs: sub_aggregations},
       clients_totals: { terms: { field: 'client_id', size: 2000, min_doc_count: 1 }, aggs: sub_aggregations },
       prefixes_totals: { terms: { field: 'prefix', size: 2000, min_doc_count: 1 }, aggs: sub_aggregations },
-      subjects: { terms: { field: 'subjects.subject', size: 15, min_doc_count: 1 } }
     }
   end
 
@@ -339,7 +344,7 @@ class Doi < ActiveRecord::Base
     beginning_of_month = DateTime.current.beginning_of_month.strftime('%Y-%m-%d')
 
     {
-    states: { terms: { field: 'aasm_state', size: 15, min_doc_count: 1 } },
+    states: { terms: { field: 'aasm_state', size: 4, min_doc_count: 1 } },
     this_month:{ date_range:{ field: 'created', time_zone: "CET", ranges: {from: beginning_of_month, to: "now/d"} } },
     this_year: { date_range: { field: 'created', time_zone: "CET", ranges: {from: beginning_of_year, to: "now/d"} } },
     last_year: { date_range: { field: 'created', time_zone: "CET", ranges: {from: beginning_of_last_year, to: beginning_of_year} } }

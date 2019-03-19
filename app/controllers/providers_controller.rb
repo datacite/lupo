@@ -122,7 +122,9 @@ class ProvidersController < ApplicationController
 
   def totals
     page = { size: 0, number: 1}
-    response = Doi.query("", page: page)
+
+    response = Doi.query("", page: page, totals_agg: true)
+
     total = response.results.total
 
     registrant = total > 0 ? providers_totals(response.response.aggregations.providers_totals.buckets) : nil
