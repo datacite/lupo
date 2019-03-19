@@ -243,6 +243,10 @@ module Indexable
       client.indices.create index: index_name, body: { settings:  {"index.requests.cache.enable": true }}
     end
 
+    def count
+      Elasticsearch::Model.client.count(index: index_name)['count']
+    end
+
     def create_alias(index: nil)
       return nil unless index.present?
 
