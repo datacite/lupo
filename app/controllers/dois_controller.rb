@@ -8,7 +8,6 @@ class DoisController < ApplicationController
   prepend_before_action :authenticate_user!
   before_action :set_doi, only: [:show, :destroy, :get_url]
   before_action :set_include, only: [:index, :show, :create, :update]
-  # before_bugsnag_notify :add_metadata_to_bugsnag
 
   def index
     authorize! :read, Doi
@@ -156,8 +155,6 @@ class DoisController < ApplicationController
         end
         format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :csv, :schema_org) { render request.format.to_sym => response.records.to_a }
       end
-    rescue Elasticsearch::Transport::Transport::Errors::GatewayTimeout => exception
-      head :gateway_timeout
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
       

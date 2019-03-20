@@ -2,7 +2,6 @@ class WorksController < ApplicationController
   prepend_before_action :authenticate_user!
   before_action :set_doi, only: [:show]
   before_action :set_include, only: [:index, :show]
-  # before_bugsnag_notify :add_metadata_to_bugsnag
 
   def index
     authorize! :read, Doi

@@ -60,8 +60,6 @@ class MembersController < ApplicationController
       options[:links] = nil
 
       render json: MemberSerializer.new(@members, options).serialized_json, status: :ok
-    rescue Elasticsearch::Transport::Transport::Errors::GatewayTimeout => exception
-      head :gateway_timeout
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
       

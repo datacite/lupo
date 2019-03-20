@@ -42,13 +42,6 @@
     <link href="<%= ENV['CDN_URL'] %>/stylesheets/datacite.css" rel='stylesheet' type='text/css'>
 
     <link href="<%= ENV['CDN_URL'] %>/images/favicon.ico" rel="icon" type="image/ico" />
-
-    <% if ENV['BUGSNAG_JS_KEY'] %>
-      <script
-        src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js"
-        data-apikey="<%= ENV['BUGSNAG_JS_KEY'] %>">
-      </script>
-    <% end -%>
   </head>
   <body>
     <% header_links = development? ? data.links.development_links : (stage? ? data.links.stage_links : data.links.production_links) %>

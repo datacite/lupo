@@ -19,8 +19,6 @@ class ApplicationController < ActionController::API
   # pass ability into serializer
   serialization_scope :current_ability
 
-  # before_bugsnag_notify :add_user_info_to_bugsnag
-
   before_action :default_format_json, :transform_params, :set_raven_context
   after_action :set_jsonp_format, :set_consumer_header
 
@@ -123,16 +121,6 @@ class ApplicationController < ActionController::API
     super
     payload[:uid] = current_user.uid.downcase if current_user.try(:uid)
   end
-
-  # def add_user_info_to_bugsnag(report)
-  #   return nil unless current_user.try(:uid)
-    
-  #   report.user = {
-  #     email: current_user.email,
-  #     name: current_user.name,
-  #     id: current_user.uid
-  #   }
-  # end
 
   def set_raven_context
     if current_user.try(:uid)
