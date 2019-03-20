@@ -129,7 +129,7 @@ class ClientsController < ApplicationController
 
   def totals
     page = { size: 0, number: 1}
-    response = Doi.query(nil, provider_id: params[:provider_id], page: page)
+    response = Doi.query(nil, provider_id: params[:provider_id], page: page, totals_agg: true)
     total = response.results.total
 
     registrant = total > 0 ? clients_totals(response.response.aggregations.clients_totals.buckets) : nil

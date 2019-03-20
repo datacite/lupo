@@ -138,7 +138,7 @@ class PrefixesController < ApplicationController
 
   def totals
     page = { size: 0, number: 1}
-    response = Doi.query("", client_id: params[:client_id],page: page)
+    response = Doi.query("", client_id: params[:client_id],page: page, totals_agg: true)
     total = response.results.total
 
     registrant = total > 0 ? prefixes_totals(response.response.aggregations.prefixes_totals.buckets) : nil

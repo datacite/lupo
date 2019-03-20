@@ -100,7 +100,7 @@ module Indexable
     end
 
     def query(query, options={})
-      aggregations = query_aggregations
+      aggregations = options[:totals_agg] == true ? totals_aggregations : query_aggregations
       options[:page] ||= { size: 25, number: 1 }
 
       # enable cursor-based pagination for DOIs
@@ -241,6 +241,10 @@ module Indexable
 
       client.indices.delete index: index_name rescue nil if options[:force]
       client.indices.create index: index_name, body: { settings:  {"index.requests.cache.enable": true }}
+    end
+
+    def count
+      Elasticsearch::Model.client.count(index: index_name)['count']
     end
 
     def create_alias(index: nil)
