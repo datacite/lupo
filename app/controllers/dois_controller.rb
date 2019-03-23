@@ -8,6 +8,7 @@ class DoisController < ApplicationController
   prepend_before_action :authenticate_user!
   before_action :set_doi, only: [:show, :destroy, :get_url]
   before_action :set_include, only: [:index, :show, :create, :update]
+  before_action :set_raven_context, only: [:create, :update, :validate]
 
   def index
     authorize! :read, Doi
@@ -556,11 +557,9 @@ class DoisController < ApplicationController
       :lastLandingPageStatusResult, :lastLandingPageContentType)
   end
 
-  # def add_metadata_to_bugsnag(report)
-  #   return nil unless params.dig(:data, :attributes, :xml).present?
+  def set_raven_context
+    return nil unless params.dig(:data, :attributes, :xml).present?
 
-  #   report.add_tab(:metadata, {
-  #     metadata: Base64.decode64(params.dig(:data, :attributes, :xml))
-  #   })
-  # end
+    Raven.extra_context metadata: Base64.decode64(params.dig(:data, :attributes, :xml))
+  end
 end
