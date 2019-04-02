@@ -2,7 +2,7 @@ require 'maremma'
 
 class Doi < ActiveRecord::Base
   audited only: [:doi, :url, :creators, :contributors, :titles, :publisher, :publication_year, :types, :descriptions, :container, :sizes, :formats, :version_info, :language, :dates, :identifiers, :related_identifiers, :funding_references, :geo_locations, :rights_list, :subjects, :schema_version, :content_url, :landing_page, :aasm_state, :source, :reason]
-  
+
   include Metadatable
   include Cacheable
   include Licensable
@@ -382,7 +382,7 @@ class Doi < ActiveRecord::Base
       logger.error "[MySQL] No metadata for DOI " + doi.doi + " found: " + doi.current_metadata.inspect
       return nil
     end
-    
+
     meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
     attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
       [a.to_sym, meta[a]]
@@ -410,6 +410,42 @@ class Doi < ActiveRecord::Base
 
     (from_date..until_date).to_a.length
   end
+
+  def self.import_missing_by_empty_attribute(options={})
+    logger = Logger.new(STDOUT)
+
+    attribute = options[:attribute]
+
+    # Find all dois by missing attribute
+    count = 0
+
+    query = options[:query] || "-_exists_:#{attribute} -aasm_state:draft"
+    size = (options[:size] || 1000).to_i
+
+    response = Doi.query(query, page: { size: 1, cursor: 0 })
+    logger.info "[Metadata Missing Fix] #{response.results.total} DOIs found missing attribute #{attribute}."
+
+    if response.results.total > 0
+      # walk through results using cursor
+      cursor = 0
+
+      while response.results.results.length > 0 do
+        response = Doi.query(query, page: { size: size, cursor: cursor })
+        break unless response.results.results.length > 0
+
+        logger.info "[Metadata Missing Fix] Attempting fix for #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
+        cursor = response.results.results.last[:sort].first.to_i
+
+        response.results.results.each do |d|
+          # Import One as a background job
+          DoiImportOneJob.perform_later(d.doi)
+        end
+      end
+    end
+
+    response.results.total
+  end
+
 
   def self.import_missing(options={})
     from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
@@ -454,12 +490,12 @@ class Doi < ActiveRecord::Base
               logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
               return nil
             end
-            
+
             meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
             attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
               [a.to_sym, meta[a]]
             end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
-    
+
             # update_columns will NOT trigger validations and Elasticsearch indexing
             doi.update_columns(attrs)
 
@@ -471,7 +507,7 @@ class Doi < ActiveRecord::Base
             count += 1
           end
         end
-    
+
         if count > 0
           logger.info "[MySQL] Imported metadata for #{count} DOIs created on #{options[:from_date]}."
         end
@@ -511,12 +547,12 @@ class Doi < ActiveRecord::Base
               logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
               return nil
             end
-            
+
             meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
             attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
               [a.to_sym, meta[a]]
             end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
-    
+
             # update_columns will NOT trigger validations and Elasticsearch indexing
             doi.update_columns(attrs)
 
@@ -528,7 +564,7 @@ class Doi < ActiveRecord::Base
             count += 1
           end
         end
-    
+
         if count > 0
           logger.info "[MySQL] Imported metadata for #{count} DOIs created on #{options[:from_date]}."
         end
@@ -749,7 +785,7 @@ class Doi < ActiveRecord::Base
   # providers europ and ethz do their own handle registration, so fetch url from handle system instead
   def update_url
     return nil if current_user.nil? || !is_registered_or_findable?
-    
+
     if %w(europ ethz).include?(provider_id) || %w(Crossref).include?(agency)
       UrlJob.perform_later(doi)
     else
@@ -919,7 +955,7 @@ class Doi < ActiveRecord::Base
     if options[:client_id] && options[:target_id] && response.results.total > 0
       # walk through results using cursor
       cursor = 0
-      
+
       while response.results.results.length > 0 do
         response = Doi.query(query, client_id: options[:client_id], page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0

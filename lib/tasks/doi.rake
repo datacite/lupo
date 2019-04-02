@@ -71,6 +71,18 @@ namespace :doi do
     Doi.import_missing(from_date: from_date, until_date: until_date)
   end
 
+  desc 'Import missing DOIs by empty attribute'
+  task :import_missing_by_empty_attribute => :environment do
+    if ENV['ATTRIBUTE'].present?
+      attribute = ENV['ATTRIBUTE']
+    else
+      puts "ENV['ATTRIBUTE'] is required"
+      exit
+    end
+
+    Doi.import_missing_by_empty_attribute(attribute: attribute)
+  end
+
   desc 'Import one DOI'
   task :import_one => :environment do
     if ENV['DOI'].nil?
