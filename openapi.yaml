@@ -345,6 +345,27 @@ paths:
       responses:
         '204':
           description: No content
+  '/dois/{id}/activities':
+    parameters:
+      - name: id
+        in: path
+        description: DOI
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - dois
+        - activity
+      summary: Returns actiity for a specific DOI
+      security: []
+      responses:
+        '200':
+          description: A JSON object.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Activity'
   /events:
     get:
       summary: Returns a list of events.
@@ -686,6 +707,77 @@ paths:
       responses:
         '204':
           description: No content
+  /activities:
+    get:
+      tags:
+        - activity
+      summary: Get a JSON API result of activities.
+      security: []
+      parameters:
+        - in: query
+          name: id
+          description: Find activity by an id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: ids
+          description: Find activities by array of activity ids
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - in: query
+          name: query
+          description: Search the index by keyword or query string syntax.
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: 'page[number]'
+          description: Pagination - page number
+          required: false
+          schema:
+            type: number
+        - in: query
+          name: 'page[size]'
+          required: false
+          description: Pagination - page size
+          schema:
+            type: number
+        - in: query
+          name: 'page[cursor]'
+          required: false
+          description: 'Pagination - page cursor (used instead of page[number])'
+          schema:
+            type: number
+      responses:
+        '200':
+          description: A JSON API result of activities.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Activity'
+  '/activities/{id}':
+    parameters:
+      - name: id
+        in: path
+        description: Activity ID
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - activity
+      summary: Get a JSON API result of a specific activity
+      responses:
+        '200':
+          description: A JSON object.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Activity'
   /reports:
     get:
       tags:
@@ -860,8 +952,39 @@ components:
                   readOnly: true
       required:
         - id
+    Activity:
+      type: object
+      description: Represents an activity for an event within DataCite systems.
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 0000-0000-0000-0000
+            type:
+              type: string
+            attributes:
+              type: object
+              properties:
+                'prov:wasGeneratedBy':
+                  type: string
+                'prov:generatedAtTime':
+                  type: string
+                'prov:wasDerivedFrom':
+                  type: string
+                'prov:wasAttributedTo':
+                  type: string
+                action:
+                  type: string
+                version:
+                  type: number
+                changes:
+                  type: object
     Doi:
-      description: Represents a DOI and provides access to metadata attributes, further schema specific information can be found at https://schema.datacite.org
+      description: >-
+        Represents a DOI and provides access to metadata attributes, further
+        schema specific information can be found at https://schema.datacite.org
       type: object
       properties:
         data:
@@ -883,7 +1006,10 @@ components:
                 event:
                   description: Can be set to trigger a DOI state change.
                   type: string
-                  enum: [publish, register, hide]
+                  enum:
+                    - publish
+                    - register
+                    - hide
                   writeOnly: true
                 identifiers:
                   type: array
@@ -1116,7 +1242,7 @@ components:
                 reason:
                   type: string
                 landingPage:
-                  description: Data describing the landing page, used by link checking.
+                  description: 'Data describing the landing page, used by link checking.'
                   type: object
                   properties:
                     checked:
