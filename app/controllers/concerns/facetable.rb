@@ -144,7 +144,6 @@ module Facetable
 
       ids = arr.map { |hsh| hsh["key"] }.join(",")
       clients = Client.find_by_ids(ids, size: 2000).results.reduce({}) do |sum, p|
-        puts sum
         sum[p.symbol.downcase] = p.name
         sum
       end

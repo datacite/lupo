@@ -128,13 +128,22 @@ class ClientsController < ApplicationController
   end
 
   def totals
+    logger = Logger.new(STDOUT)
+
     page = { size: 0, number: 1}
-    response = Doi.query(nil, provider_id: params[:provider_id], page: page, totals_agg: true)
+    response = nil
+    logger.info "[Benchmark] clients totals " + Benchmark.ms {
+      response = Doi.query(nil, provider_id: params[:provider_id], page: page, totals_agg: true)
+    }.to_s + " ms"
     total = response.results.total
 
-    registrant = total > 0 ? clients_totals(response.response.aggregations.clients_totals.buckets) : nil
-
-    render json: registrant, status: :ok  
+    registrant = nil
+    logger.info "[Benchmark] clients clients_totals " + Benchmark.ms {
+      registrant = total > 0 ? clients_totals(response.response.aggregations.clients_totals.buckets) : nil
+    }.to_s + " ms"
+    logger.info "[Benchmark] clients render " + Benchmark.ms {
+      render json: registrant, status: :ok
+    }.to_s + " ms" 
   end
 
   protected

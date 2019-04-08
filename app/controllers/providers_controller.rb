@@ -121,15 +121,22 @@ class ProvidersController < ApplicationController
   end
 
   def totals
+    logger = Logger.new(STDOUT)
+
     page = { size: 0, number: 1}
-
-    response = Doi.query("", page: page, totals_agg: true)
-
+    response = nil
+    logger.info "[Benchmark] providers totals " + Benchmark.ms {
+      response = Doi.query("", page: page, totals_agg: true)
+    }.to_s + " ms"
     total = response.results.total
 
-    registrant = total > 0 ? providers_totals(response.response.aggregations.providers_totals.buckets) : nil
-
-    render json: registrant, status: :ok  
+    registrant = nil
+    logger.info "[Benchmark] providers providers_totals " + Benchmark.ms {
+      registrant = total > 0 ? providers_totals(response.response.aggregations.providers_totals.buckets) : nil
+    }.to_s + " ms"
+    logger.info "[Benchmark] providers render " + Benchmark.ms {
+      render json: registrant, status: :ok
+    }.to_s + " ms"
   end
 
 

@@ -697,7 +697,6 @@ describe "dois", type: :request do
 
       it 'revert the changes with status code 200' do
         post "/dois/undo", params: undo_attributes.to_json, headers: headers
-        puts response.body
         expect(response).to have_http_status(200)
       end
     end
@@ -820,7 +819,6 @@ describe "dois", type: :request do
       before { put "/dois/#{doi.doi}", params: valid_attributes.to_json, headers: admin_headers }
 
       it 'returns no errors' do
-        puts response.body
         expect(response).to have_http_status(200)
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
       end
@@ -1024,7 +1022,6 @@ describe "dois", type: :request do
       end
 
       it 'returns status code 201' do
-        puts response.body
         expect(response).to have_http_status(201)
       end
 
@@ -1061,7 +1058,6 @@ describe "dois", type: :request do
       end
 
       it 'returns status code 201' do
-        puts response.body
         expect(response).to have_http_status(201)
       end
 

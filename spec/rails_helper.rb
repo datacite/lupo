@@ -17,6 +17,7 @@ require "colorize"
 require "database_cleaner"
 require 'aasm/rspec'
 require "strip_attributes/matchers"
+require 'rspec-benchmark'
 
 # Checks for pending migration and applies them before tests are run.
 ActiveRecord::Migration.maintain_test_schema!
@@ -37,6 +38,7 @@ end
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include StripAttributes::Matchers
+  config.include RSpec::Benchmark::Matchers
   # don't use transactions, use database_clear gem via support file
   config.use_transactional_fixtures = false
 

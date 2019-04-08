@@ -1,5 +1,6 @@
 require 'uri'
 require 'base64'
+require 'benchmark'
 
 class DoisController < ApplicationController
   include ActionController::MimeResponds
@@ -12,6 +13,8 @@ class DoisController < ApplicationController
 
   def index
     authorize! :read, Doi
+
+    logger = Logger.new(STDOUT)
 
     sort = case params[:sort]
           when "name" then { "doi" => { order: 'asc' }}
@@ -35,34 +38,38 @@ class DoisController < ApplicationController
     end
 
     if params[:id].present?
-      response = Doi.find_by_id(params[:id])
+      logger.info "[Benchmark] find_by_id " + Benchmark.ms {
+        response = Doi.find_by_id(params[:id])
+      }.to_s + " ms"
     elsif params[:ids].present?
       response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      response = Doi.query(params[:query],
-                          state: params[:state],
-                          created: params[:created],
-                          registered: params[:registered],
-                          provider_id: params[:provider_id],
-                          client_id: params[:client_id],
-                          prefix: params[:prefix],
-                          person_id: params[:person_id],
-                          resource_type_id: params[:resource_type_id],
-                          schema_version: params[:schema_version],
-                          subject: params[:subject],
-                          link_check_status: params[:link_check_status],
-                          link_check_has_schema_org: params[:link_check_has_schema_org],
-                          link_check_body_has_pid: params[:link_check_body_has_pid],
-                          link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
-                          link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
-                          link_check_found_citation_doi: params[:link_check_found_citation_doi],
-                          link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
-                          sample_group: sample_group_field,
-                          sample_size: params[:sample],
-                          source: params[:source],
-                          page: page,
-                          sort: sort,
-                          random: params[:random])
+      logger.info "[Benchmark] query " + Benchmark.ms {
+        response = Doi.query(params[:query],
+                            state: params[:state],
+                            created: params[:created],
+                            registered: params[:registered],
+                            provider_id: params[:provider_id],
+                            client_id: params[:client_id],
+                            prefix: params[:prefix],
+                            person_id: params[:person_id],
+                            resource_type_id: params[:resource_type_id],
+                            schema_version: params[:schema_version],
+                            subject: params[:subject],
+                            link_check_status: params[:link_check_status],
+                            link_check_has_schema_org: params[:link_check_has_schema_org],
+                            link_check_body_has_pid: params[:link_check_body_has_pid],
+                            link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
+                            link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
+                            link_check_found_citation_doi: params[:link_check_found_citation_doi],
+                            link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
+                            sample_group: sample_group_field,
+                            sample_size: params[:sample],
+                            source: params[:source],
+                            page: page,
+                            sort: sort,
+                            random: params[:random])
+        }.to_s + " ms"
     end
 
     begin
@@ -83,28 +90,48 @@ class DoisController < ApplicationController
         total = sample_dois.length
         total_pages = 1
       else
-        results = response.results.results
+        logger.info "[Benchmark] results " + Benchmark.ms {
+          results = response.results.results
+        }.to_s + " ms"
         total = response.results.total
         total_for_pages = page[:cursor].present? ? total.to_f : [total.to_f, 10000].min
         total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
       end
 
-      states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
-      resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
-      created = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
-      registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
-      providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
-      clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
-      prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
-      schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
-      sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
-      link_checks_status = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_status.buckets) : nil
-      links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_has_schema_org.buckets) : nil
-      link_checks_schema_org_id = total > 0 ? response.response.aggregations.link_checks_schema_org_id.value : nil
-      link_checks_dc_identifier = total > 0 ? response.response.aggregations.link_checks_dc_identifier.value : nil
-      link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
-      links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
-      subjects = total > 0 ? facet_by_key(response.response.aggregations.subjects.buckets) : nil
+      states = nil
+      resource_types = nil
+      created = nil
+      registered = nil
+      providers = nil
+      clients = nil
+      prefixes = nil
+      schema_versions = nil
+      sources = nil
+      link_checks_status = nil
+      links_with_schema_org = nil
+      link_checks_schema_org_id = nil
+      link_checks_dc_identifier = nil
+      link_checks_citation_doi = nil
+      links_checked = nil
+      subjects = nil
+      logger.info "[Benchmark] aggregations " + Benchmark.ms {
+        states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
+        resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
+        created = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
+        registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
+        providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+        clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
+        prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
+        schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
+        sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
+        link_checks_status = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_status.buckets) : nil
+        links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_has_schema_org.buckets) : nil
+        link_checks_schema_org_id = total > 0 ? response.response.aggregations.link_checks_schema_org_id.value : nil
+        link_checks_dc_identifier = total > 0 ? response.response.aggregations.link_checks_dc_identifier.value : nil
+        link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
+        links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
+        subjects = total > 0 ? facet_by_key(response.response.aggregations.subjects.buckets) : nil
+      }.to_s + " ms"
 
       respond_to do |format|
         format.json do
@@ -148,7 +175,9 @@ class DoisController < ApplicationController
             :current_ability => current_ability,
           }
 
-          render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
+          logger.info "[Benchmark] render " + Benchmark.ms {
+            render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
+          }.to_s + " ms"
         end
         format.citation do
           # fetch formatted citations
@@ -215,7 +244,6 @@ class DoisController < ApplicationController
     # logger.info safe_params.inspect
 
     @doi = Doi.new(safe_params)
-    puts @doi.inspect
 
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
