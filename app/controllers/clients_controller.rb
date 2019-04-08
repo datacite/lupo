@@ -1,3 +1,5 @@
+require 'benchmark'
+
 class ClientsController < ApplicationController
   include Countable
 

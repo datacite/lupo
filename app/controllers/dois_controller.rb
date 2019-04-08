@@ -37,6 +37,8 @@ class DoisController < ApplicationController
       else nil
     end
 
+    response = nil
+
     if params[:id].present?
       logger.info "[Benchmark] find_by_id " + Benchmark.ms {
         response = Doi.find_by_id(params[:id])
@@ -90,6 +92,7 @@ class DoisController < ApplicationController
         total = sample_dois.length
         total_pages = 1
       else
+        results = nil
         logger.info "[Benchmark] results " + Benchmark.ms {
           results = response.results.results
         }.to_s + " ms"

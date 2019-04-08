@@ -1,5 +1,6 @@
+require 'benchmark'
+
 class PrefixesController < ApplicationController
- 
   before_action :set_prefix, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
@@ -137,14 +138,22 @@ class PrefixesController < ApplicationController
   end
 
   def totals
+    logger = Logger.new(STDOUT)
+
     page = { size: 0, number: 1}
-    response = Doi.query("", client_id: params[:client_id],page: page, totals_agg: true)
+    response = nil
+    logger.info "[Benchmark] prefixes totals " + Benchmark.ms {
+      response = Doi.query("", client_id: params[:client_id],page: page, totals_agg: true)
+    }.to_s + " ms"
     total = response.results.total
 
-    registrant = total > 0 ? prefixes_totals(response.response.aggregations.prefixes_totals.buckets) : nil
-
-    render json: registrant, status: :ok  
-
+    registrant = nil
+    logger.info "[Benchmark] prefixes prefixes_totals " + Benchmark.ms {
+      registrant = total > 0 ? prefixes_totals(response.response.aggregations.prefixes_totals.buckets) : nil
+    }.to_s + " ms"
+    logger.info "[Benchmark] clients render " + Benchmark.ms {
+      render json: registrant, status: :ok  
+    }.to_s + " ms"
   end
 
   def destroy

@@ -1,3 +1,5 @@
+require 'benchmark'
+
 class ProvidersController < ApplicationController
   include Countable
 
