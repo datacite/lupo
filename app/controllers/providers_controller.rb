@@ -35,7 +35,7 @@ class ProvidersController < ApplicationController
       organization_types = total > 0 ? facet_by_key(response.response.aggregations.organization_types.buckets) : nil
       focus_areas = total > 0 ? facet_by_key(response.response.aggregations.focus_areas.buckets) : nil
 
-      @providers = response.results.results
+      @providers = response.results
 
       options = {}
       options[:meta] = {

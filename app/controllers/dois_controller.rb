@@ -94,7 +94,7 @@ class DoisController < ApplicationController
       else
         results = nil
         logger.info "[Benchmark] results " + Benchmark.ms {
-          results = response.results.results
+          results = response.results
         }.to_s + " ms"
         total = response.results.total
         total_for_pages = page[:cursor].present? ? total.to_f : [total.to_f, 10000].min

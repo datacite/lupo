@@ -35,7 +35,7 @@ class ClientsController < ApplicationController
       providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
       software = total > 0 ? facet_by_software(response.response.aggregations.software.buckets) : nil
 
-      @clients = response.results.results
+      @clients = response.results
 
       options = {}
       options[:meta] = {

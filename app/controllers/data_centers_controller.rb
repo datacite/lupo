@@ -28,7 +28,7 @@ class DataCentersController < ApplicationController
       years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
       providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
 
-      @clients = response.results.results
+      @clients = response.results
 
       options = {}
       options[:meta] = {

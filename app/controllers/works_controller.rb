@@ -58,7 +58,7 @@ class WorksController < ApplicationController
       providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
       clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
 
-      @dois = response.results.results
+      @dois = response.results
 
       options = {}
       options[:meta] = {
@@ -100,7 +100,7 @@ class WorksController < ApplicationController
       if sample_dois
         @dois = sample_dois
       else
-        @dois = response.results.results
+        @dois = response.results
       end
       render json: WorkSerializer.new(@dois, options).serialized_json, status: :ok
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception

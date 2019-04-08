@@ -27,7 +27,7 @@ class ActivitiesController < ApplicationController
       total_for_pages = page[:cursor].present? ? total.to_f : [total.to_f, 10000].min
       total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
       
-      @activities = response.results.results
+      @activities = response.results
 
       options = {}
       options[:meta] = {
