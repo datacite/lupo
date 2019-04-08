@@ -16,6 +16,8 @@ servers:
   - url: 'https://api.datacite.org'
     description: Production server
 tags:
+  - name: activities
+    description: Activities
   - name: client-prefixes
     description: Client Prefixes
   - name: clients
@@ -35,6 +37,77 @@ tags:
   - name: reports
     description: Reports
 paths:
+  /activities:
+    get:
+      tags:
+        - activities
+      summary: Get a JSON API result of activities.
+      security: []
+      parameters:
+        - in: query
+          name: id
+          description: Find activity by an id
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: ids
+          description: Find activities by array of activity ids
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - in: query
+          name: query
+          description: Search the index by keyword or query string syntax.
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: 'page[number]'
+          description: Pagination - page number
+          required: false
+          schema:
+            type: number
+        - in: query
+          name: 'page[size]'
+          required: false
+          description: Pagination - page size
+          schema:
+            type: number
+        - in: query
+          name: 'page[cursor]'
+          required: false
+          description: 'Pagination - page cursor (used instead of page[number])'
+          schema:
+            type: number
+      responses:
+        '200':
+          description: A JSON API result of activities.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Activity'
+  '/activities/{id}':
+    parameters:
+      - name: id
+        in: path
+        description: Activity ID
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - activities
+      summary: Get a JSON API result of a specific activity
+      responses:
+        '200':
+          description: A JSON object.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Activity'
   /client-prefixes:
     get:
       tags:
@@ -356,7 +429,7 @@ paths:
     get:
       tags:
         - dois
-        - activity
+        - activities
       summary: Returns actiity for a specific DOI
       security: []
       responses:
@@ -707,77 +780,6 @@ paths:
       responses:
         '204':
           description: No content
-  /activities:
-    get:
-      tags:
-        - activity
-      summary: Get a JSON API result of activities.
-      security: []
-      parameters:
-        - in: query
-          name: id
-          description: Find activity by an id
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: ids
-          description: Find activities by array of activity ids
-          required: false
-          schema:
-            type: array
-            items:
-              type: string
-        - in: query
-          name: query
-          description: Search the index by keyword or query string syntax.
-          required: false
-          schema:
-            type: string
-        - in: query
-          name: 'page[number]'
-          description: Pagination - page number
-          required: false
-          schema:
-            type: number
-        - in: query
-          name: 'page[size]'
-          required: false
-          description: Pagination - page size
-          schema:
-            type: number
-        - in: query
-          name: 'page[cursor]'
-          required: false
-          description: 'Pagination - page cursor (used instead of page[number])'
-          schema:
-            type: number
-      responses:
-        '200':
-          description: A JSON API result of activities.
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/Activity'
-  '/activities/{id}':
-    parameters:
-      - name: id
-        in: path
-        description: Activity ID
-        required: true
-        schema:
-          type: string
-    get:
-      tags:
-        - activity
-      summary: Get a JSON API result of a specific activity
-      responses:
-        '200':
-          description: A JSON object.
-          content:
-            application/vnd.api+json:
-              schema:
-                $ref: '#/components/schemas/Activity'
   /reports:
     get:
       tags:
