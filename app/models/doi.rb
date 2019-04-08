@@ -711,6 +711,32 @@ class Doi < ActiveRecord::Base
     media.pluck(:id).map { |m| Base32::URL.encode(m, split: 4, length: 16) }.compact
   end
 
+
+  def self.normalize_doi(doi)
+    doi = Array(/\A(?:(http|https):\/(\/)?(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match(doi)).last
+    doi = doi.delete("\u200B").downcase if doi.present?
+    "https://doi.org/#{doi}" if doi.present?
+  end
+
+  def self.find_by_ids(ids, options={})
+    dois = ids.split(",").map(&:upcase)
+  
+   
+    puts dois
+
+    __elasticsearch__.search({
+      from: 0,
+      size: 1000,
+      sort: [{ created: { order: 'asc' }}],
+      query: {
+        terms: {
+          doi: dois
+        }
+      },
+      aggregations: query_aggregations
+    })
+  end
+
   def xml_encoded
     Base64.strict_encode64(xml) if xml.present?
   rescue ArgumentError => exception
