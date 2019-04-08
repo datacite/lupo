@@ -430,7 +430,7 @@ paths:
       tags:
         - dois
         - activities
-      summary: Returns actiity for a specific DOI
+      summary: Returns activity for a specific DOI
       security: []
       responses:
         '200':
