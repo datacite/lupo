@@ -9,7 +9,8 @@ class ActivitySerializer
   belongs_to :doi, record_type: :dois
 
   attribute "prov:wasDerivedFrom" do |object|
-    object.uid
+    url = Rails.env.production? ? "https://api.datacite.org" : "https://api.test.datacite.org"
+    url + "/dois" + object.uid
   end
 
   attribute "prov:wasAttributedTo" do |object|
