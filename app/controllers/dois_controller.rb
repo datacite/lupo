@@ -486,6 +486,7 @@ class DoisController < ApplicationController
         ]
       },
       :contentUrl,
+      { contentUrl: [] },
       :sizes,
       { sizes: [] },
       :formats,
@@ -584,7 +585,7 @@ class DoisController < ApplicationController
       :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage,
       :created, :registered, :updated, :lastLandingPage, :version,
       :lastLandingPageStatus, :lastLandingPageStatusCheck,
-      :lastLandingPageStatusResult, :lastLandingPageContentType)
+      :lastLandingPageStatusResult, :lastLandingPageContentType, :contentUrl)
   end
 
   def set_raven_context

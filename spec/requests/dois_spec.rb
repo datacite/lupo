@@ -1962,6 +1962,26 @@ describe "dois", type: :request do
       end
     end
 
+    context 'update contentUrl' do
+      let(:content_url) { ["s3://cgp-commons-public/topmed_open_access/197bc047-e917-55ed-852d-d563cdbc50e4/NWD165827.recab.cram", "gs://topmed-irc-share/public/NWD165827.recab.cram"] }
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "contentUrl" => content_url
+            }
+          }
+        }
+      end
+
+      before { patch "/dois/#{doi.doi}", params: update_attributes.to_json, headers: headers } 
+
+      it 'updates the Doi' do
+        expect(json.dig('data', 'attributes', 'contentUrl')).to eq(content_url)
+      end
+    end
+
     context 'landing page' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
