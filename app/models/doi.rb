@@ -332,22 +332,18 @@ class Doi < ActiveRecord::Base
 
   def self.totals_aggregations
     {
-      providers_totals: { terms: { field: 'provider_id', size: ::Provider.count, min_doc_count: 1 }, aggs: sub_aggregations},
-      clients_totals: { terms: { field: 'client_id', size: ::Client.count, min_doc_count: 1 }, aggs: sub_aggregations },
+      providers_totals: { terms: { field: 'provider_id', size: ::Provider.__elasticsearch__.count, min_doc_count: 1 }, aggs: sub_aggregations},
+      clients_totals: { terms: { field: 'client_id', size: ::Client.__elasticsearch__.count, min_doc_count: 1 }, aggs: sub_aggregations },
       prefixes_totals: { terms: { field: 'prefix', size: ::Prefix.count, min_doc_count: 1 }, aggs: sub_aggregations },
     }
   end
 
   def self.sub_aggregations
-    beginning_of_year  = DateTime.current.beginning_of_year.strftime('%Y-%m-%d')
-    beginning_of_last_year  = DateTime.current.beginning_of_year.last_year.strftime('%Y-%m-%d')
-    beginning_of_month = DateTime.current.beginning_of_month.strftime('%Y-%m-%d')
-
     {
-    states: { terms: { field: 'aasm_state', size: 4, min_doc_count: 1 } },
-    this_month:{ date_range:{ field: 'created', time_zone: "CET", ranges: {from: beginning_of_month, to: "now/d"} } },
-    this_year: { date_range: { field: 'created', time_zone: "CET", ranges: {from: beginning_of_year, to: "now/d"} } },
-    last_year: { date_range: { field: 'created', time_zone: "CET", ranges: {from: beginning_of_last_year, to: beginning_of_year} } }
+      states: { terms: { field: 'aasm_state', size: 4, min_doc_count: 1 } },
+      this_month: { date_range: { field: 'created', ranges: { from: "now/M", to: "now/d" } } },
+      this_year: { date_range: { field: 'created', ranges: { from: "now/y", to: "now/d" } } },
+      last_year: { date_range: { field: 'created', ranges: { from: "now-1y/y", to: "now/y-1d" } } }
     }
   end
 
