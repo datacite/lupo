@@ -23,6 +23,8 @@ class DoisController < ApplicationController
           when "-created" then { created: { order: 'desc' }}
           when "updated" then { updated: { order: 'asc' }}
           when "-updated" then { updated: { order: 'desc' }}
+          when "published" then { published: { order: 'asc' }}
+          when "-published" then { published: { order: 'desc' }}
           when "relevance" then { "_score": { "order": "desc" }}
           else { updated: { order: 'desc' }}
           end

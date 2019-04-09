@@ -245,6 +245,7 @@ class Doi < ActiveRecord::Base
     }
     indexes :cache_key,                      type: :keyword
     indexes :registered,                     type: :date, ignore_malformed: true
+    indexes :published,                      type: :date, ignore_malformed: true
     indexes :created,                        type: :date, ignore_malformed: true
     indexes :updated,                        type: :date, ignore_malformed: true
 
@@ -300,6 +301,7 @@ class Doi < ActiveRecord::Base
       "registered" => registered,
       "created" => created,
       "updated" => updated,
+      "published" => published,
       "client" => client.as_indexed_json,
       "provider" => provider.as_indexed_json,
       "resource_type" => resource_type.try(:as_indexed_json),
@@ -848,6 +850,10 @@ class Doi < ActiveRecord::Base
 
   def date_updated
     updated
+  end
+
+  def published
+    get_date(dates, "issued") || publication_year.to_s
   end
 
   def cache_key
