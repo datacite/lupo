@@ -430,7 +430,7 @@ class Doi < ActiveRecord::Base
         break unless response.results.results.length > 0
 
         logger.info "[Metadata Missing Fix] Attempting fix for #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
-        cursor = response.results.results.last[:sort].first.to_i
+        cursor = response.results.to_a.last[:sort].first.to_i
 
         response.results.results.each do |d|
           # Import One as a background job
@@ -476,7 +476,7 @@ class Doi < ActiveRecord::Base
         break unless response.results.results.length > 0
 
         logger.info "[MySQL] Importing metadata for #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
-        cursor = response.results.results.last[:sort].first.to_i
+        cursor = response.results.to_a.last[:sort].first.to_i
 
         response.records.each do |doi|
           begin
@@ -533,7 +533,7 @@ class Doi < ActiveRecord::Base
         break unless response.results.results.length > 0
 
         logger.info "[MySQL] Importing missing metadata for #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
-        cursor = response.results.results.last[:sort].first.to_i
+        cursor = response.results.to_a.last[:sort].first.to_i
 
         response.records.each do |doi|
           begin
@@ -888,7 +888,7 @@ class Doi < ActiveRecord::Base
         break unless response.results.results.length > 0
 
         logger.info "[Handle] Register #{response.results.results.length} DOIs in the handle system starting with _id #{cursor + 1}."
-        cursor = response.results.results.last[:sort].first.to_i
+        cursor = response.results.to_a.last[:sort].first.to_i
 
         response.results.results.each do |d|
           HandleJob.perform_later(d.doi)
@@ -912,7 +912,7 @@ class Doi < ActiveRecord::Base
         break unless response.results.results.length > 0
 
         logger.info "[Handle] Update URL for #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
-        cursor = response.results.results.last[:sort].first.to_i
+        cursor = response.results.to_a.last[:sort].first.to_i
 
         response.results.results.each do |d|
           UrlJob.perform_later(d.doi)
@@ -936,7 +936,7 @@ class Doi < ActiveRecord::Base
         break unless response.results.results.length > 0
 
         logger.info "[MySQL] Set minted for #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
-        cursor = response.results.results.last[:sort].first.to_i
+        cursor = response.results.to_a.last[:sort].first.to_i
 
         response.results.results.each do |d|
           UrlJob.perform_later(d.doi)
@@ -973,7 +973,7 @@ class Doi < ActiveRecord::Base
         break unless response.results.results.length > 0
 
         logger.info "[Transfer] Transferring #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
-        cursor = response.results.results.last[:sort].first.to_i
+        cursor = response.results.to_a.last[:sort].first.to_i
 
         response.results.results.each do |d|
           TransferJob.perform_later(d.doi, target_id: options[:target_id])

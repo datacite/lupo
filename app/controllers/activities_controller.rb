@@ -40,7 +40,7 @@ class ActivitiesController < ApplicationController
         self: request.original_url,
         next: @activities.size < page[:size] ? nil : request.base_url + "/activities?" + {
           query: params[:query],
-          "page[cursor]" => page[:cursor].present? ? Array.wrap(@activities.last[:sort]).first : nil,
+          "page[cursor]" => page[:cursor].present? ? Array.wrap(@activities.to_a.last[:sort]).first : nil,
           "page[number]" => page[:cursor].blank? && page[:number].present? ? page[:number] + 1 : nil,
           "page[size]" => page[:size],
           sort: params[:sort] }.compact.to_query

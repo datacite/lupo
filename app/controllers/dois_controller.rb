@@ -163,7 +163,7 @@ class DoisController < ApplicationController
               query: params[:query],
               "provider-id" => params[:provider_id],
               "client-id" => params[:client_id],
-              "page[cursor]" => page[:cursor].present? ? Array.wrap(@dois.last[:sort]).first : nil,
+              "page[cursor]" => page[:cursor].present? ? Array.wrap(@dois.to_a.last[:sort]).first : nil,
               "page[number]" => page[:cursor].blank? && page[:number].present? ? page[:number] + 1 : nil,
               "page[size]" => page[:size] }.compact.to_query
             }.compact
