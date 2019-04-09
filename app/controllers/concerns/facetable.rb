@@ -98,10 +98,7 @@ module Facetable
     end
 
     def providers_totals(arr)
-      # generate hash with id and name for each provider in facet
-
-      ids = arr.map { |hsh| hsh["key"] }.join(",")
-      providers = Provider.find_by_ids(ids, size: 1000).records.pluck(:symbol, :name).to_h
+      providers = Provider.all.pluck(:symbol, :name).to_h
 
       arr.map do |hsh|
         { "id" => hsh["key"],
@@ -117,16 +114,15 @@ module Facetable
     end
 
     def prefixes_totals(arr)
-      # generate hash with id and name for each provider in facet
-
       arr.map do |hsh|
         { "id" => hsh["key"],
           "title" => hsh["key"],
           "count" => hsh["doc_count"],
           "temporal" => {
-          "this_month" => facet_anual(hsh.this_month.buckets),
-          "this_year" => facet_anual(hsh.this_year.buckets),
-          "last_year" => facet_anual(hsh.last_year.buckets)},
+            "this_month" => facet_anual(hsh.this_month.buckets),
+            "this_year" => facet_anual(hsh.this_year.buckets),
+            "last_year" => facet_anual(hsh.last_year.buckets)
+          },
           "states"    => facet_by_key(hsh.states.buckets)
         }
       end
@@ -136,15 +132,9 @@ module Facetable
     def clients_totals(arr)
       logger = Logger.new(STDOUT)
 
-      # generate hash with id and name for each client in facet
-      ids = nil
-      logger.info "[Benchmark] clients_totals ids " + Benchmark.ms {
-        ids = arr.map { |hsh| hsh["key"] }.join(",")
-      }.to_s + " ms"
-
       clients = nil
       logger.info "[Benchmark] clients_totals find_by_ids " + Benchmark.ms {
-        clients = Client.find_by_ids(ids, size: 2000).records.pluck(:symbol, :name).to_h
+        clients = Client.all.pluck(:symbol, :name).to_h
       }.to_s + " ms"
 
       logger.info "[Benchmark] clients_totals map " + Benchmark.ms {

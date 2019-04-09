@@ -46,32 +46,30 @@ class DoisController < ApplicationController
     elsif params[:ids].present?
       response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      logger.info "[Benchmark] query " + Benchmark.ms {
-        response = Doi.query(params[:query],
-                            state: params[:state],
-                            created: params[:created],
-                            registered: params[:registered],
-                            provider_id: params[:provider_id],
-                            client_id: params[:client_id],
-                            prefix: params[:prefix],
-                            person_id: params[:person_id],
-                            resource_type_id: params[:resource_type_id],
-                            schema_version: params[:schema_version],
-                            subject: params[:subject],
-                            link_check_status: params[:link_check_status],
-                            link_check_has_schema_org: params[:link_check_has_schema_org],
-                            link_check_body_has_pid: params[:link_check_body_has_pid],
-                            link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
-                            link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
-                            link_check_found_citation_doi: params[:link_check_found_citation_doi],
-                            link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
-                            sample_group: sample_group_field,
-                            sample_size: params[:sample],
-                            source: params[:source],
-                            page: page,
-                            sort: sort,
-                            random: params[:random])
-        }.to_s + " ms"
+      response = Doi.query(params[:query],
+                          state: params[:state],
+                          created: params[:created],
+                          registered: params[:registered],
+                          provider_id: params[:provider_id],
+                          client_id: params[:client_id],
+                          prefix: params[:prefix],
+                          person_id: params[:person_id],
+                          resource_type_id: params[:resource_type_id],
+                          schema_version: params[:schema_version],
+                          subject: params[:subject],
+                          link_check_status: params[:link_check_status],
+                          link_check_has_schema_org: params[:link_check_has_schema_org],
+                          link_check_body_has_pid: params[:link_check_body_has_pid],
+                          link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
+                          link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
+                          link_check_found_citation_doi: params[:link_check_found_citation_doi],
+                          link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
+                          sample_group: sample_group_field,
+                          sample_size: params[:sample],
+                          source: params[:source],
+                          page: page,
+                          sort: sort,
+                          random: params[:random])
     end
 
     begin
