@@ -1939,6 +1939,29 @@ describe "dois", type: :request do
       end
     end
 
+    context 'update subjects' do
+      let(:subjects) { [{ "subject" => "80505 Web Technologies (excl. Web Search)",
+        "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
+        "subjectScheme" => "FOR",
+        "lang" => "en" }] }
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "subjects" => subjects
+            }
+          }
+        }
+      end
+
+      before { patch "/dois/#{doi.doi}", params: update_attributes.to_json, headers: headers } 
+
+      it 'updates the Doi' do
+        expect(json.dig('data', 'attributes', 'subjects')).to eq(subjects)
+      end
+    end
+
     context 'landing page' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }

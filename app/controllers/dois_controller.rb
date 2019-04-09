@@ -464,6 +464,8 @@ class DoisController < ApplicationController
       { types: [:resourceTypeGeneral, :resourceType, :schemaOrg, :bibtex, :citeproc, :ris] },
       :dates,
       { dates: [:date, :dateType, :dateInformation] },
+      :subjects,
+      { subjects: [:subject, :subjectScheme, :schemeUri, :valueUri, :lang] },
       :landingPage,
       {
         landingPage: [
