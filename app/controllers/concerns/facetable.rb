@@ -132,26 +132,20 @@ module Facetable
     def clients_totals(arr)
       logger = Logger.new(STDOUT)
 
-      clients = nil
-      logger.info "[Benchmark] clients_totals find_by_ids " + Benchmark.ms {
-        clients = Client.all.pluck(:symbol, :name).to_h
-      }.to_s + " ms"
+      clients = Client.all.pluck(:symbol, :name).to_h
 
-      logger.info "[Benchmark] clients_totals map " + Benchmark.ms {
-        arr = arr.map do |hsh|
-          { "id" => hsh["key"],
-            "title" => clients[hsh["key"].upcase],
-            "count" => hsh["doc_count"],
-            "temporal" => {
-              "this_month" => facet_anual(hsh.this_month.buckets),
-              "this_year" => facet_anual(hsh.this_year.buckets),
-              "last_year" => facet_anual(hsh.last_year.buckets)
-            },
-            "states"    => facet_by_key(hsh.states.buckets)
-          }
-        end
-      }.to_s + " ms"
-      arr
+      arr = arr.map do |hsh|
+        { "id" => hsh["key"],
+          "title" => clients[hsh["key"].upcase],
+          "count" => hsh["doc_count"],
+          "temporal" => {
+            "this_month" => facet_anual(hsh.this_month.buckets),
+            "this_year" => facet_anual(hsh.this_year.buckets),
+            "last_year" => facet_anual(hsh.last_year.buckets)
+          },
+          "states"    => facet_by_key(hsh.states.buckets)
+        }
+      end
     end
 
     def facet_by_provider_ids(arr)
