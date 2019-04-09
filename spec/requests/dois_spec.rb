@@ -1919,6 +1919,26 @@ describe "dois", type: :request do
       # end
     end
 
+    context 'update rightsList' do
+      let(:rights_list) { [{ "rights" => "Creative Commons Attribution 3.0", "rightsUri" => "http://creativecommons.org/licenses/by/3.0/", "lang" => "en"}] }
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "rightsList" => rights_list
+            }
+          }
+        }
+      end
+
+      before { patch "/dois/#{doi.doi}", params: update_attributes.to_json, headers: headers } 
+
+      it 'updates the Doi' do
+        expect(json.dig('data', 'attributes', 'rightsList')).to eq(rights_list)
+      end
+    end
+
     context 'landing page' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
