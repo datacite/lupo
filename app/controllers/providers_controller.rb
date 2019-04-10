@@ -146,8 +146,8 @@ class ProvidersController < ApplicationController
   # a provider with clients or prefixes can't be deleted
   def destroy
     logger = Logger.new(STDOUT)
-    if @provider.client_count.present?
-      message = "Can't delete provider that has clients."
+    if @provider.active_client_count > 0
+      message = "Can't delete provider that has active clients."
       status = 400
       logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status

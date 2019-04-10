@@ -27,6 +27,14 @@ module Countable
       response.results.total > 0 ? facet_by_cumulative_year(response.response.aggregations.cumulative_years.buckets) : []
     end
 
+    # count active clients by provider. Provider can only be deleted when there are no active clients.
+    def active_client_count(provider_id: nil)
+      return 0 unless provider_id.present?
+
+      response = Client.query(nil, provider_id: provider_id, page: { number: 1, size: 0 })
+      response.results.total
+    end
+
     # show provider count for admin
     # count until the previous year if provider has been deleted
     def provider_count(provider_id: nil)
