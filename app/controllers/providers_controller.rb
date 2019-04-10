@@ -143,10 +143,10 @@ class ProvidersController < ApplicationController
 
 
   # don't delete, but set deleted_at timestamp
-  # a provider with clients or prefixes can't be deleted
+  # a provider with active clients or with prefixes can't be deleted
   def destroy
     logger = Logger.new(STDOUT)
-    if @provider.active_client_count > 0
+    if active_client_count(provider_id: @provider.symbol) > 0
       message = "Can't delete provider that has active clients."
       status = 400
       logger.warn message
