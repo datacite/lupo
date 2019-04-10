@@ -1982,6 +1982,84 @@ describe "dois", type: :request do
       end
     end
 
+    context 'remove series_information' do
+      let(:xml) { File.read(file_fixture('datacite_series_information.xml')) }
+      let(:descriptions) { [{ "description" => "Axel is a minimalistic cliff climbing rover that can explore
+        extreme terrains from the moon, Mars, and beyond. To
+        increase the technology readiness and scientific usability
+        of Axel, a sampling system needs to be designed and
+        build for sampling different rock and soils. To decrease
+        the amount of force required to sample clumpy and
+        possibly icy science targets, a percussive scoop could be
+        used. A percussive scoop uses repeated impact force to
+        dig into samples and a rotary actuation to collect the
+        samples. Percussive scooping can reduce the amount of downward force required by about two to four
+        times depending on the cohesion of the soil and the depth of the sampling. The goal for this project is to
+        build a working prototype of a percussive scoop for Axel.", "descriptionType" => "Abstract" }]}
+      let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", xml: xml, event: "publish") }
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "descriptions" => descriptions
+            }
+          }
+        }
+      end
+
+      before { patch "/dois/#{doi.doi}", params: update_attributes.to_json, headers: headers } 
+
+      it 'updates the Doi' do
+        expect(json.dig('data', 'attributes', 'descriptions')).to eq(descriptions)
+        expect(json.dig('data', 'attributes', 'container')).to be nil
+      end
+    end
+
+    context 'remove series_information via xml' do
+      let(:xml) { Base64.strict_encode64(File.read(file_fixture('datacite_series_information.xml'))) }
+      let(:xml_new) { Base64.strict_encode64(File.read(file_fixture('datacite_no_series_information.xml'))) }
+      let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "xml" => xml
+            }
+          }
+        }
+      end
+      let(:update_attributes_again) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "xml" => xml_new
+            }
+          }
+        }
+      end
+
+      before { get "/dois/#{doi.doi}", headers: headers } 
+
+      it 'updates the Doi' do
+        expect(json.dig('data', 'attributes', 'descriptions')).to eq([{"description"=>"Data from: A new malaria agent in African hominids."}])
+        expect(json.dig('data', 'attributes', 'container')).to be nil
+
+        patch "/dois/#{doi.doi}", params: update_attributes.to_json, headers: headers
+        
+        expect(json.dig('data', 'attributes', 'descriptions').size).to eq(2)
+        expect(json.dig('data', 'attributes', 'descriptions').last).to eq("description"=>"Keck Institute for Space Studies", "descriptionType"=>"SeriesInformation")
+        expect(json.dig('data', 'attributes', 'container')).to eq("title"=>"Keck Institute for Space Studies", "type"=>"Series")
+
+        patch "/dois/#{doi.doi}", params: update_attributes_again.to_json, headers: headers
+        
+        expect(json.dig('data', 'attributes', 'descriptions').size).to eq(1)
+        expect(json.dig('data', 'attributes', 'container')).to be_empty
+      end
+    end
+
     context 'landing page' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }

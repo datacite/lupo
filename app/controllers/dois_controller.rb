@@ -569,8 +569,9 @@ class DoisController < ApplicationController
 
     # merge attributes from xml into regular attributes
     # make sure we don't accidentally set any attributes to nil
+    # set container even if empty, as the content is read-only and generated from other properties
     read_attrs_keys.each do |attr|
-      p.merge!(attr.to_s.underscore => p[attr].presence || meta[attr.to_s.underscore]) if p.has_key?(attr) || meta[attr.to_s.underscore].present?
+      p.merge!(attr.to_s.underscore => p[attr].presence || meta[attr.to_s.underscore]) if p.has_key?(attr) || meta[attr.to_s.underscore].present? || attr == :container
     end
     p.merge!(version_info: p[:version] || meta["version_info"]) if p.has_key?(:version_info) || meta["version_info"].present?
 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resource
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://datacite.org/schema/kernel-4" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4/metadata.xsd">
+    <identifier identifierType="DOI">10.26206/T76E-RE09</identifier>
+    <creators>
+        <creator>
+            <creatorName>Hassenruck-Gudipati, Hima</creatorName>
+            <givenName>Hima</givenName>
+            <familyName>Hassenruck-Gudipati</familyName>
+        </creator>
+    </creators>
+    <titles>
+        <title>Percussive Scoop Sampling in Extreme Terrain</title>
+    </titles>
+    <publisher>Keck Institute for Space Studies</publisher>
+    <publicationYear>2016</publicationYear>
+    <dates>
+        <date dateType="Available">2016-03-09 20:28:15</date>
+    </dates>
+    <language>English</language>
+    <resourceType resourceTypeGeneral="Text">Discussion Paper</resourceType>
+    <rightsList>
+        <rights>No commercial reproduction, distribution, display or performance rights in this work are provided.</rights>
+    </rightsList>
+    <descriptions>
+        <description descriptionType="Abstract">Axel is a minimalistic cliff climbing rover that can explore
+extreme terrains from the moon, Mars, and beyond. To
+increase the technology readiness and scientific usability
+of Axel, a sampling system needs to be designed and
+build for sampling different rock and soils. To decrease
+the amount of force required to sample clumpy and
+possibly icy science targets, a percussive scoop could be
+used. A percussive scoop uses repeated impact force to
+dig into samples and a rotary actuation to collect the
+samples. Percussive scooping can reduce the amount of downward force required by about two to four
+times depending on the cohesion of the soil and the depth of the sampling. The goal for this project is to
+build a working prototype of a percussive scoop for Axel.</description>
+    </descriptions>
+    <fundingReferences>
+        <fundingReference>
+            <funderName>Keck Institute for Space Studies (KISS)</funderName>
+        </fundingReference>
+    </fundingReferences>
+</resource>
