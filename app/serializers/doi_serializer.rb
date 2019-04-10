@@ -28,7 +28,7 @@ class DoiSerializer
   end
 
   attribute :published do |object|
-    object.respond_to?(:published) ? :published : nil
+    object.respond_to?(:published) ? object.published : nil
   end
 
   attribute :is_active do |object|
