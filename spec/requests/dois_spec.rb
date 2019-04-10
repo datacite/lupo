@@ -1982,6 +1982,79 @@ describe "dois", type: :request do
       end
     end
 
+    context 'update multiple affiliations' do
+      let(:creators) { [{ "name"=>"Ollomi, Benjamin", "affiliation" => ["Cambridge University", "EMBL-EBI"] }] }
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "creators" => creators
+            }
+          }
+        }
+      end
+
+      before { patch "/dois/#{doi.doi}", params: update_attributes.to_json, headers: headers } 
+
+      it 'updates the Doi' do
+        expect(json.dig('data', 'attributes', 'creators')).to eq(creators)
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
+        expect(doc.at_css("creators", "creator").to_s + "\n").to eq(
+          <<~HEREDOC
+            <creators>
+              <creator>
+                <creatorName>Ollomi, Benjamin</creatorName>
+                <affiliation>Cambridge University</affiliation>
+                <affiliation>EMBL-EBI</affiliation>
+              </creator>
+            </creators>
+          HEREDOC
+        )
+      end
+    end
+
+    context 'update geoLocationPoint' do
+      let(:geo_locations) { [
+        {
+          "geoLocationPoint" => {
+            "pointLatitude" => "49.0850736",
+            "pointLongitude" => "-123.3300992"
+          }
+        }] }
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "geoLocations" => geo_locations
+            }
+          }
+        }
+      end
+
+      before { patch "/dois/#{doi.doi}", params: update_attributes.to_json, headers: headers } 
+
+      it 'updates the Doi' do
+        expect(json.dig('data', 'attributes', 'geoLocations')).to eq(geo_locations)
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
+        expect(doc.at_css("geoLocations", "geoLocation").to_s + "\n").to eq(
+          <<~HEREDOC
+            <geoLocations>
+              <geoLocation>
+                <geoLocationPoint>
+                  <pointLatitude>49.0850736</pointLatitude>
+                  <pointLongitude>-123.3300992</pointLongitude>
+                </geoLocationPoint>
+              </geoLocation>
+            </geoLocations>
+          HEREDOC
+        )
+      end
+    end
+
     context 'remove series_information' do
       let(:xml) { File.read(file_fixture('datacite_series_information.xml')) }
       let(:descriptions) { [{ "description" => "Axel is a minimalistic cliff climbing rover that can explore
