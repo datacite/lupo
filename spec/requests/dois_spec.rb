@@ -2129,7 +2129,7 @@ describe "dois", type: :request do
         patch "/dois/#{doi.doi}", params: update_attributes_again.to_json, headers: headers
         
         expect(json.dig('data', 'attributes', 'descriptions').size).to eq(1)
-        expect(json.dig('data', 'attributes', 'container')).to be_empty
+        expect(json.dig('data', 'attributes', 'container')).to be_nil
       end
     end
 
