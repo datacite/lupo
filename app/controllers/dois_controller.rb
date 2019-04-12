@@ -135,7 +135,6 @@ class DoisController < ApplicationController
 
       respond_to do |format|
         format.json do
-          @dois = results
           options = {}
           options[:meta] = {
             total: total,
@@ -161,11 +160,11 @@ class DoisController < ApplicationController
 
           options[:links] = {
             self: request.original_url,
-            next: @dois.size < page[:size] ? nil : request.base_url + "/dois?" + {
+            next: results.size < page[:size] ? nil : request.base_url + "/dois?" + {
               query: params[:query],
               "provider-id" => params[:provider_id],
               "client-id" => params[:client_id],
-              "page[cursor]" => page[:cursor].present? ? Array.wrap(@dois.to_a.last[:sort]).first : nil,
+              "page[cursor]" => page[:cursor].present? ? Array.wrap(results.to_a.last[:sort]).first : nil,
               "page[number]" => page[:cursor].blank? && page[:number].present? ? page[:number] + 1 : nil,
               "page[size]" => page[:size] }.compact.to_query
             }.compact
@@ -176,7 +175,7 @@ class DoisController < ApplicationController
           }
 
           logger.info "[Benchmark] render " + Benchmark.ms {
-            render json: DoiSerializer.new(@dois, options).serialized_json, status: :ok
+            render json: DoiSerializer.new(results, options).serialized_json, status: :ok
           }.to_s + " ms"
         end
         format.citation do
@@ -187,7 +186,7 @@ class DoisController < ApplicationController
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
-      
+
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
       render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
@@ -395,7 +394,7 @@ class DoisController < ApplicationController
     head :no_content and return unless client_prefix.present?
 
     dois = Doi.get_dois(prefix: client_prefix.prefix, username: current_user.uid.upcase, password: current_user.password)
-    if dois.length > 0 
+    if dois.length > 0
       render json: { dois: dois }.to_json, status: :ok
     else
       head :no_content
