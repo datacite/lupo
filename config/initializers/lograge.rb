@@ -10,7 +10,6 @@ Rails.application.configure do
     event.payload.inspect.length > 100000
   end
   config.lograge.base_controller_class = 'ActionController::API'
-  config.log_level = ENV['LOG_LEVEL'].to_sym
 
   config.lograge.custom_options = lambda do |event|
     exceptions = %w(controller action format id)
