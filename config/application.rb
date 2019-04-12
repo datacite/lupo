@@ -77,6 +77,7 @@ module Lupo
     logger           = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
+    config.log_level = ENV['LOG_LEVEL'].to_sym
 
     # configure caching
     config.cache_store = :dalli_store, nil, { :namespace => ENV['APPLICATION'] }
