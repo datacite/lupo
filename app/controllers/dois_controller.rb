@@ -217,7 +217,11 @@ class DoisController < ApplicationController
   def validate
     logger = Logger.new(STDOUT)
     # logger.info safe_params.inspect
-    @doi = Doi.new(safe_params.merge(only_validate: true))
+
+    doi = Doi.where(doi: params.dig(:data,:attributes,:doi)).first
+    exists = doi.present?
+
+    @doi = Doi.new(safe_params.merge(only_validate: true, exists: exists))
 
     authorize! :validate, @doi
 

@@ -64,6 +64,7 @@ class Doi < ActiveRecord::Base
 
   attribute :regenerate, :boolean, default: false
   attribute :only_validate, :boolean, default: false
+  attribute :exists, :boolean, default: false
   attribute :should_validate, :boolean, default: false
   attribute :agency, :string, default: "DataCite"
 
@@ -77,7 +78,7 @@ class Doi < ActiveRecord::Base
   # validates_presence_of :url, if: :is_registered_or_findable?
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
-  validates_format_of :doi, :with => /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, :on => :create
+  validates_format_of :doi, :with => /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, :on => :create, unless: :exists
   validates_format_of :url, :with => /\A(ftp|http|https):\/\/[\S]+/ , if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?

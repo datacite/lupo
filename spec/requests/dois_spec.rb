@@ -1435,6 +1435,36 @@ describe "dois", type: :request do
       end
     end
 
+    context 'when doi has unpermitted characters' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/107+03",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "source" => "test",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      before { post '/dois', params: valid_attributes.to_json, headers: headers }
+
+      it 'returns validation error' do
+        expect(json.dig('errors')).to eq([{"source"=>"doi", "title"=>"Is invalid"}])
+      end
+
+
+      it 'returns status code 422' do
+        expect(response).to have_http_status(422)
+      end
+
+    end
+
     context 'creators no xml' do
       let(:creators) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
       let(:valid_attributes) do
@@ -1598,6 +1628,28 @@ describe "dois", type: :request do
         it 'returns status code 200' do
           expect(response).to have_http_status(200)
         end
+      end
+
+      context 'validatation fails with unpermitted characters in new DOI' do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('datacite.xml'))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.14454/107+03",
+                "xml" => xml,
+              }
+            }
+          }
+        end
+
+        before { post '/dois/validate', params: params.to_json, headers: headers }
+
+        it 'returns validation error' do
+          expect(json.dig('errors')).to eq([{"source"=>"doi", "title"=>"Is invalid"}])
+        end
+  
       end
 
       context 'validates schema 3' do
