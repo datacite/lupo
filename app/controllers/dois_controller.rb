@@ -285,7 +285,7 @@ class DoisController < ApplicationController
         @doi.assign_attributes(safe_params.slice(:client_id))
       else
         authorize! :update, @doi
-        @doi.assign_attributes(safe_params.except(:doi, :client_id))
+        @doi.assign_attributes(safe_params.except(:doi, :client_id).merge(exists: exists))
       end
     else
       doi_id = validate_doi(params[:id])
