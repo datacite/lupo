@@ -332,6 +332,7 @@ describe Doi, vcr: true do
       expect(meta["titles"]).to eq([{"title"=>"Hydrological and meteorological investigations in a lake near Kangerlussuaq, west Greenland"}])
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("PANGAEA")
+      expect(meta["schema_version"]).to eq(nil)
     end
   end
 
