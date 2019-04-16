@@ -544,7 +544,7 @@ class DoisController < ApplicationController
     end
 
     meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
-    p[:schemaVersion] = meta["from"] == "schema_org" ? "http://datacite.org/schema/kernel-4" :  p[:schemaVersion]
+    p[:schemaVersion] =  METADATA_FORMATS.include?(meta["from"]) ? LAST_SCHEMA_VERSION : p[:schemaVersion]
     xml = meta["string"]
 
     read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher],

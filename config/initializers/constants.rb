@@ -46,3 +46,14 @@ REGIONS = {
   "EMEA" => "Europe, Middle East and Africa",
   "AMER" => "Americas"
 }
+
+LAST_SCHEMA_VERSION = "http://datacite.org/schema/kernel-4"
+
+METADATA_FORMATS = [
+  "schema_org",
+  "ris",
+  "bibtex",
+  "citeproc",
+  "crossref",
+  "codemeta"
+]
