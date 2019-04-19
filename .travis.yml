@@ -14,7 +14,7 @@ addons:
     repo_token: $CODECLIMATE_REPO_TOKEN
   apt:
     packages:
-      - oracle-java8-set-default
+      - oracle-java9-set-default
       - mysql-server
       - mysql-client
     sources:
