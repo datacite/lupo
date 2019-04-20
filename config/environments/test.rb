@@ -13,7 +13,7 @@ Rails.application.configure do
   config.eager_load = false
 
   # don't use debug level
-  config.log_level = :info
+  config.log_level = :error
 
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = true
