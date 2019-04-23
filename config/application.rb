@@ -8,6 +8,7 @@ require "active_record/railtie"
 require "active_storage/engine"
 require "action_controller/railtie"
 require "rails/test_unit/railtie"
+require "active_job/logging"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -78,6 +79,8 @@ module Lupo
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
     config.log_level = ENV['LOG_LEVEL'].to_sym
+
+    config.active_job.logger = config.logger
 
     # configure caching
     config.cache_store = :dalli_store, nil, { :namespace => ENV['APPLICATION'] }
