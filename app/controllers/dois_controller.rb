@@ -75,6 +75,8 @@ class DoisController < ApplicationController
     end
 
     begin
+      logger.info "[Benchmark] Elasticsearch request " + response.took.to_s + " ms"
+
       # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
       if sample_group_field.present?
         sample_dois = []
