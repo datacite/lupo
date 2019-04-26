@@ -41,6 +41,13 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(json['data']['id']).to eq(provider.symbol.downcase)
       end
 
+      it 'returns the provider info for member page' do
+        puts json
+        expect(json['data']['attributes']['twitterHandle']).to eq(provider.twitter_handle)
+        expect(json['data']['attributes']['billingInformation']).to eq(provider.billing_information)
+        expect(json['data']['attributes']['rorId']).to eq(provider.ror_id)
+      end
+
       it 'returns status code 200' do
         expect(response).to have_http_status(200)
       end
