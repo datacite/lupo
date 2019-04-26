@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_09_211358) do
+ActiveRecord::Schema.define(version: 2019_04_26_090046) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -58,6 +58,9 @@ ActiveRecord::Schema.define(version: 2019_04_09_211358) do
     t.string "logo"
     t.string "focus_area", limit: 191
     t.string "organization_type", limit: 191
+    t.json "billing_information"
+    t.string "twitter_handle", limit: 20
+    t.string "ror_id"
     t.index ["organization_type"], name: "index_allocator_organization_type"
     t.index ["symbol"], name: "symbol", unique: true
   end
