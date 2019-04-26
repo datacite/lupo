@@ -9,7 +9,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                     "symbol" => "BL",
                     "name" => "British Library",
                     "contactEmail" => "bob@example.com",
-                    "countryCode" => "GB" } } }
+                    "country" => "GB" } } }
   end
   let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + token } }
 
@@ -192,7 +192,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "region" => "Americas",
                         "contactEmail" => "Pepe@mdm.cod",
                         "contactName" => "timAus",
-                        "countryCode" => "GB" } } }
+                        "country" => "GB" } } }
       end
       before { put "/providers/#{provider.symbol}", params: params.to_json, headers: headers }
 
@@ -213,7 +213,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "region" => "Americas",
                         "contactEmail" => "Pepe@mdm.cod",
                         "contactName" => "timAus",
-                        "countryCode" => "GB" } } }
+                        "country" => "GB" } } }
       end
       let(:admin) { create(:provider, symbol: "ADMIN", role_name: "ROLE_ADMIN", password_input: "12345") }
       let(:credentials) { admin.encode_auth_param(username: "ADMIN", password: "12345") }
@@ -238,7 +238,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "region" => "Americas",
                         "contactEmail" => "Pepe@mdm.cod",
                         "contactName" => "timAus",
-                        "countryCode" => "GB" } } }
+                        "country" => "GB" } } }
       end
 
       before { put '/providers/xxx', params: params.to_json, headers: headers }
