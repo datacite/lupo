@@ -8,6 +8,7 @@ Mime::Type.register "text/html", :html, %w( application/xhtml+xml ), %w( xhtml )
 Mime::Type.register "text/plain", :text, [], %w(txt)
 Mime::Type.register "application/json", :json, %w( text/x-json application/jsonrequest application/vnd.api+json )
 Mime::Type.register "text/csv", :csv
+Mime::Type.register "text/csv", :providers_csv
 
 # Mime types supported by bolognese gem https://github.com/datacite/bolognese
 Mime::Type.register "application/vnd.crossref.unixref+xml", :crossref
@@ -70,5 +71,10 @@ end
 
 ActionController::Renderers.add :csv do |obj, options|
   %w(doi url registered state resourceTypeGeneral resourceType title author publisher publicationYear).to_csv +
+  Array.wrap(obj).map { |o| o.send("csv") }.join("")
+end
+
+ActionController::Renderers.add :providers_csv do |obj, options|
+  %w(name provider_id year contact_name contact_address is_active description website phone region country_code logo_url  focus_area organisation_type memmber_type role_name password joined created updated deleted_at).to_csv +
   Array.wrap(obj).map { |o| o.send("csv") }.join("")
 end
