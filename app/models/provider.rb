@@ -39,6 +39,7 @@ class Provider < ActiveRecord::Base
   validates_inclusion_of :organization_type, :in => %w(nationalInstitution nationalLibrary academicInstitution academicLibrary researchInstitution governmentAgency publisher professionalSociety serviceProvider vendor), :message => "organization type %s is not included in the list", if: :organization_type?
   validates_inclusion_of :focus_area, :in => %w(biomedicalAndHealthSciences earthSciences humanities mathematicsAndComputerScience physicalSciencesAndEngineering socialSciences general), :message => "focus area %s is not included in the list", if: :focus_area?
   validate :freeze_symbol, :on => :update
+  validates_format_of :ror_id, :with => /\A(?:(http|https):\/\/)?(?:ror\.org\/)?(0\w{6}\d{2})\z/, if: :ror_id?
 
   before_validation :set_region
 
@@ -95,6 +96,13 @@ class Provider < ActiveRecord::Base
       indexes :role_name,     type: :keyword
       indexes :cache_key,     type: :keyword
       indexes :joined,        type: :date
+      indexes :twitter_handle,type: :keyword
+      indexes :ror_id,        type: :keyword
+      indexes :billing_information, type: :object, properties: {
+        postCode: { type: :keyword },
+        state: { type: :text},
+        city: { type: :text },
+        address: { type: :text }}
       indexes :created,       type: :date
       indexes :updated,       type: :date
       indexes :deleted_at,    type: :date
@@ -127,6 +135,9 @@ class Provider < ActiveRecord::Base
       "password" => password,
       "cache_key" => cache_key,
       "joined" => joined,
+      "twitter_handle" => twitter_handle,
+      "ror_id" => ror_id,
+      "billing_information" => billing_information,
       "created" => created,
       "updated" => updated,
       "deleted_at" => deleted_at,
@@ -246,6 +257,9 @@ class Provider < ActiveRecord::Base
       "is-active" => is_active == "\x01",
       "version" => version,
       "joined" => joined && joined.iso8601,
+      "twitter_handle" => twitter_handle,
+      "ror_id" => ror_id,
+      "billing_information" => billing_information,
       "created" => created.iso8601,
       "updated" => updated.iso8601,
       "deleted_at" => deleted_at ? deleted_at.iso8601 : nil }
