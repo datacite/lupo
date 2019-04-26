@@ -137,7 +137,7 @@ class Provider < ActiveRecord::Base
       "joined" => joined,
       "twitter_handle" => twitter_handle,
       "ror_id" => ror_id,
-      "billing_information" => billing_information,
+      "billing_information" => billing,
       "created" => created,
       "updated" => updated,
       "deleted_at" => deleted_at,
@@ -169,6 +169,15 @@ class Provider < ActiveRecord::Base
 
   def year
     joined.year if joined.present?
+  end
+
+  def billing
+    {
+      post_code: billing_information.fetch("post_code",nil),
+      address: billing_information.fetch("address",nil),
+      city: billing_information.fetch("city",nil),
+      state: billing_information.fetch("state",nil)
+    }
   end
 
   # count years account has been active. Ignore if deleted the same year as created
@@ -259,7 +268,7 @@ class Provider < ActiveRecord::Base
       "joined" => joined && joined.iso8601,
       "twitter_handle" => twitter_handle,
       "ror_id" => ror_id,
-      "billing_information" => billing_information,
+      "billing_information" => billing,
       "created" => created.iso8601,
       "updated" => updated.iso8601,
       "deleted_at" => deleted_at ? deleted_at.iso8601 : nil }
