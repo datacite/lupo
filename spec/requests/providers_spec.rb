@@ -59,7 +59,7 @@ describe "Providers", type: :request, elasticsearch: true  do
     end
 
     context "text/csv" do
-      before { get "/providers/", headers: { "HTTP_ACCEPT" => "text/csv", 'Authorization' => 'Bearer ' + bearer  } }
+      before { get "/providers/", headers: { "HTTP_ACCEPT" => "text/csv", 'Authorization' => 'Bearer ' + token  } }
 
       it 'returns status code 200' do
         expect(response).to have_http_status(200)
