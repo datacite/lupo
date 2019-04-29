@@ -184,7 +184,9 @@ class DoisController < ApplicationController
           # fetch formatted citations
           render citation: response.records.to_a, style: params[:style] || "apa", locale: params[:locale] || "en-US"
         end
-        format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :csv, :schema_org) { render request.format.to_sym => response.records.to_a }
+        header = %w(doi url registered state resourceTypeGeneral resourceType title author publisher publicationYear)
+        format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => response.records.to_a }
+        format.csv { render request.format.to_sym => response.records.to_a, header: header }
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
@@ -212,7 +214,9 @@ class DoisController < ApplicationController
         # fetch formatted citation
         render citation: @doi, style: params[:style] || "apa", locale: params[:locale] || "en-US"
       end
-      format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :csv, :schema_org) { render request.format.to_sym => @doi }
+      header = %w(doi url registered state resourceTypeGeneral resourceType title author publisher publicationYear)
+      format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => @doi }
+      format.csv { render request.format.to_sym =>  @doi, header: header }
     end
   end
 

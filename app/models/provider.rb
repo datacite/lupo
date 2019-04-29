@@ -159,6 +159,41 @@ class Provider < ActiveRecord::Base
     }
   end
 
+  def csv
+
+    provider = {
+      name: name,
+      provider_id: symbol,
+      year: year,
+      contact_name: contact_name,
+      contact_email: contact_email,
+      is_active: is_active,
+      description: description,
+      website: website,
+      phone: phone,
+      region: region,
+      country_code: country_code,
+      logo_url: logo_url,
+      focus_area: focus_area,
+      organization_type: organization_type,
+      member_type: member_type,
+      # address: billing.address,
+      # post_code: billing.post_code,
+      # city: billing.city,
+      # state: billing.state,
+      # twitter_handle: twitter_handle,
+      # ror_id: ror_id,
+      role_name: role_name,
+      password: password,
+      joined: joined,
+      created: created,
+      updated: updated,
+      deleted_at: deleted_at,
+    }.values
+
+    CSV.generate { |csv| csv << provider }
+  end
+
   def uid
     symbol.downcase
   end

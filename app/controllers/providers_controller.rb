@@ -1,6 +1,7 @@
 require 'benchmark'
 
 class ProvidersController < ApplicationController
+  include ActionController::MimeResponds
   include Countable
 
   before_action :set_provider, only: [:show, :update, :destroy]
@@ -36,35 +37,40 @@ class ProvidersController < ApplicationController
       focus_areas = total > 0 ? facet_by_key(response.response.aggregations.focus_areas.buckets) : nil
 
       @providers = response.results
+      respond_to do |format|
+        format.json do
+            options = {}
+            options[:meta] = {
+              total: total,
+              "totalPages" => total_pages,
+              page: page[:number],
+              years: years,
+              regions: regions,
+              "organizationTypes" => organization_types,
+              "focusAreas" => focus_areas
+            }.compact
 
-      options = {}
-      options[:meta] = {
-        total: total,
-        "totalPages" => total_pages,
-        page: page[:number],
-        years: years,
-        regions: regions,
-        "organizationTypes" => organization_types,
-        "focusAreas" => focus_areas
-      }.compact
+            options[:links] = {
+              self: request.original_url,
+              next: @providers.blank? ? nil : request.base_url + "/providers?" + {
+                query: params[:query],
+                year: params[:year],
+                region: params[:region],
+                "organization_type" => params[:organization_type],
+                "focus-area" => params[:focus_area],
+                fields: params[:fields],
+                "page[number]" => page[:number] + 1,
+                "page[size]" => page[:size],
+                sort: sort }.compact.to_query
+              }.compact
+            options[:include] = @include
+            options[:is_collection] = true
 
-      options[:links] = {
-        self: request.original_url,
-        next: @providers.blank? ? nil : request.base_url + "/providers?" + {
-          query: params[:query],
-          year: params[:year],
-          region: params[:region],
-          "organization_type" => params[:organization_type],
-          "focus-area" => params[:focus_area],
-          fields: params[:fields],
-          "page[number]" => page[:number] + 1,
-          "page[size]" => page[:size],
-          sort: sort }.compact.to_query
-        }.compact
-      options[:include] = @include
-      options[:is_collection] = true
-
-      render json: ProviderSerializer.new(@providers, options).serialized_json, status: :ok
+            render json: ProviderSerializer.new(@providers, options).serialized_json, status: :ok
+        end
+        header = %w(name provider_id year contact_name contact_address is_active description website phone region country_code logo_url  focus_area organisation_type memmber_type role_name password joined created updated deleted_at)
+        format.csv { render request.format.to_sym => response.records.to_a, header: header }
+      end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
 

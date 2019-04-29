@@ -2,6 +2,7 @@ module Helpable
   extend ActiveSupport::Concern
 
   require 'bolognese'
+  require 'csv'
   require 'securerandom'
   require 'base32/url'
 

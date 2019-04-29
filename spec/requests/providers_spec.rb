@@ -64,6 +64,14 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
       end
     end
+
+    context "text/csv" do
+      before { get "/providers/", headers: { "HTTP_ACCEPT" => "text/csv", 'Authorization' => 'Bearer ' + token  } }
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
+      end
+    end
   end
 
   # describe 'POST /providers' do
