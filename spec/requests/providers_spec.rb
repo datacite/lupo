@@ -100,46 +100,6 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
     end
 
-    context 'request for admin provider with meta' do
-      let(:params) do
-        {
-          "data" => {
-            "attributes" => {
-              "meta" => {
-                "clients" => [{
-                  "id" => "2019",
-                  "title" => "2019",
-                  "count" => 1
-                }],
-                "dois" => []
-              }, "name" => "Carnegie Mellon University",
-              "symbol" => "CMU", "description" => nil,
-              "region" => "AMER", "country" => "US",
-              "organizationType" => "academicInstitution",
-              "focusArea" => "general", "logoUrl" => "",
-              "contactName" => "Jonathan Kiritharan",
-              "contactEmail" => "jkiritha@andrew.cmu.edu",
-              "phone" => "", "website" => "", "isActive" => true,
-              "passwordInput" => "@change", "hasPassword" => false,
-              "keepPassword" => false, "joined" => ""
-            }, "type" => "providers"
-          }
-        }
-
-      end
-
-      before { post '/providers', params: params.to_json, headers: headers }
-
-      it 'creates a provider' do
-        expect(json.dig('data', 'attributes', 'contactEmail')).to eq("jkiritha@andrew.cmu.edu")
-      end
-
-      it 'returns status code 200' do
-        expect(response).to have_http_status(200)
-      end
-
-    end
-
     context 'request for admin provider' do
       let(:params) do
         { "data" => { "type" => "providers",
@@ -151,6 +111,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "contactName" => "timAus",
                         "country" => "GB" } } }
       end
+
       before { post '/providers', params: params.to_json, headers: headers }
 
       it 'creates a provider' do
