@@ -5,7 +5,7 @@ class ProviderSerializer
   set_id :uid
   cache_options enabled: true, cache_length: 24.hours
 
-  attributes :name, :symbol, :website, :contact_name, :contact_email, :phone, :description, :region, :country, :logo_url, :organization_type, :focus_area, :is_active, :has_password, :joined, :created, :updated
+  attributes :name, :symbol, :website, :contact_name, :contact_email, :phone, :description, :region, :country, :logo_url, :organization_type, :focus_area, :is_active, :has_password, :joined, :billing_information, :twitter_handle, :ror_id, :created, :updated
 
   has_many :prefixes, record_type: :prefixes
 
