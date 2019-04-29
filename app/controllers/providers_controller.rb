@@ -128,7 +128,7 @@ class ProvidersController < ApplicationController
     page = { size: 0, number: 1}
     response = nil
     logger.info "[Benchmark] providers totals " + Benchmark.ms {
-      response = Doi.query("", page: page, totals_agg: true)
+      response = Doi.query("", state: params[:state] || "", page: page, totals_agg: true)
     }.to_s + " ms"
     total = response.results.total
 

@@ -228,6 +228,24 @@ paths:
       responses:
         '201':
           description: Created
+  /clients/totals:
+    get:
+      tags:
+        - clients
+      summary: Returns Clients DOI production statistics.
+      security: []
+      parameters:
+        - in: query
+          name: provider-id
+          schema:
+            type: string
+        - in: query
+          name: state
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A JSON array of clients stats.
   '/clients/{id}':
     parameters:
       - name: id
@@ -625,6 +643,24 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Prefix'
+  /prefixes/totals:
+    get:
+      tags:
+        - prefixes
+      summary: Returns prefixes DOI production statistics.
+      security: []
+      parameters:
+        - in: query
+          name: client-id
+          schema:
+            type: string
+        - in: query
+          name: state
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A JSON array of prefixes stats.
   '/prefixes/{id}':
     get:
       tags:
@@ -741,6 +777,20 @@ paths:
       responses:
         '201':
           description: Created
+  /providers/totals:
+    get:
+      tags:
+        - providers
+      summary: Returns Providers DOI production statistics.
+      security: []
+      parameters:
+        - in: query
+          name: state
+          schema:
+            type: string
+      responses:
+        '200':
+          description: A JSON array of providers stats.
   '/providers/{id}':
     parameters:
       - name: id
