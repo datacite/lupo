@@ -212,7 +212,7 @@ class Provider < ActiveRecord::Base
       address: billing_information.fetch("address",nil),
       city: billing_information.fetch("city",nil),
       state: billing_information.fetch("state",nil)
-    }
+    } if billing_information
   end
 
   # count years account has been active. Ignore if deleted the same year as created
