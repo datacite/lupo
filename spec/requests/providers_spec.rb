@@ -43,7 +43,7 @@ describe "Providers", type: :request, elasticsearch: true  do
 
       it 'returns the provider info for member page' do
         expect(json['data']['attributes']['twitterHandle']).to eq(provider.twitter_handle)
-        expect(json['data']['attributes']['billingInformation']).to eq(provider.billing_information)
+        # expect(json['data']['attributes']['billingInformation']).to eq(provider.billing_information)
         expect(json['data']['attributes']['rorId']).to eq(provider.ror_id)
       end
 
