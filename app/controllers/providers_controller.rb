@@ -4,8 +4,8 @@ class ProvidersController < ApplicationController
   include ActionController::MimeResponds
   include Countable
 
+  prepend_before_action :authenticate_user!
   before_action :set_provider, only: [:show, :update, :destroy]
-  before_action :authenticate_user!
   load_and_authorize_resource :except => [:index, :show, :totals]
 
   def index
@@ -65,7 +65,9 @@ class ProvidersController < ApplicationController
               }.compact
             options[:include] = @include
             options[:is_collection] = true
-
+            options[:params] = {
+              :current_ability => current_ability,
+            }
             render json: ProviderSerializer.new(@providers, options).serialized_json, status: :ok
         end
         header = %w(name provider_id year contact_name contact_address is_active description website phone region country_code logo_url  focus_area organisation_type memmber_type role_name password joined created updated deleted_at)
@@ -81,6 +83,7 @@ class ProvidersController < ApplicationController
   end
 
   def show
+
     options = {}
     options[:meta] = { 
       providers: provider_count(provider_id: params[:id] == "admin" ? nil : params[:id]),
@@ -88,7 +91,9 @@ class ProvidersController < ApplicationController
       dois: doi_count(provider_id: params[:id] == "admin" ? nil : params[:id]) }.compact
     options[:include] = @include
     options[:is_collection] = false
-
+    options[:params] = {
+      :current_ability => current_ability,
+    }
     render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
   end
 
@@ -101,7 +106,9 @@ class ProvidersController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-  
+      options[:params] = {
+        :current_ability => current_ability,
+      }  
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
       logger.warn @provider.errors.inspect
@@ -120,6 +127,9 @@ class ProvidersController < ApplicationController
         dois: doi_count(provider_id: params[:id] == "admin" ? nil : params[:id]) }.compact
       options[:include] = @include
       options[:is_collection] = false
+      options[:params] = {
+        :current_ability => current_ability,
+      }
   
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
