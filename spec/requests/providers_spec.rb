@@ -43,7 +43,7 @@ describe "Providers", type: :request, elasticsearch: true  do
 
       it 'returns the provider info for member page' do
         expect(json['data']['attributes']['twitterHandle']).to eq(provider.twitter_handle)
-        # expect(json['data']['attributes']['billingInformation']).to eq(provider.billing_information)
+        expect(json['data']['attributes']['billingInformation']).to eq(provider.billing_information)
         expect(json['data']['attributes']['rorId']).to eq(provider.ror_id)
       end
 
@@ -93,6 +93,82 @@ describe "Providers", type: :request, elasticsearch: true  do
       it 'creates a provider' do
         puts json
         expect(json.dig('data', 'attributes', 'contactEmail')).to eq("doe@joe.joe")
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context 'request ability check' do
+      let!(:providers)  { create_list(:provider, 2) }
+      let(:last_provider_token) { User.generate_token(provider_id: providers.last.symbol, role_id:"provider_admin") }
+      let(:headers_last) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + last_provider_token } }
+
+
+      before do
+        Provider.import
+        sleep 1
+        get "/providers/#{providers.first.symbol}", headers: headers_last
+      end
+  
+
+      it 'has no permission' do
+        expect(json["data"].dig('attributes', 'symbol')).to eq(providers.first.symbol)
+        expect(json["data"].dig( 'attributes', 'billingInformation')).to eq(nil)
+        expect(json["data"].dig( 'attributes', 'twitterHandle')).to eq(nil)
+      end
+    end
+    
+
+    context 'request is valid with billing information' do
+      let(:params) do
+        {
+          "data"=>{
+            "type"=>"providers",
+            "attributes"=>{
+              "contactEmail"=>"jkiritha@andrew.cmu.edu",
+              "contactName"=>"Jonathan Kiritharan",
+              "country"=>"US",
+              "created"=>"",
+              "description"=>"",
+              "focusArea"=>"general",
+              "hasPassword"=>"[FILTERED]",
+              "isActive"=>true,
+              "joined"=>"",
+              "keepPassword"=>"[FILTERED]",
+              "logoUrl"=>"",
+              "name"=>"Carnegie Mellon University",
+              "organizationType"=>"academicInstitution",
+              "passwordInput"=>"[FILTERED]",
+              "phone"=>"",
+              "twitterHandle"=>"meekakitty",
+              "rorId"=>"https://ror.org/05njkjr15",
+              "billingInformation":{
+                "city"=>"barcelona",
+                "state"=>"Rennes",
+                "postCode"=>"122dc"
+              },
+              "region"=>"",
+              "symbol"=>"CMfddff33333dd111d111113f4d",
+              "updated"=>"",
+              "website"=>""
+            }
+          }
+        }
+      end
+
+      before do 
+        post '/providers', params: params.to_json, headers: headers 
+      end
+
+      it 'creates a provider' do
+        puts json
+        expect(json.dig('data', 'attributes', 'contactEmail')).to eq("jkiritha@andrew.cmu.edu")
+        expect(json.dig('data', 'attributes', 'billingInformation',"state")).to eq("Rennes")
+        expect(json.dig('data', 'attributes', 'billingInformation',"postCode")).to eq("122dc")
+        expect(json.dig('data', 'attributes', 'twitterHandle')).to eq("meekakitty")
+        expect(json.dig('data', 'attributes', 'rorId')).to eq("https://ror.org/05njkjr15")
       end
 
       it 'returns status code 201' do

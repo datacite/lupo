@@ -208,12 +208,12 @@ FactoryBot.define do
     password_input { "12345" }
     twitter_handle { "megaTwitterlace" }
     ror_id { "https://ror.org/05njkjr15" }
-    # billing_information {{
-    #   "city": "barcelona",
-    #   "state": "cataluyna",
-    #   "address": Faker::Address.street_address,
-    #   "postCode": "10777"
-    #  }}
+    billing_information {{
+      "city": "barcelona",
+      "state": "cataluyna",
+      "address": Faker::Address.street_address,
+      "postCode": "10777"
+     }}
     is_active { true }
 
     initialize_with { Provider.where(symbol: symbol).first_or_initialize }
