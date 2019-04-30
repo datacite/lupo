@@ -98,11 +98,11 @@ class Provider < ActiveRecord::Base
       indexes :joined,        type: :date
       indexes :twitter_handle,type: :keyword
       indexes :ror_id,        type: :keyword
-      # indexes :billing_information, type: :object, properties: {
-      #   postCode: { type: :keyword },
-      #   state: { type: :text},
-      #   city: { type: :text },
-      #   address: { type: :text }}
+      indexes :billing_information, type: :object, properties: {
+        postCode: { type: :keyword },
+        state: { type: :text},
+        city: { type: :text },
+        address: { type: :text }}
       indexes :created,       type: :date
       indexes :updated,       type: :date
       indexes :deleted_at,    type: :date
@@ -137,7 +137,7 @@ class Provider < ActiveRecord::Base
       "joined" => joined,
       "twitter_handle" => twitter_handle,
       "ror_id" => ror_id,
-      # "billing_information" => billing_information,
+      "billing_information" => billing_information,
       "created" => created,
       "updated" => updated,
       "deleted_at" => deleted_at,
@@ -177,12 +177,12 @@ class Provider < ActiveRecord::Base
       focus_area: focus_area,
       organization_type: organization_type,
       member_type: member_type,
-      # address: billing.address,
-      # post_code: billing.post_code,
-      # city: billing.city,
-      # state: billing.state,
-      # twitter_handle: twitter_handle,
-      # ror_id: ror_id,
+      address: billing_information.address,
+      post_code: billing_information.post_code,
+      city: billing_information.city,
+      state: billing_information.state,
+      twitter_handle: twitter_handle,
+      ror_id: ror_id,
       role_name: role_name,
       password: password,
       joined: joined,
@@ -206,13 +206,8 @@ class Provider < ActiveRecord::Base
     joined.year if joined.present?
   end
 
-  # def billing
-  #   {
-  #     post_code: billing_information.to_h.fetch("post_code",nil),
-  #     address: billing_information.to_h.fetch("address",nil),
-  #     city: billing_information.to_h.fetch("city",nil),
-  #     state: billing_information.to_h.fetch("state",nil)
-  #   } 
+  # def billing_information
+  #   billing_information.present? ? billing_information : {}
   # end
 
   # count years account has been active. Ignore if deleted the same year as created
@@ -303,7 +298,6 @@ class Provider < ActiveRecord::Base
       "joined" => joined && joined.iso8601,
       "twitter_handle" => twitter_handle,
       "ror_id" => ror_id,
-      # "billing_information" => billing_information,
       "created" => created.iso8601,
       "updated" => updated.iso8601,
       "deleted_at" => deleted_at ? deleted_at.iso8601 : nil }
@@ -339,6 +333,6 @@ class Provider < ActiveRecord::Base
     self.role_name = "ROLE_ALLOCATOR" unless role_name.present?
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
-    # self.billing_information = {} unless billing_information
+    self.billing_information = {} unless billing_information.present?
   end
 end
