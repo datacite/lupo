@@ -70,7 +70,7 @@ class ProvidersController < ApplicationController
             }
             render json: ProviderSerializer.new(@providers, options).serialized_json, status: :ok
         end
-        header = %w(name provider_id year contact_name contact_address is_active description website phone region country_code logo_url  focus_area organisation_type memmber_type role_name password joined created updated deleted_at)
+        header = %w(name provider_id year contact_name contact_address is_active description website  region country_code logo_url  focus_area organisation_type memmber_type address, post_code, city, state, twitter_handle, ror_id, role_name password joined created updated deleted_at)
         format.csv { render request.format.to_sym => response.records.to_a, header: header }
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception

@@ -170,17 +170,16 @@ class Provider < ActiveRecord::Base
       is_active: is_active,
       description: description,
       website: website,
-      phone: phone,
       region: region,
       country_code: country_code,
       logo_url: logo_url,
       focus_area: focus_area,
       organization_type: organization_type,
       member_type: member_type,
-      address: billing_information.address,
-      post_code: billing_information.post_code,
-      city: billing_information.city,
-      state: billing_information.state,
+      address: address,
+      post_code: post_code,
+      city: city,
+      state: state,
       twitter_handle: twitter_handle,
       ror_id: ror_id,
       role_name: role_name,
@@ -206,9 +205,22 @@ class Provider < ActiveRecord::Base
     joined.year if joined.present?
   end
 
-  # def billing_information
-  #   billing_information.present? ? billing_information : {}
-  # end
+  def address
+    billing_information.fetch("address",nil) if billing_information.present?
+  end
+
+  def state
+    billing_information.fetch("state",nil) if billing_information.present?
+  end
+
+  def city
+    billing_information.fetch("city",nil) if billing_information.present?
+  end
+
+  def post_code
+    billing_information.fetch("post_code",nil) if billing_information.present?
+  end
+
 
   # count years account has been active. Ignore if deleted the same year as created
   def cumulative_years
