@@ -223,7 +223,7 @@ describe User, type: :model do
     context "when is anonymous" do
       let(:token) { nil }
 
-      it{ is_expected.not_to be_able_to(:read, provider) }
+      it{ is_expected.not_to be_able_to(:create, provider) }
       it{ is_expected.not_to be_able_to(:update, provider) }
       it{ is_expected.not_to be_able_to(:destroy, provider) }
 

@@ -101,6 +101,7 @@ class Ability
       can [:read], Doi do |doi|
         doi.findable?
       end
+      can [:read], Provider
       can [:read], Activity do |activity|
         activity.doi.findable?
       end
