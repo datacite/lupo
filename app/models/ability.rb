@@ -18,6 +18,7 @@ class Ability
       can :read, :all
     elsif user.role_id == "provider_admin" && user.provider_id.present?
       can [:update, :read, :read_billing_information], Provider, :symbol => user.provider_id.upcase
+      can [:read], Provider
       can [:manage], ProviderPrefix, :provider_id => user.provider_id
       can [:manage], Client,:provider_id => user.provider_id
       can [:manage], ClientPrefix #, :client_id => user.provider_id
@@ -39,6 +40,7 @@ class Ability
       end
     elsif user.role_id == "provider_user" && user.provider_id.present?
       can [:read, :read_billing_information], Provider, :symbol => user.provider_id.upcase
+      can [:read], Provider
       can [:read], ProviderPrefix, :provider_id => user.provider_id
       can [:read], Client, :provider_id => user.provider_id
       can [:read], ClientPrefix#, :client_id => user.client_id
