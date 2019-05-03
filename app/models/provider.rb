@@ -183,7 +183,6 @@ class Provider < ActiveRecord::Base
       twitter_handle: twitter_handle,
       ror_id: ror_id,
       role_name: role_name,
-      password: password,
       joined: joined,
       created: created,
       updated: updated,

@@ -53,3 +53,4 @@ doc/dependencies*
 !.env.travis
 docker-compose.override.yml
 .ruby-version
+.vscode
