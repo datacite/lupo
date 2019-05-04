@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rails', '~> 5.2.0'
-gem 'bootsnap', '~> 1.2', '>= 1.2.1'
+gem 'bootsnap', '~> 1.4', '>= 1.4.4', require: false
 gem 'mysql2', '~> 0.4.4'
 gem 'dotenv'
 gem 'rake', '~> 12.0'
@@ -56,6 +56,9 @@ gem 'oj_mimic_json', '~> 1.0', '>= 1.0.1'
 gem 'turnout', '~> 2.5'
 gem 'audited', '~> 4.8'
 gem 'git', '~> 1.5'
+gem 'graphql', '~> 1.9', '>= 1.9.4'
+# gem 'graphql-batch', '~> 0.4.0'
+# gem 'graphql-errors', '~> 0.3.0'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5', '>= 3.5.2'
