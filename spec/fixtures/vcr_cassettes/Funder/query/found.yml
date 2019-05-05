@@ -1,0 +1,49 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.crossref.org/funders?query=dfg&rows=100
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.2.1; +https://github.com/datacite/maremma)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - X-Requested-With
+      Content-Length:
+      - '1157'
+      Server:
+      - http-kit
+      Date:
+      - Sun, 05 May 2019 05:40:36 GMT
+      X-Rate-Limit-Limit:
+      - '50'
+      X-Rate-Limit-Interval:
+      - 1s
+      Connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"ok","message-type":"funder-list","message-version":"1.0.0","message":{"items-per-page":100,"query":{"start-index":0,"search-terms":"dfg"},"total-results":3,"items":[{"id":"501100001659","location":null,"name":"Deutsche
+        Forschungsgemeinschaft","alt-names":["DFG","German Research Association","German
+        Research Foundation"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100001659","replaces":[],"replaced-by":[],"tokens":["deutsche","forschungsgemeinschaft","dfg","german","research","association","german","research","foundation"]},{"id":"100004875","location":"United
+        States","name":"Massachusetts Department of Fish and Game","alt-names":["Department
+        of Fish and Game","DFG","MassDFG"],"uri":"http:\/\/dx.doi.org\/10.13039\/100004875","replaces":[],"replaced-by":[],"tokens":["massachusetts","department","of","fish","and","game","department","of","fish","and","game","dfg","massdfg"]},{"id":"100004807","location":"United
+        States","name":"California Department of Fish and Game","alt-names":["DFG"],"uri":"http:\/\/dx.doi.org\/10.13039\/100004807","replaces":[],"replaced-by":[],"tokens":["california","department","of","fish","and","game","dfg"]}]}}'
+    http_version: 
+  recorded_at: Sun, 05 May 2019 05:40:36 GMT
+recorded_with: VCR 3.0.3

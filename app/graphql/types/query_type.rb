@@ -41,5 +41,22 @@ module Types
     def prefix(id:)
       Prefix.where(prefix: id).first
     end
+
+    field :funders, [Types::FunderType], null: false do
+      argument :query, String, required: false
+      argument :first, Int, required: false, default_value: 100
+    end
+
+    def funders(query: nil, first: nil)
+      Funder.query(query, limit: first)
+    end
+
+    field :funder, Types::FunderType, null: false do
+      argument :id, ID, required: true
+    end
+
+    def funder(id:)
+      Funder.find_by_id(id).first
+    end
   end
 end
