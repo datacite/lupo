@@ -1,0 +1,105 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.ror.org/organizations/ror.org/0521rfb23
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.2.1; +https://github.com/datacite/maremma)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json;charset=utf-8
+      Content-Length:
+      - '964'
+      Connection:
+      - keep-alive
+      Date:
+      - Sun, 05 May 2019 11:19:00 GMT
+      Status:
+      - 200 OK
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Content-Type-Options:
+      - nosniff
+      X-Powered-By:
+      - Phusion Passenger 6.0.2
+      Server:
+      - nginx/1.15.8 + Phusion Passenger 6.0.2
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 80c1ad5f9352d00b95a9da73eb6b6be5.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - NA4aCeuXVhsem3RiddPyp1BEP_1PTesG8rdgQ0GYX39Xnx7L9RA_gQ==
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "id": "https://ror.org/0521rfb23",
+          "name": "Lincoln University",
+          "types": [
+            "Education"
+          ],
+          "links": [
+            "http://www.lincoln.edu/"
+          ],
+          "aliases": [
+            "Ashmun Institute"
+          ],
+          "acronyms": [
+            "LU"
+          ],
+          "wikipedia_url": "http://en.wikipedia.org/wiki/Lincoln_University_(Pennsylvania)",
+          "labels": [
+            {
+              "label": "Universidad Lincoln",
+              "iso639": "es"
+            }
+          ],
+          "country": {
+            "country_code": "US",
+            "country_name": "United States"
+          },
+          "external_ids": {
+            "ISNI": {
+              "preferred": null,
+              "all": [
+                "0000 0004 0420 5871"
+              ]
+            },
+            "FundRef": {
+              "preferred": null,
+              "all": [
+                "100007032"
+              ]
+            },
+            "OrgRef": {
+              "preferred": null,
+              "all": [
+                "833671"
+              ]
+            },
+            "Wikidata": {
+              "preferred": null,
+              "all": [
+                "Q4570781"
+              ]
+            },
+            "GRID": {
+              "preferred": "grid.417434.1",
+              "all": "grid.417434.1"
+            }
+          }
+        }
+    http_version: 
+  recorded_at: Sun, 05 May 2019 11:19:00 GMT
+recorded_with: VCR 3.0.3

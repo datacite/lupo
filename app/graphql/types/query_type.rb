@@ -72,5 +72,21 @@ module Types
     def researcher(id:)
       Researcher.find_by_id(id).first
     end
+
+    field :organizations, [Types::OrganizationType], null: false do
+      argument :query, String, required: false
+    end
+
+    def organizations(query: nil)
+      Organization.query(query)
+    end
+
+    field :organization, Types::OrganizationType, null: false do
+      argument :id, ID, required: true
+    end
+
+    def organization(id:)
+      Organization.find_by_id(id).first
+    end
   end
 end

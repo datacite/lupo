@@ -12,7 +12,7 @@ describe Funder, type: :model, vcr: true do
     it "not found" do
       id = "https://doi.org/10.13039/xxx"
       funder = Funder.find_by_id(id)
-      expect(funder).to be_nil
+      expect(funder).to be_empty
     end
   end
 
