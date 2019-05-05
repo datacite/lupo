@@ -1,0 +1,26 @@
+class Researcher
+  def self.find_by_id(id)
+    orcid = orcid_from_url(id)
+    return [] unless orcid.present?
+
+    url = "https://pub.orcid.org/v2.1/#{orcid}/person"
+    response = Maremma.get(url, accept: "application/vnd.orcid+json")
+
+    return [] if response.status != 200
+
+    message = response.body.fetch("data", {})
+    [parse_message(id: id, message: message)]
+  end
+
+  def self.parse_message(id: nil, message: nil)
+    {
+      id: id,
+      given_name: message.dig("name", "given-names", "value"),
+      family_name: message.dig("name", "family-name", "value"),
+      name: message.dig("name", "credit-name", "value") }.compact
+  end
+
+  def self.orcid_from_url(url)
+    Array(/\A(http|https):\/\/orcid\.org\/(.+)/.match(url)).last
+  end
+end

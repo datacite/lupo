@@ -6,7 +6,7 @@ module Types
     end
 
     def members(query: nil, first: nil)
-      Provider.query(query, page: { number: 1, size: first }
+      Provider.query(query, page: { number: 1, size: first })
     end
 
     field :member, Types::MemberType, null: false do
@@ -23,7 +23,7 @@ module Types
     end
 
     def clients(query: nil, first: nil)
-      Client.query(query, page: { number: 1, size: first }
+      Client.query(query, page: { number: 1, size: first })
     end
 
     field :client, Types::ClientType, null: false do
@@ -63,6 +63,14 @@ module Types
 
     def funder(id:)
       Funder.find_by_id(id).first
+    end
+
+    field :researcher, Types::ResearcherType, null: false do
+      argument :id, ID, required: true
+    end
+
+    def researcher(id:)
+      Researcher.find_by_id(id).first
     end
   end
 end
