@@ -12,7 +12,7 @@ describe Researcher, type: :model, vcr: true do
     it "not found" do
       id = "https://orcid.org/xxx"
       researchers = Researcher.find_by_id(id)
-      expect(researchers).to be_nil
+      expect(researchers).to be_empty
     end
   end
 end
