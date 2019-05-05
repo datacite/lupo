@@ -1,9 +1,12 @@
 module Types
   class QueryType < Types::BaseObject
-    field :members, [Types::MemberType], null: false
+    field :members, [Types::MemberType], null: false do
+      argument :query, String, required: false
+      argument :first, Int, required: false, default_value: 100
+    end
 
-    def members
-      Provider.query(nil)
+    def members(query: nil, first: nil)
+      Provider.query(query, page: { number: 1, size: first }
     end
 
     field :member, Types::MemberType, null: false do
@@ -14,10 +17,13 @@ module Types
       Provider.find_by_id(id).first
     end
 
-    field :clients, [Types::ClientType], null: false
+    field :clients, [Types::ClientType], null: false do
+      argument :query, String, required: false
+      argument :first, Int, required: false, default_value: 100
+    end
 
-    def clients
-      Client.query(nil)
+    def clients(query: nil, first: nil)
+      Client.query(query, page: { number: 1, size: first }
     end
 
     field :client, Types::ClientType, null: false do
