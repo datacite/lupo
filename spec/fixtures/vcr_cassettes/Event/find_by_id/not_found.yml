@@ -1,0 +1,44 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.datacite.org/events/https://doi.org/10.13039/xxx
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.2.1; +https://github.com/datacite/maremma)
+      Accept:
+      - application/vnd.api+json; version=2
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Date:
+      - Mon, 06 May 2019 20:55:35 GMT
+      Content-Type:
+      - application/json; charset=UTF-8
+      Content-Length:
+      - '34'
+      Connection:
+      - keep-alive
+      Status:
+      - 404 Not Found
+      Vary:
+      - Origin
+      X-Runtime:
+      - '0.001265'
+      X-Request-Id:
+      - 73761d8a-4945-45ee-b8d5-021e5596c1a4
+      X-Powered-By:
+      - Phusion Passenger 6.0.2
+      Server:
+      - nginx/1.15.8 + Phusion Passenger 6.0.2
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":404,"error":"Not Found"}'
+    http_version: 
+  recorded_at: Mon, 06 May 2019 20:55:35 GMT
+recorded_with: VCR 3.0.3
