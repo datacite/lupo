@@ -1,7 +1,7 @@
 require 'types/client_type'
 
 module Types
-  class MemberType < Types::BaseObject
+  class ProviderType < Types::BaseObject
     description "Information about members"
 
     field :id, ID, null: false, hash_key: 'uid', description: "Unique identifier for each member"
