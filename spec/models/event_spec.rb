@@ -39,6 +39,20 @@ describe Event, type: :model, vcr: true do
       expect(response[:data].first).to eq(:id=>"308185f3-1607-478b-a25e-ed5671994db5", :subj_id=>"https://api.datacite.org/reports/fa2ad308-1b25-4394-9bc6-e0c7511e763d", :obj_id=>"https://doi.org/10.7272/q6g15xs4", :source_id=>"datacite-usage", :relation_type_id=>"total-dataset-investigations-regular", :total=>4)
     end
 
+    it "doi" do
+      doi = "https://doi.org/10.7272/q6z60kzd"
+      response = Event.query(nil, doi: doi)
+      expect(response[:data].size).to eq(22)
+      expect(response.dig(:meta, "relationTypes", 0, "yearMonths")).to eq([{"id"=>"2018-04", "title"=>"April 2018", "sum"=>23171.0},
+        {"id"=>"2018-05", "title"=>"May 2018", "sum"=>58.0},
+        {"id"=>"2018-06", "title"=>"June 2018", "sum"=>4.0},
+        {"id"=>"2018-08", "title"=>"August 2018", "sum"=>16.0},
+        {"id"=>"2019-02", "title"=>"February 2019", "sum"=>11.0},
+        {"id"=>"2019-03", "title"=>"March 2019", "sum"=>5.0},
+        {"id"=>"2019-04", "title"=>"April 2019", "sum"=>2.0},
+        {"id"=>"2019-05", "title"=>"May 2019", "sum"=>1.0}])
+    end
+
     it "not found" do
       source_id = "xxx"
       response = Event.query(nil, source_id: source_id)

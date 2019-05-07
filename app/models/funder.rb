@@ -1,4 +1,7 @@
 class Funder
+  # include helper module for PORO models
+  include Modelable
+
   def self.find_by_id(id)
     doi = doi_from_url(id)
     return [] unless doi.present?
@@ -46,12 +49,5 @@ class Funder
       alternate_name: message["alt-names"],
       country: message["location"],
       date_modified: "2019-04-18T00:00:00Z" }.compact
-  end
-
-  def self.doi_from_url(url)
-    if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match(url)
-      uri = Addressable::URI.parse(url)
-      uri.path.gsub(/^\//, '').downcase
-    end
   end
 end
