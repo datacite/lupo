@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.datacite.org/events/https://doi.org/10.13039/xxx
+    uri: https://api.datacite.org/events/xxx
     body:
       encoding: US-ASCII
       string: ''
@@ -17,28 +17,29 @@ http_interactions:
       message: Not Found
     headers:
       Date:
-      - Mon, 06 May 2019 20:55:35 GMT
+      - Tue, 07 May 2019 05:09:23 GMT
       Content-Type:
-      - application/json; charset=UTF-8
-      Content-Length:
-      - '34'
+      - application/json; charset=utf-8
       Connection:
       - keep-alive
       Status:
       - 404 Not Found
+      Cache-Control:
+      - no-cache
       Vary:
-      - Origin
+      - Accept-Encoding, Origin
       X-Runtime:
-      - '0.001265'
+      - '0.059691'
       X-Request-Id:
-      - 73761d8a-4945-45ee-b8d5-021e5596c1a4
+      - 6ac28d34-dc1e-451f-9c7a-26a682b83a47
       X-Powered-By:
       - Phusion Passenger 6.0.2
       Server:
       - nginx/1.15.8 + Phusion Passenger 6.0.2
     body:
       encoding: ASCII-8BIT
-      string: '{"status":404,"error":"Not Found"}'
+      string: '{"errors":[{"status":"404","title":"The resource you are looking for
+        doesn''t exist."}]}'
     http_version: 
-  recorded_at: Mon, 06 May 2019 20:55:35 GMT
+  recorded_at: Tue, 07 May 2019 05:09:23 GMT
 recorded_with: VCR 3.0.3

@@ -1,14 +1,20 @@
 class Event
   def self.find_by_id(id)
-    return [] unless id.present?
+    return { errors: [{ "title" => "No id provided"} ] } unless id.present?
 
     url = "https://api.datacite.org/events/#{id}"
     response = Maremma.get(url, accept: "application/vnd.api+json; version=2")
 
-    return [] if response.status != 200
+    if response.status == 200
+      message = response.body.dig("data", "attributes")
+      data = [parse_message(id: id, message: message)]
+    else
+      data = []
+    end
     
-    message = response.body.dig("data", "attributes")
-    [parse_message(id: id, message: message)]
+    { data: data,
+      meta: response.body.fetch("meta", {}),
+      errors: response.body.fetch("errors", []) }
   end
 
   def self.query(query, options={})
@@ -20,12 +26,16 @@ class Event
     
     response = Maremma.get(url, accept: "application/vnd.api+json; version=2")
 
-    return [] if response.status != 200
-    
-    items = response.body.fetch("data", [])
-    items.map do |message|
-      parse_message(id: message['id'], message: message['attributes'])
+    if response.status == 200
+      items = response.body.fetch("data", [])
+      data = items.map { |message| parse_message(id: message['id'], message: message['attributes']) }
+    else
+      data = []
     end
+
+    { data: data,
+      meta: response.body.fetch("meta", {}),
+      errors: response.body.fetch("errors", []) }
   end
 
   def self.parse_message(id: nil, message: nil)
