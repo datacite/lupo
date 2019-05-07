@@ -137,7 +137,12 @@ class Provider < ActiveRecord::Base
       "joined" => joined,
       "twitter_handle" => twitter_handle,
       "ror_id" => ror_id,
-      "billing_information" => billing_information,
+      "billing_information" => {
+        "address" => address,
+        "postCode" => post_code,
+        "state" => state,
+        "city" => city
+      },
       "created" => created,
       "updated" => updated,
       "deleted_at" => deleted_at,

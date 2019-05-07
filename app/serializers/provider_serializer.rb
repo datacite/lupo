@@ -22,7 +22,7 @@ class ProviderSerializer
   end
 
   attribute :billing_information, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_billing_information, object) == true } do |object|
-    object.billing_information.transform_keys!{ |key| key.to_s.camelcase(:lower) } if object.billing_information.present?
+    object.billing_information.present? ? object.billing_information.transform_keys!{ |key| key.to_s.camelcase(:lower) } : {}
   end
 
   attribute :twitter_handle, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_billing_information, object) == true } do |object|
