@@ -6,7 +6,7 @@ describe Researcher, type: :model, vcr: true do
       id = "https://orcid.org/0000-0003-1419-2405"
       researchers = Researcher.find_by_id(id)
       expect(researchers.size).to eq(1)
-      expect(researchers.first).to eq(id: "https://orcid.org/0000-0003-1419-2405", name: "Martin Fenner", given_name: "Martin", family_name: "Fenner")
+      expect(researchers.first).to eq(id: "https://orcid.org/0000-0003-1419-2405", name: "Martin Fenner", "givenName" => "Martin", "familyName" => "Fenner")
     end
 
     it "not found" do

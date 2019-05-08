@@ -15,9 +15,9 @@ class Researcher
   def self.parse_message(id: nil, message: nil)
     {
       id: id,
-      given_name: message.dig("name", "given-names", "value"),
-      family_name: message.dig("name", "family-name", "value"),
-      name: message.dig("name", "credit-name", "value") }.compact
+      name: message.dig("name", "credit-name", "value"),
+      "givenName" => message.dig("name", "given-names", "value"),
+      "familyName" => message.dig("name", "family-name", "value") }.compact
   end
 
   def self.orcid_from_url(url)

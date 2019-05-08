@@ -23,7 +23,7 @@ http_interactions:
       Content-Type:
       - application/vnd.orcid+json; qs=4;charset=UTF-8
       Date:
-      - Sun, 05 May 2019 10:25:09 GMT
+      - Tue, 07 May 2019 19:04:30 GMT
       Expires:
       - '0'
       Pragma:
@@ -37,7 +37,7 @@ http_interactions:
       Connection:
       - keep-alive
       Set-Cookie:
-      - X-Mapping-fjhppofk=AC7FD72D56BC49A75A07C0057E9FFEE4; path=/
+      - X-Mapping-fjhppofk=FAC9A421C8E47CC7F8C08879007190C1; path=/
       X-Frame-Options:
       - DENY
     body:
@@ -51,5 +51,5 @@ http_interactions:
           "more-info" : "https://members.orcid.org/api/resources/troubleshooting"
         }
     http_version: 
-  recorded_at: Sun, 05 May 2019 10:25:09 GMT
+  recorded_at: Tue, 07 May 2019 19:04:30 GMT
 recorded_with: VCR 3.0.3
