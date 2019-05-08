@@ -70,30 +70,37 @@ after_success:
       tar -xzvf dockerize-linux-amd64-v0.6.0.tar.gz;
       rm dockerize-linux-amd64-v0.6.0.tar.gz;
       export GIT_SHA=$(git rev-parse --short HEAD);
+      export GIT_REVISION=$(git rev-parse HEAD);
       export GIT_TAG=$(git describe --tags $(git rev-list --tags --max-count=1));
-      git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/ror-community/deployment.git";
-      
-      if [ "$TRAVIS_BRANCH" == "master" ]; then
-        ./dockerize -template vendor/docker/_ror-api.auto.tfvars.tmpl:deployment/ror/services/api/_ror-api.auto.tfvars;
-      elif [ "$TRAVIS_BRANCH" == "dev" ]; then
-        ./dockerize -template vendor/docker/_ror-api.auto.tfvars.tmpl:deployment/ror/services/api/_ror-api-dev.auto.tfvars;
-      elif [ "$TRAVIS_BRANCH" == "python_write" ]; then
-        ./dockerize -template vendor/docker/_ror-api.auto.tfvars.tmpl:deployment/ror/services/api/_ror-api-dev.auto.tfvars;
+
+      git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git";
+      ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/stage/services/client-api/_lupo.auto.tfvars;
+
+      sentry-cli releases new lupo:${GIT_TAG} --finalize --project lupo;
+
+      if [ "${TRAVIS_TAG?}" ]; then
+        ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/prod-eu-west/services/client-api/_lupo.auto.tfvars;
+        sentry-cli releases deploys lupo:${GIT_TAG} new -e production;
+      else
+        sentry-cli releases deploys lupo:${GIT_TAG} new -e stage;
       fi
+
+      sentry-cli releases set-commits --auto lupo:${GIT_TAG};
       
-      cd deployment;
+      cd mastino;
       git remote;
       git config user.email ${DOCKER_EMAIL};
       git config user.name ${DOCKER_USERNAME};
-
-      if [ "$TRAVIS_BRANCH" == "master" ]; then
-        git add ror/services/api/_ror-api.auto.tfvars;
-      elif [ "$TRAVIS_BRANCH" == "dev" ]; then
-        git add ror/services/api/_ror-api-dv.auto.tfvars;
+      
+      if [ "${TRAVIS_TAG?}" ]; then
+        git add prod-eu-west/services/client-api/_lupo.auto.tfvars;
+        git commit -m "Adding lupo git variables for commit tagged ${TRAVIS_TAG?}";
+        git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" master;
+      else
+        git add stage/services/client-api/_lupo.auto.tfvars;
+        git commit -m "Adding lupo git variables for latest commit";
+        git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" master;
       fi
-
-      git commit -m "Adding ror-api git variables for latest commit on branch $TRAVIS_BRANCH";
-      git push "https://${TRAVIS_SECURE_TOKEN}@github.com/ror-community/deployment.git" master;
     fi
 
 notifications:
