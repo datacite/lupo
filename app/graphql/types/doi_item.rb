@@ -1,16 +1,12 @@
-require 'types/description_type'
-require 'types/title_type'
-require 'types/researcher_type'
+require 'types/base_interface'
+
 require 'types/client_type'
 require 'types/provider_type'
-require 'types/rights_type'
-require 'types/date_type'
-require 'types/subject_type'
-require 'types/resource_type_type'
-require 'types/identifier_type'
-require 'types/related_identifier_type'
-require 'types/funding_type'
+require 'types/researcher_type'
 
+require 'types/description_type'
+require 'types/title_type'
+require 'types/rights_type'
 module Types::DoiItem
   include Types::BaseInterface
 

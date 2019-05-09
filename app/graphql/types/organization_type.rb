@@ -1,6 +1,3 @@
-require 'types/country_type'
-require 'types/label_type'
-
 module Types
   class OrganizationType < Types::BaseObject
     description "Information about organizations"

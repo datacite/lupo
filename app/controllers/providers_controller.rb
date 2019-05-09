@@ -83,7 +83,6 @@ class ProvidersController < ApplicationController
   end
 
   def show
-
     options = {}
     options[:meta] = { 
       providers: provider_count(provider_id: params[:id] == "admin" ? nil : params[:id]),

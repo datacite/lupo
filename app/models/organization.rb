@@ -13,7 +13,7 @@ class Organization
   end
 
   def self.query(query, options={})
-    # rows = options[:limit] || 100
+    # rows = options[:limit] || 25
 
     if query.present?
       url = "https://api.ror.org/organizations?query=#{query}&qp"

@@ -1,46 +1,55 @@
 module Types
   class QueryType < Types::BaseObject
-    field :providers, [Types::ProviderType], null: false do
+    field :providers, [::Types::ProviderType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def providers(query: nil, first: nil)
-      Provider.query(query, page: { number: 1, size: first })
+      Provider.query(query, page: { number: 1, size: first }).records
     end
 
-    field :provider, Types::ProviderType, null: false do
+    field :provider, ::Types::ProviderType, null: false do
       argument :id, ID, required: true
     end
 
     def provider(id:)
-      Provider.find_by_id(id).first
+      Provider.unscoped.where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_ADMIN')").where(deleted_at: nil).where(symbol: id).first
     end
 
-    field :clients, [Types::ClientType], null: false do
+    field :clients, [::Types::ClientType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def clients(query: nil, first: nil)
-      Client.query(query, page: { number: 1, size: first })
+      Client.query(query, page: { number: 1, size: first }).records
     end
 
-    field :client, Types::ClientType, null: false do
+    field :client, ::Types::ClientType, null: false do
       argument :id, ID, required: true
     end
 
     def client(id:)
-      Client.find_by_id(id).first
+      Client.where(symbol: id).where(deleted_at: nil).first
     end
 
-    field :prefixes, [Types::PrefixType], null: false
-
-    def prefixes
-      Prefix.all
+    field :prefixes, [::Types::PrefixType], null: false do
+      argument :query, String, required: false
+      argument :first, Int, required: false, default_value: 25
     end
 
-    field :prefix, Types::PrefixType, null: false do
+    def prefixes(query: nil, first: nil)
+      if query.present?
+        collection = Prefix.query(query)
+      else
+        collection = Prefix.all
+      end
+
+      collection.page(1).per(first)
+    end
+
+    field :prefix, ::Types::PrefixType, null: false do
       argument :id, ID, required: true
     end
 
@@ -48,16 +57,16 @@ module Types
       Prefix.where(prefix: id).first
     end
 
-    field :funders, [Types::FunderType], null: false do
+    field :funders, [::Types::FunderType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def funders(query: nil, first: nil)
       Funder.query(query, limit: first)
     end
 
-    field :funder, Types::FunderType, null: false do
+    field :funder, ::Types::FunderType, null: false do
       argument :id, ID, required: true
     end
 
@@ -65,7 +74,7 @@ module Types
       Funder.find_by_id(id).first
     end
 
-    field :researcher, Types::ResearcherType, null: false do
+    field :researcher, ::Types::ResearcherType, null: false do
       argument :id, ID, required: true
     end
 
@@ -73,15 +82,16 @@ module Types
       Researcher.find_by_id(id).first
     end
 
-    field :organizations, [Types::OrganizationType], null: false do
+    field :organizations, [::Types::OrganizationType], null: false do
       argument :query, String, required: false
+      argument :first, Int, required: false, default_value: 25
     end
 
-    def organizations(query: nil)
-      Organization.query(query)
+    def organizations(query: nil, first: nil)
+      Organization.query(query, limit: first)
     end
 
-    field :organization, Types::OrganizationType, null: false do
+    field :organization, ::Types::OrganizationType, null: false do
       argument :id, ID, required: true
     end
 
@@ -89,16 +99,16 @@ module Types
       Organization.find_by_id(id).first
     end
 
-    field :datasets, [Types::DatasetType], null: false do
+    field :datasets, [::Types::DatasetType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def datasets(query: nil, first: nil)
       Doi.query(query, resource_type_id: "Dataset", page: { number: 1, size: first })
     end
 
-    field :dataset, Types::DatasetType, null: false do
+    field :dataset, ::Types::DatasetType, null: false do
       argument :id, ID, required: true
     end
 
@@ -107,16 +117,16 @@ module Types
       Doi.find_by_id(doi).first
     end
 
-    field :publications, [Types::PublicationType], null: false do
+    field :publications, [::Types::PublicationType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def publications(query: nil, first: nil)
       Doi.query(query, resource_type_id: "Text", page: { number: 1, size: first })
     end
 
-    field :publication, Types::PublicationType, null: false do
+    field :publication, ::Types::PublicationType, null: false do
       argument :id, ID, required: true
     end
 
@@ -125,16 +135,16 @@ module Types
       Doi.find_by_id(doi).first
     end
 
-    field :audiovisuals, [Types::AudiovisualType], null: false do
+    field :audiovisuals, [::Types::AudiovisualType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def audiovisuals(query: nil, first: nil)
       Doi.query(query, resource_type_id: "Audiovisual", page: { number: 1, size: first })
     end
 
-    field :audiovisual, Types::AudiovisualType, null: false do
+    field :audiovisual, ::Types::AudiovisualType, null: false do
       argument :id, ID, required: true
     end
 
@@ -143,16 +153,16 @@ module Types
       Doi.find_by_id(doi).first
     end
 
-    field :collections, [Types::CollectionType], null: false do
+    field :collections, [::Types::CollectionType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def collections(query: nil, first: nil)
       Doi.query(query, resource_type_id: "Collection", page: { number: 1, size: first })
     end
 
-    field :collection, Types::CollectionType, null: false do
+    field :collection, ::Types::CollectionType, null: false do
       argument :id, ID, required: true
     end
 
@@ -161,16 +171,16 @@ module Types
       Doi.find_by_id(doi).first
     end
 
-    field :data_papers, [Types::DataPaperType], null: false do
+    field :data_papers, [::Types::DataPaperType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def data_papers(query: nil, first: nil)
       Doi.query(query, resource_type_id: "DataPaper", page: { number: 1, size: first })
     end
 
-    field :data_paper, Types::DataPaperType, null: false do
+    field :data_paper, ::Types::DataPaperType, null: false do
       argument :id, ID, required: true
     end
 
@@ -179,16 +189,16 @@ module Types
       Doi.find_by_id(doi).first
     end
 
-    field :events, [Types::EventType], null: false do
+    field :events, [::Types::EventType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def events(query: nil, first: nil)
       Doi.query(query, resource_type_id: "Event", page: { number: 1, size: first })
     end
 
-    field :event, Types::EventType, null: false do
+    field :event, ::Types::EventType, null: false do
       argument :id, ID, required: true
     end
 
@@ -197,16 +207,16 @@ module Types
       Doi.find_by_id(doi).first
     end
 
-    field :images, [Types::ImageType], null: false do
+    field :images, [::Types::ImageType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def images(query: nil, first: nil)
       Doi.query(query, resource_type_id: "Image", page: { number: 1, size: first })
     end
 
-    field :image, Types::ImageType, null: false do
+    field :image, ::Types::ImageType, null: false do
       argument :id, ID, required: true
     end
 
@@ -215,16 +225,16 @@ module Types
       Doi.find_by_id(doi).first
     end
 
-    field :interactive_resources, [Types::InteractiveResourceType], null: false do
+    field :interactive_resources, [::Types::InteractiveResourceType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def interactive_resources(query: nil, first: nil)
       Doi.query(query, resource_type_id: "InteractiveResource", page: { number: 1, size: first })
     end
 
-    field :interactive_resource, Types::InteractiveResourceType, null: false do
+    field :interactive_resource, ::Types::InteractiveResourceType, null: false do
       argument :id, ID, required: true
     end
 
@@ -233,16 +243,16 @@ module Types
       Doi.find_by_id(doi).first
     end
 
-    field :models, [Types::ModelType], null: false do
+    field :models, [::Types::ModelType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def models(query: nil, first: nil)
       Doi.query(query, resource_type_id: "Model", page: { number: 1, size: first })
     end
 
-    field :model, Types::ModelType, null: false do
+    field :model, ::Types::ModelType, null: false do
       argument :id, ID, required: true
     end
 
@@ -251,16 +261,16 @@ module Types
       Doi.find_by_id(doi).first
     end
 
-    field :physical_objects, [Types::PhysicalObjectType], null: false do
+    field :physical_objects, [::Types::PhysicalObjectType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def physical_objects(query: nil, first: nil)
       Doi.query(query, resource_type_id: "PhysicalObject", page: { number: 1, size: first })
     end
 
-    field :physical_object, Types::PhysicalObjectType, null: false do
+    field :physical_object, ::Types::PhysicalObjectType, null: false do
       argument :id, ID, required: true
     end
 
@@ -269,16 +279,16 @@ module Types
       Doi.find_by_id(doi).first
     end
 
-    field :services, [Types::ServiceType], null: false do
+    field :services, [::Types::ServiceType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def services(query: nil, first: nil)
       Doi.query(query, resource_type_id: "Service", page: { number: 1, size: first })
     end
 
-    field :service, Types::ServiceType, null: false do
+    field :service, ::Types::ServiceType, null: false do
       argument :id, ID, required: true
     end
 
@@ -287,16 +297,16 @@ module Types
       Doi.find_by_id(doi).first
     end
 
-    field :softwares, [Types::SoftwareType], null: false do
+    field :softwares, [::Types::SoftwareType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def softwares(query: nil, first: nil)
       Doi.query(query, resource_type_id: "Software", page: { number: 1, size: first })
     end
 
-    field :software, Types::SoftwareType, null: false do
+    field :software, ::Types::SoftwareType, null: false do
       argument :id, ID, required: true
     end
 
@@ -305,16 +315,16 @@ module Types
       Doi.find_by_id(doi).first
     end
 
-    field :sounds, [Types::SoundType], null: false do
+    field :sounds, [::Types::SoundType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def sounds(query: nil, first: nil)
       Doi.query(query, resource_type_id: "Sound", page: { number: 1, size: first })
     end
 
-    field :sound, Types::SoundType, null: false do
+    field :sound, ::Types::SoundType, null: false do
       argument :id, ID, required: true
     end
 
@@ -323,16 +333,16 @@ module Types
       Doi.find_by_id(doi).first
     end
 
-    field :workflows, [Types::WorkflowType], null: false do
+    field :workflows, [::Types::WorkflowType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def workflows(query: nil, first: nil)
       Doi.query(query, resource_type_id: "Workflow", page: { number: 1, size: first })
     end
 
-    field :workflow, Types::WorkflowType, null: false do
+    field :workflow, ::Types::WorkflowType, null: false do
       argument :id, ID, required: true
     end
 
@@ -341,16 +351,16 @@ module Types
       Doi.find_by_id(doi).first
     end
 
-    field :others, [Types::OtherType], null: false do
+    field :others, [::Types::OtherType], null: false do
       argument :query, String, required: false
-      argument :first, Int, required: false, default_value: 100
+      argument :first, Int, required: false, default_value: 25
     end
 
     def others(query: nil, first: nil)
       Doi.query(query, resource_type_id: "Other", page: { number: 1, size: first })
     end
 
-    field :other, Types::OtherType, null: false do
+    field :other, ::Types::OtherType, null: false do
       argument :id, ID, required: true
     end
 

@@ -58,7 +58,8 @@ gem 'audited', '~> 4.8'
 gem 'git', '~> 1.5'
 gem 'graphql', '~> 1.9', '>= 1.9.4'
 # gem 'graphql-batch', '~> 0.4.0'
-# gem 'graphql-errors', '~> 0.3.0'
+gem 'graphql-errors', '~> 0.3.0'
+gem 'graphql-cache', '~> 0.6.0'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.5', '>= 3.5.2'

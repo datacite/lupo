@@ -1,5 +1,5 @@
 module Types
   class InteractiveResourceType < Types::BaseObject
-    implements Types::DoiItem
+    implements ::Types::DoiItem
   end
 end

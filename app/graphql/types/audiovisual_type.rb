@@ -1,5 +1,5 @@
 module Types
   class AudiovisualType < Types::BaseObject
-    implements Types::DoiItem
+    implements ::Types::DoiItem
   end
 end
