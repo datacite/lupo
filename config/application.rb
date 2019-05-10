@@ -60,8 +60,8 @@ module Lupo
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.1
-    config.autoload_paths << Rails.root.join('lib')
-    config.eager_load_paths << Rails.root.join('app', 'graphql', 'types')
+    config.paths.add Rails.root.join('app', 'graphql', 'types').to_s, eager_load: true
+    config.paths.add Rails.root.join('app', 'graphql', 'mutations').to_s, eager_load: true
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
