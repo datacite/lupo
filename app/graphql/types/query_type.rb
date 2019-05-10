@@ -72,7 +72,10 @@ class QueryType < BaseObject
   end
 
   def funder(id:)
-    Funder.find_by_id(id).first
+    result = Funder.find_by_id(id).first
+    fail ActiveRecord::RecordNotFound if result.nil?
+
+    result
   end
 
   field :researcher, ResearcherType, null: false do
@@ -80,7 +83,10 @@ class QueryType < BaseObject
   end
 
   def researcher(id:)
-    Researcher.find_by_id(id).first
+    result = Researcher.find_by_id(id).first
+    fail ActiveRecord::RecordNotFound if result.nil?
+
+    result
   end
 
   field :organizations, [OrganizationType], null: false do
@@ -97,7 +103,10 @@ class QueryType < BaseObject
   end
 
   def organization(id:)
-    Organization.find_by_id(id).first
+    result = Organization.find_by_id(id).first
+    fail ActiveRecord::RecordNotFound if result.nil?
+
+    result
   end
 
   field :datasets, [DatasetType], null: false do
@@ -114,8 +123,7 @@ class QueryType < BaseObject
   end
 
   def dataset(id:)
-    doi = doi_from_url(id)
-    Doi.find_by_id(doi).first
+    set_doi(id)
   end
 
   field :publications, [PublicationType], null: false do
@@ -132,8 +140,7 @@ class QueryType < BaseObject
   end
 
   def publication(id:)
-    doi = doi_from_url(id)
-    Doi.find_by_id(doi).first
+    set_doi(id)
   end
 
   field :audiovisuals, [AudiovisualType], null: false do
@@ -150,8 +157,7 @@ class QueryType < BaseObject
   end
 
   def audiovisual(id:)
-    doi = doi_from_url(id)
-    Doi.find_by_id(doi).first
+    set_doi(id)
   end
 
   field :collections, [CollectionType], null: false do
@@ -168,8 +174,7 @@ class QueryType < BaseObject
   end
 
   def collection(id:)
-    doi = doi_from_url(id)
-    Doi.find_by_id(doi).first
+    set_doi(id)
   end
 
   field :data_papers, [DataPaperType], null: false do
@@ -186,8 +191,7 @@ class QueryType < BaseObject
   end
 
   def data_paper(id:)
-    doi = doi_from_url(id)
-    Doi.find_by_id(doi).first
+    set_doi(id)
   end
 
   field :events, [EventType], null: false do
@@ -204,8 +208,7 @@ class QueryType < BaseObject
   end
 
   def event(id:)
-    doi = doi_from_url(id)
-    Doi.find_by_id(doi).first
+    set_doi(id)
   end
 
   field :images, [ImageType], null: false do
@@ -222,8 +225,7 @@ class QueryType < BaseObject
   end
 
   def image(id:)
-    doi = doi_from_url(id)
-    Doi.find_by_id(doi).first
+    set_doi(id)
   end
 
   field :interactive_resources, [InteractiveResourceType], null: false do
@@ -240,8 +242,7 @@ class QueryType < BaseObject
   end
 
   def interactive_resource(id:)
-    doi = doi_from_url(id)
-    Doi.find_by_id(doi).first
+    set_doi(id)
   end
 
   field :models, [ModelType], null: false do
@@ -258,8 +259,7 @@ class QueryType < BaseObject
   end
 
   def model(id:)
-    doi = doi_from_url(id)
-    Doi.find_by_id(doi).first
+    set_doi(id)
   end
 
   field :physical_objects, [PhysicalObjectType], null: false do
@@ -276,8 +276,7 @@ class QueryType < BaseObject
   end
 
   def physical_object(id:)
-    doi = doi_from_url(id)
-    Doi.find_by_id(doi).first
+    set_doi(id)
   end
 
   field :services, [ServiceType], null: false do
@@ -294,8 +293,7 @@ class QueryType < BaseObject
   end
 
   def service(id:)
-    doi = doi_from_url(id)
-    Doi.find_by_id(doi).first
+    set_doi(id)
   end
 
   field :softwares, [SoftwareType], null: false do
@@ -312,8 +310,7 @@ class QueryType < BaseObject
   end
 
   def software(id:)
-    doi = doi_from_url(id)
-    Doi.find_by_id(doi).first
+    set_doi(id)
   end
 
   field :sounds, [SoundType], null: false do
@@ -330,8 +327,7 @@ class QueryType < BaseObject
   end
 
   def sound(id:)
-    doi = doi_from_url(id)
-    Doi.find_by_id(doi).first
+    set_doi(id)
   end
 
   field :workflows, [WorkflowType], null: false do
@@ -348,8 +344,7 @@ class QueryType < BaseObject
   end
 
   def workflow(id:)
-    doi = doi_from_url(id)
-    Doi.find_by_id(doi).first
+    set_doi(id)
   end
 
   field :others, [OtherType], null: false do
@@ -366,8 +361,17 @@ class QueryType < BaseObject
   end
 
   def other(id:)
+    set_doi(id)
+  end
+
+  def set_doi(id)
     doi = doi_from_url(id)
-    Doi.find_by_id(doi).first
+    fail ActiveRecord::RecordNotFound if doi.nil?
+
+    result = Doi.find_by_id(doi).first
+    fail ActiveRecord::RecordNotFound if result.nil?
+
+    result
   end
 
   def doi_from_url(url)
