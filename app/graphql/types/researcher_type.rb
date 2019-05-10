@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class ResearcherType < Types::BaseObject
     description "Information about researchers"
