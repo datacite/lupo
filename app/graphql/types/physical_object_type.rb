@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-module Types
-  class PhysicalObjectType < Types::BaseObject
-    implements sTypes::DoiItem
-  end
+class PhysicalObjectType < BaseObject
+  implements DoiItem
 end

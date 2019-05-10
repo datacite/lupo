@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-module Types
-  class WorkflowType < Types::BaseObject
-    implements Types::DoiItem
-  end
+class WorkflowType < BaseObject
+  implements DoiItem
 end

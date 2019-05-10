@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-module Types
-  class OtherType < Types::BaseObject
-    implements Types::DoiItem
-  end
+class OtherType < BaseObject
+  implements DoiItem
 end

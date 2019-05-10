@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-module Types
-  class ImageType < Types::BaseObject
-    implements Types::DoiItem
-  end
+class ImageType < BaseObject
+  implements DoiItem
 end
