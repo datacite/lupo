@@ -40,6 +40,7 @@ class Provider < ActiveRecord::Base
   validates_inclusion_of :focus_area, :in => %w(biomedicalAndHealthSciences earthSciences humanities mathematicsAndComputerScience physicalSciencesAndEngineering socialSciences general), :message => "focus area %s is not included in the list", if: :focus_area?
   validate :freeze_symbol, :on => :update
   validates_format_of :ror_id, :with => /\A(?:(http|https):\/\/)?(?:ror\.org\/)?(0\w{6}\d{2})\z/, if: :ror_id?
+  validates_format_of :twitter_handle, :with => /\A[a-zA-Z0-9_]{1,15}\z/, if: :twitter_handle?
 
   before_validation :set_region
 
@@ -101,7 +102,10 @@ class Provider < ActiveRecord::Base
       indexes :billing_information, type: :object, properties: {
         postCode: { type: :keyword },
         state: { type: :text},
+        organization: { type: :text},
+        department: { type: :text},
         city: { type: :text },
+        country: { type: :text },
         address: { type: :text }}
       indexes :created,       type: :date
       indexes :updated,       type: :date
@@ -138,10 +142,13 @@ class Provider < ActiveRecord::Base
       "twitter_handle" => twitter_handle,
       "ror_id" => ror_id,
       "billing_information" => {
-        "address" => address,
-        "postCode" => post_code,
-        "state" => state,
-        "city" => city
+        "address" => billing_address,
+        "organization" => billing_organization,
+        "department" => billing_department,
+        "postCode" => billing_post_code,
+        "state" => billing_state,
+        "country" => billing_country,
+        "city" => billing_city
       },
       "created" => created,
       "updated" => updated,
@@ -181,10 +188,13 @@ class Provider < ActiveRecord::Base
       focus_area: focus_area,
       organization_type: organization_type,
       member_type: member_type,
-      address: address,
-      post_code: post_code,
-      city: city,
-      state: state,
+      billing_address: billing_address,
+      billing_post_code: billing_post_code,
+      billing_city: billing_city,
+      billing_department: billing_department,
+      billing_organization: billing_organization,
+      billing_state: billing_state,
+      billing_country: billing_country,
       twitter_handle: twitter_handle,
       ror_id: ror_id,
       role_name: role_name,
@@ -209,22 +219,34 @@ class Provider < ActiveRecord::Base
     joined.year if joined.present?
   end
 
-  def address
+  def billing_department
+    billing_information.fetch("department",nil) if billing_information.present?
+  end
+
+  def billing_organization
+    billing_information.fetch("organization",nil) if billing_information.present?
+  end
+
+
+  def billing_address
     billing_information.fetch("address",nil) if billing_information.present?
   end
 
-  def state
+  def billing_state
     billing_information.fetch("state",nil) if billing_information.present?
   end
 
-  def city
+  def billing_city
     billing_information.fetch("city",nil) if billing_information.present?
   end
 
-  def post_code
+  def billing_post_code
     billing_information.fetch("post_code",nil) if billing_information.present?
   end
 
+  def billing_country
+    billing_information.fetch("country",nil) if billing_information.present?
+  end
 
   # count years account has been active. Ignore if deleted the same year as created
   def cumulative_years
