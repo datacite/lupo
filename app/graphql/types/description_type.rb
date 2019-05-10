@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class DescriptionType < Types::BaseObject
     description "Information about descriptions"

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class IdentifierType < Types::BaseObject
     description "Information about identifiers"

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class DateType < Types::BaseObject
     description "Information about dates"

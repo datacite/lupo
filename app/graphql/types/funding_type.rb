@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class FundingType < Types::BaseObject
     description "Information about funding"
