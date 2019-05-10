@@ -125,7 +125,7 @@ class ProviderPrefixesController < ApplicationController
       render json: ProviderPrefixSerializer.new(@provider_prefix, options).serialized_json, status: :created
     else
       logger.warn @provider_prefix.errors.inspect
-      render json: serialize(@provider_prefix.errors), status: :unprocessable_entity
+      render json: serialize_errors(@provider_prefix.errors), status: :unprocessable_entity
     end
   end
 
