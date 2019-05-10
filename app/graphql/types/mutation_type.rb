@@ -1,21 +1,6 @@
-# module Types
-#   class MutationType < BaseObject
-#     # field :providers, [::Types::ProviderType], null: false
+# frozen_string_literal: true
 
-#     # def providers
-#     #   Provider.query(nil)
-#     # end
-
-#     # field :clients, [::Types::ClientType], null: false
-
-#     # def clients
-#     #   Client.query(nil)
-#     # end
-
-#     # field :prefixes, [::Types::PrefixType], null: false
-
-#     # def prefixes
-#     #   Prefix.all
-#     # end
-#   end
-# end
+module Types
+  class MutationType < Types::BaseObject
+  end
+end
