@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Turnout.configure do |config|
   config.default_maintenance_page = Turnout::MaintenancePage::JSON
   config.default_allowed_paths = ['^/heartbeat']

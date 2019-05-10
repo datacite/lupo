@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddDeletedAtColumn < ActiveRecord::Migration[5.1]
   def change
     add_column :allocator, :deleted_at, :datetime, default: nil

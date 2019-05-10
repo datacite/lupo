@@ -1,8 +1,10 @@
-require 'flipper'
-require 'flipper/adapters/http'
+# frozen_string_literal: true
+
+require "flipper"
+require "flipper/adapters/http"
 require "active_support/notifications"
-require 'active_support/cache'
-require 'flipper/adapters/active_support_cache_store'
+require "active_support/cache"
+require "flipper/adapters/active_support_cache_store"
 
 Flipper.configure do |config|
   config.default do

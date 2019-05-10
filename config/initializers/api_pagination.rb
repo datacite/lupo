@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ApiPagination.configure do |config|
   config.page_param do |params|
     params[:page][:number]

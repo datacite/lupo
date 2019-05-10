@@ -1,4 +1,6 @@
-require 'elasticsearch/rails/lograge'
+# frozen_string_literal: true
+
+require "elasticsearch/rails/lograge"
 
 Rails.application.configure do
   config.lograge.enabled = true

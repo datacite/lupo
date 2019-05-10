@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateAllTables < ActiveRecord::Migration[5.1]
   def change
     create_table "allocator", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -19,8 +21,8 @@ class CreateAllTables < ActiveRecord::Migration[5.1]
     end
 
     create_table "allocator_prefixes", primary_key: ["allocator", "prefixes"], force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-      t.integer "allocator", :limit => 8, null: false
-      t.integer "prefixes", :limit => 8, null: false
+      t.integer "allocator", limit: 8, null: false
+      t.integer "prefixes", limit: 8, null: false
       t.index ["allocator"], name: "FKE7FBD67446EBD781"
       t.index ["prefixes"], name: "FKE7FBD674AF86A1C7"
     end
@@ -40,15 +42,15 @@ class CreateAllTables < ActiveRecord::Migration[5.1]
       t.string "symbol", null: false
       t.datetime "updated"
       t.integer "version"
-      t.integer "allocator", :limit => 8, null: false
+      t.integer "allocator", limit: 8, null: false
       t.string "experiments"
       t.index ["allocator"], name: "FK6695D60546EBD781"
       t.index ["symbol"], name: "symbol", unique: true
     end
 
     create_table "datacentre_prefixes", primary_key: ["datacentre", "prefixes"], force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-      t.integer "datacentre", :limit => 8, null: false
-      t.integer "prefixes",  :limit => 8, null: false
+      t.integer "datacentre", limit: 8, null: false
+      t.integer "prefixes",  limit: 8, null: false
       t.index ["datacentre"], name: "FK13A1B3BA47B5F5FF"
       t.index ["prefixes"], name: "FK13A1B3BAAF86A1C7"
     end
@@ -63,7 +65,7 @@ class CreateAllTables < ActiveRecord::Migration[5.1]
       t.string "last_metadata_status"
       t.datetime "updated"
       t.integer "version"
-      t.integer "datacentre", :limit => 8, null: false
+      t.integer "datacentre", limit: 8, null: false
       t.datetime "minted"
       t.index ["datacentre"], name: "FK5605B47847B5F5FF"
       t.index ["doi"], name: "doi", unique: true
@@ -75,7 +77,7 @@ class CreateAllTables < ActiveRecord::Migration[5.1]
       t.datetime "updated"
       t.string "url", null: false
       t.integer "version"
-      t.integer "dataset", :limit => 8, null: false
+      t.integer "dataset", limit: 8, null: false
       t.index ["dataset", "updated"], name: "dataset_updated"
       t.index ["dataset"], name: "FK62F6FE44D3D6B1B"
     end
@@ -85,7 +87,7 @@ class CreateAllTables < ActiveRecord::Migration[5.1]
       t.integer "metadata_version"
       t.integer "version"
       t.binary "xml", limit: 16777215
-      t.integer "dataset", :limit => 8, null: false
+      t.integer "dataset", limit: 8, null: false
       t.binary "is_converted_by_mds", limit: 1
       t.string "namespace"
       t.index ["dataset", "metadata_version"], name: "dataset_version"

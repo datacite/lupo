@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class IdentifierError < RuntimeError; end
 
 RESCUABLE_EXCEPTIONS = [CanCan::AccessDenied,

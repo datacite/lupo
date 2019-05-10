@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RemoveMicrosecondsInTimeColumns < ActiveRecord::Migration[5.2]
   def up
     change_column :dataset, :created, :datetime

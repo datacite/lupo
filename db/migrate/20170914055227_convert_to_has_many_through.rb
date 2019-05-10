@@ -1,13 +1,15 @@
+# frozen_string_literal: true
+
 class ConvertToHasManyThrough < ActiveRecord::Migration[5.1]
   def up
     execute "ALTER TABLE `allocator_prefixes` DROP PRIMARY KEY"
-    add_index :allocator_prefixes, [:allocator, :prefixes], :unique => true
+    add_index :allocator_prefixes, [:allocator, :prefixes], unique: true
     add_column :allocator_prefixes, :id, :primary_key
     add_column :allocator_prefixes, :created, :datetime
     add_column :allocator_prefixes, :updated, :datetime
 
     execute "ALTER TABLE `datacentre_prefixes` DROP PRIMARY KEY"
-    add_index :datacentre_prefixes, [:datacentre, :prefixes], :unique => true
+    add_index :datacentre_prefixes, [:datacentre, :prefixes], unique: true
     add_column :datacentre_prefixes, :id, :primary_key
     add_column :datacentre_prefixes, :created, :datetime
     add_column :datacentre_prefixes, :updated, :datetime

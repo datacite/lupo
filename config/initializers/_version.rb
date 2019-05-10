@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Lupo
   class Application
     g = Git.open(Rails.root)

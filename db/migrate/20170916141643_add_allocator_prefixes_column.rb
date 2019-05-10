@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddAllocatorPrefixesColumn < ActiveRecord::Migration[5.1]
   def change
     add_column :datacentre_prefixes, :allocator_prefixes, :integer, limit: 8

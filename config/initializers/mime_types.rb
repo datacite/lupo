@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # unregister all Mime types, keep only :text
 Mime::EXTENSION_LOOKUP.map { |i| i.first.to_sym }.each do |f|
   Mime::Type.unregister(f)
@@ -72,4 +74,3 @@ ActionController::Renderers.add :csv do |obj, options|
   options[:header].to_csv +
   Array.wrap(obj).map { |o| o.send("csv") }.join("")
 end
-

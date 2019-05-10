@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddAasmColumn < ActiveRecord::Migration[5.1]
   def self.up
     add_column :dataset, :state, :string, default: "draft"

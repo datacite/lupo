@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddFocusArea < ActiveRecord::Migration[5.2]
   def up
     remove_column :allocator, :institution_type, :string, limit: 191

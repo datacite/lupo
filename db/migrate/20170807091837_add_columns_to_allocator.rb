@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddColumnsToAllocator < ActiveRecord::Migration[5.1]
   def change
     add_column :allocator, :description, :string
