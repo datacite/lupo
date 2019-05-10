@@ -9,10 +9,10 @@ http_interactions:
     headers:
       User-Agent:
       - Mozilla/5.0 (compatible; Maremma/4.1.1; +https://github.com/datacite/maremma)
-      Content-Type:
-      - application/json;charset=UTF-8
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Content-Type:
+      - application/json;charset=UTF-8
       Authorization:
       - Basic <HANDLE_TOKEN>
   response:
@@ -21,7 +21,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 26 Sep 2018 08:52:01 GMT
+      - Fri, 10 May 2019 12:45:27 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Connection:
@@ -32,7 +32,7 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"responseCode":1,"handle":"10.5438/MCNV-GA6N"}'
     http_version: 
-  recorded_at: Wed, 26 Sep 2018 08:52:01 GMT
+  recorded_at: Fri, 10 May 2019 12:45:27 GMT
 - request:
     method: get
     uri: https://handle.test.datacite.org/api/handles/10.5438/MCNV-GA6N?index=1
@@ -50,7 +50,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 26 Sep 2018 08:52:01 GMT
+      - Fri, 10 May 2019 12:45:27 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Connection:
@@ -59,7 +59,7 @@ http_interactions:
       - Accept-Encoding
     body:
       encoding: ASCII-8BIT
-      string: '{"responseCode":1,"handle":"10.5438/MCNV-GA6N","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/"},"ttl":86400,"timestamp":"2018-09-26T08:52:01Z"}]}'
+      string: '{"responseCode":1,"handle":"10.5438/MCNV-GA6N","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/"},"ttl":86400,"timestamp":"2019-05-10T12:45:27Z"}]}'
     http_version: 
-  recorded_at: Wed, 26 Sep 2018 08:52:01 GMT
+  recorded_at: Fri, 10 May 2019 12:45:27 GMT
 recorded_with: VCR 3.0.3

@@ -62,7 +62,7 @@ gem 'graphql-errors', '~> 0.3.0'
 # gem 'graphql-cache', '~> 0.6.0'
 
 group :development, :test do
-  gem 'rspec-rails', '~> 3.5', '>= 3.5.2'
+  gem 'rspec-rails', '~> 3.8', '>= 3.8.2'
   gem 'rspec-benchmark', '~> 0.4.0'
   gem 'rubocop', '~> 0.68.1', require: false
   gem 'rubocop-performance', '~> 1.2', require: false
