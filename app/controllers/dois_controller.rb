@@ -242,7 +242,7 @@ class DoisController < ApplicationController
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
     else
       logger.info @doi.errors.messages
-      render json: serialize(@doi.errors.messages), status: :ok
+      render json: serialize_errors(@doi.errors.messages), status: :ok
     end
   end
 
@@ -269,7 +269,7 @@ class DoisController < ApplicationController
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :created, location: @doi
     else
       logger.warn @doi.errors.inspect
-      render json: serialize(@doi.errors), include: @include, status: :unprocessable_entity
+      render json: serialize_errors(@doi.errors), include: @include, status: :unprocessable_entity
     end
   end
 
@@ -316,7 +316,7 @@ class DoisController < ApplicationController
       render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
     else
       logger.warn @doi.errors.messages
-      render json: serialize(@doi.errors.messages), include: @include, status: :unprocessable_entity
+      render json: serialize_errors(@doi.errors.messages), include: @include, status: :unprocessable_entity
     end
   end
 
@@ -340,7 +340,7 @@ class DoisController < ApplicationController
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
     else
       logger.warn @doi.errors.messages
-      render json: serialize(@doi.errors.messages), include: @include, status: :unprocessable_entity
+      render json: serialize_errors(@doi.errors.messages), include: @include, status: :unprocessable_entity
     end
   end
 
@@ -353,7 +353,7 @@ class DoisController < ApplicationController
         head :no_content
       else
         logger.warn @doi.errors.inspect
-        render json: serialize(@doi.errors), status: :unprocessable_entity
+        render json: serialize_errors(@doi.errors), status: :unprocessable_entity
       end
     else
       response.headers["Allow"] = "HEAD, GET, POST, PATCH, PUT, OPTIONS"

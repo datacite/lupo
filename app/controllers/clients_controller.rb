@@ -93,7 +93,7 @@ class ClientsController < ApplicationController
       render json: ClientSerializer.new(@client, options).serialized_json, status: :created
     else
       logger.warn @client.errors.inspect
-      render json: serialize(@client.errors), status: :unprocessable_entity
+      render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
 
@@ -107,7 +107,7 @@ class ClientsController < ApplicationController
       render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
     else
       logger.warn @client.errors.inspect
-      render json: serialize(@client.errors), status: :unprocessable_entity
+      render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
 
@@ -125,7 +125,7 @@ class ClientsController < ApplicationController
       head :no_content
     else
       logger.warn @client.errors.inspect
-      render json: serialize(@client.errors), status: :unprocessable_entity
+      render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
 

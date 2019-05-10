@@ -67,7 +67,7 @@ class MetadataController < ApplicationController
       render json: MetadataSerializer.new(@metadata, options).serialized_json, status: :created
     else
       logger.warn @metadata.errors.inspect
-      render json: serialize(@metadata.errors), status: :unprocessable_entity
+      render json: serialize_errors(@metadata.errors), status: :unprocessable_entity
     end
   end
 
@@ -80,7 +80,7 @@ class MetadataController < ApplicationController
         head :no_content
       else
         logger.warn @metadata.errors.inspect
-        render json: serialize(@metadata.errors), status: :unprocessable_entity
+        render json: serialize_errors(@metadata.errors), status: :unprocessable_entity
       end
     else
       response.headers["Allow"] = "HEAD, GET, POST, PATCH, PUT, OPTIONS"

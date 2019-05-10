@@ -128,7 +128,7 @@ class PrefixesController < ApplicationController
       render json: PrefixSerializer.new(@prefix, options).serialized_json, status: :created, location: @prefix
     else
       logger.warn @prefix.errors.inspect
-      render json: serialize(@prefix.errors), status: :unprocessable_entity
+      render json: serialize_errors(@prefix.errors), status: :unprocessable_entity
     end
   end
 

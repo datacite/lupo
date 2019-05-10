@@ -2,7 +2,7 @@ module ErrorSerializable
   extend ActiveSupport::Concern
 
   included do
-    def serialize(errors)
+    def serialize_errors(errors)
       return nil if errors.nil?
 
       arr = Array.wrap(errors).reduce([]) do |sum, err|
