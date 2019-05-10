@@ -70,7 +70,7 @@ class ProvidersController < ApplicationController
             }
             render json: ProviderSerializer.new(@providers, options).serialized_json, status: :ok
         end
-        header = %w(name provider_id year contact_name contact_address is_active description website  region country logo_url  focus_area organisation_type memmber_type address post_code city state twitter_handle ror_id role_name joined created updated deleted_at)
+        header = %w(accountName fabricaAccountId year contactName contact_address is_active accountDescription accountWebsite  region country logo_url  focusArea organisation_type accountType billingStreet billingPostalCode  billingCity department billingOrganization billingState billingCountry twitter ror_id role_name joined created updated deleted_at)
         format.csv { render request.format.to_sym => response.records.to_a, header: header }
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
@@ -192,7 +192,7 @@ class ProvidersController < ApplicationController
     # ]
     # params.require(:data).permit(:type, attributes: attributes)
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:name, :symbol, :description, :website, :joined, "organizationType", "focusArea", :phone, "contactName", "contactEmail", "isActive", "passwordInput", :country, "billingInformation",{ "billingInformation": ["postCode", :state, :city, :address]}, "rorId", "twitterHandle" ],
+      params, only: [:name, :symbol, :description, :website, :joined, "organizationType", "focusArea", :phone, "contactName", "contactEmail", "isActive", "passwordInput", :country, "billingInformation",{ "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle" ],
               keys: { "organizationType" => :organization_type, "focusArea" => :focus_area, "contactName" => :contact_name, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" =>:twitter_handle  }
     )
   end
