@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 module Types
   class PrefixType < Types::BaseObject
     description "Information about prefixes"
 
-    field :id, ID, null: false, hash_key: 'prefix', description: "Unique identifier for each prefix"
-    field :providers, [::Types::ProviderType], null: false do
+    field :id, ID, null: false, hash_key: "prefix", description: "Unique identifier for each prefix"
+    field :providers, [Types::ProviderType], null: false do
       argument :query, String, required: false
       argument :first, Int, required: false, default_value: 25
     end
 
-    field :clients, [::Types::ClientType], null: false do
+    field :clients, [Types::ClientType], null: false do
       argument :query, String, required: false
       argument :first, Int, required: false, default_value: 25
     end
