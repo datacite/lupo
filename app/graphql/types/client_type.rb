@@ -8,8 +8,9 @@ class ClientType < GraphQL::Schema::Object
   field :description, String, null: true, description: "Description of the client"
   field :contact_name, String, null: true, description: "Client contact name"
   field :contact_email, String, null: true, description: "Client contact email"
-  field :prefixes, [PrefixType], null: false, description: "Prefixes managed by the client"  do
+  field :prefixes, PrefixConnectionWithTotalCountType, null: false, description: "Prefixes managed by the client", connection: true, max_page_size: 100 do
     argument :query, String, required: false
+    argument :year, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
@@ -26,7 +27,8 @@ class ClientType < GraphQL::Schema::Object
   def prefixes(**args)
     collection = object.prefixes
     collection = collection.query(args[:query]) if args[:query].present?
-    collection.page(1).per(args[:first])
+    collection = collection.where('YEAR(prefix.created) = ?', args[:year]) if args[:year].present?
+    collection
   end
 
   def datasets(**args)

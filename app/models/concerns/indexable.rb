@@ -112,6 +112,10 @@ module Indexable
         from = 0
         search_after = [options.dig(:page, :cursor)]
         sort = [{ created: { order: 'asc' }}]
+      elsif options.dig(:page, :cursor).present?
+        from = 0
+        search_after = [options.dig(:page, :cursor)]
+        sort = [{ created: { order: 'asc' }}]
       else
         from = (options.dig(:page, :number) - 1) * options.dig(:page, :size)
         search_after = nil

@@ -16,23 +16,27 @@ class ProviderType < BaseObject
   field :organization_type, String, null: true, description: "Type of organization"
   field :focus_area, String, null: true, description: "Field of science covered by member"
   field :joined, String, null: true, description: "Date provider joined DataCite"
-  field :prefixes, [PrefixType], null: false do
+  field :prefixes, PrefixConnectionWithTotalCountType, null: false, description: "Prefixes managed by the provider", connection: true, max_page_size: 100 do
     argument :query, String, required: false
+    argument :state, String, required: false
+    argument :year, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :clients, [ClientType], null: false, description: "Clients associated with the provider" do
+  field :clients, [ClientType], null: false, description: "Clients associated with the provider", max_page_size: 100 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
   def prefixes(**args)
     collection = object.prefixes
+    collection = collection.state(args[:state].underscore.dasherize) if args[:state].present?
     collection = collection.query(args[:query]) if args[:query].present?
-    collection.page(1).per(args[:first])
+    collection = collection.where('YEAR(prefix.created) = ?', args[:year]) if args[:year].present?
+    collection
   end
 
   def clients(**args)
-    Client.query(args[:query], provider_id: object.uid, page: { number: 1, size: args[:first] }).records
+    Client.query(args[:query], provider_id: object.uid, page: { cursor: 1, size: args[:first] }).records
   end
 end
