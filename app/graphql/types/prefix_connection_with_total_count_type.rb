@@ -16,6 +16,7 @@ class PrefixConnectionWithTotalCountType < GraphQL::Types::Relay::BaseConnection
 
     if object.parent.class.name == "Provider"
       collection = object.parent.provider_prefixes.joins(:prefix)
+      collection = collection.where('YEAR(allocator_prefixes.created_at) = ?', args[:year]) if args[:year].present?
 
       if args[:state].present?
         [{ id: args[:state],
@@ -39,6 +40,7 @@ class PrefixConnectionWithTotalCountType < GraphQL::Types::Relay::BaseConnection
 
     if object.parent.class.name == "Provider"
       collection = object.parent.provider_prefixes.joins(:prefix)
+      collection = collection.state(args[:state].underscore.dasherize) if args[:state].present?
       
       if args[:year].present?
         [{ id: args[:year],

@@ -29,10 +29,10 @@ class ProviderType < BaseObject
   end
 
   def prefixes(**args)
-    collection = object.prefixes
+    collection = object.provider_prefixes.joins(:prefix)
     collection = collection.state(args[:state].underscore.dasherize) if args[:state].present?
     collection = collection.query(args[:query]) if args[:query].present?
-    collection = collection.where('YEAR(prefix.created) = ?', args[:year]) if args[:year].present?
+    collection = collection.where('YEAR(allocator_prefixes.created_at) = ?', args[:year]) if args[:year].present?
     collection
   end
 

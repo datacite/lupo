@@ -25,9 +25,9 @@ class ClientType < GraphQL::Schema::Object
   end
 
   def prefixes(**args)
-    collection = object.prefixes
+    collection = object.client_prefixes.joins(:prefix)
     collection = collection.query(args[:query]) if args[:query].present?
-    collection = collection.where('YEAR(prefix.created) = ?', args[:year]) if args[:year].present?
+    collection = collection.where('YEAR(datacentre_prefixes.created_at) = ?', args[:year]) if args[:year].present?
     collection
   end
 
