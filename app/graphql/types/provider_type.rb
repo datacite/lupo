@@ -16,7 +16,7 @@ class ProviderType < BaseObject
   field :organization_type, String, null: true, description: "Type of organization"
   field :focus_area, String, null: true, description: "Field of science covered by member"
   field :joined, String, null: true, description: "Date provider joined DataCite"
-  field :prefixes, PrefixConnectionWithTotalCountType, null: false, description: "Prefixes managed by the provider", connection: true, max_page_size: 100 do
+  field :prefixes, PrefixConnectionWithMetaType, null: false, description: "Prefixes managed by the provider", connection: true, max_page_size: 100 do
     argument :query, String, required: false
     argument :state, String, required: false
     argument :year, String, required: false

@@ -3,7 +3,7 @@
 class PrefixType < BaseObject
   description "Information about prefixes"
 
-  field :id, ID, null: false, hash_key: "prefix", description: "Unique identifier for each prefix"
+  field :id, ID, null: false, hash_key: "prefix.id", description: "Unique identifier for each prefix"
   # field :providers, [ProviderType], null: false do
   #   argument :query, String, required: false
   #   argument :first, Int, required: false, default_value: 25
@@ -13,6 +13,10 @@ class PrefixType < BaseObject
   #   argument :query, String, required: false
   #   argument :first, Int, required: false, default_value: 25
   # end
+
+  def id
+    object.prefix.prefix
+  end
 
   def providers(**args)
     collection = object.providers

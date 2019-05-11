@@ -8,7 +8,7 @@ class ClientType < GraphQL::Schema::Object
   field :description, String, null: true, description: "Description of the client"
   field :contact_name, String, null: true, description: "Client contact name"
   field :contact_email, String, null: true, description: "Client contact email"
-  field :prefixes, PrefixConnectionWithTotalCountType, null: false, description: "Prefixes managed by the client", connection: true, max_page_size: 100 do
+  field :prefixes, PrefixConnectionWithMetaType, null: false, description: "Prefixes managed by the client", connection: true, max_page_size: 100 do
     argument :query, String, required: false
     argument :year, String, required: false
     argument :first, Int, required: false, default_value: 25
