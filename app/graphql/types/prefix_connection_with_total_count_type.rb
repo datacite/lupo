@@ -13,14 +13,14 @@ class PrefixConnectionWithTotalCountType < GraphQL::Types::Relay::BaseConnection
 
   def states
     args = self.object.arguments
-    
+
     if object.parent.class.name == "Provider"
       collection = object.parent.provider_prefixes.joins(:prefix)
 
       if args[:state].present?
         [{ id: args[:state],
            title: args[:state].underscore.humanize,
-           count: collection.count }]
+           count: collection.state(args[:state].underscore.dasherize).count }]
       else
         [{ id: "withoutClient",
            title: "Without client",
