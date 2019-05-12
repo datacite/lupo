@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class FunderSoftwareConnectionWithMetaType < GraphQL::Types::Relay::BaseConnection
-  edge_type(EventEdgeType, edge_class: EventEdge)
+  edge_type(EventDataEdgeType, edge_class: EventDataEdge)
 
   field :total_count, Integer, null: false
 

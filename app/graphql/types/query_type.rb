@@ -109,13 +109,13 @@ class QueryType < BaseObject
     result
   end
 
-  field :datasets, [DatasetType], null: false do
+  field :datasets, DatasetConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
   def datasets(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Dataset", state: "findable", page: { number: 1, size: first })
+    Doi.query(query, resource_type_id: "Dataset", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :dataset, DatasetType, null: false do
@@ -126,13 +126,13 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :publications, [PublicationType], null: false do
+  field :publications, PublicationConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
   def publications(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Text", state: "findable", page: { number: 1, size: first })
+    Doi.query(query, resource_type_id: "Text", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :publication, PublicationType, null: false do
@@ -149,7 +149,7 @@ class QueryType < BaseObject
   end
 
   def audiovisuals(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Audiovisual", state: "findable", page: { number: 1, size: first })
+    Doi.query(query, resource_type_id: "Audiovisual", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :audiovisual, AudiovisualType, null: false do
@@ -166,7 +166,7 @@ class QueryType < BaseObject
   end
 
   def collections(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Collection", state: "findable", page: { number: 1, size: first })
+    Doi.query(query, resource_type_id: "Collection", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :collection, CollectionType, null: false do
@@ -183,7 +183,7 @@ class QueryType < BaseObject
   end
 
   def data_papers(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "DataPaper", state: "findable", page: { number: 1, size: first })
+    Doi.query(query, resource_type_id: "DataPaper", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :data_paper, DataPaperType, null: false do
@@ -200,7 +200,7 @@ class QueryType < BaseObject
   end
 
   def events(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Event", state: "findable", page: { number: 1, size: first })
+    Doi.query(query, resource_type_id: "Event", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :event, EventType, null: false do
@@ -217,7 +217,7 @@ class QueryType < BaseObject
   end
 
   def images(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Image", state: "findable", page: { number: 1, size: first })
+    Doi.query(query, resource_type_id: "Image", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :image, ImageType, null: false do
@@ -234,7 +234,7 @@ class QueryType < BaseObject
   end
 
   def interactive_resources(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "InteractiveResource", state: "findable", page: { number: 1, size: first })
+    Doi.query(query, resource_type_id: "InteractiveResource", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :interactive_resource, InteractiveResourceType, null: false do
@@ -251,7 +251,7 @@ class QueryType < BaseObject
   end
 
   def models(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Model", state: "findable", page: { number: 1, size: first })
+    Doi.query(query, resource_type_id: "Model", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :model, ModelType, null: false do
@@ -268,7 +268,7 @@ class QueryType < BaseObject
   end
 
   def physical_objects(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "PhysicalObject", state: "findable", page: { number: 1, size: first })
+    Doi.query(query, resource_type_id: "PhysicalObject", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :physical_object, PhysicalObjectType, null: false do
@@ -285,7 +285,7 @@ class QueryType < BaseObject
   end
 
   def services(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Service", state: "findable", page: { number: 1, size: first })
+    Doi.query(query, resource_type_id: "Service", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :service, ServiceType, null: false do
@@ -296,13 +296,13 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :softwares, [SoftwareType], null: false do
+  field :softwares, SoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
   def softwares(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Software", state: "findable", page: { number: 1, size: first })
+    Doi.query(query, resource_type_id: "Software", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :software, SoftwareType, null: false do
@@ -319,7 +319,7 @@ class QueryType < BaseObject
   end
 
   def sounds(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Sound", state: "findable", page: { number: 1, size: first })
+    Doi.query(query, resource_type_id: "Sound", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :sound, SoundType, null: false do
@@ -336,7 +336,7 @@ class QueryType < BaseObject
   end
 
   def workflows(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Workflow", state: "findable", page: { number: 1, size: first })
+    Doi.query(query, resource_type_id: "Workflow", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :workflow, WorkflowType, null: false do
@@ -353,7 +353,7 @@ class QueryType < BaseObject
   end
 
   def others(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Other", state: "findable", page: { number: 1, size: first })
+    Doi.query(query, resource_type_id: "Other", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :other, OtherType, null: false do

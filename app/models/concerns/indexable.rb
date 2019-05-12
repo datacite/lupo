@@ -117,7 +117,7 @@ module Indexable
         search_after = [options.dig(:page, :cursor)]
         sort = [{ created: { order: 'asc' }}]
       else
-        from = (options.dig(:page, :number) - 1) * options.dig(:page, :size)
+        from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)
         search_after = nil
         sort = options[:sort]
       end
