@@ -40,6 +40,6 @@ class ProviderType < BaseObject
   end
 
   def clients(**args)
-    Client.query(args[:query], provider_id: object.uid, year: args[:year], software: args[:software], page: { number: 1, size: 500 }).results.to_a
+    Client.query(args[:query], provider_id: object.uid, year: args[:year], software: args[:software], page: { number: 1, size: 500 }).records.to_a
   end
 end

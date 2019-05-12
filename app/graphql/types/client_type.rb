@@ -35,10 +35,10 @@ class ClientType < GraphQL::Schema::Object
   end
 
   def datasets(**args)
-    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Dataset", page: { number: 1, size: args[:first] })
+    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Dataset", page: { number: 1, size: args[:first] }).records.to_a
   end
 
   def publications(**args)
-    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Text", page: { number: 1, size: args[:first] })
+    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Text", page: { number: 1, size: args[:first] }).records.to_a
   end
 end
