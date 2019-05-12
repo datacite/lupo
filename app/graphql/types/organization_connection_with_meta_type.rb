@@ -6,6 +6,8 @@ class OrganizationConnectionWithMetaType < GraphQL::Types::Relay::BaseConnection
   field :total_count, Integer, null: false
 
   def total_count
-    object.nodes.size
+    args = object.arguments
+
+    Organization.query(args[:query], limit: 0).dig(:meta, "total").to_i
   end
 end

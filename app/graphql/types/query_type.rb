@@ -72,7 +72,7 @@ class QueryType < BaseObject
   end
 
   def funder(id:)
-    result = Funder.find_by_id(id)[:data].first
+    result = Funder.find_by_id(id).fetch(:data, []).first
     fail ActiveRecord::RecordNotFound if result.nil?
 
     result
@@ -83,7 +83,7 @@ class QueryType < BaseObject
   end
 
   def researcher(id:)
-    result = Researcher.find_by_id(id).first
+    result = Researcher.find_by_id(id).fetch(:data, []).first
     fail ActiveRecord::RecordNotFound if result.nil?
 
     result
@@ -95,7 +95,7 @@ class QueryType < BaseObject
   end
 
   def organizations(query: nil, first: nil)
-    Organization.query(query, limit: first)
+    Organization.query(query, limit: first).fetch(:data, [])
   end
 
   field :organization, OrganizationType, null: false do
@@ -103,7 +103,7 @@ class QueryType < BaseObject
   end
 
   def organization(id:)
-    result = Organization.find_by_id(id).first
+    result = Organization.find_by_id(id).fetch(:data, []).first
     fail ActiveRecord::RecordNotFound if result.nil?
 
     result

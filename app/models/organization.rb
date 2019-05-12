@@ -1,15 +1,19 @@
 class Organization
   def self.find_by_id(id)
     ror_id = ror_id_from_url(id)
-    return [] unless ror_id.present?
+    return {} unless ror_id.present?
 
     url = "https://api.ror.org/organizations/#{ror_id}"
     response = Maremma.get(url, host: true)
 
-    return [] if response.status != 200
+    return {} if response.status != 200
     
     message = response.body.fetch("data", {})
-    [parse_message(id: id, message: message)]
+    data = [parse_message(id: id, message: message)]
+
+    errors = response.body.fetch("errors", nil)
+
+    { data: data, errors: errors }
   end
 
   def self.query(query, options={})
@@ -25,10 +29,13 @@ class Organization
 
     return [] if response.status != 200
     
-    items = response.body.dig("data", "items")
-    items.map do |message|
-      parse_message(id: message['id'], message: message)
+    data = Array.wrap(response.body.dig("data", "items")).map do |message|
+      parse_message(id: message["id"], message: message)
     end
+    meta = { "total" => response.body.dig("data", "number_of_results") }
+    errors = response.body.fetch("errors", nil)
+
+    { data: data, meta: meta, errors: errors }
   end
 
   def self.parse_message(id: nil, message: nil)
