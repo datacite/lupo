@@ -27,8 +27,11 @@ class Event
     url = "https://api.datacite.org/events?page[size]=#{size}"
     url += "&relation-type-id=#{options[:relation_type_id]}" if options[:relation_type_id].present?
     url += "&source-id=#{options[:source_id]}" if options[:source_id].present?
+    url += "&citation-type=#{options[:citation_type]}" if options[:citation_type].present?
     url += "&doi=#{doi}" if doi.present?
-    
+    url += "&subj-id=#{options[:subj_id]}" if options[:subj_id].present?
+    url += "&obj-id=#{options[:obj_id]}" if options[:obj_id].present?
+
     response = Maremma.get(url, accept: "application/vnd.api+json; version=2")
 
     if response.status == 200

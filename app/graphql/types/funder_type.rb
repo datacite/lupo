@@ -8,4 +8,33 @@ class FunderType < BaseObject
   field :alternate_name, [String], null: true, description: "Alternate funder names"
   field :country, String, null: true, description: "Country where funder is located"
   field :date_modified, String, null: false, description: "Date information was last updated"
+  field :datasets, DatasetConnectionWithMetaType, null: false, description: "Funded datasets", connection: true, max_page_size: 100 do
+    argument :first, Int, required: false, default_value: 25
+  end
+
+  field :publications, [PublicationType], null: false, description: "Funded publications" do
+    argument :query, String, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+
+  def datasets(**args)
+    ids = Event.query(nil, obj_id: object[:id], citation_type: "Dataset-Funder").fetch(:data, []).map do |e|
+      doi_from_url(e[:subj_id])
+    end.join(",")
+    Doi.find_by_ids(ids, page: { number: 1, size: args[:first] }).to_a
+  end
+
+  def publications(**args)
+    ids = Event.query(nil, obj_id: object[:id], citation_type: "Funder-ScholarlyArticle").fetch(:data, []).map do |e|
+      doi_from_url(e[:subj_id])
+    end.join(",")
+    Doi.find_by_ids(ids, page: { number: 1, size: args[:first] }).to_a
+  end
+
+  def doi_from_url(url)
+    if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match?(url)
+      uri = Addressable::URI.parse(url)
+      uri.path.gsub(/^\//, "").downcase
+    end
+  end
 end

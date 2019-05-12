@@ -1,0 +1,50 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.datacite.org/events?page%5Bsize%5D=100&subj-id=https://doi.org/10.3389/feart.2018.00153
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.2.1; +https://github.com/datacite/maremma)
+      Accept:
+      - application/vnd.api+json; version=2
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 12 May 2019 11:20:43 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Anonymous-Consumer:
+      - 'true'
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Accept-Encoding, Origin
+      Etag:
+      - W/"99199bd170d8143970a644f69cd7f8ee"
+      X-Runtime:
+      - '0.454156'
+      X-Request-Id:
+      - d1fd23ce-9a94-4cba-b020-ee4e0813d97a
+      X-Powered-By:
+      - Phusion Passenger 6.0.2
+      Server:
+      - nginx/1.15.8 + Phusion Passenger 6.0.2
+    body:
+      encoding: ASCII-8BIT
+      string: '{"data":[{"id":"63897322-b0fd-4145-a3a7-014b37954aed","type":"events","attributes":{"subjId":"https://doi.org/10.3389/feart.2018.00153","objId":"https://doi.org/10.3886/icpsr04254.v1","sourceId":"crossref","relationTypeId":"references","total":1,"messageAction":"create","sourceToken":"8676e950-8ac5-4074-8ac3-c0a18ada7e99","license":"https://doi.org/10.13003/CED-terms-of-use","occurredAt":"0000-01-01T00:00:00.000Z","timestamp":"2019-02-26T11:39:57.967Z"},"relationships":{"subj":{"data":{"id":"https://doi.org/10.3389/feart.2018.00153","type":"objects"}},"obj":{"data":{"id":"https://doi.org/10.3886/icpsr04254.v1","type":"objects"}}}}],"meta":{"total":1,"totalPages":1,"page":1,"sources":[{"id":"crossref","title":"Crossref
+        to DataCite","count":1}],"prefixes":[{"id":"10.3389","title":"10.3389","count":1},{"id":"10.3886","title":"10.3886","count":1}],"citationTypes":[],"relationTypes":[{"id":"references","title":"references","count":1.0,"yearMonths":[{"id":"0000-01","title":"January
+        0000","sum":1.0}]}]},"links":{"self":"https://api.datacite.org/events?page%5Bsize%5D=100&subj-id=https%3A%2F%2Fdoi.org%2F10.3389%2Ffeart.2018.00153","next":"https://api.datacite.org/events?page%5Bnumber%5D=2&page%5Bsize%5D=100&subj-id=https%3A%2F%2Fdoi.org%2F10.3389%2Ffeart.2018.00153"}}'
+    http_version: 
+  recorded_at: Sun, 12 May 2019 11:20:43 GMT
+recorded_with: VCR 3.0.3

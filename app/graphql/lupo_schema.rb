@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class LupoSchema < GraphQL::Schema
-  default_max_page_size 100
-  max_depth 5
+  default_max_page_size 250
+  max_depth 10
 
   # mutation(Types::MutationType)
   query(QueryType)

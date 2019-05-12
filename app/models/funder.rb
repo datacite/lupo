@@ -12,7 +12,11 @@ class Funder
     return [] if response.status != 200
     
     message = response.body.dig("data", "message")
-    [parse_message(id: id, message: message)]
+    data = [parse_message(id: id, message: message)]
+
+    errors = response.body.fetch("errors", nil)
+
+    { data: data, errors: errors }
   end
 
   def self.query(query, options={})
@@ -27,11 +31,14 @@ class Funder
     response = Maremma.get(url, host: true)
 
     return [] if response.status != 200
-    
-    items = response.body.dig("data", "message", "items")
-    items.map do |message|
+
+    data = response.body.dig("data", "message", "items").map do |message|
       parse_message(id: "https://doi.org/10.13039/#{message['id']}", message: message)
     end
+    meta = { "total" => response.body.dig("data", "message", "total-results") }
+    errors = response.body.fetch("errors", nil)
+
+    { data: data, meta: meta, errors: errors }
   end
 
   def self.parse_message(id: nil, message: nil)
