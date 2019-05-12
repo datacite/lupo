@@ -9,7 +9,7 @@ class Funder
     url = "https://api.crossref.org/funders/#{doi}"
     response = Maremma.get(url, host: true)
 
-    return [] if response.status != 200
+    return {} if response.status != 200
     
     message = response.body.dig("data", "message")
     data = [parse_message(id: id, message: message)]
@@ -30,7 +30,7 @@ class Funder
 
     response = Maremma.get(url, host: true)
 
-    return [] if response.status != 200
+    return {} if response.status != 200
 
     data = response.body.dig("data", "message", "items").map do |message|
       parse_message(id: "https://doi.org/10.13039/#{message['id']}", message: message)
