@@ -5,9 +5,12 @@ class ClientType < GraphQL::Schema::Object
 
   field :id, ID, null: false, hash_key: "uid", description: "Unique identifier for each client"
   field :name, String, null: false, description: "Client name"
+  field :re3data, String, null: true, description: "The re3data identifier for the client"
   field :description, String, null: true, description: "Description of the client"
+  field :url, String, null: true, description: "The homepage of the client"
   field :contact_name, String, null: true, description: "Client contact name"
   field :contact_email, String, null: true, description: "Client contact email"
+  field :software, String, null: true, description: "The name of the software that is used to run the repository"
   field :prefixes, PrefixConnectionWithMetaType, null: false, description: "Prefixes managed by the client", connection: true, max_page_size: 100 do
     argument :query, String, required: false
     argument :year, String, required: false

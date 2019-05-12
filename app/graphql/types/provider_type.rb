@@ -23,9 +23,12 @@ class ProviderType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :clients, [ClientType], null: false, description: "Clients associated with the provider", max_page_size: 100 do
+  field :clients, ClientConnectionWithMetaType, null: false, description: "Clients associated with the provider", connection: true, max_page_size: 100 do
     argument :query, String, required: false
+    argument :year, String, required: false
+    argument :software, String, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def prefixes(**args)
@@ -37,6 +40,6 @@ class ProviderType < BaseObject
   end
 
   def clients(**args)
-    Client.query(args[:query], provider_id: object.uid, page: { cursor: 1, size: args[:first] }).records
+    Client.query(args[:query], provider_id: object.uid, year: args[:year], software: args[:software], page: { number: 1, size: 500 }).results.to_a
   end
 end

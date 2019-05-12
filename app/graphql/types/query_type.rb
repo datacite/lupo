@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
 class QueryType < BaseObject
-  field :providers, [ProviderType], null: false do
+  field :providers, ProviderConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
-    argument :first, Int, required: false, default_value: 25
   end
 
-  def providers(query: nil, first: nil)
-    Provider.query(query, page: { number: 1, size: first }).records
+  def providers(query: nil)
+    Provider.query(query, page: { number: 1, size: 250 }).records.to_a
   end
 
   field :provider, ProviderType, null: false do
@@ -18,13 +17,14 @@ class QueryType < BaseObject
     Provider.unscoped.where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_ADMIN')").where(deleted_at: nil).where(symbol: id).first
   end
 
-  field :clients, [ClientType], null: false do
+  field :clients, ClientConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :year, String, required: false
+    argument :software, String, required: false
   end
 
-  def clients(query: nil, first: nil)
-    Client.query(query, page: { number: 1, size: first }).records
+  def clients(query: nil, year: nil, software: nil)
+    Client.query(query, year: year, software: software, page: { number: 1, size: 2000 }).records.to_a
   end
 
   field :client, ClientType, null: false do
@@ -58,13 +58,13 @@ class QueryType < BaseObject
     Prefix.where(prefix: id).first
   end
 
-  field :funders, [FunderType], null: false do
+  field :funders, FunderConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
   def funders(query: nil, first: nil)
-    Funder.query(query, limit: first)
+    Funder.query(query, limit: first).fetch(:data, [])
   end
 
   field :funder, FunderType, null: false do
@@ -72,7 +72,7 @@ class QueryType < BaseObject
   end
 
   def funder(id:)
-    result = Funder.find_by_id(id).first
+    result = Funder.find_by_id(id)[:data].first
     fail ActiveRecord::RecordNotFound if result.nil?
 
     result
@@ -89,7 +89,7 @@ class QueryType < BaseObject
     result
   end
 
-  field :organizations, [OrganizationType], null: false do
+  field :organizations, OrganizationConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end

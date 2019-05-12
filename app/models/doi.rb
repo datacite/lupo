@@ -712,7 +712,7 @@ class Doi < ActiveRecord::Base
 
   def self.find_by_ids(ids, options={})
     dois = ids.split(",").map(&:upcase)
-
+    
     __elasticsearch__.search({
       from: 0,
       size: 1000,
