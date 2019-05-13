@@ -77,6 +77,18 @@ describe Doi, vcr: true do
       expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/"}, "ttl"=>86400, "timestamp"=>"2019-05-10T12:45:27Z"}])
     end
 
+    context "https to http" do
+      it "should convert" do
+        url = "https://orcid.org/0000-0003-1419-2405"
+        expect(subject.https_to_http(url)).to eq("http://orcid.org/0000-0003-1419-2405")
+      end
+
+      it "should ignore http" do
+        url = "http://orcid.org/0000-0003-1419-2405"
+        expect(subject.https_to_http(url)).to eq(url)
+      end
+    end
+
     # it 'should register on save' do
     #   url = "https://blog.datacite.org/"
     #   subject = create(:doi, doi: "10.5438/hpc4-5t22", url: url, client: client, aasm_state: "findable")

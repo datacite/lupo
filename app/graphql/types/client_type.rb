@@ -17,7 +17,7 @@ class ClientType < GraphQL::Schema::Object
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :datasets, [Types::DatasetType], null: false, description: "Datasets managed by the client" do
+  field :datasets, [DatasetType], null: false, description: "Datasets managed by the client" do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end

@@ -22,21 +22,21 @@ class ResearcherType < BaseObject
   end
 
   def datasets(**args)
-    ids = Event.query(nil, obj_id: object[:id], citation_type: "Dataset-Person").fetch(:data, []).map do |e|
+    ids = Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Dataset-Person").fetch(:data, []).map do |e|
       doi_from_url(e[:subj_id])
     end.join(",")
     Doi.find_by_ids(ids, page: { number: 1, size: args[:first] }).to_a
   end
 
   def publications(**args)
-    ids = Event.query(nil, obj_id: object[:id], citation_type: "Person-ScholarlyArticle").fetch(:data, []).map do |e|
+    ids = Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Person-ScholarlyArticle").fetch(:data, []).map do |e|
       doi_from_url(e[:subj_id])
     end.join(",")
     Doi.find_by_ids(ids, page: { number: 1, size: args[:first] }).to_a
   end
 
   def softwares(**args)
-    ids = Event.query(nil, obj_id: object[:id], citation_type: "Person-SoftwareSourceCode").fetch(:data, []).map do |e|
+    ids = Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Person-SoftwareSourceCode").fetch(:data, []).map do |e|
       doi_from_url(e[:subj_id])
     end.join(",")
     Doi.find_by_ids(ids, page: { number: 1, size: args[:first] }).to_a
@@ -47,5 +47,11 @@ class ResearcherType < BaseObject
       uri = Addressable::URI.parse(url)
       uri.path.gsub(/^\//, "").downcase
     end
+  end
+
+  def https_to_http(url)
+    uri = Addressable::URI.parse(url)
+    uri.scheme = "http"
+    uri.to_s
   end
 end

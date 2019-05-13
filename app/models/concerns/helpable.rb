@@ -106,6 +106,12 @@ module Helpable
     def epoch_to_utc(epoch)
       Time.at(epoch).to_datetime.utc.iso8601
     end
+
+    def https_to_http(url)
+      uri = Addressable::URI.parse(url)
+      uri.scheme = "http"
+      uri.to_s
+    end
   end
 
   module ClassMethods
