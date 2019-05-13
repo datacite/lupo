@@ -6,7 +6,7 @@ class ResearcherSoftwareConnectionWithMetaType < GraphQL::Types::Relay::BaseConn
   field :total_count, Integer, null: false
 
   def total_count
-    Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Person-SoftwareSourceCode").fetch(:meta, "total")
+    Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Person-SoftwareSourceCode").dig(:meta, "total").to_i
   end
 
   def https_to_http(url)
