@@ -22,12 +22,12 @@ class ClientType < GraphQL::Schema::Object
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, ClientPublicationConnectionWithMetaType, null: false, connection: true, max_page_size: 100,  null: false, description: "Publications managed by the client" do
+  field :publications, ClientPublicationConnectionWithMetaType, null: false, connection: true, max_page_size: 100, description: "Publications managed by the client" do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, ClientSoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 100,  null: false, description: "Software managed by the client" do
+  field :softwares, ClientSoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 100, description: "Software managed by the client" do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
