@@ -6,7 +6,7 @@ class FunderType < BaseObject
   field :id, ID, null: false, description: "Crossref Funder ID"
   field :name, String, null: false, description: "Funder name"
   field :alternate_name, [String], null: true, description: "Alternate funder names"
-  field :country, String, null: true, description: "Country where funder is located"
+  field :country, CountryType, null: true, description: "Country where funder is located"
   field :date_modified, String, null: false, description: "Date information was last updated"
   field :datasets, FunderDatasetConnectionWithMetaType, null: false, description: "Funded datasets", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25

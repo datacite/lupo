@@ -22,7 +22,7 @@ describe Funder, type: :model, vcr: true do
       funders = Funder.query(query)
       expect(funders.dig(:meta, "total")).to eq(19662)
       expect(funders[:data].size).to eq(100)
-      expect(funders[:data].first).to eq(id: "https://doi.org/10.13039/100002569", name: "American Association of Endodontists Foundation", alternate_name: ["AAE Foundation for Endodontics", "AAE Foundation", "Foundation for Endodontics", "AAEF"], country: "United States", date_modified: "2019-04-18T00:00:00Z")
+      expect(funders[:data].first).to eq(id: "https://doi.org/10.13039/100002569", name: "American Association of Endodontists Foundation", alternate_name: ["AAE Foundation for Endodontics", "AAE Foundation", "Foundation for Endodontics", "AAEF"], country: {"code"=>"US", "name"=>"United States"}, date_modified: "2019-04-18T00:00:00Z")
     end
 
     it "limit" do
@@ -30,7 +30,7 @@ describe Funder, type: :model, vcr: true do
       funders = Funder.query(query, limit: 10)
       expect(funders.dig(:meta, "total")).to eq(19662)
       expect(funders[:data].size).to eq(10)
-      expect(funders[:data].first).to eq(id: "https://doi.org/10.13039/100002569", name: "American Association of Endodontists Foundation", alternate_name: ["AAE Foundation for Endodontics", "AAE Foundation", "Foundation for Endodontics", "AAEF"], country: "United States", date_modified: "2019-04-18T00:00:00Z")
+      expect(funders[:data].first).to eq(id: "https://doi.org/10.13039/100002569", name: "American Association of Endodontists Foundation", alternate_name: ["AAE Foundation for Endodontics", "AAE Foundation", "Foundation for Endodontics", "AAEF"], country: {"code"=>"US", "name"=>"United States"}, date_modified: "2019-04-18T00:00:00Z")
     end
 
     it "found" do

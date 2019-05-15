@@ -6,7 +6,7 @@ describe Organization, type: :model, vcr: true do
       id = "https://ror.org/0521rfb23"
       organizations = Organization.find_by_id(id)
       expect(organizations[:data].size).to eq(1)
-      expect(organizations[:data].first).to eq(:id=>"https://ror.org/0521rfb23", :name=>"Lincoln University", :aliases=>["Ashmun Institute"], :acronyms=>["LU"], :labels=>[{:iso639=>"es", :label=>"Universidad Lincoln"}], :links=>["http://www.lincoln.edu/"], :wikipedia_url=>"http://en.wikipedia.org/wiki/Lincoln_University_(Pennsylvania)", :country=>{:id=>"US", :name=>"United States"})
+      expect(organizations[:data].first).to eq(:id=>"https://ror.org/0521rfb23", :name=>"Lincoln University", :aliases=>["Ashmun Institute"], :acronyms=>["LU"], :labels=>[{:code=>"ES", :name=>"Universidad Lincoln"}], :links=>["http://www.lincoln.edu/"], :wikipedia_url=>"http://en.wikipedia.org/wiki/Lincoln_University_(Pennsylvania)", :country=>{:code=>"US", :name=>"United States"})
     end
 
     it "not found" do
@@ -23,7 +23,7 @@ describe Organization, type: :model, vcr: true do
       organizations = Organization.query(query)
       expect(organizations.dig(:meta, "total")).to eq(91625)
       expect(organizations[:data].size).to eq(20)
-      expect(organizations[:data].first).to eq(:id=>"https://ror.org/00xqf8t64", :name=>"Padjadjaran University", :aliases=>["Padjadjaran University"], :acronyms=>["UNPAD"], :labels=> [{:iso639=>"id", :label=>"Universitas Padjadjaran"}], :links=>["http://www.unpad.ac.id/en/"], :wikipedia_url=>"http://en.wikipedia.org/wiki/Padjadjaran_University", :country=>{:id=>"ID", :name=>"Indonesia"})
+      expect(organizations[:data].first).to eq(:id=>"https://ror.org/00xqf8t64", :name=>"Padjadjaran University", :aliases=>["Padjadjaran University"], :acronyms=>["UNPAD"], :labels=> [{:code=>"ID", :name=>"Universitas Padjadjaran"}], :links=>["http://www.unpad.ac.id/en/"], :wikipedia_url=>"http://en.wikipedia.org/wiki/Padjadjaran_University", :country=>{:code=>"ID", :name=>"Indonesia"})
     end
 
     it "found" do
@@ -31,7 +31,7 @@ describe Organization, type: :model, vcr: true do
       organizations = Organization.query(query)
       expect(organizations.dig(:meta, "total")).to eq(10475)
       expect(organizations[:data].size).to eq(20)
-      expect(organizations[:data].first).to eq(:id=>"https://ror.org/04ps1r162", :name=>"Lincoln University", :aliases=>[], :acronyms=>[], :labels=>[{:iso639=>"mi", :label=>"Te Whare Wanaka o Aoraki"}], :links=>["http://www.lincoln.ac.nz/"], :wikipedia_url=>"http://en.wikipedia.org/wiki/Lincoln_University_(New_Zealand)", :country=>{:id=>"NZ", :name=>"New Zealand"})
+      expect(organizations[:data].first).to eq(:id=>"https://ror.org/04ps1r162", :name=>"Lincoln University", :aliases=>[], :acronyms=>[], :labels=>[{:code=>"MI", :name=>"Te Whare Wanaka o Aoraki"}], :links=>["http://www.lincoln.ac.nz/"], :wikipedia_url=>"http://en.wikipedia.org/wiki/Lincoln_University_(New_Zealand)", :country=>{:code=>"NZ", :name=>"New Zealand"})
     end
 
     it "not found" do

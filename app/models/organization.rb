@@ -40,13 +40,14 @@ class Organization
 
   def self.parse_message(id: nil, message: nil)
     country = {
-      id: message.dig("country", "country_code"),
+      code: message.dig("country", "country_code"),
       name: message.dig("country", "country_name") }.compact
 
     labels = Array.wrap(message["labels"]).map do |label|
+      code = label["iso639"].present? ? label["iso639"].upcase : nil
       {
-        iso639: label["iso639"],
-        label: label["label"] }.compact
+        code: code,
+        name: label["label"] }.compact
     end
     
     {

@@ -43,18 +43,20 @@ class Funder
 
   def self.parse_message(id: nil, message: nil)
     if message["location"].present?
-      location = { 
-        "country" => message["location"]
+      c = ISO3166::Country.find_country_by_name(message["location"])
+      country = {
+        "code" => c.alpha2,
+        "name" => message["location"]
       }
     else
-      location = nil
+      country = nil
     end
     
     {
       id: id,
       name: message["name"],
       alternate_name: message["alt-names"],
-      country: message["location"],
+      country: country,
       date_modified: "2019-04-18T00:00:00Z" }.compact
   end
 end

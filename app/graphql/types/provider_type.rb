@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
 class ProviderType < BaseObject
-  description "Information about members"
+  description "Information about providers"
 
-  field :id, ID, null: false, hash_key: "uid", description: "Unique identifier for each member"
-  field :name, String, null: false, description: "Member name"
+  field :id, ID, null: false, hash_key: "uid", description: "Unique identifier for each provider"
+  field :name, String, null: false, description: "Provider name"
   field :ror_id, String, null: false, description: "Research Organization Registry (ROR) identifier"
-  field :description, String, null: true, description: "Description of the member"
-  field :website, String, null: true, description: "Website of the member"
-  field :contact_name, String, null: true, description: "Member contact name"
-  field :contact_email, String, null: true, description: "Member contact email"
-  field :logo_url, String, null: true, description: "URL for the member logo"
-  field :region, String, null: true, description: "Geographic region where the member is located"
-  field :country, String, null: true, description: "Country where the member is located"
+  field :description, String, null: true, description: "Description of the provider"
+  field :website, String, null: true, description: "Website of the provider"
+  field :contact_name, String, null: true, description: "Provider contact name"
+  field :contact_email, String, null: true, description: "Provider contact email"
+  field :logo_url, String, null: true, description: "URL for the provider logo"
+  field :region, String, null: true, description: "Geographic region where the provider is located"
+  field :country, CountryType, null: true, description: "Country where the provider is located"
   field :organization_type, String, null: true, description: "Type of organization"
-  field :focus_area, String, null: true, description: "Field of science covered by member"
+  field :focus_area, String, null: true, description: "Field of science covered by provider"
   field :joined, String, null: true, description: "Date provider joined DataCite"
   field :prefixes, PrefixConnectionWithMetaType, null: false, description: "Prefixes managed by the provider", connection: true, max_page_size: 100 do
     argument :query, String, required: false
@@ -29,6 +29,14 @@ class ProviderType < BaseObject
     argument :software, String, required: false
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
+  end
+
+  def country
+    return {} unless object.country_code.present?
+    { 
+      code: object.country_code,
+      name: ISO3166::Country[object.country_code].name
+    }.compact
   end
 
   def prefixes(**args)
