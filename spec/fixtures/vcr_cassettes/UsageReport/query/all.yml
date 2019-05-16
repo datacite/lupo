@@ -1,0 +1,77 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.datacite.org/reports?page%5Bnumber%5D=1&page%5Bsize%5D=25
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.2.1; +https://github.com/datacite/maremma)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 16 May 2019 21:04:41 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Anonymous-Consumer:
+      - 'true'
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Accept-Encoding, Origin
+      Etag:
+      - W/"63845934af71517e70504bddcbc5dd32"
+      X-Runtime:
+      - '0.600917'
+      X-Request-Id:
+      - 46dfadb2-c763-4b18-9278-aaa91e02b9aa
+      X-Powered-By:
+      - Phusion Passenger 6.0.2
+      Server:
+      - nginx/1.15.8 + Phusion Passenger 6.0.2
+    body:
+      encoding: ASCII-8BIT
+      string: '{"reports":[{"id":"073f27b5-d38b-4301-ab73-3274ba3eb672","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"rd1","created-by":"Dash","created":"2019-05-15","reporting-period":{"end-date":"2019-05-15","begin-date":"2019-05-01"},"report-filters":[],"report-attributes":[],"exceptions":[{"code":3040,"data":"usage
+        data has not been processed for the entire reporting period","message":"partial
+        data returned","help-url":"String","severity":"warning"}]}},{"id":"08761bb6-f8d9-4d01-8012-fd21042fd71d","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"rd1","created-by":"Dash","created":"2018-05-31","reporting-period":{"end-date":"2018-05-31","begin-date":"2018-05-01"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"0b99a0be-3683-474f-9f0c-2552e266088a","report-header":{"report-name":"Dataset
+        Master Report","report-id":"dsr","release":"rd1","created-by":"KNB Data Repository","created":"2018-10-29","reporting-period":{"end-date":"2012-09-01","begin-date":"2012-08-01"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"0c732186-e057-47d9-a5ee-a8121a26c4f9","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"rd1","created-by":"Dash","created":"2019-02-28","reporting-period":{"end-date":"2019-02-28","begin-date":"2019-02-01"},"report-filters":[],"report-attributes":[],"exceptions":[{}]}},{"id":"0cb326d1-e3e7-4cc1-9d86-7c5f3d5ca310","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"rd1","created-by":"Dash","created":"2018-08-31","reporting-period":{"end-date":"2018-08-31","begin-date":"2018-08-01"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"12cf3d5a-6ec4-4a56-b845-04f6a22c61f1","report-header":{"report-name":"Dataset
+        Master Report","report-id":"dsr","release":"rd1","created-by":"urn:node:PISCO","created":"2019-01-08","reporting-period":{"end-date":"2012-08-31","begin-date":"2012-08-01"},"report-filters":[],"report-attributes":[],"exceptions":[{"code":69,"data":"usage
+        data needs to be uncompressed","message":"Report is compressed using gzip","help-url":"https://github.com/datacite/sashimi","severity":"warning"}]}},{"id":"16a1fa9d-f9e9-4373-aab2-96ae3227b44b","report-header":{"report-name":"Dataset
+        Master Report","report-id":"dsr","release":"rd1","created-by":"KNB Data Repository","created":"2018-10-29","reporting-period":{"end-date":"2012-08-01","begin-date":"2012-07-01"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"1de19fae-a005-45da-adc0-bb877fbdbbf1","report-header":{"report-name":"Dataset
+        Master Report","report-id":"dsr","release":"rd1","created-by":"KNB Data Repository","created":"2018-10-29","reporting-period":{"end-date":"2012-12-01","begin-date":"2012-11-01"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"21fd2e8e-5481-4bbd-b2ef-742d8b270a66","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"rd1","created-by":"Dash","created":"2018-04-30","reporting-period":{"end-date":"2018-04-30","begin-date":"2018-04-01"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"26896a01-4458-4669-953f-798100faa72e","report-header":{"report-name":"Dataset
+        Master Report","report-id":"dsr","release":"rd1","created-by":"urn:node:mnORC1","created":"2019-01-07","reporting-period":{"end-date":"2014-11-30","begin-date":"2014-11-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"3315dff3-192d-4cfa-9930-c4c1bf407e93","report-header":{"report-name":"Dataset
+        Master Report","report-id":"3315dff3-192d-4cfa-9930-c4c1bf407e93","release":"rd1","created-by":"urn:node:KNB","created":"2018-11-02","reporting-period":{"end-date":"2013-03-31","begin-date":"2013-03-01"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"39918229-e6f8-4c66-9547-ebf5f9861815","report-header":{"report-name":"Dataset
+        Master Report","report-id":"dsr","release":"rd1","created-by":"urn:node:mnORC1","created":"2019-01-07","reporting-period":{"end-date":"2014-08-31","begin-date":"2014-08-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"3b89f845-6762-4c8c-83ff-6187cc81f7d6","report-header":{"report-name":"Dataset
+        Master Report","report-id":"3b89f845-6762-4c8c-83ff-6187cc81f7d6","release":"rd1","created-by":"urn:node:KNB","created":"2018-11-02","reporting-period":{"end-date":"2013-08-31","begin-date":"2013-08-01"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"3c32bfab-2db2-4eb4-9f27-d800e86cd57b","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"rd1","created-by":"Dash","created":"2018-11-30","reporting-period":{"end-date":"2018-11-30","begin-date":"2018-11-01"},"report-filters":[],"report-attributes":[],"exceptions":[{}]}},{"id":"3d750852-9679-4f01-bf00-fbc4a6fe1aff","report-header":{"report-name":"Dataset
+        Master Report","report-id":"3d750852-9679-4f01-bf00-fbc4a6fe1aff","release":"rd1","created-by":"urn:node:KNB","created":"2018-11-02","reporting-period":{"end-date":"2013-01-31","begin-date":"2013-01-02"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"54664a75-cd16-4af6-9036-d065e162667d","report-header":{"report-name":"Dataset
+        Master Report","report-id":"dsr","release":"rd1","created-by":"urn:node:KNB","created":"2018-11-27","reporting-period":{"end-date":"2013-09-30","begin-date":"2013-09-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"6202b723-070f-4ef0-9feb-06c118f646f2","report-header":{"report-name":"Dataset
+        Master Report","report-id":"dsr","release":"rd1","created-by":"urn:node:KNB","created":"2019-01-08","reporting-period":{"end-date":"2012-12-31","begin-date":"2012-12-01"},"report-filters":[],"report-attributes":[],"exceptions":[{"code":69,"data":"usage
+        data needs to be uncompressed","message":"Report is compressed using gzip","help-url":"https://github.com/datacite/sashimi","severity":"warning"}]}},{"id":"7080b9b7-ee5c-4845-bcba-e505a8b5c641","report-header":{"report-name":"Dataset
+        Master Report","report-id":"7080b9b7-ee5c-4845-bcba-e505a8b5c641","release":"rd1","created-by":"urn:node:GOA","created":"2018-11-02","reporting-period":{"end-date":"2013-11-30","begin-date":"2013-11-01"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"70844c15-7766-46e4-b61f-cd00c29c92f6","report-header":{"report-name":"Dataset
+        Master Report","report-id":"70844c15-7766-46e4-b61f-cd00c29c92f6","release":"rd1","created-by":"urn:node:GOA","created":"2018-11-02","reporting-period":{"end-date":"2013-12-31","begin-date":"2013-12-01"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"70c7936f-c485-48f6-b467-8634cf1669f1","report-header":{"report-name":"Dataset
+        Master Report","report-id":"dsr","release":"rd1","created-by":"urn:node:mnORC1","created":"2019-01-07","reporting-period":{"end-date":"2014-05-31","begin-date":"2014-05-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"734a3d8b-3bef-4577-b90a-46fdf4347c0e","report-header":{"report-name":"Dataset
+        Master Report","report-id":"734a3d8b-3bef-4577-b90a-46fdf4347c0e","release":"rd1","created-by":"urn:node:KNB","created":"2018-11-02","reporting-period":{"end-date":"2013-07-31","begin-date":"2013-07-01"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"79eaa328-fc73-4e42-ac73-3684337f2ff1","report-header":{"report-name":"Dataset
+        Master Report","report-id":"79eaa328-fc73-4e42-ac73-3684337f2ff1","release":"rd1","created-by":"urn:node:KNB","created":"2018-11-02","reporting-period":{"end-date":"2013-04-30","begin-date":"2013-04-01"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"805e16c5-c5d9-4703-8dde-357eb0635235","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"rd1","created-by":"Dash","created":"2018-07-31","reporting-period":{"end-date":"2018-07-31","begin-date":"2018-07-01"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"807cf15b-596b-4e7c-8bf9-03d474579365","report-header":{"report-name":"Dataset
+        Master Report","report-id":"dsr","release":"rd1","created-by":"urn:node:mnORC1","created":"2019-01-07","reporting-period":{"end-date":"2014-07-31","begin-date":"2014-07-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"87346bcf-2b80-4768-a458-a0d92c77e66e","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"rd1","created-by":"Dash","created":"2018-12-31","reporting-period":{"end-date":"2018-12-31","begin-date":"2018-12-01"},"report-filters":[],"report-attributes":[],"exceptions":[{}]}}],"meta":{"total":50,"total-pages":2,"page":1}}'
+    http_version: 
+  recorded_at: Thu, 16 May 2019 21:04:41 GMT
+recorded_with: VCR 3.0.3

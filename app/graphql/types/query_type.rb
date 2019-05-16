@@ -365,6 +365,25 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
+  field :usage_reports, UsageReportConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
+    argument :first, Int, required: false, default_value: 25
+  end
+
+  def usage_reports(first: nil)
+    UsageReport.query(nil, page: { number: 1, size: first }).fetch(:data, [])
+  end
+
+  field :usage_report, UsageReportType, null: false do
+    argument :id, ID, required: true
+  end
+
+  def usage_report(id:)
+    result = UsageReport.find_by_id(id).fetch(:data, []).first
+    fail ActiveRecord::RecordNotFound if result.nil?
+
+    result
+  end
+
   def set_doi(id)
     doi = doi_from_url(id)
     fail ActiveRecord::RecordNotFound if doi.nil?
