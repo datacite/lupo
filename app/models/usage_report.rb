@@ -5,7 +5,8 @@ class UsageReport
   include Modelable
 
   def self.find_by_id(id)
-    url = "https://api.datacite.org/reports/#{id}"
+    url = Rails.env.production? ? "https://api.datacite.org/reports/#{id}" : "https://api.test.datacite.org/reports/#{id}"
+        
     response = Maremma.get(url)
 
     return {} if response.status != 200
@@ -22,8 +23,8 @@ class UsageReport
     number = (options.dig(:page, :number) || 1).to_i
     size = (options.dig(:page, :size) || 25).to_i
 
-    url = "https://api.datacite.org/reports?page[size]=#{size}&page[number]=#{number}"
-
+    url = Rails.env.production? ? "https://api.datacite.org/reports?page[size]=#{size}&page[number]=#{number}" : "https://api.test.datacite.org/reports?page[size]=#{size}&page[number]=#{number}"
+    
     response = Maremma.get(url)
 
     return {} if response.status != 200
