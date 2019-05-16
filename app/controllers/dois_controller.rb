@@ -46,7 +46,7 @@ class DoisController < ApplicationController
         response = Doi.find_by_id(params[:id])
       }.to_s + " ms"
     elsif params[:ids].present?
-      response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
+      response = Doi.find_by_id(params[:ids], page: page, sort: sort)
     else
       response = Doi.query(params[:query],
                           state: params[:state],

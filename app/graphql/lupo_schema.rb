@@ -6,6 +6,9 @@ class LupoSchema < GraphQL::Schema
 
   # mutation(Types::MutationType)
   query(QueryType)
+
+  use GraphQL::Batch
+  use GraphQL::Cache
 end
 
 GraphQL::Errors.configure(LupoSchema) do

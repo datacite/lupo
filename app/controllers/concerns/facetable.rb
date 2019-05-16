@@ -88,7 +88,7 @@ module Facetable
       # generate hash with id and name for each provider in facet
 
       ids = arr.map { |hsh| hsh["key"] }.join(",")
-      providers = Provider.find_by_ids(ids, size: 1000).records.pluck(:symbol, :name).to_h
+      providers = Provider.find_by_id(ids, size: 1000).records.pluck(:symbol, :name).to_h
 
       arr.map do |hsh|
         { "id" => hsh["key"],
@@ -163,7 +163,7 @@ module Facetable
     def facet_by_client(arr)
       # generate hash with id and name for each client in facet
       ids = arr.map { |hsh| hsh["key"] }.join(",")
-      clients = Client.find_by_ids(ids).records.pluck(:symbol, :name).to_h
+      clients = Client.find_by_id(ids).records.pluck(:symbol, :name).to_h
 
       arr.map do |hsh|
         { "id" => hsh["key"],

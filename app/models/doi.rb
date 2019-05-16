@@ -354,13 +354,22 @@ class Doi < ActiveRecord::Base
   #   ['doi^10', 'titles.title^10', 'creator_names^10', 'creators.name^10', 'creators.id^10', 'publisher^10', 'descriptions.description^10', 'types.resourceTypeGeneral^10', 'subjects.subject^10', 'identifiers.identifier^10', 'related_identifiers.relatedIdentifier^10', '_all']
   # end
 
-  def self.find_by_id(id, options={})
-    return nil unless id.present?
+  # return results for one or more ids
+  def self.find_by_id(ids, options={})
+    ids = ids.split(",") if ids.is_a?(String)
+    
+    options[:page] ||= {}
+    options[:page][:number] ||= 1
+    options[:page][:size] ||= 25
+    options[:sort] ||= { created: { order: "asc" }}
 
     __elasticsearch__.search({
+      from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
+      size: options[:size] || 25,
+      sort: [options[:sort]],
       query: {
-        term: {
-          doi: id.upcase
+        terms: {
+          doi: ids.map(&:upcase)
         }
       },
       aggregations: query_aggregations
@@ -708,22 +717,6 @@ class Doi < ActiveRecord::Base
 
   def media_ids
     media.pluck(:id).map { |m| Base32::URL.encode(m, split: 4, length: 16) }.compact
-  end
-
-  def self.find_by_ids(ids, options={})
-    dois = ids.split(",").map(&:upcase)
-    
-    __elasticsearch__.search({
-      from: 0,
-      size: 1000,
-      sort: [{ created: { order: 'asc' }}],
-      query: {
-        terms: {
-          doi: dois
-        }
-      },
-      aggregations: query_aggregations
-    })
   end
 
   def xml_encoded

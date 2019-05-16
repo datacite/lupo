@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PrefixConnectionWithMetaType < GraphQL::Types::Relay::BaseConnection
+class PrefixConnectionWithMetaType < BaseConnection
   edge_type(PrefixEdgeType)
 
   field :total_count, Integer, null: false

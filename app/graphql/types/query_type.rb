@@ -14,7 +14,7 @@ class QueryType < BaseObject
   end
 
   def provider(id:)
-    Provider.unscoped.where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_ADMIN')").where(deleted_at: nil).where(symbol: id).first
+    ElasticsearchLoader.for(Provider).load(id)
   end
 
   field :clients, ClientConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
@@ -32,7 +32,7 @@ class QueryType < BaseObject
   end
 
   def client(id:)
-    Client.where(symbol: id).where(deleted_at: nil).first
+    ElasticsearchLoader.for(Client).load(id)
   end
 
   field :prefixes, [PrefixType], null: false do
@@ -368,7 +368,7 @@ class QueryType < BaseObject
     doi = doi_from_url(id)
     fail ActiveRecord::RecordNotFound if doi.nil?
 
-    result = Doi.find_by_id(doi).first
+    result = ElasticsearchLoader.for(Doi).load(doi)
     fail ActiveRecord::RecordNotFound if result.nil?
 
     result

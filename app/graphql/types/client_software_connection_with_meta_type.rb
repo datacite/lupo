@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ClientSoftwareConnectionWithMetaType < GraphQL::Types::Relay::BaseConnection
+class ClientSoftwareConnectionWithMetaType < BaseConnection
   edge_type(DatasetEdgeType)
 
   field :total_count, Integer, null: false

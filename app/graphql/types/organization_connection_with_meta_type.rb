@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class OrganizationConnectionWithMetaType < GraphQL::Types::Relay::BaseConnection
+class OrganizationConnectionWithMetaType < BaseConnection
   edge_type(OrganizationEdgeType)
 
   field :total_count, Integer, null: false

@@ -17,7 +17,7 @@ class ActivitiesController < ApplicationController
     if params[:id].present?
       response = Activity.find_by_id(params[:id]) 
     elsif params[:ids].present?
-      response = Activity.find_by_ids(params[:ids], page: page, sort: sort)
+      response = Activity.find_by_id(params[:ids], page: page, sort: sort)
     else
       response = Activity.query(params[:query], uid: params[:doi_id], page: page, sort: sort)
     end

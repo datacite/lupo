@@ -17,7 +17,7 @@ class DataCentersController < ApplicationController
     if params[:id].present?
       response = Client.find_by_id(params[:id]) 
     elsif params[:ids].present?
-      response = Client.find_by_ids(params[:ids], page: page, sort: sort)
+      response = Client.find_by_id(params[:ids], page: page, sort: sort)
     else
       response = Client.query(params[:query], year: params[:year], provider_id: params[:member_id], fields: params[:fields], page: page, sort: sort)
     end

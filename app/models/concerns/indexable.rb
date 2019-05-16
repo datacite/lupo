@@ -53,14 +53,21 @@ module Indexable
   end
 
   module ClassMethods
-    # don't raise an exception when not found
-    def find_by_id(id, options={})
-      return nil unless id.present?
+    # return results for one or more ids
+    def find_by_id(ids, options={})
+      ids = ids.split(",") if ids.is_a?(String)
+      options[:page] ||= {}
+      options[:page][:number] ||= 1
+      options[:page][:size] ||= 25
+      options[:sort] ||= { created: { order: "asc" }}
 
       __elasticsearch__.search({
+        from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
+        size: options[:size] || 25,
+        sort: [options[:sort]],
         query: {
-          term: {
-            symbol: id.upcase
+          terms: {
+            symbol: ids.map(&:upcase)
           }
         },
         aggregations: query_aggregations
@@ -83,25 +90,11 @@ module Indexable
       })
     end
 
-    def find_by_ids(ids, options={})
-      options[:sort] ||= { "_doc" => { order: 'asc' }}
-
-      __elasticsearch__.search({
-        from: options[:page].present? ? (options.dig(:page, :number) - 1) * options.dig(:page, :size) : 0,
-        size: options[:size] || 25,
-        sort: [options[:sort]],
-        query: {
-          terms: {
-            symbol: ids.split(",").map(&:upcase)
-          }
-        },
-        aggregations: query_aggregations
-      })
-    end
-
     def query(query, options={})
       aggregations = options[:totals_agg] == true ? totals_aggregations : query_aggregations
-      options[:page] ||= { size: 25, number: 1 }
+      options[:page] ||= {}
+      options[:page][:number] ||= 1
+      options[:page][:size] ||= 25
 
       # enable cursor-based pagination for DOIs
       if self.name == "Doi" && options.dig(:page, :cursor).present?

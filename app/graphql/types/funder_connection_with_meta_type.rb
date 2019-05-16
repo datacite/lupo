@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class FunderConnectionWithMetaType < GraphQL::Types::Relay::BaseConnection
+class FunderConnectionWithMetaType < BaseConnection
   edge_type(FunderEdgeType)
 
   field :total_count, Integer, null: false

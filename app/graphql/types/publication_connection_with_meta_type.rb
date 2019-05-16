@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class PublicationConnectionWithMetaType < GraphQL::Types::Relay::BaseConnection
+class PublicationConnectionWithMetaType < BaseConnection
   edge_type(DatasetEdgeType)
 
   field :total_count, Integer, null: false

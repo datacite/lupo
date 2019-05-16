@@ -24,22 +24,22 @@ class FunderType < BaseObject
   def datasets(**args)
     ids = Event.query(nil, obj_id: object[:id], citation_type: "Dataset-Funder").fetch(:data, []).map do |e|
       doi_from_url(e[:subj_id])
-    end.join(",")
-    Doi.find_by_ids(ids, page: { number: 1, size: args[:first] }).to_a
+    end
+    ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
   def publications(**args)
     ids = Event.query(nil, obj_id: object[:id], citation_type: "Funder-ScholarlyArticle").fetch(:data, []).map do |e|
       doi_from_url(e[:subj_id])
-    end.join(",")
-    Doi.find_by_ids(ids, page: { number: 1, size: args[:first] }).to_a
+    end
+    ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
   def softwares(**args)
     ids = Event.query(nil, obj_id: object[:id], citation_type: "Funder-SoftwareSourceCode").fetch(:data, []).map do |e|
       doi_from_url(e[:subj_id])
-    end.join(",")
-    Doi.find_by_ids(ids, page: { number: 1, size: args[:first] }).to_a
+    end
+    ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
   def doi_from_url(url)
