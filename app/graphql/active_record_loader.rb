@@ -6,7 +6,11 @@ class ActiveRecordLoader < GraphQL::Batch::Loader
   end
 
   def perform(ids)
-    @model.where(id: ids).each { |record| fulfill(record.id, record) }
+    if @model.name == "Prefix"
+      @model.where(prefix: ids).each { |record| fulfill(record.id, record) }
+    else
+      @model.where(id: ids).each { |record| fulfill(record.id, record) }
+    end
     ids.each { |id| fulfill(id, nil) unless fulfilled?(id) }
   end
 end

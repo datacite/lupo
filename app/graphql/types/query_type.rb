@@ -6,7 +6,8 @@ class QueryType < BaseObject
   end
 
   def providers(query: nil)
-    Provider.query(query, page: { number: 1, size: 250 }).records.to_a
+    ids = Provider.query(query, page: { number: 1, size: 250 }).results.to_a.map { |p| p.uid }
+    ElasticsearchLoader.for(Provider).load_many(ids)
   end
 
   field :provider, ProviderType, null: false do
@@ -24,7 +25,8 @@ class QueryType < BaseObject
   end
 
   def clients(query: nil, year: nil, software: nil)
-    Client.query(query, year: year, software: software, page: { number: 1, size: 2000 }).records.to_a
+    ids = Client.query(query, year: year, software: software, page: { number: 1, size: 2000 }).results.to_a.map { |p| p.uid }
+    ElasticsearchLoader.for(Client).load_many(ids)
   end
 
   field :client, ClientType, null: false do
@@ -55,6 +57,7 @@ class QueryType < BaseObject
   end
 
   def prefix(id:)
+    #ActiveRecordLoader.for(Prefix).load(id)
     Prefix.where(prefix: id).first
   end
 

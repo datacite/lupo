@@ -58,12 +58,12 @@ module Indexable
       ids = ids.split(",") if ids.is_a?(String)
       options[:page] ||= {}
       options[:page][:number] ||= 1
-      options[:page][:size] ||= 25
+      options[:page][:size] ||= 2000
       options[:sort] ||= { created: { order: "asc" }}
 
       __elasticsearch__.search({
         from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
-        size: options[:size] || 25,
+        size: options.dig(:page, :size),
         sort: [options[:sort]],
         query: {
           terms: {
