@@ -6,8 +6,7 @@ class QueryType < BaseObject
   end
 
   def providers(query: nil)
-    ids = Provider.query(query, page: { number: 1, size: 250 }).results.to_a.map { |p| p.uid }
-    ElasticsearchLoader.for(Provider).load_many(ids)
+    Provider.query(query, page: { number: 1, size: 250 }).records.to_a
   end
 
   field :provider, ProviderType, null: false do
@@ -25,8 +24,7 @@ class QueryType < BaseObject
   end
 
   def clients(query: nil, year: nil, software: nil)
-    ids = Client.query(query, year: year, software: software, page: { number: 1, size: 2000 }).results.to_a.map { |p| p.uid }
-    ElasticsearchLoader.for(Client).load_many(ids)
+    Client.query(query, year: year, software: software, page: { number: 1, size: 2000 }).records.to_a
   end
 
   field :client, ClientType, null: false do
