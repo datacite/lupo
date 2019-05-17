@@ -5,7 +5,7 @@ class Event
   def self.find_by_id(id)
     return { errors: [{ "title" => "No id provided"} ] } unless id.present?
 
-    url = "https://api.datacite.org/events/#{id}"
+    url = Rails.env.production? ? "https://api.datacite.org/events/#{id}" : "https://api.test.datacite.org/events/#{id}"
     response = Maremma.get(url, accept: "application/vnd.api+json; version=2")
 
     if response.status == 200
@@ -23,8 +23,8 @@ class Event
   def self.query(query, options={})
     size = options[:limit] || 100
     doi = options[:doi].present? ? doi_from_url(options[:doi]) : nil
-
-    url = "https://api.datacite.org/events?page[size]=#{size}"
+    
+    url = Rails.env.production? ? "https://api.datacite.org/events?page[size]=#{size}" : "https://api.test.datacite.org/events?page[size]=#{size}"
     url += "&relation-type-id=#{options[:relation_type_id]}" if options[:relation_type_id].present?
     url += "&source-id=#{options[:source_id]}" if options[:source_id].present?
     url += "&citation-type=#{options[:citation_type]}" if options[:citation_type].present?
