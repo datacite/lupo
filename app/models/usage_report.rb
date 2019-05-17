@@ -5,7 +5,10 @@ class UsageReport
   include Modelable
 
   def self.find_by_id(id)
-    url = Rails.env.production? ? "https://api.datacite.org/reports/#{id}" : "https://api.test.datacite.org/reports/#{id}"
+    base_url = Rails.env.production? ? "https://api.datacite.org/reports" : "https://api.test.datacite.org/reports"
+    return {} unless id.starts_with?(base_url)
+
+    url = id
         
     response = Maremma.get(url)
 
@@ -23,14 +26,15 @@ class UsageReport
     number = (options.dig(:page, :number) || 1).to_i
     size = (options.dig(:page, :size) || 25).to_i
 
-    url = Rails.env.production? ? "https://api.datacite.org/reports?page[size]=#{size}&page[number]=#{number}" : "https://api.test.datacite.org/reports?page[size]=#{size}&page[number]=#{number}"
+    base_url = Rails.env.production? ? "https://api.datacite.org/reports" : "https://api.test.datacite.org/reports"
+    url = base_url + "?page[size]=#{size}&page[number]=#{number}"
     
     response = Maremma.get(url)
 
     return {} if response.status != 200
 
     data = response.body.dig("data", "reports").map do |message|
-      parse_message(id: message['id'], message: message)
+      parse_message(id: base_url + "/#{message["id"]}", message: message)
     end
     meta = { "total" => response.body.dig("data", "meta", "total") }
     errors = response.body.fetch("errors", nil)
