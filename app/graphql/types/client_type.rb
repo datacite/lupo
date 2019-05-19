@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ClientType < GraphQL::Schema::Object
+class ClientType < BaseObject
   description "Information about clients"
 
   field :id, ID, null: false, hash_key: "uid", description: "Unique identifier for each client"
