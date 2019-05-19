@@ -33,21 +33,21 @@ class ClientType < GraphQL::Schema::Object
   end
 
   def prefixes(**args)
-    collection = object.client_prefixes.joins(:prefix)
+    collection = ClientPrefix.joins(:client, :prefix).where('datacentre.symbol = ?', object.uid)
     collection = collection.query(args[:query]) if args[:query].present?
     collection = collection.where('YEAR(datacentre_prefixes.created_at) = ?', args[:year]) if args[:year].present?
     collection
   end
 
   def datasets(**args)
-    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Dataset", page: { number: 1, size: args[:first] }).records.to_a
+    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Dataset", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   def publications(**args)
-    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Text", page: { number: 1, size: args[:first] }).records.to_a
+    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Text", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   def softwares(**args)
-    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Software", page: { number: 1, size: args[:first] }).records.to_a
+    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Software", page: { number: 1, size: args[:first] }).results.to_a
   end
 end
