@@ -78,6 +78,7 @@ class Provider < ActiveRecord::Base
       indexes :id,            type: :keyword
       indexes :uid,           type: :keyword
       indexes :symbol,        type: :keyword
+      indexes :client_ids,    type: :keyword
       indexes :prefix_ids,    type: :keyword
       indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }}
       indexes :contact_name,  type: :text
@@ -120,6 +121,7 @@ class Provider < ActiveRecord::Base
       "id" => uid,
       "uid" => uid,
       "name" => name,
+      "client_ids" => client_ids,
       "prefix_ids" => prefix_ids,
       "symbol" => symbol,
       "year" => year,
@@ -172,7 +174,6 @@ class Provider < ActiveRecord::Base
   end
 
   def csv
-
     provider = {
       name: name,
       provider_id: symbol,
@@ -226,7 +227,6 @@ class Provider < ActiveRecord::Base
   def billing_organization
     billing_information.fetch("organization",nil) if billing_information.present?
   end
-
 
   def billing_address
     billing_information.fetch("address",nil) if billing_information.present?

@@ -40,7 +40,7 @@ class Client < ActiveRecord::Base
   validate :freeze_symbol, :on => :update
   strip_attributes
 
-  belongs_to :provider, foreign_key: :allocator
+  belongs_to :provider, foreign_key: :allocator, touch: true
   has_many :dois, foreign_key: :datacentre
   has_many :client_prefixes, foreign_key: :datacentre, dependent: :destroy
   has_many :prefixes, through: :client_prefixes
