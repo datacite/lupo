@@ -206,7 +206,7 @@ FactoryBot.define do
     name { "My provider" }
     country_code { "DE" }
     password_input { "12345" }
-    twitter_handle { "megaTwitterlace" }
+    twitter_handle { "@egaTwitterlace" }
     ror_id { "https://ror.org/05njkjr15" }
     billing_information {{
       "city": "barcelona",

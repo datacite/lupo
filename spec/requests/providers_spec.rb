@@ -52,6 +52,24 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
     end
 
+    context 'create provider type ROLE_CONTRACTUAL_PROVIDER and check it works ' do
+      let(:provider)  { create(:provider, role_name: "ROLE_CONTRACTUAL_PROVIDER", name: "Contractor", symbol: "CONTRACT_SLASH") }
+
+
+      before do 
+        get "/providers/#{provider.symbol.downcase}", headers: headers 
+      end
+
+      it 'creates a provider' do
+        expect(json).not_to be_empty
+        expect(json['data']['id']).to eq(provider.symbol.downcase)
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
     context 'when the record does not exist' do
       before { get "/providers/xxx" , headers: headers}
 
@@ -120,6 +138,42 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
     end
     
+    context 'create provider type ROLE_CONTRACTUAL_PROVIDER ' do
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "symbol" => "FG",
+                        "name" => "Figshare",
+                        "region" => "EMEA",
+                        "contactEmail" => "doe@joe.joe",
+                        "contactName" => "timAus",
+                        "roleName" => "ROLE_CONTRACTUAL_PROVIDER",
+                        "country" => "GB" } } }
+      end
+
+      before do 
+        post '/providers', params: params.to_json, headers: headers 
+      end
+
+      it 'creates a provider' do
+        puts json
+        expect(json.dig('data', 'attributes', 'contactEmail')).to eq("doe@joe.joe")
+        expect(json.dig('data', 'attributes', 'name')).to eq("Figshare")
+      end
+
+      it 'provider model get computed' do
+        report = Provider.where(symbol: json.dig('data', 'attributes','symbol')).first
+        expect(report.role_name).to eq("ROLE_CONTRACTUAL_PROVIDER")
+        expect(report.member_type).to eq("contractual_provider")
+        expect(report.member_type_label).to eq("Contractual Provider")      
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+
 
     context 'request is valid with billing information' do
       let(:params) do
