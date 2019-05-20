@@ -7,6 +7,8 @@ class ClientConnectionWithMetaType < BaseConnection
   field :total_count, Integer, null: false, cache: true
 
   def total_count
-    object.nodes.size
+    args = object.arguments
+
+    Client.query(args[:query], year: args[:year], software: args[:software], page: { number: 1, size: 0 }).results.total
   end
 end

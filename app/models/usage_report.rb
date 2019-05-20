@@ -5,6 +5,7 @@ class UsageReport
   include Modelable
 
   def self.find_by_id(id)
+    ids = id.split(",")
     base_url = Rails.env.production? ? "https://api.datacite.org/reports" : "https://api.test.datacite.org/reports"
     return {} unless id.starts_with?(base_url)
 
@@ -51,6 +52,9 @@ class UsageReport
     {
       id: id,
       reporting_period: reporting_period,
+      client_id: message["client_id"],
+      year: message["year"],
+      month: message["month"],
       date_modified: message["created"] }.compact
   end
 end

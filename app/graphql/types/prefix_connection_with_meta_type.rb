@@ -2,10 +2,11 @@
 
 class PrefixConnectionWithMetaType < BaseConnection
   edge_type(PrefixEdgeType)
-
-  field :total_count, Integer, null: false
-  field :states, [FacetType], null: false
-  field :years, [FacetType], null: false
+  field_class GraphQL::Cache::Field
+  
+  field :total_count, Integer, null: false, cache: true
+  field :states, [FacetType], null: false, cache: true
+  field :years, [FacetType], null: false, cache: true
 
   def total_count
     object.nodes.size
@@ -14,10 +15,13 @@ class PrefixConnectionWithMetaType < BaseConnection
   def states
     args = self.object.arguments
 
-    if object.parent.class.name == "Provider"
-      collection = object.parent.provider_prefixes.joins(:prefix)
+    if object.parent._index == "providers"
+      collection = ProviderPrefix.joins(:provider, :prefix).where('allocator.symbol = ?', object.parent.symbol) 
       collection = collection.where('YEAR(allocator_prefixes.created_at) = ?', args[:year]) if args[:year].present?
-
+      collection = collection.state(args[:state].underscore.dasherize) if args[:state].present?
+      collection = collection.query(args[:query]) if args[:query].present?
+      
+      puts collection.inspect
       if args[:state].present?
         [{ id: args[:state],
            title: args[:state].underscore.humanize,
@@ -38,10 +42,11 @@ class PrefixConnectionWithMetaType < BaseConnection
   def years
     args = self.object.arguments
 
-    if object.parent.class.name == "Provider"
-      collection = object.parent.provider_prefixes.joins(:prefix)
+    if object.parent._index == "providers"
+      collection = ProviderPrefix.joins(:provider, :prefix).where('allocator.symbol = ?', object.parent.symbol) 
       collection = collection.state(args[:state].underscore.dasherize) if args[:state].present?
-      
+      collection = collection.query(args[:query]) if args[:query].present?
+
       if args[:year].present?
         [{ id: args[:year],
            title: args[:year],
@@ -50,9 +55,10 @@ class PrefixConnectionWithMetaType < BaseConnection
         years = collection.where.not(prefixes: nil).order("YEAR(allocator_prefixes.created_at) DESC").group("YEAR(allocator_prefixes.created_at)").count
         years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
       end
-    elsif object.parent.class.name == "Client"
-      collection = object.parent.client_prefixes.joins(:prefix)
-
+    elsif object.parent._index == "clients"
+      collection = ClientPrefix.joins(:client, :prefix).where('datacentre.symbol = ?', object.parent.symbol)
+      collection = collection.query(args[:query]) if args[:query].present?
+      
       if args[:year].present?
         [{ id: args[:year],
            title: args[:year],
