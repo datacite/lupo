@@ -60,7 +60,7 @@ gem 'graphql', '~> 1.9', '>= 1.9.4'
 gem 'graphql-errors', '~> 0.3.0'
 gem 'graphql-batch', '~> 0.4.0'
 gem 'graphql-cache', '~> 0.6.0', git: "https://github.com/stackshareio/graphql-cache"
-gem 'ddtrace', '~> 0.23.3'
+# gem 'ddtrace', '~> 0.23.3'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.8', '>= 3.8.2'
