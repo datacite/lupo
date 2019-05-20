@@ -6,7 +6,7 @@ class ProviderPrefix < ActiveRecord::Base
 
   self.table_name = "allocator_prefixes"
 
-  belongs_to :provider, foreign_key: :allocator, touch: true
+  belongs_to :provider, foreign_key: :allocator #, touch: true
   belongs_to :prefix, foreign_key: :prefixes
   has_many :client_prefixes, foreign_key: :allocator_prefixes, dependent: :destroy
   has_many :clients, through: :client_prefixes
