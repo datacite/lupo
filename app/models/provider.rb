@@ -41,6 +41,10 @@ class Provider < ActiveRecord::Base
   validate :freeze_symbol, :on => :update
   validates_format_of :ror_id, :with => /\A(?:(http|https):\/\/)?(?:ror\.org\/)?(0\w{6}\d{2})\z/, if: :ror_id?
   validates_format_of :twitter_handle, :with => /\A[a-zA-Z0-9_]{1,15}\z/, if: :twitter_handle?
+  validates :general_contact, contact: true
+  validates :technical_contact, contact: true
+  validates :service_contact, contact: true
+  validates :voting_contact, contact: true
 
   before_validation :set_region
 
@@ -107,6 +111,26 @@ class Provider < ActiveRecord::Base
         city: { type: :text },
         country: { type: :text },
         address: { type: :text }}
+      indexes :general_contact, type: :object, properties: {
+        email: { type: :text },
+        given_name: { type: :text},
+        family_name: { type: :text }
+      }
+      indexes :technical_contact, type: :object, properties: {
+        email: { type: :text },
+        given_name: { type: :text},
+        family_name: { type: :text }
+      }
+      indexes :service_contact, type: :object, properties: {
+        email: { type: :text },
+        given_name: { type: :text},
+        family_name: { type: :text }
+      }
+      indexes :voting_contact, type: :object, properties: {
+        email: { type: :text },
+        given_name: { type: :text},
+        family_name: { type: :text }
+      }
       indexes :created,       type: :date
       indexes :updated,       type: :date
       indexes :deleted_at,    type: :date
@@ -150,6 +174,10 @@ class Provider < ActiveRecord::Base
         "country" => billing_country,
         "city" => billing_city
       },
+      "general_contact" => general_contact,
+      "technical_contact" => technical_contact,
+      "service_contact" => service_contact,
+      "voting_contact" => voting_contact,
       "created" => created,
       "updated" => updated,
       "deleted_at" => deleted_at,
@@ -160,7 +188,7 @@ class Provider < ActiveRecord::Base
   # def self.query_fields
   #   ['symbol^10', 'name^10', 'contact_name^10', 'contact_email^10', '_all']
   # end
-  
+
   def self.query_aggregations
     {
       years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
@@ -210,7 +238,7 @@ class Provider < ActiveRecord::Base
   def uid
     symbol.downcase
   end
-  
+
   def cache_key
     "providers/#{uid}-#{updated.iso8601}"
   end
