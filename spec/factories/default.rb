@@ -214,6 +214,26 @@ FactoryBot.define do
       "address": Faker::Address.street_address,
       "postCode": "10777"
      }}
+    general_contact {{
+      "email": "richard@example.com",
+      "given_name": "Richard",
+      "family_name": "Hallett"
+    }}
+    technical_contact {{
+      "email": "kristian@example.com",
+      "given_name": "Kristian",
+      "family_name": "Garza"
+    }}
+    service_contact {{
+      "email": "martin@example.com",
+      "given_name": "Martin",
+      "family_name": "Fenner"
+    }}
+    voting_contact {{
+      "email": "robin@example.com",
+      "given_name": "Robin",
+      "family_name": "Dasler"
+    }}
     is_active { true }
 
     initialize_with { Provider.where(symbol: symbol).first_or_initialize }
