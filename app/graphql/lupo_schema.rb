@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class LupoSchema < GraphQL::Schema
-  use(GraphQL::Tracing::DataDogTracing, analytics_enabled: Rails.env.production?)
+  # use(GraphQL::Tracing::DataDogTracing, analytics_enabled: Rails.env.production?)
 
   default_max_page_size 250
   max_depth 10
