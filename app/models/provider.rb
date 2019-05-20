@@ -40,7 +40,7 @@ class Provider < ActiveRecord::Base
   validates_inclusion_of :focus_area, :in => %w(biomedicalAndHealthSciences earthSciences humanities mathematicsAndComputerScience physicalSciencesAndEngineering socialSciences general), :message => "focus area %s is not included in the list", if: :focus_area?
   validate :freeze_symbol, :on => :update
   validates_format_of :ror_id, :with => /\A(?:(http|https):\/\/)?(?:ror\.org\/)?(0\w{6}\d{2})\z/, if: :ror_id?
-  validates_format_of :twitter_handle, :with => /\A[a-zA-Z0-9_]{1,15}\z/, if: :twitter_handle?
+  validates_format_of :twitter_handle, :with => /\A@[a-zA-Z0-9_]{1,16}\z/, if: :twitter_handle?
 
   before_validation :set_region
 
@@ -271,7 +271,7 @@ class Provider < ActiveRecord::Base
   def member_types
     { 
       "ROLE_MEMBER"               => "member_only",
-      "ROLE_ALLOCATOR"            => "member_provider",
+      "ROLE_ALLOCATOR"            => "provider",
       "ROLE_CONSORTIUM_LEAD"      => "consortium_lead",
       "ROLE_CONTRACTUAL_PROVIDER" => "contractual_provider",
       "ROLE_FOR_PROFIT_PROVIDER"  => "for_profit_provider"
