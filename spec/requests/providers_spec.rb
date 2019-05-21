@@ -196,7 +196,7 @@ describe "Providers", type: :request, elasticsearch: true  do
               "organizationType"=>"academicInstitution",
               "passwordInput"=>"[FILTERED]",
               "phone"=>"",
-              "twitterHandle"=>"meekakitty",
+              "twitterHandle"=>"@meekakitty",
               "rorId"=>"https://ror.org/05njkjr15",
               "billingInformation":{
                 "city"=>"barcelona",
@@ -221,7 +221,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(json.dig('data', 'attributes', 'contactEmail')).to eq("jkiritha@andrew.cmu.edu")
         expect(json.dig('data', 'attributes', 'billingInformation',"state")).to eq("Rennes")
         expect(json.dig('data', 'attributes', 'billingInformation',"postCode")).to eq("122dc")
-        expect(json.dig('data', 'attributes', 'twitterHandle')).to eq("meekakitty")
+        expect(json.dig('data', 'attributes', 'twitterHandle')).to eq("@meekakitty")
         expect(json.dig('data', 'attributes', 'rorId')).to eq("https://ror.org/05njkjr15")
       end
 
