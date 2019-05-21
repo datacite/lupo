@@ -101,17 +101,6 @@ ActiveRecord::Schema.define(version: 2019_05_17_154500) do
     t.index ["user_id", "user_type"], name: "user_index"
   end
 
-  create_table "contacts", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.bigint "allocator"
-    t.string "email"
-    t.string "given_name"
-    t.string "family_name"
-    t.string "role"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["allocator"], name: "fk_rails_5c598567a8"
-  end
-
   create_table "datacentre", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
     t.text "comments", limit: 4294967295
     t.string "contact_email", null: false
