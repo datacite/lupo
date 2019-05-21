@@ -13,6 +13,11 @@ module Indexable
       end
     end
 
+    after_touch do
+      # use index_document instead of update_document to also update virtual attributes
+      IndexJob.perform_later(self)
+    end
+
     before_destroy do
       begin
         __elasticsearch__.delete_document

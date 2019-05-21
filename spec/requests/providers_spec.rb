@@ -34,7 +34,7 @@ describe "Providers", type: :request, elasticsearch: true  do
 
   describe 'GET /providers/:id' do
     before { get "/providers/#{provider.symbol}" , headers: headers}
-    
+
     context 'when the record exists' do
       it 'returns the provider' do
         expect(json).not_to be_empty
@@ -56,8 +56,8 @@ describe "Providers", type: :request, elasticsearch: true  do
       let(:provider)  { create(:provider, role_name: "ROLE_CONTRACTUAL_PROVIDER", name: "Contractor", symbol: "CONTRACT_SLASH") }
 
 
-      before do 
-        get "/providers/#{provider.symbol.downcase}", headers: headers 
+      before do
+        get "/providers/#{provider.symbol.downcase}", headers: headers
       end
 
       it 'creates a provider' do
@@ -104,8 +104,8 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "country" => "GB" } } }
       end
 
-      before do 
-        post '/providers', params: params.to_json, headers: headers 
+      before do
+        post '/providers', params: params.to_json, headers: headers
       end
 
       it 'creates a provider' do
@@ -129,7 +129,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         sleep 1
         get "/providers/#{providers.first.symbol}", headers: headers_last
       end
-  
+
 
       it 'has no permission' do
         expect(json["data"].dig('attributes', 'symbol')).to eq(providers.first.symbol)
@@ -137,7 +137,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(json["data"].dig( 'attributes', 'twitterHandle')).to eq(nil)
       end
     end
-    
+
     context 'create provider type ROLE_CONTRACTUAL_PROVIDER ' do
       let(:params) do
         { "data" => { "type" => "providers",
@@ -151,8 +151,8 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "country" => "GB" } } }
       end
 
-      before do 
-        post '/providers', params: params.to_json, headers: headers 
+      before do
+        post '/providers', params: params.to_json, headers: headers
       end
 
       it 'creates a provider' do
@@ -165,7 +165,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         report = Provider.where(symbol: json.dig('data', 'attributes','symbol')).first
         expect(report.role_name).to eq("ROLE_CONTRACTUAL_PROVIDER")
         expect(report.member_type).to eq("contractual_provider")
-        expect(report.member_type_label).to eq("Contractual Provider")      
+        expect(report.member_type_label).to eq("Contractual Provider")
       end
 
       it 'returns status code 201' do
@@ -212,8 +212,8 @@ describe "Providers", type: :request, elasticsearch: true  do
         }
       end
 
-      before do 
-        post '/providers', params: params.to_json, headers: headers 
+      before do
+        post '/providers', params: params.to_json, headers: headers
       end
 
       it 'creates a provider' do
@@ -223,6 +223,82 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(json.dig('data', 'attributes', 'billingInformation',"postCode")).to eq("122dc")
         expect(json.dig('data', 'attributes', 'twitterHandle')).to eq("@meekakitty")
         expect(json.dig('data', 'attributes', 'rorId')).to eq("https://ror.org/05njkjr15")
+      end
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(200)
+      end
+    end
+
+    context 'request is valid with contact information' do
+      let(:params) do
+        {
+          "data"=>{
+            "type"=>"providers",
+            "attributes"=>{
+              "contactEmail"=>"jkiritha@andrew.cmu.edu",
+              "contactName"=>"Jonathan Kiritharan",
+              "country"=>"US",
+              "created"=>"",
+              "description"=>"",
+              "focusArea"=>"general",
+              "hasPassword"=>"[FILTERED]",
+              "isActive"=>true,
+              "joined"=>"",
+              "keepPassword"=>"[FILTERED]",
+              "logoUrl"=>"",
+              "name"=>"Carnegie Mellon University",
+              "organizationType"=>"academicInstitution",
+              "passwordInput"=>"[FILTERED]",
+              "phone"=>"",
+              "twitterHandle"=>"meekakitty",
+              "rorId"=>"https://ror.org/05njkjr15",
+              "generalContact":{
+                "email"=>"richard@example.com",
+                "givenName"=>"Richard",
+                "familyName"=>"Hallett"
+              },
+              "technicalContact": {
+                "email": "kristian@example.com",
+                "givenName": "Kristian",
+                "familyName": "Garza"
+              },
+              "serviceContact": {
+                "email": "martin@example.com",
+                "givenName": "Martin",
+                "familyName": "Fenner"
+              },
+              "votingContact": {
+                "email": "robin@example.com",
+                "givenName": "Robin",
+                "familyName": "Dasler"
+              },
+              "region"=>"",
+              "symbol"=>"CMfddff33333dd111d111113f4d",
+              "updated"=>"",
+              "website"=>""
+            }
+          }
+        }
+      end
+
+      before do
+        post '/providers', params: params.to_json, headers: headers
+      end
+
+      it 'creates a provider' do
+        expect(json.dig('data', 'attributes', 'generalContact',"email")).to eq("richard@example.com")
+        expect(json.dig('data', 'attributes', 'generalContact',"givenName")).to eq("Richard")
+        expect(json.dig('data', 'attributes', 'generalContact',"familyName")).to eq("Hallett")
+        expect(json.dig('data', 'attributes', 'technicalContact',"email")).to eq("kristian@example.com")
+        expect(json.dig('data', 'attributes', 'technicalContact',"givenName")).to eq("Kristian")
+        expect(json.dig('data', 'attributes', 'technicalContact',"familyName")).to eq("Garza")
+        expect(json.dig('data', 'attributes', 'serviceContact',"email")).to eq("martin@example.com")
+        expect(json.dig('data', 'attributes', 'serviceContact',"givenName")).to eq("Martin")
+        expect(json.dig('data', 'attributes', 'serviceContact',"familyName")).to eq("Fenner")
+        expect(json.dig('data', 'attributes', 'votingContact',"email")).to eq("robin@example.com")
+        expect(json.dig('data', 'attributes', 'votingContact',"givenName")).to eq("Robin")
+        expect(json.dig('data', 'attributes', 'votingContact',"familyName")).to eq("Dasler")
       end
 
       it 'returns status code 201' do

@@ -84,7 +84,7 @@ class ProvidersController < ApplicationController
 
   def show
     options = {}
-    options[:meta] = { 
+    options[:meta] = {
       providers: provider_count(provider_id: params[:id] == "admin" ? nil : params[:id]),
       clients: client_count(provider_id: params[:id] == "admin" ? nil : params[:id]),
       dois: doi_count(provider_id: params[:id] == "admin" ? nil : params[:id]) }.compact
@@ -107,7 +107,7 @@ class ProvidersController < ApplicationController
       options[:is_collection] = false
       options[:params] = {
         :current_ability => current_ability,
-      }  
+      }
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
       logger.warn @provider.errors.inspect
@@ -120,7 +120,7 @@ class ProvidersController < ApplicationController
     # logger.debug safe_params.inspect
     if @provider.update_attributes(safe_params)
       options = {}
-      options[:meta] = { 
+      options[:meta] = {
         providers: provider_count(provider_id: params[:id] == "admin" ? nil : params[:id]),
         clients: client_count(provider_id: params[:id] == "admin" ? nil : params[:id]),
         dois: doi_count(provider_id: params[:id] == "admin" ? nil : params[:id]) }.compact
@@ -129,7 +129,7 @@ class ProvidersController < ApplicationController
       options[:params] = {
         :current_ability => current_ability,
       }
-  
+
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
       logger.warn @provider.errors.inspect
@@ -192,8 +192,22 @@ class ProvidersController < ApplicationController
     # ]
     # params.require(:data).permit(:type, attributes: attributes)
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:name, :symbol, :description, :website, :joined, "organizationType", "focusArea", :phone, "contactName", "contactEmail", "isActive", "passwordInput", :country, "billingInformation",{ "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle", "roleName" ],
-              keys: { "organizationType" => :organization_type, "focusArea" => :focus_area, "contactName" => :contact_name, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" =>:twitter_handle, "roleName" => :role_name  }
+      params,
+      only: [
+        :name, :symbol, :description, :website, :joined, "organizationType", "focusArea", :phone, "contactName", "contactEmail", "isActive", "passwordInput", :country, "billingInformation",{ "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle", "roleName", 
+      "generalContact",{ "generalContact": [:email, "givenName", "familyName"]},
+      "technicalContact",{ "technicalContact": [:email, "givenName", "familyName"]},
+      "serviceContact",{ "serviceContact": [:email, "givenName", "familyName"]},
+      "votingContact",{ "votingContact": [:email, "givenName", "familyName"]}
+      ],
+      keys: {
+        "organizationType" => :organization_type, "focusArea" => :focus_area, "contactName" => :contact_name, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" =>:twitter_handle,
+        "roleName" =>:role_name,
+        "generalContact" => :general_contact,
+        "technicalContact" => :technical_contact,
+        "serviceContact" => :service_contact,
+        "votingContact" => :voting_contact
+      }
     )
   end
 end

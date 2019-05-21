@@ -28,7 +28,6 @@ class ProviderType < BaseObject
     argument :year, String, required: false
     argument :software, String, required: false
     argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
   end
 
   def country
@@ -40,7 +39,7 @@ class ProviderType < BaseObject
   end
 
   def prefixes(**args)
-    collection = object.provider_prefixes.joins(:prefix)
+    collection = ProviderPrefix.joins(:provider, :prefix).where('allocator.symbol = ?', object.uid) 
     collection = collection.state(args[:state].underscore.dasherize) if args[:state].present?
     collection = collection.query(args[:query]) if args[:query].present?
     collection = collection.where('YEAR(allocator_prefixes.created_at) = ?', args[:year]) if args[:year].present?
@@ -48,6 +47,6 @@ class ProviderType < BaseObject
   end
 
   def clients(**args)
-    Client.query(args[:query], provider_id: object.uid, year: args[:year], software: args[:software], page: { number: 1, size: 500 }).records.to_a
+    Client.query(args[:query], provider_id: object.uid, year: args[:year], software: args[:software], page: { number: 1, size: args[:first] }).results.to_a
   end
 end

@@ -1,0 +1,81 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.test.datacite.org/reports?page%5Bnumber%5D=1&page%5Bsize%5D=25
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.2.1; +https://github.com/datacite/maremma)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 17 May 2019 05:27:11 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Anonymous-Consumer:
+      - 'true'
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Accept-Encoding, Origin
+      Etag:
+      - W/"c10f62298a868f5a0443ba5128fa349d"
+      X-Runtime:
+      - '0.568355'
+      X-Request-Id:
+      - 3fd55dad-b132-4639-8a5a-fbe4ebf6dcac
+      X-Powered-By:
+      - Phusion Passenger 6.0.2
+      Server:
+      - nginx/1.15.8 + Phusion Passenger 6.0.2
+    body:
+      encoding: ASCII-8BIT
+      string: '{"reports":[{"id":"0498876e-dd55-42b0-b2a6-850df004a0e4","report-header":{"report-name":"resolution
+        report","report-id":"dsr","release":"drl","created-by":"datacite.datacite","created":"2019-02-27","reporting-period":{"end-date":"2018-10-31","begin-date":"2018-10-01"},"report-filters":[],"report-attributes":[],"exceptions":[{"code":69,"data":"usage
+        data needs to be uncompressed","message":"Report is compressed using gzip","help-url":"https://github.com/datacite/sashimi","severity":"warning"}]}},{"id":"0ba6375f-c99a-43e4-8bfc-b763fd22811b","report-header":{"report-name":"dataset
+        rehport","report-id":"DSRf","release":"rd1","created-by":"datacite.harvard3","created":"2018-05-31","reporting-period":{"end-date":"2040-05-31","begin-date":"2040-05-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"1415853b-3a34-4f7b-a2de-7afec54b07bf","report-header":{"report-name":"Dataset
+        Master Report","report-id":"SDR","release":"RD1","created-by":"test26","created":"2018-05-22","reporting-period":{"end-date":"2063-02-30T00:00:00","begin-date":"2063-02-01T00:00:00"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"18a326b7-e9a3-460d-bc61-6820f136ba95","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"rd1","created-by":"LibreScholar","created":"2018-12-01","reporting-period":{"end-date":"2018-12-01","begin-date":"2018-12-01"},"report-filters":[],"report-attributes":[],"exceptions":[{"code":3040,"data":"usage
+        data has not been processed for the entire reporting period","message":"partial
+        data returned","help-url":"String","severity":"warning"}]}},{"id":"1a547547-325c-4597-a1b1-7ef5299a1c9a","report-header":{"report-name":"Dataset
+        Master Report","report-id":"SDR","release":"RD1","created-by":"test48","created":"2018-05-22","reporting-period":{"end-date":"2063-03-30T00:00:00","begin-date":"2063-03-01T00:00:00"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"1a6e79ea-5291-4f5f-a25e-2cb071715bfc","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"rd1","created-by":"DashX12","created":"2018-04-30","reporting-period":{"end-date":"2018-04-30","begin-date":"2018-04-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"1ca6c11f-dcc8-47ed-be45-53499687f0d1","report-header":{"report-name":"resolution
+        report","report-id":"dsr","release":"drl","created-by":"datacite","created":"2018-12-13","reporting-period":{"end-date":"2018-08-31","begin-date":"2018-08-01"},"report-filters":[],"report-attributes":[],"exceptions":[{"code":69,"data":"usage
+        data needs to be uncompressed","message":"Report is compressed using gzip","help-url":"https://github.com/datacite/sashimi","severity":"warning"}]}},{"id":"1fc2fc5f-547e-4772-b0d3-63aa2a76f74e","report-header":{"report-name":"resolution
+        report","report-id":"1fc2fc5f-547e-4772-b0d3-63aa2a76f74e","release":"drl","created-by":"datacite","created":"2018-11-23","reporting-period":{"end-date":"2020-07-31","begin-date":"2020-07-01"},"report-filters":[],"report-attributes":[],"exceptions":[{"code":69,"data":"usage
+        data needs to be uncompressed","message":"Report is compressed using gzip","help-url":"https://github.com/datacite/sashimi","severity":"warning"}]}},{"id":"219214c5-3507-476c-b532-a054985a0373","report-header":{"report-name":"resolution
+        report","report-id":"dsr","release":"drl","created-by":"datacitef","created":"2019-05-13","reporting-period":{"end-date":"2018-04-30","begin-date":"2018-04-01"},"report-filters":[],"report-attributes":[],"exceptions":[{"code":69,"data":"usage
+        data needs to be uncompressed","message":"Report is compressed using gzip","help-url":"https://github.com/datacite/sashimi","severity":"warning"}]}},{"id":"22867b62-186e-4c38-bafa-e217c503cc71","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"RD1","created-by":"Rabina4","created":"2018-05-18","reporting-period":{"end-date":"2019-08-30T00:00:00","begin-date":"2021-08-01T00:00:00"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"2b6820c7-1f5b-4b8a-90fd-08f1afd65d52","report-header":{"report-name":"dataset
+        report","report-id":"dsr","release":"rd1","created-by":"kristian2","created":"2018-10-17","reporting-period":{"end-date":"2022-04-30","begin-date":"2022-04-02"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"2bd9eef6-f3d5-4f6c-95f2-66d1f686193c","report-header":{"report-name":"Dataset
+        Master Report","report-id":"SDR","release":"RD1","created-by":"test42","created":"2018-05-22","reporting-period":{"end-date":"2063-03-30T00:00:00","begin-date":"2063-03-01T00:00:00"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"34446c5e-1ed0-424a-b160-e719f2526889","report-header":{"report-name":"Dataset
+        Master Report","report-id":"34446c5e-1ed0-424a-b160-e719f2526889","release":"rd1","created-by":"urn:node:mnUCSB1","created":"2018-11-26","reporting-period":{"end-date":"2014-11-30","begin-date":"2014-11-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"3521af3d-135e-43a6-94c1-d52ee8002461","report-header":{"report-name":"dataset
+        report","report-id":"FULL","release":"rd2","created-by":"kristian","created":"2018-05-11","reporting-period":{"end-date":"2022-06-30","begin-date":"2022-06-07"},"report-filters":[{"name":"begin-date","value":"2018-04-01T00:00:00"},{"name":"end-date","value":"2018-04-30T00:00:00"}],"report-attributes":[],"exceptions":null}},{"id":"3521af4d-133e-4356-94c1-d52ee8112461","report-header":{"report-name":"dataset
+        report","report-id":"FULL","release":"rd2","created-by":"kristian","created":"2018-05-11","reporting-period":{"end-date":"2022-09-05","begin-date":"2022-09-03"},"report-filters":[{"name":"begin-date","value":"2018-04-01T00:00:00"},{"name":"end-date","value":"2018-04-30T00:00:00"}],"report-attributes":[],"exceptions":null}},{"id":"3521af4d-135e-4356-94c1-d52ee8112461","report-header":{"report-name":"dataset
+        report","report-id":"FULL","release":"rd2","created-by":"kristian","created":"2018-05-11","reporting-period":{"end-date":"2022-07-02","begin-date":"2022-07-01"},"report-filters":[{"name":"begin-date","value":"2018-04-01T00:00:00"},{"name":"end-date","value":"2018-04-30T00:00:00"}],"report-attributes":[],"exceptions":null}},{"id":"37443e0e-35f9-4b24-a5e5-eada3feee513","report-header":{"report-name":"dataset
+        report","report-id":"dsr","release":"rd1","created-by":"datacite","created":"2018-10-17","reporting-period":{"end-date":"2018-04-30","begin-date":"2018-04-01"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"376ad8d4-a56f-49a3-8ce2-5176ed090f95","report-header":{"report-name":"resolution
+        report","report-id":"dsr","release":"drl","created-by":"philosophy3","created":"2018-12-01","reporting-period":{"end-date":"2018-09-30","begin-date":"2018-09-01"},"report-filters":[],"report-attributes":[],"exceptions":[{"code":69,"data":"usage
+        data needs to be uncompressed","message":"Report is compressed using gzip","help-url":"https://github.com/datacite/sashimi","severity":"warning"}]}},{"id":"385e73b5-0ef9-4a88-abe5-52ed7169c3b7","report-header":{"report-name":"dataset
+        report","report-id":"dsr","release":"rd1","created-by":"kristi5an3","created":"2018-10-18","reporting-period":{"end-date":"2022-06-23","begin-date":"2022-06-22"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"38907668-592b-4586-bc1c-e5858f332ac0","report-header":{"report-name":"Dataset
+        Master Report","report-id":"38907668-592b-4586-bc1c-e5858f332ac0","release":"rd1","created-by":"urn:node:TFRI","created":"2018-11-26","reporting-period":{"end-date":"2015-05-31","begin-date":"2015-05-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"3f3cd83b-8a73-4055-9b33-766045a33e9f","report-header":{"report-name":"dataset
+        report","report-id":"FULL","release":"rd2","created-by":"datacite7","created":"2018-05-11","reporting-period":{"end-date":"2022-04-30","begin-date":"2022-04-02"},"report-filters":[{"name":"begin-date","value":"2018-04-01T00:00:00"},{"name":"end-date","value":"2018-04-30T00:00:00"}],"report-attributes":[],"exceptions":null}},{"id":"407a0477-8921-4c52-910e-33d6b3320833","report-header":{"report-name":"Dataset
+        Master Report","report-id":"SDR","release":"RD1","created-by":"test38","created":"2018-05-22","reporting-period":{"end-date":"2063-03-30T00:00:00","begin-date":"2063-03-01T00:00:00"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"4262636a-7a7b-4a19-8053-794dbd8f1043","report-header":{"report-name":"Dataset
+        Master Report","report-id":"SDR","release":"RD1","created-by":"test31","created":"2018-05-22","reporting-period":{"end-date":"2063-03-30T00:00:00","begin-date":"2063-03-01T00:00:00"},"report-filters":[],"report-attributes":[],"exceptions":null}},{"id":"4274f4a1-0e2a-4c96-99aa-df743fa40b36","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"rd1","created-by":"datacite.datacite","created":"2018-08-31","reporting-period":{"end-date":"2007-08-28","begin-date":"2007-08-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"446a5792-3d87-4faf-a75b-6739f9c98cbe","report-header":{"report-name":"resolution
+        report","report-id":"dsr","release":"drl","created-by":"Datace","created":"2019-05-15","reporting-period":{"end-date":"2018-04-30","begin-date":"2018-04-01"},"report-filters":[],"report-attributes":[],"exceptions":[{"code":69,"data":"usage
+        data needs to be uncompressed","message":"Report is compressed using gzip","help-url":"https://github.com/datacite/sashimi","severity":"warning"}]}}],"meta":{"total":116,"total-pages":5,"page":1}}'
+    http_version: 
+  recorded_at: Fri, 17 May 2019 05:27:11 GMT
+recorded_with: VCR 3.0.3

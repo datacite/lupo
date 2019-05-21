@@ -871,6 +871,15 @@ class Doi < ActiveRecord::Base
     end
   end
 
+  #to be used after DOIS transfer to another RA
+  def self.delete_dois_by_prefix(prefix)
+    collection.where("doi LIKE ?", prefix).find_each do |d|
+      logger = Logger.new(STDOUT)
+      logger.info "Deleted #{d.doi}, last updated #{d.updated.iso8601}."
+      d.destroy
+    end
+  end
+
   # register DOIs in the handle system that have not been registered yet
   # providers ethz and europ register their DOIs in the handle system themselves and are ignored
   def self.set_handle

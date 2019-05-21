@@ -6,7 +6,7 @@ class ClientPrefix < ActiveRecord::Base
 
   self.table_name = "datacentre_prefixes"
 
-  belongs_to :client, foreign_key: :datacentre
+  belongs_to :client, foreign_key: :datacentre #, touch: true
   belongs_to :prefix, foreign_key: :prefixes
   belongs_to :provider_prefix, foreign_key: :allocator_prefixes
 

@@ -2,10 +2,13 @@
 
 class ProviderConnectionWithMetaType < BaseConnection
   edge_type(ProviderEdgeType)
-
-  field :total_count, Integer, null: false
+  field_class GraphQL::Cache::Field
+  
+  field :total_count, Integer, null: false, cache: true
 
   def total_count
-    object.nodes.size
+    args = object.arguments
+
+    Provider.query(args[:query], year: args[:year], page: { number: 1, size: 0 }).results.total
   end
 end

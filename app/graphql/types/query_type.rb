@@ -3,10 +3,11 @@
 class QueryType < BaseObject
   field :providers, ProviderConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
+    argument :first, Int, required: false, default_value: 25
   end
 
-  def providers(query: nil)
-    Provider.query(query, page: { number: 1, size: 250 }).records.to_a
+  def providers(query: nil, year: nil, first: nil)
+    Provider.query(query, year: year, page: { number: 1, size: first }).results.to_a
   end
 
   field :provider, ProviderType, null: false do
@@ -21,10 +22,11 @@ class QueryType < BaseObject
     argument :query, String, required: false
     argument :year, String, required: false
     argument :software, String, required: false
+    argument :first, Int, required: false, default_value: 25
   end
 
-  def clients(query: nil, year: nil, software: nil)
-    Client.query(query, year: year, software: software, page: { number: 1, size: 2000 }).records.to_a
+  def clients(query: nil, year: nil, software: nil, first: nil)
+    Client.query(query, year: year, software: software, page: { number: 1, size: first }).results.to_a
   end
 
   field :client, ClientType, null: false do
@@ -363,6 +365,25 @@ class QueryType < BaseObject
 
   def other(id:)
     set_doi(id)
+  end
+
+  field :usage_reports, UsageReportConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
+    argument :first, Int, required: false, default_value: 25
+  end
+
+  def usage_reports(first: nil)
+    UsageReport.query(nil, page: { number: 1, size: first }).fetch(:data, [])
+  end
+
+  field :usage_report, UsageReportType, null: false do
+    argument :id, ID, required: true
+  end
+
+  def usage_report(id:)
+    result = UsageReport.find_by_id(id).fetch(:data, []).first
+    fail ActiveRecord::RecordNotFound if result.nil?
+
+    result
   end
 
   def set_doi(id)
