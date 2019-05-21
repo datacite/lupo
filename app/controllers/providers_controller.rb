@@ -194,14 +194,14 @@ class ProvidersController < ApplicationController
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params,
       only: [
-        :name, :symbol, :description, :website, :joined, "organizationType", "focusArea", :phone, "contactName", "contactEmail", "isActive", "passwordInput", :country, "billingInformation",{ "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle",
+        :name, :symbol, :description, :website, :joined, "organizationType", "focusArea", :phone, "contactName", "contactEmail", "isActive", "passwordInput", :country, "billingInformation",{ "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","roleName",
       "generalContact",{ "generalContact": [:email, "givenName", "familyName"]},
       "technicalContact",{ "technicalContact": [:email, "givenName", "familyName"]},
       "serviceContact",{ "serviceContact": [:email, "givenName", "familyName"]},
       "votingContact",{ "votingContact": [:email, "givenName", "familyName"]}
       ],
       keys: {
-        "organizationType" => :organization_type, "focusArea" => :focus_area, "contactName" => :contact_name, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" =>:twitter_handle, 
+        "organizationType" => :organization_type, "focusArea" => :focus_area, "contactName" => :contact_name, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" =>:twitter_handle, "roleName" =>:role_name, 
         "generalContact" => :general_contact,
         "technicalContact" => :technical_contact,
         "serviceContact" => :service_contact,
