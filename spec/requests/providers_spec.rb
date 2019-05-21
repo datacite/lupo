@@ -267,6 +267,11 @@ describe "Providers", type: :request, elasticsearch: true  do
                 "givenName": "Martin",
                 "familyName": "Fenner"
               },
+              "billingContact": {
+                "email": "Trisha@example.com",
+                "givenName": "Trisha",
+                "familyName": "cruse"
+              },
               "votingContact": {
                 "email": "robin@example.com",
                 "givenName": "Robin",
@@ -292,6 +297,9 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(json.dig('data', 'attributes', 'technicalContact',"email")).to eq("kristian@example.com")
         expect(json.dig('data', 'attributes', 'technicalContact',"givenName")).to eq("Kristian")
         expect(json.dig('data', 'attributes', 'technicalContact',"familyName")).to eq("Garza")
+        expect(json.dig('data', 'attributes', 'billingContact',"email")).to eq("Trisha@example.com")
+        expect(json.dig('data', 'attributes', 'billingContact',"givenName")).to eq("Trisha")
+        expect(json.dig('data', 'attributes', 'billingContact',"familyName")).to eq("cruse")
         expect(json.dig('data', 'attributes', 'serviceContact',"email")).to eq("martin@example.com")
         expect(json.dig('data', 'attributes', 'serviceContact',"givenName")).to eq("Martin")
         expect(json.dig('data', 'attributes', 'serviceContact',"familyName")).to eq("Fenner")

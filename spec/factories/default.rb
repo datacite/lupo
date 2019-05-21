@@ -226,6 +226,11 @@ FactoryBot.define do
       "given_name": "Kristian",
       "family_name": "Garza"
     }}
+    billing_contact {{
+      "email": "Trisha@example.com",
+      "given_name": "Trisha",
+      "family_name": "cruse"
+    }}
     service_contact {{
       "email": "martin@example.com",
       "given_name": "Martin",
