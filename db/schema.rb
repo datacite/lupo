@@ -101,17 +101,6 @@ ActiveRecord::Schema.define(version: 2019_05_17_154500) do
     t.index ["user_id", "user_type"], name: "user_index"
   end
 
-  create_table "contacts", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.bigint "allocator"
-    t.string "email"
-    t.string "given_name"
-    t.string "family_name"
-    t.string "role"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["allocator"], name: "fk_rails_5c598567a8"
-  end
-
   create_table "datacentre", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
     t.text "comments", limit: 4294967295
     t.string "contact_email", null: false
@@ -241,7 +230,6 @@ ActiveRecord::Schema.define(version: 2019_05_17_154500) do
 
   add_foreign_key "allocator_prefixes", "allocator", column: "allocator", name: "FKE7FBD67446EBD781"
   add_foreign_key "allocator_prefixes", "prefix", column: "prefixes", name: "FKE7FBD674AF86A1C7"
-  add_foreign_key "contacts", "allocator", column: "allocator"
   add_foreign_key "datacentre", "allocator", column: "allocator", name: "FK6695D60546EBD781"
   add_foreign_key "datacentre_prefixes", "datacentre", column: "datacentre", name: "FK13A1B3BA47B5F5FF"
   add_foreign_key "datacentre_prefixes", "prefix", column: "prefixes", name: "FK13A1B3BAAF86A1C7"

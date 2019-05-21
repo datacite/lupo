@@ -23,6 +23,7 @@ describe "Providers", type: :request, elasticsearch: true  do
     end
 
     it 'returns providers' do
+      # puts response.inspect
       expect(json['data'].size).to eq(4)
       expect(json.dig('meta', 'total')).to eq(4)
     end
@@ -251,7 +252,7 @@ describe "Providers", type: :request, elasticsearch: true  do
               "organizationType"=>"academicInstitution",
               "passwordInput"=>"[FILTERED]",
               "phone"=>"",
-              "twitterHandle"=>"meekakitty",
+              "twitterHandle"=>"@eekakitty",
               "rorId"=>"https://ror.org/05njkjr15",
               "generalContact":{
                 "email"=>"richard@example.com",

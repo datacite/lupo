@@ -206,11 +206,13 @@ FactoryBot.define do
     name { "My provider" }
     country_code { "DE" }
     password_input { "12345" }
-    twitter_handle { "@egaTwitterlace" }
+    twitter_handle { "@egaTwitterlac" }
     ror_id { "https://ror.org/05njkjr15" }
     billing_information {{
       "city": "barcelona",
       "state": "cataluyna",
+      "department": "sales",
+      "organization": "testing org",
       "address": Faker::Address.street_address,
       "postCode": "10777"
      }}

@@ -202,7 +202,7 @@ class ProvidersController < ApplicationController
       ],
       keys: {
         "organizationType" => :organization_type, "focusArea" => :focus_area, "contactName" => :contact_name, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" =>:twitter_handle,
-        "roleName" =>:role_name,
+        "roleName" => :role_name,
         "generalContact" => :general_contact,
         "technicalContact" => :technical_contact,
         "serviceContact" => :service_contact,
