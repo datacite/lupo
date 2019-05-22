@@ -206,36 +206,6 @@ describe "Providers", type: :request, elasticsearch: true  do
                 "address"=>"Rennes",
                 "postCode"=>"122dc"
               },
-              "generalContact":{
-                "email"=>"richard@example.com",
-                "givenName"=>"Richard",
-                "familyName"=>"Hallett"
-              },
-              "technicalContact": {
-                "email": "kristian@example.com",
-                "givenName": "Kristian",
-                "familyName": "Garza"
-              },
-              "serviceContact": {
-                "email": "martin@example.com",
-                "givenName": "Martin",
-                "familyName": "Fenner"
-              },
-              "billingContact": {
-                "email": "Trisha@example.com",
-                "givenName": "Trisha",
-                "familyName": "cruse"
-              },
-              "secondaryBillingContact": {
-                "email": "Trisha@example.com",
-                "givenName": "Trisha",
-                "familyName": "cruse"
-              },
-              "votingContact": {
-                "email": "robin@example.com",
-                "givenName": "Robin",
-                "familyName": "Dasler"
-              },
               "region"=>"",
               "symbol"=>"CMfddff33333dd111d111113f4d",
               "updated"=>"",
@@ -286,11 +256,6 @@ describe "Providers", type: :request, elasticsearch: true  do
               "phone"=>"",
               "twitterHandle"=>"@eekakitty",
               "rorId"=>"https://ror.org/05njkjr15",
-              "generalContact":{
-                "email"=>"richard@example.com",
-                "givenName"=>"Richard",
-                "familyName"=>"Hallett"
-              },
               "technicalContact": {
                 "email": "kristian@example.com",
                 "givenName": "Kristian",
@@ -330,9 +295,6 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
 
       it 'creates a provider' do
-        expect(json.dig('data', 'attributes', 'generalContact',"email")).to eq("richard@example.com")
-        expect(json.dig('data', 'attributes', 'generalContact',"givenName")).to eq("Richard")
-        expect(json.dig('data', 'attributes', 'generalContact',"familyName")).to eq("Hallett")
         expect(json.dig('data', 'attributes', 'technicalContact',"email")).to eq("kristian@example.com")
         expect(json.dig('data', 'attributes', 'technicalContact',"givenName")).to eq("Kristian")
         expect(json.dig('data', 'attributes', 'technicalContact',"familyName")).to eq("Garza")

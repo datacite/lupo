@@ -217,11 +217,6 @@ FactoryBot.define do
       "address": Faker::Address.street_address,
       "postCode": "10777"
      }}
-    general_contact {{
-      "email": "richard@example.com",
-      "given_name": "Richard",
-      "family_name": "Hallett"
-    }}
     technical_contact {{
       "email": "kristian@example.com",
       "given_name": "Kristian",

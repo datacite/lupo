@@ -41,7 +41,6 @@ class Provider < ActiveRecord::Base
   validate :freeze_symbol, :on => :update
   validates_format_of :ror_id, :with => /\A(?:(http|https):\/\/)?(?:ror\.org\/)?(0\w{6}\d{2})\z/, if: :ror_id?
   validates_format_of :twitter_handle, :with => /\A@[a-zA-Z0-9_]{1,16}\z/, if: :twitter_handle?
-  validates :general_contact, contact: true
   validates :technical_contact, contact: true
   validates :billing_contact, contact: true
   validates :secondary_billing_contact, contact: true
@@ -115,11 +114,6 @@ class Provider < ActiveRecord::Base
         city: { type: :text },
         country: { type: :text },
         address: { type: :text }}
-      indexes :general_contact, type: :object, properties: {
-        email: { type: :text },
-        given_name: { type: :text},
-        family_name: { type: :text }
-      }
       indexes :technical_contact, type: :object, properties: {
         email: { type: :text },
         given_name: { type: :text},
@@ -189,7 +183,6 @@ class Provider < ActiveRecord::Base
         "country" => billing_country,
         "city" => billing_city
       },
-      "general_contact" => general_contact,
       "technical_contact" => technical_contact,
       "billing_contact" => billing_contact,
       "secondary_billing_contact" => secondary_billing_contact,
@@ -296,7 +289,7 @@ class Provider < ActiveRecord::Base
   end
 
   def member_type_labels
-    { 
+    {
       "ROLE_MEMBER"               => "Member Only",
       "ROLE_ALLOCATOR"            => "Member Provider",
       "ROLE_CONSORTIUM_LEAD"      => "Consortium Lead",
@@ -312,7 +305,7 @@ class Provider < ActiveRecord::Base
   end
 
   def member_types
-    { 
+    {
       "ROLE_MEMBER"               => "member_only",
       "ROLE_ALLOCATOR"            => "provider",
       "ROLE_CONSORTIUM_LEAD"      => "consortium_lead",
