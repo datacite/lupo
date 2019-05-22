@@ -200,7 +200,41 @@ describe "Providers", type: :request, elasticsearch: true  do
               "billingInformation":{
                 "city"=>"barcelona",
                 "state"=>"Rennes",
+                "country"=>"Rennes",
+                "organization"=>"Rennes",
+                "department"=>"Rennes",
+                "address"=>"Rennes",
                 "postCode"=>"122dc"
+              },
+              "generalContact":{
+                "email"=>"richard@example.com",
+                "givenName"=>"Richard",
+                "familyName"=>"Hallett"
+              },
+              "technicalContact": {
+                "email": "kristian@example.com",
+                "givenName": "Kristian",
+                "familyName": "Garza"
+              },
+              "serviceContact": {
+                "email": "martin@example.com",
+                "givenName": "Martin",
+                "familyName": "Fenner"
+              },
+              "billingContact": {
+                "email": "Trisha@example.com",
+                "givenName": "Trisha",
+                "familyName": "cruse"
+              },
+              "secondaryBillingContact": {
+                "email": "Trisha@example.com",
+                "givenName": "Trisha",
+                "familyName": "cruse"
+              },
+              "votingContact": {
+                "email": "robin@example.com",
+                "givenName": "Robin",
+                "familyName": "Dasler"
               },
               "region"=>"",
               "symbol"=>"CMfddff33333dd111d111113f4d",
@@ -216,7 +250,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
 
       it 'creates a provider' do
-        puts json
+        puts response.inspect
         expect(json.dig('data', 'attributes', 'contactEmail')).to eq("jkiritha@andrew.cmu.edu")
         expect(json.dig('data', 'attributes', 'billingInformation',"state")).to eq("Rennes")
         expect(json.dig('data', 'attributes', 'billingInformation',"postCode")).to eq("122dc")
@@ -267,6 +301,16 @@ describe "Providers", type: :request, elasticsearch: true  do
                 "givenName": "Martin",
                 "familyName": "Fenner"
               },
+              "billingContact": {
+                "email": "Trisha@example.com",
+                "givenName": "Trisha",
+                "familyName": "cruse"
+              },
+              "secondaryBillingContact": {
+                "email": "Trisha@example.com",
+                "givenName": "Trisha",
+                "familyName": "cruse"
+              },
               "votingContact": {
                 "email": "robin@example.com",
                 "givenName": "Robin",
@@ -292,6 +336,12 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(json.dig('data', 'attributes', 'technicalContact',"email")).to eq("kristian@example.com")
         expect(json.dig('data', 'attributes', 'technicalContact',"givenName")).to eq("Kristian")
         expect(json.dig('data', 'attributes', 'technicalContact',"familyName")).to eq("Garza")
+        expect(json.dig('data', 'attributes', 'billingContact',"email")).to eq("Trisha@example.com")
+        expect(json.dig('data', 'attributes', 'billingContact',"givenName")).to eq("Trisha")
+        expect(json.dig('data', 'attributes', 'billingContact',"familyName")).to eq("cruse")
+        expect(json.dig('data', 'attributes', 'secondaryBillingContact',"email")).to eq("Trisha@example.com")
+        expect(json.dig('data', 'attributes', 'secondaryBillingContact',"givenName")).to eq("Trisha")
+        expect(json.dig('data', 'attributes', 'secondaryBillingContact',"familyName")).to eq("cruse")
         expect(json.dig('data', 'attributes', 'serviceContact',"email")).to eq("martin@example.com")
         expect(json.dig('data', 'attributes', 'serviceContact',"givenName")).to eq("Martin")
         expect(json.dig('data', 'attributes', 'serviceContact',"familyName")).to eq("Fenner")
