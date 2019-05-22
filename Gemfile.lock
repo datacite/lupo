@@ -65,8 +65,8 @@ GEM
     audited (4.8.0)
       activerecord (>= 4.0, < 5.3)
     aws-eventstream (1.0.3)
-    aws-partitions (1.165.0)
-    aws-sdk-core (3.53.0)
+    aws-partitions (1.166.0)
+    aws-sdk-core (3.53.1)
       aws-eventstream (~> 1.0, >= 1.0.2)
       aws-partitions (~> 1.0)
       aws-sigv4 (~> 1.1)
@@ -188,10 +188,10 @@ GEM
       sxp (~> 1.0)
     edtf (3.0.4)
       activesupport (>= 3.0, < 6.0)
-    elasticsearch (7.1.0)
-      elasticsearch-api (= 7.1.0)
-      elasticsearch-transport (= 7.1.0)
-    elasticsearch-api (7.1.0)
+    elasticsearch (6.8.0)
+      elasticsearch-api (= 6.8.0)
+      elasticsearch-transport (= 6.8.0)
+    elasticsearch-api (6.8.0)
       multi_json
     elasticsearch-extensions (0.0.31)
       ansi
@@ -201,7 +201,7 @@ GEM
       elasticsearch (> 1)
       hashie
     elasticsearch-rails (6.0.0)
-    elasticsearch-transport (7.1.0)
+    elasticsearch-transport (6.8.0)
       faraday
       multi_json
     equivalent-xml (0.6.0)
@@ -554,6 +554,7 @@ DEPENDENCIES
   database_cleaner
   diffy (~> 3.2, >= 3.2.1)
   dotenv
+  elasticsearch (~> 6.8)
   elasticsearch-extensions (~> 0.0.29)
   elasticsearch-model (~> 6.0.0)
   elasticsearch-rails (~> 6.0.0)

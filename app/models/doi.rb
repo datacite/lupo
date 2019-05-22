@@ -871,13 +871,39 @@ class Doi < ActiveRecord::Base
     end
   end
 
-  #to be used after DOIS transfer to another RA
-  def self.delete_dois_by_prefix(prefix)
-    collection.where("doi LIKE ?", prefix).find_each do |d|
-      logger = Logger.new(STDOUT)
-      logger.info "Deleted #{d.doi}, last updated #{d.updated.iso8601}."
-      d.destroy
+  # to be used after DOIs were transferred to another DOI RA
+  def self.delete_dois_by_prefix(prefix, options={})
+    logger = Logger.new(STDOUT)
+
+    if prefix.blank?
+      Logger.error "[Error] No prefix provided."
+      return nil
     end
+
+    # query = options[:query] || "*"
+    size = (options[:size] || 1000).to_i
+
+    response = Doi.query(nil, prefix: prefix, page: { size: 1, cursor: 0 })
+    logger.info "#{response.results.total} DOIs found for prefix #{prefix}."
+
+    if prefix && response.results.total > 0
+      # walk through results using cursor
+      cursor = 0
+
+      while response.results.results.length > 0 do
+        response = Doi.query(nil, prefix: prefix, page: { size: size, cursor: cursor })
+        break unless response.results.results.length > 0
+
+        logger.info "Deleting #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
+        cursor = response.results.to_a.last[:sort].first.to_i
+
+        response.results.results.each do |d|
+          DeleteJob.perform_later(d.doi)
+        end
+      end
+    end
+
+    response.results.total
   end
 
   # register DOIs in the handle system that have not been registered yet
@@ -970,7 +996,7 @@ class Doi < ActiveRecord::Base
     query = options[:query] || "*"
     size = (options[:size] || 1000).to_i
 
-    response = Doi.query(query, client_id: options[:client_id], page: { size: 1, cursor: 0 })
+    response = Doi.query(nil, client_id: options[:client_id], page: { size: 1, cursor: 0 })
     logger.info "[Transfer] #{response.results.total} DOIs found for client #{options[:client_id]}."
 
     if options[:client_id] && options[:target_id] && response.results.total > 0
@@ -978,7 +1004,7 @@ class Doi < ActiveRecord::Base
       cursor = 0
 
       while response.results.results.length > 0 do
-        response = Doi.query(query, client_id: options[:client_id], page: { size: size, cursor: cursor })
+        response = Doi.query(nil, client_id: options[:client_id], page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
 
         logger.info "[Transfer] Transferring #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
@@ -1024,7 +1050,7 @@ class Doi < ActiveRecord::Base
           "download-latency" => "downloadLatency"
         }
         result = result.map {|k, v| [mappings[k] || k, v] }.to_h
-#        doi.update_columns("last_landing_page_status_result": result)
+        # doi.update_columns("last_landing_page_status_result": result)
 
         # Do a fix of the stored download Latency
         # Sometimes was floating point precision, we dont need this

@@ -129,12 +129,6 @@ namespace :doi do
     Doi.delete_test_dois(from_date: from_date)
   end
 
-  desc 'Delete DOIs with by prefix'
-  task :delete_test_dois => :environment do
-    prefix = ENV['PREFIX_TO_DELETE'] 
-    Doi.delete_dois_by_prefix(prefix) if prefix.present?
-  end
-
   desc 'Migrates landing page data handling camelCase changes at same time'
   task :migrate_landing_page => :environment do
     Doi.migrate_landing_page
