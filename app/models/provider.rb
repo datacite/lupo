@@ -35,16 +35,18 @@ class Provider < ActiveRecord::Base
   validates_uniqueness_of :symbol, message: "This name has already been taken"
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, message: "contact_email should be an email"
   validates_format_of :website, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be an url"
-  validates_inclusion_of :role_name, :in => %w( ROLE_ALLOCATOR ROLE_MEMBER ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
+  validates_inclusion_of :role_name, :in => %w( ROLE_FOR_PROFIT_PROVIDER ROLE_CONTRACTUAL_PROVIDER ROLE_CONSORTIUM_LEAD ROLE_ALLOCATOR ROLE_MEMBER ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
   validates_inclusion_of :organization_type, :in => %w(nationalInstitution nationalLibrary academicInstitution academicLibrary researchInstitution governmentAgency publisher professionalSociety serviceProvider vendor), :message => "organization type %s is not included in the list", if: :organization_type?
   validates_inclusion_of :focus_area, :in => %w(biomedicalAndHealthSciences earthSciences humanities mathematicsAndComputerScience physicalSciencesAndEngineering socialSciences general), :message => "focus area %s is not included in the list", if: :focus_area?
   validate :freeze_symbol, :on => :update
   validates_format_of :ror_id, :with => /\A(?:(http|https):\/\/)?(?:ror\.org\/)?(0\w{6}\d{2})\z/, if: :ror_id?
-  validates_format_of :twitter_handle, :with => /\A[a-zA-Z0-9_]{1,15}\z/, if: :twitter_handle?
-  validates :general_contact, contact: true
+  validates_format_of :twitter_handle, :with => /\A@[a-zA-Z0-9_]{1,16}\z/, if: :twitter_handle?
   validates :technical_contact, contact: true
+  validates :billing_contact, contact: true
+  validates :secondary_billing_contact, contact: true
   validates :service_contact, contact: true
   validates :voting_contact, contact: true
+  #validates :billing_information, billing_information: true ##commented while we collect data
 
   before_validation :set_region
 
@@ -112,12 +114,17 @@ class Provider < ActiveRecord::Base
         city: { type: :text },
         country: { type: :text },
         address: { type: :text }}
-      indexes :general_contact, type: :object, properties: {
+      indexes :technical_contact, type: :object, properties: {
         email: { type: :text },
         given_name: { type: :text},
         family_name: { type: :text }
       }
-      indexes :technical_contact, type: :object, properties: {
+      indexes :billing_contact, type: :object, properties: {
+        email: { type: :text },
+        given_name: { type: :text},
+        family_name: { type: :text }
+      }
+      indexes :secondary_billing_contact, type: :object, properties: {
         email: { type: :text },
         given_name: { type: :text},
         family_name: { type: :text }
@@ -176,8 +183,9 @@ class Provider < ActiveRecord::Base
         "country" => billing_country,
         "city" => billing_city
       },
-      "general_contact" => general_contact,
       "technical_contact" => technical_contact,
+      "billing_contact" => billing_contact,
+      "secondary_billing_contact" => secondary_billing_contact,
       "service_contact" => service_contact,
       "voting_contact" => voting_contact,
       "created" => created,
@@ -212,11 +220,11 @@ class Provider < ActiveRecord::Base
       description: description,
       website: website,
       region: region_human_name,
-      country: country_name,
+      country: country_code,
       logo_url: logo_url,
       focus_area: focus_area,
       organization_type: organization_type,
-      member_type: member_type,
+      member_type: member_type_label,
       billing_address: billing_address,
       billing_post_code: billing_post_code,
       billing_city: billing_city,
@@ -276,6 +284,36 @@ class Provider < ActiveRecord::Base
     billing_information.fetch("country",nil) if billing_information.present?
   end
 
+  def member_type_label
+    member_type_labels[role_name]
+  end
+
+  def member_type_labels
+    {
+      "ROLE_MEMBER"               => "Member Only",
+      "ROLE_ALLOCATOR"            => "Member Provider",
+      "ROLE_CONSORTIUM_LEAD"      => "Consortium Lead",
+      "ROLE_CONTRACTUAL_PROVIDER" => "Contractual Provider",
+      "ROLE_ADMIN"                => "DataCite admin",
+      "ROLE_DEV"                  => "DataCite admin",
+      "ROLE_FOR_PROFIT_PROVIDER"  => "For-profit Provider"
+     }
+  end
+
+  def member_type
+    member_types[role_name]
+  end
+
+  def member_types
+    {
+      "ROLE_MEMBER"               => "member_only",
+      "ROLE_ALLOCATOR"            => "provider",
+      "ROLE_CONSORTIUM_LEAD"      => "consortium_lead",
+      "ROLE_CONTRACTUAL_PROVIDER" => "contractual_provider",
+      "ROLE_FOR_PROFIT_PROVIDER"  => "for_profit_provider"
+     }
+  end
+
   # count years account has been active. Ignore if deleted the same year as created
   def cumulative_years
     if deleted_at && deleted_at.year > created_at.year
@@ -322,13 +360,13 @@ class Provider < ActiveRecord::Base
     write_attribute(:password, encrypt_password_sha256(value)) if value.present?
   end
 
-  def member_type
-    if role_name == "ROLE_ALLOCATOR"
-      "provider"
-    elsif role_name == "ROLE_MEMBER"
-      "member_only"
-    end
-  end
+  # def member_type
+  #   if role_name == "ROLE_ALLOCATOR"
+  #     "provider"
+  #   elsif role_name == "ROLE_MEMBER"
+  #     "member_only"
+  #   end
+  # end
 
   def client_ids
     clients.where(deleted_at: nil).pluck(:symbol).map(&:downcase)

@@ -168,9 +168,9 @@ module Indexable
         must << { term: { focus_area: options[:focus_area] }} if options[:focus_area].present?
 
         if options[:all_members]
-          must << { terms: { role_name: %w(ROLE_ALLOCATOR ROLE_MEMBER) }}
+          must << { terms: { role_name: %w( ROLE_FOR_PROFIT_PROVIDER ROLE_CONTRACTUAL_PROVIDER ROLE_CONSORTIUM_LEAD ROLE_ALLOCATOR ROLE_MEMBER) }}
         else
-          must << { term: { role_name: "ROLE_ALLOCATOR" }}
+          must << { terms: { role_name: %w( ROLE_FOR_PROFIT_PROVIDER ROLE_CONTRACTUAL_PROVIDER ROLE_CONSORTIUM_LEAD ROLE_ALLOCATOR) }}
         end
 
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]

@@ -206,23 +206,31 @@ FactoryBot.define do
     name { "My provider" }
     country_code { "DE" }
     password_input { "12345" }
-    twitter_handle { "megaTwitterlace" }
+    twitter_handle { "@egaTwitterlac" }
     ror_id { "https://ror.org/05njkjr15" }
     billing_information {{
       "city": "barcelona",
       "state": "cataluyna",
+      "department": "sales",
+      "country": "CN",
+      "organization": "testing org",
       "address": Faker::Address.street_address,
       "postCode": "10777"
      }}
-    general_contact {{
-      "email": "richard@example.com",
-      "given_name": "Richard",
-      "family_name": "Hallett"
-    }}
     technical_contact {{
       "email": "kristian@example.com",
       "given_name": "Kristian",
       "family_name": "Garza"
+    }}
+    billing_contact {{
+      "email": "Trisha@example.com",
+      "given_name": "Trisha",
+      "family_name": "cruse"
+    }}
+    secondary_billing_contact {{
+      "email": "Trisha@example.com",
+      "given_name": "Trisha",
+      "family_name": "cruse"
     }}
     service_contact {{
       "email": "martin@example.com",

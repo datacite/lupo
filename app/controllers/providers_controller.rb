@@ -179,7 +179,7 @@ class ProvidersController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_provider
-    @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_ADMIN')").where(deleted_at: nil).where(symbol: params[:id]).first
+    @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM_LEAD' , 'ROLE_ALLOCATOR', 'ROLE_ADMIN')").where(deleted_at: nil).where(symbol: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @provider.present?
   end
 
@@ -194,16 +194,18 @@ class ProvidersController < ApplicationController
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params,
       only: [
-        :name, :symbol, :description, :website, :joined, "organizationType", "focusArea", :phone, "contactName", "contactEmail", "isActive", "passwordInput", :country, "billingInformation",{ "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle",
-      "generalContact",{ "generalContact": [:email, "givenName", "familyName"]},
+        :name, :symbol, :description, :website, :joined, "organizationType", "focusArea", :phone, "contactName", "contactEmail", "isActive", "passwordInput", :country, "billingInformation",{ "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","roleName",
       "technicalContact",{ "technicalContact": [:email, "givenName", "familyName"]},
+      "secondaryBillingContact",{ "secondaryBillingContact": [:email, "givenName", "familyName"]},
+      "billingContact",{ "billingContact": [:email, "givenName", "familyName"]},
       "serviceContact",{ "serviceContact": [:email, "givenName", "familyName"]},
       "votingContact",{ "votingContact": [:email, "givenName", "familyName"]}
       ],
       keys: {
-        "organizationType" => :organization_type, "focusArea" => :focus_area, "contactName" => :contact_name, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" =>:twitter_handle,
-        "generalContact" => :general_contact,
+        "organizationType" => :organization_type, "focusArea" => :focus_area, "contactName" => :contact_name, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" =>:twitter_handle, "roleName" =>:role_name,
         "technicalContact" => :technical_contact,
+        "secondaryBillingContact" => :secondary_billing_contact,
+        "billingContact" => :billing_contact,
         "serviceContact" => :service_contact,
         "votingContact" => :voting_contact
       }

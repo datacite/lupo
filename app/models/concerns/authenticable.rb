@@ -66,11 +66,14 @@ module Authenticable
     end
 
     def get_payload(uid: nil, user: nil, password: nil)
-      roles = {
-        "ROLE_ADMIN" => "staff_admin",
-        "ROLE_ALLOCATOR" => "provider_admin",
-        "ROLE_DATACENTRE" => "client_admin"
-      }
+      roles = { 
+        "ROLE_ADMIN"                => "staff_admin",
+        "ROLE_DATACENTRE"           => "client_admin",
+        "ROLE_ALLOCATOR"            => "provider_admin",
+        "ROLE_CONSORTIUM_LEAD"      => "provider_admin",
+        "ROLE_CONTRACTUAL_PROVIDER" => "provider_admin",
+        "ROLE_FOR_PROFIT_PROVIDER"  => "provider_admin"
+       }
       payload = {
         "uid" => uid,
         "role_id" => roles.fetch(user.role_name, "user"),
@@ -144,11 +147,14 @@ module Authenticable
     end
 
     def get_payload(uid: nil, user: nil, password: nil)
-      roles = {
-        "ROLE_ADMIN" => "staff_admin",
-        "ROLE_ALLOCATOR" => "provider_admin",
-        "ROLE_DATACENTRE" => "client_admin"
-      }
+      roles = { 
+        "ROLE_ADMIN"                => "staff_admin",
+        "ROLE_DATACENTRE"           => "client_admin",
+        "ROLE_ALLOCATOR"            => "provider_admin",
+        "ROLE_CONSORTIUM_LEAD"      => "provider_admin",
+        "ROLE_CONTRACTUAL_PROVIDER" => "provider_admin",
+        "ROLE_FOR_PROFIT_PROVIDER"  => "provider_admin"
+       }
       payload = {
         "uid" => uid,
         "role_id" => roles.fetch(user.role_name, "user"),
