@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(version: 2019_05_21_152430) do
     t.json "service_contact"
     t.json "voting_contact"
     t.json "billing_contact"
+    t.json "secondary_billing_contact"
     t.index ["organization_type"], name: "index_allocator_organization_type"
     t.index ["symbol"], name: "symbol", unique: true
   end

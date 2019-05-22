@@ -212,6 +212,7 @@ FactoryBot.define do
       "city": "barcelona",
       "state": "cataluyna",
       "department": "sales",
+      "country": "CN",
       "organization": "testing org",
       "address": Faker::Address.street_address,
       "postCode": "10777"
@@ -227,6 +228,11 @@ FactoryBot.define do
       "family_name": "Garza"
     }}
     billing_contact {{
+      "email": "Trisha@example.com",
+      "given_name": "Trisha",
+      "family_name": "cruse"
+    }}
+    secondary_billing_contact {{
       "email": "Trisha@example.com",
       "given_name": "Trisha",
       "family_name": "cruse"

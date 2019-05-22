@@ -44,8 +44,10 @@ class Provider < ActiveRecord::Base
   validates :general_contact, contact: true
   validates :technical_contact, contact: true
   validates :billing_contact, contact: true
+  validates :secondary_billing_contact, contact: true
   validates :service_contact, contact: true
   validates :voting_contact, contact: true
+  #validates :billing_information, billing_information: true ##commented while we collect data
 
   before_validation :set_region
 
@@ -128,6 +130,11 @@ class Provider < ActiveRecord::Base
         given_name: { type: :text},
         family_name: { type: :text }
       }
+      indexes :secondary_billing_contact, type: :object, properties: {
+        email: { type: :text },
+        given_name: { type: :text},
+        family_name: { type: :text }
+      }
       indexes :service_contact, type: :object, properties: {
         email: { type: :text },
         given_name: { type: :text},
@@ -185,6 +192,7 @@ class Provider < ActiveRecord::Base
       "general_contact" => general_contact,
       "technical_contact" => technical_contact,
       "billing_contact" => billing_contact,
+      "secondary_billing_contact" => secondary_billing_contact,
       "service_contact" => service_contact,
       "voting_contact" => voting_contact,
       "created" => created,
