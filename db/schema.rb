@@ -231,7 +231,6 @@ ActiveRecord::Schema.define(version: 2019_05_22_162430) do
 
   add_foreign_key "allocator_prefixes", "allocator", column: "allocator", name: "FKE7FBD67446EBD781"
   add_foreign_key "allocator_prefixes", "prefix", column: "prefixes", name: "FKE7FBD674AF86A1C7"
-  add_foreign_key "contacts", "allocator", column: "allocator"
   add_foreign_key "datacentre", "allocator", column: "allocator", name: "FK6695D60546EBD781"
   add_foreign_key "datacentre_prefixes", "datacentre", column: "datacentre", name: "FK13A1B3BA47B5F5FF"
   add_foreign_key "datacentre_prefixes", "prefix", column: "prefixes", name: "FK13A1B3BAAF86A1C7"
