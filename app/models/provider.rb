@@ -214,8 +214,6 @@ class Provider < ActiveRecord::Base
       name: name,
       provider_id: symbol,
       year: year,
-      contact_name: contact_name,
-      contact_email: contact_email,
       is_active: is_active,
       description: description,
       website: website,
@@ -225,6 +223,16 @@ class Provider < ActiveRecord::Base
       focus_area: focus_area,
       organization_type: organization_type,
       member_type: member_type_label,
+      contact_email: contact_email,
+      technical_contact_email: technical_contact_email,
+      technical_contact_given_name: technical_contact_given_name,
+      technical_contact_family_name: technical_contact_family_name,
+      service_contact_email: service_contact_email,
+      service_contact_given_name: service_contact_given_name,
+      service_contact_family_name: service_contact_family_name,
+      voting_contact_email: voting_contact_email,
+      voting_contact_given_name: voting_contact_given_name,
+      voting_contact_family_name: voting_contact_family_name,
       billing_address: billing_address,
       billing_post_code: billing_post_code,
       billing_city: billing_city,
@@ -254,6 +262,42 @@ class Provider < ActiveRecord::Base
 
   def year
     joined.year if joined.present?
+  end
+
+  def technical_contact_email
+    technical_contact.fetch("email",nil) if technical_contact.present?
+  end
+
+  def technical_contact_given_name
+    technical_contact.fetch("given_name",nil) if technical_contact.present?
+  end
+
+  def technical_contact_family_name
+    technical_contact.fetch("family_name",nil) if technical_contact.present?
+  end
+
+  def service_contact_email
+    service_contact.fetch("email",nil) if service_contact.present?
+  end
+
+  def service_contact_given_name
+    service_contact.fetch("given_name",nil) if service_contact.present?
+  end
+
+  def service_contact_family_name
+    service_contact.fetch("family_name",nil) if service_contact.present?
+  end
+
+  def voting_contact_email
+    voting_contact.fetch("email",nil) if voting_contact.present?
+  end
+
+  def voting_contact_given_name
+    voting_contact.fetch("given_name",nil) if voting_contact.present?
+  end
+
+  def voting_contact_family_name
+    voting_contact.fetch("family_name",nil) if voting_contact.present?
   end
 
   def billing_department

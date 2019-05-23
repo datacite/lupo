@@ -70,7 +70,43 @@ class ProvidersController < ApplicationController
             }
             render json: ProviderSerializer.new(@providers, options).serialized_json, status: :ok
         end
-        header = %w(accountName fabricaAccountId year contactName contact_address is_active accountDescription accountWebsite  region country logo_url  focusArea organisation_type accountType billingStreet billingPostalCode  billingCity department billingOrganization billingState billingCountry twitter ror_id role_name joined created updated deleted_at)
+        header = %w(
+          accountName
+          fabricaAccountId
+          year
+          is_active
+          accountDescription
+          accountWebsite
+          region
+          country
+          logo_url
+          focusArea
+          organisation_type
+          accountType
+          generalContactEmail
+          technicalContactEmail
+          technicalContactGivenName
+          technicalContactFamilyName
+          serviceContactEmail
+          serviceContactGivenName
+          serviceContactFamilyName
+          votingContactEmail
+          votingContactGivenName
+          votingContactFamilyName
+          billingStreet
+          billingPostalCode
+          billingCity
+          department
+          billingOrganization
+          billingState
+          billingCountry
+          twitter
+          ror_id
+          role_name
+          joined
+          created
+          updated
+          deleted_at)
         format.csv { render request.format.to_sym => response.records.to_a, header: header }
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
