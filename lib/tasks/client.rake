@@ -91,28 +91,12 @@ namespace :client do
 
     # delete all associated prefixes and DOIs
     prefixes = client.prefixes.where.not('prefix IN (?)', prefixes_to_keep).pluck(:prefix)
-    prefix_ids = client.prefixes.where.not('prefix IN (?)', prefixes_to_keep).pluck(:id)
-
-    response = client.client_prefixes.destroy_all
-    puts "#{response.count} client prefixes deleted."
-
-    if prefix_ids.present?
-      response = ProviderPrefix.where('prefixes IN (?)', prefix_ids).destroy_all
-      puts "#{response.count} provider prefixes deleted."
+    prefixes.each do |prefix|
+      ENV['PREFIX'] = prefix
+      Rake::Task["prefix:delete"].reenable
+      Rake::Task["prefix:delete"].invoke
     end
 
-    if prefixes.present?
-      response = Prefix.where('prefix IN (?)', prefixes).destroy_all
-      puts "Prefixes #{prefixes.join(" and ")} deleted."
-    end
-
-    # delete DOIs in batches
-    puts "#{client.dois.length} DOIs will be deleted."
-    client.dois.find_each do |doi|
-      doi.destroy
-      puts "DOI #{doi.doi} deleted."
-    end
-    
     if client.update_attributes(is_active: nil, deleted_at: Time.zone.now)
       client.send_delete_email unless Rails.env.test?
       puts "Client with client ID #{ENV['CLIENT_ID']} deleted."
