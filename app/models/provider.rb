@@ -40,13 +40,14 @@ class Provider < ActiveRecord::Base
   validates_inclusion_of :focus_area, :in => %w(biomedicalAndHealthSciences earthSciences humanities mathematicsAndComputerScience physicalSciencesAndEngineering socialSciences general), :message => "focus area %s is not included in the list", if: :focus_area?
   validate :freeze_symbol, :on => :update
   validates_format_of :ror_id, :with => /\A(?:(http|https):\/\/)?(?:ror\.org\/)?(0\w{6}\d{2})\z/, if: :ror_id?
-  validates_format_of :twitter_handle, :with => /\A@[a-zA-Z0-9_]{1,16}\z/, if: :twitter_handle?
-  validates :technical_contact, contact: true
-  validates :billing_contact, contact: true
-  validates :secondary_billing_contact, contact: true
-  validates :service_contact, contact: true
-  validates :voting_contact, contact: true
-  #validates :billing_information, billing_information: true ##commented while we collect data
+  validates_format_of :twitter_handle, :with => /\A@[a-zA-Z0-9_]{1,15}\z/, if: :twitter_handle?
+  
+  # validates :technical_contact, contact: true
+  # validates :billing_contact, contact: true
+  # validates :secondary_billing_contact, contact: true
+  # validates :service_contact, contact: true
+  # validates :voting_contact, contact: true
+  #validates :billing_information, billing_information: true
 
   before_validation :set_region
 
