@@ -100,6 +100,12 @@ class ProvidersController < ApplicationController
           billingOrganization
           billingState
           billingCountry
+          billingContactEmail
+          billingContactGivenName
+          billingontactFamilyName
+          secondaryBillingContactEmail
+          secondaryBillingContactGivenName
+          secondaryBillingContactFamilyName
           twitter
           ror_id
           role_name

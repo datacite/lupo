@@ -240,6 +240,12 @@ class Provider < ActiveRecord::Base
       billing_organization: billing_organization,
       billing_state: billing_state,
       billing_country: billing_country,
+      billing_contact_email: billing_contact_email,
+      billing_contact_given_name: billing_contact_given_name,
+      billing_contact_family_name: billing_contact_family_name,
+      secondary_billing_contact_email: secondary_billing_contact_email,
+      secondary_billing_contact_given_name: secondary_billing_contact_given_name,
+      secondary_billing_contact_family_name: secondary_billing_contact_family_name,
       twitter_handle: twitter_handle,
       ror_id: ror_id,
       role_name: role_name,
@@ -326,6 +332,30 @@ class Provider < ActiveRecord::Base
 
   def billing_country
     billing_information.fetch("country",nil) if billing_information.present?
+  end
+
+  def billing_contact_email
+    billing_contact.fetch("email",nil) if billing_contact.present?
+  end
+
+  def billing_contact_given_name
+    billing_contact.fetch("given_name",nil) if billing_contact.present?
+  end
+
+  def billing_contact_family_name
+    billing_contact.fetch("family_name",nil) if billing_contact.present?
+  end
+
+  def secondary_billing_contact_email
+    secondary_billing_contact.fetch("email",nil) if secondary_billing_contact.present?
+  end
+
+  def secondary_billing_contact_given_name
+    secondary_billing_contact.fetch("given_name",nil) if secondary_billing_contact.present?
+  end
+
+  def secondary_billing_contact_family_name
+    secondary_billing_contact.fetch("family_name",nil) if secondary_billing_contact.present?
   end
 
   def member_type_label
