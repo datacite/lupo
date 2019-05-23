@@ -120,9 +120,6 @@ module Indexable
         sort = options[:sort]
       end
 
-      # currently not used
-      # fields = options[:query_fields].presence || query_fields
-
       # make sure field name uses underscore
       # escape forward slashes in query
       if query.present?
@@ -137,7 +134,7 @@ module Indexable
       end
 
       must = []
-      must << { query_string: { query: query }} if query.present?
+      must << { query_string: { query: query, fields: query_fields }} if query.present?
       must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
       must << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
       must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?

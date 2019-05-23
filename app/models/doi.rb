@@ -350,9 +350,9 @@ class Doi < ActiveRecord::Base
     }
   end
 
-  # def self.query_fields
-  #   ['doi^10', 'titles.title^10', 'creator_names^10', 'creators.name^10', 'creators.id^10', 'publisher^10', 'descriptions.description^10', 'types.resourceTypeGeneral^10', 'subjects.subject^10', 'identifiers.identifier^10', 'related_identifiers.relatedIdentifier^10', '_all']
-  # end
+  def self.query_fields
+    ['doi^10', 'uid^10', 'titles.title^3', 'creator_names^3', 'creators.name^3', 'creators.id^3', 'publisher^3', 'descriptions.description^3', 'types.resourceTypeGeneral^3', 'subjects.subject^3', 'identifiers.identifier^3', 'related_identifiers.relatedIdentifier^3', '_all']
+  end
 
   # return results for one or more ids
   def self.find_by_id(ids, options={})
