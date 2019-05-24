@@ -197,7 +197,7 @@ class Provider < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['symbol^10', 'name^10', 'contact_name^10', 'contact_email^10', '_all']
+    ['uid^10', 'symbol^10', 'name^5', 'contact_name^5', 'contact_email^5', '_all']
   end
 
   def self.query_aggregations

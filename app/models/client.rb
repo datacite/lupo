@@ -128,7 +128,7 @@ class Client < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['symbol^10', 'name^10', 'description^10', 'contact_name^10', 'contact_email^10', 'domains', 'url', 'software^3', 'repository.subjects.text^3', 'repository.certificates.text^3', '_all']
+    ['uid^10', 'symbol^10', 'name^5', 'description^5', 'contact_name^5', 'contact_email^5', 'domains', 'url', 'software^3', 'repository.subjects.text^3', 'repository.certificates.text^3', '_all']
   end
 
   def self.query_aggregations
