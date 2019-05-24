@@ -166,6 +166,7 @@ module Indexable
         must << { term: { focus_area: options[:focus_area] }} if options[:focus_area].present?
 
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
+        must_not << { term: { role_name: "ROLE_ADMIN" }}
       elsif self.name == "Client"
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { terms: { "software.raw" => options[:software].split(",") }} if options[:software].present?
