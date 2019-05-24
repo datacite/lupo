@@ -108,7 +108,7 @@ class ProvidersController < ApplicationController
           secondaryBillingContactFamilyName
           twitter
           ror_id
-          role_name
+          member_type
           joined
           created
           updated
@@ -236,7 +236,7 @@ class ProvidersController < ApplicationController
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params,
       only: [
-        :name, :symbol, :description, :website, :joined, "organizationType", "focusArea", :phone, "contactName", "contactEmail", "isActive", "passwordInput", :country, "billingInformation",{ "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","roleName",
+        :name, :symbol, :description, :website, :joined, "organizationType", "focusArea", :phone, "contactName", "contactEmail", "isActive", "passwordInput", :country, "billingInformation",{ "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType",
       "technicalContact",{ "technicalContact": [:email, "givenName", "familyName"]},
       "secondaryBillingContact",{ "secondaryBillingContact": [:email, "givenName", "familyName"]},
       "billingContact",{ "billingContact": [:email, "givenName", "familyName"]},
@@ -244,7 +244,7 @@ class ProvidersController < ApplicationController
       "votingContact",{ "votingContact": [:email, "givenName", "familyName"]}
       ],
       keys: {
-        "organizationType" => :organization_type, "focusArea" => :focus_area, "contactName" => :contact_name, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" => :twitter_handle, "roleName" => :role_name,
+        "organizationType" => :organization_type, "focusArea" => :focus_area, "contactName" => :contact_name, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" => :twitter_handle, "memberType" => :member_type,
         "technicalContact" => :technical_contact,
         "secondaryBillingContact" => :secondary_billing_contact,
         "billingContact" => :billing_contact,

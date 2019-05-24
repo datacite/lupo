@@ -62,25 +62,25 @@ class User
   def provider
     return nil unless provider_id.present?
 
-    Provider.where(symbol: provider_id).first
+    Provider.where(symbol: provider_id).where(deleted_at: nil).first
   end
 
   def client
     return nil unless client_id.present?
 
-    ::Client.where(symbol: client_id).first
+    ::Client.where(symbol: client_id).where(deleted_at: nil).first
   end
 
   def self.reset(username)
     uid = username.downcase
 
     if uid.include?(".")
-      user = Client.where(symbol: uid.upcase).first
+      user = Client.where(symbol: uid.upcase).where(deleted_at: nil).first
       client_id = uid
     elsif uid == "admin"
-      user = Provider.unscoped.where(symbol: uid.upcase).first
-    else
       user = Provider.where(symbol: uid.upcase).first
+    else
+      user = Provider.where(symbol: uid.upcase).where(deleted_at: nil).first
       provider_id = uid
     end
 

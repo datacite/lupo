@@ -139,7 +139,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
     end
 
-    context 'create provider type ROLE_CONTRACTUAL_PROVIDER ' do
+    context 'create provider member_role contractual_provider' do
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
@@ -148,7 +148,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "region" => "EMEA",
                         "contactEmail" => "doe@joe.joe",
                         "contactName" => "timAus",
-                        "roleName" => "ROLE_CONTRACTUAL_PROVIDER",
+                        "memberType" => "contractual_provider",
                         "country" => "GB" } } }
       end
 
@@ -157,16 +157,9 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
 
       it 'creates a provider' do
-        puts json
         expect(json.dig('data', 'attributes', 'contactEmail')).to eq("doe@joe.joe")
         expect(json.dig('data', 'attributes', 'name')).to eq("Figshare")
-      end
-
-      it 'provider model get computed' do
-        report = Provider.where(symbol: json.dig('data', 'attributes','symbol')).first
-        expect(report.role_name).to eq("ROLE_CONTRACTUAL_PROVIDER")
-        expect(report.member_type).to eq("contractual_provider")
-        expect(report.member_type_label).to eq("Contractual Provider")
+        expect(json.dig('data', 'attributes', 'memberType')).to eq("contractual_provider")
       end
 
       it 'returns status code 201' do

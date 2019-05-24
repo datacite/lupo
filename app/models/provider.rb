@@ -41,7 +41,7 @@ class Provider < ActiveRecord::Base
   validate :freeze_symbol, :on => :update
   validates_format_of :ror_id, :with => /\A(?:(http|https):\/\/)?(?:ror\.org\/)?(0\w{6}\d{2})\z/, if: :ror_id?
   validates_format_of :twitter_handle, :with => /\A@[a-zA-Z0-9_]{1,15}\z/, if: :twitter_handle?
-  
+
   # validates :technical_contact, contact: true
   # validates :billing_contact, contact: true
   # validates :secondary_billing_contact, contact: true
@@ -379,6 +379,11 @@ class Provider < ActiveRecord::Base
     member_types[role_name]
   end
 
+  def member_type=(value)
+    role_name = member_types.invert.fetch(value, nil)
+    write_attribute(:role_name, role_name) if role_name.present?
+  end
+
   def member_types
     {
       "ROLE_MEMBER"               => "member_only",
@@ -434,14 +439,6 @@ class Provider < ActiveRecord::Base
   def password_input=(value)
     write_attribute(:password, encrypt_password_sha256(value)) if value.present?
   end
-
-  # def member_type
-  #   if role_name == "ROLE_ALLOCATOR"
-  #     "provider"
-  #   elsif role_name == "ROLE_MEMBER"
-  #     "member_only"
-  #   end
-  # end
 
   def client_ids
     clients.where(deleted_at: nil).pluck(:symbol).map(&:downcase)
