@@ -161,9 +161,9 @@ module Indexable
       if self.name == "Provider"
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { term: { region: options[:region].upcase }} if options[:region].present?
+        must << { term: { member_type: options[:member_type] }} if options[:member_type].present?
         must << { term: { organization_type: options[:organization_type] }} if options[:organization_type].present?
         must << { term: { focus_area: options[:focus_area] }} if options[:focus_area].present?
-        must << { terms: { role_name: %w( ROLE_FOR_PROFIT_PROVIDER ROLE_CONTRACTUAL_PROVIDER ROLE_CONSORTIUM_LEAD ROLE_ALLOCATOR ROLE_MEMBER) }}
 
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
       elsif self.name == "Client"
