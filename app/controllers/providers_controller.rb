@@ -25,7 +25,7 @@ class ProvidersController < ApplicationController
     elsif params[:ids].present?
       response = Provider.find_by_id(params[:ids], page: page, sort: sort)
     else
-      response = Provider.query(params[:query], year: params[:year], region: params[:region], organization_type: params[:organization_type], focus_area: params[:focus_area], page: page, sort: sort)
+      response = Provider.query(params[:query], year: params[:year], region: params[:region], organization_type: params[:organization_type], focus_area: params[:focus_area], all_members: params[:all_members], page: page, sort: sort)
     end
 
     begin
@@ -221,7 +221,7 @@ class ProvidersController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_provider
-    @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM_LEAD' , 'ROLE_ALLOCATOR', 'ROLE_ADMIN')").where(deleted_at: nil).where(symbol: params[:id]).first
+    @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM_LEAD' , 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER')").where(deleted_at: nil).where(symbol: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @provider.present?
   end
 
@@ -244,7 +244,7 @@ class ProvidersController < ApplicationController
       "votingContact",{ "votingContact": [:email, "givenName", "familyName"]}
       ],
       keys: {
-        "organizationType" => :organization_type, "focusArea" => :focus_area, "contactName" => :contact_name, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" =>:twitter_handle, "roleName" =>:role_name,
+        "organizationType" => :organization_type, "focusArea" => :focus_area, "contactName" => :contact_name, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" => :twitter_handle, "roleName" => :role_name,
         "technicalContact" => :technical_contact,
         "secondaryBillingContact" => :secondary_billing_contact,
         "billingContact" => :billing_contact,
