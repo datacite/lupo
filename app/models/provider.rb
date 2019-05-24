@@ -205,6 +205,7 @@ class Provider < ActiveRecord::Base
       years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
       cumulative_years: { terms: { field: 'cumulative_years', min_doc_count: 1, order: { _count: "asc" } } },
       regions: { terms: { field: 'region', size: 10, min_doc_count: 1 } },
+      member_types: { terms: { field: 'member_type', size: 10, min_doc_count: 1 } },
       organization_types: { terms: { field: 'organization_type', size: 10, min_doc_count: 1 } },
       focus_areas: { terms: { field: 'focus_area', size: 10, min_doc_count: 1 } }
     }

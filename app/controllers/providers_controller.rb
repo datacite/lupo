@@ -33,6 +33,7 @@ class ProvidersController < ApplicationController
       total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
       years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
       regions = total > 0 ? facet_by_region(response.response.aggregations.regions.buckets) : nil
+      member_types = total > 0 ? facet_by_key(response.response.aggregations.member_types.buckets) : nil
       organization_types = total > 0 ? facet_by_key(response.response.aggregations.organization_types.buckets) : nil
       focus_areas = total > 0 ? facet_by_key(response.response.aggregations.focus_areas.buckets) : nil
 
@@ -46,6 +47,7 @@ class ProvidersController < ApplicationController
               page: page[:number],
               years: years,
               regions: regions,
+              "memberTypes" => member_types,
               "organizationTypes" => organization_types,
               "focusAreas" => focus_areas
             }.compact
@@ -56,6 +58,7 @@ class ProvidersController < ApplicationController
                 query: params[:query],
                 year: params[:year],
                 region: params[:region],
+                "member_type" => params[:member_type],
                 "organization_type" => params[:organization_type],
                 "focus-area" => params[:focus_area],
                 fields: params[:fields],
