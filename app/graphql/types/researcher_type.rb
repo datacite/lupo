@@ -22,7 +22,7 @@ class ResearcherType < BaseObject
   end
 
   def id
-    object.fetch(:id, nil) || object.fetch("nameIdentifiers", []).find { |n| n.fetch("nameIdentifierScheme", nil) == "ORCID" }.fetch("nameIdentifier", nil)
+    object.fetch(:id, nil) || object.fetch("nameIdentifiers", []).find { |n| n.fetch("nameIdentifierScheme", nil) == "ORCID" }.to_h.fetch("nameIdentifier", nil)
   end
 
   def datasets(**args)
