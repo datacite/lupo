@@ -21,6 +21,10 @@ class ResearcherType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
+  def id
+    object.fetch(:id, nil) || object.fetch("nameIdentifiers", []).find { |n| n.fetch("nameIdentifierScheme", nil) == "ORCID" }.fetch("nameIdentifier", nil)
+  end
+
   def datasets(**args)
     ids = Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Dataset-Person").fetch(:data, []).map do |e|
       doi_from_url(e[:subj_id])
