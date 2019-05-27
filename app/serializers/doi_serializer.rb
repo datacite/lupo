@@ -19,6 +19,11 @@ class DoiSerializer
     object.doi.downcase
   end
 
+  attribute :creators do |object|
+    # Always return an array of creators
+    Array.wrap(object.creators)
+  end
+
   attribute :state do |object|
     object.aasm_state
   end
