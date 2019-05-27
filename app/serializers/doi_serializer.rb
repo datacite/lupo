@@ -19,6 +19,15 @@ class DoiSerializer
     object.doi.downcase
   end
 
+  attribute :creators do |object|
+    # If we're just a hash then force this over to a list.
+    if object.creators.class == Hash
+      object.creators = [object.creators]
+    end
+
+    object.creators
+  end
+
   attribute :state do |object|
     object.aasm_state
   end
