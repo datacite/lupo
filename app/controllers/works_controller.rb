@@ -76,7 +76,7 @@ class WorksController < ApplicationController
           query: params[:query],
           "member-id" => params[:provider_id],
           "data-center-id" => params[:client_id],
-          "page[cursor]" => page[:cursor].present? ? Array.wrap(@dois.to_a.last[:sort]).first : nil,
+          "page[cursor]" => page[:cursor].present? ? Array.wrap(@dois.to_a.last.to_h[:sort]).first : nil,
           "page[size]" => page[:size] }.compact.to_query
         }.compact
       options[:include] = @include
