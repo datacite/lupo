@@ -135,7 +135,6 @@ module Indexable
 
       must = []
       must << { query_string: { query: query, fields: query_fields }} if query.present?
-      must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
       must << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
       must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
       must << { terms: { client_id: options[:client_id].to_s.split(",") }} if options[:client_id].present?
@@ -172,6 +171,12 @@ module Indexable
         must << { terms: { "software.raw" => options[:software].split(",") }} if options[:software].present?
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
       elsif self.name == "Doi"
+        # anonymous users should only see findable DOIs
+        if options[:current_user]
+          must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
+        else
+          must << { terms: { aasm_state: ["findable"] }}
+        end
         must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
       end
 

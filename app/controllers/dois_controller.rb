@@ -71,7 +71,8 @@ class DoisController < ApplicationController
                           source: params[:source],
                           page: page,
                           sort: sort,
-                          random: params[:random])
+                          random: params[:random],
+                          current_user: current_user)
     end
 
     begin
