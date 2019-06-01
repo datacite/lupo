@@ -41,6 +41,9 @@ class DoisController < ApplicationController
 
     response = nil
 
+    # only show findable DOIs to anonymous users
+    params[:state] = "findable" if current_user.nil?
+
     if params[:id].present?
       logger.info "[Benchmark] find_by_id " + Benchmark.ms {
         response = Doi.find_by_id(params[:id])
@@ -71,8 +74,7 @@ class DoisController < ApplicationController
                           source: params[:source],
                           page: page,
                           sort: sort,
-                          random: params[:random],
-                          current_user: current_user)
+                          random: params[:random])
     end
 
     begin

@@ -185,10 +185,10 @@ class ProvidersController < ApplicationController
   def totals
     logger = Logger.new(STDOUT)
 
-    page = { size: 0, number: 1}
+    page = { size: 0, number: 1 }
     response = nil
     bmt = Benchmark.ms {
-      response = Doi.query("", state: params[:state], page: page, totals_agg: true)
+      response = Doi.query(nil, state: "findable,registered", page: page, totals_agg: true)
     }
     
     if bmt > 10000
@@ -196,6 +196,8 @@ class ProvidersController < ApplicationController
     else
       logger.info "[Benchmark] providers totals " + bmt.to_s + " ms"
     end
+
+    logger.info response.results.inspect
 
     total = response.results.total
 

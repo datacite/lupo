@@ -46,8 +46,7 @@ class WorksController < ApplicationController
                           sample_size: params[:sample],
                           page: page,
                           sort: sort,
-                          random: params[:sample].present? ? true : false,
-                          current_user: current_user)
+                          random: params[:sample].present? ? true : false)
     end
 
     begin

@@ -143,7 +143,7 @@ class PrefixesController < ApplicationController
     page = { size: 0, number: 1}
     response = nil
     logger.info "[Benchmark] prefixes totals " + Benchmark.ms {
-      response = Doi.query("", client_id: params[:client_id], state: params[:state], page: page, totals_agg: true)
+      response = Doi.query(nil, client_id: params[:client_id], state: "findable,registered", page: page, totals_agg: true)
     }.to_s + " ms"
     total = response.results.total
 

@@ -171,12 +171,7 @@ module Indexable
         must << { terms: { "software.raw" => options[:software].split(",") }} if options[:software].present?
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
       elsif self.name == "Doi"
-        # anonymous users should only see findable DOIs
-        if options[:current_user]
-          must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
-        else
-          must << { terms: { aasm_state: ["findable"] }}
-        end
+        must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
         must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
       end
 
