@@ -10,12 +10,12 @@ describe "dois", type: :request do
   let!(:prefix) { create(:prefix, prefix: "10.14454") }
   let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
 
-  let(:doi) { create(:doi, client: client) }
+  let(:doi) { create(:doi, client: client, aasm_state: "findable") }
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
   let(:headers) { { 'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer }}
 
   describe 'GET /dois', elasticsearch: true do
-    let!(:dois) { create_list(:doi, 3, client: client) }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
 
     before do
       Doi.import
@@ -2411,10 +2411,10 @@ describe "dois", type: :request do
   end
 
   describe 'GET /dois/random' do
-    before { get '/dois/random', headers: headers }
+    before { get '/dois/random?prefix=10.14454', headers: headers }
 
     it 'returns random doi' do
-      expect(json['doi']).to start_with("10.5072")
+      expect(json['doi']).to start_with("10.14454")
       expect(response).to have_http_status(200)
     end
 
@@ -2529,10 +2529,10 @@ describe "dois", type: :request do
 
   describe 'GET /dois/random?number' do
     let(:number) { 122149076 }
-    before { get "/dois/random?number=#{number}", headers: headers }
+    before { get "/dois/random?prefix=10.14454&number=#{number}", headers: headers }
 
     it 'returns predictable doi' do
-      expect(json['doi']).to eq("10.5072/3mfp-6m52")
+      expect(json['doi']).to eq("10.14454/3mfp-6m52")
     end
 
     it 'returns status code 200' do

@@ -363,10 +363,12 @@ class DoisController < ApplicationController
   end
 
   def random
-    prefix = params[:prefix].presence || "10.5072"
-    doi = generate_random_doi(prefix, number: params[:number])
-
-    render json: { doi: doi }.to_json
+    if params[:prefix].present?
+      doi = generate_random_doi(params[:prefix], number: params[:number])
+      render json: { doi: doi }.to_json
+    else
+      render json: { errors: [{ status: "422", title: "Parameter prefix is required" }] }.to_json, status: :unprocessable_entity
+    end
   end
 
   def get_url
