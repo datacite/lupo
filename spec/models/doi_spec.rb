@@ -434,7 +434,7 @@ describe Doi, type: :model, vcr: true do
     let(:provider)  { create(:provider) }
     let(:client)  { create(:client, provider: provider) }
     let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
-    let!(:dois) { create_list(:doi, 3, client: client, creators: nil) }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
     let(:doi) { dois.first }
 
     before do
@@ -461,18 +461,13 @@ describe Doi, type: :model, vcr: true do
       response = Doi.import_by_day(from_date: Date.today.strftime("%F"))
       expect(response).to eq(3)
     end
-
-    it "import by day missing" do
-      response = Doi.import_by_day_missing(from_date: Date.today.strftime("%F"))
-      expect(response).to eq(3)
-    end
   end
 
   describe "index", elasticsearch: true do
     let(:provider)  { create(:provider) }
     let(:client)  { create(:client, provider: provider) }
     let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
-    let!(:dois) { create_list(:doi, 3, client: client, creators: nil) }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
     let(:doi) { dois.first }
 
     before do
@@ -505,7 +500,7 @@ describe Doi, type: :model, vcr: true do
     let(:provider)  { create(:provider) }
     let(:client)  { create(:client, provider: provider) }
     let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
-    let!(:dois) { create_list(:doi, 5, client: client) }
+    let!(:dois) { create_list(:doi, 5, client: client, aasm_state: "findable") }
 
     before do
       Doi.import

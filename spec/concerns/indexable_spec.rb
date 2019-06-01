@@ -69,7 +69,7 @@ describe "Indexable class methods", elasticsearch: true do
   end
 
   context "doi" do
-    let!(:doi) { create(:doi, titles: { title: "Soil investigations" }, publisher: "Pangaea", descriptions: { description: "this is a description" }) }
+    let!(:doi) { create(:doi, titles: { title: "Soil investigations" }, publisher: "Pangaea", descriptions: { description: "this is a description" }, aasm_state: "findable") }
 
     before do
       Doi.import
