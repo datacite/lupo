@@ -10,7 +10,7 @@ describe "dois", type: :request do
   let!(:prefix) { create(:prefix, prefix: "10.14454") }
   let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
 
-  let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+  let(:doi) { create(:doi, client: client) }
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
   let(:headers) { { 'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer }}
 
