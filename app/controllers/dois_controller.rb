@@ -161,8 +161,6 @@ class DoisController < ApplicationController
             subjects: subjects
           }.compact
 
-          logger.info page.inspect
-
           options[:links] = {
             self: request.original_url,
             next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/dois?" + {
