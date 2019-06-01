@@ -134,18 +134,34 @@ class ClientsController < ApplicationController
 
     page = { size: 0, number: 1}
     response = nil
-    logger.info "[Benchmark] clients totals " + Benchmark.ms {
+    bmt = Benchmark.ms {
       response = Doi.query(nil, provider_id: params[:provider_id], state: params[:state], page: page, totals_agg: true)
-    }.to_s + " ms"
+    }
+    if bmt > 10000
+      logger.warn "[Benchmark Warning] clients totals " + bmt.to_s + " ms"
+    else
+      logger.info "[Benchmark] clients totals " + bmt.to_s + " ms"
+    end
     total = response.results.total
 
     registrant = nil
-    logger.info "[Benchmark] clients clients_totals " + Benchmark.ms {
+    bmc = Benchmark.ms {
       registrant = total > 0 ? clients_totals(response.response.aggregations.clients_totals.buckets) : nil
-    }.to_s + " ms"
-    logger.info "[Benchmark] clients render " + Benchmark.ms {
+    }
+    if bmc > 10000
+      logger.warn "[Benchmark Warning] clients clients_totals " + bmc.to_s + " ms"
+    else
+      logger.info "[Benchmark] clients clients_totals " + bmc.to_s + " ms"
+    end
+
+    bmr = Benchmark.ms {
       render json: registrant, status: :ok
-    }.to_s + " ms" 
+    }
+    if bmr > 10000
+      logger.warn "[Benchmark Warning] clients render " + bmr.to_s + " ms"
+    else
+      logger.info "[Benchmark] clients render " + bmr.to_s + " ms"
+    end
   end
 
   protected

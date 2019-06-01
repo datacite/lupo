@@ -187,20 +187,37 @@ class ProvidersController < ApplicationController
 
     page = { size: 0, number: 1}
     response = nil
-    logger.info "[Benchmark] providers totals " + Benchmark.ms {
+    bmt = Benchmark.ms {
       response = Doi.query("", state: params[:state], page: page, totals_agg: true)
-    }.to_s + " ms"
+    }
+    
+    if bmt > 10000
+      logger.warn "[Benchmark Warning] providers totals " + bmt.to_s + " ms"
+    else
+      logger.info "[Benchmark] providers totals " + bmt.to_s + " ms"
+    end
+
     total = response.results.total
 
     registrant = nil
-    logger.info "[Benchmark] providers providers_totals " + Benchmark.ms {
+    bmp = Benchmark.ms {
       registrant = total > 0 ? providers_totals(response.response.aggregations.providers_totals.buckets) : nil
-    }.to_s + " ms"
-    logger.info "[Benchmark] providers render " + Benchmark.ms {
-      render json: registrant, status: :ok
-    }.to_s + " ms"
-  end
+    }
+    if bmp > 10000
+      logger.warn "[Benchmark Warning] providers providers_totals " + bmp.to_s + " ms"
+    else
+      logger.info "[Benchmark] providers providers_totals " + bmp.to_s + " ms"
+    end
 
+    bmr = Benchmark.ms {
+      render json: registrant, status: :ok
+    }
+    if bmr > 10000
+      logger.warn "[Benchmark Warning] providers render " + bmr.to_s + " ms"
+    else
+      logger.info "[Benchmark] providers render " + bmr.to_s + " ms"
+    end
+  end
 
   # don't delete, but set deleted_at timestamp
   # a provider with active clients or with prefixes can't be deleted

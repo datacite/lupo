@@ -76,7 +76,11 @@ class DoisController < ApplicationController
     end
 
     begin
-      logger.info "[Benchmark] Elasticsearch request " + response.took.to_s + " ms"
+      if response.took > 1000
+        logger.warn "[Benchmark Warning] Elasticsearch request " + response.took.to_s + " ms"
+      else
+        logger.info "[Benchmark] Elasticsearch request " + response.took.to_s + " ms"
+      end
 
       # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
       if sample_group_field.present?
@@ -101,6 +105,7 @@ class DoisController < ApplicationController
         total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
       end
 
+      # we need to define those variables before the block
       states = nil
       resource_types = nil
       created = nil
@@ -117,7 +122,7 @@ class DoisController < ApplicationController
       link_checks_citation_doi = nil
       links_checked = nil
       subjects = nil
-      logger.info "[Benchmark] aggregations " + Benchmark.ms {
+      bma = Benchmark.ms {
         states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
         resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
         created = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
@@ -134,7 +139,12 @@ class DoisController < ApplicationController
         link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
         links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
         subjects = total > 0 ? facet_by_key(response.response.aggregations.subjects.buckets) : nil
-      }.to_s + " ms"
+      }
+      if bma > 1000
+        logger.warn "[Benchmark Warning] aggregations " + bma.to_s + " ms"
+      else
+        logger.info "[Benchmark] aggregations " + bma.to_s + " ms"
+      end
 
       respond_to do |format|
         format.json do
@@ -177,10 +187,17 @@ class DoisController < ApplicationController
             :current_ability => current_ability,
           }
 
-          logger.info "[Benchmark] render " + Benchmark.ms {
+          bmr = Benchmark.ms {
             render json: DoiSerializer.new(results, options).serialized_json, status: :ok
-          }.to_s + " ms"
+          }
+          
+          if bmr > 3000
+            logger.warn "[Benchmark Warning] render " + bmr.to_s + " ms"
+          else
+            logger.info "[Benchmark] render " + bmr.to_s + " ms"
+          end
         end
+
         format.citation do
           # fetch formatted citations
           render citation: response.records.to_a, style: params[:style] || "apa", locale: params[:locale] || "en-US"
