@@ -161,13 +161,15 @@ class DoisController < ApplicationController
             subjects: subjects
           }.compact
 
+          logger.info page.inspect
+
           options[:links] = {
             self: request.original_url,
-            next: results.size < page[:size] ? nil : request.base_url + "/dois?" + {
+            next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/dois?" + {
               query: params[:query],
               "provider-id" => params[:provider_id],
               "client-id" => params[:client_id],
-              "page[cursor]" => page[:cursor].present? ? Array.wrap(results.to_a.last.to_h[:sort]).first : nil,
+              "page[cursor]" => page[:cursor].present? ? Array.wrap(results.to_a.last[:sort]).first : nil,
               "page[number]" => page[:cursor].blank? && page[:number].present? ? page[:number] + 1 : nil,
               "page[size]" => page[:size] }.compact.to_query
             }.compact
