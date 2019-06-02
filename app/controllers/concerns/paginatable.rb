@@ -17,7 +17,7 @@ module Paginatable
       end
 
       if page[:size].present?
-        page[:size] = [page[:size].to_i, 1000].min
+        page[:size] = [page[:size].to_i, 10000].min
         max_number = page[:size] > 0 ? 10000/page[:size] : 1
       else
         page[:size] = 25

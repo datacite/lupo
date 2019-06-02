@@ -44,7 +44,7 @@ services:
       - "9301:9300"
     environment:
       discovery.type: single-node
-      ES_JAVA_OPTS: -Xmx256m -Xms256m
+      ES_JAVA_OPTS: -Xms1g -Xmx1g
       ELASTIC_PASSWORD: changeme
       xpack.security.enabled: "false"
       http.cors.enabled: "true"

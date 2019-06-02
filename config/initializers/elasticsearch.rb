@@ -7,7 +7,7 @@ if ENV['ES_HOST'] == "elasticsearch:9200"
   config = {
     host: ENV['ES_HOST'],
     transport_options: {
-      request: { timeout: 5 }
+      request: { timeout: 30 }
     }
   }
   Elasticsearch::Model.client = Elasticsearch::Client.new(host: ENV['ES_HOST'], user: "elastic", password: ENV['ELASTIC_PASSWORD']) do |f|
