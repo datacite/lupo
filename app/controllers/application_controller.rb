@@ -14,6 +14,9 @@ class ApplicationController < ActionController::API
   # include helper module for pagination
   include Paginatable
 
+  # include helper module for sparse fieldsets
+  include Fieldable
+
   attr_accessor :current_user
 
   # pass ability into serializer

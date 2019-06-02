@@ -54,7 +54,6 @@ class ClientsController < ApplicationController
           "provider-id" => params[:provider_id],
           software: params[:software],
           year: params[:year],
-          fields: params[:fields],
           "page[number]" => page[:number] + 1,
           "page[size]" => page[:size],
           sort: params[:sort] }.compact.to_query
@@ -62,7 +61,12 @@ class ClientsController < ApplicationController
       options[:include] = @include
       options[:is_collection] = true
 
-      render json: ClientSerializer.new(@clients, options).serialized_json, status: :ok
+      fields = fields_from_params(params)
+      if fields
+        render json: ClientSerializer.new(@clients, options.merge(fields: fields)).serialized_json, status: :ok
+      else
+        render json: ClientSerializer.new(@clients, options).serialized_json, status: :ok
+      end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
 

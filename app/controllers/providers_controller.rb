@@ -61,7 +61,6 @@ class ProvidersController < ApplicationController
                 "member_type" => params[:member_type],
                 "organization_type" => params[:organization_type],
                 "focus-area" => params[:focus_area],
-                fields: params[:fields],
                 "page[number]" => page[:number] + 1,
                 "page[size]" => page[:size],
                 sort: sort }.compact.to_query
@@ -71,7 +70,13 @@ class ProvidersController < ApplicationController
             options[:params] = {
               :current_ability => current_ability,
             }
-            render json: ProviderSerializer.new(@providers, options).serialized_json, status: :ok
+
+            fields = fields_from_params(params)
+            if fields
+              render json: ProviderSerializer.new(@providers, options.merge(fields: fields)).serialized_json, status: :ok
+            else
+              render json: ProviderSerializer.new(@providers, options).serialized_json, status: :ok
+            end
         end
         header = %w(
           accountName
