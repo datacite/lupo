@@ -190,7 +190,17 @@ class DoisController < ApplicationController
           }
 
           bmr = Benchmark.ms {
-            render json: DoiSerializer.new(results, options).serialized_json, status: :ok
+            logger.info params[:fields]
+            # support sparse fieldsets
+            if params[:fields]
+              f = params.to_unsafe_h.dig(:fields)
+              f = { dois: "doi" } unless f.is_a?(Hash)
+              f.each { |k, v| f[k] = v.split(",") }
+              
+              render json: DoiSerializer.new(results, options.merge(fields: f)).serialized_json, status: :ok
+            else
+              render json: DoiSerializer.new(results, options).serialized_json, status: :ok
+            end
           }
           
           if bmr > 3000
