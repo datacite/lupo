@@ -37,26 +37,20 @@ describe 'Members', type: :request do
   # end
 
   describe 'GET /members/:id' do
-    before { get "/members/#{provider.uid}" }
-
     context 'when the record exists' do
       it 'returns the member' do
-        expect(json.dig('data', 'attributes', 'title')).to eq(provider.name)
-      end
+        get "/members/#{provider.uid}"
 
-      it 'returns status code 200' do
-        expect(response).to have_http_status(200)
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'title')).to eq(provider.name)
       end
     end
 
     context 'when the record does not exist' do
-      before { get "/members/xxx" }
-
       it 'returns status code 404' do
-        expect(response).to have_http_status(404)
-      end
+        get "/members/xxx"
 
-      it 'returns a not found message' do
+        expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
       end
     end

@@ -4,26 +4,18 @@ describe "Prefixes", type: :request do
   let!(:prefixes)  { create_list(:prefix, 10) }
   let(:bearer) { User.generate_token }
   let(:prefix_id) { prefixes.first.prefix }
-  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer }}
+  let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
 
   describe 'GET /prefixes' do
-    before do
-      get '/prefixes', headers: headers
-    end
-
     it 'returns prefixes' do
-      expect(json).not_to be_empty
-      expect(json['data'].size).to eq(10)
-    end
+      get '/prefixes', nil, headers
 
-    it 'returns status code 200' do
-      expect(response).to have_http_status(200)
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(10)
     end
   end
 
   describe 'GET /prefixes/:id' do
-    before { get "/prefixes/#{prefix_id}", headers: headers }
-
     context 'when the record exists' do
       # it 'returns the prefix' do
       #   expect(json).not_to be_empty
@@ -31,44 +23,37 @@ describe "Prefixes", type: :request do
       # end
 
       it 'returns status code 200' do
-        expect(response).to have_http_status(200)
+        get "/prefixes/#{prefix_id}", nil, headers
+
+        expect(last_response.status).to eq(200)
       end
     end
 
     context 'when the prefix does not exist' do
-      before { get "/prefixes/10.1234" , headers: headers}
-
       it 'returns status code 404' do
-        expect(response).to have_http_status(404)
-      end
+        get "/prefixes/10.1234", nil, headers
 
-      it 'returns a not found message' do
+        expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
       end
     end
 
     context 'when the record does not exist' do
-      before { get "/prefixes/xxx" , headers: headers}
-
       it 'returns status code 404' do
-        expect(response).to have_http_status(404)
-      end
+        get "/prefixes/xxx", nil, headers
 
-      it 'returns a not found message' do
+        expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
       end
     end
   end
 
   describe 'PATCH /prefixes/:prefix_id' do
-    before { patch "/prefixes/#{prefix_id}", headers: headers }
-
     it 'returns method not supported error' do
-      expect(json.dig("errors")).to eq([{"status"=>"405", "title"=>"Method not allowed"}])
-    end
+      patch "/prefixes/#{prefix_id}", nil, headers
 
-    it 'returns status code 405' do
-      expect(response).to have_http_status(405)
+      expect(last_response.status).to eq(405)
+      expect(json.dig("errors")).to eq([{"status"=>"405", "title"=>"Method not allowed"}])
     end
   end
 
@@ -78,24 +63,19 @@ describe "Prefixes", type: :request do
       let(:valid_attributes) do
         {
           "data" => {
-                    "type" => "prefixes",
-                    "attributes" => {
-                      "prefix" => "10.17177",
-                      "id" => "10.17177"
-                      }
+            "type" => "prefixes",
+            "attributes" => {
+              "prefix" => "10.17177",
+              "id" => "10.17177"
             }
+          }
         }
       end
 
-      before { post '/prefixes', params: valid_attributes.to_json, headers: headers }
-
-      # TODO
-      # it 'creates a prefix' do
-      #   expect(json.dig('data', 'id')).to eq("10.17177")
-      # end
-
       it 'returns status code 201' do
-        expect(response).to have_http_status(201)
+        post '/prefixes', valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
       end
     end
 
@@ -104,21 +84,18 @@ describe "Prefixes", type: :request do
       let(:not_valid_attributes) do
         {
           "data" => {
-                    "type" => "prefixes",
-                    "attributes" => {
-                      "prefix" => "dsds10.33342"
-                    }
+            "type" => "prefixes",
+            "attributes" => {
+              "prefix" => "dsds10.33342"
             }
+          }
         }
       end
 
-      before { post '/prefixes', params: not_valid_attributes.to_json, headers: headers }
-
       it 'returns status code 422' do
-        expect(response).to have_http_status(422)
-      end
+        post '/prefixes', not_valid_attributes, headers
 
-      it 'returns a validation failure message' do
+        expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq("source"=>"prefix", "title"=>"Can't be blank")
       end
     end
@@ -155,10 +132,10 @@ describe "Prefixes", type: :request do
 
   # Test suite for DELETE /prefixes/:id
   describe 'DELETE /prefixes/:id' do
-    before { delete "/prefixes/#{prefix_id}", headers: headers }
-
     it 'returns status code 204' do
-      expect(response).to have_http_status(204)
+      delete "/prefixes/#{prefix_id}", nil, headers
+
+      expect(last_response.status).to eq(204)
     end
   end
 end
