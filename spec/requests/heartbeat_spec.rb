@@ -4,7 +4,7 @@ describe '/heartbeat', type: :request do
   it "get heartbeat" do
     get '/heartbeat'
 
-    # expect(response.status).to eq(200)
-    # expect(response.body).to eq("OK")
+    expect(last_response.status).to eq(200)
+    expect(last_response.body).to eq("OK")
   end
 end

@@ -8,43 +8,49 @@ describe "Metadata", type: :request  do
   let!(:metadatas)  { create_list(:metadata, 5, doi: doi, xml: xml) }
   let!(:metadata) { create(:metadata, doi: doi, xml: xml) }
   let(:bearer) { User.generate_token(role_id: "client_admin", provider_id: provider.symbol.downcase, client_id: client.symbol.downcase) }
-  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
+  let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer}}
 
   describe 'GET /dois/DOI/metadata' do
-    before { get "/dois/#{doi.doi}/metadata", headers: headers }
-
     it 'returns Metadata' do
+      get "/dois/#{doi.doi}/metadata", nil, headers
+
       expect(json).not_to be_empty
       expect(json['data'].size).to eq(7)
     end
 
     it 'returns status code 200' do
-      expect(response).to have_http_status(200)
+      get "/dois/#{doi.doi}/metadata", nil, headers
+
+      expect(last_response.status).to eq(200)
     end
   end
 
   describe 'GET /dois/DOI/metadata/:id' do
-    before { get "/dois/#{doi.doi}/metadata/#{metadata.uid}", headers: headers }
-
     context 'when the record exists' do
       it 'returns the Metadata' do
+        get "/dois/#{doi.doi}/metadata/#{metadata.uid}", nil, headers
+
         expect(json).not_to be_empty
         expect(json.dig('data', 'id')).to eq(metadata.uid)
       end
 
       it 'returns status code 200' do
-        expect(response).to have_http_status(200)
+        get "/dois/#{doi.doi}/metadata/#{metadata.uid}", nil, headers
+
+        expect(last_response.status).to eq(200)
       end
     end
 
     context 'when the record does not exist' do
-      before { get "/dois/#{doi.doi}/metadata/xxxx", headers: headers }
-
       it 'returns status code 404' do
-        expect(response).to have_http_status(404)
+        get "/dois/#{doi.doi}/metadata/xxxx", nil, headers
+
+        expect(last_response.status).to eq(404)
       end
 
       it 'returns a not found message' do
+        get "/dois/#{doi.doi}/metadata/xxxx", nil, headers
+
         expect(json["errors"]).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
       end
     end
@@ -56,26 +62,28 @@ describe "Metadata", type: :request  do
         {
           "data" => {
             "type" => "metadata",
-            "attributes"=> {
-        			"xml"=> Base64.strict_encode64(xml)
+            "attributes" => {
+        			"xml" => Base64.strict_encode64(xml)
         		}
           }
         }
       end
-      before { post "/dois/#{doi.doi}/metadata", params: valid_attributes.to_json, headers: headers }
 
       it 'creates a metadata record' do
+        post "/dois/#{doi.doi}/metadata", valid_attributes, headers
+
         expect(Base64.decode64(json.dig('data', 'attributes', 'xml'))).to eq(xml)
         expect(json.dig('data', 'attributes', 'namespace')).to eq("http://datacite.org/schema/kernel-4")
       end
 
       it 'returns status code 201' do
-        expect(response).to have_http_status(201)
+        post "/dois/#{doi.doi}/metadata", valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
       end
     end
 
     context 'when the xml is missing' do
-      # missing doi
       let(:not_valid_attributes) do
         {
           "data" => {
@@ -83,42 +91,45 @@ describe "Metadata", type: :request  do
           }
         }
       end
-      before { post "/dois/#{doi.doi}/metadata", params: not_valid_attributes.to_json, headers: headers }
 
       it 'returns status code 422' do
-        expect(response).to have_http_status(422)
+        post "/dois/#{doi.doi}/metadata", not_valid_attributes, headers
+
+        expect(last_response.status).to eq(422)
       end
 
       it 'returns a validation failure message' do
+        post "/dois/#{doi.doi}/metadata", not_valid_attributes, headers
+
         expect(json["errors"]).to eq([{"source"=>"xml", "title"=>"Can't be blank"}])
       end
     end
 
     context 'when the XML is not valid draft status' do
       let(:xml) { file_fixture('datacite_missing_creator.xml').read }
-
       let(:valid_attributes) do
         {
           "data" => {
             "type" => "metadata",
-            "attributes"=> {
-              "xml"=> Base64.strict_encode64(xml)
+            "attributes" => {
+              "xml" => Base64.strict_encode64(xml)
             },
-            "relationships"=>  {
-              "doi"=>  {
-                "data"=> {
-                  "type"=> "dois",
-                  "id"=> doi.doi
+            "relationships" =>  {
+              "doi" =>  {
+                "data" => {
+                  "type" => "dois",
+                  "id" => doi.doi
                 }
               }
             }
           }
         }
       end
-      before { post "/dois/#{doi.doi}/metadata", params: valid_attributes.to_json, headers: headers }
 
       it 'returns status code 201' do
-        expect(response).to have_http_status(201)
+        post "/dois/#{doi.doi}/metadata", valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
       end
 
       # it 'creates a metadata record' do
@@ -162,22 +173,24 @@ describe "Metadata", type: :request  do
   end
 
   describe 'DELETE /dois/DOI/metadata/:id' do
-    before { delete "/dois/#{doi.doi}/metadata/#{metadata.uid}", headers: headers }
-
     context 'when the resources does exist' do
       it 'returns status code 204' do
-        expect(response).to have_http_status(204)
+        delete "/dois/#{doi.doi}/metadata/#{metadata.uid}", nil, headers
+
+        expect(last_response.status).to eq(204)
       end
     end
 
     context 'when the resources doesnt exist' do
-      before { delete "/dois/#{doi.doi}/metadata/xxx",  headers: headers }
-
       it 'returns status code 404' do
-        expect(response).to have_http_status(404)
+        delete "/dois/#{doi.doi}/metadata/xxx", nil, headers
+        
+        expect(last_response.status).to eq(404)
       end
 
       it 'returns a validation failure message' do
+        delete "/dois/#{doi.doi}/metadata/xxx", nil, headers
+        
         expect(json["errors"]).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
       end
     end

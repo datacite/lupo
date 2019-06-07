@@ -22,7 +22,7 @@ describe 'Clients', type: :request, elasticsearch: true do
               			}
               		}} }
   end
-  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + bearer}}
+  let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer}}
   let(:query) { "jamon"}
 
   describe 'GET /clients', elasticsearch: true do
@@ -31,16 +31,19 @@ describe 'Clients', type: :request, elasticsearch: true do
     before do
       Client.import
       sleep 1
-      get '/clients', headers: headers
     end
 
     it 'returns clients' do
+      get '/clients', nil, headers
+
       expect(json['data'].size).to eq(4)
       expect(json.dig('meta', 'total')).to eq(4)
     end
 
     it 'returns status code 200' do
-      expect(response).to have_http_status(200)
+      get '/clients', nil, headers
+
+      expect(last_response.status).to eq(200)
     end
   end
 
@@ -74,38 +77,41 @@ describe 'Clients', type: :request, elasticsearch: true do
   #   end
   # end
 
-  # Test suite for GET /clients/:id
   describe 'GET /clients/:id' do
-    before { get "/clients/#{client.uid}", headers: headers }
-
     context 'when the record exists' do
       it 'returns the client' do
+        get "/clients/#{client.uid}", nil, headers
+
         expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
       end
 
       it 'returns status code 200' do
-        expect(response).to have_http_status(200)
+        get "/clients/#{client.uid}", nil, headers
+
+        expect(last_response.status).to eq(200)
       end
     end
 
     context 'when the record does not exist' do
-      before { get "/clients/xxx", headers: headers }
-
       it 'returns status code 404' do
-        expect(response).to have_http_status(404)
+        get "/clients/xxx", nil, headers
+
+        expect(last_response.status).to eq(404)
       end
 
       it 'returns a not found message' do
+        get "/clients/xxx", nil, headers
+
         expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
       end
     end
   end
 
   describe 'POST /clients' do
-    context 'when the request is valid' do
-      before { post '/clients', params: params.to_json, headers: headers }
-    
+    context 'when the request is valid' do    
       it 'creates a client' do
+        post '/clients', params, headers
+
         attributes = json.dig('data', 'attributes')
         expect(attributes["name"]).to eq("Imperial College")
         expect(attributes["contactName"]).to eq("Madonna")
@@ -115,7 +121,9 @@ describe 'Clients', type: :request, elasticsearch: true do
       end
     
       it 'returns status code 201' do
-        expect(response).to have_http_status(201)
+        post '/clients', params, headers
+
+        expect(last_response.status).to eq(201)
       end
     end
 
@@ -137,13 +145,15 @@ describe 'Clients', type: :request, elasticsearch: true do
                   		}} }
       end
 
-      before { post '/clients', params: params.to_json, headers: headers }
-
       it 'returns status code 422' do
-        expect(response).to have_http_status(422)
+        post '/clients', params, headers
+
+        expect(last_response.status).to eq(422)
       end
 
       it 'returns a validation failure message' do
+        post '/clients', params, headers
+
         expect(json["errors"]).to eq([{"source"=>"contact_email", "title"=>"Can't be blank"}, {"source"=>"contact_email", "title"=>"Is invalid"}])
       end
     end
@@ -156,15 +166,18 @@ describe 'Clients', type: :request, elasticsearch: true do
                       "attributes" => {
                         "name" => "Imperial College 2"}} }
       end
-      before { put "/clients/#{client.symbol}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
+        put "/clients/#{client.symbol}", params, headers
+
         expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
         expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
       end
 
       it 'returns status code 200' do
-        expect(response).to have_http_status(200)
+        put "/clients/#{client.symbol}", params, headers
+
+        expect(last_response.status).to eq(200)
       end
     end
 
@@ -175,17 +188,19 @@ describe 'Clients', type: :request, elasticsearch: true do
                         "name" => "Imperial College 2"}} }
       end
       let(:credentials) { provider.encode_auth_param(username: provider.symbol.downcase, password: "12345") }
-      let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Basic ' + credentials } }
-
-      before { put "/clients/#{client.symbol}", params: params.to_json, headers: headers }
+      let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Basic ' + credentials } }
 
       it 'updates the record' do
+        put "/clients/#{client.symbol}", params, headers
+
         expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
         expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
       end
 
       it 'returns status code 200' do
-        expect(response).to have_http_status(200)
+        put "/clients/#{client.symbol}", params, headers
+
+        expect(last_response.status).to eq(200)
       end
     end
 
@@ -198,33 +213,37 @@ describe 'Clients', type: :request, elasticsearch: true do
                         "name" => "Imperial College"}} }
       end
 
-      before { put "/clients/#{client.symbol}", params: params.to_json, headers: headers }
-
       it 'returns status code 422' do
-        expect(response).to have_http_status(422)
+        put "/clients/#{client.symbol}", params, headers
+
+        expect(last_response.status).to eq(422)
       end
 
       it 'returns a validation failure message' do
+        put "/clients/#{client.symbol}", params, headers
+
         expect(json["errors"].first).to eq("source"=>"symbol", "title"=>"Cannot be changed")
       end
     end
   end
 
   describe 'DELETE /clients/:id' do
-    before { delete "/clients/#{client.uid}", headers: headers }
-
     it 'returns status code 204' do
-      expect(response).to have_http_status(204)
+      delete "/clients/#{client.uid}", nil, headers
+
+      expect(last_response.status).to eq(204)
     end
 
-    context 'when the resources doesnt exist' do
-      before { delete '/clients/xxx', params: params.to_json, headers: headers }
-
+    context 'when the resource doesnt exist' do
       it 'returns status code 404' do
-        expect(response).to have_http_status(404)
+        delete '/clients/xxx', nil, headers
+
+        expect(last_response.status).to eq(404)
       end
 
       it 'returns a validation failure message' do
+        delete '/clients/xxx', nil, headers
+
         expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
       end
     end
@@ -242,12 +261,13 @@ describe 'Clients', type: :request, elasticsearch: true do
     before do
       Doi.import
       sleep 1
-      put "/clients/#{client.symbol}", params: params.to_json, headers: headers
-      sleep 1
     end
 
     it 'returns status code 200' do
-      expect(response).to have_http_status(200)
+      put "/clients/#{client.symbol}", params, headers
+      sleep 1
+
+      expect(last_response.status).to eq(200)
     end
 
     # it "transfered all DOIs" do
