@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_22_162430) do
+ActiveRecord::Schema.define(version: 2019_06_04_093226) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -195,6 +195,33 @@ ActiveRecord::Schema.define(version: 2019_05_22_162430) do
     t.index ["schema_version"], name: "index_dataset_on_schema_version"
     t.index ["source"], name: "index_dataset_source"
     t.index ["url"], name: "index_dataset_on_url", length: 100
+  end
+
+  create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.text "uuid", null: false
+    t.text "subj_id", null: false
+    t.text "obj_id"
+    t.string "source_id", limit: 191
+    t.string "aasm_state"
+    t.string "state_event"
+    t.text "callback"
+    t.text "error_messages"
+    t.text "source_token"
+    t.datetime "created_at", precision: 3, null: false
+    t.datetime "updated_at", precision: 3, null: false
+    t.datetime "indexed_at", default: "1970-01-01 00:00:00", null: false
+    t.datetime "occurred_at"
+    t.string "message_action", limit: 191, default: "create", null: false
+    t.string "relation_type_id", limit: 191
+    t.text "subj", limit: 16777215
+    t.text "obj", limit: 16777215
+    t.integer "total", default: 1
+    t.string "license", limit: 191
+    t.index ["created_at", "indexed_at", "updated_at"], name: "index_events_on_created_indexed_updated"
+    t.index ["source_id", "created_at"], name: "index_events_on_source_id_created_at"
+    t.index ["subj_id", "obj_id", "source_id", "relation_type_id"], name: "index_events_on_multiple_columns", unique: true, length: { subj_id: 191, obj_id: 191 }
+    t.index ["updated_at"], name: "index_events_on_updated_at"
+    t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
   end
 
   create_table "media", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

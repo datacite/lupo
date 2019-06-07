@@ -55,6 +55,14 @@ Rails.application.routes.draw do
 
   resources :activities, only: [:index, :show]
 
+  scope module: :v2, constraints: ApiConstraint.new(version: 2, default: false) do
+    resources :events
+  end
+
+  scope module: :v1, constraints: ApiConstraint.new(version: 1, default: :true) do
+    resources :events
+  end
+
   resources :clients, constraints: { :id => /.+/ } do
     resources :prefixes, constraints: { :id => /.+/ }
     resources :dois, constraints: { :id => /.+/ }
