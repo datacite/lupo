@@ -11,7 +11,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                     "contactEmail" => "bob@example.com",
                     "country" => "GB" } } }
   end
-  let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + token } }
+  let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + token } }
 
   describe 'GET /providers' do
     let!(:providers)  { create_list(:provider, 3) }
@@ -19,75 +19,82 @@ describe "Providers", type: :request, elasticsearch: true  do
     before do
       Provider.import
       sleep 1
-      get '/providers', headers: headers
     end
 
-    it 'returns providers' do
-      # puts response.inspect
+    it "returns providers" do
+      get "/providers", nil, headers
+
       expect(json['data'].size).to eq(4)
       expect(json.dig('meta', 'total')).to eq(4)
     end
 
     it 'returns status code 200' do
-      expect(response).to have_http_status(200)
+      get "/providers", nil, headers
+
+      expect(last_response.status).to eq(200)
     end
   end
 
   describe 'GET /providers/:id' do
-    before { get "/providers/#{provider.symbol}" , headers: headers}
-
     context 'when the record exists' do
       it 'returns the provider' do
+        get "/providers/#{provider.symbol}", nil, headers
+
         expect(json).not_to be_empty
         expect(json['data']['id']).to eq(provider.symbol.downcase)
       end
 
       it 'returns the provider info for member page' do
+        get "/providers/#{provider.symbol}", nil, headers
+
         expect(json['data']['attributes']['twitterHandle']).to eq(provider.twitter_handle)
         expect(json['data']['attributes']['billingInformation']).to eq(provider.billing_information)
         expect(json['data']['attributes']['rorId']).to eq(provider.ror_id)
       end
 
       it 'returns status code 200' do
-        expect(response).to have_http_status(200)
+        get "/providers/#{provider.symbol}", nil, headers
+
+        expect(last_response.status).to eq(200)
       end
     end
 
-    context 'create provider type ROLE_CONTRACTUAL_PROVIDER and check it works ' do
+    context 'get provider type ROLE_CONTRACTUAL_PROVIDER and check it works ' do
       let(:provider)  { create(:provider, role_name: "ROLE_CONTRACTUAL_PROVIDER", name: "Contractor", symbol: "CONTRACT_SLASH") }
 
+      it 'get provider' do
+        get "/providers/#{provider.symbol.downcase}", nil, headers
 
-      before do
-        get "/providers/#{provider.symbol.downcase}", headers: headers
-      end
-
-      it 'creates a provider' do
         expect(json).not_to be_empty
-        expect(json['data']['id']).to eq(provider.symbol.downcase)
+        expect(json.dig('data', 'id')).to eq(provider.symbol.downcase)
       end
 
-      it 'returns status code 201' do
-        expect(response).to have_http_status(200)
+      it 'returns status code 200' do
+        get "/providers/#{provider.symbol.downcase}", nil, headers
+
+        expect(last_response.status).to eq(200)
       end
     end
 
     context 'when the record does not exist' do
-      before { get "/providers/xxx" , headers: headers}
-
       it 'returns status code 404' do
-        expect(response).to have_http_status(404)
+        get "/providers/xxx", nil, headers
+
+        expect(last_response.status).to eq(404)
       end
 
       it 'returns a not found message' do
+        get "/providers/xxx", nil, headers
+
         expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
       end
     end
 
     context "text/csv" do
-      before { get "/providers/", headers: { "HTTP_ACCEPT" => "text/csv", 'Authorization' => 'Bearer ' + token  } }
-
       it 'returns status code 200' do
-        expect(response).to have_http_status(200)
+        get "/providers/", nil, { "HTTP_ACCEPT" => "text/csv", 'Authorization' => 'Bearer ' + token }
+        
+        expect(last_response.status).to eq(200)
       end
     end
   end
@@ -105,34 +112,32 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "country" => "GB" } } }
       end
 
-      before do
-        post '/providers', params: params.to_json, headers: headers
-      end
-
       it 'creates a provider' do
-        puts json
+        post '/providers', params, headers
+
         expect(json.dig('data', 'attributes', 'contactEmail')).to eq("doe@joe.joe")
       end
 
       it 'returns status code 201' do
-        expect(response).to have_http_status(200)
+        post '/providers', params, headers
+
+        expect(last_response.status).to eq(200)
       end
     end
 
     context 'request ability check' do
       let!(:providers)  { create_list(:provider, 2) }
       let(:last_provider_token) { User.generate_token(provider_id: providers.last.symbol, role_id:"provider_admin") }
-      let(:headers_last) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Bearer ' + last_provider_token } }
-
+      let(:headers_last) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + last_provider_token } }
 
       before do
         Provider.import
         sleep 1
-        get "/providers/#{providers.first.symbol}", headers: headers_last
       end
 
-
       it 'has no permission' do
+        get "/providers/#{providers.first.symbol}", nil, headers_last
+
         expect(json["data"].dig('attributes', 'symbol')).to eq(providers.first.symbol)
         expect(json["data"].dig( 'attributes', 'billingInformation')).to eq(nil)
         expect(json["data"].dig( 'attributes', 'twitterHandle')).to eq(nil)
@@ -152,18 +157,18 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "country" => "GB" } } }
       end
 
-      before do
-        post '/providers', params: params.to_json, headers: headers
-      end
-
       it 'creates a provider' do
+        post '/providers', params, headers
+
         expect(json.dig('data', 'attributes', 'contactEmail')).to eq("doe@joe.joe")
         expect(json.dig('data', 'attributes', 'name')).to eq("Figshare")
         expect(json.dig('data', 'attributes', 'memberType')).to eq("contractual_provider")
       end
 
       it 'returns status code 201' do
-        expect(response).to have_http_status(200)
+        post '/providers', params, headers
+
+        expect(last_response.status).to eq(200)
       end
     end
 
@@ -208,12 +213,9 @@ describe "Providers", type: :request, elasticsearch: true  do
         }
       end
 
-      before do
-        post '/providers', params: params.to_json, headers: headers
-      end
-
       it 'creates a provider' do
-        puts response.inspect
+        post '/providers', params, headers
+
         expect(json.dig('data', 'attributes', 'contactEmail')).to eq("jkiritha@andrew.cmu.edu")
         expect(json.dig('data', 'attributes', 'billingInformation',"state")).to eq("Rennes")
         expect(json.dig('data', 'attributes', 'billingInformation',"postCode")).to eq("122dc")
@@ -222,7 +224,9 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
 
       it 'returns status code 201' do
-        expect(response).to have_http_status(200)
+        post '/providers', params, headers
+
+        expect(last_response.status).to eq(200)
       end
     end
 
@@ -249,30 +253,30 @@ describe "Providers", type: :request, elasticsearch: true  do
               "phone"=>"",
               "twitterHandle"=>"@eekakitty",
               "rorId"=>"https://ror.org/05njkjr15",
-              "technicalContact": {
-                "email": "kristian@example.com",
-                "givenName": "Kristian",
-                "familyName": "Garza"
+              "technicalContact"=> {
+                "email"=> "kristian@example.com",
+                "givenName"=> "Kristian",
+                "familyName"=> "Garza"
               },
-              "serviceContact": {
-                "email": "martin@example.com",
-                "givenName": "Martin",
-                "familyName": "Fenner"
+              "serviceContact"=> {
+                "email"=> "martin@example.com",
+                "givenName"=> "Martin",
+                "familyName"=> "Fenner"
               },
-              "billingContact": {
-                "email": "Trisha@example.com",
-                "givenName": "Trisha",
-                "familyName": "cruse"
+              "billingContact"=> {
+                "email"=> "Trisha@example.com",
+                "givenName"=> "Trisha",
+                "familyName"=> "cruse"
               },
-              "secondaryBillingContact": {
-                "email": "Trisha@example.com",
-                "givenName": "Trisha",
-                "familyName": "cruse"
+              "secondaryBillingContact"=> {
+                "email"=> "Trisha@example.com",
+                "givenName"=> "Trisha",
+                "familyName"=> "cruse"
               },
-              "votingContact": {
-                "email": "robin@example.com",
-                "givenName": "Robin",
-                "familyName": "Dasler"
+              "votingContact"=> {
+                "email"=> "robin@example.com",
+                "givenName"=> "Robin",
+                "familyName"=> "Dasler"
               },
               "region"=>"",
               "symbol"=>"CMfddff33333dd111d111113f4d",
@@ -283,11 +287,9 @@ describe "Providers", type: :request, elasticsearch: true  do
         }
       end
 
-      before do
-        post '/providers', params: params.to_json, headers: headers
-      end
-
       it 'creates a provider' do
+        post '/providers', params, headers
+        
         expect(json.dig('data', 'attributes', 'technicalContact',"email")).to eq("kristian@example.com")
         expect(json.dig('data', 'attributes', 'technicalContact',"givenName")).to eq("Kristian")
         expect(json.dig('data', 'attributes', 'technicalContact',"familyName")).to eq("Garza")
@@ -306,7 +308,9 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
 
       it 'returns status code 201' do
-        expect(response).to have_http_status(200)
+        post '/providers', params, headers
+
+        expect(last_response.status).to eq(200)
       end
     end
 
@@ -338,14 +342,16 @@ describe "Providers", type: :request, elasticsearch: true  do
 
       end
 
-      before { post '/providers', params: params.to_json, headers: headers }
-
       it 'creates a provider' do
+        post '/providers', params, headers
+
         expect(json.dig('data', 'attributes', 'contactEmail')).to eq("jkiritha@andrew.cmu.edu")
       end
 
       it 'returns status code 200' do
-        expect(response).to have_http_status(200)
+        post '/providers', params, headers
+
+        expect(last_response.status).to eq(200)
       end
 
     end
@@ -361,14 +367,17 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "contactName" => "timAus",
                         "country" => "GB" } } }
       end
-      before { post '/providers', params: params.to_json, headers: headers }
 
       it 'creates a provider' do
+        post '/providers', params, headers
+
         expect(json.dig('data', 'attributes', 'contactEmail')).to eq("doe@joe.joe")
       end
 
       it 'returns status code 200' do
-        expect(response).to have_http_status(200)
+        post '/providers', params, headers
+
+        expect(last_response.status).to eq(200)
       end
     end
 
@@ -385,16 +394,18 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
       let(:admin) { create(:provider, symbol: "ADMIN", role_name: "ROLE_ADMIN", password_input: "12345") }
       let(:credentials) { admin.encode_auth_param(username: "ADMIN", password: "12345") }
-      let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Basic ' + credentials } }
-
-      before { post '/providers', params: params.to_json, headers: headers }
+      let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Basic ' + credentials } }
 
       it 'creates a provider' do
+        post '/providers', params, headers
+
         expect(json.dig('data', 'attributes', 'contactEmail')).to eq("doe@joe.joe")
       end
 
       it 'returns status code 200' do
-        expect(response).to have_http_status(200)
+        post '/providers', params, headers
+
+        expect(last_response.status).to eq(200)
       end
     end
 
@@ -408,13 +419,15 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "country" => "GB" } } }
       end
 
-      before { post '/providers', params: params.to_json, headers: headers }
-
       it 'returns status code 422' do
-        expect(response).to have_http_status(422)
+        post '/providers', params, headers
+
+        expect(last_response.status).to eq(422)
       end
 
       it 'returns a validation failure message' do
+        post '/providers', params, headers
+
         expect(json["errors"].first).to eq("source"=>"contact_email", "title"=>"Can't be blank")
       end
     end
@@ -429,10 +442,10 @@ describe "Providers", type: :request, elasticsearch: true  do
             "country" => "GB" } }
       end
 
-      before { post '/providers', params: params.to_json, headers: headers }
-
       it 'returns status code 400' do
-        expect(response).to have_http_status(400)
+        post '/providers', params, headers
+
+        expect(last_response.status).to eq(400)
       end
 
       # it 'returns a validation failure message' do
@@ -452,14 +465,17 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "contactName" => "timAus",
                         "country" => "GB" } } }
       end
-      before { put "/providers/#{provider.symbol}", params: params.to_json, headers: headers }
 
       it 'updates the record' do
+        put "/providers/#{provider.symbol}", params, headers
+
         expect(json.dig('data', 'attributes', 'contactName')).to eq("timAus")
       end
 
       it 'returns status code 200' do
-        expect(response).to have_http_status(200)
+        put "/providers/#{provider.symbol}", params, headers
+
+        expect(last_response.status).to eq(200)
       end
     end
 
@@ -475,16 +491,18 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
       let(:admin) { create(:provider, symbol: "ADMIN", role_name: "ROLE_ADMIN", password_input: "12345") }
       let(:credentials) { admin.encode_auth_param(username: "ADMIN", password: "12345") }
-      let(:headers) { {'ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'Authorization' => 'Basic ' + credentials } }
-
-      before { put "/providers/#{provider.symbol}", params: params.to_json, headers: headers }
+      let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Basic ' + credentials } }
 
       it 'updates the record' do
+        put "/providers/#{provider.symbol}", params, headers
+
         expect(json.dig('data', 'attributes', 'contactName')).to eq("timAus")
       end
 
       it 'returns status code 200' do
-        expect(response).to have_http_status(200)
+        put "/providers/#{provider.symbol}", params, headers
+
+        expect(last_response.status).to eq(200)
       end
     end
 
@@ -499,10 +517,10 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "country" => "GB" } } }
       end
 
-      before { put '/providers/xxx', params: params.to_json, headers: headers }
-
       it 'returns status code 404' do
-        expect(response).to have_http_status(404)
+        put '/providers/xxx', params, headers
+
+        expect(last_response.status).to eq(404)
       end
     end
   end

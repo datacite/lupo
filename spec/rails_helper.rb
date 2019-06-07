@@ -39,6 +39,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include StripAttributes::Matchers
   config.include RSpec::Benchmark::Matchers
+  config.include Rack::Test::Methods, type: :request
   # don't use transactions, use database_clear gem via support file
   config.use_transactional_fixtures = false
 
