@@ -71,18 +71,11 @@ class EventsController < ApplicationController
            when "-created" then { created_at: { order: 'desc' }}
            when "updated" then { updated_at: { order: 'asc' }}
            when "-updated" then { updated_at: { order: 'desc' }}
+           when "relation_type_id" then { relation_type_id: { order: 'asc' }}
            else { updated_at: { order: 'asc' }}
            end
 
-    page = params[:page] || {}
-    if page[:size].present?
-      page[:size] = [page[:size].to_i, 1000].min
-      max_number = 1
-    else
-      page[:size] = 1000
-      max_number = 10000/page[:size]
-    end
-    page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
+    page = page_from_params(params)
 
     if params[:id].present?
       response = Event.find_by_id(params[:id])
@@ -112,14 +105,15 @@ class EventsController < ApplicationController
     total_for_pages = page[:cursor].present? ? total.to_f : [total.to_f, 10000].min
     total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
 
-    sources = total > 0 ? facet_by_source(response.response.aggregations.sources.buckets) : nil
-    prefixes = total > 0 ? facet_by_source(response.response.aggregations.prefixes.buckets) : nil
-    citation_types = total > 0 ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
-    relation_types = total > 0 ? facet_by_relation_type(response.response.aggregations.relation_types.buckets) : nil
-    registrants = total > 0  && params[:extra] ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
-    pairings = total > 0 && params[:extra] ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
-    dois = total > 0 && params[:extra] ? facet_by_dois(response.response.aggregations.dois.buckets) : nil
-    dois_usage = total > 0 && params[:extra] ? facet_by_dois(response.response.aggregations.dois_usage.dois.buckets) : nil
+    sources = total.positive? ? facet_by_source(response.response.aggregations.sources.buckets) : nil
+    prefixes = total.positive? ? facet_by_source(response.response.aggregations.prefixes.buckets) : nil
+    citation_types = total.positive? ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
+    relation_types = total.positive? ? facet_by_relation_type(response.response.aggregations.relation_types.buckets) : nil
+    registrants = total.positive?  && params[:extra] ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
+    pairings = total.positive? && params[:extra] ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
+    dois = total.positive? && params[:extra] ? facet_by_dois(response.response.aggregations.dois.buckets) : nil
+    dois_usage = total.positive? && params[:extra] ? facet_by_dois(response.response.aggregations.dois_usage.dois.buckets) : nil
+    dois_citations = total.positive? && params[:extra] ? facet_citations_by_year(response.response.aggregations.dois_citations) : nil
 
     @events = response.results.results
 
@@ -135,7 +129,8 @@ class EventsController < ApplicationController
       pairings: pairings,
       registrants: registrants,
       "doisRelationTypes": dois,
-      "doisUsageTypes": dois_usage
+      "doisUsageTypes": dois_usage,
+      "doisCitations": dois_citations
     }.compact
 
     options[:links] = {
@@ -184,7 +179,7 @@ class EventsController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:subj, :obj]
+      @include &= [:subj, :obj]
     else
       @include = []
     end

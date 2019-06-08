@@ -3,6 +3,7 @@ module Facetable
 
   SOURCES = {
     "datacite-usage" => "DataCite Usage Stats",
+    "datacite-resolution" => "DataCite Resolution Stats",
     "datacite-related" => "DataCite Related Identifiers",
     "datacite-crossref" => "DataCite to Crossref",
     "datacite-kisti" => "DataCite to KISTI",
@@ -131,6 +132,20 @@ module Facetable
           "title" => SOURCES[hsh["key"]] || hsh["key"],
           "count" => hsh["doc_count"] }
       end
+    end
+
+    def facet_citations_by_year(hash)
+      arr = hash.dig('years', 'buckets').map do |h|
+        year = h['key_as_string'][0..3].to_i
+        title = h['key_as_string'][0..3]
+
+        {
+          'id' => year,
+          'title' => title,
+          'sum' => h.dig('total_by_year', 'value') }
+      end
+      { "count" => hash.dig("sum_distribution", "value"),
+        "years" => arr }
     end
 
     def facet_by_relation_type(arr)
