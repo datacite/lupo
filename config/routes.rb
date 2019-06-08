@@ -55,14 +55,6 @@ Rails.application.routes.draw do
 
   resources :activities, only: [:index, :show]
 
-  scope module: :v2, constraints: ApiConstraint.new(version: 2, default: false) do
-    resources :events
-  end
-
-  scope module: :v1, constraints: ApiConstraint.new(version: 1, default: :true) do
-    resources :events
-  end
-
   resources :clients, constraints: { :id => /.+/ } do
     resources :prefixes, constraints: { :id => /.+/ }
     resources :dois, constraints: { :id => /.+/ }
@@ -74,6 +66,9 @@ Rails.application.routes.draw do
     resources :media
     resources :activities
   end
+
+  resources :events
+  
   resources :prefixes, constraints: { :id => /.+/ }
   resources :provider_prefixes, path: 'provider-prefixes'
   resources :random, only: [:index]
@@ -92,8 +87,8 @@ Rails.application.routes.draw do
 
   # support for legacy routes
   resources :members, only: [:show, :index]
-  resources :data_centers, only: [:show, :index], constraints: { :id => /.+/ }, path: "/data-centers"
-  resources :works, only: [:show, :index], constraints: { :id => /.+/ }
+  resources :data_centers, only: [:show, :index], constraints: { id: /.+/ }, path: "/data-centers"
+  resources :works, only: [:show, :index], constraints: { id: /.+/ }
 
   # rescue routing errors
   #match "*path", to: "index#routing_error", via: :all
