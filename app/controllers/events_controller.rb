@@ -1,5 +1,4 @@
-class V2::EventsController < ApplicationController
-
+class EventsController < ApplicationController
   include Identifiable
 
   include Facetable
@@ -26,7 +25,7 @@ class V2::EventsController < ApplicationController
       options = {}
       options[:is_collection] = false
 
-      render json: V2::EventSerializer.new(@event, options).serialized_json, status: exists ? :ok : :created
+      render json: EventSerializer.new(@event, options).serialized_json, status: exists ? :ok : :created
     else
       errors = @event.errors.full_messages.map { |message| { status: 422, title: message } }
       render json: { errors: errors }, status: :unprocessable_entity
@@ -163,7 +162,7 @@ class V2::EventsController < ApplicationController
     options[:include] = @include
     options[:is_collection] = true
 
-    render json: V2::EventSerializer.new(@events, options).serialized_json, status: :ok
+    render json: EventSerializer.new(@events, options).serialized_json, status: :ok
   end
 
   def destroy
