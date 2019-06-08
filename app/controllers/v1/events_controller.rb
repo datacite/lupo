@@ -1,5 +1,4 @@
 class V1::EventsController < ApplicationController
-
   include Identifiable
 
   include Facetable
