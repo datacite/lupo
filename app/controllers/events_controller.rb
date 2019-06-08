@@ -109,13 +109,13 @@ class EventsController < ApplicationController
     prefixes = total.positive? ? facet_by_source(response.response.aggregations.prefixes.buckets) : nil
     citation_types = total.positive? ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
     relation_types = total.positive? ? facet_by_relation_type(response.response.aggregations.relation_types.buckets) : nil
-    registrants = total.positive?  && params[:extra] ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
+    registrants = total.positive? && params[:extra] ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
     pairings = total.positive? && params[:extra] ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
     dois = total.positive? && params[:extra] ? facet_by_dois(response.response.aggregations.dois.buckets) : nil
     dois_usage = total.positive? && params[:extra] ? facet_by_dois(response.response.aggregations.dois_usage.dois.buckets) : nil
     dois_citations = total.positive? && params[:extra] ? facet_citations_by_year(response.response.aggregations.dois_citations) : nil
 
-    @events = response.results.results
+    results = response.results
 
     options = {}
     options[:meta] = {
@@ -135,7 +135,7 @@ class EventsController < ApplicationController
 
     options[:links] = {
       self: request.original_url,
-      next: @events.blank? ? nil : request.base_url + "/events?" + {
+      next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/events?" + {
         "query" => params[:query],
         "subj-id" => params[:subj_id],
         "obj-id" => params[:obj_id],
@@ -150,14 +150,14 @@ class EventsController < ApplicationController
         "registrant-id" => params[:registrant_id],
         "publication-year" => params[:publication_year],
         "year-month" => params[:year_month],
-        "page[cursor]" => page[:cursor].present? ? Array.wrap(@events.to_a.last[:sort]).first : nil,
+        "page[cursor]" => page[:cursor].present? ? Array.wrap(results.to_a.last[:sort]).first : nil,
         "page[number]" => page[:cursor].blank? && page[:number].present? ? page[:number] + 1 : nil,
         "page[size]" => page[:size] }.compact.to_query
       }.compact
     options[:include] = @include
     options[:is_collection] = true
 
-    render json: EventSerializer.new(@events, options).serialized_json, status: :ok
+    render json: EventSerializer.new(results, options).serialized_json, status: :ok
   end
 
   def destroy
