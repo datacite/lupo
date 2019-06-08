@@ -10,7 +10,7 @@ class EventDataEdge < GraphQL::Relay::Edge
 
   def event_data
     @event_data ||= begin
-      Event.query(nil, subj_id: self.node[:id], obj_id: self.parent[:id])[:data].first.to_h
+      Event.query(nil, subj_id: self.node[:id], obj_id: self.parent[:id]).results.first.to_h
     end
   end
 

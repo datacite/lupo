@@ -8,7 +8,7 @@ class DatasetType < BaseObject
   end
 
   def usage_reports(**args)
-    ids = Event.query(nil, obj_id: object.id).fetch(:data, []).map do |e|
+    ids = Event.query(nil, obj_id: object.id).results.to_a.map do |e|
       e[:subj_id]
     end
     UsageReport.find_by_id(ids, page: { number: 1, size: args[:first] }).fetch(:data, [])

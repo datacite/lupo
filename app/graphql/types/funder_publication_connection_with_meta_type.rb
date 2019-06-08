@@ -7,6 +7,6 @@ class FunderPublicationConnectionWithMetaType < BaseConnection
   field :total_count, Integer, null: false, cache: true
 
   def total_count
-    Event.query(nil, obj_id: object.parent[:id], citation_type: "Funder-JournalArticle").dig(:meta, "total").to_i
+    Event.query(nil, obj_id: object.parent[:id], citation_type: "Funder-JournalArticle").results.total
   end
 end

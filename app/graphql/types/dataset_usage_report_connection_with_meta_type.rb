@@ -7,6 +7,6 @@ class DatasetUsageReportConnectionWithMetaType < BaseConnection
   field :total_count, Integer, null: false, cache: true
 
   def total_count
-    Event.query(nil, obj_id: object.parent.id).dig(:meta, "total").to_i
+    Event.query(nil, obj_id: object.parent.id).results.total
   end
 end

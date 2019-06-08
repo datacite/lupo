@@ -12,7 +12,7 @@ class UsageReportType < BaseObject
   end
 
   def datasets(**args)
-    ids = Event.query(nil, subj_id: object[:id]).fetch(:data, []).map do |e|
+    ids = Event.query(nil, subj_id: object[:id]).results.to_a.map do |e|
       doi_from_url(e[:obj_id])
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
