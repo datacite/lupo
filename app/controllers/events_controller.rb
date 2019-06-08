@@ -87,7 +87,7 @@ class EventsController < ApplicationController
     if params[:id].present?
       response = Event.find_by_id(params[:id])
     elsif params[:ids].present?
-      response = Event.find_by_ids(params[:ids], page: page, sort: sort)
+      response = Event.find_by_id(params[:ids], page: page, sort: sort)
     else
       response = Event.query(params[:query],
                              subj_id: params[:subj_id],
