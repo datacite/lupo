@@ -71,16 +71,12 @@ Rails.application.routes.draw do
   #   resources :events
   # end
 
-  resources :events, constraints: ApiConstraint.new(version: 2, default: :false)
-  resources :old_events, path: "events", constraints: ApiConstraint.new(version: 1, default: :true)
-
-  # scope module: :v2, constraints: ApiConstraint.new(version: 2, default: :false) do
-  #   resources :events
-  # end
-  
-  # scope module: :v1, constraints: ApiConstraint.new(version: 1, default: :true) do
-  #   resources :events
-  # end
+  constraints(-> (req) { req.env["HTTP_ACCEPT"].to_s.include?("version=2") }) do
+    resources :events
+  end
+  constraints(-> (req) { req.env["HTTP_ACCEPT"].to_s.exclude?("version=2") }) do
+    resources :old_events, path: "events"
+  end
   
   resources :prefixes, constraints: { :id => /.+/ }
   resources :provider_prefixes, path: 'provider-prefixes'
