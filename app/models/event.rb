@@ -55,6 +55,9 @@ class Event < ActiveRecord::Base
   serialize :obj, JSON
   serialize :error_messages, JSON
 
+  alias_attribute :created, :created_at 
+  alias_attribute :updated, :updated_at 
+
   validates :subj_id, :source_id, :source_token, presence: true
 
   attr_accessor :container_title, :url
@@ -234,6 +237,28 @@ class Event < ActiveRecord::Base
           dois: { terms: { field: 'obj_id', size: 50, min_doc_count: 1 }, aggs: { relation_types: { terms: { field: 'relation_type_id',size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: 'total' }}}}} } }
         }
     }
+  end
+
+  # return results for one or more ids
+  def self.find_by_id(ids, options={})
+    ids = ids.split(",") if ids.is_a?(String)
+    
+    options[:page] ||= {}
+    options[:page][:number] ||= 1
+    options[:page][:size] ||= 1000
+    options[:sort] ||= { created: { order: "asc" }}
+
+    __elasticsearch__.search({
+      from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
+      size: options.dig(:page, :size),
+      sort: [options[:sort]],
+      query: {
+        terms: {
+          uuid: ids
+        }
+      },
+      aggregations: query_aggregations
+    })
   end
 
   def self.index(options={})

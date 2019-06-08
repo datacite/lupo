@@ -3,7 +3,7 @@ class EventsController < ApplicationController
 
   include Facetable
 
-  prepend_before_action :authenticate_user_from_token!, :except => [:index, :show]
+  prepend_before_action :authenticate_user!, except: [:index, :show]
   before_action :load_event, only: [:show, :destroy]
   before_action :set_include, only: [:index, :show, :create, :update]
   authorize_resource only: [:destroy]
@@ -45,7 +45,7 @@ class EventsController < ApplicationController
       options = {}
       options[:is_collection] = false
 
-      render json: V2::EventSerializer.new(@event, options).serialized_json, status: exists ? :ok : :created
+      render json: EventSerializer.new(@event, options).serialized_json, status: exists ? :ok : :created
     else
       errors = @event.errors.full_messages.map { |message| { status: 422, title: message } }
       render json: { errors: errors }, status: :unprocessable_entity
@@ -57,7 +57,7 @@ class EventsController < ApplicationController
     options[:include] = @include
     options[:is_collection] = false
 
-    render json: V2::EventSerializer.new(@event, options).serialized_json, status: :ok
+    render json: EventSerializer.new(@event, options).serialized_json, status: :ok
   end
 
   def index
@@ -177,8 +177,7 @@ class EventsController < ApplicationController
   protected
 
   def load_event
-    response = Event.find_by_id(params[:id])
-    @event = response.results.first
+    @event = Event.where(uuid: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @event.present?
   end
 

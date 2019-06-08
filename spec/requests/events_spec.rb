@@ -1,13 +1,13 @@
 require "rails_helper"
 
-describe "/events", type: :request do
+describe "/events", type: :request, elasticsearch: true do
   before(:each) do
     allow(Time).to receive(:now).and_return(Time.mktime(2015, 4, 8))
     allow(Time.zone).to receive(:now).and_return(Time.mktime(2015, 4, 8))
   end
 
   let(:event) { build(:event) }
-  let(:errors) { [{ "status" => "401", "title"=>"You are not authorized to access this resource."}] }
+  let(:errors) { [{ "status" => "401", "title"=>"Bad credentials."}] }
 
   # Successful response from creating via the API.
   let(:success) { { "id"=> event.uuid,
@@ -63,11 +63,9 @@ describe "/events", type: :request do
         post uri, params, headers
 
         expect(last_response.status).to eq(201)
-
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to be_nil
-        expect(response.dig("data", "id")).not_to eq(event.uuid)
-        expect(response.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
+        expect(json["errors"]).to be_nil
+        expect(json.dig("data", "id")).not_to eq(event.uuid)
+        expect(json.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
       end
     end
 
@@ -89,11 +87,9 @@ describe "/events", type: :request do
         post uri, params, headers
 
         expect(last_response.status).to eq(201)
-
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to be_nil
-        expect(response.dig("data", "id")).not_to eq(event.uuid)
-        expect(response.dig("data", "attributes", "objId")).to eq(url)
+        expect(json["errors"]).to be_nil
+        expect(json.dig("data", "id")).not_to eq(event.uuid)
+        expect(json.dig("data", "attributes", "objId")).to eq(url)
       end
     end
 
@@ -102,11 +98,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         post uri, params, headers
-        expect(last_response.status).to eq(401)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq(errors)
-        expect(response["data"]).to be_nil
+        expect(last_response.status).to eq(403)
+        expect(json["errors"]).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+        expect(json["data"]).to be_nil
       end
     end
 
@@ -115,11 +110,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         post uri, params, headers
-        expect(last_response.status).to eq(401)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq(errors)
-        expect(response["data"]).to be_blank
+        expect(last_response.status).to eq(403)
+        expect(json["errors"]).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+        expect(json["data"]).to be_blank
       end
     end
 
@@ -134,11 +128,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         post uri, params, headers
-        expect(last_response.status).to eq(422)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq([{"status"=>422, "title"=>"Source token can't be blank"}])
-        expect(response["data"]).to be_nil
+        expect(last_response.status).to eq(422)
+        expect(json["errors"]).to eq([{"status"=>422, "title"=>"Source token can't be blank"}])
+        expect(json["data"]).to be_nil
       end
     end
 
@@ -153,11 +146,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         post uri, params, headers
-        expect(last_response.status).to eq(422)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq([{"status"=>422, "title"=>"Source can't be blank"}])
-        expect(response["data"]).to be_blank
+        expect(last_response.status).to eq(422)
+        expect(json["errors"]).to eq([{"status"=>422, "title"=>"Source can't be blank"}])
+        expect(json["data"]).to be_blank
       end
     end
 
@@ -172,11 +164,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         post uri, params, headers
-        expect(last_response.status).to eq(422)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq([{"status"=>422, "title"=>"Subj can't be blank"}])
-        expect(response["data"]).to be_blank
+        expect(last_response.status).to eq(422)
+        expect(json["errors"]).to eq([{"status"=>422, "title"=>"Subj can't be blank"}])
+        expect(json["data"]).to be_blank
       end
     end
 
@@ -190,9 +181,9 @@ describe "/events", type: :request do
         post uri, params, headers
         expect(last_response.status).to eq(401)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq(errors)
-        expect(response["data"]).to be_blank
+        puts last_response.body
+        expect(json["errors"]).to eq(errors)
+        expect(json["data"]).to be_blank
       end
     end
 
@@ -206,11 +197,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         post uri, params, headers
-        expect(last_response.status).to eq(422)
 
-        response = JSON.parse(last_response.body)
-        expect(response.dig("errors", 0, "title")).to start_with("Invalid payload")
-        expect(response["data"]).to be_blank
+        expect(last_response.status).to eq(422)
+        expect(json.dig("errors", 0, "title")).to start_with("Invalid payload")
+        expect(json["data"]).to be_blank
       end
     end
 
@@ -219,12 +209,12 @@ describe "/events", type: :request do
 
       it "JSON" do
         post uri, params, headers
+
         expect(last_response.status).to eq(422)
-        response = JSON.parse(last_response.body)
-        error = response["errors"].first
+        error = json["errors"].first
         expect(error["status"]).to eq("422")
         expect(error["title"]).to start_with("Invalid payload")
-        expect(response["data"]).to be_blank
+        expect(json["data"]).to be_blank
       end
     end
 
@@ -235,11 +225,9 @@ describe "/events", type: :request do
         post uri, params, headers
 
         expect(last_response.status).to eq(200)
-
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to be_nil
-        expect(response.dig("data", "id")).to eq(event.uuid)
-        expect(response.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
+        expect(json["errors"]).to be_nil
+        expect(json.dig("data", "id")).to eq(event.uuid)
+        expect(json.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
       end
     end
   end
@@ -263,11 +251,9 @@ describe "/events", type: :request do
         put uri, params, headers
 
         expect(last_response.status).to eq(201)
-        puts last_response.body
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to be_nil
-        expect(response.dig("data", "id")).to eq(event.uuid)
-        expect(response.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
+        expect(json["errors"]).to be_nil
+        expect(json.dig("data", "id")).to eq(event.uuid)
+        expect(json.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
       end
     end
 
@@ -276,11 +262,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         put uri, params, headers
-        expect(last_response.status).to eq(401)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq(errors)
-        expect(response["data"]).to be_nil
+        expect(last_response.status).to eq(403)
+        expect(json["errors"]).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+        expect(json["data"]).to be_nil
       end
     end
 
@@ -289,11 +274,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         put uri, params, headers
-        expect(last_response.status).to eq(401)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq(errors)
-        expect(response["data"]).to be_blank
+        expect(last_response.status).to eq(403)
+        expect(json["errors"]).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+        expect(json["data"]).to be_blank
       end
     end
 
@@ -308,11 +292,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         put uri, params, headers
-        expect(last_response.status).to eq(422)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq([{"status"=>422, "title"=>"Source token can't be blank"}])
-        expect(response["data"]).to be_nil
+        expect(last_response.status).to eq(422)
+        expect(json["errors"]).to eq([{"status"=>422, "title"=>"Source token can't be blank"}])
+        expect(json["data"]).to be_nil
       end
     end
 
@@ -327,11 +310,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         put uri, params, headers
-        expect(last_response.status).to eq(422)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq([{"status"=>422, "title"=>"Source can't be blank"}])
-        expect(response["data"]).to be_blank
+        expect(last_response.status).to eq(422)
+        expect(json["errors"]).to eq([{"status"=>422, "title"=>"Source can't be blank"}])
+        expect(json["data"]).to be_blank
       end
     end
 
@@ -346,11 +328,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         put uri, params, headers
-        expect(last_response.status).to eq(422)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq([{"status"=>422, "title"=>"Subj can't be blank"}])
-        expect(response["data"]).to be_blank
+        expect(last_response.status).to eq(422)
+        expect(json["errors"]).to eq([{"status"=>422, "title"=>"Subj can't be blank"}])
+        expect(json["data"]).to be_blank
       end
     end
 
@@ -362,11 +343,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         put uri, params, headers
-        expect(last_response.status).to eq(401)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq(errors)
-        expect(response["data"]).to be_blank
+        expect(last_response.status).to eq(401)
+        expect(json["errors"]).to eq(errors)
+        expect(json["data"]).to be_blank
       end
     end
 
@@ -380,11 +360,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         put uri, params, headers
-        expect(last_response.status).to eq(422)
 
-        response = JSON.parse(last_response.body)
-        expect(response.dig("errors", 0, "title")).to start_with("Invalid payload")
-        expect(response["data"]).to be_blank
+        expect(last_response.status).to eq(422)
+        expect(json.dig("errors", 0, "title")).to start_with("Invalid payload")
+        expect(json["data"]).to be_blank
       end
     end
 
@@ -393,12 +372,12 @@ describe "/events", type: :request do
 
       it "JSON" do
         put uri, params, headers
+
         expect(last_response.status).to eq(422)
-        response = JSON.parse(last_response.body)
-        error = response["errors"].first
+        error = json["errors"].first
         expect(error["status"]).to eq("422")
         expect(error["title"]).to start_with("Invalid payload")
-        expect(response["data"]).to be_blank
+        expect(json["data"]).to be_blank
       end
     end
 
@@ -409,10 +388,8 @@ describe "/events", type: :request do
         put uri, params, headers
 
         expect(last_response.status).to eq(200)
-
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to be_nil
-        expect(response.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
+        expect(json["errors"]).to be_nil
+        expect(json.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
       end
     end
   end
@@ -438,10 +415,8 @@ describe "/events", type: :request do
         put uri, params, headers
 
         expect(last_response.status).to eq(200)
-
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to be_nil
-        expect(response.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
+        expect(json["errors"]).to be_nil
+        expect(json.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
       end
     end
 
@@ -450,11 +425,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         put uri, params, headers
-        expect(last_response.status).to eq(401)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq(errors)
-        expect(response["data"]).to be_nil
+        expect(last_response.status).to eq(403)
+        expect(json["errors"]).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+        expect(json["data"]).to be_nil
       end
     end
 
@@ -463,11 +437,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         put uri, params, headers
-        expect(last_response.status).to eq(401)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq(errors)
-        expect(response["data"]).to be_blank
+        expect(last_response.status).to eq(403)
+        expect(json["errors"]).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+        expect(json["data"]).to be_blank
       end
     end
 
@@ -479,11 +452,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         put uri, params, headers
-        expect(last_response.status).to eq(401)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq(errors)
-        expect(response["data"]).to be_blank
+        expect(last_response.status).to eq(401)
+        expect(json["errors"]).to eq(errors)
+        expect(json["data"]).to be_blank
       end
     end
 
@@ -497,11 +469,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         put uri, params, headers
+        
         expect(last_response.status).to eq(422)
-
-        response = JSON.parse(last_response.body)
-        expect(response.dig("errors", 0, "title")).to start_with("Invalid payload")
-        expect(response["data"]).to be_blank
+        expect(json.dig("errors", 0, "title")).to start_with("Invalid payload")
+        expect(json["data"]).to be_blank
       end
     end
 
@@ -510,12 +481,12 @@ describe "/events", type: :request do
 
       it "JSON" do
         put uri, params, headers
+
         expect(last_response.status).to eq(422)
-        response = JSON.parse(last_response.body)
-        error = response["errors"].first
+        error = json["errors"].first
         expect(error["status"]).to eq("422")
         expect(error["title"]).to start_with("Invalid payload")
-        expect(response["data"]).to be_blank
+        expect(json["data"]).to be_blank
       end
     end
   end
@@ -565,11 +536,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         get uri, nil, headers
-        expect(last_response.status).to eq(404)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
-        expect(response["data"]).to be_nil
+        expect(last_response.status).to eq(404)
+        expect(json["errors"]).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
+        expect(json["data"]).to be_nil
       end
     end
   end
@@ -808,11 +778,10 @@ describe "/events", type: :request do
 
       it "JSON" do
         delete uri, nil, headers
-        expect(last_response.status).to eq(404)
 
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
-        expect(response["data"]).to be_nil
+        expect(last_response.status).to eq(404)
+        expect(json["errors"]).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
+        expect(json["data"]).to be_nil
       end
     end
   end
