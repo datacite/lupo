@@ -231,9 +231,15 @@ class Event < ActiveRecord::Base
   def self.query_aggregations
     sum_distribution = {
       sum_bucket: {
-          buckets_path: "year_months>total_by_year_month"
-        }
+        buckets_path: "year_months>total_by_year_month"
       }
+    }
+
+    sum_year_distribution = {
+      sum_bucket: {
+        buckets_path: "years>total_by_year"
+      }
+    }
 
     {
       sources: { terms: { field: 'source_id', size: 50, min_doc_count: 1 } },
