@@ -272,7 +272,7 @@ class Event < ActiveRecord::Base
     options[:page] ||= {}
     options[:page][:number] ||= 1
     options[:page][:size] ||= 1000
-    options[:sort] ||= { created: { order: "asc" }}
+    options[:sort] ||= { created_at: { order: "asc" }}
 
     __elasticsearch__.search({
       from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),

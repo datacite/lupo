@@ -172,7 +172,8 @@ class EventsController < ApplicationController
   protected
 
   def load_event
-    @event = Event.where(uuid: params[:id]).first
+    response = Event.find_by_id(params[:id])
+    @event = response.results.first
     fail ActiveRecord::RecordNotFound unless @event.present?
   end
 
