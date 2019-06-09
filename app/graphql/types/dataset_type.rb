@@ -6,11 +6,43 @@ class DatasetType < BaseObject
   field :usage_reports, DatasetUsageReportConnectionWithMetaType, null: false, description: "Usage reports for this dataset", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
   end
+  field :datasets, DatasetDatasetConnectionWithMetaType, null: false, description: "Funded datasets", connection: true, max_page_size: 100 do
+    argument :first, Int, required: false, default_value: 25
+  end
+  field :publications, DatasetPublicationConnectionWithMetaType, null: false, description: "Funded publications", connection: true do
+    argument :query, String, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+  field :softwares, DatasetSoftwareConnectionWithMetaType, null: false, description: "Funded software", connection: true, max_page_size: 100 do
+    argument :first, Int, required: false, default_value: 25
+  end
 
   def usage_reports(**args)
     ids = Event.query(nil, obj_id: object.id).results.to_a.map do |e|
       e[:subj_id]
     end
     UsageReport.find_by_id(ids, page: { number: 1, size: args[:first] }).fetch(:data, [])
+  end
+
+  def datasets(**args)
+    ids = Event.query(nil, doi_id: doi_from_url(object.identifier), citation_type: "Dataset-Dataset").results.to_a.map do |e|
+      object.identifier == e.subj_id ? doi_from_url(e.obj_id) : doi_from_url(e.subj_id)
+    end
+    
+    ElasticsearchLoader.for(Doi).load_many(ids)
+  end
+
+  def publications(**args)
+    ids = Event.query(nil, doi_id: doi_from_url(object.identifier), citation_type: "Dataset-ScholarlyArticle").results.to_a.map do |e|
+      object.identifier == e.subj_id ? doi_from_url(e.obj_id) : doi_from_url(e.subj_id)
+    end
+    ElasticsearchLoader.for(Doi).load_many(ids)
+  end
+
+  def softwares(**args)
+    ids = Event.query(nil, doi_id: doi_from_url(object.identifier), citation_type: "Dataset-SoftwareSourceCode").results.to_a.map do |e|
+      object.identifier == e.subj_id ? doi_from_url(e.obj_id) : doi_from_url(e.subj_id)
+    end
+    ElasticsearchLoader.for(Doi).load_many(ids)
   end
 end
