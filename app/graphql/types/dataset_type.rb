@@ -6,14 +6,14 @@ class DatasetType < BaseObject
   field :usage_reports, DatasetUsageReportConnectionWithMetaType, null: false, description: "Usage reports for this dataset", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
   end
-  field :datasets, DatasetDatasetConnectionWithMetaType, null: false, description: "Funded datasets", connection: true, max_page_size: 100 do
+  field :datasets, DatasetDatasetConnectionWithMetaType, null: false, description: "Referenced datasets", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
   end
-  field :publications, DatasetPublicationConnectionWithMetaType, null: false, description: "Funded publications", connection: true do
+  field :publications, DatasetPublicationConnectionWithMetaType, null: false, description: "Referenced publications", connection: true do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
-  field :softwares, DatasetSoftwareConnectionWithMetaType, null: false, description: "Funded software", connection: true, max_page_size: 100 do
+  field :softwares, DatasetSoftwareConnectionWithMetaType, null: false, description: "Referenced software", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
   end
 
