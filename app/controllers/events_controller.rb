@@ -85,7 +85,7 @@ class EventsController < ApplicationController
       response = Event.query(params[:query],
                              subj_id: params[:subj_id],
                              obj_id: params[:obj_id],
-                             doi: params[:doi],
+                             doi: params[:doi_id] || params[:doi],
                              orcid: params[:orcid],
                              prefix: params[:prefix],
                              subtype: params[:subtype],

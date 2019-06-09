@@ -55,21 +55,18 @@ Rails.application.routes.draw do
 
   resources :activities, only: [:index, :show]
 
-  resources :clients, constraints: { :id => /.+/ } do
-    resources :prefixes, constraints: { :id => /.+/ }
-    resources :dois, constraints: { :id => /.+/ }
+  resources :clients, constraints: { id: /.+/ } do
+    resources :prefixes, constraints: { id: /.+/ }
+    resources :dois, constraints: { id: /.+/ }
   end
 
-  resources :client_prefixes, path: 'client-prefixes'
-  resources :dois, constraints: { :id => /.+/ } do
+  resources :client_prefixes, path: "client-prefixes"
+  resources :dois, constraints: { id: /.+/ } do
     resources :metadata
     resources :media
     resources :activities
+    resources :events
   end
-
-  # scope module: :v2 do
-  #   resources :events
-  # end
 
   constraints(-> (req) { req.env["HTTP_ACCEPT"].to_s.include?("version=2") }) do
     resources :events
