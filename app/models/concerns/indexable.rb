@@ -9,7 +9,7 @@ module Indexable
       IndexJob.perform_later(self)
       if self.class.name == "Doi"
         update_column(:indexed, Time.zone.now)
-        send_import_message(self.to_jsonapi) if aasm_state == "findable" unless Rails.env.test?
+        send_import_message(self.to_jsonapi) if aasm_state == "findable" unless (Rails.env.test? || client_id == "crossref.citations")
       end
     end
 
