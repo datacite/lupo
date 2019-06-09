@@ -15,21 +15,21 @@ class SoftwareType < BaseObject
   end
 
   def datasets(**args)
-    ids = Event.query(nil, doi_id: doi_from_url(object.identifier), citation_type: "Dataset-SoftwareSourceCode").results.to_a.map do |e|
+    ids = Event.query(nil, doi: doi_from_url(object.identifier), citation_type: "Dataset-SoftwareSourceCode").results.to_a.map do |e|
       object.identifier == e.subj_id ? doi_from_url(e.obj_id) : doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
   def publications(**args)
-    ids = Event.query(nil, doi_id: doi_from_url(object.identifier), citation_type: "ScholarlyArticle-SoftwareSourceCode").results.to_a.map do |e|
+    ids = Event.query(nil, doi: doi_from_url(object.identifier), citation_type: "ScholarlyArticle-SoftwareSourceCode").results.to_a.map do |e|
       object.identifier == e.subj_id ? doi_from_url(e.obj_id) : doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
   def softwares(**args)
-    ids = Event.query(nil, doi_id: doi_from_url(object.identifier), citation_type: "SoftwareSourceCode-SoftwareSourceCode").results.to_a.map do |e|
+    ids = Event.query(nil, doi: doi_from_url(object.identifier), citation_type: "SoftwareSourceCode-SoftwareSourceCode").results.to_a.map do |e|
       object.identifier == e.subj_id ? doi_from_url(e.obj_id) : doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
