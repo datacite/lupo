@@ -439,7 +439,7 @@ describe Doi, type: :model, vcr: true do
 
     it "import by ids" do
       response = Doi.import_by_ids
-      expect(response).to eq(52)
+      expect(response).to be > 0
     end
 
     it "import by id" do
