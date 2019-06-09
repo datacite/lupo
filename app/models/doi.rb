@@ -583,79 +583,13 @@ class Doi < ActiveRecord::Base
   end
 
   def self.index(options={})
-    from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
-    until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
-    index_time = options[:index_time].presence || Time.zone.now.utc.iso8601
-    client_id = options[:client_id]
-
-    # get every day between from_date and until_date
-    (from_date..until_date).each do |d|
-      DoiIndexByDayJob.perform_later(from_date: d.strftime("%F"), index_time: index_time, client_id: client_id)
-    end
-
-    (from_date..until_date).to_a.length
-  end
-
-  def self.index_by_day(options={})
-    return nil unless options[:from_date].present?
-    from_date = Date.parse(options[:from_date])
-    index_time = options[:index_time].presence || Time.zone.now.utc.iso8601
-    client_id = options[:client_id]
-
-    errors = 0
-    count = 0
-
-    logger = Logger.new(STDOUT)
-
-    collection = Doi.where(created: from_date.midnight..from_date.end_of_day).where("indexed < ?", index_time)
-    collection = collection.where(datacentre: client_id) if client_id.present?
-
-    collection.find_in_batches(batch_size: 250) do |dois|
-      response = Doi.__elasticsearch__.client.bulk \
-        index:   Doi.index_name,
-        type:    Doi.document_type,
-        body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
-
-      # log errors
-      errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
-      response['items'].select { |k, v| k.values.first['error'].present? }.each do |err|
-        logger.error "[Elasticsearch] " + err.inspect
-      end
-
-      dois.each { |doi| doi.update_column(:indexed, Time.zone.now) }
-      count += dois.length
-    end
-
-    if errors > 1
-      logger.error "[Elasticsearch] #{errors} errors indexing #{count} DOIs created on #{options[:from_date]}."
-    elsif count > 1
-      logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{options[:from_date]}."
-    end
-
-    count
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    logger.info "[Elasticsearch] Error #{error.message} indexing DOIs created on #{options[:from_date]}."
-
-    count = 0
-
-    Doi.where(created: from_date.midnight..from_date.end_of_day).where("indexed < ?", index_time).find_each do |doi|
-      IndexJob.perform_later(doi)
-      doi.update_column(:indexed, Time.zone.now)
-      count += 1
-    end
-
-    logger.info "[Elasticsearch] Indexed #{count} DOIs created on #{options[:from_date]}."
-
-    count
-  end
-
-  def self.index_by_ids(options={})
     from_id = (options[:from_id] || 1).to_i
     until_id = (options[:until_id] || from_id + 499).to_i
 
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
       DoiIndexByIdJob.perform_later(id: id)
+      puts "Queued indexing for DOIs with IDs starting with #{id}."
     end
 
     (from_id..until_id).to_a.length
