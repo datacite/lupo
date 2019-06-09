@@ -376,226 +376,20 @@ class Doi < ActiveRecord::Base
     })
   end
 
-  def self.import_one(doi_id: nil)
-    logger = Logger.new(STDOUT)
-
-    doi = Doi.where(doi: doi_id).first
-    unless doi.present?
-      logger.error "[MySQL] DOI " + doi_id + " not found."
-      return nil
-    end
-
-    string = doi.current_metadata.present? ? doi.clean_xml(doi.current_metadata.xml) : nil
-    unless string.present?
-      logger.error "[MySQL] No metadata for DOI " + doi.doi + " found: " + doi.current_metadata.inspect
-      return nil
-    end
-
-    meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
-    attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
-      [a.to_sym, meta[a]]
-    end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
-
-    # update_attributes will trigger validations and Elasticsearch indexing
-    doi.update_attributes(attrs)
-    logger.info "[MySQL] Imported metadata for DOI " + doi.doi + "."
-    doi
-  rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
-    logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
-    Raven.capture_exception(error)
-    doi
-  end
-
-  def self.import_all(options={})
-    from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
-    until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
-    client_id = options[:client_id]
-
-    # get every day between from_date and until_date
-    (from_date..until_date).each do |d|
-      DoiImportByDayJob.perform_later(from_date: d.strftime("%F"), client_id: client_id)
-    end
-
-    (from_date..until_date).to_a.length
-  end
-
-  def self.import_missing_by_empty_attribute(options={})
-    logger = Logger.new(STDOUT)
-
-    attribute = options[:attribute]
-
-    # Find all dois by missing attribute
-    count = 0
-
-    query = options[:query] || "-_exists_:#{attribute} -aasm_state:draft"
-    size = (options[:size] || 1000).to_i
-
-    response = Doi.query(query, page: { size: 1, cursor: 0 })
-    logger.info "[Metadata Missing Fix] #{response.results.total} DOIs found missing attribute #{attribute}."
-
-    if response.results.total > 0
-      # walk through results using cursor
-      cursor = 0
-
-      while response.results.results.length > 0 do
-        response = Doi.query(query, page: { size: size, cursor: cursor })
-        break unless response.results.results.length > 0
-
-        logger.info "[Metadata Missing Fix] Attempting fix for #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
-        cursor = response.results.to_a.last[:sort].first.to_i
-
-        response.results.results.each do |d|
-          # Import One as a background job
-          DoiImportOneJob.perform_later(d.doi)
-        end
-      end
-    end
-
-    response.results.total
-  end
-
-
-  def self.import_missing(options={})
-    from_date = options[:from_date].present? ? Date.parse(options[:from_date]) : Date.current
-    until_date = options[:until_date].present? ? Date.parse(options[:until_date]) : Date.current
-    client_id = options[:client_id]
-
-    # get every day between from_date and until_date
-    (from_date..until_date).each do |d|
-      DoiImportByDayMissingJob.perform_later(from_date: d.strftime("%F"), client_id: client_id)
-    end
-
-    (from_date..until_date).to_a.length
-  end
-
-  def self.import_by_day(options={})
-    return nil unless options[:from_date].present?
-    from_date = Date.parse(options[:from_date])
-
-    count = 0
-
-    logger = Logger.new(STDOUT)
-
-    response = Doi.query("created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 1, cursor: 0 })
-    logger.info "#{response.results.total} DOIs found created on #{from_date.strftime("%F")}."
-
-    if response.results.total > 0
-      # walk through results using cursor
-      cursor = 0
-
-      while response.results.results.length > 0 do
-        response = Doi.query("created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 1000, cursor: cursor })
-        break unless response.results.results.length > 0
-
-        logger.info "[MySQL] Importing metadata for #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
-        cursor = response.results.to_a.last[:sort].first.to_i
-
-        response.records.each do |doi|
-          begin
-            # ignore broken xml
-            string = doi.current_metadata.present? ? doi.from_xml(doi.current_metadata.xml.to_s.force_encoding("UTF-8")) : nil
-            unless string.present?
-              logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
-              return nil
-            end
-
-            meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
-            attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
-              [a.to_sym, meta[a]]
-            end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
-
-            # update_columns will NOT trigger validations and Elasticsearch indexing
-            doi.update_columns(attrs)
-
-            doi.__elasticsearch__.index_document
-          rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
-            logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
-            Raven.capture_exception(error)
-          else
-            count += 1
-          end
-        end
-
-        if count > 0
-          logger.info "[MySQL] Imported metadata for #{count} DOIs created on #{options[:from_date]}."
-        end
-      end
-    end
-
-    count
-  end
-
-  def self.import_by_day_missing(options={})
-    return nil unless options[:from_date].present?
-    from_date = Date.parse(options[:from_date])
-
-    count = 0
-
-    logger = Logger.new(STDOUT)
-
-    response = Doi.query("-creators:* +created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 1, cursor: 0 })
-    logger.info "#{response.results.total} DOIs found with missing metadata created on #{from_date.strftime("%F")}."
-
-    if response.results.total > 0
-      # walk through results using cursor
-      cursor = 1
-
-      while response.results.results.length > 0 do
-        response = Doi.query("-creators:* +created:[#{from_date.strftime("%F")} TO #{from_date.strftime("%F")}]", page: { size: 1000, cursor: cursor })
-        break unless response.results.results.length > 0
-
-        logger.info "[MySQL] Importing missing metadata for #{response.results.results.length} DOIs starting with _id #{cursor + 1}."
-        cursor = response.results.to_a.last[:sort].first.to_i
-
-        response.records.each do |doi|
-          begin
-            # ignore broken xml
-            string = doi.current_metadata.present? ? doi.from_xml(doi.current_metadata.xml.to_s.force_encoding("UTF-8")) : nil
-            unless string.present?
-              logger.error "[MySQL] No metadata for DOI " + doi.doi + " found."
-              return nil
-            end
-
-            meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
-            attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
-              [a.to_sym, meta[a]]
-            end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
-
-            # update_columns will NOT trigger validations and Elasticsearch indexing
-            doi.update_columns(attrs)
-
-            doi.__elasticsearch__.index_document
-          rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
-            logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
-            Raven.capture_exception(error)
-          else
-            count += 1
-          end
-        end
-
-        if count > 0
-          logger.info "[MySQL] Imported metadata for #{count} DOIs created on #{options[:from_date]}."
-        end
-      end
-    end
-
-    count
-  end
-
-  def self.index(options={})
+  def self.import(options={})
     from_id = (options[:from_id] || 1).to_i
-    until_id = (options[:until_id] || from_id + 499).to_i
+    until_id = (options[:until_id] || Doi.maximum(:id)).to_i
 
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
-      DoiIndexByIdJob.perform_later(id: id)
-      puts "Queued indexing for DOIs with IDs starting with #{id}."
+      DoiImportByIdJob.perform_later(id: id)
+      puts "Queued importing for DOIs with IDs starting with #{id}."
     end
 
     (from_id..until_id).to_a.length
   end
 
-  def self.index_by_id(options={})
+  def self.import_by_id(options={})
     return nil unless options[:id].present?
     id = options[:id].to_i
 
@@ -620,14 +414,14 @@ class Doi < ActiveRecord::Base
     end
 
     if errors > 1
-      logger.error "[Elasticsearch] #{errors} errors indexing #{count} DOIs with IDs #{id} - #{(id + 499)}."
+      logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs with IDs #{id} - #{(id + 499)}."
     elsif count > 0
-      logger.info "[Elasticsearch] Indexed #{count} DOIs with IDs #{id} - #{(id + 499)}."
+      logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
     end
 
     count
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    logger.info "[Elasticsearch] Error #{error.message} indexing DOIs with IDs #{id} - #{(id + 499)}."
+    logger.info "[Elasticsearch] Error #{error.message} importing DOIs with IDs #{id} - #{(id + 499)}."
 
     count = 0
 
@@ -636,7 +430,7 @@ class Doi < ActiveRecord::Base
       count += 1
     end
 
-    logger.info "[Elasticsearch] Indexed #{count} DOIs with IDs #{id} - #{(id + 499)}."
+    logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
 
     count
   end

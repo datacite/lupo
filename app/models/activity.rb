@@ -181,19 +181,19 @@ class Activity < Audited::Audit
     {}
   end
 
-  def self.index_by_ids(options={})
+  def self.import(options={})
     from_id = (options[:from_id] || 1).to_i
-    until_id = (options[:until_id] || from_id + 499).to_i
+    until_id = (options[:until_id] || Activity.maximum(:id)).to_i
 
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
-      ActivityIndexByIdJob.perform_later(id: id)
+      ActivityImportByIdJob.perform_later(id: id)
     end
 
     (from_id..until_id).to_a.length
   end
 
-  def self.index_by_id(options={})
+  def self.import_by_id(options={})
     return nil unless options[:id].present?
     id = options[:id].to_i
 
@@ -218,14 +218,14 @@ class Activity < Audited::Audit
     end
 
     if errors > 1
-      logger.error "[Elasticsearch] #{errors} errors indexing #{count} activities with IDs #{id} - #{(id + 499)}."
+      logger.error "[Elasticsearch] #{errors} errors importing #{count} activities with IDs #{id} - #{(id + 499)}."
     elsif count > 0
-      logger.info "[Elasticsearch] Indexed #{count} activities with IDs #{id} - #{(id + 499)}."
+      logger.info "[Elasticsearch] Imported #{count} activities with IDs #{id} - #{(id + 499)}."
     end
 
     count
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    logger.info "[Elasticsearch] Error #{error.message} indexing activities with IDs #{id} - #{(id + 499)}."
+    logger.info "[Elasticsearch] Error #{error.message} importing activities with IDs #{id} - #{(id + 499)}."
 
     count = 0
 
@@ -234,7 +234,7 @@ class Activity < Audited::Audit
       count += 1
     end
 
-    logger.info "[Elasticsearch] Indexed #{count} activities with IDs #{id} - #{(id + 499)}."
+    logger.info "[Elasticsearch] Imported #{count} activities with IDs #{id} - #{(id + 499)}."
 
     count
   end

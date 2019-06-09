@@ -287,18 +287,18 @@ class Event < ActiveRecord::Base
     })
   end
 
-  def self.index(options={})
+  def self.import(options={})
     from_id = (options[:from_id] || 1).to_i
-    until_id = (options[:until_id] || from_id + 499).to_i
+    until_id = (options[:until_id] || Event.maximum(:id)).to_i
 
     # get every id between from_id and until_id
     (from_id..until_id).step(500).each do |id|
-      EventIndexByIdJob.perform_later(id: id)
-      puts "Queued indexing for events with IDs starting with #{id}."
+      EventImportByIdJob.perform_later(id: id)
+      puts "Queued importing for events with IDs starting with #{id}."
     end
   end
 
-  def self.index_by_id(options={})
+  def self.import_by_id(options={})
     return nil unless options[:id].present?
     id = options[:id].to_i
 
@@ -323,12 +323,12 @@ class Event < ActiveRecord::Base
     end
 
     if errors > 1
-      logger.error "[Elasticsearch] #{errors} errors indexing #{count} events with IDs #{id} - #{(id + 499)}."
+      logger.error "[Elasticsearch] #{errors} errors importing #{count} events with IDs #{id} - #{(id + 499)}."
     elsif count > 0
-      logger.info "[Elasticsearch] Indexed #{count} events with IDs #{id} - #{(id + 499)}."
+      logger.info "[Elasticsearch] Imported #{count} events with IDs #{id} - #{(id + 499)}."
     end
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    logger.info "[Elasticsearch] Error #{error.message} indexing events with IDs #{id} - #{(id + 499)}."
+    logger.info "[Elasticsearch] Error #{error.message} importing events with IDs #{id} - #{(id + 499)}."
 
     count = 0
 
@@ -337,7 +337,7 @@ class Event < ActiveRecord::Base
       count += 1
     end
 
-    logger.info "[Elasticsearch] Indexed #{count} events with IDs #{id} - #{(id + 499)}."
+    logger.info "[Elasticsearch] Imported #{count} events with IDs #{id} - #{(id + 499)}."
   end
 
   def to_param  # overridden, use uuid instead of id

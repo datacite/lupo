@@ -252,6 +252,10 @@ FactoryBot.define do
     association :provider, factory: :provider, strategy: :create
   end
 
+  factory :activity do  
+    association :doi, factory: :doi, strategy: :create
+  end
+
   factory :event do    
     uuid { SecureRandom.uuid }
     source_id { "citeulike" }

@@ -13,65 +13,13 @@ namespace :doi do
   task :refresh_index => :environment do
     Doi.__elasticsearch__.refresh_index!
   end
-  
-  desc 'Index all DOIs'
-  task :index => :environment do
-    from_id = (ENV['FROM_ID'] || 1).to_i
-    until_id = (ENV['UNTIL_ID'] || from_id + 499).to_i
-
-    Doi.index(from_id: from_id, until_id: until_id)
-  end
-
-  desc 'Import all dois'
-  task :import => :environment do
-    Doi.__elasticsearch__.create_index!
-    Doi.import
-  end
 
   desc 'Import all DOIs'
-  task :import_all => :environment do
-    if ENV['YEAR'].present?
-      from_date = "#{ENV['YEAR']}-01-01"
-      until_date = "#{ENV['YEAR']}-12-31"
-    else
-      from_date = ENV['FROM_DATE'] || Date.current.strftime("%F")
-      until_date = ENV['UNTIL_DATE'] || Date.current.strftime("%F")
-    end
+  task :import => :environment do
+    from_id = (ENV['FROM_ID'] || 1).to_i
+    until_id = (ENV['UNTIL_ID'] || Doi.maximum(:id)).to_i
 
-    Doi.import_all(from_date: from_date, until_date: until_date)
-  end
-
-  desc 'Import DOIs per day'
-  task :import_by_day => :environment do
-    from_date = ENV['FROM_DATE'] || Date.current.strftime("%F")
-
-    Doi.import_by_day(from_date: from_date)
-    puts "DOIs created on #{from_date} imported."
-  end
-
-  desc 'Import missing DOIs'
-  task :import_missing => :environment do
-    if ENV['YEAR'].present?
-      from_date = "#{ENV['YEAR']}-01-01"
-      until_date = "#{ENV['YEAR']}-12-31"
-    else
-      from_date = ENV['FROM_DATE'] || Date.current.strftime("%F")
-      until_date = ENV['UNTIL_DATE'] || Date.current.strftime("%F")
-    end
-
-    Doi.import_missing(from_date: from_date, until_date: until_date)
-  end
-
-  desc 'Import missing DOIs by empty attribute'
-  task :import_missing_by_empty_attribute => :environment do
-    if ENV['ATTRIBUTE'].present?
-      attribute = ENV['ATTRIBUTE']
-    else
-      puts "ENV['ATTRIBUTE'] is required"
-      exit
-    end
-
-    Doi.import_missing_by_empty_attribute(attribute: attribute)
+    Doi.import(from_id: from_id, until_id: until_id)
   end
 
   desc 'Import one DOI'

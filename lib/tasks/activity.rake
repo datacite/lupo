@@ -16,14 +16,9 @@ namespace :activity do
 
   desc 'Import all activities'
   task :import => :environment do
-    Activity.import
-  end
-
-  desc 'Index all activities'
-  task :index => :environment do
     from_id = (ENV['FROM_ID'] || 1).to_i
-    until_id = (ENV['UNTIL_ID'] || from_id + 499).to_i
+    until_id = (ENV['UNTIL_ID'] || Activity.maximum(:id)).to_i
 
-    Activity.index_by_ids(from_id: from_id, until_id: until_id)
+    Activity.import(from_id: from_id, until_id: until_id)
   end
 end
