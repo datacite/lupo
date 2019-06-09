@@ -148,11 +148,8 @@ describe "dois", type: :request do
       it 'creates the record' do
         patch "/dois/#{doi_id}", valid_attributes, headers
 
-        expect(last_response.status).to eq(201)
-        expect(json.dig('data', 'attributes', 'doi')).to eq(doi_id.downcase)
-        expect(json.dig('data', 'attributes', 'url')).to be_nil
-        expect(json.dig('data', 'attributes', 'isActive')).to be false
-        expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+        expect(last_response.status).to eq(422)
+        expect(json["errors"]).to eq([{"source"=>"url", "title"=>"Can't be blank"}])
       end
     end
 
@@ -197,10 +194,8 @@ describe "dois", type: :request do
       it 'updates the record' do
         patch "/dois/#{doi_id}", valid_attributes, headers
 
-        expect(last_response.status).to eq(201)
-        expect(json.dig('data', 'attributes', 'doi')).to eq(doi_id.downcase)
-        expect(json.dig('data', 'attributes', 'url')).to be_nil
-        expect(json.dig('data', 'attributes', 'isActive')).to be false
+        expect(last_response.status).to eq(422)
+        expect(json["errors"]).to eq([{"source"=>"url", "title"=>"Can't be blank"}])
       end
     end
 
@@ -912,37 +907,42 @@ describe "dois", type: :request do
     end
 
     context 'crossref url', vcr: true do
+      let(:provider) { create(:provider, name: "Crossref", symbol: "CROSSREF", role_name: "ROLE_REGISTRATION_AGENCY") }
+      let(:client) { create(:client, provider: provider, name: "Crossref Citations", symbol: "CROSSREF.CITATIONS") }
+  
       let(:xml) { Base64.strict_encode64("https://doi.org/10.7554/elife.01567") }
       let(:valid_attributes) do
         {
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "url" => "https://elifesciences.org/articles/01567",
               "xml" => xml,
               "source" => "test",
               "event" => "publish"
+            },
+            "relationships" => {
+              "client" =>  {
+                "data" => {
+                  "type" => "clients",
+                  "id" => client.symbol.downcase
+                }
+              }
             }
           }
         }
       end
 
       it 'updates the record' do
-        patch "/dois/10.14454/elife.01567", valid_attributes, headers
+        patch "/dois/10.7554/elife.01567", valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig('data', 'attributes', 'url')).to eq("https://elifesciences.org/articles/01567")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/elife.01567")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.7554/elife.01567")
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
-
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+     
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
         expect(xml.dig("titles", "title")).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
-      end
-
-      it 'sets state to findable' do
-        patch "/dois/10.14454/elife.01567", valid_attributes, headers
-
-        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
       end
     end
 
@@ -964,7 +964,7 @@ describe "dois", type: :request do
 
       it 'updates the record' do
         patch "/dois/10.14454/q6g15xs4", valid_attributes, headers
-
+        puts last_response.body
         expect(last_response.status).to eq(201)
         expect(json.dig('data', 'attributes', 'url')).to eq("https://datashare.ucsf.edu/stash/dataset/doi:10.7272/Q6G15XS4")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/q6g15xs4")

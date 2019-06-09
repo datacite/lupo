@@ -250,10 +250,7 @@ class DoisController < ApplicationController
     logger = Logger.new(STDOUT)
     # logger.info safe_params.inspect
 
-    doi = Doi.where(doi: params.dig(:data,:attributes,:doi)).first
-    exists = doi.present?
-
-    @doi = Doi.new(safe_params.merge(only_validate: true, exists: exists))
+    @doi = Doi.new(safe_params.merge(only_validate: true))
 
     authorize! :validate, @doi
 
@@ -578,7 +575,7 @@ class DoisController < ApplicationController
     end
 
     meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
-    p[:schemaVersion] =  METADATA_FORMATS.include?(meta["from"]) ? LAST_SCHEMA_VERSION : p[:schemaVersion]
+    p[:schemaVersion] = METADATA_FORMATS.include?(meta["from"]) ? LAST_SCHEMA_VERSION : p[:schemaVersion]
     xml = meta["string"]
 
     read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher],
@@ -597,7 +594,7 @@ class DoisController < ApplicationController
 
     p.merge!(xml: xml) if xml.present?
 
-    read_attrs_keys = [:creators, :contributors, :titles, :publisher,
+    read_attrs_keys = [:url, :creators, :contributors, :titles, :publisher,
       :publicationYear, :types, :descriptions, :container, :sizes,
       :formats, :language, :dates, :identifiers,
       :relatedIdentifiers, :fundingReferences, :geoLocations, :rightsList,

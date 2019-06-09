@@ -32,25 +32,25 @@ class Doi < ActiveRecord::Base
 
     event :register do
       # can't register test prefix
-      transitions :from => [:draft], :to => :registered, :if => [:registerable?]
+      transitions from: [:draft], to: :registered, if: [:registerable?]
     end
 
     event :publish do
       # can't index test prefix
-      transitions :from => [:draft], :to => :findable, :if => [:registerable?]
-      transitions :from => :registered, :to => :findable
+      transitions from: [:draft], to: :findable, if: [:registerable?]
+      transitions from: :registered, to: :findable
     end
 
     event :hide do
-      transitions :from => [:findable], :to => :registered
+      transitions from: [:findable], to: :registered
     end
 
     event :flag do
-      transitions :from => [:registered, :findable], :to => :flagged
+      transitions from: [:registered, :findable], to: :flagged
     end
 
     event :link_check do
-      transitions :from => [:tombstoned, :registered, :findable, :flagged], :to => :broken
+      transitions from: [:tombstoned, :registered, :findable, :flagged], to: :broken
     end
   end
 
@@ -75,14 +75,14 @@ class Doi < ActiveRecord::Base
   delegate :provider, to: :client
 
   validates_presence_of :doi
-  # validates_presence_of :url, if: :is_registered_or_findable?
+  validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
-  validates_format_of :doi, :with => /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, :on => :create, unless: :exists
-  validates_format_of :url, :with => /\A(ftp|http|https):\/\/[\S]+/ , if: :url?, message: "URL is not valid"
+  validates_format_of :doi, with: /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, on: :create
+  validates_format_of :url, with: /\A(ftp|http|https):\/\/[\S]+/ , if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
-  validates :xml, presence: true, xml_schema: true, :if => Proc.new { |doi| doi.validatable? }
+  validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
 
   after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
@@ -502,7 +502,7 @@ class Doi < ActiveRecord::Base
   end
 
   def registerable?
-    prefix != "10.5072" && url.present?
+    prefix != "10.5072" # && url.present?
   end
 
   # def is_valid?
@@ -817,5 +817,4 @@ class Doi < ActiveRecord::Base
       end
     end
   end
-
 end
