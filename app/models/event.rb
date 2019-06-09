@@ -287,7 +287,7 @@ class Event < ActiveRecord::Base
     })
   end
 
-  def self.import(options={})
+  def self.import_by_ids(options={})
     from_id = (options[:from_id] || 1).to_i
     until_id = (options[:until_id] || Event.maximum(:id)).to_i
 

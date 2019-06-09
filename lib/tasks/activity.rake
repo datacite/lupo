@@ -19,6 +19,6 @@ namespace :activity do
     from_id = (ENV['FROM_ID'] || 1).to_i
     until_id = (ENV['UNTIL_ID'] || Activity.maximum(:id)).to_i
 
-    Activity.import(from_id: from_id, until_id: until_id)
+    Activity.import_by_ids(from_id: from_id, until_id: until_id)
   end
 end
