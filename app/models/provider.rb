@@ -35,7 +35,7 @@ class Provider < ActiveRecord::Base
   validates_uniqueness_of :symbol, message: "This name has already been taken"
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, message: "contact_email should be an email"
   validates_format_of :website, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be an url"
-  validates_inclusion_of :role_name, :in => %w( ROLE_FOR_PROFIT_PROVIDER ROLE_CONTRACTUAL_PROVIDER ROLE_CONSORTIUM_LEAD ROLE_ALLOCATOR ROLE_MEMBER ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
+  validates_inclusion_of :role_name, :in => %w( ROLE_FOR_PROFIT_PROVIDER ROLE_CONTRACTUAL_PROVIDER ROLE_CONSORTIUM_LEAD ROLE_ALLOCATOR ROLE_MEMBER ROLE_REGISTRATION_AGENCY ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
   validates_inclusion_of :organization_type, :in => %w(nationalInstitution nationalLibrary academicInstitution academicLibrary researchInstitution governmentAgency publisher professionalSociety serviceProvider vendor), :message => "organization type %s is not included in the list", if: :organization_type?
   validates_inclusion_of :focus_area, :in => %w(biomedicalAndHealthSciences earthSciences humanities mathematicsAndComputerScience physicalSciencesAndEngineering socialSciences general), :message => "focus area %s is not included in the list", if: :focus_area?
   validate :freeze_symbol, :on => :update
@@ -372,7 +372,8 @@ class Provider < ActiveRecord::Base
       "ROLE_CONTRACTUAL_PROVIDER" => "Contractual Provider",
       "ROLE_ADMIN"                => "DataCite admin",
       "ROLE_DEV"                  => "DataCite admin",
-      "ROLE_FOR_PROFIT_PROVIDER"  => "For-profit Provider"
+      "ROLE_FOR_PROFIT_PROVIDER"  => "For-profit Provider",
+      "ROLE_REGISTRATION_AGENCY"  => "DOI Registration Agency"
      }
   end
 
@@ -391,7 +392,8 @@ class Provider < ActiveRecord::Base
       "ROLE_ALLOCATOR"            => "provider",
       "ROLE_CONSORTIUM_LEAD"      => "consortium_lead",
       "ROLE_CONTRACTUAL_PROVIDER" => "contractual_provider",
-      "ROLE_FOR_PROFIT_PROVIDER"  => "for_profit_provider"
+      "ROLE_FOR_PROFIT_PROVIDER"  => "for_profit_provider",
+      "ROLE_REGISTRATION_AGENCY"  => "registration_agency"
      }
   end
 
