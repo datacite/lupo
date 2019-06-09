@@ -10,11 +10,11 @@ describe "/events", type: :request, elasticsearch: true do
   let(:errors) { [{ "status" => "401", "title"=>"Bad credentials."}] }
 
   # Successful response from creating via the API.
-  let(:success) { { "id"=> event.uuid,
-                    "type"=>"events",
+  let(:success) { { "id" => event.uuid,
+                    "type" => "events",
                     "attributes"=>{
-                      "subjId"=>"http://www.citeulike.org/user/dbogartoit",
-                      "objId"=>"http://doi.org/10.1371/journal.pmed.0030186",
+                      "subjId" => "http://www.citeulike.org/user/dbogartoit",
+                      "objId" => "http://doi.org/10.1371/journal.pmed.0030186",
                       "messageAction"=>"create",
                       "sourceToken"=>"citeulike_123",
                       "relationTypeId"=>"bookmarks",
@@ -49,6 +49,7 @@ describe "/events", type: :request, elasticsearch: true do
     let(:uri) { "/events" }
     let(:params) do
       { "data" => { "type" => "events",
+                    "id" => event.uuid,
                     "attributes" => {
                       "subjId" => event.subj_id,
                       "subj" => event.subj,
@@ -64,7 +65,7 @@ describe "/events", type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(201)
         expect(json["errors"]).to be_nil
-        expect(json.dig("data", "id")).not_to eq(event.uuid)
+        expect(json.dig("data", "id")).to eq(event.uuid)
         expect(json.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
       end
     end
@@ -227,7 +228,7 @@ describe "/events", type: :request, elasticsearch: true do
         expect(last_response.status).to eq(200)
         expect(json["errors"]).to be_nil
         expect(json.dig("data", "id")).to eq(event.uuid)
-        expect(json.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
+        expect(json.dig("data", "relationships", "subj", "data")).to eq("id" => event.subj_id, "type"=>"objects")
       end
     end
   end
