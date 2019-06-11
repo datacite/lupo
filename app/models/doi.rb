@@ -45,6 +45,10 @@ class Doi < ActiveRecord::Base
       transitions from: [:findable], to: :registered
     end
 
+    event :show do
+      transitions from: [:registered], to: :findable
+    end
+
     event :flag do
       transitions from: [:registered, :findable], to: :flagged
     end
@@ -584,7 +588,7 @@ class Doi < ActiveRecord::Base
   end
 
   def event=(value)
-    self.send(value) if %w(register publish hide).include?(value)
+    self.send(value) if %w(register publish hide show).include?(value)
   end
 
   # delete all DOIs with test prefix 10.5072 not updated since from_date
