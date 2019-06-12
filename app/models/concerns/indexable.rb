@@ -165,11 +165,16 @@ module Indexable
         must << { term: { focus_area: options[:focus_area] }} if options[:focus_area].present?
 
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
-        must_not << { term: { role_name: "ROLE_ADMIN" }}
+        if options[:exclude_registration_agencies]
+          must_not << { terms: { role_name: ["ROLE_ADMIN", "ROLE_REGISTRATION_AGENCY"] }}
+        else
+          must_not << { term: { role_name: "ROLE_ADMIN" }}
+        end
       elsif self.name == "Client"
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { terms: { "software.raw" => options[:software].split(",") }} if options[:software].present?
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
+        must_not << { terms: { provider_id: ["crossref"] }} if options[:exclude_registration_agencies]
       elsif self.name == "Doi"
         must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
         must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
