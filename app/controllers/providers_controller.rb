@@ -25,7 +25,15 @@ class ProvidersController < ApplicationController
     elsif params[:ids].present?
       response = Provider.find_by_id(params[:ids], page: page, sort: sort)
     else
-      response = Provider.query(params[:query], year: params[:year], region: params[:region], member_type: params[:member_type], organization_type: params[:organization_type], focus_area: params[:focus_area], page: page, sort: sort)
+      response = Provider.query(params[:query],
+        exclude_registration_agencies: params[:exclude_registration_agencies],
+        year: params[:year], 
+        region: params[:region], 
+        member_type: params[:member_type], 
+        organization_type: params[:organization_type], 
+        focus_area: params[:focus_area], 
+        page: page, 
+        sort: sort)
     end
 
     begin
