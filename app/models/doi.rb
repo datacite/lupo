@@ -70,7 +70,6 @@ class Doi < ActiveRecord::Base
   attribute :only_validate, :boolean, default: false
   attribute :exists, :boolean, default: false
   attribute :should_validate, :boolean, default: false
-  attribute :agency, :string, default: "DataCite"
 
   belongs_to :client, foreign_key: :datacentre
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
@@ -229,6 +228,7 @@ class Doi < ActiveRecord::Base
     indexes :aasm_state,                     type: :keyword
     indexes :schema_version,                 type: :keyword
     indexes :metadata_version,               type: :keyword
+    indexes :agency,                         type: :keyword
     indexes :source,                         type: :keyword
     indexes :prefix,                         type: :keyword
     indexes :suffix,                         type: :keyword
@@ -297,6 +297,7 @@ class Doi < ActiveRecord::Base
       "xml" => xml,
       "is_active" => is_active,
       "landing_page" => landing_page,
+      "agency" => agency,
       "aasm_state" => aasm_state,
       "schema_version" => schema_version,
       "metadata_version" => metadata_version,
@@ -526,7 +527,7 @@ class Doi < ActiveRecord::Base
   def update_url
     return nil if current_user.nil? || !is_registered_or_findable?
 
-    if %w(europ ethz).include?(provider_id) || %w(Crossref).include?(agency)
+    if %w(europ ethz crossref).include?(provider_id) || %w(Crossref).include?(agency)
       UrlJob.perform_later(doi)
     else
       HandleJob.perform_later(doi)

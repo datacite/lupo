@@ -396,7 +396,7 @@ class DoisController < ApplicationController
   def get_url
     authorize! :get_url, @doi
 
-    if !@doi.is_registered_or_findable? || %w(europ ethz).include?(@doi.provider_id) || %w(Crossref).include?(@doi.agency)
+    if !@doi.is_registered_or_findable? || %w(europ ethz crossref).include?(@doi.provider_id) || %w(Crossref).include?(@doi.agency)
       url = @doi.url
       head :no_content and return unless url.present?
     else
@@ -596,8 +596,8 @@ class DoisController < ApplicationController
 
     read_attrs_keys = [:url, :creators, :contributors, :titles, :publisher,
       :publicationYear, :types, :descriptions, :container, :sizes,
-      :formats, :language, :dates, :identifiers,
-      :relatedIdentifiers, :fundingReferences, :geoLocations, :rightsList,
+      :formats, :language, :dates, :identifiers, :relatedIdentifiers, 
+      :fundingReferences, :geoLocations, :rightsList, :agency,
       :subjects, :contentUrl, :schemaVersion]
 
     # merge attributes from xml into regular attributes

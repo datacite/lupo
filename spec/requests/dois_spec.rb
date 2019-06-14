@@ -939,6 +939,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("https://elifesciences.org/articles/01567")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.7554/elife.01567")
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
+        # expect(json.dig('data', 'attributes', 'agency')).to eq("Crossref")
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
      
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
