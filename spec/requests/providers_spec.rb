@@ -419,15 +419,10 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "country" => "GB" } } }
       end
 
-      it 'returns status code 422' do
-        post '/providers', params, headers
-
-        expect(last_response.status).to eq(422)
-      end
-
       it 'returns a validation failure message' do
         post '/providers', params, headers
 
+        expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq("source"=>"contact_email", "title"=>"Can't be blank")
       end
     end
@@ -469,13 +464,23 @@ describe "Providers", type: :request, elasticsearch: true  do
       it 'updates the record' do
         put "/providers/#{provider.symbol}", params, headers
 
+        expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'contactName')).to eq("timAus")
       end
+    end
 
-      it 'returns status code 200' do
+    context 'ror_id in wrong format' do
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "rorId" => "ror.org/05njkjr15" } } }
+      end
+
+      it 'raises error' do
         put "/providers/#{provider.symbol}", params, headers
 
-        expect(last_response.status).to eq(200)
+        expect(last_response.status).to eq(422)
+        expect(json["errors"].first).to eq("source" => "ror_id", "title" => "Ror id should be a url")
       end
     end
 
@@ -496,13 +501,8 @@ describe "Providers", type: :request, elasticsearch: true  do
       it 'updates the record' do
         put "/providers/#{provider.symbol}", params, headers
 
-        expect(json.dig('data', 'attributes', 'contactName')).to eq("timAus")
-      end
-
-      it 'returns status code 200' do
-        put "/providers/#{provider.symbol}", params, headers
-
         expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'contactName')).to eq("timAus")
       end
     end
 

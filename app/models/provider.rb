@@ -34,12 +34,12 @@ class Provider < ActiveRecord::Base
   validates_presence_of :symbol, :name, :contact_name, :contact_email
   validates_uniqueness_of :symbol, message: "This name has already been taken"
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, message: "contact_email should be an email"
-  validates_format_of :website, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be an url"
+  validates_format_of :website, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be a URL"
   validates_inclusion_of :role_name, :in => %w( ROLE_FOR_PROFIT_PROVIDER ROLE_CONTRACTUAL_PROVIDER ROLE_CONSORTIUM_LEAD ROLE_ALLOCATOR ROLE_MEMBER ROLE_REGISTRATION_AGENCY ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
   validates_inclusion_of :organization_type, :in => %w(nationalInstitution nationalLibrary academicInstitution academicLibrary researchInstitution governmentAgency publisher professionalSociety serviceProvider vendor), :message => "organization type %s is not included in the list", if: :organization_type?
   validates_inclusion_of :focus_area, :in => %w(biomedicalAndHealthSciences earthSciences humanities mathematicsAndComputerScience physicalSciencesAndEngineering socialSciences general), :message => "focus area %s is not included in the list", if: :focus_area?
   validate :freeze_symbol, :on => :update
-  validates_format_of :ror_id, :with => /\A(?:(http|https):\/\/)?(?:ror\.org\/)?(0\w{6}\d{2})\z/, if: :ror_id?
+  validates_format_of :ror_id, :with => /\A(http|https):\/\/ror\.org\/0\w{6}\d{2}\z/, if: :ror_id?, message: "ROR ID should be a URL"
   validates_format_of :twitter_handle, :with => /\A@[a-zA-Z0-9_]{1,15}\z/, if: :twitter_handle?
 
   # validates :technical_contact, contact: true
