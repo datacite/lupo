@@ -178,6 +178,8 @@ module Indexable
       elsif self.name == "Doi"
         must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
         must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
+        must << { term: { "client.repository_id": options[:repository_id].upcase }} if options[:repository_id].present?
+        must_not << { terms: { provider_id: ["crossref"] }} if options[:exclude_registration_agencies]
       elsif self.name == "Event"
         must << { term: { subj_id: options[:subj_id] }} if options[:subj_id].present?
         must << { term: { obj_id: options[:obj_id] }} if options[:obj_id].present?

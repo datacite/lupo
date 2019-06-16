@@ -52,7 +52,12 @@ class Repository
       subjects: message["subjects"],
       content_types: message["contentTypes"],
       provider_types: message["providerTypes"],
-      keywords: message["keywords"] }.compact
+      keywords: message["keywords"],
+      data_accesses: message["dataAccesses"],
+      data_uploads: message["dataUploads"],
+      pid_systems: message["pidSystems"],
+      apis: message["apis"],
+      software: message["software"] }.compact
   end
 
   def self.doi_from_url(url)
