@@ -823,15 +823,93 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
         expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
 
         doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10703")
       end
+    end
 
-      it 'sets state to findable' do
+    context 'when the request is valid random doi' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "prefix" => "10.14454",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "source" => "test",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      it 'creates a Doi' do
         post '/dois', valid_attributes, headers
 
+        expect(last_response.status).to eq(201)
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to start_with("10.14454")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+        expect(json.dig('data', 'attributes', 'creators')).to eq([{"familyName"=>"Fenner",
+          "givenName"=>"Martin",
+          "name"=>"Fenner, Martin",
+          "nameIdentifiers"=>
+            [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405",
+              "nameIdentifierScheme"=>"ORCID",
+              "schemeUri"=>"https://orcid.org"}],
+          "nameType"=>"Personal"}])
+        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig('data', 'attributes', 'source')).to eq("test")
+        expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
+        expect(doc.at_css("identifier").content).to start_with("10.14454")
+      end
+    end
+
+    context 'when the request is valid random doi with client prefix' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "source" => "test",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      it 'creates a Doi' do
+        post '/dois', valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to start_with("10.14454")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+        expect(json.dig('data', 'attributes', 'creators')).to eq([{"familyName"=>"Fenner",
+          "givenName"=>"Martin",
+          "name"=>"Fenner, Martin",
+          "nameIdentifiers"=>
+            [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405",
+              "nameIdentifierScheme"=>"ORCID",
+              "schemeUri"=>"https://orcid.org"}],
+          "nameType"=>"Personal"}])
+        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig('data', 'attributes', 'source')).to eq("test")
+        expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
+        expect(doc.at_css("identifier").content).to start_with("10.14454")
       end
     end
 
@@ -2171,7 +2249,7 @@ describe "dois", type: :request do
       get '/dois/random?prefix=10.14454', headers: headers
 
       expect(last_response.status).to eq(200)
-      expect(json['doi']).to start_with("10.14454")
+      expect(json['dois'].first).to start_with("10.14454")
     end
   end
 
@@ -2263,7 +2341,7 @@ describe "dois", type: :request do
       get "/dois/random?prefix=#{prefix.prefix}", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json['doi']).to start_with("10.14454")
+      expect(json['dois'].first).to start_with("10.14454")
     end
   end
 
@@ -2274,7 +2352,7 @@ describe "dois", type: :request do
       get "/dois/random?prefix=10.14454&number=#{number}", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json['doi']).to eq("10.14454/3mfp-6m52")
+      expect(json['dois'].first).to eq("10.14454/3mfp-6m52")
     end
   end
 

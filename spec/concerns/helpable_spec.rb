@@ -25,39 +25,47 @@ describe Doi, vcr: true do
     end
   end
 
-  context "generate_random_doi" do
+  context "generate_random_dois" do
     it 'should generate' do
-      str = "10.5072"
-      expect(subject.generate_random_doi(str).length).to eq(17)
+      str = "10.14454"
+      expect(subject.generate_random_dois(str).first.length).to eq(18)
+    end
+
+    it 'should generate multiple' do
+      str = "10.14454"
+      size = 10
+      dois = subject.generate_random_dois(str, size: size)
+      expect(dois.length).to eq(10)
+      expect(dois.first).to start_with("10.14454")
     end
 
     it 'should generate with seed' do
-      str = "10.5072"
+      str = "10.14454"
       number = 123456
-      expect(subject.generate_random_doi(str, number: number)).to eq("10.5072/003r-j076")
+      expect(subject.generate_random_dois(str, number: number)).to eq(["10.14454/003r-j076"])
     end
 
     it 'should generate with seed checksum' do
-      str = "10.5072"
+      str = "10.14454"
       number = 1234578
-      expect(subject.generate_random_doi(str, number: number)).to eq("10.5072/015n-mj18")
+      expect(subject.generate_random_dois(str, number: number)).to eq(["10.14454/015n-mj18"])
     end
 
     it 'should generate with another seed checksum' do
-      str = "10.5072"
+      str = "10.14454"
       number = 1234579
-      expect(subject.generate_random_doi(str, number: number)).to eq("10.5072/015n-mk15")
+      expect(subject.generate_random_dois(str, number: number)).to eq(["10.14454/015n-mk15"])
     end
 
     it 'should generate with shoulder' do
-      str = "10.5072/fk2"
+      str = "10.14454/fk2"
       number = 123456
-      expect(subject.generate_random_doi(str, number: number)).to eq("10.5072/fk2-003r-j076")
+      expect(subject.generate_random_dois(str, number: number)).to eq(["10.14454/fk2-003r-j076"])
     end
 
     it 'should not generate if not DOI prefix' do
       str = "20.5438"
-      expect { subject.generate_random_doi(str) }.to raise_error(IdentifierError, "No valid prefix found")
+      expect { subject.generate_random_dois(str) }.to raise_error(IdentifierError, "No valid prefix found")
     end
   end
 

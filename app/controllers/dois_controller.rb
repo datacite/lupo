@@ -386,8 +386,8 @@ class DoisController < ApplicationController
 
   def random
     if params[:prefix].present?
-      doi = generate_random_doi(params[:prefix], number: params[:number])
-      render json: { doi: doi }.to_json
+      dois = generate_random_dois(params[:prefix], number: params[:number], size: params[:size])
+      render json: { dois: dois }.to_json
     else
       render json: { errors: [{ status: "422", title: "Parameter prefix is required" }] }.to_json, status: :unprocessable_entity
     end
@@ -583,6 +583,15 @@ class DoisController < ApplicationController
       p[:formats], p[:version], p[:language], p[:dates], p[:identifiers],
       p[:relatedIdentifiers], p[:fundingReferences], p[:geoLocations], p[:rightsList],
       p[:subjects], p[:contentUrl], p[:schemaVersion]].compact
+
+    # generate random DOI if no DOI is provided
+    if p[:doi].blank? && p[:prefix].present?
+      p[:doi] = generate_random_dois(p[:prefix]).first
+    elsif p[:doi].blank? && client_id.present?
+      client = Client.where('datacentre.symbol = ?', client_id).first
+      client_prefix = client.client_prefixes.joins(:prefix).first
+      p[:doi] = generate_random_dois(client_prefix.prefix.prefix).first if client_prefix
+    end
 
     # replace DOI, but otherwise don't touch the XML
     # use Array.wrap(read_attrs.first) as read_attrs may also be [[]]

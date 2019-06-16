@@ -247,7 +247,7 @@ GEM
       tilt
     hamster (3.0.0)
       concurrent-ruby (~> 1.0)
-    hashdiff (0.4.0)
+    hashdiff (1.0.0.beta1)
     hashie (3.6.0)
     htmlentities (4.3.4)
     http-cookie (1.0.3)
@@ -569,6 +569,7 @@ DEPENDENCIES
   graphql-batch (~> 0.4.0)
   graphql-cache (~> 0.6.0)!
   graphql-errors (~> 0.3.0)
+  hashdiff (>= 1.0.0.beta1, < 2.0.0)
   iso8601 (~> 0.9.0)
   json (~> 1.8, >= 1.8.5)
   jsonlint (~> 0.2.0)

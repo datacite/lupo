@@ -83,6 +83,7 @@ end
 group :test do
   gem 'capybara'
   gem 'webmock', '~> 3.1'
+  gem 'hashdiff', ['>= 1.0.0.beta1', '< 2.0.0']
   gem 'vcr', '~> 3.0.3'
   gem 'codeclimate-test-reporter', '~> 1.0', '>= 1.0.8'
   gem 'factory_bot_rails', '~> 4.8', '>= 4.8.2'
