@@ -99,165 +99,200 @@ class Doi < ActiveRecord::Base
   # use different index for testing
   index_name Rails.env.test? ? "dois-test" : "dois"
 
-  mapping dynamic: 'false' do
-    indexes :id,                             type: :keyword
-    indexes :uid,                            type: :keyword
-    indexes :doi,                            type: :keyword
-    indexes :identifier,                     type: :keyword
-    indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
-    indexes :creators,                       type: :object, properties: {
-      nameType: { type: :keyword },
-      nameIdentifiers: { type: :object, properties: {
-        nameIdentifier: { type: :keyword },
-        nameIdentifierScheme: { type: :keyword },
-        schemeUri: { type: :keyword }
-      }},
-      name: { type: :text },
-      givenName: { type: :text },
-      familyName: { type: :text },
-      affiliation: { type: :text }
+  settings index: {
+    analysis: {
+      analyzer: {
+        string_lowercase: { tokenizer: 'keyword', filter: %w(lowercase ascii_folding) }
+      },
+      normalizer: {
+        keyword_lowercase: { type: "custom", filter: %w(lowercase) }
+      },
+      filter: { 
+        ascii_folding: { type: 'asciifolding', preserve_original: true } 
+      }
     }
-    indexes :contributors,                   type: :object, properties: {
-      nameType: { type: :keyword },
-      nameIdentifiers: { type: :object, properties: {
-        nameIdentifier: { type: :keyword },
-        nameIdentifierScheme: { type: :keyword },
-        schemeUri: { type: :keyword }
-      }},
-      name: { type: :text },
-      givenName: { type: :text },
-      familyName: { type: :text },
-      affiliation: { type: :text },
-      contributorType: { type: :keyword }
-    }
-    indexes :creator_names,                  type: :text
-    indexes :titles,                         type: :object, properties: {
-      title: { type: :text, fields: { keyword: { type: "keyword" }}},
-      titleType: { type: :keyword },
-      lang: { type: :keyword }
-    }
-    indexes :descriptions,                   type: :object, properties: {
-      description: { type: :text },
-      descriptionType: { type: :keyword },
-      lang: { type: :keyword }
-    }
-    indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" }}
-    indexes :publication_year,               type: :date, format: "yyyy", ignore_malformed: true
-    indexes :client_id,                      type: :keyword
-    indexes :provider_id,                    type: :keyword
-    indexes :resource_type_id,               type: :keyword
-    indexes :media_ids,                      type: :keyword
-    indexes :media,                          type: :object, properties: {
-      type: { type: :keyword },
-      id: { type: :keyword },
-      uid: { type: :keyword },
-      url: { type: :text },
-      media_type: { type: :keyword },
-      version: { type: :keyword },
-      created: { type: :date, ignore_malformed: true },
-      updated: { type: :date, ignore_malformed: true }
-    }
-    indexes :identifiers,                    type: :object, properties: {
-      identifierType: { type: :keyword },
-      identifier: { type: :keyword }
-    }
-    indexes :related_identifiers,            type: :object, properties: {
-      relatedIdentifierType: { type: :keyword },
-      relatedIdentifier: { type: :keyword },
-      relationType: { type: :keyword },
-      relatedMetadataScheme: { type: :keyword },
-      schemeUri: { type: :keyword },
-      schemeType: { type: :keyword },
-      resourceTypeGeneral: { type: :keyword }
-    }
-    indexes :types,                          type: :object, properties: {
-      resourceTypeGeneral: { type: :keyword },
-      resourceType: { type: :keyword },
-      schemaOrg: { type: :keyword },
-      bibtex: { type: :keyword },
-      citeproc: { type: :keyword },
-      ris: { type: :keyword }
-    }
-    indexes :funding_references,             type: :object, properties: {
-      funderName: { type: :keyword },
-      funderIdentifier: { type: :keyword },
-      funderIdentifierType: { type: :keyword },
-      awardNumber: { type: :keyword },
-      awardUri: { type: :keyword },
-      awardTitle: { type: :keyword }
-    }
-    indexes :dates,                          type: :object, properties: {
-      date: { type: :date, format: "date_optional_time", ignore_malformed: true, fields: { raw: { type: :text }} },
-      dateType: { type: :keyword }
-    }
-    indexes :geo_locations,                  type: :object, properties: {
-      geoLocationPoint: { type: :object },
-      geoLocationBox: { type: :object },
-      geoLocationPlace: { type: :keyword }
-    }
-    indexes :rights_list,                    type: :object, properties: {
-      rights: { type: :keyword },
-      rightsUri: { type: :keyword },
-      lang: { type: :keyword }
-    }
-    indexes :subjects,                       type: :object, properties: {
-      subject: { type: :keyword },
-      subjectScheme: { type: :keyword },
-      schemeUri: { type: :keyword },
-      valueUri: { type: :keyword },
-      lang: { type: :keyword }
-    }
-    indexes :container,                     type: :object, properties: {
-      type: { type: :keyword },
-      identifier: { type: :keyword },
-      identifierType: { type: :keyword },
-      title: { type: :keyword },
-      volume: { type: :keyword },
-      issue: { type: :keyword },
-      firstPage: { type: :keyword },
-      lastPage: { type: :keyword }
-    }
+  } do 
+    mapping dynamic: 'false' do
+      indexes :id,                             type: :keyword
+      indexes :uid,                            type: :keyword
+      indexes :doi,                            type: :keyword
+      indexes :identifier,                     type: :keyword
+      indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
+      indexes :creators,                       type: :object, properties: {
+        nameType: { type: :keyword },
+        nameIdentifiers: { type: :object, properties: {
+          nameIdentifier: { type: :keyword },
+          nameIdentifierScheme: { type: :keyword },
+          schemeUri: { type: :keyword }
+        }},
+        name: { type: :text },
+        givenName: { type: :text },
+        familyName: { type: :text },
+        affiliation: { type: :text }
+      }
+      indexes :contributors,                   type: :object, properties: {
+        nameType: { type: :keyword },
+        nameIdentifiers: { type: :object, properties: {
+          nameIdentifier: { type: :keyword },
+          nameIdentifierScheme: { type: :keyword },
+          schemeUri: { type: :keyword }
+        }},
+        name: { type: :text },
+        givenName: { type: :text },
+        familyName: { type: :text },
+        affiliation: { type: :text },
+        contributorType: { type: :keyword }
+      }
+      indexes :creator_names,                  type: :text
+      indexes :titles,                         type: :object, properties: {
+        title: { type: :text, fields: { keyword: { type: "keyword" }}},
+        titleType: { type: :keyword },
+        lang: { type: :keyword }
+      }
+      indexes :descriptions,                   type: :object, properties: {
+        description: { type: :text },
+        descriptionType: { type: :keyword },
+        lang: { type: :keyword }
+      }
+      indexes :publisher,                      type: :text, fields: { keyword: { type: "keyword" }}
+      indexes :publication_year,               type: :date, format: "yyyy", ignore_malformed: true
+      indexes :client_id,                      type: :keyword
+      indexes :provider_id,                    type: :keyword
+      indexes :resource_type_id,               type: :keyword
+      indexes :media_ids,                      type: :keyword
+      indexes :media,                          type: :object, properties: {
+        type: { type: :keyword },
+        id: { type: :keyword },
+        uid: { type: :keyword },
+        url: { type: :text },
+        media_type: { type: :keyword },
+        version: { type: :keyword },
+        created: { type: :date, ignore_malformed: true },
+        updated: { type: :date, ignore_malformed: true }
+      }
+      indexes :identifiers,                    type: :object, properties: {
+        identifierType: { type: :keyword },
+        identifier: { type: :keyword }
+      }
+      indexes :related_identifiers,            type: :object, properties: {
+        relatedIdentifierType: { type: :keyword },
+        relatedIdentifier: { type: :keyword },
+        relationType: { type: :keyword },
+        relatedMetadataScheme: { type: :keyword },
+        schemeUri: { type: :keyword },
+        schemeType: { type: :keyword },
+        resourceTypeGeneral: { type: :keyword }
+      }
+      indexes :types,                          type: :object, properties: {
+        resourceTypeGeneral: { type: :keyword },
+        resourceType: { type: :keyword },
+        schemaOrg: { type: :keyword },
+        bibtex: { type: :keyword },
+        citeproc: { type: :keyword },
+        ris: { type: :keyword }
+      }
+      indexes :funding_references,             type: :object, properties: {
+        funderName: { type: :keyword },
+        funderIdentifier: { type: :keyword },
+        funderIdentifierType: { type: :keyword },
+        awardNumber: { type: :keyword },
+        awardUri: { type: :keyword },
+        awardTitle: { type: :keyword }
+      }
+      indexes :dates,                          type: :object, properties: {
+        date: { type: :date, format: "date_optional_time", ignore_malformed: true, fields: { raw: { type: :text }} },
+        dateType: { type: :keyword }
+      }
+      indexes :geo_locations,                  type: :object, properties: {
+        geoLocationPoint: { type: :object },
+        geoLocationBox: { type: :object },
+        geoLocationPlace: { type: :keyword }
+      }
+      indexes :rights_list,                    type: :object, properties: {
+        rights: { type: :keyword },
+        rightsUri: { type: :keyword },
+        lang: { type: :keyword }
+      }
+      indexes :subjects,                       type: :object, properties: {
+        subject: { type: :keyword },
+        subjectScheme: { type: :keyword },
+        schemeUri: { type: :keyword },
+        valueUri: { type: :keyword },
+        lang: { type: :keyword }
+      }
+      indexes :container,                     type: :object, properties: {
+        type: { type: :keyword },
+        identifier: { type: :keyword },
+        identifierType: { type: :keyword },
+        title: { type: :keyword },
+        volume: { type: :keyword },
+        issue: { type: :keyword },
+        firstPage: { type: :keyword },
+        lastPage: { type: :keyword }
+      }
 
-    indexes :xml,                            type: :text, index: "false"
-    indexes :content_url,                    type: :keyword
-    indexes :version_info,                   type: :keyword
-    indexes :formats,                        type: :keyword
-    indexes :sizes,                          type: :keyword
-    indexes :language,                       type: :keyword
-    indexes :is_active,                      type: :keyword
-    indexes :aasm_state,                     type: :keyword
-    indexes :schema_version,                 type: :keyword
-    indexes :metadata_version,               type: :keyword
-    indexes :agency,                         type: :keyword
-    indexes :source,                         type: :keyword
-    indexes :prefix,                         type: :keyword
-    indexes :suffix,                         type: :keyword
-    indexes :reason,                         type: :text
-    indexes :landing_page, type: :object, properties: {
-      checked: { type: :date, ignore_malformed: true },
-      url: { type: :text, fields: { keyword: { type: "keyword" }}},
-      status: { type: :integer },
-      contentType: { type: :keyword },
-      error: { type: :keyword },
-      redirectCount: { type: :integer },
-      redirectUrls: { type: :keyword },
-      downloadLatency: { type: :scaled_float, scaling_factor: 100 },
-      hasSchemaOrg: { type: :boolean },
-      schemaOrgId: { type: :keyword },
-      dcIdentifier: { type: :keyword },
-      citationDoi: { type: :keyword },
-      bodyHasPid: { type: :boolean }
-    }
-    indexes :cache_key,                      type: :keyword
-    indexes :registered,                     type: :date, ignore_malformed: true
-    indexes :published,                      type: :date, ignore_malformed: true
-    indexes :created,                        type: :date, ignore_malformed: true
-    indexes :updated,                        type: :date, ignore_malformed: true
+      indexes :xml,                            type: :text, index: "false"
+      indexes :content_url,                    type: :keyword
+      indexes :version_info,                   type: :keyword
+      indexes :formats,                        type: :keyword
+      indexes :sizes,                          type: :keyword
+      indexes :language,                       type: :keyword
+      indexes :is_active,                      type: :keyword
+      indexes :aasm_state,                     type: :keyword
+      indexes :schema_version,                 type: :keyword
+      indexes :metadata_version,               type: :keyword
+      indexes :agency,                         type: :keyword
+      indexes :source,                         type: :keyword
+      indexes :prefix,                         type: :keyword
+      indexes :suffix,                         type: :keyword
+      indexes :reason,                         type: :text
+      indexes :landing_page, type: :object, properties: {
+        checked: { type: :date, ignore_malformed: true },
+        url: { type: :text, fields: { keyword: { type: "keyword" }}},
+        status: { type: :integer },
+        contentType: { type: :keyword },
+        error: { type: :keyword },
+        redirectCount: { type: :integer },
+        redirectUrls: { type: :keyword },
+        downloadLatency: { type: :scaled_float, scaling_factor: 100 },
+        hasSchemaOrg: { type: :boolean },
+        schemaOrgId: { type: :keyword },
+        dcIdentifier: { type: :keyword },
+        citationDoi: { type: :keyword },
+        bodyHasPid: { type: :boolean }
+      }
+      indexes :cache_key,                      type: :keyword
+      indexes :registered,                     type: :date, ignore_malformed: true
+      indexes :published,                      type: :date, ignore_malformed: true
+      indexes :created,                        type: :date, ignore_malformed: true
+      indexes :updated,                        type: :date, ignore_malformed: true
 
-    # include parent objects
-    indexes :client,                         type: :object
-    indexes :provider,                       type: :object
-    indexes :resource_type,                  type: :object
+      # include parent objects
+      indexes :client,                         type: :object, properties: {
+        id: { type: :keyword },
+        symbol: { type: :keyword },
+        provider_id: { type: :keyword },
+        repository_id: { type: :keyword },
+        prefix_ids: { type: :keyword },
+        name: { type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }} },
+        description: { type: :text },
+        contact_name: { type: :text },
+        contact_email: { type: :text, fields: { keyword: { type: "keyword" }} },
+        version: { type: :integer },
+        is_active: { type: :keyword },
+        domains: { type: :text },
+        year: { type: :integer },
+        url: { type: :text, fields: { keyword: { type: "keyword" }} },
+        software: { type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }} },
+        cache_key: { type: :keyword },
+        created: { type: :date },
+        updated: { type: :date },
+        deleted_at: { type: :date },
+        cumulative_years: { type: :integer, index: "false" }
+      }
+      indexes :provider,                       type: :object
+      indexes :resource_type,                  type: :object
+    end
   end
 
   def as_indexed_json(options={})

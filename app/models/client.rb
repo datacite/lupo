@@ -80,7 +80,6 @@ class Client < ActiveRecord::Base
       indexes :description,   type: :text
       indexes :contact_name,  type: :text
       indexes :contact_email, type: :text, fields: { keyword: { type: "keyword" }}
-      indexes :re3data,       type: :keyword
       indexes :version,       type: :integer
       indexes :is_active,     type: :keyword
       indexes :domains,       type: :text

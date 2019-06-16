@@ -173,12 +173,13 @@ module Indexable
       elsif self.name == "Client"
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { terms: { "software.raw" => options[:software].split(",") }} if options[:software].present?
+        must << { term: { repository_id: options[:repository_id].gsub("/", '\/') }} if options[:repository_id].present?
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
         must_not << { terms: { provider_id: ["crossref"] }} if options[:exclude_registration_agencies]
       elsif self.name == "Doi"
         must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
         must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
-        must << { term: { "client.repository_id": options[:repository_id].upcase }} if options[:repository_id].present?
+        must << { term: { "client.repository_id" => options[:repository_id].upcase.gsub("/", '\/') }} if options[:repository_id].present?
         must_not << { terms: { provider_id: ["crossref"] }} if options[:exclude_registration_agencies]
       elsif self.name == "Event"
         must << { term: { subj_id: options[:subj_id] }} if options[:subj_id].present?

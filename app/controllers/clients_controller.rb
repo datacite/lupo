@@ -25,7 +25,13 @@ class ClientsController < ApplicationController
     elsif params[:ids].present?
       response = Client.find_by_id(params[:ids], page: page, sort: sort)
     else
-      response = Client.query(params[:query], year: params[:year], provider_id: params[:provider_id], software: params[:software], page: page, sort: sort)
+      response = Client.query(params[:query], 
+        year: params[:year], 
+        provider_id: params[:provider_id],
+        repository_id: params[:repository_id],
+        software: params[:software], 
+        page: page, 
+        sort: sort)
     end
 
     begin
