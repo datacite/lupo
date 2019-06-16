@@ -5,7 +5,7 @@ class ClientSerializer
   set_id :uid
   cache_options enabled: true, cache_length: 24.hours
   
-  attributes :name, :symbol, :re3data, :year, :contact_name, :contact_email, :description, :domains, :url, :created, :updated
+  attributes :name, :symbol, :year, :contact_name, :contact_email, :description, :domains, :url, :created, :updated
 
   belongs_to :provider, record_type: :providers
   belongs_to :repository, record_type: :repositories, if: Proc.new { |client| client.repository_id }
