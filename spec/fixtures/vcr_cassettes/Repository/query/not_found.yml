@@ -1,0 +1,46 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.datacite.org/repositories?query=xxx
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.2.1; +https://github.com/datacite/maremma)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 16 Jun 2019 10:12:27 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Origin
+      Etag:
+      - W/"25238a8876f26f0b17aa45c052954e12"
+      X-Runtime:
+      - '0.077595'
+      X-Request-Id:
+      - 8ae60cf5-b6fb-43ea-bbb1-effdce8d1258
+      X-Powered-By:
+      - Phusion Passenger 5.2.3
+      Server:
+      - nginx/1.12.2 + Phusion Passenger 5.2.3
+    body:
+      encoding: ASCII-8BIT
+      string: '{"data":[],"meta":{"total":0,"totalPages":0,"page":1},"links":{"self":"https://api.datacite.org/repositories?query=xxx"}}'
+    http_version: 
+  recorded_at: Sun, 16 Jun 2019 10:12:27 GMT
+recorded_with: VCR 3.0.3
