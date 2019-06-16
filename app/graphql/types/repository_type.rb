@@ -12,6 +12,7 @@ class RepositoryType < BaseObject
   field :description, String, null: true, description: "Repository description"
   field :certificates, [TextType], null: true, description: "Repository certificates"
   field :subjects, [SchemeType], null: true, description: "Subjects"
+  field :types, [TextType], null: true, description: "Repository types"
   field :content_types, [SchemeType], null: true, description: "Content types"
   field :provider_types, [TextType], null: true, description: "Provider types"
   field :keywords, [TextType], null: true, description: "Keywords"
@@ -37,8 +38,6 @@ class RepositoryType < BaseObject
   end
 
   def datasets(**args)
-    logger = Logger.new(STDOUT)
-    logger.info doi_from_url(object[:id])
     Doi.query(args[:query], repository_id: doi_from_url(object[:id]), resource_type_id: "Dataset", page: { number: 1, size: args[:first] }).results.to_a
   end
 

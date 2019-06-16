@@ -17,13 +17,21 @@ class Repository
   end
 
   def self.query(query, options={})
-    # rows = options[:limit] || 25
+    limit ||= 25
+    page ||= 1
 
-    if query.present?
-      url = "https://api.datacite.org/repositories?query=#{query}"
-    else
-      url = "https://api.datacite.org/repositories"
-    end
+    params = {
+      query: query,
+      subject: options[:subject],
+      open: options[:open], 
+      certified: options[:certified],
+      pid: options[:pid],
+      software: options[:software],
+      disciplinary: options[:disciplinary],
+      "page[size]" => limit,
+      "page[number]" => page }.compact
+
+    url = "https://api.datacite.org/repositories?" + URI.encode_www_form(params)
 
     response = Maremma.get(url, host: true)
 
