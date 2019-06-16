@@ -119,7 +119,7 @@ class QueryType < BaseObject
     argument :certified, Boolean, required: false
     argument :disciplinary, Boolean, required: false
     argument :software, String, required: false
-    argument :subject, String, required: false
+    argument :subject, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
