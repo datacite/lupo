@@ -424,7 +424,7 @@ class DoisController < ApplicationController
     authorize! :get_urls, Doi
 
     client = Client.where('datacentre.symbol = ?', current_user.uid.upcase).first
-    client_prefix = client.prefixes.where.not('prefix.prefix = ?', "10.5072").first
+    client_prefix = client.prefixes.first
     head :no_content and return unless client_prefix.present?
 
     dois = Doi.get_dois(prefix: client_prefix.prefix, username: current_user.uid.upcase, password: current_user.password)
@@ -588,10 +588,6 @@ class DoisController < ApplicationController
     # generate random DOI if no DOI is provided
     if p[:doi].blank? && p[:prefix].present?
       p[:doi] = generate_random_dois(p[:prefix]).first
-    elsif p[:doi].blank? && client_id.present?
-      client = Client.where('datacentre.symbol = ?', client_id).first
-      client_prefix = client.client_prefixes.joins(:prefix).first
-      p[:doi] = generate_random_dois(client_prefix.prefix.prefix).first if client_prefix
     end
 
     # replace DOI, but otherwise don't touch the XML
