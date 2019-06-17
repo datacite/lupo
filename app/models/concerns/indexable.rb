@@ -106,6 +106,10 @@ module Indexable
         from = 0
         search_after = [options.dig(:page, :cursor)]
         sort = [{ _id: { order: 'asc' }}]
+      elsif self.name == "Event" && options.dig(:page, :cursor).present?
+        from = 0
+        search_after = [options.dig(:page, :cursor)]
+        sort = [{ _id: { order: 'asc' }}]
       elsif self.name == "Activity" && options.dig(:page, :cursor).present?
         from = 0
         search_after = [options.dig(:page, :cursor)]

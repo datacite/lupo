@@ -14,13 +14,13 @@ class UrlJob < ActiveJob::Base
       response = Doi.get_doi(doi: doi.doi)
       url = response.body.dig('data', 'values', 0, 'data', 'value')
       if url.present?
-        if (doi.is_registered_or_findable? || %w(europ ethz).include?(doi.provider_id)) && doi.minted.blank?
+        if (doi.is_registered_or_findable? || %w(europ ethz crossref).include?(doi.provider_id)) && doi.minted.blank?
           doi.update_attributes(url: url, minted: Time.zone.now)
         else
           doi.update_attributes(url: url)
         end
 
-        doi.update_attributes(aasm_state: "findable") if %w(europ ethz).include?(doi.provider_id)
+        doi.update_attributes(aasm_state: "findable") if %w(europ ethz crossref).include?(doi.provider_id)
 
         doi.__elasticsearch__.index_document
 

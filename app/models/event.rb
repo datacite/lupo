@@ -5,6 +5,9 @@ class Event < ActiveRecord::Base
   # include event processing
   include Processable
 
+  # include helper methods for models
+  include Modelable
+
   # include doi normalization
   include Identifiable
 
@@ -340,6 +343,76 @@ class Event < ActiveRecord::Base
     logger.info "[Elasticsearch] Imported #{count} events with IDs #{id} - #{(id + 499)}."
   end
 
+  def self.update_crossref(options={})
+    logger = Logger.new(STDOUT)
+
+    size = (options[:size] || 1000).to_i
+
+    response = Event.query(nil, source_id: "crossref", page: { size: 1, cursor: 0 })
+    logger.info "[Update] #{response.results.total} events for source crossref."
+
+    if response.results.total > 0
+      # walk through results using cursor
+      cursor = 0
+
+      while response.results.results.length > 0 do
+        response = Event.query(nil, source_id: "crossref", page: { size: size, cursor: cursor })
+        break unless response.results.results.length > 0
+
+        logger.info "[Update] Updating #{response.results.results.length} crossref events starting with _id #{cursor + 1}."
+        cursor = response.results.to_a.last[:sort].first.to_i
+
+        response.results.results.each do |e|
+          CrossrefDoiJob.perform_later(e.subj_id)
+        end
+      end
+    end
+
+    response.results.total
+  end
+
+  def self.update_datacite_crossref(options={})
+    logger = Logger.new(STDOUT)
+
+    size = (options[:size] || 1000).to_i
+
+    response = Event.query(nil, source_id: "datacite_crossref", page: { size: 1, cursor: 0 })
+    logger.info "[Update] #{response.results.total} events for source datacite_crossref."
+
+    if response.results.total > 0
+      # walk through results using cursor
+      cursor = 0
+
+      while response.results.results.length > 0 do
+        response = Event.query(nil, source_id: "crossref", page: { size: size, cursor: cursor })
+        break unless response.results.results.length > 0
+
+        logger.info "[Update] Updating #{response.results.results.length} datacite_crossref events starting with _id #{cursor + 1}."
+        cursor = response.results.to_a.last[:sort].first.to_i
+
+        response.results.results.each do |e|
+          CrossrefDoiJob.perform_later(e.obj_id)
+        end
+      end
+    end
+
+    response.results.total
+  end
+
+  def self.get_crossref_metadata(id)
+    doi = doi_from_url(id)
+    return {} unless doi.present?
+
+    # check whether DOI has been registered with DataCite already
+    result = Doi.find_by_id(doi).results.first
+    if result.blank?
+      # otherwise store Crossref metadata with DataCite 
+      # using client crossref.citations and DataCite XML
+      xml = Base64.strict_encode64(id)
+      Doi.create({ xml: xml, source: "levriero", event: "publish", client_id: "crossref.citations" }, :without_protection => true)
+    end
+  end
+
   def to_param  # overridden, use uuid instead of id
     uuid
   end
@@ -356,6 +429,7 @@ class Event < ActiveRecord::Base
                "timestamp" => timestamp }}
     Maremma.post(callback, data: data.to_json, token: ENV['API_KEY'])
   end
+
   def access_method
     if relation_type_id.to_s =~ /(requests|investigations)/
       relation_type_id.split("-").last if relation_type_id.present?
