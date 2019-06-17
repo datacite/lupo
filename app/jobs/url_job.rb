@@ -11,7 +11,7 @@ class UrlJob < ActiveJob::Base
     doi = Doi.where(doi: doi_id).first
 
     if doi.present?
-      response = Doi.get_doi(doi: doi.doi)
+      response = Doi.get_doi(doi: doi.doi, agency: doi.agency)
       url = response.body.dig('data', 'values', 0, 'data', 'value')
       if url.present?
         if (doi.is_registered_or_findable? || %w(europ ethz crossref).include?(doi.provider_id)) && doi.minted.blank?
