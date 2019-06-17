@@ -550,7 +550,7 @@ class Doi < ActiveRecord::Base
   # end
 
   def is_registered_or_findable?
-    %w(registered findable).include?(aasm_state)
+    %w(registered findable).include?(aasm_state) || agency != "DataCite"
   end
 
   def validatable?
