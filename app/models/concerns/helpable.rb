@@ -154,12 +154,12 @@ module Helpable
     def get_doi(options={})
       return OpenStruct.new(body: { "errors" => [{ "title" => "DOI missing" }] }) unless options[:doi].present?
 
-      url = (Rails.env.production? || options[:agency] == "Crossref") ? "https://doi.org" : "https://handle.test.datacite.org"
-      url += "/#{options[:doi]}"
-      response = Maremma.get(url, ssl_self_signed: true, timeout: 10)
+      url = Rails.env.production? ? "https://doi.org" : "https://handle.test.datacite.org"
+      url += "/api/handles/#{options[:doi]}"
+      response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
 
       if response.status == 200
-        response.headers[:location]
+        response
       else
         text = "Error " + response.body["errors"].inspect
 

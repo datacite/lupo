@@ -560,9 +560,9 @@ class Doi < ActiveRecord::Base
   # update URL in handle system for registered and findable state
   # providers europ and ethz do their own handle registration, so fetch url from handle system instead
   def update_url
-    return nil if current_user.nil? || !is_registered_or_findable?
+    return nil if current_user.nil? || !is_registered_or_findable? || %w(Crossref).include?(agency)
 
-    if %w(europ ethz crossref).include?(provider_id) || %w(Crossref).include?(agency)
+    if %w(europ ethz).include?(provider_id)
       UrlJob.perform_later(doi)
     else
       HandleJob.perform_later(doi)
