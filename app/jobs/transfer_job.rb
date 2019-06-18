@@ -1,5 +1,5 @@
 class TransferJob < ActiveJob::Base
-  queue_as :lupo_background
+  queue_as :lupo_transfer
 
   # retry_on ActiveRecord::RecordNotFound, wait: 10.seconds, attempts: 3
   # retry_on Faraday::TimeoutError, wait: 10.minutes, attempts: 3
