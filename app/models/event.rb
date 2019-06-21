@@ -85,7 +85,7 @@ class Event < ActiveRecord::Base
     indexes :subj_id,          type: :keyword
     indexes :obj_id,           type: :keyword
     indexes :doi,              type: :keyword
-    indexes :dois,             type: :keyword
+    #indexes :dois,             type: :keyword
     indexes :orcid,            type: :keyword
     indexes :prefix,           type: :keyword
     indexes :subtype,          type: :keyword
@@ -96,6 +96,7 @@ class Event < ActiveRecord::Base
       id: { type: :keyword },
       uid: { type: :keyword },
       proxyIdentifiers: { type: :keyword },
+      datePublished: { type: :date, format: "date_optional_time||yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true },
       registrantId: { type: :keyword },
       cache_key: { type: :keyword }
     }
@@ -104,6 +105,7 @@ class Event < ActiveRecord::Base
       id: { type: :keyword },
       uid: { type: :keyword },
       proxyIdentifiers: { type: :keyword },
+      datePublished: { type: :date, format: "date_optional_time||yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true },
       registrantId: { type: :keyword },
       cache_key: { type: :keyword }
     }
@@ -136,7 +138,7 @@ class Event < ActiveRecord::Base
       "subj" => subj.merge(cache_key: subj_cache_key),
       "obj" => obj.merge(cache_key: obj_cache_key),
       "doi" => doi,
-      "dois" => dois,
+      #"dois" => dois,
       "orcid" => orcid,
       "issn" => issn,
       "prefix" => prefix,
@@ -387,9 +389,9 @@ class Event < ActiveRecord::Base
     [doi_from_url(subj_id), doi_from_url(obj_id)].compact
   end
 
-  def dois
-    Doi.query(nil, doi: doi.map(&:upcase)).results
-  end
+  # def dois
+  #   Doi.query(nil, doi: doi.map(&:upcase)).results
+  # end
 
   def prefix
     [doi.map { |d| d.to_s.split('/', 2).first }].compact
