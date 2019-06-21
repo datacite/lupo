@@ -66,7 +66,7 @@ describe "/events", type: :request, elasticsearch: true do
         expect(last_response.status).to eq(201)
         expect(json["errors"]).to be_nil
         expect(json.dig("data", "id")).to eq(event.uuid)
-        expect(json.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
+        expect(json.dig("data", "relationships", "dois", "data")).to eq([{"id"=>"10.1371/journal.pmed.0030186", "type"=>"dois"}])
       end
     end
 
@@ -228,7 +228,7 @@ describe "/events", type: :request, elasticsearch: true do
         expect(last_response.status).to eq(200)
         expect(json["errors"]).to be_nil
         expect(json.dig("data", "id")).to eq(event.uuid)
-        expect(json.dig("data", "relationships", "subj", "data")).to eq("id" => event.subj_id, "type"=>"objects")
+        expect(json.dig("data", "relationships", "dois", "data")).to eq([{"id"=>"10.1371/journal.pmed.0030186", "type"=>"dois"}])
       end
     end
   end
@@ -254,7 +254,7 @@ describe "/events", type: :request, elasticsearch: true do
         expect(last_response.status).to eq(201)
         expect(json["errors"]).to be_nil
         expect(json.dig("data", "id")).to eq(event.uuid)
-        expect(json.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
+        expect(json.dig("data", "relationships", "dois", "data")).to eq([{"id"=>"10.1371/journal.pmed.0030186", "type"=>"dois"}])
       end
     end
 
@@ -390,7 +390,7 @@ describe "/events", type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(200)
         expect(json["errors"]).to be_nil
-        expect(json.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
+        expect(json.dig("data", "relationships", "dois", "data")).to eq([{"id"=>"10.1371/journal.pmed.0030186", "type"=>"dois"}])
       end
     end
   end
@@ -417,7 +417,7 @@ describe "/events", type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(200)
         expect(json["errors"]).to be_nil
-        expect(json.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
+        expect(json.dig("data", "relationships", "dois", "data")).to eq([{"id"=>"10.1371/journal.pmed.0030186", "type"=>"dois"}])
       end
     end
 

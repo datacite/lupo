@@ -1377,8 +1377,8 @@ describe "dois", type: :request do
       end
     end
 
-    context 'state change with test prefix' do
-      let(:prefix) { create(:prefix, prefix: "10.5072") }
+    context 'draft doi no url' do
+      let(:prefix) { create(:prefix, prefix: "10.14454") }
       let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
 
       let(:valid_attributes) do
@@ -1386,9 +1386,7 @@ describe "dois", type: :request do
           "data" => {
             "type" => "dois",
             "attributes" => {
-              "doi" => "10.5072/10704",
-              "url" => "http://www.bl.uk/pdf/patspec.pdf",
-              "event" => "publish"
+              "doi" => "10.14454/10704"
             }
           }
         }
@@ -1398,8 +1396,7 @@ describe "dois", type: :request do
         post '/dois', valid_attributes, headers
 
         expect(last_response.status).to eq(201)
-        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.5072/10704")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10704")
         expect(json.dig('data', 'attributes', 'state')).to eq("draft")
       end
     end

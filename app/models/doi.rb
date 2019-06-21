@@ -550,7 +550,7 @@ class Doi < ActiveRecord::Base
   # end
 
   def is_registered_or_findable?
-    %w(registered findable).include?(aasm_state) || agency != "DataCite"
+    %w(registered findable).include?(aasm_state) || %w(crossref).include?(provider_id)
   end
 
   def validatable?
@@ -560,7 +560,7 @@ class Doi < ActiveRecord::Base
   # update URL in handle system for registered and findable state
   # providers europ and ethz do their own handle registration, so fetch url from handle system instead
   def update_url
-    return nil if current_user.nil? || !is_registered_or_findable? || %w(Crossref).include?(agency)
+    return nil if current_user.nil? || !is_registered_or_findable?
 
     if %w(europ ethz).include?(provider_id)
       UrlJob.perform_later(doi)
