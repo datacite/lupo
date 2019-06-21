@@ -200,10 +200,10 @@ FactoryBot.define do
   end
 
   factory :provider do
-    contact_email { "josiah@example.org" }
-    contact_name  { "Josiah Carberry" }
+    system_email { "josiah@example.org" }
     sequence(:symbol) { |n| "TEST#{n}" }
     name { "My provider" }
+    display_name { "My provider" }
     country_code { "DE" }
     password_input { "12345" }
     twitter_handle { "@egaTwitterlac" }
@@ -222,6 +222,11 @@ FactoryBot.define do
       "given_name": "Kristian",
       "family_name": "Garza"
     }}
+    secondary_technical_contact {{
+      "email": "kristian@example.com",
+      "given_name": "Kristian",
+      "family_name": "Garza"
+    }}
     billing_contact {{
       "email": "Trisha@example.com",
       "given_name": "Trisha",
@@ -233,6 +238,11 @@ FactoryBot.define do
       "family_name": "cruse"
     }}
     service_contact {{
+      "email": "martin@example.com",
+      "given_name": "Martin",
+      "family_name": "Fenner"
+    }}
+    secondary_service_contact {{
       "email": "martin@example.com",
       "given_name": "Martin",
       "family_name": "Fenner"

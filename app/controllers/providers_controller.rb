@@ -267,7 +267,7 @@ class ProvidersController < ApplicationController
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params,
       only: [
-        :name, :symbol, :description, :website, :joined, "organizationType", "focusArea", "contactName", "contactEmail", "isActive", "passwordInput", :country, "billingInformation",{ "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType",
+        :name, "displayName", :symbol, :description, :website, :joined, "organizationType", "focusArea", "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation",{ "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType",
       "technicalContact",{ "technicalContact": [:email, "givenName", "familyName"]},
       "secondaryTechnicalContact",{ "secondaryTechnicalContact": [:email, "givenName", "familyName"]},
       "secondaryBillingContact",{ "secondaryBillingContact": [:email, "givenName", "familyName"]},
@@ -277,6 +277,7 @@ class ProvidersController < ApplicationController
       "votingContact",{ "votingContact": [:email, "givenName", "familyName"]}
       ],
       keys: {
+        "displayName" => :display_name,
         "organizationType" => :organization_type, "focusArea" => :focus_area, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" => :twitter_handle, "memberType" => :member_type,
         "technicalContact" => :technical_contact,
         "secondaryTechnicalContact" => :secondary_technical_contact,
@@ -284,7 +285,9 @@ class ProvidersController < ApplicationController
         "billingContact" => :billing_contact,
         "serviceContact" => :service_contact,
         "secondaryServiceContact" => :secondary_service_contact,
-        "votingContact" => :voting_contact
+        "votingContact" => :voting_contact,
+        "groupEmail" => :group_email,
+        "systemEmail" => :system_email
       }
     )
   end

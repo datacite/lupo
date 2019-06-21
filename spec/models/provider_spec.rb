@@ -6,8 +6,8 @@ describe Provider, type: :model do
   describe "validations" do
     it { should validate_presence_of(:symbol) }
     it { should validate_presence_of(:name) }
-    it { should validate_presence_of(:contact_email) }
-    it { should validate_presence_of(:contact_name) }
+    it { should validate_presence_of(:display_name) }
+    it { should validate_presence_of(:system_email) }
     it { is_expected.to strip_attribute(:name) }
     it { expect(provider).to be_valid }
   end
@@ -45,7 +45,7 @@ describe Provider, type: :model do
       params = provider.to_jsonapi
       expect(params.dig("id")).to eq(provider.symbol.downcase)
       expect(params.dig("attributes","symbol")).to eq(provider.symbol)
-      expect(params.dig("attributes","contact-email")).to eq(provider.contact_email)
+      expect(params.dig("attributes","system-email")).to eq(provider.system_email)
       expect(params.dig("attributes","is-active")).to be true
     end
   end

@@ -8,7 +8,8 @@ describe "Providers", type: :request, elasticsearch: true  do
                   "attributes" => {
                     "symbol" => "BL",
                     "name" => "British Library",
-                    "contactEmail" => "bob@example.com",
+                    "displayName" => "British Library",
+                    "systemEmail" => "bob@example.com",
                     "country" => "GB" } } }
   end
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + token } }
@@ -24,14 +25,9 @@ describe "Providers", type: :request, elasticsearch: true  do
     it "returns providers" do
       get "/providers", nil, headers
 
+      expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(4)
       expect(json.dig('meta', 'total')).to eq(4)
-    end
-
-    it 'returns status code 200' do
-      get "/providers", nil, headers
-
-      expect(last_response.status).to eq(200)
     end
   end
 
@@ -106,16 +102,16 @@ describe "Providers", type: :request, elasticsearch: true  do
                       "attributes" => {
                         "symbol" => "BL",
                         "name" => "British Library",
+                        "displayName" => "British Library",
                         "region" => "EMEA",
-                        "contactEmail" => "doe@joe.joe",
-                        "contactName" => "timAus",
+                        "systemEmail" => "doe@joe.joe",
                         "country" => "GB" } } }
       end
 
       it 'creates a provider' do
         post '/providers', params, headers
 
-        expect(json.dig('data', 'attributes', 'contactEmail')).to eq("doe@joe.joe")
+        expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
       end
 
       it 'returns status code 201' do
@@ -150,9 +146,9 @@ describe "Providers", type: :request, elasticsearch: true  do
                       "attributes" => {
                         "symbol" => "FG",
                         "name" => "Figshare",
+                        "displayName" => "Figshare",
                         "region" => "EMEA",
-                        "contactEmail" => "doe@joe.joe",
-                        "contactName" => "timAus",
+                        "systemEmail" => "doe@joe.joe",
                         "memberType" => "contractual_provider",
                         "country" => "GB" } } }
       end
@@ -160,7 +156,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       it 'creates a provider' do
         post '/providers', params, headers
 
-        expect(json.dig('data', 'attributes', 'contactEmail')).to eq("doe@joe.joe")
+        expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
         expect(json.dig('data', 'attributes', 'name')).to eq("Figshare")
         expect(json.dig('data', 'attributes', 'memberType')).to eq("contractual_provider")
       end
@@ -178,8 +174,7 @@ describe "Providers", type: :request, elasticsearch: true  do
           "data"=>{
             "type"=>"providers",
             "attributes"=>{
-              "contactEmail"=>"jkiritha@andrew.cmu.edu",
-              "contactName"=>"Jonathan Kiritharan",
+              "systemEmail"=>"jkiritha@andrew.cmu.edu",
               "country"=>"US",
               "created"=>"",
               "description"=>"",
@@ -190,6 +185,7 @@ describe "Providers", type: :request, elasticsearch: true  do
               "keepPassword"=>"[FILTERED]",
               "logoUrl"=>"",
               "name"=>"Carnegie Mellon University",
+              "displayName"=>"Carnegie Mellon University",
               "organizationType"=>"academicInstitution",
               "passwordInput"=>"[FILTERED]",
               "twitterHandle"=>"@meekakitty",
@@ -215,7 +211,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       it 'creates a provider' do
         post '/providers', params, headers
 
-        expect(json.dig('data', 'attributes', 'contactEmail')).to eq("jkiritha@andrew.cmu.edu")
+        expect(json.dig('data', 'attributes', 'systemEmail')).to eq("jkiritha@andrew.cmu.edu")
         expect(json.dig('data', 'attributes', 'billingInformation',"state")).to eq("Rennes")
         expect(json.dig('data', 'attributes', 'billingInformation',"postCode")).to eq("122dc")
         expect(json.dig('data', 'attributes', 'twitterHandle')).to eq("@meekakitty")
@@ -235,8 +231,7 @@ describe "Providers", type: :request, elasticsearch: true  do
           "data"=>{
             "type"=>"providers",
             "attributes"=>{
-              "contactEmail"=>"jkiritha@andrew.cmu.edu",
-              "contactName"=>"Jonathan Kiritharan",
+              "systemEmail"=>"jkiritha@andrew.cmu.edu",
               "country"=>"US",
               "created"=>"",
               "description"=>"",
@@ -247,6 +242,7 @@ describe "Providers", type: :request, elasticsearch: true  do
               "keepPassword"=>"[FILTERED]",
               "logoUrl"=>"",
               "name"=>"Carnegie Mellon University",
+              "displayName"=>"Carnegie Mellon University",
               "organizationType"=>"academicInstitution",
               "passwordInput"=>"[FILTERED]",
               "twitterHandle"=>"@eekakitty",
@@ -324,12 +320,14 @@ describe "Providers", type: :request, elasticsearch: true  do
                   "count" => 1
                 }],
                 "dois" => []
-              }, "name" => "Carnegie Mellon University",
+              }, 
+              "name" => "Carnegie Mellon University",
+              "displayName" => "Carnegie Mellon University",
               "symbol" => "CMU", "description" => nil,
               "region" => "AMER", "country" => "US",
               "organizationType" => "academicInstitution",
               "focusArea" => "general", "logoUrl" => "",
-              "contactEmail" => "jkiritha@andrew.cmu.edu",
+              "systemEmail" => "jkiritha@andrew.cmu.edu",
               "website" => "", "isActive" => true,
               "passwordInput" => "@change", "hasPassword" => false,
               "keepPassword" => false, "joined" => ""
@@ -342,7 +340,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       it 'creates a provider' do
         post '/providers', params, headers
 
-        expect(json.dig('data', 'attributes', 'contactEmail')).to eq("jkiritha@andrew.cmu.edu")
+        expect(json.dig('data', 'attributes', 'systemEmail')).to eq("jkiritha@andrew.cmu.edu")
       end
 
       it 'returns status code 200' do
@@ -359,16 +357,16 @@ describe "Providers", type: :request, elasticsearch: true  do
                       "attributes" => {
                         "symbol" => "ADMIN",
                         "name" => "Admin",
+                        "displayName" => "Admin",
                         "region" => "EMEA",
-                        "contactEmail" => "doe@joe.joe",
-                        "contactName" => "timAus",
+                        "systemEmail" => "doe@joe.joe",
                         "country" => "GB" } } }
       end
 
       it 'creates a provider' do
         post '/providers', params, headers
 
-        expect(json.dig('data', 'attributes', 'contactEmail')).to eq("doe@joe.joe")
+        expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
       end
 
       it 'returns status code 200' do
@@ -384,9 +382,9 @@ describe "Providers", type: :request, elasticsearch: true  do
                       "attributes" => {
                         "symbol" => "BL",
                         "name" => "British Library",
+                        "displayName" => "British Library",
                         "region" => "EMEA",
-                        "contactEmail" => "doe@joe.joe",
-                        "contactName" => "timAus",
+                        "systemEmail" => "doe@joe.joe",
                         "country" => "GB" } } }
       end
       let(:admin) { create(:provider, symbol: "ADMIN", role_name: "ROLE_ADMIN", password_input: "12345") }
@@ -396,7 +394,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       it 'creates a provider' do
         post '/providers', params, headers
 
-        expect(json.dig('data', 'attributes', 'contactEmail')).to eq("doe@joe.joe")
+        expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
       end
 
       it 'returns status code 200' do
@@ -412,7 +410,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                       "attributes" => {
                         "symbol" => "BL",
                         "name" => "British Library",
-                        "contactName" => "timAus",
+                        "displayName" => "British Library",
                         "country" => "GB" } } }
       end
 
@@ -420,7 +418,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         post '/providers', params, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"].first).to eq("source"=>"contact_email", "title"=>"Can't be blank")
+        expect(json["errors"].first).to eq("source"=>"system_email", "title"=>"Can't be blank")
       end
     end
 
@@ -429,8 +427,9 @@ describe "Providers", type: :request, elasticsearch: true  do
         { "type" => "providers",
           "attributes" => {
             "symbol" => "BL",
-            "contactName" => "timAus",
+            "systemEmail" => "timAus",
             "name" => "British Library",
+            "displayName" => "British Library",
             "country" => "GB" } }
       end
 
@@ -452,9 +451,9 @@ describe "Providers", type: :request, elasticsearch: true  do
         { "data" => { "type" => "providers",
                       "attributes" => {
                         "name" => "British Library",
+                        "displayName" => "British Library",
                         "region" => "Americas",
-                        "contactEmail" => "Pepe@mdm.cod",
-                        "contactName" => "timAus",
+                        "systemEmail" => "Pepe@mdm.cod",
                         "country" => "GB" } } }
       end
 
@@ -462,7 +461,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         put "/providers/#{provider.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig('data', 'attributes', 'contactName')).to eq("timAus")
+        expect(json.dig('data', 'attributes', 'displayName')).to eq("British Library")
       end
     end
 
@@ -486,9 +485,9 @@ describe "Providers", type: :request, elasticsearch: true  do
         { "data" => { "type" => "providers",
                       "attributes" => {
                         "name" => "British Library",
+                        "displayName" => "British Library",
                         "region" => "Americas",
-                        "contactEmail" => "Pepe@mdm.cod",
-                        "contactName" => "timAus",
+                        "systemEmail" => "Pepe@mdm.cod",
                         "country" => "GB" } } }
       end
       let(:admin) { create(:provider, symbol: "ADMIN", role_name: "ROLE_ADMIN", password_input: "12345") }
@@ -499,7 +498,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         put "/providers/#{provider.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig('data', 'attributes', 'contactName')).to eq("timAus")
+        expect(json.dig('data', 'attributes', 'systemEmail')).to eq("Pepe@mdm.cod")
       end
     end
 
@@ -508,9 +507,9 @@ describe "Providers", type: :request, elasticsearch: true  do
         { "data" => { "type" => "providers",
                       "attributes" => {
                         "name" => "British Library",
+                        "displayName" => "British Library",
                         "region" => "Americas",
-                        "contactEmail" => "Pepe@mdm.cod",
-                        "contactName" => "timAus",
+                        "systemEmail" => "Pepe@mdm.cod",
                         "country" => "GB" } } }
       end
 

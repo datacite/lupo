@@ -28,12 +28,14 @@ class Provider < ActiveRecord::Base
   alias_attribute :flipper_id, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
+  alias_attribute :contact_email, :system_email
   attr_readonly :symbol
   attr_accessor :password_input
 
-  validates_presence_of :symbol, :name, :contact_name, :contact_email
+  validates_presence_of :symbol, :name, :display_name, :system_email
   validates_uniqueness_of :symbol, message: "This name has already been taken"
-  validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, message: "contact_email should be an email"
+  validates_format_of :system_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, message: "system_email should be an email"
+  validates_format_of :group_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, if: :group_email?, message: "group_email should be an email"
   validates_format_of :website, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be a url"
   validates_inclusion_of :role_name, :in => %w( ROLE_FOR_PROFIT_PROVIDER ROLE_CONTRACTUAL_PROVIDER ROLE_CONSORTIUM_LEAD ROLE_ALLOCATOR ROLE_MEMBER ROLE_REGISTRATION_AGENCY ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
   validates_inclusion_of :organization_type, :in => %w(researchInstitution academicInstitution governmentAgency nationalInstitution professionalSociety publisher serviceProvider other), message: "organization type %s is not included in the list", if: :organization_type?
@@ -88,8 +90,9 @@ class Provider < ActiveRecord::Base
       indexes :client_ids,    type: :keyword
       indexes :prefix_ids,    type: :keyword
       indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }}
-      indexes :contact_name,  type: :text
-      indexes :contact_email, type: :text, fields: { keyword: { type: "keyword" }}
+      indexes :display_name,  type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }}
+      indexes :system_email,  type: :text, fields: { keyword: { type: "keyword" }}
+      indexes :group_email,   type: :text, fields: { keyword: { type: "keyword" }}
       indexes :version,       type: :integer
       indexes :is_active,     type: :keyword
       indexes :year,          type: :integer
@@ -162,12 +165,13 @@ class Provider < ActiveRecord::Base
       "id" => uid,
       "uid" => uid,
       "name" => name,
+      "display_name" => display_name,
       "client_ids" => client_ids,
       "prefix_ids" => prefix_ids,
       "symbol" => symbol,
       "year" => year,
-      "contact_name" => contact_name,
-      "contact_email" => contact_email,
+      "system_email" => system_email,
+      "group_email" => group_email,
       "is_active" => is_active,
       "description" => description,
       "website" => website,
@@ -207,7 +211,7 @@ class Provider < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['uid^10', 'symbol^10', 'name^5', 'contact_name^5', 'contact_email^5', '_all']
+    ['uid^10', 'symbol^10', 'name^5', 'system_email^5', 'group_email^5', '_all']
   end
 
   def self.query_aggregations
@@ -235,7 +239,8 @@ class Provider < ActiveRecord::Base
       focus_area: focus_area,
       organization_type: organization_type,
       member_type: member_type_label,
-      contact_email: contact_email,
+      system_email: system_email,
+      group_email: group_email,
       technical_contact_email: technical_contact_email,
       technical_contact_given_name: technical_contact_given_name,
       technical_contact_family_name: technical_contact_family_name,
@@ -505,8 +510,8 @@ class Provider < ActiveRecord::Base
       "symbol" => symbol,
       "name" => name,
       "website" => website,
-      "contact-name" => contact_name,
-      "contact-email" => contact_email,
+      "system-email" => system_email,
+      "group-email" => group_email,
       "prefixes" => prefixes.map { |p| p.prefix },
       "country-code" => country_code,
       "role_name" => role_name,
@@ -547,7 +552,6 @@ class Provider < ActiveRecord::Base
     self.symbol = symbol.upcase if symbol.present?
     self.is_active = is_active ? "\x01" : "\x00"
     self.version = version.present? ? version + 1 : 0
-    self.contact_name = "" unless contact_name.present?
     self.role_name = "ROLE_ALLOCATOR" unless role_name.present?
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
