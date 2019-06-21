@@ -95,7 +95,6 @@ class Provider < ActiveRecord::Base
       indexes :year,          type: :integer
       indexes :description,   type: :text
       indexes :website,       type: :text, fields: { keyword: { type: "keyword" }}
-      indexes :phone,         type: :text
       indexes :logo_url,      type: :text
       indexes :region,        type: :keyword
       indexes :focus_area,    type: :keyword
@@ -120,6 +119,11 @@ class Provider < ActiveRecord::Base
         given_name: { type: :text},
         family_name: { type: :text }
       }
+      indexes :secondary_technical_contact, type: :object, properties: {
+        email: { type: :text },
+        given_name: { type: :text},
+        family_name: { type: :text }
+      }
       indexes :billing_contact, type: :object, properties: {
         email: { type: :text },
         given_name: { type: :text},
@@ -131,6 +135,11 @@ class Provider < ActiveRecord::Base
         family_name: { type: :text }
       }
       indexes :service_contact, type: :object, properties: {
+        email: { type: :text },
+        given_name: { type: :text},
+        family_name: { type: :text }
+      }
+      indexes :secondary_service_contact, type: :object, properties: {
         email: { type: :text },
         given_name: { type: :text},
         family_name: { type: :text }
@@ -162,7 +171,6 @@ class Provider < ActiveRecord::Base
       "is_active" => is_active,
       "description" => description,
       "website" => website,
-      "phone" => phone,
       "region" => region,
       "country_code" => country_code,
       "logo_url" => logo_url,
@@ -185,9 +193,11 @@ class Provider < ActiveRecord::Base
         "city" => billing_city
       },
       "technical_contact" => technical_contact,
+      "secondary_technical_contact" => secondary_technical_contact,
       "billing_contact" => billing_contact,
       "secondary_billing_contact" => secondary_billing_contact,
       "service_contact" => service_contact,
+      "secondary_service_contact" => secondary_service_contact,
       "voting_contact" => voting_contact,
       "created" => created,
       "updated" => updated,
@@ -229,9 +239,15 @@ class Provider < ActiveRecord::Base
       technical_contact_email: technical_contact_email,
       technical_contact_given_name: technical_contact_given_name,
       technical_contact_family_name: technical_contact_family_name,
+      secondary_technical_contact_email: secondary_technical_contact_email,
+      secondary_technical_contact_given_name: secondary_technical_contact_given_name,
+      secondary_technical_contact_family_name: secondary_technical_contact_family_name,
       service_contact_email: service_contact_email,
       service_contact_given_name: service_contact_given_name,
       service_contact_family_name: service_contact_family_name,
+      secondary_service_contact_email: secondary_service_contact_email,
+      secondary_service_contact_given_name: secondary_service_contact_given_name,
+      secondary_service_contact_family_name: secondary_service_contact_family_name,
       voting_contact_email: voting_contact_email,
       voting_contact_given_name: voting_contact_given_name,
       voting_contact_family_name: voting_contact_family_name,
@@ -284,6 +300,18 @@ class Provider < ActiveRecord::Base
     technical_contact.fetch("family_name",nil) if technical_contact.present?
   end
 
+  def secondary_technical_contact_email
+    secondary_technical_contact.fetch("email",nil) if secondary_technical_contact.present?
+  end
+
+  def secondary_technical_contact_given_name
+    secondary_technical_contact.fetch("given_name",nil) if secondary_technical_contact.present?
+  end
+
+  def secondary_technical_contact_family_name
+    secondary_technical_contact.fetch("family_name",nil) if secondary_technical_contact.present?
+  end
+
   def service_contact_email
     service_contact.fetch("email",nil) if service_contact.present?
   end
@@ -294,6 +322,18 @@ class Provider < ActiveRecord::Base
 
   def service_contact_family_name
     service_contact.fetch("family_name",nil) if service_contact.present?
+  end
+
+  def secondary_service_contact_email
+    secondary_service_contact.fetch("email",nil) if secondary_service_contact.present?
+  end
+
+  def secondary_service_contact_given_name
+    secondary_service_contact.fetch("given_name",nil) if secondary_service_contact.present?
+  end
+
+  def secondary_service_contact_family_name
+    secondary_service_contact.fetch("family_name",nil) if secondary_service_contact.present?
   end
 
   def voting_contact_email
@@ -467,7 +507,6 @@ class Provider < ActiveRecord::Base
       "website" => website,
       "contact-name" => contact_name,
       "contact-email" => contact_email,
-      "contact-phone" => phone,
       "prefixes" => prefixes.map { |p| p.prefix },
       "country-code" => country_code,
       "role_name" => role_name,

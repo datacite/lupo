@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_04_093226) do
+ActiveRecord::Schema.define(version: 2019_06_21_202343) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -34,8 +34,7 @@ ActiveRecord::Schema.define(version: 2019_06_04_093226) do
   end
 
   create_table "allocator", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "contact_email", null: false
-    t.string "contact_name", limit: 80, null: false
+    t.string "system_email", null: false
     t.datetime "created"
     t.integer "doi_quota_allowed", null: false
     t.integer "doi_quota_used", null: false
@@ -52,7 +51,6 @@ ActiveRecord::Schema.define(version: 2019_06_04_093226) do
     t.string "region"
     t.string "country_code"
     t.string "website"
-    t.string "phone"
     t.datetime "deleted_at"
     t.date "joined"
     t.string "logo"
@@ -66,6 +64,10 @@ ActiveRecord::Schema.define(version: 2019_06_04_093226) do
     t.json "voting_contact"
     t.json "billing_contact"
     t.json "secondary_billing_contact"
+    t.string "display_name"
+    t.string "group_email"
+    t.json "secondary_service_contact"
+    t.json "secondary_technical_contact"
     t.index ["organization_type"], name: "index_allocator_organization_type"
     t.index ["symbol"], name: "symbol", unique: true
   end

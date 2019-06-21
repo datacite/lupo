@@ -192,7 +192,6 @@ describe "Providers", type: :request, elasticsearch: true  do
               "name"=>"Carnegie Mellon University",
               "organizationType"=>"academicInstitution",
               "passwordInput"=>"[FILTERED]",
-              "phone"=>"",
               "twitterHandle"=>"@meekakitty",
               "rorId"=>"https://ror.org/05njkjr15",
               "billingInformation":{
@@ -250,7 +249,6 @@ describe "Providers", type: :request, elasticsearch: true  do
               "name"=>"Carnegie Mellon University",
               "organizationType"=>"academicInstitution",
               "passwordInput"=>"[FILTERED]",
-              "phone"=>"",
               "twitterHandle"=>"@eekakitty",
               "rorId"=>"https://ror.org/05njkjr15",
               "technicalContact"=> {
@@ -331,9 +329,8 @@ describe "Providers", type: :request, elasticsearch: true  do
               "region" => "AMER", "country" => "US",
               "organizationType" => "academicInstitution",
               "focusArea" => "general", "logoUrl" => "",
-              "contactName" => "Jonathan Kiritharan",
               "contactEmail" => "jkiritha@andrew.cmu.edu",
-              "phone" => "", "website" => "", "isActive" => true,
+              "website" => "", "isActive" => true,
               "passwordInput" => "@change", "hasPassword" => false,
               "keepPassword" => false, "joined" => ""
             }, "type" => "providers"
