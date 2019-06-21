@@ -85,49 +85,17 @@ class Event < ActiveRecord::Base
     indexes :subj_id,          type: :keyword
     indexes :obj_id,           type: :keyword
     indexes :doi,              type: :keyword
+    indexes :dois,             type: :keyword
     indexes :orcid,            type: :keyword
     indexes :prefix,           type: :keyword
     indexes :subtype,          type: :keyword
     indexes :citation_type,    type: :keyword
     indexes :issn,             type: :keyword
     indexes :subj,             type: :object, properties: {
-      "@type" => { type: :keyword },
-      "@id" => { type: :keyword },
+      type: { type: :keyword },
+      id: { type: :keyword },
       uid: { type: :keyword },
-      name: { type: :text },
-      givenName: { type: :text },
-      familyName: { type: :text },
-      author: { type: :object, properties: {
-        "@type" => { type: :keyword },
-        "@id" => { type: :keyword },
-        name: { type: :text },
-        givenName: { type: :text },
-        familyName: { type: :text }
-      }},
-      periodical: { type: :object, properties: {
-        "@type" => { type: :keyword },
-        "@id" => { type: :keyword },
-        name: { type: :text },
-        "issn" => { type: :keyword }
-      }},
-      alternateName: { type: :text },
-      volumeNumber: { type: :keyword },
-      issueNumber: { type: :keyword },
-      pagination: { type: :keyword },
-      publisher: { type: :object, properties: {
-        "@type" => { type: :keyword },
-        "@id" => { type: :keyword },
-        name: { type: :text }
-      }},
-      funder: { type: :object, properties: {
-        "@type" => { type: :keyword },
-        "@id" => { type: :keyword },
-        name: { type: :text }
-      }},
       proxyIdentifiers: { type: :keyword },
-      version: { type: :keyword },
-      datePublished: { type: :date, format: "date_optional_time||yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true },
-      dateModified: { type: :date, format: "date_optional_time", ignore_malformed: true },
       registrantId: { type: :keyword },
       cache_key: { type: :keyword }
     }
@@ -135,40 +103,7 @@ class Event < ActiveRecord::Base
       type: { type: :keyword },
       id: { type: :keyword },
       uid: { type: :keyword },
-      name: { type: :text },
-      givenName: { type: :text },
-      familyName: { type: :text },
-      author: { type: :object, properties: {
-        "@type" => { type: :keyword },
-        "@id" => { type: :keyword },
-        name: { type: :text },
-        givenName: { type: :text },
-        familyName: { type: :text }
-      }},
-      periodical: { type: :object, properties: {
-        "@type" => { type: :keyword },
-        "@id" => { type: :keyword },
-        name: { type: :text },
-        "issn" => { type: :keyword }
-      }},
-      alternateName: { type: :text },
-      volumeNumber: { type: :keyword },
-      issueNumber: { type: :keyword },
-      pagination: { type: :keyword },
-      publisher: { type: :object, properties: {
-        "@type" => { type: :keyword },
-        "@id" => { type: :keyword },
-        name: { type: :text }
-      }},
-      funder: { type: :object, properties: {
-        "@type" => { type: :keyword },
-        "@id" => { type: :keyword },
-        name: { type: :text }
-      }},
       proxyIdentifiers: { type: :keyword },
-      version: { type: :keyword },
-      datePublished: { type: :date, format: "date_optional_time||yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true },
-      dateModified: { type: :date, format: "date_optional_time", ignore_malformed: true },
       registrantId: { type: :keyword },
       cache_key: { type: :keyword }
     }
@@ -201,6 +136,7 @@ class Event < ActiveRecord::Base
       "subj" => subj.merge(cache_key: subj_cache_key),
       "obj" => obj.merge(cache_key: obj_cache_key),
       "doi" => doi,
+      "dois" => dois,
       "orcid" => orcid,
       "issn" => issn,
       "prefix" => prefix,
@@ -449,6 +385,10 @@ class Event < ActiveRecord::Base
     Array.wrap(subj["funder"]).map { |f| doi_from_url(f["@id"]) }.compact +
     Array.wrap(obj["funder"]).map { |f| doi_from_url(f["@id"]) }.compact +
     [doi_from_url(subj_id), doi_from_url(obj_id)].compact
+  end
+
+  def dois
+    Doi.query(nil, doi: doi.map(&:upcase)).results
   end
 
   def prefix
