@@ -314,7 +314,7 @@ class Event < ActiveRecord::Base
     response = Event.query(nil, source_id: "datacite-crossref", page: { size: 1, cursor: cursor })
     logger.info "[Update] #{response.results.total} events for source datacite-crossref."
 
-     # walk through results using cursor
+    # walk through results using cursor
     if response.results.total > 0
       while response.results.results.length > 0 do
         response = Event.query(nil, source_id: "datacite-crossref", page: { size: size, cursor: cursor })
@@ -332,6 +332,8 @@ class Event < ActiveRecord::Base
   end
 
   def self.get_crossref_metadata(id)
+    logger = Logger.new(STDOUT)
+
     doi = doi_from_url(id)
     return {} unless doi.present?
 
@@ -341,7 +343,12 @@ class Event < ActiveRecord::Base
       # otherwise store Crossref metadata with DataCite 
       # using client crossref.citations and DataCite XML
       xml = Base64.strict_encode64(id)
-      Doi.create({ xml: xml, source: "levriero", event: "publish", client_id: "crossref.citations" }, :without_protection => true)
+      d = Doi.new({ xml: xml, source: "levriero", event: "publish", client_id: "crossref.citations" }, :without_protection => true)
+      if d.save
+        logger.info "Record for DOI #{doi} created."
+      else
+        logger.warn "[Error for #{doi}]: " + d.errors.inspect
+      end
     end
   end
 
