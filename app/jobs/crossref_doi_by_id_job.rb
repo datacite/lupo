@@ -49,7 +49,7 @@ class CrossrefDoiByIdJob < ActiveJob::Base
     if [200, 201].include?(response.status)
       logger.info "DOI #{doi} created."
     else
-      logger.warn "[Error for DOI #{doi}]: " + response.body["errors"]
+      logger.warn "[Error for DOI #{doi}]: " + response.body["errors"].inspect
     end
   end
 
