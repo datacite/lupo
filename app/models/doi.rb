@@ -351,7 +351,6 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_aggregations
-
     {
       resource_types: { terms: { field: 'types.resourceTypeGeneral', size: 15, min_doc_count: 1 } },
       states: { terms: { field: 'aasm_state', size: 15, min_doc_count: 1 } },
@@ -417,7 +416,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.import_by_ids(options={})
-    from_id = (options[:from_id] || 1).to_i
+    from_id = (options[:from_id] || Doi.minimum(:id)).to_i
     until_id = (options[:until_id] || Doi.maximum(:id)).to_i
 
     # get every id between from_id and end_id

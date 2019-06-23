@@ -6,7 +6,9 @@ class EventSerializer
   
   attributes :subj_id, :obj_id, :source_id, :relation_type_id, :total, :message_action, :source_token, :license, :occurred_at, :timestamp
   
-  belongs_to :dois, record_type: :dois, id_method_name: :doi #, object_method_name: :dois
+  has_many :dois, record_type: :dois, id_method_name: :doi, serializer: DoiSerializer do |object|
+    Doi.find_by_id(object.doi).results
+  end
   
   attribute :timestamp, &:updated_at
 end

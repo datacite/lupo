@@ -16,7 +16,7 @@ namespace :doi do
 
   desc 'Import all DOIs'
   task :import => :environment do
-    from_id = (ENV['FROM_ID'] || 1).to_i
+    from_id = (ENV['FROM_ID'] || Doi.minimum(:id)).to_i
     until_id = (ENV['UNTIL_ID'] || Doi.maximum(:id)).to_i
 
     Doi.import_by_ids(from_id: from_id, until_id: until_id)

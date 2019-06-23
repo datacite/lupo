@@ -80,12 +80,11 @@ class Event < ActiveRecord::Base
   # use different index for testing
   index_name Rails.env.test? ? "events-test" : "events"
 
-  mapping dynamic: 'false' do
+  mapping dynamic: "false" do
     indexes :uuid,             type: :keyword
     indexes :subj_id,          type: :keyword
     indexes :obj_id,           type: :keyword
     indexes :doi,              type: :keyword
-    #indexes :dois,             type: :keyword
     indexes :orcid,            type: :keyword
     indexes :prefix,           type: :keyword
     indexes :subtype,          type: :keyword
@@ -138,7 +137,6 @@ class Event < ActiveRecord::Base
       "subj" => subj.merge(cache_key: subj_cache_key),
       "obj" => obj.merge(cache_key: obj_cache_key),
       "doi" => doi,
-      #"dois" => dois,
       "orcid" => orcid,
       "issn" => issn,
       "prefix" => prefix,
@@ -229,7 +227,7 @@ class Event < ActiveRecord::Base
   end
 
   def self.import_by_ids(options={})
-    from_id = (options[:from_id] || 1).to_i
+    from_id = (options[:from_id] || Event.minimum(:id)).to_i
     until_id = (options[:until_id] || Event.maximum(:id)).to_i
 
     # get every id between from_id and until_id
@@ -388,10 +386,6 @@ class Event < ActiveRecord::Base
     Array.wrap(obj["funder"]).map { |f| doi_from_url(f["@id"]) }.compact +
     [doi_from_url(subj_id), doi_from_url(obj_id)].compact
   end
-
-  # def dois
-  #   Doi.query(nil, doi: doi.map(&:upcase)).results
-  # end
 
   def prefix
     [doi.map { |d| d.to_s.split('/', 2).first }].compact

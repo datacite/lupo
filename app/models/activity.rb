@@ -182,7 +182,7 @@ class Activity < Audited::Audit
   end
 
   def self.import_by_ids(options={})
-    from_id = (options[:from_id] || 1).to_i
+    from_id = (options[:from_id] || Activity.minimum(:id)).to_i
     until_id = (options[:until_id] || Activity.maximum(:id)).to_i
 
     # get every id between from_id and end_id
