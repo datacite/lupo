@@ -182,7 +182,7 @@ class EventsController < ApplicationController
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
       @include &= [:dois]
     else
-      @include = []
+      @include = [:dois]
     end
   end
 
