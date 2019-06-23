@@ -24,21 +24,19 @@ namespace :event do
 end
 
 namespace :crossref do
-  desc 'Import dois for all events'
+  desc 'Import crossref dois for all events'
   task :import_doi => :environment do
-    from_id = (ENV['FROM_ID'] || 1).to_i
-    until_id = (ENV['UNTIL_ID'] || Event.maximum(:id)).to_i
+    cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
 
-    Event.update_crossref(from_id: from_id, until_id: until_id)
+    Event.update_crossref(cursor: cursor)
   end
 end
 
 namespace :datacite_crossref do
-  desc 'Import dois for all events'
+  desc 'Import crossref dois for all events'
   task :import_doi => :environment do
-    from_id = (ENV['FROM_ID'] || 1).to_i
-    until_id = (ENV['UNTIL_ID'] || Event.maximum(:id)).to_i
+    cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
 
-    Event.update_datacite_crossref(from_id: from_id, until_id: until_id)
+    Event.update_datacite_crossref(cursor: cursor)
   end
 end

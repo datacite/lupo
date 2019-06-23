@@ -283,14 +283,13 @@ class Event < ActiveRecord::Base
     logger = Logger.new(STDOUT)
 
     size = (options[:size] || 1000).to_i
+    cursor = (options[:cursor] || 0).to_i
 
-    response = Event.query(nil, source_id: "crossref", page: { size: 1, cursor: 0 })
+    response = Event.query(nil, source_id: "crossref", page: { size: 1, cursor: cursor })
     logger.info "[Update] #{response.results.total} events for source crossref."
 
+    # walk through results using cursor
     if response.results.total > 0
-      # walk through results using cursor
-      cursor = 0
-
       while response.results.results.length > 0 do
         response = Event.query(nil, source_id: "crossref", page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
@@ -298,9 +297,8 @@ class Event < ActiveRecord::Base
         logger.info "[Update] Updating #{response.results.results.length} crossref events starting with _id #{cursor + 1}."
         cursor = response.results.to_a.last[:sort].first.to_i
 
-        response.results.results.each do |e|
-          CrossrefDoiJob.perform_later(e.subj_id)
-        end
+        dois = response.results.results.map(&:subj_id).uniq
+        CrossrefDoiJob.perform_later(dois)
       end
     end
 
@@ -311,14 +309,13 @@ class Event < ActiveRecord::Base
     logger = Logger.new(STDOUT)
 
     size = (options[:size] || 1000).to_i
+    cursor = (options[:cursor] || 0).to_i
 
-    response = Event.query(nil, source_id: "datacite-crossref", page: { size: 1, cursor: 0 })
+    response = Event.query(nil, source_id: "datacite-crossref", page: { size: 1, cursor: cursor })
     logger.info "[Update] #{response.results.total} events for source datacite-crossref."
 
+     # walk through results using cursor
     if response.results.total > 0
-      # walk through results using cursor
-      cursor = 0
-
       while response.results.results.length > 0 do
         response = Event.query(nil, source_id: "datacite-crossref", page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
@@ -326,9 +323,8 @@ class Event < ActiveRecord::Base
         logger.info "[Update] Updating #{response.results.results.length} datacite-crossref events starting with _id #{cursor + 1}."
         cursor = response.results.to_a.last[:sort].first.to_i
 
-        response.results.results.each do |e|
-          CrossrefDoiJob.perform_later(e.obj_id)
-        end
+        dois = response.results.results.map(&:obj_id).uniq
+        CrossrefDoiJob.perform_later(dois)
       end
     end
 
