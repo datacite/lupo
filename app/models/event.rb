@@ -331,27 +331,6 @@ class Event < ActiveRecord::Base
     response.results.total
   end
 
-  def self.get_crossref_metadata(id)
-    logger = Logger.new(STDOUT)
-
-    doi = doi_from_url(id)
-    return {} unless doi.present?
-
-    # check whether DOI has been registered with DataCite already
-    result = Doi.find_by_id(doi).results.first
-    if result.blank?
-      # otherwise store Crossref metadata with DataCite 
-      # using client crossref.citations and DataCite XML
-      xml = Base64.strict_encode64(id)
-      d = Doi.new({ xml: xml, source: "levriero", event: "publish", client_id: "crossref.citations" }, :without_protection => true)
-      if d.save
-        logger.info "Record for DOI #{doi} created."
-      else
-        logger.warn "[Error for #{doi}]: " + d.errors.inspect
-      end
-    end
-  end
-
   def to_param  # overridden, use uuid instead of id
     uuid
   end
