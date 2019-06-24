@@ -101,6 +101,9 @@ module Lupo
     # compress responses with deflate or gzip
     config.middleware.use Rack::Deflater
 
+    # use batch loader
+    config.middleware.use BatchLoader::Middleware
+
     # set Active Job queueing backend
     if ENV['AWS_REGION']
       config.active_job.queue_adapter = :shoryuken
