@@ -11,19 +11,19 @@ describe "Mailable", type: :model, vcr: true do
     expect(response[:message]).to eq("Queued. Thank you.")
   end
 
-  it "format_message_text" do
-    template = "users/reset.text.erb"
-    text = User.format_message_text(template: template, title: title, contact_name: client.name, name: client.symbol, url: token)
-    line = text.split("\n").first
-    expect(line).to eq("Dear #{client.name},")
-  end
+  # it "format_message_text" do
+  #   template = "users/reset.text.erb"
+  #   text = User.format_message_text(template: template, title: title, contact_name: client.name, name: client.symbol, url: token)
+  #   line = text.split("\n").first
+  #   expect(line).to eq("Dear #{client.name},")
+  # end
 
-  it "format_message_html" do
-    template = "users/reset.html.erb"
-    html = User.format_message_html(template: template, title: title, contact_name: client.name, name: client.symbol, url: token)
-    line = html.split("\n")[41]
-    expect(line.strip).to eq("<h1 style=\"font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; box-sizing: border-box; margin-top: 0; color: #2F3133; font-size: 19px; font-weight: bold;\" align=\"left\">Dear #{client.name},</h1>")
-  end
+  # it "format_message_html" do
+  #   template = "users/reset.html.erb"
+  #   html = User.format_message_html(template: template, title: title, contact_name: client.name, name: client.symbol, url: token)
+  #   line = html.split("\n")[41]
+  #   expect(line.strip).to eq("<h1 style=\"font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; box-sizing: border-box; margin-top: 0; color: #2F3133; font-size: 19px; font-weight: bold;\" align=\"left\">Dear #{client.name},</h1>")
+  # end
 
   it "send message" do
     text = <<~BODY
