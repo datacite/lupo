@@ -68,7 +68,7 @@ module Mailable
 
     def format_message_text(template: nil, title: nil, contact_name: nil, name: nil, url: nil, reset_url: nil)
       ActionController::Base.render(
-        assigns: { title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url },
+        assigns: { title: title, contact_name: name, name: name, url: url, reset_url: reset_url },
         template: template,
         layout: false
       )
@@ -76,7 +76,7 @@ module Mailable
 
     def format_message_html(template: nil, title: nil, contact_name: nil, name: nil, url: nil, reset_url: nil)
       input = ActionController::Base.render(
-        assigns: { title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url },
+        assigns: { title: title, contact_name: name, name: name, url: url, reset_url: reset_url },
         template: template,
         layout: "application"
       )
