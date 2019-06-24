@@ -170,25 +170,6 @@ describe Doi, type: :model, vcr: true do
       end
     end
 
-    context "provider ethz" do
-      let(:provider)  { create(:provider, symbol: "ETHZ") }
-      let(:client)  { create(:client, provider: provider) }
-      let(:url) { "https://www.example.org" }
-      subject { build(:doi, client: client, current_user: current_user) }
-
-      it "don't update state change" do
-        subject.publish
-        expect { subject.save }.not_to have_enqueued_job(HandleJob)
-        expect(subject).to have_state(:findable)
-      end
-
-      it "don't update url change" do
-        subject.publish
-        subject.url = url
-        expect { subject.save }.not_to have_enqueued_job(HandleJob)
-      end
-    end
-
     context "provider europ" do
       let(:provider)  { create(:provider, symbol: "EUROP") }
       let(:client)  { create(:client, provider: provider) }

@@ -28,14 +28,14 @@ module Mailable
       reset_url = ENV['BRACCO_URL'] + "/reset"
       title = Rails.env.stage? ? "DataCite DOI Fabrica Test" : "DataCite DOI Fabrica"
       subject = "#{title}: New Account"
-      text = User.format_message_text(template: "users/welcome.text.erb", title: title, contact_name: contact_name, name: symbol, url: url, reset_url: reset_url)
-      html = User.format_message_html(template: "users/welcome.html.erb", title: title, contact_name: contact_name, name: symbol, url: url, reset_url: reset_url)
+      text = User.format_message_text(template: "users/welcome.text.erb", title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url)
+      html = User.format_message_html(template: "users/welcome.html.erb", title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url)
 
-      response = User.send_message(name: contact_name, email: contact_email, subject: subject, text: text, html: html)
+      response = User.send_message(name: name, email: contact_email, subject: subject, text: text, html: html)
 
       fields = [
         { title: "Account ID", value: symbol},
-        { title: "Contact name", value: contact_name, short: true },
+        { title: "Contact name", value: name, short: true },
         { title: "Contact email", value: contact_email, short: true }
       ]
       User.send_notification_to_slack(nil, title: subject, level: "good", fields: fields)
@@ -46,14 +46,14 @@ module Mailable
     def send_delete_email
       title = Rails.env.stage? ? "DataCite DOI Fabrica Test" : "DataCite DOI Fabrica"
       subject = "#{title}: Account Deleted"
-      text = User.format_message_text(template: "users/delete.text.erb", title: title, contact_name: contact_name, name: symbol)
-      html = User.format_message_html(template: "users/delete.html.erb", title: title, contact_name: contact_name, name: symbol)
+      text = User.format_message_text(template: "users/delete.text.erb", title: title, contact_name: name, name: symbol)
+      html = User.format_message_html(template: "users/delete.html.erb", title: title, contact_name: name, name: symbol)
 
-      response = User.send_message(name: contact_name, email: contact_email, subject: subject, text: text, html: html)
+      response = User.send_message(name: name, email: contact_email, subject: subject, text: text, html: html)
 
       fields = [
         { title: "Account ID", value: symbol},
-        { title: "Contact name", value: contact_name, short: true },
+        { title: "Contact name", value: name, short: true },
         { title: "Contact email", value: contact_email, short: true }
       ]
       User.send_notification_to_slack(nil, title: subject, level: "warning", fields: fields)
@@ -68,7 +68,7 @@ module Mailable
 
     def format_message_text(template: nil, title: nil, contact_name: nil, name: nil, url: nil, reset_url: nil)
       ActionController::Base.render(
-        assigns: { title: title, contact_name: contact_name, name: name, url: url, reset_url: reset_url },
+        assigns: { title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url },
         template: template,
         layout: false
       )
@@ -76,7 +76,7 @@ module Mailable
 
     def format_message_html(template: nil, title: nil, contact_name: nil, name: nil, url: nil, reset_url: nil)
       input = ActionController::Base.render(
-        assigns: { title: title, contact_name: contact_name, name: name, url: url, reset_url: reset_url },
+        assigns: { title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url },
         template: template,
         layout: "application"
       )

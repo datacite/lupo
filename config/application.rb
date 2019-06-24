@@ -55,7 +55,7 @@ ENV['ES_NAME'] ||= "elasticsearch"
 ENV['TRUSTED_IP'] ||= "10.0.40.1"
 ENV['MG_FROM'] ||= "support@datacite.org"
 ENV['MG_DOMAIN'] ||= "mg.datacite.org"
-ENV['HANDLES_MINTED'] ||= "112,10132"
+ENV['HANDLES_MINTED'] ||= "10132"
 
 module Lupo
   class Application < Rails::Application
