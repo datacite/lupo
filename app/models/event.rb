@@ -331,6 +331,32 @@ class Event < ActiveRecord::Base
     response.results.total
   end
 
+  def self.update_datacite_orcid_auto_update(options={})
+    logger = Logger.new(STDOUT)
+
+    size = (options[:size] || 1000).to_i
+    cursor = (options[:cursor] || 0).to_i
+
+    response = Event.query(nil, source_id: "datacite-orcid-auto-update", page: { size: 1, cursor: cursor })
+    logger.info "[Update] #{response.results.total} events for source datacite-orcid-auto-update."
+
+    # walk through results using cursor
+    if response.results.total > 0
+      while response.results.results.length > 0 do
+        response = Event.query(nil, source_id: "datacite-orcid-auto-update", page: { size: size, cursor: cursor })
+        break unless response.results.results.length > 0
+
+        logger.info "[Update] Updating #{response.results.results.length} datacite-orcid-auto-update events starting with _id #{cursor + 1}."
+        cursor = response.results.to_a.last[:sort].first.to_i
+
+        ids = response.results.results.map(&:obj_id).uniq
+        OrcidAutoUpdateJob.perform_later(ids)
+      end
+    end
+
+    response.results.total
+  end
+
   def to_param  # overridden, use uuid instead of id
     uuid
   end

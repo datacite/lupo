@@ -40,3 +40,12 @@ namespace :datacite_crossref do
     Event.update_datacite_crossref(cursor: cursor)
   end
 end
+
+namespace :datacite_orcid_auto_update do
+  desc 'Import orcid ids for all events'
+  task :import_orcid => :environment do
+    cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
+
+    Event.update_datacite_orcid_auto_update(cursor: cursor)
+  end
+end
