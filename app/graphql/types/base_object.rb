@@ -9,4 +9,11 @@ class BaseObject < GraphQL::Schema::Object
       uri.path.gsub(/^\//, "").downcase
     end
   end
+
+  def orcid_from_url(url)
+    if /\A(?:(http|https):\/\/(orcid.org)\/)(.+)\z/.match?(url)
+      uri = Addressable::URI.parse(url)
+      uri.path.gsub(/^\//, "").downcase
+    end
+  end
 end

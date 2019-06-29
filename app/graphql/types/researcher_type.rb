@@ -38,29 +38,30 @@ class ResearcherType < BaseObject
   end
 
   def datasets(**args)
-    ids = Event.query(nil, obj_id: https_to_http(object.uid ? "https://orcid.org/#{object.uid}" : nil || object[:id]), citation_type: "Dataset-Person").results.to_a.map do |e|
+    ids = Event.query(nil, obj_id: https_to_http(object.uid || object[:id] || object.fetch("nameIdentifiers", []).find { |n| n.fetch("nameIdentifierScheme", nil) == "ORCID" }.to_h.fetch("nameIdentifier", nil)), citation_type: "Dataset-Person").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
   def publications(**args)
-    ids = Event.query(nil, obj_id: https_to_http(object.uid ? "https://orcid.org/#{object.uid}" : nil || object[:id]), citation_type: "Person-ScholarlyArticle").results.to_a.map do |e|
+    ids = Event.query(nil, obj_id: https_to_http(object.uid || object[:id] || object.fetch("nameIdentifiers", []).find { |n| n.fetch("nameIdentifierScheme", nil) == "ORCID" }.to_h.fetch("nameIdentifier", nil)), citation_type: "Person-ScholarlyArticle").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
   def softwares(**args)
-    ids = Event.query(nil, obj_id: https_to_http(object.uid ? "https://orcid.org/#{object.uid}" : nil || object[:id]), citation_type: "Person-SoftwareSourceCode").results.to_a.map do |e|
+    ids = Event.query(nil, obj_id: https_to_http(object.uid || object[:id] || object.fetch("nameIdentifiers", []).find { |n| n.fetch("nameIdentifierScheme", nil) == "ORCID" }.to_h.fetch("nameIdentifier", nil)), citation_type: "Person-SoftwareSourceCode").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
   def https_to_http(url)
-    uri = Addressable::URI.parse(url)
-    uri.scheme = "http"
-    uri.to_s
+    orcid = orcid_from_url(url)
+    return nil unless orcid.present?
+
+    "https://orcid.org/#{orcid}"
   end
 end
