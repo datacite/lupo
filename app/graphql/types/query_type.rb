@@ -81,15 +81,21 @@ class QueryType < BaseObject
     result
   end
 
-  field :researcher, ResearcherType, null: false do
+  field :researcher, ResearcherType, null: true do
     argument :id, ID, required: true
   end
 
   def researcher(id:)
-    result = Researcher.find_by_id(id).fetch(:data, []).first
-    fail ActiveRecord::RecordNotFound if result.nil?
+    ElasticsearchLoader.for(Researcher).load(orcid_from_url(id))
+  end
 
-    result
+  field :researchers, ResearcherConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
+    argument :query, String, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+
+  def researchers(query: nil, first: nil)
+    Researcher.query(query, page: { number: 1, size: first }).results.to_a
   end
 
   field :organizations, OrganizationConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
@@ -427,5 +433,9 @@ class QueryType < BaseObject
       uri = Addressable::URI.parse(url)
       uri.path.gsub(/^\//, "").downcase
     end
+  end
+
+  def orcid_from_url(url)
+    Array(/\A(http|https):\/\/orcid\.org\/(.+)/.match(url)).last
   end
 end
