@@ -25,7 +25,7 @@ class SoftwareConnectionWithMetaType < BaseConnection
   end
 
   def researcher_connection_count
-    Event.query(nil, citation_type: "Researcher-SoftwareSourceCode").results.total
+    Event.query(nil, citation_type: "Person-SoftwareSourceCode").results.total
   end
 
   def funder_connection_count

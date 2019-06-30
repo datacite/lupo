@@ -25,7 +25,7 @@ class DatasetConnectionWithMetaType < BaseConnection
   end
 
   def researcher_connection_count
-    Event.query(nil, citation_type: "Dataset-Researcher").results.total
+    Event.query(nil, citation_type: "Dataset-Person").results.total
   end
 
   def funder_connection_count

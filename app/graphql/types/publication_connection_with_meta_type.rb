@@ -25,7 +25,7 @@ class PublicationConnectionWithMetaType < BaseConnection
   end
 
   def researcher_connection_count
-    Event.query(nil, citation_type: "Researcher-ScholarlyArticle").results.total
+    Event.query(nil, citation_type: "Person-ScholarlyArticle").results.total
   end
 
   def funder_connection_count
