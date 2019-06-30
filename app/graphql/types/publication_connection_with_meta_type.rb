@@ -5,6 +5,7 @@ class PublicationConnectionWithMetaType < BaseConnection
   field_class GraphQL::Cache::Field
 
   field :total_count, Integer, null: false, cache: true
+  field :publication_connection_count, Integer, null: false, cache: true
   field :dataset_connection_count, Integer, null: false, cache: true
   field :software_connection_count, Integer, null: false, cache: true
   field :researcher_connection_count, Integer, null: false, cache: true
@@ -14,6 +15,10 @@ class PublicationConnectionWithMetaType < BaseConnection
     args = object.arguments
     
     Doi.query(args[:query], resource_type_id: "Text", state: "findable", page: { number: 1, size: args[:first] }).results.total
+  end
+
+  def publication_connection_count
+    Event.query(nil, citation_type: "ScholarlyArticle-ScholarlyArticle").results.total
   end
 
   def dataset_connection_count
