@@ -276,6 +276,7 @@ module Facetable
           "this_month" => facet_anual(hsh.this_month.buckets),
           "this_year" => facet_anual(hsh.this_year.buckets),
           "last_year" => facet_anual(hsh.last_year.buckets)},
+          "two_years_ago" => facet_anual(hsh.two_years_ago.buckets),
           "states"    => facet_by_key(hsh.states.buckets)
         }
       end
@@ -309,7 +310,8 @@ module Facetable
           "temporal" => {
             "this_month" => facet_anual(hsh.this_month.buckets),
             "this_year" => facet_anual(hsh.this_year.buckets),
-            "last_year" => facet_anual(hsh.last_year.buckets)
+            "last_year" => facet_anual(hsh.last_year.buckets),
+            "two_years_ago" => facet_anual(hsh.two_years_ago.buckets)
           },
           "states"    => facet_by_key(hsh.states.buckets)
         }

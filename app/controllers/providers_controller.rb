@@ -201,7 +201,8 @@ class ProvidersController < ApplicationController
     page = { size: 0, number: 1 }
     response = nil
     bmt = Benchmark.ms {
-      response = Doi.query(nil, state: "findable,registered", page: page, totals_agg: true)
+      state =  authenticate_user!.present? && authenticate_user!.is_admin? && params[:state].present? ? params[:state] : "registered,findable"
+      response = Doi.query(nil, state: state, page: page, totals_agg: true)
     }
     
     if bmt > 10000
