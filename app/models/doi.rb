@@ -415,6 +415,36 @@ class Doi < ActiveRecord::Base
     })
   end
 
+  def self.import_one(doi_id: nil)
+    logger = Logger.new(STDOUT)
+
+    doi = Doi.where(doi: doi_id).first
+    unless doi.present?
+      logger.error "[MySQL] DOI " + doi_id + " not found."
+      return nil
+    end
+
+    string = doi.current_metadata.present? ? doi.clean_xml(doi.current_metadata.xml) : nil
+    unless string.present?
+      logger.error "[MySQL] No metadata for DOI " + doi.doi + " found: " + doi.current_metadata.inspect
+      return nil
+    end
+
+    meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
+    attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
+      [a.to_sym, meta[a]]
+    end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
+
+    # update_attributes will trigger validations and Elasticsearch indexing
+    doi.update_attributes(attrs)
+    logger.info "[MySQL] Imported metadata for DOI " + doi.doi + "."
+    doi
+  rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
+    logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
+    Raven.capture_exception(error)
+    doi
+  end
+
   def self.import_by_ids(options={})
     from_id = (options[:from_id] || Doi.minimum(:id)).to_i
     until_id = (options[:until_id] || Doi.maximum(:id)).to_i
