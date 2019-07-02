@@ -145,7 +145,8 @@ class ClientsController < ApplicationController
     page = { size: 0, number: 1}
     response = nil
     bmt = Benchmark.ms {
-      response = Doi.query(nil, provider_id: params[:provider_id], state: "findable,registered", page: page, totals_agg: true)
+      state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
+      response = Doi.query(nil, provider_id: params[:provider_id], state: state, page: page, totals_agg: true)
     }
     if bmt > 10000
       logger.warn "[Benchmark Warning] clients totals " + bmt.to_s + " ms"
