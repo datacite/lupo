@@ -1727,8 +1727,8 @@ describe "dois", type: :request do
 
           expect(last_response.status).to eq(200)
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
-          expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"}])
-          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2006-12-20", "dateType"=>"Issued"}, {"date"=>"2017-01-01T03:37:08Z", "dateType"=>"Updated"}])
+          expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2014-02-11", "dateType"=>"Issued"}, {"date"=>"2018-08-23T13:41:49Z", "dateType"=>"Updated"}])
         end
       end
 

@@ -218,13 +218,13 @@ describe Doi, vcr: true do
 
       expect(meta["string"]).to eq(string)
       expect(meta["from"]).to eq("crossref")
-      expect(meta["doi"]).to eq("10.1371/journal.pone.0000030")
+      expect(meta["doi"]).to eq("10.7554/elife.01567")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq("familyName"=>"Ralser", "givenName"=>"Markus", "name"=>"Ralser, Markus", "nameType"=>"Personal")
-      expect(meta["titles"]).to eq([{"title"=>"Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"}])
-      expect(meta["publication_year"]).to eq("2006")
-      expect(meta["publisher"]).to eq("(:unav)")
-      expect(meta["container"]).to eq("firstPage"=>"e30", "identifier"=>"1932-6203", "identifierType"=>"ISSN", "issue"=>"1", "title"=>"PLoS ONE", "type"=>"Journal", "volume"=>"1")
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "nameType"=>"Personal")
+      expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
+      expect(meta["publication_year"]).to eq("2014")
+      expect(meta["publisher"]).to eq("eLife Sciences Publications, Ltd")
+      expect(meta["container"]).to eq("identifier"=>"2050-084X", "identifierType"=>"ISSN", "title"=>"eLife", "type"=>"Journal", "volume"=>"3")
     end
 
     it "from crossref url" do
@@ -237,7 +237,7 @@ describe Doi, vcr: true do
       expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
       expect(meta["publication_year"]).to eq("2014")
-      expect(meta["publisher"]).to eq("(:unav)")
+      expect(meta["publisher"]).to eq("eLife Sciences Publications, Ltd")
       expect(meta["container"]).to eq("identifier" => "2050-084X", "identifierType"=>"ISSN", "title"=>"eLife", "type"=>"Journal", "volume"=>"3")
       expect(meta["agency"]).to eq("Crossref")
     end
@@ -387,13 +387,13 @@ describe Doi, vcr: true do
       string = file_fixture('crossref.xml').read
       meta = subject.parse_xml(string)
 
-      expect(meta["doi"]).to eq("10.1371/journal.pone.0000030")
+      expect(meta["doi"]).to eq("10.7554/elife.01567")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq("familyName"=>"Ralser", "givenName"=>"Markus", "name"=>"Ralser, Markus", "nameType"=>"Personal")
-      expect(meta["titles"]).to eq([{"title"=>"Triose Phosphate Isomerase Deficiency Is Caused by Altered Dimerization–Not Catalytic Inactivity–of the Mutant Enzymes"}])
-      expect(meta["publication_year"]).to eq("2006")
-      expect(meta["publisher"]).to eq("(:unav)")
-      expect(meta["container"]).to eq("firstPage"=>"e30", "identifier"=>"1932-6203", "identifierType"=>"ISSN", "issue"=>"1", "title"=>"PLoS ONE", "type"=>"Journal", "volume"=>"1")
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "nameType"=>"Personal")
+      expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
+      expect(meta["publication_year"]).to eq("2014")
+      expect(meta["publisher"]).to eq("eLife Sciences Publications, Ltd")
+      expect(meta["container"]).to eq("identifier"=>"2050-084X", "identifierType"=>"ISSN", "title"=>"eLife", "type"=>"Journal", "volume"=>"3")
     end
 
     it "from bibtex" do
