@@ -6,15 +6,18 @@ class CrossrefDoiByIdJob < ActiveJob::Base
 
   # discard_on ActiveJob::DeserializationError
 
-  def perform(id)
+  def perform(id, options={})
     logger = Logger.new(STDOUT)
 
     doi = doi_from_url(id)
     return {} unless doi.present?
 
-    # check whether DOI has been registered with DataCite already
-    result = Doi.find_by_id(doi).results.first
-    return {} unless result.blank?
+    # check whether DOI has been stored with DataCite already
+    # unless we want to refresh the metadata
+    unless options[:refresh]
+      result = Doi.find_by_id(doi).results.first
+      return {} unless result.blank?
+    end
 
     # otherwise store Crossref metadata with DataCite 
     # using client crossref.citations and DataCite XML
@@ -42,14 +45,16 @@ class CrossrefDoiByIdJob < ActiveJob::Base
     url = "http://localhost/dois/#{doi}"
     response = Maremma.put(url, accept: 'application/vnd.api+json', 
                                 content_type: 'application/vnd.api+json',
-                                data: data.to_json, 
+                                data: data.to_json,
                                 username: ENV["ADMIN_USERNAME"],
                                 password: ENV["ADMIN_PASSWORD"])
 
-    if [200, 201].include?(response.status)
-      logger.info "DOI #{doi} created."
+    if response.status == 201
+      logger.info "DOI #{doi} record created."
+    elsif response.status == 200
+      logger.info "DOI #{doi} record updated."
     else
-      logger.warn "[Error for DOI #{doi}]: " + response.body["errors"].inspect
+      logger.error "[Error parsing Crossref DOI #{doi}]: " + response.body["errors"].inspect
     end
   end
 

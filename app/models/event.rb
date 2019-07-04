@@ -324,7 +324,7 @@ class Event < ActiveRecord::Base
         cursor = response.results.to_a.last[:sort].first.to_i
 
         dois = response.results.results.map(&:obj_id).uniq
-        CrossrefDoiJob.perform_later(dois)
+        CrossrefDoiJob.perform_later(dois, options)
       end
     end
 
@@ -350,7 +350,7 @@ class Event < ActiveRecord::Base
         cursor = response.results.to_a.last[:sort].first.to_i
 
         ids = response.results.results.map(&:obj_id).uniq
-        OrcidAutoUpdateJob.perform_later(ids)
+        OrcidAutoUpdateJob.perform_later(ids, options)
       end
     end
 

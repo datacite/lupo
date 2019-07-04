@@ -6,15 +6,18 @@ class OrcidAutoUpdateByIdJob < ActiveJob::Base
 
   # discard_on ActiveJob::DeserializationError
 
-  def perform(id)
+  def perform(id, options={})
     logger = Logger.new(STDOUT)
 
     orcid = orcid_from_url(id)
     return {} unless orcid.present?
 
-    # check whether ORCID ID has been registered with DataCite already
-    result = Researcher.find_by_id(orcid).results.first
-    return {} unless result.blank?
+    # check whether ORCID ID has been stored with DataCite already
+    # unless we want to refresh the metadata
+    unless options[:refresh]
+      result = Researcher.find_by_id(orcid).results.first
+      return {} unless result.blank?
+    end
 
     # otherwise fetch basic ORCID metadata and store with DataCite
     url = "https://pub.orcid.org/v2.1/#{orcid}/person"

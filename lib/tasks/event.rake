@@ -37,7 +37,7 @@ namespace :datacite_crossref do
   task :import_doi => :environment do
     cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
 
-    Event.update_datacite_crossref(cursor: cursor)
+    Event.update_datacite_crossref(cursor: cursor, refresh: ENV['REFRESH'], size: ENV['SIZE'])
   end
 end
 
@@ -46,6 +46,6 @@ namespace :datacite_orcid_auto_update do
   task :import_orcid => :environment do
     cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
 
-    Event.update_datacite_orcid_auto_update(cursor: cursor)
+    Event.update_datacite_orcid_auto_update(cursor: cursor, refresh: ENV['REFRESH'], size: ENV['SIZE'])
   end
 end
