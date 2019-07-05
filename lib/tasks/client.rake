@@ -14,6 +14,19 @@ namespace :client do
     Client.__elasticsearch__.refresh_index!
   end
 
+  desc "reindex"
+  task :reindex => :environment do
+    if ENV['SOURCE_INDEX'].nil? || ENV['DEST_INDEX'].nil?
+      puts "ENV['SOURCE_INDEX'] ENV['DEST_INDEX'] required"
+      exit
+    end
+
+    Client.__elasticsearch__.create_index! index: ENV['DEST_INDEX']
+
+    esclient = Elasticsearch::Client.new log: true, host: ENV['ES_HOST']
+    esclient.reindex body: { source: { index: ENV['SOURCE_INDEX'] }, dest: { index: ENV['DEST_INDEX'] } }
+  end
+
   desc 'Index DOIs by client'
   task :index_all_dois => :environment do
     if ENV['CLIENT_ID'].nil?

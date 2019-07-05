@@ -21,6 +21,19 @@ namespace :event do
 
     Event.import_by_ids(from_id: from_id, until_id: until_id)
   end
+
+  desc "reindex"
+  task :reindex => :environment do
+    if ENV['SOURCE_INDEX'].nil? || ENV['DEST_INDEX'].nil?
+      puts "ENV['SOURCE_INDEX'] ENV['DEST_INDEX'] required"
+      exit
+    end
+
+    Event.__elasticsearch__.create_index! index: ENV['DEST_INDEX']
+
+    client = Elasticsearch::Client.new log: true, host: ENV['ES_HOST']
+    client.reindex body: { source: { index: ENV['SOURCE_INDEX'] }, dest: { index: ENV['DEST_INDEX'] } }
+  end
 end
 
 namespace :crossref do
