@@ -296,12 +296,7 @@ module Indexable
 
       client     = Elasticsearch::Client.new log: true, host: ENV['ES_HOST']
       index_name = self.index_name
-
-      client.indices.get_alias(name: index_name).each do |indice|
-        puts "Removing all Aliases first"
-        client.indices.delete_alias index: indice.first, name: index_name
-      end if client.indices.exists_alias? name: index_name
-
+      
       client.indices.put_alias index: index, name: index_name
     end
 

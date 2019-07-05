@@ -64,6 +64,12 @@ namespace :doi do
   end
 
 
+  desc "Update Alias"
+  task :update_alias => :environment do
+    Doi.update_aliases(old_index: ENV['OLD_INDEX'], new_index: ENV['NEW_INDEX'])
+  end
+
+
   desc "reindex"
   task :reindex => :environment do
     Doi.reindex(index: ENV['INDEX_NAME'])

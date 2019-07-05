@@ -78,7 +78,7 @@ class Event < ActiveRecord::Base
   attr_accessor :container_title, :url
 
   # use different index for testing
-  index_name Rails.env.test? ? "events-test" : "events_alias"
+  index_name Rails.env.test? ? "events-test" : "events"
 
   mapping dynamic: "false" do
     indexes :uuid,             type: :keyword

@@ -27,6 +27,11 @@ namespace :event do
     Event.create_alias(index: ENV['INDEX_NAME'])
   end
 
+  desc "Update Alias"
+  task :update_alias => :environment do
+    Event.update_aliases(old_index: ENV['OLD_INDEX'], new_index: ENV['NEW_INDEX'])
+  end
+
   desc "reindex the whole index"
   task :reindex => :environment do
     Event.reindex(index: ENV['INDEX_NAME'])
