@@ -12,7 +12,7 @@ class Ability
     if user.role_id == "staff_admin"
       can :manage, :all
       cannot [:new, :create], Doi do |doi|
-        doi.client.blank? || !(doi.client.prefixes.where(prefix: doi.prefix).first || doi.client.symbol.downcase.start_with?("crossref.") || doi.client.symbol.downcase.start_with?("medra.")
+        doi.client.blank? || !(doi.client.prefixes.where(prefix: doi.prefix).first || doi.client.symbol.downcase.start_with?("crossref.") || doi.client.symbol.downcase.start_with?("medra."))
       end
     elsif user.role_id == "staff_user"
       can :read, :all
