@@ -285,7 +285,7 @@ module Indexable
       self.__elasticsearch__.create_index! index: index
       index_name = self.index_name
 
-      client = Elasticsearch::Client.new log: true, host: ENV['ES_HOST']
+      client = Elasticsearch::Model.client
       ### always take origing index even if it was a alias
       index_name = client.indices.get_alias(name: index_name).first.first  if client.indices.exists_alias? name: index_name
       client.reindex body: { source: { index: index_name }, dest: { index: index } }
@@ -294,9 +294,9 @@ module Indexable
     def create_alias(index: nil)
       return nil unless index.present?
 
-      client     = Elasticsearch::Client.new log: true, host: ENV['ES_HOST']
+      client     = Elasticsearch::Model.client
       index_name = self.index_name
-      
+
       client.indices.put_alias index: index, name: index_name
     end
 
@@ -304,7 +304,7 @@ module Indexable
       return nil unless old_index.present? && new_index.present?
       
       # client     = self.gateway.client
-      client = Elasticsearch::Client.new log: true, host: ENV['ES_HOST']
+      client = Elasticsearch::Model.client
       index_name = self.index_name
 
       client.indices.update_aliases body: {
