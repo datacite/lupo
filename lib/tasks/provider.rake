@@ -20,16 +20,13 @@ namespace :provider do
     Provider.__elasticsearch__.refresh_index!
   end
 
+  desc "Create Alias"
+  task :create_alias => :environment do
+    Provider.create_alias(index: ENV['INDEX_NAME'])
+  end
+
   desc "reindex"
   task :reindex => :environment do
-    if ENV['SOURCE_INDEX'].nil? || ENV['DEST_INDEX'].nil?
-      puts "ENV['SOURCE_INDEX'] ENV['DEST_INDEX'] required"
-      exit
-    end
-
-    Provider.__elasticsearch__.create_index! index: ENV['DEST_INDEX']
-
-    client = Elasticsearch::Client.new log: true, host: ENV['ES_HOST']
-    client.reindex body: { source: { index: ENV['SOURCE_INDEX'] }, dest: { index: ENV['DEST_INDEX'] } }
+    Provider.reindex(index: ENV['INDEX_NAME'])
   end
 end

@@ -279,11 +279,26 @@ module Indexable
       Elasticsearch::Model.client.count(index: index_name)['count']
     end
 
+    def reindex(index: nil)
+      return nil unless index.present?
+
+      Provider.__elasticsearch__.create_index! index: index
+      index_name = self.index_name
+
+      client = Elasticsearch::Client.new log: true, host: ENV['ES_HOST']
+      client.reindex body: { source: { index: index_name }, dest: { index: index } }
+    end
+
     def create_alias(index: nil)
       return nil unless index.present?
 
-      client     = self.gateway.client
+      client     = Elasticsearch::Client.new log: true, host: ENV['ES_HOST']
       index_name = self.index_name
+
+      client.indices.get_alias(name: index_name).each do |indice|
+        puts "Removing all Aliases first"
+        client.indices.delete_alias index: indice.first, name: index_name
+      end if client.indices.exists_alias? name: index_name
 
       client.indices.put_alias index: index, name: index_name
     end
@@ -291,7 +306,8 @@ module Indexable
     def update_aliases(old_index: nil, new_index: nil)
       return nil unless old_index.present? && new_index.present?
       
-      client     = self.gateway.client
+      # client     = self.gateway.client
+      client = Elasticsearch::Client.new log: true, host: ENV['ES_HOST']
       index_name = self.index_name
 
       client.indices.update_aliases body: {

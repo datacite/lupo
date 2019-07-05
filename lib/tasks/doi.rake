@@ -58,16 +58,14 @@ namespace :doi do
     Doi.migrate_landing_page
   end
 
+  desc "Create Alias"
+  task :create_alias => :environment do
+    Doi.create_alias(index: ENV['INDEX_NAME'])
+  end
+
+
   desc "reindex"
   task :reindex => :environment do
-    if ENV['SOURCE_INDEX'].nil? || ENV['DEST_INDEX'].nil?
-      puts "ENV['SOURCE_INDEX'] ENV['DEST_INDEX'] required"
-      exit
-    end
-
-    Doi.__elasticsearch__.create_index! index: ENV['DEST_INDEX']
-
-    client = Elasticsearch::Client.new log: true, host: ENV['ES_HOST']
-    client.reindex body: { source: { index: ENV['SOURCE_INDEX'] }, dest: { index: ENV['DEST_INDEX'] } }
+    Doi.reindex(index: ENV['INDEX_NAME'])
   end
 end
