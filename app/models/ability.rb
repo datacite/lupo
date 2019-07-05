@@ -12,7 +12,7 @@ class Ability
     if user.role_id == "staff_admin"
       can :manage, :all
       cannot [:new, :create], Doi do |doi|
-        doi.client.blank? || !(doi.client.prefixes.where(prefix: doi.prefix).first || doi.client.symbol.downcase.start_with?("crossref."))
+        doi.client.blank? || !(doi.client.prefixes.where(prefix: doi.prefix).first || doi.client.symbol.downcase.start_with?("crossref.") || doi.client.symbol.downcase.start_with?("medra.")
       end
     elsif user.role_id == "staff_user"
       can :read, :all
@@ -65,7 +65,7 @@ class Ability
 
       can [:read, :destroy, :update, :register_url, :validate, :undo, :get_url, :get_urls, :read_landing_page_results], Doi, :client_id => user.client_id
       can [:new, :create], Doi do |doi| 
-        doi.client.prefixes.where(prefix: doi.prefix).present? || doi.client.symbol.downcase.start_with?("crossref.")
+        doi.client.prefixes.where(prefix: doi.prefix).present? || doi.client.symbol.downcase.start_with?("crossref.") || doi.client.symbol.downcase.start_with?("medra.")
       end
       can [:read], Doi do |doi|
         doi.findable?

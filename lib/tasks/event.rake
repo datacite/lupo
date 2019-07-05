@@ -41,6 +41,15 @@ namespace :datacite_crossref do
   end
 end
 
+namespace :datacite_medra do
+  desc 'Import medra dois for all events'
+  task :import_doi => :environment do
+    cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
+
+    Event.update_datacite_medra(cursor: cursor, refresh: ENV['REFRESH'], size: ENV['SIZE'])
+  end
+end
+
 namespace :datacite_orcid_auto_update do
   desc 'Import orcid ids for all events'
   task :import_orcid => :environment do

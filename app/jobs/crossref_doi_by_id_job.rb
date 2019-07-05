@@ -19,8 +19,14 @@ class CrossrefDoiByIdJob < ActiveJob::Base
       return {} unless result.blank?
     end
 
-    # otherwise store Crossref metadata with DataCite 
-    # using client crossref.citations and DataCite XML
+    # otherwise store DOI metadata with DataCite 
+    # check DOI registration agency as Crossref also indexes DOIs from other RAs
+    # using client crossref.citations, medra.citations, etc. and DataCite XML
+    ra = get_doi_ra(id).downcase
+    return {} unless ra.present?
+
+    client_id = ra.downcase + ".citations"
+
     xml = Base64.strict_encode64(id)
     attributes = {
       "xml" => xml,
@@ -35,7 +41,7 @@ class CrossrefDoiByIdJob < ActiveJob::Base
           "client" =>  {
             "data" => {
               "type" => "clients",
-              "id" => "crossref.citations"
+              "id" => client_id
             }
           }
         }
@@ -54,7 +60,7 @@ class CrossrefDoiByIdJob < ActiveJob::Base
     elsif response.status == 200
       logger.info "DOI #{doi} record updated."
     else
-      logger.error "[Error parsing Crossref DOI #{doi}]: " + response.body["errors"].inspect
+      logger.error "[Error parsing #{ra} DOI #{doi}]: " + response.body["errors"].inspect
     end
   end
 
@@ -63,5 +69,19 @@ class CrossrefDoiByIdJob < ActiveJob::Base
       uri = Addressable::URI.parse(url)
       uri.path.gsub(/^\//, '').downcase
     end
+  end
+
+  def get_doi_ra(doi)
+    prefix = validate_prefix(doi)
+    return nil if prefix.blank?
+
+    url = "https://doi.org/ra/#{prefix}"
+    result = Maremma.get(url)
+
+    result.body.dig("data", 0, "RA")
+  end
+
+  def validate_prefix(doi)
+    Array(/\A(?:(http|https):\/(\/)?(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}).*\z/.match(doi)).last
   end
 end

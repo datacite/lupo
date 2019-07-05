@@ -580,7 +580,7 @@ class Doi < ActiveRecord::Base
   # end
 
   def is_registered_or_findable?
-    %w(registered findable).include?(aasm_state) || %w(crossref).include?(provider_id)
+    %w(registered findable).include?(aasm_state) || %w(crossref medra).include?(provider_id)
   end
 
   def validatable?
