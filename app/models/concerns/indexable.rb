@@ -282,10 +282,12 @@ module Indexable
     def reindex(index: nil)
       return nil unless index.present?
 
-      Provider.__elasticsearch__.create_index! index: index
+      self.__elasticsearch__.create_index! index: index
       index_name = self.index_name
 
       client = Elasticsearch::Client.new log: true, host: ENV['ES_HOST']
+      ### always take origing index even if it was a alias
+      index_name = client.indices.get_alias(name: index_name).first.first  if client.indices.exists_alias? name: index_name
       client.reindex body: { source: { index: index_name }, dest: { index: index } }
     end
 
