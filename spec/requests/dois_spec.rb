@@ -984,6 +984,40 @@ describe "dois", type: :request do
       end
     end
 
+    context 'crossref url not found', vcr: true do
+      let(:provider) { create(:provider, name: "Crossref", symbol: "CROSSREF", role_name: "ROLE_REGISTRATION_AGENCY") }
+      let(:client) { create(:client, provider: provider, name: "Crossref Citations", symbol: "CROSSREF.CITATIONS") }
+  
+      let(:xml) { Base64.strict_encode64("https://doi.org/10.3389/fmicb.2019.01425") }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "xml" => xml,
+              "source" => "test",
+              "event" => "publish"
+            },
+            "relationships" => {
+              "client" =>  {
+                "data" => {
+                  "type" => "clients",
+                  "id" => client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+
+      it 'not found on updating the record' do
+        patch "/dois/10.3389/fmicb.2019.01425", valid_attributes, headers
+
+        expect(last_response.status).to eq(404)
+        expect(json['errors']).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
+      end
+    end
+
     context 'medra url', vcr: true do
       let(:provider) { create(:provider, name: "mEDRA", symbol: "MEDRA", role_name: "ROLE_REGISTRATION_AGENCY") }
       let(:client) { create(:client, provider: provider, name: "mEDRA Citations", symbol: "MEDRA.CITATIONS") }

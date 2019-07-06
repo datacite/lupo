@@ -579,6 +579,9 @@ class DoisController < ApplicationController
     p[:schemaVersion] = METADATA_FORMATS.include?(meta["from"]) ? LAST_SCHEMA_VERSION : p[:schemaVersion]
     xml = meta["string"]
 
+    # if metadata for DOIs from other registration agencies are not found
+    fail ActiveRecord::RecordNotFound if meta["state"] == "not_found"
+
     read_attrs = [p[:creators], p[:contributors], p[:titles], p[:publisher],
       p[:publicationYear], p[:types], p[:descriptions], p[:container], p[:sizes],
       p[:formats], p[:version], p[:language], p[:dates], p[:identifiers],

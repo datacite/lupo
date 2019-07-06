@@ -59,6 +59,8 @@ class CrossrefDoiByIdJob < ActiveJob::Base
       logger.info "DOI #{doi} record created."
     elsif response.status == 200
       logger.info "DOI #{doi} record updated."
+    elsif response.status == 404
+      logger.info "[Error parsing #{ra} DOI #{doi}]: not found."
     else
       logger.error "[Error parsing #{ra} DOI #{doi}]: " + response.body["errors"].inspect
     end
