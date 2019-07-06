@@ -306,47 +306,55 @@ class Event < ActiveRecord::Base
   end
 
   def self.update_datacite_crossref(options={})
-    logger = Logger.new(STDOUT)
-
-    size = (options[:size] || 1000).to_i
-    cursor = (options[:cursor] || 0).to_i
-
-    response = Event.query(nil, source_id: "datacite-crossref", page: { size: 1, cursor: cursor })
-    logger.info "[Update] #{response.results.total} events for source datacite-crossref."
-
-    # walk through results using cursor
-    if response.results.total > 0
-      while response.results.results.length > 0 do
-        response = Event.query(nil, source_id: "datacite-crossref", page: { size: size, cursor: cursor })
-        break unless response.results.results.length > 0
-
-        logger.info "[Update] Updating #{response.results.results.length} datacite-crossref events starting with _id #{cursor + 1}."
-        cursor = response.results.to_a.last[:sort].first.to_i
-
-        dois = response.results.results.map(&:obj_id).uniq
-        CrossrefDoiJob.perform_later(dois, options)
-      end
-    end
-
-    response.results.total
+    update_datacite_ra(options.merge(ra: "crossref"))
   end
 
   def self.update_datacite_medra(options={})
+    update_datacite_ra(options.merge(ra: "medra"))
+  end
+
+  def self.update_datacite_kisti(options={})
+    update_datacite_ra(options.merge(ra: "kisti"))
+  end
+
+  def self.update_datacite_jalc(options={})
+    update_datacite_ra(options.merge(ra: "jalc"))
+  end
+
+  def self.update_datacite_op(options={})
+    update_datacite_ra(options.merge(ra: "op"))
+  end
+
+  def self.update_datacite_medra(options={})
+    update_datacite_ra(options.merge(ra: "medra"))
+  end
+
+  def self.update_datacite_medra(options={})
+    update_datacite_ra(options.merge(ra: "medra"))
+  end
+
+  def self.update_datacite_medra(options={})
+    update_datacite_ra(options.merge(ra: "medra"))
+  end
+
+  def self.update_datacite_ra(options={})
     logger = Logger.new(STDOUT)
 
     size = (options[:size] || 1000).to_i
     cursor = (options[:cursor] || 0).to_i
+    ra = options[:ra] || "crossref"
+    source_id = "datacite-#{ra}"
 
-    response = Event.query(nil, source_id: "datacite-medra", page: { size: 1, cursor: cursor })
-    logger.info "[Update] #{response.results.total} events for source datacite-medra."
+    response = Event.query(nil, source_id: source_id, page: { size: 1, cursor: cursor })
+    logger.info "[Update] #{response.results.total} events for source #{source_id}."
 
     # walk through results using cursor
     if response.results.total > 0
       while response.results.results.length > 0 do
-        response = Event.query(nil, source_id: "datacite-medra", page: { size: size, cursor: cursor })
+        response = Event.query(nil, source_id: source_id, page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
 
-        logger.info "[Update] Updating #{response.results.results.length} datacite-medra events starting with _id #{cursor + 1}."
+        logger.info "[Update] Updating #{response.results.results.length} #{source_id} events starting with _id #{cursor + 1}."
         cursor = response.results.to_a.last[:sort].first.to_i
 
         dois = response.results.results.map(&:obj_id).uniq

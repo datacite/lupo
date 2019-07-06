@@ -50,6 +50,33 @@ namespace :datacite_medra do
   end
 end
 
+namespace :datacite_kisti do
+  desc 'Import kisti dois for all events'
+  task :import_doi => :environment do
+    cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
+
+    Event.update_datacite_kisti(cursor: cursor, refresh: ENV['REFRESH'], size: ENV['SIZE'])
+  end
+end
+
+namespace :datacite_jalc do
+  desc 'Import jalc dois for all events'
+  task :import_doi => :environment do
+    cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
+
+    Event.update_datacite_jalc(cursor: cursor, refresh: ENV['REFRESH'], size: ENV['SIZE'])
+  end
+end
+
+namespace :datacite_op do
+  desc 'Import op dois for all events'
+  task :import_doi => :environment do
+    cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
+
+    Event.update_datacite_op(cursor: cursor, refresh: ENV['REFRESH'], size: ENV['SIZE'])
+  end
+end
+
 namespace :datacite_orcid_auto_update do
   desc 'Import orcid ids for all events'
   task :import_orcid => :environment do
