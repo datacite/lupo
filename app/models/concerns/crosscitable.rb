@@ -9,14 +9,14 @@ module Crosscitable
 
     attr_accessor :issue, :volume, :style, :locale
 
-    alias_attribute :get_medra, :get_crossref
-    alias_attribute :read_medra, :read_crossref
-    alias_attribute :get_kisti, :get_crossref
-    alias_attribute :read_kisti, :read_crossref
-    alias_attribute :get_jalc, :get_crossref
-    alias_attribute :read_jalc, :read_crossref
-    alias_attribute :get_op, :get_crossref
-    alias_attribute :read_op, :read_crossref
+    # alias_attribute :get_medra, :get_crossref
+    # alias_attribute :read_medra, :read_crossref
+    # alias_attribute :get_kisti, :get_crossref
+    # alias_attribute :read_kisti, :read_crossref
+    # alias_attribute :get_jalc, :get_crossref
+    # alias_attribute :read_jalc, :read_crossref
+    # alias_attribute :get_op, :get_crossref
+    # alias_attribute :read_op, :read_crossref
 
     def sandbox
       !Rails.env.production?

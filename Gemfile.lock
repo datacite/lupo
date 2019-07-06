@@ -106,7 +106,7 @@ GEM
       latex-decode (~> 0.0)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
-    bolognese (1.2.7)
+    bolognese (1.2.9)
       activesupport (>= 4.2.5, < 6)
       benchmark_methods (~> 0.7)
       bibtex-ruby (~> 4.1)
