@@ -166,7 +166,7 @@ class Event < ActiveRecord::Base
   end
 
   def citation_id
-    [subj_id, obj_id].compact.sort.join("-")
+    [subj_id, obj_id].sort.join("-")
   end
 
   def self.query_fields

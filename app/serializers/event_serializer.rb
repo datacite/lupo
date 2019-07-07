@@ -1,5 +1,3 @@
-require 'benchmark'
-
 
 class EventSerializer
   include FastJsonapi::ObjectSerializer
