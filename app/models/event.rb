@@ -126,7 +126,7 @@ class Event < ActiveRecord::Base
     indexes :updated_at,       type: :date
     indexes :indexed_at,       type: :date
     indexes :occurred_at,      type: :date
-    indexes :my_hash,          type: :keyword
+    indexes :citation_id,      type: :keyword
     indexes :cache_key,        type: :keyword
   end
 
@@ -160,12 +160,12 @@ class Event < ActiveRecord::Base
       "updated_at" => updated_at,
       "indexed_at" => indexed_at,
       "occurred_at" => occurred_at,
-      "my_hash" => my_hash,
+      "citation_id" => citation_id,
       "cache_key" => cache_key
     }
   end
 
-  def my_hash
+  def citation_id
     [subj_id, obj_id].compact.sort.join("-")
   end
 
@@ -206,14 +206,16 @@ class Event < ActiveRecord::Base
           }
         },
         aggs: { years: { date_histogram: { field: 'occurred_at', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
-      },
-      unique_citations: {
-        filter: {
-          script: {
-            script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
-          }
-        },
-        aggs: { type_count: { cardinality: { field: 'my_hash' }}}
+      # },
+      # unique_citations: {
+      #   filter: {
+      #     script: {
+      #       script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
+      #     }
+      #   },
+      #   aggs: { dois: {
+      #      terms: { field: 'obj_id', size: 50, min_doc_count: 1 }, aggs: { unique_citations: { cardinality: { field: 'citation_id' }}}
+      #   }}
       }
     }
   end
