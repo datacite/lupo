@@ -48,7 +48,7 @@ class CrossrefDoiByIdJob < ActiveJob::Base
       }
     }
 
-    url = "http://localhost/dois/#{doi}"
+    url = "http://localhost/dois/#{Addressable::URI.encode(doi)}"
     response = Maremma.put(url, accept: 'application/vnd.api+json', 
                                 content_type: 'application/vnd.api+json',
                                 data: data.to_json,
