@@ -1,7 +1,7 @@
 namespace :event do
   desc "Create index for events"
   task :create_index => :environment do
-    Event.__elasticsearch__.create_index!
+    Event.__elasticsearch__.create_index!(index: ENV['INDEX_NAME']||=nil)
   end
 
   desc "Delete index for events"
