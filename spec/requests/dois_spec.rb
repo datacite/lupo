@@ -2389,15 +2389,6 @@ describe "dois", type: :request do
     end
   end
 
-  describe 'POST /dois/delete-test-dois' do
-    it 'returns dois' do
-      post '/dois/delete-test-dois', nil, admin_headers
-
-      expect(json['message']).to eq("Test DOIs deleted.")
-      expect(last_response.status).to eq(200)
-    end
-  end
-
   describe 'GET /dois/random' do
     it 'returns random doi' do
       get '/dois/random?prefix=10.14454', headers: headers

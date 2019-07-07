@@ -19,7 +19,7 @@ describe "Providers", type: :request, elasticsearch: true  do
 
     before do
       Provider.import
-      sleep 1
+      sleep 2
     end
 
     it "returns providers" do
