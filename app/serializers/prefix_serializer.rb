@@ -7,6 +7,6 @@ class PrefixSerializer
 
   attributes :registration_agency, :created, :updated
 
-  has_many :clients, record_type: :clients, if: Proc.new { |record| record.prefix != "10.5072" }
-  has_many :providers, record_type: :providers, if: Proc.new { |record| record.prefix != "10.5072" }
+  has_many :clients, record_type: :clients
+  has_many :providers, record_type: :providers
 end

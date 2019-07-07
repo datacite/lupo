@@ -31,12 +31,10 @@ class Doi < ActiveRecord::Base
     state :tombstoned, :registered, :findable, :flagged, :broken
 
     event :register do
-      # can't register test prefix
       transitions from: [:draft], to: :registered, if: [:registerable?]
     end
 
     event :publish do
-      # can't index test prefix
       transitions from: [:draft], to: :findable, if: [:registerable?]
       transitions from: :registered, to: :findable
     end
@@ -567,12 +565,8 @@ class Doi < ActiveRecord::Base
     uid.split("/", 2).last if doi.present?
   end
 
-  def is_test_prefix?
-    prefix == "10.5072"
-  end
-
   def registerable?
-    prefix != "10.5072" # && url.present?
+    true # && url.present?
   end
 
   # def is_valid?
@@ -655,18 +649,6 @@ class Doi < ActiveRecord::Base
 
   def event=(value)
     self.send(value) if %w(register publish hide show).include?(value)
-  end
-
-  # delete all DOIs with test prefix 10.5072 not updated since from_date
-  # we need to use destroy_all to also delete has_many associations for metadata and media
-  def self.delete_test_dois(from_date: nil)
-    from_date ||= Time.zone.now - 1.month
-    collection = Doi.where("updated < ?", from_date)
-    collection.where("doi LIKE ?", "10.5072%").find_each do |d|
-      logger = Logger.new(STDOUT)
-      logger.info "Automatically deleted #{d.doi}, last updated #{d.updated.iso8601}."
-      d.destroy
-    end
   end
 
   # to be used after DOIs were transferred to another DOI RA

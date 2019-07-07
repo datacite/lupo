@@ -2,7 +2,7 @@ namespace :prefix do
   desc 'Delete prefix and associated DOIs'
   task :delete => :environment do
     # These prefixes are used by multiple clients and can't be deleted
-    prefixes_to_keep = %w(10.5072 10.4124 10.4225 10.4226 10.4227)
+    prefixes_to_keep = %w(10.4124 10.4225 10.4226 10.4227)
 
     if ENV['PREFIX'].nil?
       puts "ENV['PREFIX'] is required."

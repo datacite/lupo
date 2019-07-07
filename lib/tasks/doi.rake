@@ -47,12 +47,6 @@ namespace :doi do
     Doi.set_minted
   end
 
-  desc 'Delete DOIs with test prefix older than one month'
-  task :delete_test_dois => :environment do
-    from_date = ENV['FROM_DATE'] || Time.zone.now - 1.month
-    Doi.delete_test_dois(from_date: from_date)
-  end
-
   desc 'Migrates landing page data handling camelCase changes at same time'
   task :migrate_landing_page => :environment do
     Doi.migrate_landing_page

@@ -87,7 +87,7 @@ namespace :client do
     end
 
     # These prefixes are used by multiple clients
-    prefixes_to_keep = %w(10.5072 10.4124 10.4225 10.4226 10.4227)
+    prefixes_to_keep = %w(10.4124 10.4225 10.4226 10.4227)
 
     # delete all associated prefixes and DOIs
     prefixes = client.prefixes.where.not('prefix IN (?)', prefixes_to_keep).pluck(:prefix)
@@ -130,7 +130,7 @@ namespace :client do
     end
 
     # These prefixes are used by multiple clients
-    prefixes_to_keep = %w(10.5072 10.4124 10.4225 10.4226 10.4227)
+    prefixes_to_keep = %w(10.4124 10.4225 10.4226 10.4227)
 
     # delete all associated prefixes
     prefixes = client.prefixes.where.not('prefix IN (?)', prefixes_to_keep).pluck(:prefix)

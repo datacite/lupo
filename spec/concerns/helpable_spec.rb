@@ -5,22 +5,22 @@ describe Doi, vcr: true do
 
   context "validate_prefix" do
     it 'should validate' do
-      str = "10.5072"
-      expect(subject.validate_prefix(str)).to eq("10.5072")
+      str = "10.14454"
+      expect(subject.validate_prefix(str)).to eq("10.14454")
     end
 
     it 'should validate with slash' do
-      str = "10.5072/"
-      expect(subject.validate_prefix(str)).to eq("10.5072")
+      str = "10.14454/"
+      expect(subject.validate_prefix(str)).to eq("10.14454")
     end
 
     it 'should validate with shoulder' do
-      str = "10.5072/FK2"
-      expect(subject.validate_prefix(str)).to eq("10.5072")
+      str = "10.14454/FK2"
+      expect(subject.validate_prefix(str)).to eq("10.14454")
     end
 
     it 'should not validate if not DOI prefix' do
-      str = "20.5072"
+      str = "20.14454"
       expect(subject.validate_prefix(str)).to be_nil
     end
   end

@@ -178,7 +178,7 @@ describe Doi, vcr: true do
 
       expect(meta["string"]).to eq(string)
       expect(meta["from"]).to eq("datacite")
-      expect(meta["doi"]).to eq("10.5072/testpub")
+      expect(meta["doi"]).to eq("10.14454/testpub")
       expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"Smith, John", "nameType"=>"Personal"}, {"name"=>"つまらないものですが"}])
       expect(meta["titles"]).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
       expect(meta["publication_year"]).to eq("2010")
@@ -365,7 +365,7 @@ describe Doi, vcr: true do
       string = file_fixture('datacite_schema_2.2.xml').read
       meta = subject.parse_xml(string)
 
-      expect(meta["doi"]).to eq("10.5072/testpub")
+      expect(meta["doi"]).to eq("10.14454/testpub")
       expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"Smith, John", "nameType"=>"Personal"}, {"name"=>"つまらないものですが"}])
       expect(meta["titles"]).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
       expect(meta["publication_year"]).to eq("2010")

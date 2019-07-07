@@ -41,24 +41,12 @@ describe Doi, type: :model, vcr: true do
         subject.register
         expect(subject).to have_state(:registered)
       end
-
-      it "can't register with test prefix" do
-        subject = create(:doi, doi: "10.5072/x")
-        subject.register
-        expect(subject).to have_state(:draft)
-      end
     end
 
     describe "findable" do
       it "can publish" do
         subject.publish
         expect(subject).to have_state(:findable)
-      end
-
-      it "can't publish with test prefix" do
-        subject = create(:doi, doi: "10.5072/x")
-        subject.publish
-        expect(subject).to have_state(:draft)
       end
     end
 

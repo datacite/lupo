@@ -2,7 +2,7 @@
           xmlns:xlink="http://www.w3.org/1999/xlink"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4/metadata.xsd">
-   <identifier identifierType="DOI">10.5072/dans-xcy-enug</identifier>
+   <identifier identifierType="DOI">10.14454/dans-xcy-enug</identifier>
    <creators>
       <creator>
          <creatorName>Chris Baars at DANS for testing</creatorName>
