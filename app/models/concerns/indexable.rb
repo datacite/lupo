@@ -280,6 +280,7 @@ module Indexable
     end
 
     def reindex(index: nil)
+      logger = Logger.new(STDOUT)
       return nil unless index.present?
       
       self.__elasticsearch__.create_index! index: index unless self.__elasticsearch__.index_exists? index: index
@@ -288,21 +289,23 @@ module Indexable
       client = Elasticsearch::Model.client
       ### always take origing index even if it was a alias
       index_name = client.indices.get_alias(name: index_name).first.first  if client.indices.exists_alias? name: index_name
+      logger.info "Index #{index} exists? #{self.__elasticsearch__.index_exists? index: index}"
       client.reindex body: { source: { index: index_name }, dest: { index: index } }
-      puts "Index #{index} exists? #{self.__elasticsearch__.index_exists? index: index}"
     end
 
     def create_alias(index: nil)
+      logger = Logger.new(STDOUT)
       return nil unless index.present?
 
       client     = Elasticsearch::Model.client
       index_name = self.index_name
 
       client.indices.put_alias index: index, name: index_name
-      puts client.indices.get_alias name: index_name
+      logger.info client.indices.get_alias name: index_name
     end
 
     def update_aliases(old_index: nil, new_index: nil)
+      logger = Logger.new(STDOUT)
       return nil unless old_index.present? && new_index.present?
       
       # client     = self.gateway.client
@@ -315,7 +318,7 @@ module Indexable
           { add:    { index: new_index, alias: index_name } }
         ]
       }
-      puts client.indices.get_alias name: index_name
+      logger.info client.indices.get_alias name: index_name
     end
   end
 end
