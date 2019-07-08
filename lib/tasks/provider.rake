@@ -19,14 +19,4 @@ namespace :provider do
   task :refresh_index => :environment do
     Provider.__elasticsearch__.refresh_index!
   end
-
-  desc "Create Alias"
-  task :create_alias => :environment do
-    Provider.create_alias(index: ENV['INDEX_NAME'])
-  end
-
-  desc "reindex"
-  task :reindex => :environment do
-    Provider.reindex(index: ENV['INDEX_NAME'])
-  end
 end

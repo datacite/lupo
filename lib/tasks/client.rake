@@ -14,17 +14,6 @@ namespace :client do
     Client.__elasticsearch__.refresh_index!
   end
 
-  desc "Create Alias"
-  task :create_alias => :environment do
-    Client.create_alias(index: ENV['INDEX_NAME'])
-  end
-
-
-  desc "reindex"
-  task :reindex => :environment do
-    Client.reindex(index: ENV['INDEX_NAME'])
-  end
-
   desc 'Index DOIs by client'
   task :index_all_dois => :environment do
     if ENV['CLIENT_ID'].nil?
