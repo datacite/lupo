@@ -97,6 +97,7 @@ class EventsController < ApplicationController
                              publication_year: params[:publication_year],
                              occurred_at: params[:occurred_at],
                              year_month: params[:year_month],
+                             unique: params[:unique],
                              page: page,
                              sort: sort)
     end
