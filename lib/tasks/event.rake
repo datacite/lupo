@@ -1,12 +1,15 @@
 namespace :event do
   desc "Create index for events"
   task :create_index => :environment do
-    Event.__elasticsearch__.create_index!(index: ENV['INDEX_NAME']||=nil)
+    alias_name = Event.index_name
+    Event.__elasticsearch__.create_index!(index: ENV['INDEX_NAME'])
+    Event.create_alias(index: ENV['INDEX_NAME'], alias_name:alias_name)
   end
 
   desc "Delete index for events"
   task :delete_index => :environment do
-    Event.__elasticsearch__.delete_index!
+    #### It will delete the index rather than then trying to delete the alias
+    Event.__elasticsearch__.delete_index!(index: ENV['INDEX_NAME']||=Event.get_current_index_name)
   end
 
   desc "Refresh index for events"
@@ -22,9 +25,19 @@ namespace :event do
     Event.import_by_ids(from_id: from_id, until_id: until_id)
   end
 
+  desc "Get Current Index name"
+  task :get_current_index_name => :environment do
+    puts "Current index name is #{Event.get_current_index_name}"
+  end
+
+  desc "Delete unused Index"
+  task :delete_unused_index => :environment do
+    Event.delete_unused_index(index: ENV['INDEX_NAME'])
+  end
+
   desc "Create Alias"
   task :create_alias => :environment do
-    Event.create_alias(index: ENV['INDEX_NAME'])
+    Event.create_alias(index: ENV['INDEX_NAME'], alias_name:ENV['ALIAS_NAME'])
   end
 
   desc "Update Alias"

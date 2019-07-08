@@ -58,11 +58,20 @@ namespace :doi do
     Doi.migrate_landing_page
   end
 
+  desc "Get Current Index name"
+  task :get_current_index_name => :environment do
+    Doi.get_current_index_name
+  end
+
+  desc "Delete unused Index"
+  task :delete_unused_index => :environment do
+    Doi.delete_unused_index(index: ENV['INDEX_NAME'])
+  end
+
   desc "Create Alias"
   task :create_alias => :environment do
     Doi.create_alias(index: ENV['INDEX_NAME'])
   end
-
 
   desc "Update Alias"
   task :update_alias => :environment do
