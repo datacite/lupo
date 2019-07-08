@@ -280,33 +280,64 @@ module Indexable
     end
 
     def reindex(index: nil)
-      logger = Logger.new(STDOUT)
       return nil unless index.present?
       
       self.__elasticsearch__.create_index! index: index unless self.__elasticsearch__.index_exists? index: index
+      
+      client = Elasticsearch::Model.client
+      ### always take origing index even if it was a alias
+      logger = Logger.new(STDOUT)
+      index_name = self.get_current_index_name
+      logger.info "Index #{index} exists? #{self.__elasticsearch__.index_exists? index: index}"
+      logger.info client.reindex body: { source: { index: index_name }, dest: { index: index } }
+    end
+
+    def get_current_index_name      
       index_name = self.index_name
 
       client = Elasticsearch::Model.client
       ### always take origing index even if it was a alias
       index_name = client.indices.get_alias(name: index_name).first.first  if client.indices.exists_alias? name: index_name
-      logger.info "Index #{index} exists? #{self.__elasticsearch__.index_exists? index: index}"
-      client.reindex body: { source: { index: index_name }, dest: { index: index } }
+      index_name
     end
 
-    def create_alias(index: nil)
-      logger = Logger.new(STDOUT)
+    def delete_unused_index(index: nil)
       return nil unless index.present?
+      logger = Logger.new(STDOUT)
+      stem = self.__elasticsearch__.target.to_s.downcase
+      return logger.warn "[ERROR] You can only delete indexes starting with the name convention: `#{stem}`" unless index.match?(/^#{stem}/) 
+      return logger.warn "[ERROR] #{index} is being used" if self.index_name == index
+
+      client = Elasticsearch::Model.client
+      return nil unless client.indices.exists? index: index
+      return logger.warn "[ERROR] #{index} is an alias name" if client.indices.exists_alias? name: index
+
+      logger.info client.indices.delete index: index 
+    end
+
+    def create_alias(index: nil, alias_name: nil)
+      return nil unless index.present?
+      logger = Logger.new(STDOUT)
+
 
       client     = Elasticsearch::Model.client
-      index_name = self.index_name
+      # alias_name = alias_name.present? ? alias_name : self.index_name
 
-      client.indices.put_alias index: index, name: index_name
-      logger.info client.indices.get_alias name: index_name
+      alias_name = if alias_name.present?
+        stem = self.__elasticsearch__.target.to_s.downcase
+        return logger.warn "[ERROR] Alias naming must start with: `#{stem}`" unless alias_name.match?(/^#{stem}/)
+        alias_name
+      else
+        self.index_name
+      end
+
+      client.indices.put_alias index: index, name: alias_name
+      logger.info client.indices.get_alias name: alias_name
     end
 
     def update_aliases(old_index: nil, new_index: nil)
-      logger = Logger.new(STDOUT)
       return nil unless old_index.present? && new_index.present?
+      logger = Logger.new(STDOUT)
       
       # client     = self.gateway.client
       client = Elasticsearch::Model.client
