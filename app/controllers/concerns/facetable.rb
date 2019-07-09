@@ -265,6 +265,14 @@ module Facetable
       end
     end
 
+    def facet_citations_by_dois(arr)
+      arr.map do |hsh|
+        { "id" => hsh["key"],
+          "title" => hsh["key"],
+          "citations" => hsh.dig("unique_citations", "value")}
+      end
+    end
+
     def providers_totals(arr)
       providers = Provider.all.pluck(:symbol, :name).to_h
 

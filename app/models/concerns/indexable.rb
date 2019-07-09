@@ -205,7 +205,7 @@ module Indexable
         must << { terms: { relation_type_id: options[:relation_type_id].split(",") }} if options[:relation_type_id].present?
         must << { terms: { registrant_id: options[:registrant_id].split(",") }} if options[:registrant_id].present?
         must << { terms: { registrant_id: options[:provider_id].split(",") }} if options[:provider_id].present?
-        must << { terms: { issn: options[:issn].split(",") }} if options[:issn].present?  
+        must << { terms: { issn: options[:issn].split(",") }} if options[:issn].present?
       end
 
       # ES query can be optionally defined in different ways
@@ -256,6 +256,16 @@ module Indexable
           }
         }
       end
+ 
+      # Collap results list by unique citations
+      unique = options[:unique].blank? ? nil : {
+        field: "citation_id",
+        inner_hits: {
+          name: "first_unique_event",
+          size: 1
+        },
+        "max_concurrent_group_searches": 1
+      }
 
       __elasticsearch__.search({
         size: options.dig(:page, :size),
@@ -263,6 +273,7 @@ module Indexable
         search_after: search_after,
         sort: sort,
         query: es_query,
+        collapse: unique,
         aggregations: aggregations
       }.compact)
     end
