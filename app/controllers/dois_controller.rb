@@ -31,6 +31,16 @@ class DoisController < ApplicationController
 
     page = page_from_params(params)
 
+    # For DOI's we need to decode the page cursor
+    if page[:cursor].present?
+      # Cursor navigation overrides any sort orders specified.
+      sort = { created: { order: 'asc' }, doi: "asc"}
+      page[:cursor] = Base64.decode64(page[:cursor]).split(",")
+      show_cursor_link = true
+    else
+      show_cursor_link = false
+    end
+
     sample_group_field = case params[:sample_group]
       when "client" then "client_id"
       when "data-center" then "client_id"
@@ -155,7 +165,7 @@ class DoisController < ApplicationController
           options[:meta] = {
             total: total,
             "totalPages" => total_pages,
-            page: page[:cursor].blank? && page[:number].present? ? page[:number] : nil,
+            page: show_cursor_link == false && page[:number].present? ? page[:number] : nil,
             states: states,
             "resourceTypes" => resource_types,
             created: created,
@@ -180,8 +190,8 @@ class DoisController < ApplicationController
               query: params[:query],
               "provider-id" => params[:provider_id],
               "client-id" => params[:client_id],
-              "page[cursor]" => page[:cursor].present? ? Array.wrap(results.to_a.last[:sort]).first : nil,
-              "page[number]" => page[:cursor].blank? && page[:number].present? ? page[:number] + 1 : nil,
+              "page[cursor]" => show_cursor_link == true ? Base64.encode64(Array.wrap(results.to_a.last[:sort]).join(',')) : nil,
+              "page[number]" => show_cursor_link == false && page[:number].present? ? page[:number] + 1 : nil,
               "page[size]" => page[:size] }.compact.to_query
             }.compact
           options[:include] = @include
@@ -193,13 +203,13 @@ class DoisController < ApplicationController
           bmr = Benchmark.ms {
             # sparse fieldsets
             fields = fields_from_params(params)
-            if fields              
+            if fields
               render json: DoiSerializer.new(results, options.merge(fields: fields)).serialized_json, status: :ok
             else
               render json: DoiSerializer.new(results, options).serialized_json, status: :ok
             end
           }
-          
+
           if bmr > 3000
             logger.warn "[Benchmark Warning] render " + bmr.to_s + " ms"
           else
@@ -605,7 +615,7 @@ class DoisController < ApplicationController
 
     read_attrs_keys = [:url, :creators, :contributors, :titles, :publisher,
       :publicationYear, :types, :descriptions, :container, :sizes,
-      :formats, :language, :dates, :identifiers, :relatedIdentifiers, 
+      :formats, :language, :dates, :identifiers, :relatedIdentifiers,
       :fundingReferences, :geoLocations, :rightsList, :agency,
       :subjects, :contentUrl, :schemaVersion]
 

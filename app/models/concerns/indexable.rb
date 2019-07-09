@@ -104,8 +104,8 @@ module Indexable
       # enable cursor-based pagination for DOIs
       if self.name == "Doi" && options.dig(:page, :cursor).present?
         from = 0
-        search_after = [options.dig(:page, :cursor)]
-        sort = [{ _id: { order: 'asc' }}]
+        search_after = Array.wrap(options.dig(:page, :cursor))
+        sort = [{ created: "asc", doi: "asc"}]
       elsif self.name == "Event" && options.dig(:page, :cursor).present?
         from = 0
         search_after = [options.dig(:page, :cursor)]
@@ -205,7 +205,7 @@ module Indexable
         must << { terms: { relation_type_id: options[:relation_type_id].split(",") }} if options[:relation_type_id].present?
         must << { terms: { registrant_id: options[:registrant_id].split(",") }} if options[:registrant_id].present?
         must << { terms: { registrant_id: options[:provider_id].split(",") }} if options[:provider_id].present?
-        must << { terms: { issn: options[:issn].split(",") }} if options[:issn].present?  
+        must << { terms: { issn: options[:issn].split(",") }} if options[:issn].present?
       end
 
       # ES query can be optionally defined in different ways
@@ -290,7 +290,7 @@ module Indexable
 
     def update_aliases(old_index: nil, new_index: nil)
       return nil unless old_index.present? && new_index.present?
-      
+
       client     = self.gateway.client
       index_name = self.index_name
 
