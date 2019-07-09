@@ -190,6 +190,7 @@ class DoisController < ApplicationController
               query: params[:query],
               "provider-id" => params[:provider_id],
               "client-id" => params[:client_id],
+              # The cursor link should be based on the ES sort, but we want to encode it into a single string
               "page[cursor]" => show_cursor_link == true ? Base64.encode64(Array.wrap(results.to_a.last[:sort]).join(',')) : nil,
               "page[number]" => show_cursor_link == false && page[:number].present? ? page[:number] + 1 : nil,
               "page[size]" => page[:size] }.compact.to_query
