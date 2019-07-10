@@ -1,3 +1,4 @@
+
 class EventSerializer
   include FastJsonapi::ObjectSerializer
   include BatchLoaderHelper
