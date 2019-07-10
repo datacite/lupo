@@ -54,7 +54,7 @@ after_success:
       docker push $REPO:$TRAVIS_TAG;
       echo "Pushed to" $REPO:$TRAVIS_TAG;
       AUTO_DEPLOY=true;
-    elif [ "$TRAVIS_BRANCH" == "master" AND "$TRAVIS_PULL_REQUEST" == "false" ]; then
+    elif [[ "$TRAVIS_BRANCH" == "master" && "$TRAVIS_PULL_REQUEST" == "false" ]]; then
       docker build -f Dockerfile -t $REPO .;
       docker push $REPO;
       echo "Pushed to" $REPO;
