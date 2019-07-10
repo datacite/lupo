@@ -18,8 +18,12 @@ module Paginatable
 
       # All cursors will need to be decoded from the param
       if page[:cursor].present?
-        # When we decode and split, we'll always end up with an array
-        page[:cursor] = Base64.strict_decode64(page[:cursor]).split(",")
+        begin
+          # When we decode and split, we'll always end up with an array
+          page[:cursor] = Base64.strict_decode64(page[:cursor]).split(",")
+        rescue ArgumentError
+          raise "Invalid base64 used for cursor pased from query params"
+        end
       end
 
       if page[:size].present?
