@@ -15,7 +15,7 @@ class ActivitiesController < ApplicationController
     page = page_from_params(params)
 
     if params[:id].present?
-      response = Activity.find_by_id(params[:id]) 
+      response = Activity.find_by_id(params[:id])
     elsif params[:ids].present?
       response = Activity.find_by_id(params[:ids], page: page, sort: sort)
     else
@@ -24,24 +24,24 @@ class ActivitiesController < ApplicationController
 
     begin
       total = response.results.total
-      total_for_pages = page[:cursor].present? ? total.to_f : [total.to_f, 10000].min
+      total_for_pages = page[:cursor].nil? ? total.to_f : [total.to_f, 10000].min
       total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
-      
+
       @activities = response.results
 
       options = {}
       options[:meta] = {
         total: total,
         "totalPages" => total_pages,
-        page: page[:cursor].blank? && page[:number].present? ? page[:number] : nil,
+        page: page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
       }.compact
 
       options[:links] = {
         self: request.original_url,
         next: @activities.size < page[:size] ? nil : request.base_url + "/activities?" + {
           query: params[:query],
-          "page[cursor]" => page[:cursor].present? ? Array.wrap(@activities.to_a.last[:sort]).first : nil,
-          "page[number]" => page[:cursor].blank? && page[:number].present? ? page[:number] + 1 : nil,
+          "page[cursor]" => page[:cursor] ? Base64.strict_encode64(Array.wrap(@activities.to_a.last[:sort]).join(',')) : nil,
+          "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
           "page[size]" => page[:size],
           sort: params[:sort] }.compact.to_query
         }.compact
