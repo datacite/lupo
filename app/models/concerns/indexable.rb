@@ -339,9 +339,11 @@ module Indexable
       return nil unless old_index.present? && new_index.present?
       logger = Logger.new(STDOUT)
       
-      # client     = self.gateway.client
       client = Elasticsearch::Model.client
       index_name = self.index_name
+      stats = client.indices.stats index: [old_index, new_index], docs: true
+      ## fails if both indexes do not have the same number of documents
+      return logger.warn "[ERROR] Indices #{old_index} and #{new_index} are different" unless stats.dig("indices",old_index,"primaries","docs","count") == (stats.dig("indices",old_index,"primaries","docs","count"))
 
       client.indices.update_aliases body: {
         actions: [
