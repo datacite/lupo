@@ -16,6 +16,17 @@ module Paginatable
         page = {}
       end
 
+      # All cursors will need to be decoded from the param
+      if page[:cursor].present?
+        begin
+          # When we decode and split, we'll always end up with an array
+          page[:cursor] = Base64.strict_decode64(page[:cursor]).split(",")
+        rescue ArgumentError
+          # If we fail to decode we'll just default back to an empty cursor
+          page[:cursor] = []
+        end
+      end
+
       if page[:size].present?
         page[:size] = [page[:size].to_i, 10000].min
         max_number = page[:size] > 0 ? 10000/page[:size] : 1

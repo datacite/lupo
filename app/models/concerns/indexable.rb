@@ -101,30 +101,33 @@ module Indexable
       options[:page][:number] ||= 1
       options[:page][:size] ||= 25
 
-      # enable cursor-based pagination for DOIs
-      if self.name == "Doi" && options.dig(:page, :cursor).present?
+      # Default sort should be whatever is passed in
+      sort = options[:sort]
+      # Cursor should always be an array regardless
+      cursor_values = Array.wrap(options.dig(:page, :cursor))
+
+      # Cursor nav use the search after, this should always be an array of values that match the sort.
+      if options.dig(:page, :cursor).present?
         from = 0
-        search_after = [options.dig(:page, :cursor)]
-        sort = [{ _id: { order: 'asc' }}]
-      elsif self.name == "Event" && options.dig(:page, :cursor).present?
-        from = 0
-        search_after = [options.dig(:page, :cursor)]
-        sort = [{ _id: { order: 'asc' }}]
-      elsif self.name == "Activity" && options.dig(:page, :cursor).present?
-        from = 0
-        search_after = [options.dig(:page, :cursor)]
-        sort = [{ created: { order: 'asc' }}]
-      elsif self.name == "Researcher" && options.dig(:page, :cursor).present?
-        from = 0
-        search_after = [options.dig(:page, :cursor)]
-        sort = [{ created_at: { order: 'asc' }}]
-      elsif options.dig(:page, :cursor).present?
-        from = 0
-        search_after = [options.dig(:page, :cursor)]
-        sort = [{ created: { order: 'asc' }}]
+        search_after = cursor_values
       else
         from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)
         search_after = nil
+      end
+
+      # Calculate cursor sort based upon the type of model
+      # Cursor sorts override any option sort
+      if self.name == "Doi" && cursor_values
+        sort = [{ created: "asc", doi: "asc"}]
+      elsif self.name == "Event" && cursor_values
+        sort = [{ created_at: "asc", uuid: "asc"}]
+      elsif self.name == "Activity" && cursor_values
+        sort = [{ created: { order: 'asc' }}]
+      elsif self.name == "Researcher" && cursor_values
+        sort = [{ created_at: "asc", uid: "asc"}]
+      elsif cursor_values
+        sort = [{ created: { order: 'asc' }}]
+      else
         sort = options[:sort]
       end
 
@@ -256,7 +259,7 @@ module Indexable
           }
         }
       end
- 
+
       # Collap results list by unique citations
       unique = options[:unique].blank? ? nil : {
         field: "citation_id",
@@ -292,9 +295,9 @@ module Indexable
 
     def reindex(index: nil)
       index = self.index_next_version
-      
+
       self.__elasticsearch__.create_index! index: index unless self.__elasticsearch__.index_exists? index: index
-      
+
       client = Elasticsearch::Model.client
       ### always take origing index even if it was a alias
       logger = Logger.new(STDOUT)
@@ -328,14 +331,14 @@ module Indexable
       return nil unless index.present?
       logger = Logger.new(STDOUT)
       stem = self.__elasticsearch__.target.to_s.downcase
-      return logger.warn "[ERROR] You can only delete indexes starting with the name convention: `#{stem}`" unless index.match?(/^#{stem}/) 
+      return logger.warn "[ERROR] You can only delete indexes starting with the name convention: `#{stem}`" unless index.match?(/^#{stem}/)
       return logger.warn "[ERROR] #{index} is being used" if self.index_name == index
 
       client = Elasticsearch::Model.client
       return nil unless client.indices.exists? index: index
       return logger.warn "[ERROR] #{index} is an alias name" if client.indices.exists_alias? name: index
 
-      logger.info client.indices.delete index: index 
+      logger.info client.indices.delete index: index
     end
 
     def create_alias(index: nil, alias_name: nil)
@@ -360,7 +363,7 @@ module Indexable
 
     def update_aliases
       logger = Logger.new(STDOUT)
-      
+
       old_index = self.get_current_index_name
       new_index = self.index_next_version
 
