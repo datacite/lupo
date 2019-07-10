@@ -118,11 +118,11 @@ module Indexable
       if self.name == "Doi" && !options.dig(:page, :cursor).nil?
         sort = [{ created: "asc", doi: "asc"}]
       elsif self.name == "Event" && !options.dig(:page, :cursor).nil?
-        sort = [{ _id: { order: 'asc' }}]
+        sort = [{ created_at: "asc", uuid: "asc"}]
       elsif self.name == "Activity" && !options.dig(:page, :cursor).nil?
         sort = [{ created: { order: 'asc' }}]
       elsif self.name == "Researcher" && !options.dig(:page, :cursor).nil?
-        sort = [{ created_at: { order: 'asc' }}]
+        sort = [{ created_at: "asc", uid: "asc"}]
       elsif !options.dig(:page, :cursor).nil?
         sort = [{ created: { order: 'asc' }}]
       else
