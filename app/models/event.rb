@@ -223,7 +223,7 @@ class Event < ActiveRecord::Base
   # return results for one or more ids
   def self.find_by_id(ids, options={})
     ids = ids.split(",") if ids.is_a?(String)
-    
+
     options[:page] ||= {}
     options[:page][:number] ||= 1
     options[:page][:size] ||= 1000
@@ -299,9 +299,9 @@ class Event < ActiveRecord::Base
     logger = Logger.new(STDOUT)
 
     size = (options[:size] || 1000).to_i
-    cursor = (options[:cursor] || 0).to_i
+    cursor = [(options[:cursor] || [])]
 
-    response = Event.query(nil, source_id: "crossref", page: { size: 1, cursor: cursor })
+    response = Event.query(nil, source_id: "crossref", page: { size: 1, cursor: [] })
     logger.info "[Update] #{response.results.total} events for source crossref."
 
     # walk through results using cursor
@@ -310,8 +310,8 @@ class Event < ActiveRecord::Base
         response = Event.query(nil, source_id: "crossref", page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
 
-        logger.info "[Update] Updating #{response.results.results.length} crossref events starting with _id #{cursor + 1}."
-        cursor = response.results.to_a.last[:sort].first.to_i
+        logger.info "[Update] Updating #{response.results.results.length} crossref events starting with _id #{response.results.to_a.first[:_id]}."
+        cursor = response.results.to_a.last[:sort]
 
         dois = response.results.results.map(&:subj_id).uniq
         CrossrefDoiJob.perform_later(dois)
@@ -357,7 +357,7 @@ class Event < ActiveRecord::Base
     logger = Logger.new(STDOUT)
 
     size = (options[:size] || 1000).to_i
-    cursor = (options[:cursor] || 0).to_i
+    cursor = (options[:cursor] || [])
     ra = options[:ra] || "crossref"
     source_id = "datacite-#{ra}"
 
@@ -370,11 +370,11 @@ class Event < ActiveRecord::Base
         response = Event.query(nil, source_id: source_id, page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
 
-        logger.info "[Update] Updating #{response.results.results.length} #{source_id} events starting with _id #{cursor + 1}."
-        cursor = response.results.to_a.last[:sort].first.to_i
+        logger.info "[Update] Updating #{response.results.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
+        cursor = response.results.to_a.last[:sort]
 
         dois = response.results.results.map(&:obj_id).uniq
-        
+
         # use same jobs as for crossref dois
         CrossrefDoiJob.perform_later(dois, options)
       end
@@ -387,7 +387,7 @@ class Event < ActiveRecord::Base
     logger = Logger.new(STDOUT)
 
     size = (options[:size] || 1000).to_i
-    cursor = (options[:cursor] || 0).to_i
+    cursor = (options[:cursor] || []).to_i
 
     response = Event.query(nil, source_id: "datacite-orcid-auto-update", page: { size: 1, cursor: cursor })
     logger.info "[Update] #{response.results.total} events for source datacite-orcid-auto-update."
@@ -398,7 +398,7 @@ class Event < ActiveRecord::Base
         response = Event.query(nil, source_id: "datacite-orcid-auto-update", page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
 
-        logger.info "[Update] Updating #{response.results.results.length} datacite-orcid-auto-update events starting with _id #{cursor + 1}."
+        logger.info "[Update] Updating #{response.results.results.length} datacite-orcid-auto-update events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort].first.to_i
 
         ids = response.results.results.map(&:obj_id).uniq

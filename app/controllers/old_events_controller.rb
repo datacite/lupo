@@ -25,7 +25,7 @@ class OldEventsController < ApplicationController
     if @event.update_attributes(safe_params)
       options = {}
       options[:is_collection] = false
-      
+
       render json: OldEventSerializer.new(@event, options).serialized_json, status: exists ? :ok : :created
     else
       errors = @event.errors.full_messages.map { |message| { status: 422, title: message } }
@@ -45,7 +45,7 @@ class OldEventsController < ApplicationController
     if @event.update_attributes(safe_params)
       options = {}
       options[:is_collection] = false
-      
+
       render json: OldEventSerializer.new(@event, options).serialized_json, status: exists ? :ok : :created
     else
       errors = @event.errors.full_messages.map { |message| { status: 422, title: message } }
@@ -76,18 +76,10 @@ class OldEventsController < ApplicationController
            else { updated_at: { order: 'asc' }}
            end
 
-    page = params[:page] || {}
-    if page[:size].present? 
-      page[:size] = [page[:size].to_i, 1000].min
-      max_number = 1
-    else
-      page[:size] = 1000
-      max_number = 10000/page[:size]
-    end
-    page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
+    page = page_from_params(params)
 
     if params[:id].present?
-      response = Event.find_by_id(params[:id]) 
+      response = Event.find_by_id(params[:id])
     elsif params[:ids].present?
       response = Event.find_by_ids(params[:ids], page: page, sort: sort)
     else
@@ -99,26 +91,26 @@ class OldEventsController < ApplicationController
                              prefix: params[:prefix],
                              subtype: params[:subtype],
                              citation_type: params[:citation_type],
-                             source_id: params[:source_id], 
+                             source_id: params[:source_id],
                              registrant_id: params[:registrant_id],
                              relation_type_id: params[:relation_type_id],
                              issn: params[:issn],
-                             occurred_at: params[:occurred_at], 
-                             publication_year: params[:publication_year], 
-                             year_month: params[:year_month], 
+                             occurred_at: params[:occurred_at],
+                             publication_year: params[:publication_year],
+                             year_month: params[:year_month],
                              page: page,
                              sort: sort)
     end
 
     total = response.results.total
-    total_for_pages = page[:cursor].present? ? total.to_f : [total.to_f, 10000].min
+    total_for_pages = page[:cursor].nil? ? total.to_f : [total.to_f, 10000].min
     total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
 
     sources = total > 0 ? facet_by_source(response.response.aggregations.sources.buckets) : nil
     prefixes = total > 0 ? facet_by_source(response.response.aggregations.prefixes.buckets) : nil
     citation_types = total > 0 ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
-    relation_types = total > 0 ? facet_by_relation_type_v1(response.response.aggregations.relation_types.buckets) : nil  
-    registrants = total > 0  && params[:extra] ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil   
+    relation_types = total > 0 ? facet_by_relation_type_v1(response.response.aggregations.relation_types.buckets) : nil
+    registrants = total > 0  && params[:extra] ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
     pairings = total > 0 && params[:extra] ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
 
     results = response.results
@@ -127,7 +119,7 @@ class OldEventsController < ApplicationController
     options[:meta] = {
       total: total,
       "total-pages" => total_pages,
-      page: page[:cursor].blank? && page[:number].present? ? page[:number] : nil,
+      page: page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
       sources: sources,
       prefixes: prefixes,
       "citation-types" => citation_types,
@@ -153,8 +145,8 @@ class OldEventsController < ApplicationController
         "registrant-id" => params[:registrant_id],
         "publication-year" => params[:publication_year],
         "year-month" => params[:year_month],
-        "page[cursor]" => page[:cursor].present? ? Array.wrap(results.last[:sort]).first : nil,
-        "page[number]" => page[:cursor].blank? && page[:number].present? ? page[:number] + 1 : nil,
+        "page[cursor]" => page[:cursor] ? Base64.strict_encode64(Array.wrap(results.to_a.last[:sort]).join(',')) : nil,
+        "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
         "page[size]" => page[:size] }.compact.to_query
       }.compact
     options[:include] = @include
@@ -195,7 +187,7 @@ class OldEventsController < ApplicationController
     nested_params = [:id, :name, { author: ["given-name", "family-name", :name] }, "alternate-name", :publisher, "provider-id", :periodical, "volume-number", "issue-number", :pagination, :issn, "date-published", "registrant-id", :doi, :url, :type]
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params, only: [:id, "message-action", "source-token", :callback, "subj-id", "obj-id", "relation-type-id", "source-id", :total, :license, "occurred-at", :subj, :obj, subj: nested_params, obj: nested_params],
-              keys: { id: :uuid }    
+              keys: { id: :uuid }
     )
   end
 end

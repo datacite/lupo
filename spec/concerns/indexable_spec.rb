@@ -70,6 +70,7 @@ describe "Indexable class methods", elasticsearch: true do
 
   context "doi" do
     let!(:doi) { create(:doi, titles: { title: "Soil investigations" }, publisher: "Pangaea", descriptions: { description: "this is a description" }, aasm_state: "findable") }
+    let!(:dois) { create_list(:doi, 3, aasm_state: "findable") }
 
     before do
       Doi.import
@@ -104,6 +105,18 @@ describe "Indexable class methods", elasticsearch: true do
     it 'query by description not found' do
       results = Doi.query("climate").results
       expect(results.total).to eq(0)
+    end
+
+    it 'query with cursor navigation' do
+      results = Doi.query(nil, page: { size: 2, cursor: [] }).results
+      expect(results.total).to eq(4)
+
+      # Initial length should match the size
+      expect(results.to_a.length).to eq(2)
+
+      # Move onto next based on search_after
+      results = Doi.query(nil, page: { size: 1, cursor: results.to_a.last[:sort] }).results
+      expect(results.to_a.length).to eq(1)
     end
   end
 end

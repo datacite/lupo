@@ -104,7 +104,7 @@ class DoisController < ApplicationController
       else
         results = response.results
         total = response.results.total
-        total_for_pages = page[:cursor].present? ? total.to_f : [total.to_f, 10000].min
+        total_for_pages = page[:cursor].nil? ? total.to_f : [total.to_f, 10000].min
         total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
       end
 
@@ -155,7 +155,7 @@ class DoisController < ApplicationController
           options[:meta] = {
             total: total,
             "totalPages" => total_pages,
-            page: page[:cursor].blank? && page[:number].present? ? page[:number] : nil,
+            page: page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
             states: states,
             "resourceTypes" => resource_types,
             created: created,
@@ -180,8 +180,9 @@ class DoisController < ApplicationController
               query: params[:query],
               "provider-id" => params[:provider_id],
               "client-id" => params[:client_id],
-              "page[cursor]" => page[:cursor].present? ? Array.wrap(results.to_a.last[:sort]).first : nil,
-              "page[number]" => page[:cursor].blank? && page[:number].present? ? page[:number] + 1 : nil,
+              # The cursor link should be an array of values, but we want to encode it into a single string for the URL
+              "page[cursor]" => page[:cursor] ? Base64.strict_encode64(Array.wrap(results.to_a.last[:sort]).join(',')) : nil,
+              "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
               "page[size]" => page[:size] }.compact.to_query
             }.compact
           options[:include] = @include
@@ -193,13 +194,13 @@ class DoisController < ApplicationController
           bmr = Benchmark.ms {
             # sparse fieldsets
             fields = fields_from_params(params)
-            if fields              
+            if fields
               render json: DoiSerializer.new(results, options.merge(fields: fields)).serialized_json, status: :ok
             else
               render json: DoiSerializer.new(results, options).serialized_json, status: :ok
             end
           }
-          
+
           if bmr > 3000
             logger.warn "[Benchmark Warning] render " + bmr.to_s + " ms"
           else
@@ -600,7 +601,7 @@ class DoisController < ApplicationController
 
     read_attrs_keys = [:url, :creators, :contributors, :titles, :publisher,
       :publicationYear, :types, :descriptions, :container, :sizes,
-      :formats, :language, :dates, :identifiers, :relatedIdentifiers, 
+      :formats, :language, :dates, :identifiers, :relatedIdentifiers,
       :fundingReferences, :geoLocations, :rightsList, :agency,
       :subjects, :contentUrl, :schemaVersion]
 

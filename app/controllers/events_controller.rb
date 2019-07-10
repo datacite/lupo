@@ -1,3 +1,5 @@
+require 'benchmark'
+
 class EventsController < ApplicationController
   include Identifiable
 
@@ -77,6 +79,8 @@ class EventsController < ApplicationController
 
     page = page_from_params(params)
 
+    logger = Logger.new(STDOUT)
+
     if params[:id].present?
       response = Event.find_by_id(params[:id])
     elsif params[:ids].present?
@@ -103,7 +107,7 @@ class EventsController < ApplicationController
     end
 
     total = response.results.total
-    total_for_pages = page[:cursor].present? ? total.to_f : [total.to_f, 10000].min
+    total_for_pages = page[:cursor].nil? ? total.to_f : [total.to_f, 10000].min
     total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
 
     sources = total.positive? ? facet_by_source(response.response.aggregations.sources.buckets) : nil
@@ -123,7 +127,7 @@ class EventsController < ApplicationController
     options[:meta] = {
       total: total,
       "totalPages" => total_pages,
-      page: page[:cursor].blank? && page[:number].present? ? page[:number] : nil,
+      page: page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
       sources: sources,
       prefixes: prefixes,
       "citationTypes" => citation_types,
@@ -153,14 +157,22 @@ class EventsController < ApplicationController
         "registrant-id" => params[:registrant_id],
         "publication-year" => params[:publication_year],
         "year-month" => params[:year_month],
-        "page[cursor]" => page[:cursor].present? ? Array.wrap(results.to_a.last[:sort]).first : nil,
-        "page[number]" => page[:cursor].blank? && page[:number].present? ? page[:number] + 1 : nil,
+        "page[cursor]" => page[:cursor] ? Base64.strict_encode64(Array.wrap(results.to_a.last[:sort]).join(',')) : nil,
+        "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
         "page[size]" => page[:size] }.compact.to_query
       }.compact
     options[:include] = @include
     options[:is_collection] = true
+    
+    bmr = Benchmark.ms {
+      render json: EventSerializer.new(results, options).serialized_json, status: :ok
+    }
 
-    render json: EventSerializer.new(results, options).serialized_json, status: :ok
+    if bmr > 3000
+      logger.warn "[Benchmark Warning] Events render " + bmr.to_s + " ms"
+    else
+      logger.info "[Benchmark] Events render " + bmr.to_s + " ms"
+    end
   end
 
   def destroy
