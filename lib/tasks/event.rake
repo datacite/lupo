@@ -1,15 +1,15 @@
 namespace :event do
   desc "Create index for events"
   task :create_index => :environment do
-    alias_name = Event.index_name
-    Event.__elasticsearch__.create_index!(index: ENV['INDEX_NAME'])
-    Event.create_alias(index: ENV['INDEX_NAME'], alias_name:alias_name)
+    initial_index = "events_v1"
+    Event.__elasticsearch__.create_index!(index: initial_index)
+    Event.create_alias(index: initial_index, alias_name: Event.index_name)
   end
 
   desc "Delete index for events"
   task :delete_index => :environment do
     #### It will delete the index rather than then trying to delete the alias
-    Event.__elasticsearch__.delete_index!(index: ENV['INDEX_NAME']||=Event.get_current_index_name)
+    Event.__elasticsearch__.delete_index!(index: Event.get_current_index_name)
   end
 
   desc "Refresh index for events"
@@ -35,6 +35,11 @@ namespace :event do
     Event.delete_unused_index(index: ENV['INDEX_NAME'])
   end
 
+  desc "Delete old Index"
+  task :delete_old_index => :environment do
+    Event.delete_old_index
+  end
+
   desc "Create Alias"
   task :create_alias => :environment do
     Event.create_alias(index: ENV['INDEX_NAME'], alias_name:ENV['ALIAS_NAME'])
@@ -42,11 +47,16 @@ namespace :event do
 
   desc "Update Alias"
   task :update_alias => :environment do
-    Event.update_aliases(old_index: ENV['OLD_INDEX'], new_index: ENV['NEW_INDEX'])
+    Event.update_aliases
   end
 
   desc "reindex the whole index"
   task :reindex => :environment do
+    Event.reindex
+  end
+
+  desc "created versioned index"
+  task :created_versioned => :environment do
     Event.reindex(index: ENV['INDEX_NAME'])
   end
 end

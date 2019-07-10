@@ -280,7 +280,7 @@ module Indexable
     end
 
     def reindex(index: nil)
-      return nil unless index.present?
+      index = self.index_next_version
       
       self.__elasticsearch__.create_index! index: index unless self.__elasticsearch__.index_exists? index: index
       
@@ -292,13 +292,25 @@ module Indexable
       logger.info client.reindex body: { source: { index: index_name }, dest: { index: index } }
     end
 
-    def get_current_index_name      
+    def get_current_index_name
       index_name = self.index_name
 
       client = Elasticsearch::Model.client
       ### always take origing index even if it was a alias
       index_name = client.indices.get_alias(name: index_name).first.first  if client.indices.exists_alias? name: index_name
       index_name
+    end
+
+    def index_next_version
+      stem = self.__elasticsearch__.target.to_s.downcase.pluralize  + "_v"
+      index_version = (self.get_current_index_name.gsub(/#{stem}/, '')).to_i + 1
+      stem + "#{ index_version }"
+    end
+
+    def delete_old_index
+      stem = self.__elasticsearch__.target.to_s.downcase.pluralize  + "_v"
+      index_version = (self.get_current_index_name.gsub(/#{stem}/, '')).to_i - 1
+      self.delete_unused_index(index: stem + "#{ index_version }")
     end
 
     def delete_unused_index(index: nil)
@@ -335,10 +347,12 @@ module Indexable
       logger.info client.indices.get_alias name: alias_name
     end
 
-    def update_aliases(old_index: nil, new_index: nil)
-      return nil unless old_index.present? && new_index.present?
+    def update_aliases
       logger = Logger.new(STDOUT)
       
+      old_index = self.get_current_index_name
+      new_index = self.index_next_version
+
       client = Elasticsearch::Model.client
       index_name = self.index_name
       stats = client.indices.stats index: [old_index, new_index], docs: true
