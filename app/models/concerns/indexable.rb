@@ -303,8 +303,25 @@ module Indexable
       logger = Logger.new(STDOUT)
       index_name = self.get_current_index_name
       logger.info "Index #{index} exists? #{self.__elasticsearch__.index_exists? index: index}"
-      logger.info client.reindex body: { source: { index: index_name }, dest: { index: index } }
+
+      logger.info client.reindex body: { source: { index: index_name }, dest: { index: index } }, wait_for_completion: false
     end
+
+    def monitor_reindex(task_id: nil)
+      client = Elasticsearch::Model.client
+
+      logger.info "Task ID information" if task_id
+      logger.info client.tasks.get task_id: task_id if task_id
+
+      logger.info "Reindex Information"
+      logger.info client.tasks.list detailed: true, actions: '*reindex'
+    end
+
+    def delete_task_index
+      client = Elasticsearch::Model.client
+      logger.info client.indices.delete index: '.tasks'
+    end
+
 
     def get_current_index_name
       index_name = self.index_name

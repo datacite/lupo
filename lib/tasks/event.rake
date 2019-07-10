@@ -55,6 +55,17 @@ namespace :event do
     Event.reindex
   end
 
+  desc "monitor reindex"
+  task :monitor_reindex => :environment do
+    Event.monitor_reindex(task_id: ENV['TASK_ID'])
+  end
+
+  desc "delete tasks reindex"
+  task :delete_task_index => :environment do
+    Event.delete_task_index
+  end
+
+
   desc "created versioned index"
   task :created_versioned => :environment do
     Event.reindex(index: ENV['INDEX_NAME'])
