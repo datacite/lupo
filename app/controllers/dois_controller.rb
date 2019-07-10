@@ -181,7 +181,7 @@ class DoisController < ApplicationController
               "provider-id" => params[:provider_id],
               "client-id" => params[:client_id],
               # The cursor link should be an array of values, but we want to encode it into a single string for the URL
-              "page[cursor]" => !page[:cursor].nil? ? Base64.strict_encode64(Array.wrap(results.to_a.last[:sort]).join(',')) : nil,
+              "page[cursor]" => page[:cursor] ? Base64.strict_encode64(Array.wrap(results.to_a.last[:sort]).join(',')) : nil,
               "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
               "page[size]" => page[:size] }.compact.to_query
             }.compact
