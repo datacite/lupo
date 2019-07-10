@@ -31,16 +31,6 @@ class DoisController < ApplicationController
 
     page = page_from_params(params)
 
-    # For DOI's we need to decode the page cursor
-    if page[:cursor].present?
-      # Cursor navigation overrides any sort orders specified.
-      sort = { created: { order: 'asc' }, doi: "asc"}
-      page[:cursor] = Base64.decode64(page[:cursor]).split(",")
-      show_cursor_link = true
-    else
-      show_cursor_link = false
-    end
-
     sample_group_field = case params[:sample_group]
       when "client" then "client_id"
       when "data-center" then "client_id"
@@ -114,7 +104,7 @@ class DoisController < ApplicationController
       else
         results = response.results
         total = response.results.total
-        total_for_pages = page[:cursor].present? ? total.to_f : [total.to_f, 10000].min
+        total_for_pages = page[:cursor].nil? ? total.to_f : [total.to_f, 10000].min
         total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
       end
 
@@ -165,7 +155,7 @@ class DoisController < ApplicationController
           options[:meta] = {
             total: total,
             "totalPages" => total_pages,
-            page: show_cursor_link == false && page[:number].present? ? page[:number] : nil,
+            page: page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
             states: states,
             "resourceTypes" => resource_types,
             created: created,
@@ -190,9 +180,9 @@ class DoisController < ApplicationController
               query: params[:query],
               "provider-id" => params[:provider_id],
               "client-id" => params[:client_id],
-              # The cursor link should be based on the ES sort, but we want to encode it into a single string
-              "page[cursor]" => show_cursor_link == true ? Base64.encode64(Array.wrap(results.to_a.last[:sort]).join(',')) : nil,
-              "page[number]" => show_cursor_link == false && page[:number].present? ? page[:number] + 1 : nil,
+              # The cursor link should be an array of values, but we want to encode it into a single string for the URL
+              "page[cursor]" => !page[:cursor].nil? ? Base64.strict_encode64(Array.wrap(results.to_a.last[:sort]).join(',')) : nil,
+              "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
               "page[size]" => page[:size] }.compact.to_query
             }.compact
           options[:include] = @include

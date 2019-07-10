@@ -101,30 +101,31 @@ module Indexable
       options[:page][:number] ||= 1
       options[:page][:size] ||= 25
 
-      # enable cursor-based pagination for DOIs
-      if self.name == "Doi" && options.dig(:page, :cursor).present?
+      # Default sort should be whatever is passed in
+      sort = options[:sort]
+
+      # Cursor nav use the search after, this should always be an array of values that match the sort.
+      if options.dig(:page, :cursor).present?
         from = 0
         search_after = Array.wrap(options.dig(:page, :cursor))
-        sort = [{ created: "asc", doi: "asc"}]
-      elsif self.name == "Event" && options.dig(:page, :cursor).present?
-        from = 0
-        search_after = [options.dig(:page, :cursor)]
-        sort = [{ _id: { order: 'asc' }}]
-      elsif self.name == "Activity" && options.dig(:page, :cursor).present?
-        from = 0
-        search_after = [options.dig(:page, :cursor)]
-        sort = [{ created: { order: 'asc' }}]
-      elsif self.name == "Researcher" && options.dig(:page, :cursor).present?
-        from = 0
-        search_after = [options.dig(:page, :cursor)]
-        sort = [{ created_at: { order: 'asc' }}]
-      elsif options.dig(:page, :cursor).present?
-        from = 0
-        search_after = [options.dig(:page, :cursor)]
-        sort = [{ created: { order: 'asc' }}]
       else
         from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)
         search_after = nil
+      end
+
+      # Calculate cursor sort based upon the type of model
+      # Cursor sorts override any option sort
+      if self.name == "Doi" && !options.dig(:page, :cursor).nil?
+        sort = [{ created: "asc", doi: "asc"}]
+      elsif self.name == "Event" && !options.dig(:page, :cursor).nil?
+        sort = [{ _id: { order: 'asc' }}]
+      elsif self.name == "Activity" && !options.dig(:page, :cursor).nil?
+        sort = [{ created: { order: 'asc' }}]
+      elsif self.name == "Researcher" && !options.dig(:page, :cursor).nil?
+        sort = [{ created_at: { order: 'asc' }}]
+      elsif !options.dig(:page, :cursor).nil?
+        sort = [{ created: { order: 'asc' }}]
+      else
         sort = options[:sort]
       end
 
