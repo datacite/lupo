@@ -1,3 +1,5 @@
+require 'benchmark'
+
 class EventsController < ApplicationController
   include Identifiable
 
@@ -76,6 +78,8 @@ class EventsController < ApplicationController
            end
 
     page = page_from_params(params)
+
+    logger = Logger.new(STDOUT)
 
     if params[:id].present?
       response = Event.find_by_id(params[:id])
@@ -159,8 +163,16 @@ class EventsController < ApplicationController
       }.compact
     options[:include] = @include
     options[:is_collection] = true
+    
+    bmr = Benchmark.ms {
+      render json: EventSerializer.new(results, options).serialized_json, status: :ok
+    }
 
-    render json: EventSerializer.new(results, options).serialized_json, status: :ok
+    if bmr > 3000
+      logger.warn "[Benchmark Warning] Events render " + bmr.to_s + " ms"
+    else
+      logger.info "[Benchmark] Events render " + bmr.to_s + " ms"
+    end
   end
 
   def destroy
