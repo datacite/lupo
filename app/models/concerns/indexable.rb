@@ -103,11 +103,13 @@ module Indexable
 
       # Default sort should be whatever is passed in
       sort = options[:sort]
+      # Cursor should always be an array regardless
+      cursorValues = Array.wrap(options.dig(:page, :cursor))
 
       # Cursor nav use the search after, this should always be an array of values that match the sort.
       if options.dig(:page, :cursor).present?
         from = 0
-        search_after = Array.wrap(options.dig(:page, :cursor))
+        search_after = cursorValues
       else
         from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)
         search_after = nil
@@ -115,15 +117,15 @@ module Indexable
 
       # Calculate cursor sort based upon the type of model
       # Cursor sorts override any option sort
-      if self.name == "Doi" && !options.dig(:page, :cursor).nil?
+      if self.name == "Doi" && cursorValues
         sort = [{ created: "asc", doi: "asc"}]
-      elsif self.name == "Event" && !options.dig(:page, :cursor).nil?
+      elsif self.name == "Event" && cursorValues
         sort = [{ created_at: "asc", uuid: "asc"}]
-      elsif self.name == "Activity" && !options.dig(:page, :cursor).nil?
+      elsif self.name == "Activity" && cursorValues
         sort = [{ created: { order: 'asc' }}]
-      elsif self.name == "Researcher" && !options.dig(:page, :cursor).nil?
+      elsif self.name == "Researcher" && cursorValues
         sort = [{ created_at: "asc", uid: "asc"}]
-      elsif !options.dig(:page, :cursor).nil?
+      elsif cursorValues
         sort = [{ created: { order: 'asc' }}]
       else
         sort = options[:sort]
