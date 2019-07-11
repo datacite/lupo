@@ -1,17 +1,47 @@
 namespace :client do
   desc "Create index for clients"
   task :create_index => :environment do
-    Client.__elasticsearch__.create_index!
+    puts Client.create_index
   end
 
   desc "Delete index for clients"
   task :delete_index => :environment do
-    Client.__elasticsearch__.delete_index!
+    puts Client.delete_index
   end
 
-  desc "Refresh index for clients"
-  task :refresh_index => :environment do
-    Client.__elasticsearch__.refresh_index!
+  desc "Upgrade index for clients"
+  task :upgrade_index => :environment do
+    puts Client.upgrade_index
+  end
+
+  desc "Switch index for clients"
+  task :switch_index => :environment do
+    puts Client.switch_index
+  end
+
+  desc "Return active index for clients"
+  task :active_index => :environment do
+    puts Client.active_index + " is the active index."
+  end
+
+  desc "Start using alias indexes for clients"
+  task :start_aliases => :environment do
+    puts Client.start_aliases
+  end
+
+  desc "Monitor reindexing for clients"
+  task :monitor_reindex => :environment do
+    puts Client.monitor_reindex
+  end
+
+  desc "Wrap up starting using alias indexes for clients"
+  task :finish_aliases => :environment do
+    puts Client.finish_aliases
+  end
+
+  desc 'Import all clients'
+  task :import => :environment do
+    Provider.import(index: Client.inactive_index)
   end
 
   desc 'Index DOIs by client'
@@ -30,11 +60,6 @@ namespace :client do
     # index DOIs for client
     # puts "#{client.dois.length} DOIs will be indexed."
     client.index_all_dois
-  end
-
-  desc 'Import all clients'
-  task :import => :environment do
-    Client.import
   end
 
   desc 'Import DOIs by client'
