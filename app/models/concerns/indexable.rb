@@ -296,7 +296,7 @@ module Indexable
     # Aliasing
     #
     # We are using two indexes, where one is active (used for API calls) via aliasing and the other one
-    # is inactive. All index configuration changes and importing from the database
+    # is inactive. All index configuration changes and bulk importing from the database
     # happen in the inactive index.
     #
     # For initial setup run "start_aliases" to preserve existing index, or
@@ -324,8 +324,8 @@ module Indexable
       self.__elasticsearch__.create_index!(index: index_name) unless self.__elasticsearch__.index_exists?(index: index_name)
       self.__elasticsearch__.create_index!(index: alternate_index_name) unless self.__elasticsearch__.index_exists?(index: alternate_index_name)
 
-      # copy old index to first of the new indixes, delete the old index, and alias the old index
-      client.reindex body: { source: { index: alias_name }, dest: { index: index_name } }
+      # copy old index to first of the new indexes, delete the old index, and alias the old index
+      client.reindex body: { source: { index: alias_name }, dest: { index: index_name }, batch_size: 500, scroll: "15m" }
       self.__elasticsearch__.delete_index!(index: alias_name) if self.__elasticsearch__.index_exists?(index: alias_name)
       client.indices.put_alias index: index_name, name: alias_name unless client.indices.exists_alias?(name: alias_name)
       
