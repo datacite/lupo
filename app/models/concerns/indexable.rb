@@ -325,7 +325,7 @@ module Indexable
       self.__elasticsearch__.create_index!(index: alternate_index_name) unless self.__elasticsearch__.index_exists?(index: alternate_index_name)
 
       # copy old index to first of the new indexes, delete the old index, and alias the old index
-      client.reindex(body: { source: { index: alias_name }, dest: { index: index_name } }, timeout: 300, wait_for_completion: false)
+      client.reindex(body: { source: { index: alias_name }, dest: { index: index_name } }, timeout: "10m", wait_for_completion: false)
 
       "Created indexes #{index_name} (active) and #{alternate_index_name}."
       "Started reindexing in #{index_name}."
