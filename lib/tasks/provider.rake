@@ -16,7 +16,7 @@ namespace :provider do
 
   desc "Switch index for providers"
   task :switch_index => :environment do
-    puts Provider.switch_index
+    puts Provider.switch_index(force: ENV["FORCE"])
   end
 
   desc "Return active index for providers"

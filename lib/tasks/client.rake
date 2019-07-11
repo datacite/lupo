@@ -16,7 +16,7 @@ namespace :client do
 
   desc "Switch index for clients"
   task :switch_index => :environment do
-    puts Client.switch_index
+    puts Client.switch_index(force: ENV["FORCE"])
   end
 
   desc "Return active index for clients"

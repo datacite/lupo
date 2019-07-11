@@ -16,7 +16,7 @@ namespace :activity do
 
   desc "Switch index for activities"
   task :switch_index => :environment do
-    puts Activity.switch_index
+    puts Activity.switch_index(force: ENV["FORCE"])
   end
 
   desc "Return active index for activities"

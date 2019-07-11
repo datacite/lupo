@@ -16,7 +16,7 @@ namespace :event do
 
   desc "Switch index for events"
   task :switch_index => :environment do
-    puts Event.switch_index
+    puts Event.switch_index(force: ENV["FORCE"])
   end
 
   desc "Return active index for events"
