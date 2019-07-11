@@ -29,6 +29,16 @@ namespace :event do
     puts Event.start_aliases
   end
 
+  desc "Monitor reindexing for events"
+  task :monitor_reindex => :environment do
+    puts Event.monitor_reindex
+  end
+
+  desc "Wrap up starting using alias indexes for events"
+  task :finish_aliases => :environment do
+    puts Event.finish_aliases
+  end
+
   desc 'Import all events'
   task :import => :environment do
     from_id = (ENV['FROM_ID'] || Event.minimum(:id)).to_i

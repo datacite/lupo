@@ -325,12 +325,34 @@ module Indexable
       self.__elasticsearch__.create_index!(index: alternate_index_name) unless self.__elasticsearch__.index_exists?(index: alternate_index_name)
 
       # copy old index to first of the new indexes, delete the old index, and alias the old index
-      client.reindex body: { source: { index: alias_name }, dest: { index: index_name }, batch_size: 500, scroll: "15m" }
-      self.__elasticsearch__.delete_index!(index: alias_name) if self.__elasticsearch__.index_exists?(index: alias_name)
-      client.indices.put_alias index: index_name, name: alias_name unless client.indices.exists_alias?(name: alias_name)
-      
-      "Converted index #{alias_name} into an alias."
+      client.reindex(body: { source: { index: alias_name }, dest: { index: index_name } }, timeout: 300, wait_for_completion: false)
+
       "Created indexes #{index_name} (active) and #{alternate_index_name}."
+      "Started reindexing in #{index_name}."
+    end
+
+    # track reindexing via the tasks API
+    def monitor_reindex
+      client = Elasticsearch::Model.client
+      tasks = client.tasks.list(actions: "*reindex")
+      tasks.fetch("nodes", {}).inspect
+    end
+
+    # convert existing index to alias. Has to be done only once
+    def finish_aliases
+      alias_name = self.index_name
+      index_name = self.index_name + "_v1"
+
+      client = Elasticsearch::Model.client
+
+      if client.indices.exists_alias?(name: alias_name)
+        return "Index #{alias_name} is already an alias."
+      end
+
+      self.__elasticsearch__.delete_index!(index: alias_name) if self.__elasticsearch__.index_exists?(index: alias_name)
+      client.indices.put_alias index: index_name, name: alias_name
+
+      "Converted index #{alias_name} into an alias."
     end
 
     # create both indexes used for aliasing

@@ -29,6 +29,16 @@ namespace :doi do
     puts Doi.start_aliases
   end
 
+  desc "Monitor reindexing for dois"
+  task :monitor_reindex => :environment do
+    puts Doi.monitor_reindex
+  end
+
+  desc "Wrap up starting using alias indexes for dois"
+  task :finish_aliases => :environment do
+    puts Doi.finish_aliases
+  end
+
   desc 'Import all DOIs'
   task :import => :environment do
     from_id = (ENV['FROM_ID'] || Doi.minimum(:id)).to_i
