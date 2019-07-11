@@ -100,12 +100,19 @@ class ProvidersController < ApplicationController
           organisation_type
           accountType
           generalContactEmail
+          groupEmail
           technicalContactEmail
           technicalContactGivenName
           technicalContactFamilyName
+          secondaryTechnicalContactEmail
+          secondaryTechnicalContactGivenName
+          secondaryTechnicalContactFamilyName
           serviceContactEmail
           serviceContactGivenName
           serviceContactFamilyName
+          secondaryServiceContactEmail
+          secondaryServiceContactGivenName
+          secondaryServiceContactFamilyName
           votingContactEmail
           votingContactGivenName
           votingContactFamilyName
