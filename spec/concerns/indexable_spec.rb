@@ -109,7 +109,7 @@ describe "Indexable class methods", elasticsearch: true do
 
     it 'query with cursor navigation' do
       results = Doi.query(nil, page: { size: 2, cursor: [] }).results
-      expect(results.total).to eq(4)
+      expect(results.total).to eq(2)
 
       # Initial length should match the size
       expect(results.to_a.length).to eq(2)
