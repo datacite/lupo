@@ -9,8 +9,12 @@ class EventSerializer
   
   attributes :subj_id, :obj_id, :source_id, :relation_type_id, :total, :message_action, :source_token, :license, :occurred_at, :timestamp
   
-  has_many :dois, record_type: :dois, serializer: DoiSerializer, id_method_name: :uid do |object|
-    load_doi(object)
+  has_many :dois, record_type: :dois, serializer: DoiSerializer, id_method_name: :uid do |object ,params|
+    if params[:batch_disable]
+      Doi.find_by_id(object.doi).results
+    else
+      load_doi(object)
+    end
   end
   
   attribute :timestamp, &:updated_at

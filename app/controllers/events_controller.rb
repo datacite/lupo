@@ -165,13 +165,13 @@ class EventsController < ApplicationController
     options[:is_collection] = true
     
     bmr = Benchmark.ms {
-      render json: EventSerializer.new(results, options).serialized_json, status: :ok
+      render json: EventSerializer.new(results, options.merge!(params: {batch_disable: params["batchdisable"]})).serialized_json, status: :ok
     }
 
     if bmr > 3000
-      logger.warn "[Benchmark Warning] Events render " + bmr.to_s + " ms"
+      logger.warn "[Benchmark Warning] Events render. batch-disable: #{params['batchdisable']} " + bmr.to_s + " ms"
     else
-      logger.info "[Benchmark] Events render " + bmr.to_s + " ms"
+      logger.info "[Benchmark] Events render. batch-disable: #{params['batchdisable']} " + bmr.to_s + " ms"
     end
   end
 

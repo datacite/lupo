@@ -35,7 +35,6 @@ namespace :event do
     until_id = (ENV['UNTIL_ID'] || Event.maximum(:id)).to_i
 
     Event.import_by_ids(from_id: from_id, until_id: until_id)
-  end
 end
 
 namespace :crossref do
