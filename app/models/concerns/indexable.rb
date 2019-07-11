@@ -293,93 +293,141 @@ module Indexable
       Elasticsearch::Model.client.count(index: index_name)['count']
     end
 
-    def reindex(index: nil)
-      index = self.index_next_version
+    # Aliasing
+    #
+    # We are using two indexes, where one is active (used for API calls) via aliasing and the other one
+    # is inactive. All index configuration changes and importing from the database
+    # happen in the inactive index.
+    #
+    # For initial setup run "start_aliases" to preserve existing index, or
+    # "create_index" to start from scratch.
+    #
+    # Run "upgrade_index" whenever there are changes in the mappings or settings.
+    # Follow this by "import" to fill the new index, the usen "switch_index" to
+    # alias the new index and remove alias from current index.
+    #
+    # TODO: automatically switch aliases when "import" is done. Not easy, as "import"
+    # runs as background jobs.
 
-      self.__elasticsearch__.create_index! index: index unless self.__elasticsearch__.index_exists? index: index
-
-      client = Elasticsearch::Model.client
-      ### always take origing index even if it was a alias
-      logger = Logger.new(STDOUT)
-      index_name = self.get_current_index_name
-      logger.info "Index #{index} exists? #{self.__elasticsearch__.index_exists? index: index}"
-      logger.info client.reindex body: { source: { index: index_name }, dest: { index: index } }
-    end
-
-    def get_current_index_name
-      index_name = self.index_name
-
-      client = Elasticsearch::Model.client
-      ### always take origing index even if it was a alias
-      index_name = client.indices.get_alias(name: index_name).first.first  if client.indices.exists_alias? name: index_name
-      index_name
-    end
-
-    def index_next_version
-      stem = self.__elasticsearch__.target.to_s.downcase.pluralize  + "_v"
-      index_version = (self.get_current_index_name.gsub(/#{stem}/, '')).to_i + 1
-      stem + "#{ index_version }"
-    end
-
-    def delete_old_index
-      stem = self.__elasticsearch__.target.to_s.downcase.pluralize  + "_v"
-      index_version = (self.get_current_index_name.gsub(/#{stem}/, '')).to_i - 1
-      self.delete_unused_index(index: stem + "#{ index_version }")
-    end
-
-    def delete_unused_index(index: nil)
-      return nil unless index.present?
-      logger = Logger.new(STDOUT)
-      stem = self.__elasticsearch__.target.to_s.downcase
-      return logger.warn "[ERROR] You can only delete indexes starting with the name convention: `#{stem}`" unless index.match?(/^#{stem}/)
-      return logger.warn "[ERROR] #{index} is being used" if self.index_name == index
+    # convert existing index to alias. Has to be done only once
+    def start_aliases
+      alias_name = self.index_name
+      index_name = self.index_name + "_v1"
+      alternate_index_name = self.index_name + "_v2"
 
       client = Elasticsearch::Model.client
-      return nil unless client.indices.exists? index: index
-      return logger.warn "[ERROR] #{index} is an alias name" if client.indices.exists_alias? name: index
 
-      logger.info client.indices.delete index: index
-    end
-
-    def create_alias(index: nil, alias_name: nil)
-      return nil unless index.present?
-      logger = Logger.new(STDOUT)
-
-
-      client     = Elasticsearch::Model.client
-      # alias_name = alias_name.present? ? alias_name : self.index_name
-
-      alias_name = if alias_name.present?
-        stem = self.__elasticsearch__.target.to_s.downcase
-        return logger.warn "[ERROR] Alias naming must start with: `#{stem}`" unless alias_name.match?(/^#{stem}/)
-        alias_name
-      else
-        self.index_name
+      if client.indices.exists_alias?(name: alias_name)
+        return "Index #{alias_name} is already an alias."
       end
 
-      client.indices.put_alias index: index, name: alias_name
-      logger.info client.indices.get_alias name: alias_name
+      self.__elasticsearch__.create_index!(index: index_name) unless self.__elasticsearch__.index_exists?(index: index_name)
+      self.__elasticsearch__.create_index!(index: alternate_index_name) unless self.__elasticsearch__.index_exists?(index: alternate_index_name)
+
+      # copy old index to first of the new indixes, delete the old index, and alias the old index
+      client.reindex body: { source: { index: alias_name }, dest: { index: index_name } }
+      self.__elasticsearch__.delete_index!(index: alias_name) if self.__elasticsearch__.index_exists?(index: alias_name)
+      client.indices.put_alias index: index_name, name: alias_name unless client.indices.exists_alias?(name: alias_name)
+      
+      "Converted index #{alias_name} into an alias."
+      "Created indexes #{index_name} (active) and #{alternate_index_name}."
     end
 
-    def update_aliases
-      logger = Logger.new(STDOUT)
+    # create both indexes used for aliasing
+    def create_index
+      alias_name = self.index_name
+      index_name = self.index_name + "_v1"
+      alternate_index_name = self.index_name + "_v2"
 
-      old_index = self.get_current_index_name
-      new_index = self.index_next_version
+      self.__elasticsearch__.create_index!(index: index_name) unless self.__elasticsearch__.index_exists?(index: index_name)
+      self.__elasticsearch__.create_index!(index: alternate_index_name) unless self.__elasticsearch__.index_exists?(index: alternate_index_name)
+      
+      # index_name is the active index
+      client = Elasticsearch::Model.client
+      client.indices.put_alias index: index_name, name: alias_name unless client.indices.exists_alias?(name: alias_name)
+      
+      "Created indexes #{index_name} (active) and #{alternate_index_name}."
+    end
+
+    # delete both indexes used for aliasing
+    def delete_index
+      alias_name = self.index_name
+      index_name = self.index_name + "_v1"
+      alternate_index_name = self.index_name + "_v2"
 
       client = Elasticsearch::Model.client
-      index_name = self.index_name
-      stats = client.indices.stats index: [old_index, new_index], docs: true
-      ## fails if both indexes do not have the same number of documents
-      return logger.warn "[ERROR] Indices #{old_index} and #{new_index} are different" unless stats.dig("indices",old_index,"primaries","docs","count") == (stats.dig("indices",old_index,"primaries","docs","count"))
+      client.indices.delete_alias index: index_name, name: alias_name if client.indices.exists_alias?(name: alias_name, index: [index_name])
+      client.indices.delete_alias index: alternate_index_name, name: alias_name if client.indices.exists_alias?(name: alias_name, index: [alternate_index_name])
 
-      client.indices.update_aliases body: {
-        actions: [
-          { remove: { index: old_index, alias: index_name } },
-          { add:    { index: new_index, alias: index_name } }
-        ]
-      }
-      logger.info client.indices.get_alias name: index_name
+      self.__elasticsearch__.delete_index!(index: index_name) if self.__elasticsearch__.index_exists?(index: index_name)
+      self.__elasticsearch__.delete_index!(index: alternate_index_name) if self.__elasticsearch__.index_exists?(index: alternate_index_name)
+
+      "Deleted indexes #{index_name} and #{alternate_index_name}."
+    end
+
+    # delete and create inactive index to use current mappings
+    # Needs to run every time we change the mappings
+    def upgrade_index
+      alias_name = self.index_name
+      inactive_index ||= self.inactive_index
+      
+      self.__elasticsearch__.delete_index!(index: inactive_index) if self.__elasticsearch__.index_exists?(index: inactive_index)
+      self.__elasticsearch__.create_index!(index: inactive_index)
+
+      "Upgraded inactive index #{inactive_index}."
+    end
+
+    # switch between the two indexes, i.e. the index that is aliased
+    def switch_index
+      alias_name = self.index_name
+      index_name = self.index_name + "_v1"
+      alternate_index_name = self.index_name + "_v2"
+
+      client = Elasticsearch::Model.client
+      
+      ## only switch if both indexes have the same number of documents
+      stats = client.indices.stats index: [index_name, alternate_index_name], docs: true
+      if stats.dig("indices",index_name,"primaries","docs","count") != (stats.dig("indices",alternate_index_name,"primaries","docs","count"))
+        return "Not switching active index as #{index_name} and #{alternate_index_name} have different number of documents." 
+      end
+
+      if client.indices.exists_alias?(name: alias_name, index: [index_name])
+        client.indices.update_aliases body: {
+          actions: [
+            { remove: { index: index_name, alias: alias_name } },
+            { add:    { index: alternate_index_name, alias: alias_name } }
+          ]
+        }
+
+        "Switched active index to #{alternate_index_name}."
+      elsif client.indices.exists_alias?(name: alias_name, index: [alternate_index_name])
+        client.indices.update_aliases body: {
+          actions: [
+            { remove: { index: alternate_index_name, alias: alias_name } },
+            { add:    { index: index_name, alias: alias_name } }
+          ]
+        }
+        
+        "Switched active index to #{index_name}."
+      end
+    end
+
+    # Return the active index, i.e. the index that is aliased
+    def active_index
+      alias_name = self.index_name
+      client = Elasticsearch::Model.client
+      client.indices.get_alias(name: alias_name).keys.first
+    end
+
+    # Return the inactive index, i.e. the index that is not aliased
+    def inactive_index
+      alias_name = self.index_name
+      index_name = self.index_name + "_v1"
+      alternate_index_name = self.index_name + "_v2"
+
+      client = Elasticsearch::Model.client
+      active_index = client.indices.get_alias(name: alias_name).keys.first
+      active_index.end_with?("v1") ? alternate_index_name : index_name
     end
   end
 end

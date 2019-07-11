@@ -1,17 +1,32 @@
 namespace :activity do
   desc "Create index for activities"
   task :create_index => :environment do
-    Activity.__elasticsearch__.create_index!
+    puts Activity.create_index
   end
 
   desc "Delete index for activities"
   task :delete_index => :environment do
-    Activity.__elasticsearch__.delete_index!
+    puts Activity.delete_index
   end
 
-  desc "Refresh index for activities"
-  task :refresh_index => :environment do
-    Activity.__elasticsearch__.refresh_index!
+  desc "Upgrade index for activities"
+  task :upgrade_index => :environment do
+    puts Activity.upgrade_index
+  end
+
+  desc "Switch index for activities"
+  task :switch_index => :environment do
+    puts Activity.switch_index
+  end
+
+  desc "Return active index for activities"
+  task :active_index => :environment do
+    puts Activity.active_index + " is the active index."
+  end
+
+  desc "Start using alias indexes for activities"
+  task :start_aliases => :environment do
+    puts Activity.start_aliases
   end
 
   desc 'Import all activities'

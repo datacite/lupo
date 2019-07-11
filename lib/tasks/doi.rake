@@ -1,17 +1,32 @@
 namespace :doi do
   desc "Create index for dois"
   task :create_index => :environment do
-    Doi.__elasticsearch__.create_index!
+    puts Doi.create_index
   end
 
   desc "Delete index for dois"
   task :delete_index => :environment do
-    Doi.__elasticsearch__.delete_index!
+    puts Doi.delete_index
   end
 
-  desc "Refresh index for dois"
-  task :refresh_index => :environment do
-    Doi.__elasticsearch__.refresh_index!
+  desc "Upgrade index for dois"
+  task :upgrade_index => :environment do
+    puts Doi.upgrade_index
+  end
+
+  desc "Switch index for dois"
+  task :switch_index => :environment do
+    puts Doi.switch_index
+  end
+
+  desc "Return active index for dois"
+  task :active_index => :environment do
+    puts Doi.active_index + " is the active index."
+  end
+
+  desc "Start using alias indexes for dois"
+  task :start_aliases => :environment do
+    puts Doi.start_aliases
   end
 
   desc 'Import all DOIs'
@@ -19,7 +34,7 @@ namespace :doi do
     from_id = (ENV['FROM_ID'] || Doi.minimum(:id)).to_i
     until_id = (ENV['UNTIL_ID'] || Doi.maximum(:id)).to_i
 
-    Doi.import_by_ids(from_id: from_id, until_id: until_id)
+    Doi.import_by_ids(from_id: from_id, until_id: until_id, index: ENV["INDEX"])
   end
 
   desc 'Import one DOI'
@@ -50,31 +65,5 @@ namespace :doi do
   desc 'Migrates landing page data handling camelCase changes at same time'
   task :migrate_landing_page => :environment do
     Doi.migrate_landing_page
-  end
-
-  desc "Get Current Index name"
-  task :get_current_index_name => :environment do
-    Doi.get_current_index_name
-  end
-
-  desc "Delete unused Index"
-  task :delete_unused_index => :environment do
-    Doi.delete_unused_index(index: ENV['INDEX_NAME'])
-  end
-
-  desc "Create Alias"
-  task :create_alias => :environment do
-    Doi.create_alias(index: ENV['INDEX_NAME'])
-  end
-
-  desc "Update Alias"
-  task :update_alias => :environment do
-    Doi.update_aliases(old_index: ENV['OLD_INDEX'], new_index: ENV['NEW_INDEX'])
-  end
-
-
-  desc "reindex"
-  task :reindex => :environment do
-    Doi.reindex(index: ENV['INDEX_NAME'])
   end
 end

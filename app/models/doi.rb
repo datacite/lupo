@@ -459,8 +459,9 @@ class Doi < ActiveRecord::Base
 
   def self.import_by_id(options={})
     return nil unless options[:id].present?
-    id = options[:id].to_i
 
+    id = options[:id].to_i
+    index = Rails.env.test? ? "dois-test" : self.inactive_index
     errors = 0
     count = 0
 
@@ -468,7 +469,7 @@ class Doi < ActiveRecord::Base
 
     Doi.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |dois|
       response = Doi.__elasticsearch__.client.bulk \
-        index:   Doi.index_name,
+        index:   index,
         type:    Doi.document_type,
         body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
 

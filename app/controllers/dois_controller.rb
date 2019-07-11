@@ -7,7 +7,7 @@ class DoisController < ApplicationController
   include Crosscitable
 
   prepend_before_action :authenticate_user!
-  before_action :set_doi, only: [:show, :get_url]
+  before_action :set_doi, only: [:show, :destroy, :get_url]
   before_action :set_include, only: [:index, :show, :create, :update]
   before_action :set_raven_context, only: [:create, :update, :validate]
 
@@ -371,9 +371,6 @@ class DoisController < ApplicationController
 
   def destroy
     logger = Logger.new(STDOUT)
-    @doi = Doi.where(doi: params[:id]).first
-    fail ActiveRecord::RecordNotFound unless @doi.present?
-
     authorize! :destroy, @doi
 
     if @doi.draft?
@@ -454,9 +451,11 @@ class DoisController < ApplicationController
   protected
 
   def set_doi
-    response = Doi.find_by_id(params[:id])
-    @doi = response.results.first
+    @doi = Doi.where(doi: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @doi.present?
+
+    # capture username and password for reuse in the handle system
+    @doi.current_user = current_user
   end
 
   def set_include

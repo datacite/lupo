@@ -195,8 +195,9 @@ class Activity < Audited::Audit
 
   def self.import_by_id(options={})
     return nil unless options[:id].present?
-    id = options[:id].to_i
 
+    id = options[:id].to_i
+    index = Rails.env.test? ? "activities-test" : self.inactive_index
     errors = 0
     count = 0
 
@@ -204,7 +205,7 @@ class Activity < Audited::Audit
 
     Activity.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |activities|
       response = Activity.__elasticsearch__.client.bulk \
-        index:   Activity.index_name,
+        index:   index,
         type:    Activity.document_type,
         body:    activities.map { |activity| { index: { _id: activity.id, data: activity.as_indexed_json } } }
 

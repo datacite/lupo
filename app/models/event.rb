@@ -255,8 +255,9 @@ class Event < ActiveRecord::Base
 
   def self.import_by_id(options={})
     return nil unless options[:id].present?
-    id = options[:id].to_i
 
+    id = options[:id].to_i
+    index = Rails.env.test? ? "events-test" : self.inactive_index
     errors = 0
     count = 0
 
@@ -264,7 +265,7 @@ class Event < ActiveRecord::Base
 
     Event.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |events|
       response = Event.__elasticsearch__.client.bulk \
-        index:   Event.index_name,
+        index:   index,
         type:    Event.document_type,
         body:    events.map { |event| { index: { _id: event.id, data: event.as_indexed_json } } }
 
