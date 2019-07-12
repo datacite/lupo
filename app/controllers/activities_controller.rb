@@ -78,7 +78,8 @@ class ActivitiesController < ApplicationController
   end
 
   def set_activity
-    @activity = Activity.where(request_uuid: params[:id]).first
+    response = Activity.find_by_id(params[:id])
+    @activity = response.results.first
     fail ActiveRecord::RecordNotFound unless @activity.present?
   end
 end
