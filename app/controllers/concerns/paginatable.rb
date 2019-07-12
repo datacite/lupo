@@ -25,6 +25,7 @@ module Paginatable
       end
 
       # Elasticsearch is limited to 10000 results per query, so we liit with max_number
+      # max number of results per page is 1000
       if page[:size].present?
         page[:size] = [page[:size].to_i, 1000].min
         max_number = page[:size] > 0 ? 10000/page[:size] : 1
