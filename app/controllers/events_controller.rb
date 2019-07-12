@@ -5,8 +5,6 @@ class EventsController < ApplicationController
 
   include Facetable
 
-  include BatchLoaderHelper
-
   prepend_before_action :authenticate_user!, except: [:index, :show]
   before_action :load_event, only: [:show, :destroy]
   before_action :set_include, only: [:index, :show, :create, :update]
@@ -125,42 +123,22 @@ class EventsController < ApplicationController
  
     results = response.results
 
-    batch = []
     options = {}
-    options[:include] = @include
-
-    bmr = Benchmark.ms {
-      if params["batchdisable"] == "false" || params["batchdisable"].nil?
-        options[:include] = ""  
-        unless params["batchdisable"].nil?
-          ids = (results.map { |event| event.doi}).join(",").split(",").uniq.join(",")
-          ids = "10.18711/0jdfnq2c,10.14288/1.0043659,10.25620/iciber.issn.1476-4687"
-          batch = DoiSerializer.new(load_doi(ids), options.merge!(is_collection: true)).serializable_hash.dig(:data) 
-        end
-      end
-    
-      options[:meta] = {
-        included: batch,
-        total: total,
-        "totalPages" => total_pages,
-        page: page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
-        sources: sources,
-        prefixes: prefixes,
-        "citationTypes" => citation_types,
-        "relationTypes" => relation_types,
-        pairings: pairings,
-        registrants: registrants,
-        "doisRelationTypes": dois,
-        "doisUsageTypes": dois_usage,
-        "doisCitations": dois_citations,
-        # "uniqueCitations": unique_citations
-      }.compact
-    }
-    if bmr > 3000
-      logger.warn "[Benchmark Warning] BatchLoad Items batch-disable: #{params['batchdisable']}  " + bmr.to_s + " ms"
-    else
-      logger.info "[Benchmark] BatchLoad Items batch-disable:  #{params['batchdisable']} " + bmr.to_s + " ms"
-    end
+    options[:meta] = {
+      total: total,
+      "totalPages" => total_pages,
+      page: page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
+      sources: sources,
+      prefixes: prefixes,
+      "citationTypes" => citation_types,
+      "relationTypes" => relation_types,
+      pairings: pairings,
+      registrants: registrants,
+      "doisRelationTypes": dois,
+      "doisUsageTypes": dois_usage,
+      "doisCitations": dois_citations,
+      # "uniqueCitations": unique_citations
+    }.compact
 
     options[:links] = {
       self: request.original_url,
@@ -183,6 +161,7 @@ class EventsController < ApplicationController
         "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
         "page[size]" => page[:size] }.compact.to_query
       }.compact
+    options[:include] = @include
     options[:is_collection] = true
     
     bmr = Benchmark.ms {
