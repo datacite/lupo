@@ -70,7 +70,6 @@ describe "/events", type: :request, elasticsearch: true do
       end
     end
 
-
     context "with very long url" do
       let(:url) {"http://navigator.eumetsat.int/soapservices/cswstartup?service=csw&version=2.0.2&request=getrecordbyid&outputschema=http%3A%2F%2Fwww.isotc211.org%2F2005%2Fgmd&id=eo%3Aeum%3Adat%3Amult%3Arac-m11-iasia"}
       let(:params) do

@@ -102,20 +102,24 @@ module Indexable
       options[:page][:size] ||= 25
 
       # Cursor nav use the search after, this should always be an array of values that match the sort.
-      if options.dig(:page, :cursor).present?
+      if options.dig(:page, :cursor)
         from = 0
-        search_after = Array.wrap(options.dig(:page, :cursor))
+
+        # make sure we have a valid cursor
+        search_after = options.dig(:page, :cursor).presence || [1, "1"]
 
         if self.name == "Doi"
-          sort = [{ created: "asc", doi: "asc"}]
+          sort = [{ created: "asc", doi: "asc" }]
         elsif self.name == "Event"
-          sort = [{ created_at: "asc", uuid: "asc"}]
+          sort = [{ created_at: "asc", uuid: "asc" }]
         elsif self.name == "Activity"
-          sort = [{ created: { order: 'asc' }}]
+          sort = [{ created: "asc", request_uuid: "asc" }]
+        elsif %w(Client Provider).include?(self.name)
+          sort = [{ created: "asc", uid: "asc" }]
         elsif self.name == "Researcher"
-          sort = [{ created_at: "asc", uid: "asc"}]
+          sort = [{ created_at: "asc", uid: "asc" }]
         else
-          sort = [{ created: { order: 'asc' }}]
+          sort = [{ created: "asc" }]
         end
       else
         from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)
