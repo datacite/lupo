@@ -9,13 +9,12 @@ class EventSerializer
   
   attributes :subj_id, :obj_id, :source_id, :relation_type_id, :total, :message_action, :source_token, :license, :occurred_at, :timestamp
   
-  has_many :dois, record_type: :dois, serializer: DoiSerializer, id_method_name: :uid do |object ,params|
-    if params[:batch_disable] == "true"
-      Doi.find_by_id(object.doi).results
-    elsif params[:batch_disable] == "false" || params[:batch_disable].blank?
-      load_doi(object)
-    end
-  end
+  # has_many :dois, if: Proc.new { |record, params| params[:batch_disable] == "true" }, record_type: :dois, serializer: DoiSerializer, id_method_name: :uid do |object|
+  #   Doi.find_by_id(object.doi).results
+  # end 
+  
+
+  has_many :dois, if: Proc.new { |record, params| params[:batch_disable] == "false" || params[:batch_disable].nil?  }, record_type: :dois, id_method_name: :doi
  
   attribute :timestamp, &:updated_at
 end
