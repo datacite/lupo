@@ -117,15 +117,15 @@ module Indexable
 
       # Calculate cursor sort based upon the type of model
       # Cursor sorts override any option sort
-      if self.name == "Doi" && cursor_values
+      if self.name == "Doi" && cursor_values.present?
         sort = [{ created: "asc", doi: "asc"}]
-      elsif self.name == "Event" && cursor_values
+      elsif self.name == "Event" && cursor_values.present?
         sort = [{ created_at: "asc", uuid: "asc"}]
-      elsif self.name == "Activity" && cursor_values
+      elsif self.name == "Activity" && cursor_values.present?
         sort = [{ created: { order: 'asc' }}]
-      elsif self.name == "Researcher" && cursor_values
+      elsif self.name == "Researcher" && cursor_values.present?
         sort = [{ created_at: "asc", uid: "asc"}]
-      elsif cursor_values
+      elsif cursor_values.present?
         sort = [{ created: { order: 'asc' }}]
       else
         sort = options[:sort]
