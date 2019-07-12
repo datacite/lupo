@@ -7,7 +7,7 @@ module Paginatable
       p = params.to_unsafe_h.dig(:page)
 
       if p.is_a?(Hash)
-        page = page.symbolize_keys
+        page = p.symbolize_keys
       else
         page = {}
       end

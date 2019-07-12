@@ -66,7 +66,6 @@ class Doi < ActiveRecord::Base
 
   attribute :regenerate, :boolean, default: false
   attribute :only_validate, :boolean, default: false
-  attribute :exists, :boolean, default: false
   attribute :should_validate, :boolean, default: false
 
   belongs_to :client, foreign_key: :datacentre
