@@ -157,7 +157,7 @@ class EventsController < ApplicationController
         "registrant-id" => params[:registrant_id],
         "publication-year" => params[:publication_year],
         "year-month" => params[:year_month],
-        "page[cursor]" => page[:cursor] ? Base64.strict_encode64(Array.wrap(results.to_a.last[:sort]).join(',')) : nil,
+        "page[cursor]" => page[:cursor] ? Base64.urlsafe_encode64(Array.wrap(results.to_a.last[:sort]).join(","), padding: false) : nil,
         "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
         "page[size]" => page[:size] }.compact.to_query
       }.compact

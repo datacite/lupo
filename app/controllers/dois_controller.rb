@@ -7,7 +7,7 @@ class DoisController < ApplicationController
   include Crosscitable
 
   prepend_before_action :authenticate_user!
-  before_action :set_doi, only: [:show, :destroy, :get_url]
+  before_action :set_doi, only: [:show, :get_url]
   before_action :set_include, only: [:index, :show, :create, :update]
   before_action :set_raven_context, only: [:create, :update, :validate]
 
@@ -181,7 +181,7 @@ class DoisController < ApplicationController
               "provider-id" => params[:provider_id],
               "client-id" => params[:client_id],
               # The cursor link should be an array of values, but we want to encode it into a single string for the URL
-              "page[cursor]" => page[:cursor] ? Base64.strict_encode64(Array.wrap(results.to_a.last[:sort]).join(',')) : nil,
+              "page[cursor]" => page[:cursor] ? Base64.urlsafe_encode64(Array.wrap(results.to_a.last[:sort]).join(','), padding: false) : nil,
               "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
               "page[size]" => page[:size] }.compact.to_query
             }.compact
@@ -316,7 +316,7 @@ class DoisController < ApplicationController
         @doi.assign_attributes(safe_params.slice(:client_id))
       else
         authorize! :update, @doi
-        @doi.assign_attributes(safe_params.except(:doi, :client_id).merge(exists: exists))
+        @doi.assign_attributes(safe_params.except(:doi, :client_id))
       end
     else
       doi_id = validate_doi(params[:id])
@@ -371,6 +371,9 @@ class DoisController < ApplicationController
 
   def destroy
     logger = Logger.new(STDOUT)
+    @doi = Doi.where(doi: params[:id]).first
+    fail ActiveRecord::RecordNotFound unless @doi.present?
+
     authorize! :destroy, @doi
 
     if @doi.draft?
@@ -451,11 +454,9 @@ class DoisController < ApplicationController
   protected
 
   def set_doi
-    @doi = Doi.where(doi: params[:id]).first
+    response = Doi.find_by_id(params[:id])
+    @doi = response.records.first
     fail ActiveRecord::RecordNotFound unless @doi.present?
-
-    # capture username and password for reuse in the handle system
-    @doi.current_user = current_user
   end
 
   def set_include
