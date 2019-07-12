@@ -134,6 +134,7 @@ class EventsController < ApplicationController
         options[:include] = ""  
         unless params["batchdisable"].nil?
           ids = (results.map { |event| event.doi}).join(",").split(",").uniq.join(",")
+          ids = "10.18711/0jdfnq2c,10.14288/1.0043659,10.25620/iciber.issn.1476-4687"
           batch = DoiSerializer.new(load_doi(ids), options.merge!(is_collection: true)).serializable_hash.dig(:data) 
         end
       end
