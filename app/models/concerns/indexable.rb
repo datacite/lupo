@@ -101,33 +101,25 @@ module Indexable
       options[:page][:number] ||= 1
       options[:page][:size] ||= 25
 
-      # Default sort should be whatever is passed in
-      sort = options[:sort]
-      # Cursor should always be an array regardless
-      cursor_values = Array.wrap(options.dig(:page, :cursor))
-
       # Cursor nav use the search after, this should always be an array of values that match the sort.
       if options.dig(:page, :cursor).present?
         from = 0
-        search_after = cursor_values
+        search_after = Array.wrap(options.dig(:page, :cursor))
+
+        if self.name == "Doi"
+          sort = [{ created: "asc", doi: "asc"}]
+        elsif self.name == "Event"
+          sort = [{ created_at: "asc", uuid: "asc"}]
+        elsif self.name == "Activity"
+          sort = [{ created: { order: 'asc' }}]
+        elsif self.name == "Researcher"
+          sort = [{ created_at: "asc", uid: "asc"}]
+        else
+          sort = [{ created: { order: 'asc' }}]
+        end
       else
         from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)
         search_after = nil
-      end
-
-      # Calculate cursor sort based upon the type of model
-      # Cursor sorts override any option sort
-      if self.name == "Doi" && cursor_values.present?
-        sort = [{ created: "asc", doi: "asc"}]
-      elsif self.name == "Event" && cursor_values.present?
-        sort = [{ created_at: "asc", uuid: "asc"}]
-      elsif self.name == "Activity" && cursor_values.present?
-        sort = [{ created: { order: 'asc' }}]
-      elsif self.name == "Researcher" && cursor_values.present?
-        sort = [{ created_at: "asc", uid: "asc"}]
-      elsif cursor_values.present?
-        sort = [{ created: { order: 'asc' }}]
-      else
         sort = options[:sort]
       end
 
