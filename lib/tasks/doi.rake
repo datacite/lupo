@@ -16,7 +16,7 @@ namespace :doi do
 
   desc "Switch index for dois"
   task :switch_index => :environment do
-    puts Doi.switch_index
+    puts Doi.switch_index(force: ENV["FORCE"])
   end
 
   desc "Return active index for dois"
