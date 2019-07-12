@@ -7,28 +7,26 @@ module Paginatable
       p = params.to_unsafe_h.dig(:page)
 
       if p.is_a?(Hash)
-        page = {
-          size: p["size"],
-          number: p["number"],
-          cursor: p["cursor"]
-        }.compact
+        page = page.symbolize_keys
       else
         page = {}
       end
 
       # All cursors will need to be decoded from the param
-      if page[:cursor].present?
+      # Check for presence of :cursor key, value can be empty
+      if page.has_key?(:cursor)
         begin
           # When we decode and split, we'll always end up with an array
-          page[:cursor] = Base64.strict_decode64(page[:cursor]).split(",")
+          page[:cursor] = Base64.strict_decode64(page[:cursor].to_s).split(",")
         rescue ArgumentError
           # If we fail to decode we'll just default back to an empty cursor
           page[:cursor] = []
         end
       end
 
+      # Elasticsearch is limited to 10000 results per query, so we liit with max_number
       if page[:size].present?
-        page[:size] = [page[:size].to_i, 10000].min
+        page[:size] = [page[:size].to_i, 1000].min
         max_number = page[:size] > 0 ? 10000/page[:size] : 1
       else
         page[:size] = 25
