@@ -119,11 +119,9 @@ class WorksController < ApplicationController
   protected
 
   def set_doi
-    @doi = Doi.where(doi: params[:id]).first
+    response = Doi.find_by_id(params[:id])
+    @doi = response.records.first
     fail ActiveRecord::RecordNotFound unless @doi.present?
-
-    # capture username and password for reuse in the handle system
-    @doi.current_user = current_user
   end
 
   def set_include

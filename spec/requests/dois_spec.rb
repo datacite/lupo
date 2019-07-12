@@ -31,7 +31,14 @@ describe "dois", type: :request do
     end
   end
 
-  describe 'GET /dois/:id' do
+  describe 'GET /dois/:id', elasticsearch: true do
+    let!(:doi) { create(:doi, client: client) }
+
+    before do
+      Doi.import
+      sleep 1
+    end
+
     context 'when the record exists' do
       it 'returns the Doi' do
         get "/dois/#{doi.doi}", nil, headers
@@ -94,7 +101,14 @@ describe "dois", type: :request do
     let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }
     let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer}}
 
-    context 'initial state draft' do
+    context 'initial state draft', elasticsearch: true do
+      let!(:doi) { create(:doi, client: client) }
+
+      before do
+        Doi.import
+        sleep 1
+      end
+
       it 'fetches the record' do
         get "/dois/#{doi.doi}", nil, headers
 
@@ -2175,10 +2189,10 @@ describe "dois", type: :request do
       end
     end
 
-    context 'remove series_information via xml' do
+    context 'remove series_information via xml', elasticsearch: true do
       let(:xml) { Base64.strict_encode64(File.read(file_fixture('datacite_series_information.xml'))) }
       let(:xml_new) { Base64.strict_encode64(File.read(file_fixture('datacite_no_series_information.xml'))) }
-      let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
+      let!(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
       let(:update_attributes) do
         {
           "data" => {
@@ -2198,6 +2212,11 @@ describe "dois", type: :request do
             }
           }
         }
+      end
+
+      before do
+        Doi.import
+        sleep 1
       end
 
       it 'updates the Doi' do
@@ -2398,7 +2417,7 @@ describe "dois", type: :request do
     end
   end
 
-  describe 'GET /dois/<doi> linkcheck results' do
+  describe 'GET /dois/<doi> linkcheck results', elasticsearch: true do
     let(:landing_page) { {
       "checked" => Time.zone.now.utc.iso8601,
       "status" => 200,
@@ -2416,7 +2435,7 @@ describe "dois", type: :request do
     } }
 
     # Setup an initial DOI with results will check permissions against.
-    let(:doi) { create(:doi, doi: "10.24425/2210181332",
+    let!(:doi) { create(:doi, doi: "10.24425/2210181332",
       client: client,
       state: "findable",
       event: 'publish',
@@ -2430,6 +2449,11 @@ describe "dois", type: :request do
       state: "findable",
       event: 'publish',
       landing_page: landing_page) }
+
+    before do
+      Doi.import
+      sleep 1
+    end
 
     context 'anonymous get' do
       let(:headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json' } }
@@ -2501,82 +2525,114 @@ describe "dois", type: :request do
     end
   end
 
-  describe 'GET /dois/DOI/get-url', vcr: true do
-    let(:doi) { create(:doi, client: client, doi: "10.5438/fj3w-0shd", url: "https://blog.datacite.org/data-driven-development/", event: "publish") }
+  describe 'GET /dois/DOI/get-url', vcr: true, elasticsearch: true do
+    context 'it works' do
+      let!(:doi) { create(:doi, client: client, doi: "10.5438/fj3w-0shd", url: "https://blog.datacite.org/data-driven-development/", event: "publish") }
 
-    it 'returns url' do
-      get "/dois/#{doi.doi}/get-url", nil, headers
+      before do
+        Doi.import
+        sleep 1
+      end
 
-      expect(json["url"]).to eq("https://blog.datacite.org/data-driven-development/")
-      expect(last_response.status).to eq(200)
+      it 'returns url' do
+        get "/dois/#{doi.doi}/get-url", nil, headers
+
+        expect(json["url"]).to eq("https://blog.datacite.org/data-driven-development/")
+        expect(last_response.status).to eq(200)
+      end
     end
-  end
 
-  describe 'GET /dois/DOI/get-url no password', vcr: true do
-    let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
+    context 'no password' do
+      let!(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
 
-    it 'returns error' do
-      get "/dois/#{doi.doi}/get-url", nil, { 'HTTP_ACCEPT'=>'application/vnd.api+json' }
+      before do
+        Doi.import
+        sleep 1
+      end
 
-      expect(last_response.status).to eq(401)
-      expect(json['errors']).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
+      it 'returns error' do
+        get "/dois/#{doi.doi}/get-url", nil, { 'HTTP_ACCEPT'=>'application/vnd.api+json' }
+
+        expect(last_response.status).to eq(401)
+        expect(json['errors']).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
+      end
     end
-  end
 
-  describe 'GET /dois/DOI/get-url wrong password', vcr: true do
-    let(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
-    let(:credentials) { client.encode_auth_param(username: client.symbol.downcase, password: "12345") }
+    context 'wrong password' do
+      let!(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
+      let(:credentials) { client.encode_auth_param(username: client.symbol.downcase, password: "12345") }
 
-    it 'returns error' do
-      get "/dois/#{doi.doi}/get-url", nil, { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Basic ' + credentials }
+      before do
+        Doi.import
+        sleep 1
+      end
 
-      expect(last_response.status).to eq(401)
-      expect(json['errors']).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
+      it 'returns error' do
+        get "/dois/#{doi.doi}/get-url", nil, { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Basic ' + credentials }
+
+        expect(last_response.status).to eq(401)
+        expect(json['errors']).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
+      end
     end
-  end
 
-  describe 'GET /dois/DOI/get-url no permission', vcr: true do
-    let(:other_client) { create(:client, provider: provider) }
-    let(:doi) { create(:doi, client: other_client, doi: "10.14454/8syz-ym47", event: "publish") }
+    context 'no permission' do
+      let(:other_client) { create(:client, provider: provider) }
+      let!(:doi) { create(:doi, client: other_client, doi: "10.14454/8syz-ym47", event: "publish") }
 
-    it 'returns error' do
-      get "/dois/#{doi.doi}/get-url", nil, headers
+      before do
+        Doi.import
+        sleep 1
+      end
 
-      expect(last_response.status).to eq(403)
-      expect(json['errors']).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+      it 'returns error' do
+        get "/dois/#{doi.doi}/get-url", nil, headers
+
+        expect(last_response.status).to eq(403)
+        expect(json['errors']).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+      end
     end
-  end
 
-  describe 'GET /dois/DOI/get-url not found', vcr: true do
-    let(:doi) { create(:doi, client: client, doi: "10.14454/61y1-e521", event: "publish") }
+    context 'not found' do
+      let!(:doi) { create(:doi, client: client, doi: "10.14454/61y1-e521", event: "publish") }
 
-    it 'returns not found' do
-      get "/dois/#{doi.doi}/get-url", nil, headers
+      before do
+        Doi.import
+        sleep 1
+      end
 
-      expect(last_response.status).to eq(404)
-      expect(json['errors']).to eq([{"status"=>404, "title"=>"Not found"}])
+      it 'returns not found' do
+        get "/dois/#{doi.doi}/get-url", nil, headers
+
+        expect(last_response.status).to eq(404)
+        expect(json['errors']).to eq([{"status"=>404, "title"=>"Not found"}])
+      end
     end
-  end
 
-  describe 'GET /dois/DOI/get-url draft doi', vcr: true do
-    let(:doi) { create(:doi, client: client, doi: "10.14454/61y1-e521") }
+    context 'draft doi' do
+      let!(:doi) { create(:doi, client: client, doi: "10.14454/61y1-e521") }
 
-    it 'returns not found' do
-      get "/dois/#{doi.doi}/get-url", nil, headers
+      before do
+        Doi.import
+        sleep 1
+      end
 
-      expect(last_response.status).to eq(200)
-      expect(json['url']).to eq(doi.url)
+      it 'returns not found' do
+        get "/dois/#{doi.doi}/get-url", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json['url']).to eq(doi.url)
+      end
     end
-  end
 
-  describe 'GET /dois/DOI/get-url not DataCite DOI', vcr: true do
-    let(:doi) { create(:doi, client: client, doi: "10.1371/journal.pbio.2001414", event: "publish") }
+    context 'not DataCite DOI' do
+      let(:doi) { create(:doi, client: client, doi: "10.1371/journal.pbio.2001414", event: "publish") }
 
-    it 'returns nil' do
-      get "/dois/#{doi.doi}/get-url", nil, headers
+      it 'returns nil' do
+        get "/dois/#{doi.doi}/get-url", nil, headers
 
-      expect(last_response.status).to eq(403)
-      expect(json['url']).to be_nil
+        expect(last_response.status).to eq(404)
+        expect(json['url']).to be_nil
+      end
     end
   end
 
@@ -2602,11 +2658,16 @@ describe "dois", type: :request do
     end
   end
 
-  describe "content_negotation", type: :request do
+  describe "content_negotation", type: :request, elasticsearch: true do
     let(:provider) { create(:provider, symbol: "DATACITE") }
     let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
     let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
-    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 1
+    end
 
     context "no permission" do
       let(:doi) { create(:doi) }

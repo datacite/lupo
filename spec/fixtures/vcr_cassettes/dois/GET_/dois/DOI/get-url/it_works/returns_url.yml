@@ -1,0 +1,32 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://handle.test.datacite.org/api/handles/10.5438/FJ3W-0SHD?index=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.2.6; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 12 Jul 2019 07:29:01 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding
+    body:
+      encoding: ASCII-8BIT
+      string: '{"responseCode":1,"handle":"10.5438/FJ3W-0SHD","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/data-driven-development/"},"ttl":86400,"timestamp":"2016-12-19T15:06:36Z"}]}'
+    http_version: 
+  recorded_at: Fri, 12 Jul 2019 07:29:01 GMT
+recorded_with: VCR 3.0.3

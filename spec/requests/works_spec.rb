@@ -9,12 +9,12 @@ describe "works", type: :request do
   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
   let!(:prefix) { create(:prefix, prefix: "10.14454") }
   let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
-  let!(:dois) { create_list(:doi, 3, client: client, event: "publish") }
-  let(:doi) { create(:doi, client: client, event: "publish") }
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
   let(:headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
 
   describe 'GET /works', elasticsearch: true do
+    let!(:dois) { create_list(:doi, 3, client: client, event: "publish") }
+  
     before do
       Doi.import
       sleep 1
@@ -29,7 +29,14 @@ describe "works", type: :request do
     end
   end
 
-  describe 'GET /works/:id' do
+  describe 'GET /works/:id', elasticsearch: true do
+    let!(:doi) { create(:doi, client: client, event: "publish") }
+
+    before do
+      Doi.import
+      sleep 1
+    end
+  
     context 'when the record exists' do
       it 'returns the Doi' do
         get "/works/#{doi.doi}", nil, headers
