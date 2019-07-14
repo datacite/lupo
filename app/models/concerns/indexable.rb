@@ -396,13 +396,17 @@ module Indexable
 
     # show stats for both indexes
     def index_stats(options={})
+      index_name = self.index_name + "_v1"
+      alternate_index_name = self.index_name + "_v2"
+
+      client = Elasticsearch::Model.client
       stats = client.indices.stats index: [index_name, alternate_index_name], docs: true
       index_name_count = stats.dig("indices", index_name, "primaries", "docs", "count")
       alternate_index_name_count = stats.dig("indices", alternate_index_name, "primaries", "docs", "count")
+      last_id = self.maximum(:id) || 1
 
-      puts stats
-      message = "Index #{index_name} has #{index_name_count} documents." \
-        "Index #{alternate_index_name} has #{alternate_index_name_count} documents."
+      message = "Index #{index_name} has #{index_name_count} documents, " \
+        "#{alternate_index_name} has #{alternate_index_name_count} documents, last_id is #{last_id}."
       return message
     end
 
