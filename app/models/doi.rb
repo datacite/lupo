@@ -125,7 +125,12 @@ class Doi < ActiveRecord::Base
         name: { type: :text },
         givenName: { type: :text },
         familyName: { type: :text },
-        affiliation: { type: :text }
+        affiliation: { type: :object, properties: {
+          name: { type: :keyword },
+          affiliationIdentifier: { type: :keyword },
+          affiliationIdentifierScheme: { type: :keyword },
+          schemeUri: { type: :keyword }
+        }},
       }
       indexes :contributors,                   type: :object, properties: {
         nameType: { type: :keyword },
@@ -137,7 +142,12 @@ class Doi < ActiveRecord::Base
         name: { type: :text },
         givenName: { type: :text },
         familyName: { type: :text },
-        affiliation: { type: :text },
+        affiliation: { type: :object, properties: {
+          name: { type: :keyword },
+          affiliationIdentifier: { type: :keyword },
+          affiliationIdentifierScheme: { type: :keyword },
+          schemeUri: { type: :keyword }
+        }},
         contributorType: { type: :keyword }
       }
       indexes :creator_names,                  type: :text
