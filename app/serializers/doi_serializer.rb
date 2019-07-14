@@ -24,7 +24,7 @@ class DoiSerializer
     # for now override format for affiliations in production
     if Rails.env.production?
       Array.wrap(object.creators).map do |c|
-        c["affiliation"] = c.dig("affiliation", "name") if c.has_key?("affiliation")
+        c["affiliation"] = c.dig("affiliation", "name") if c["affiliation"].is_a?(Hash)
         c
       end
     else
