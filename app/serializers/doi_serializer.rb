@@ -21,7 +21,15 @@ class DoiSerializer
 
   attribute :creators do |object|
     # Always return an array of creators
-    Array.wrap(object.creators)
+    # for now override format for affiliations in production
+    if Rails.env.production?
+      Array.wrap(object.creators).map do |c|
+        c["affiliation"] = c.dig("affiliation", "name") if c.has_key("affiliation")
+        c
+      end
+    else
+      Array.wrap(object.creators)
+    end
   end
 
   attribute :state do |object|
