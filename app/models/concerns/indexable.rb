@@ -394,6 +394,18 @@ module Indexable
       "Upgraded inactive index #{inactive_index}."
     end
 
+    # show stats for both indexes
+    def index_stats(options={})
+      stats = client.indices.stats index: [index_name, alternate_index_name], docs: true
+      index_name_count = stats.dig("indices", index_name, "primaries", "docs", "count")
+      alternate_index_name_count = stats.dig("indices", alternate_index_name, "primaries", "docs", "count")
+
+      puts stats
+      message = "Index #{index_name} has #{index_name_count} documents." \
+        "Index #{alternate_index_name} has #{alternate_index_name_count} documents."
+      return message
+    end
+
     # switch between the two indexes, i.e. the index that is aliased
     def switch_index(options={})
       alias_name = self.index_name
@@ -401,16 +413,6 @@ module Indexable
       alternate_index_name = self.index_name + "_v2"
 
       client = Elasticsearch::Model.client
-      
-      ## only switch if both indexes have the same number of documents, unless force option is true
-      unless options[:force].present?
-        stats = client.indices.stats index: [index_name, alternate_index_name], docs: true
-        index_name_count = stats.dig("indices", index_name, "primaries", "docs", "count")
-        alternate_index_name_count = stats.dig("indices", alternate_index_name, "primaries", "docs", "count")
-        if index_name_count != alternate_index_name_count
-          return "Not switching active index as #{index_name} and #{alternate_index_name} have different number of documents: #{index_name_count} vs. #{alternate_index_name_count}." 
-        end
-      end
 
       if client.indices.exists_alias?(name: alias_name, index: [index_name])
         client.indices.update_aliases body: {

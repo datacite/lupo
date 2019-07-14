@@ -14,6 +14,11 @@ namespace :event do
     puts Event.upgrade_index
   end
 
+  desc "Show index stats for events"
+  task :index_stats => :environment do
+    puts Event.index_stats
+  end
+
   desc "Switch index for events"
   task :switch_index => :environment do
     puts Event.switch_index(force: ENV["FORCE"])

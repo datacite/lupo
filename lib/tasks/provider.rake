@@ -14,9 +14,14 @@ namespace :provider do
     puts Provider.upgrade_index
   end
 
+  desc "Show index stats for providers"
+  task :index_stats => :environment do
+    puts Provider.index_stats
+  end
+
   desc "Switch index for providers"
   task :switch_index => :environment do
-    puts Provider.switch_index(force: ENV["FORCE"])
+    puts Provider.switch_index
   end
 
   desc "Return active index for providers"

@@ -14,9 +14,14 @@ namespace :activity do
     puts Activity.upgrade_index
   end
 
+  desc "Show index stats for activities"
+  task :index_stats => :environment do
+    puts Activity.index_stats
+  end
+
   desc "Switch index for activities"
   task :switch_index => :environment do
-    puts Activity.switch_index(force: ENV["FORCE"])
+    puts Activity.switch_index
   end
 
   desc "Return active index for activities"
