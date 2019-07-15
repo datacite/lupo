@@ -179,7 +179,10 @@ describe Doi, vcr: true do
       expect(meta["string"]).to eq(string)
       expect(meta["from"]).to eq("datacite")
       expect(meta["doi"]).to eq("10.14454/testpub")
-      expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"Smith, John", "nameType"=>"Personal"}, {"name"=>"つまらないものですが"}])
+      expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"Smith, John", "nameType"=>"Personal"}, {"name"=>"つまらないものですが", "nameIdentifiers"=>
+        [{"nameIdentifier"=>"abc123",
+          "nameIdentifierScheme"=>"ISNI",
+          "schemeUri"=>"Other"}]}])
       expect(meta["titles"]).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
       expect(meta["publication_year"]).to eq("2010")
       expect(meta["publisher"]).to eq("Springer")
@@ -220,7 +223,7 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("crossref")
       expect(meta["doi"]).to eq("10.7554/elife.01567")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "affiliation" => "Department of Plant Molecular Biology, University of Lausanne, Lausanne, Switzerland", "nameType"=>"Personal")
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "affiliation" => [{"name"=>"Department of Plant Molecular Biology, University of Lausanne, Lausanne, Switzerland"}], "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("eLife Sciences Publications, Ltd")
@@ -234,7 +237,7 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("crossref")
       expect(meta["doi"]).to eq("10.7554/elife.01567")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "affiliation" => "Department of Plant Molecular Biology, University of Lausanne, Lausanne, Switzerland", "nameType"=>"Personal")
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "affiliation" => [{"name"=>"Department of Plant Molecular Biology, University of Lausanne, Lausanne, Switzerland"}], "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("eLife Sciences Publications, Ltd")
@@ -248,7 +251,7 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("datacite")
       expect(meta["doi"]).to eq("10.7272/q6g15xs4")
       expect(meta["creators"].length).to eq(2)
-      expect(meta["creators"].first).to eq("affiliation"=>"UC San Francisco", "familyName"=>"Rodriguez", "givenName"=>"Robert", "name"=>"Rodriguez, Robert", "nameType"=>"Personal")
+      expect(meta["creators"].first).to eq("affiliation"=>[{"name"=>"UC San Francisco"}], "familyName"=>"Rodriguez", "givenName"=>"Robert", "name"=>"Rodriguez, Robert", "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"NEXUS Head CT"}])
       expect(meta["publication_year"]).to eq("2017")
       expect(meta["publisher"]).to eq("UC San Francisco")
@@ -293,7 +296,7 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("codemeta")
       expect(meta["doi"]).to eq("10.5063/f1m61h5x")
       expect(meta["creators"].length).to eq(3)
-      expect(meta["creators"].first).to eq("affiliation" => "NCEAS",
+      expect(meta["creators"].first).to eq("affiliation" => [{"name"=>"NCEAS"}],
         "familyName" => "Jones",
         "givenName" => "Matt",
         "name" => "Jones, Matt",
@@ -366,7 +369,10 @@ describe Doi, vcr: true do
       meta = subject.parse_xml(string)
 
       expect(meta["doi"]).to eq("10.14454/testpub")
-      expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"Smith, John", "nameType"=>"Personal"}, {"name"=>"つまらないものですが"}])
+      expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"Smith, John", "nameType"=>"Personal"}, {"name"=>"つまらないものですが", "nameIdentifiers"=>
+        [{"nameIdentifier"=>"abc123",
+          "nameIdentifierScheme"=>"ISNI",
+          "schemeUri"=>"Other"}]}])
       expect(meta["titles"]).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
       expect(meta["publication_year"]).to eq("2010")
       expect(meta["publisher"]).to eq("Springer")
@@ -389,7 +395,7 @@ describe Doi, vcr: true do
 
       expect(meta["doi"]).to eq("10.7554/elife.01567")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "affiliation" => "Department of Plant Molecular Biology, University of Lausanne, Lausanne, Switzerland", "nameType"=>"Personal")
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "affiliation" => [{"name"=>"Department of Plant Molecular Biology, University of Lausanne, Lausanne, Switzerland"}], "nameType"=>"Personal")
       expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("eLife Sciences Publications, Ltd")
@@ -428,7 +434,7 @@ describe Doi, vcr: true do
 
       expect(meta["doi"]).to eq("10.5063/f1m61h5x")
       expect(meta["creators"].length).to eq(3)
-      expect(meta["creators"].first).to eq("affiliation" => "NCEAS",
+      expect(meta["creators"].first).to eq("affiliation" => [{"name"=>"NCEAS"}],
         "familyName" => "Jones",
         "givenName" => "Matt",
         "name" => "Jones, Matt",

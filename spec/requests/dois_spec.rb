@@ -926,6 +926,49 @@ describe "dois", type: :request do
       end
     end
 
+    context 'with affiliation' do
+      let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('datacite-example-affiliation.xml'))) }
+      let(:params) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "xml" => xml
+            }
+          }
+        }
+      end
+
+      it 'validates a Doi' do
+        post '/dois', params, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"lang"=>"en-US", "title"=>"Full DataCite XML Example"}, {"lang"=>"en-US", "title"=>"Demonstration of DataCite Properties.", "titleType"=>"Subtitle"}])
+        expect(json.dig('data', 'attributes', 'creators').length).to eq(3)
+        expect(json.dig('data', 'attributes', 'creators')[0]).to eq("affiliation" => [{"affiliationIdentifierScheme"=>"ROR", "affiliationIdentifier"=>"https://ror.org/04wxnsj81", "name"=>"DataCite"}],
+          "familyName" => "Miller",
+          "givenName" => "Elizabeth",
+          "name" => "Miller, Elizabeth",
+          "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0001-5000-0007", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+          "nameType" => "Personal")
+        expect(json.dig('data', 'attributes', 'creators')[1]).to eq("affiliation" => [{"affiliationIdentifierScheme"=>"ROR", "affiliationIdentifier"=>"https://ror.org/05gq02987", "name"=>"Brown University"}, {"affiliationIdentifierScheme"=>"GRID", "affiliationIdentifier"=>"https://grid.ac/institutes/grid.268117.b", "name"=>"Wesleyan University"}],
+          "familyName" => "Carberry",
+          "givenName" => "Josiah",
+          "name" => "Carberry, Josiah",
+          "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0002-1825-0097", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+          "nameType" => "Personal")
+        expect(json.dig('data', 'attributes', 'creators')[2]).to eq("nameType"=>"Organizational", "name"=>"The Psychoceramics Study Group", "affiliation"=>[{"affiliationIdentifier"=>"https://ror.org/05gq02987", "name"=>"Brown University", "affiliationIdentifierScheme"=>"ROR"}])
+        
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("creators", "creator")[0]).to eq("affiliation" => {"__content__"=>"DataCite", "affiliationIdentifier"=>"https://ror.org/04wxnsj81", "affiliationIdentifierScheme"=>"ROR"},
+          "creatorName" => {"__content__"=>"Miller, Elizabeth", "nameType"=>"Personal"},
+          "familyName" => "Miller",
+          "givenName" => "Elizabeth",
+          "nameIdentifier" => {"__content__"=>"0000-0001-5000-0007", "nameIdentifierScheme"=>"ORCID", "schemeURI"=>"http://orcid.org/"})
+      end
+    end
+
     context 'schema_org' do
       let(:xml) { Base64.strict_encode64(file_fixture('schema_org_topmed.json').read) }
       let(:valid_attributes) do
@@ -2083,7 +2126,7 @@ describe "dois", type: :request do
     end
 
     context 'update multiple affiliations' do
-      let(:creators) { [{ "name"=>"Ollomi, Benjamin", "affiliation" => ["Cambridge University", "EMBL-EBI"] }] }
+      let(:creators) { [{ "name"=>"Ollomi, Benjamin", "affiliation" => [{ "name" => "Cambridge University" }, { "name" => "EMBL-EBI" }] }] }
       let(:update_attributes) do
         {
           "data" => {

@@ -14,9 +14,14 @@ namespace :doi do
     puts Doi.upgrade_index
   end
 
+  desc "Show index stats for dois"
+  task :index_stats => :environment do
+    puts Doi.index_stats
+  end
+
   desc "Switch index for dois"
   task :switch_index => :environment do
-    puts Doi.switch_index(force: ENV["FORCE"])
+    puts Doi.switch_index
   end
 
   desc "Return active index for dois"
@@ -70,6 +75,11 @@ namespace :doi do
   desc 'Set minted'
   task :set_minted => :environment do
     Doi.set_minted
+  end
+
+  desc 'Convert affiliations to new format'
+  task :convert_affiliations => :environment do
+    Doi.convert_affiliations
   end
 
   desc 'Migrates landing page data handling camelCase changes at same time'

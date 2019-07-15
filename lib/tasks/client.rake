@@ -14,9 +14,14 @@ namespace :client do
     puts Client.upgrade_index
   end
 
+  desc "Show index stats for clients"
+  task :index_stats => :environment do
+    puts Client.index_stats
+  end
+
   desc "Switch index for clients"
   task :switch_index => :environment do
-    puts Client.switch_index(force: ENV["FORCE"])
+    puts Client.switch_index
   end
 
   desc "Return active index for clients"
