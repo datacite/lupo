@@ -179,13 +179,7 @@ class EventsController < ApplicationController
 
       if @include.include? :dois
         doi_names = (results.map { |event| event.doi}).join(",")
-        events_serialized[:included] = if params["batchload"] == "true" || params["batchload"].nil?
-          logger.info "batchload"
-          DoiSerializer.new(load_doi(doi_names), {is_collection: true}).serializable_hash.dig(:data) 
-        elsif params["batchload"] == "false"
-          logger.info "find_by_doi"
-          Doi.find_by_id(doi_names).results
-        end
+        events_serialized[:included] = DoiSerializer.new(Doi.find_by_id(doi_names).results, {is_collection: true}).serializable_hash.dig(:data)
       end
 
       render json: events_serialized, status: :ok
