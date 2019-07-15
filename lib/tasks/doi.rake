@@ -77,6 +77,11 @@ namespace :doi do
     Doi.set_minted
   end
 
+  desc 'Convert affiliations to new format'
+  task :convert_affiliations => :environment do
+    Doi.convert_affiliations
+  end
+
   desc 'Migrates landing page data handling camelCase changes at same time'
   task :migrate_landing_page => :environment do
     Doi.migrate_landing_page
