@@ -176,11 +176,9 @@ class EventsController < ApplicationController
       ### Then we serlize all the events and we merged them both together
       events_serialized = EventSerializer.new(results, options).serializable_hash
 
-      # doi_names = (results.map { |event| event.doi}).join(",").split(",").uniq.join(",")
 
       if @include.include? :dois
-        # doi_names = (results.map { |event| event.doi}).join(",")
-        doi_names = "10.18711/0jdfnq2c,10.14288/1.0043659,10.25620/iciber.issn.1476-4687"
+        doi_names = (results.map { |event| event.doi}).join(",")
         events_serialized[:included] = if params["batchload"] == "true" || params["batchload"].nil?
           logger.info "batchload"
           DoiSerializer.new(load_doi(doi_names), {is_collection: true}).serializable_hash.dig(:data) 
