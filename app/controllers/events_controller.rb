@@ -105,6 +105,7 @@ class EventsController < ApplicationController
                              occurred_at: params[:occurred_at],
                              year_month: params[:year_month],
                              unique: params[:unique],
+                             aggregations: params[:aggregations],
                              page: page,
                              sort: sort)
     end
@@ -113,16 +114,18 @@ class EventsController < ApplicationController
     total_for_pages = page[:cursor].nil? ? total.to_f : [total.to_f, 10000].min
     total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
 
-    sources = total.positive? ? facet_by_source(response.response.aggregations.sources.buckets) : nil
-    prefixes = total.positive? ? facet_by_source(response.response.aggregations.prefixes.buckets) : nil
-    citation_types = total.positive? ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
-    relation_types = total.positive? ? facet_by_relation_type(response.response.aggregations.relation_types.buckets) : nil
-    registrants = total.positive? && params[:extra] ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
-    pairings = total.positive? && params[:extra] ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
-    dois = total.positive? && params[:extra] ? facet_by_dois(response.response.aggregations.dois.buckets) : nil
-    dois_usage = total.positive? && params[:extra] ? facet_by_dois(response.response.aggregations.dois_usage.dois.buckets) : nil
-    dois_citations = total.positive? && params[:extra] ? facet_citations_by_year(response.response.aggregations.dois_citations) : nil
-    # unique_citations = total.positive? && params[:extra] ? facet_citations_by_dois(response.response.aggregations.unique_citations.dois.buckets) : nil
+    aggregations = params.fetch(:aggregations,"").nil? ? "" : params.fetch(:aggregations,"")
+
+    sources = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_source(response.response.aggregations.sources.buckets) : nil
+    prefixes = total.positive? && aggregations.blank?  || aggregations.include?("query_aggregations") ? facet_by_source(response.response.aggregations.prefixes.buckets) : nil
+    citation_types = total.positive? && aggregations.blank?  || aggregations.include?("query_aggregations") ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
+    relation_types = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations")  ? facet_by_relation_type(response.response.aggregations.relation_types.buckets) : nil
+    registrants = total.positive? && aggregations.include?("advanced_aggregations")  ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
+    pairings = total.positive? && aggregations.include?("advanced_aggregations") ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
+    dois = total.positive? && aggregations.include?("metrics_aggregations") ? facet_by_dois(response.response.aggregations.dois.buckets) : nil
+    dois_usage = total.positive? && aggregations.include?("metrics_aggregations") ? facet_by_dois(response.response.aggregations.dois_usage.dois.buckets) : nil
+    dois_citations = total.positive? && aggregations.include?("metrics_aggregations") ? facet_citations_by_year(response.response.aggregations.dois_citations) : nil
+    # unique_citations = total.positive? && aggregations.include?("metrics_aggregations") ? facet_citations_by_dois(response.response.aggregations.unique_citations.dois.buckets) : nil
  
     results = response.results
 
