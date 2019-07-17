@@ -12,7 +12,7 @@ class DoiSerializer
   has_many :media, if: Proc.new { |object, params| params && params[:detail] }
 
   attribute :xml, if: Proc.new { |object, params| params && params[:detail] } do |object|
-    object.xml_encoded
+    Base64.strict_encode64(object.xml) if object.xml.present?
   end
 
   attribute :doi do |object|
