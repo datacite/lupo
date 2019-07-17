@@ -35,10 +35,9 @@ describe "dois", type: :request do
 
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(3)
-      json['data'].each{
-        |doi|
+      json['data'].each do |doi|
         expect(doi.dig('attributes')).to include('xml')
-      }
+      end
     end
   end
 

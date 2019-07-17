@@ -459,7 +459,7 @@ class Doi < ActiveRecord::Base
 
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
-      DoiImportByIdJob.perform_later(id: id)
+      DoiImportByIdJob.perform_later(options.merge(id: id))
       puts "Queued importing for DOIs with IDs starting with #{id}."
     end
 
@@ -470,7 +470,13 @@ class Doi < ActiveRecord::Base
     return nil unless options[:id].present?
 
     id = options[:id].to_i
-    index = Rails.env.test? ? "dois-test" : self.inactive_index
+    index = if Rails.env.test?
+              "dois-test"
+            elsif options[:index].present?
+              options[:index]
+            else
+              self.inactive_index
+            end
     errors = 0
     count = 0
 
