@@ -189,6 +189,7 @@ class DoisController < ApplicationController
           options[:is_collection] = true
           options[:params] = {
             :current_ability => current_ability,
+            :detail => params[:detail]
           }
 
           bmr = Benchmark.ms {

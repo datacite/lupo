@@ -459,7 +459,7 @@ class Doi < ActiveRecord::Base
 
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
-      DoiImportByIdJob.perform_later(id: id)
+      DoiImportByIdJob.perform_later(options.merge(id: id))
       puts "Queued importing for DOIs with IDs starting with #{id}."
     end
 
@@ -470,7 +470,13 @@ class Doi < ActiveRecord::Base
     return nil unless options[:id].present?
 
     id = options[:id].to_i
-    index = Rails.env.test? ? "dois-test" : self.inactive_index
+    index = if Rails.env.test?
+              "dois-test"
+            elsif options[:index].present?
+              options[:index]
+            else
+              self.inactive_index
+            end
     errors = 0
     count = 0
 
@@ -842,7 +848,7 @@ class Doi < ActiveRecord::Base
   def self.convert_affiliations
     logger = Logger.new(STDOUT)
 
-    response = Doi.query("creators.affiliation:* -creators.affiliation.name:*", page: { size: 1, cursor: [] })
+    response = Doi.query("creators.affiliation:*", page: { size: 1, cursor: [] })
     logger.info "#{response.results.total} DOIs found that have the affiliation in the old format."
 
     if response.results.total > 0
@@ -850,7 +856,7 @@ class Doi < ActiveRecord::Base
       cursor = []
 
       while response.results.results.length > 0 do
-        response = Doi.query("creators.affiliation:* -creators.affiliation.name:*", page: { size: 1000, cursor: cursor })
+        response = Doi.query("creators.affiliation:*", page: { size: 1000, cursor: cursor })
         break unless response.results.results.length > 0
 
         logger.info "[Affiliation] Updating #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."

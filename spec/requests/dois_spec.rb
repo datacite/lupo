@@ -29,6 +29,16 @@ describe "dois", type: :request do
       expect(json['data'].size).to eq(3)
       expect(json.dig('meta', 'total')).to eq(3)
     end
+
+    it 'returns dois with extra detail' do
+      get '/dois?detail=true', nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(3)
+      json['data'].each do |doi|
+        expect(doi.dig('attributes')).to include('xml')
+      end
+    end
   end
 
   describe 'GET /dois/:id', elasticsearch: true do
@@ -59,7 +69,7 @@ describe "dois", type: :request do
 
     context 'anonymous user' do
       it 'returns the Doi' do
-        get "/dois/#{doi.doi}" 
+        get "/dois/#{doi.doi}"
 
         expect(last_response.status).to eq(401)
         expect(json.fetch('errors')).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
@@ -786,7 +796,7 @@ describe "dois", type: :request do
 
       it 'updates the record' do
         patch "/dois/#{doi.doi}", valid_attributes, headers
-        
+
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
@@ -959,7 +969,7 @@ describe "dois", type: :request do
           "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0002-1825-0097", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
           "nameType" => "Personal")
         expect(json.dig('data', 'attributes', 'creators')[2]).to eq("nameType"=>"Organizational", "name"=>"The Psychoceramics Study Group", "affiliation"=>[{"affiliationIdentifier"=>"https://ror.org/05gq02987", "name"=>"Brown University", "affiliationIdentifierScheme"=>"ROR"}])
-        
+
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
         expect(xml.dig("creators", "creator")[0]).to eq("affiliation" => {"__content__"=>"DataCite", "affiliationIdentifier"=>"https://ror.org/04wxnsj81", "affiliationIdentifierScheme"=>"ROR"},
           "creatorName" => {"__content__"=>"Miller, Elizabeth", "nameType"=>"Personal"},
@@ -1003,7 +1013,7 @@ describe "dois", type: :request do
     context 'crossref url', vcr: true do
       let(:provider) { create(:provider, name: "Crossref", symbol: "CROSSREF", role_name: "ROLE_REGISTRATION_AGENCY") }
       let(:client) { create(:client, provider: provider, name: "Crossref Citations", symbol: "CROSSREF.CITATIONS") }
-  
+
       let(:xml) { Base64.strict_encode64("https://doi.org/10.7554/elife.01567") }
       let(:valid_attributes) do
         {
@@ -1035,7 +1045,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
         # expect(json.dig('data', 'attributes', 'agency')).to eq("Crossref")
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
-     
+
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
         expect(xml.dig("titles", "title")).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
       end
@@ -1044,7 +1054,7 @@ describe "dois", type: :request do
     context 'crossref url not found', vcr: true do
       let(:provider) { create(:provider, name: "Crossref", symbol: "CROSSREF", role_name: "ROLE_REGISTRATION_AGENCY") }
       let(:client) { create(:client, provider: provider, name: "Crossref Citations", symbol: "CROSSREF.CITATIONS") }
-  
+
       let(:xml) { Base64.strict_encode64("https://doi.org/10.3389/fmicb.2019.01425") }
       let(:valid_attributes) do
         {
@@ -1078,7 +1088,7 @@ describe "dois", type: :request do
     context 'medra url', vcr: true do
       let(:provider) { create(:provider, name: "mEDRA", symbol: "MEDRA", role_name: "ROLE_REGISTRATION_AGENCY") }
       let(:client) { create(:client, provider: provider, name: "mEDRA Citations", symbol: "MEDRA.CITATIONS") }
-  
+
       let(:xml) { Base64.strict_encode64("https://doi.org/10.3280/ecag2018-001005") }
       let(:valid_attributes) do
         {
@@ -1110,7 +1120,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Substitutability between organic and conventional poultry products and organic price premiums"}])
         # expect(json.dig('data', 'attributes', 'agency')).to eq("mEDRA")
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
-     
+
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
         expect(xml.dig("titles", "title")).to eq("Substitutability between organic and conventional poultry products and organic price premiums")
       end
@@ -1119,7 +1129,7 @@ describe "dois", type: :request do
     context 'kisti url', vcr: true do
       let(:provider) { create(:provider, name: "KISTI", symbol: "KISTI", role_name: "ROLE_REGISTRATION_AGENCY") }
       let(:client) { create(:client, provider: provider, name: "KISTI Citations", symbol: "KISTI.CITATIONS") }
-  
+
       let(:xml) { Base64.strict_encode64("https://doi.org/10.5012/bkcs.2013.34.10.2889") }
       let(:valid_attributes) do
         {
@@ -1151,7 +1161,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Synthesis, Crystal Structure and Theoretical Calculation of a Novel Nickel(II) Complex with Dibromotyrosine and 1,10-Phenanthroline"}])
         # expect(json.dig('data', 'attributes', 'agency')).to eq("mEDRA")
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
-     
+
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
         expect(xml.dig("titles", "title")).to eq("Synthesis, Crystal Structure and Theoretical Calculation of a Novel Nickel(II) Complex with Dibromotyrosine and 1,10-Phenanthroline")
       end
@@ -1160,7 +1170,7 @@ describe "dois", type: :request do
     context 'jalc url', vcr: true do
       let(:provider) { create(:provider, name: "JaLC", symbol: "JALC", role_name: "ROLE_REGISTRATION_AGENCY") }
       let(:client) { create(:client, provider: provider, name: "JALC Citations", symbol: "JALC.CITATIONS") }
-  
+
       let(:xml) { Base64.strict_encode64("https://doi.org/10.1241/johokanri.39.979") }
       let(:valid_attributes) do
         {
@@ -1192,7 +1202,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Utilizing the Internet. 12 Series. Future of the Internet."}])
         # expect(json.dig('data', 'attributes', 'agency')).to eq("mEDRA")
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
-     
+
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
         expect(xml.dig("titles", "title")).to eq("Utilizing the Internet. 12 Series. Future of the Internet.")
       end
@@ -1201,7 +1211,7 @@ describe "dois", type: :request do
     context 'op url', vcr: true do
       let(:provider) { create(:provider, name: "OP", symbol: "OP", role_name: "ROLE_REGISTRATION_AGENCY") }
       let(:client) { create(:client, provider: provider, name: "OP Citations", symbol: "OP.CITATIONS") }
-  
+
       let(:xml) { Base64.strict_encode64("https://doi.org/10.2903/j.efsa.2018.5239") }
       let(:valid_attributes) do
         {
@@ -1233,7 +1243,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Scientific opinion on the safety of green tea catechins"}])
         # expect(json.dig('data', 'attributes', 'agency')).to eq("mEDRA")
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
-     
+
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
         expect(xml.dig("titles", "title")).to eq("Scientific opinion on the safety of green tea catechins")
       end
@@ -2284,7 +2294,7 @@ describe "dois", type: :request do
     context 'landing page' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
-      let(:landing_page) do 
+      let(:landing_page) do
         {
           "checked" => Time.zone.now.utc.iso8601,
           "status" => 200,
@@ -2330,7 +2340,7 @@ describe "dois", type: :request do
     context 'update with landing page info as admin' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:doi) { create(:doi, doi: "10.14454/10703", url: url, client: client) }
-      let(:landing_page) do 
+      let(:landing_page) do
         {
           "checked" => Time.zone.now.utc.iso8601,
           "status" => 200,
@@ -2372,7 +2382,7 @@ describe "dois", type: :request do
     context 'landing page schema-org-id array' do
       let(:url) { "https://blog.datacite.org/re3data-science-europe/" }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
-      let(:landing_page) do 
+      let(:landing_page) do
         {
           "checked" => Time.zone.now.utc.iso8601,
           "status" => 200,
@@ -2728,7 +2738,7 @@ describe "dois", type: :request do
 
       it 'returns error message' do
         get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.jats+xml" }
-        
+
         expect(last_response.status).to eq(401)
         expect(json["errors"]).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
       end
@@ -2984,7 +2994,7 @@ describe "dois", type: :request do
       context "style and locale" do
         it 'returns the Doi' do
           get "/dois/#{doi.doi}?style=vancouver&locale=de", nil, { "HTTP_ACCEPT" => "text/x-bibliography", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
-          
+
           expect(last_response.status).to eq(200)
           expect(last_response.body).to start_with("Ollomo B")
         end
