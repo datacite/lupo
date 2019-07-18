@@ -6,11 +6,11 @@ class AffiliationJob < ActiveJob::Base
     doi = Doi.where(doi: doi_id).first
 
     if doi.present?
-      new_creators = Array.wrap(creators).map do |c|
+      new_creators = Array.wrap(doi.creators).map do |c|
         c["affiliation"] = { "name" => c["affiliation"] } if c["affiliation"].is_a?(String)
         c
       end
-      new_contributors = Array.wrap(contributors).map do |c|
+      new_contributors = Array.wrap(doi.contributors).map do |c|
         c["affiliation"] = { "name" => c["affiliation"] } if c["affiliation"].is_a?(String)
         c
       end
