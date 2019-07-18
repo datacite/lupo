@@ -848,7 +848,7 @@ class Doi < ActiveRecord::Base
   def self.convert_affiliations
     logger = Logger.new(STDOUT)
 
-    response = Doi.query("creators.affiliation:* -creators.affiliation.name:*", page: { size: 1, cursor: [] })
+    response = Doi.query("creators.affiliation:*", page: { size: 1, cursor: [] })
     logger.info "#{response.results.total} DOIs found that have the affiliation in the old format."
 
     if response.results.total > 0
@@ -856,7 +856,7 @@ class Doi < ActiveRecord::Base
       cursor = []
 
       while response.results.results.length > 0 do
-        response = Doi.query("creators.affiliation:* -creators.affiliation.name:*", page: { size: 1000, cursor: cursor })
+        response = Doi.query("creators.affiliation:*", page: { size: 1000, cursor: cursor })
         break unless response.results.results.length > 0
 
         logger.info "[Affiliation] Updating #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
