@@ -165,7 +165,7 @@ class EventsController < ApplicationController
         "page[size]" => page[:size] }.compact.to_query
       }.compact
 
-    options[:include] = [] if @include.include? :dois
+    
     options[:is_collection] = true
     
     bmr = Benchmark.ms {
@@ -174,15 +174,26 @@ class EventsController < ApplicationController
       ### Unfotunately fast_json fetches relations by item and one cannot pass and the includes
       ### We obtain all the events' dois, we batchload them and serilize them 
       ### Then we serlize all the events and we merged them both together
-      events_serialized = EventSerializer.new(results, options).serializable_hash
+      ### TODO: remove after benchmark
+      if @include.include?(:dois) && params["batchload"].present?
+        if  params["batchload"].start_with?("batchload")
+          options[:include] = @include
+          render json: BatchSerializer.new(results, options).serialized_json, status: :ok
+        elsif params["batchload"].start_with?("singlecall")
+          options[:include] = []
+          doi_names = (results.map { |event| event.doi}).join(",")
+          # doi_names = "10.18711/0jdfnq2c,10.14288/1.0043659,10.25620/iciber.issn.1476-4687"
+          events_serialized = EventSerializer.new(results, options).serializable_hash
+          events_serialized[:included] = DoiSerializer.new((Doi.find_by_id(doi_names).results), {is_collection: true}).serializable_hash.dig(:data) 
 
-
-      if @include.include? :dois
-        doi_names = (results.map { |event| event.doi}).join(",")
-        events_serialized[:included] = DoiSerializer.new(Doi.find_by_id(doi_names).results, {is_collection: true}).serializable_hash.dig(:data)
+          render json: events_serialized, status: :ok
+        end
+      else
+        options[:include] = @include
+        params['batchload'] = "Normal"
+        render json: EventSerializer.new(results, options).serialized_json, status: :ok
       end
-
-      render json: events_serialized, status: :ok
+      
     }
 
     if bmr > 3000
