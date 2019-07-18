@@ -1,5 +1,5 @@
 
-class EventSerializer
+class BatchSerializer
   include FastJsonapi::ObjectSerializer
   include BatchLoaderHelper
 
@@ -9,10 +9,9 @@ class EventSerializer
   
   attributes :subj_id, :obj_id, :source_id, :relation_type_id, :total, :message_action, :source_token, :license, :occurred_at, :timestamp
    
-  
-  has_many :dois, record_type: :dois, serializer: DoiSerializer, id_method_name: :uid do |object|	
-    Doi.find_by_id(object.doi).results	
-  end
+  has_many :dois, record_type: :dois, serializer: DoiSerializer, id_method_name: :doi do |object|
+    load_doi(object)
+  end 
 
   attribute :timestamp, &:updated_at
 end
