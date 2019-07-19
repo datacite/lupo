@@ -23,17 +23,34 @@ class DoiSerializer
     object.doi.downcase
   end
 
-  attribute :creators do |object|
-    # Always return an array of creators
-    # for now override format for affiliations in production
-    if Rails.env.production?
-      Array.wrap(object.creators).map do |c|
-        c["affiliation"] = c.dig("affiliation", "name") if c["affiliation"].is_a?(Hash)
-        c
-      end
-    else
-      Array.wrap(object.creators)
-    end
+  attribute :creators do |object, params|
+    # Always return an array of creators and affiliations
+    # use new array format only if param present
+    Array.wrap(object.creators).map do |c|
+      c["affiliation"] = Array.wrap(c["affiliation"]).map do |a|
+        if params[:affiliation]
+          a.is_a?(Hash) ? a : { "name" => a }.compact
+        else
+          a.is_a?(Hash) ? a["name"] : a
+        end
+      end.compact
+      c
+    end.compact
+  end
+
+  attribute :contributors do |object, params|
+    # Always return an array of contributors and affiliations
+    # use new array format only if param present
+    Array.wrap(object.contributors).map do |c|
+      c["affiliation"] = Array.wrap(c["affiliation"]).map do |a|
+        if params[:affiliation]
+          a.is_a?(Hash) ? a : { "name" => a }.compact
+        else
+          a.is_a?(Hash) ? a["name"] : a
+        end
+      end.compact
+      c
+    end.compact
   end
 
   attribute :state do |object|

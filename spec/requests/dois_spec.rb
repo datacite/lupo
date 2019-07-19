@@ -92,7 +92,8 @@ describe "dois", type: :request do
       let(:doi) { create(:doi, client: client, creators:
         {
           "nameType" => "Personal",
-          "name" => "John Doe"
+          "name" => "John Doe",
+          "affiliation" => []
         })
       }
 
@@ -660,7 +661,7 @@ describe "dois", type: :request do
 
     context 'when the creators change' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
-      let(:creators) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
+      let(:creators) { [{ "affiliation"=>[], "name"=>"Ollomi, Benjamin" }, { "affiliation"=>[], "name"=>"Duran, Patrick" }] }
       let(:valid_attributes) do
         {
           "data" => {
@@ -836,7 +837,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
-        expect(json.dig('data', 'attributes', 'creators')).to eq([{"familyName"=>"Fenner",
+        expect(json.dig('data', 'attributes', 'creators')).to eq([{"affiliation"=>[], "familyName"=>"Fenner",
           "givenName"=>"Martin",
           "name"=>"Fenner, Martin",
           "nameIdentifiers"=>
@@ -878,7 +879,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to start_with("10.14454")
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
-        expect(json.dig('data', 'attributes', 'creators')).to eq([{"familyName"=>"Fenner",
+        expect(json.dig('data', 'attributes', 'creators')).to eq([{"affiliation"=>[], "familyName"=>"Fenner",
           "givenName"=>"Martin",
           "name"=>"Fenner, Martin",
           "nameIdentifiers"=>
@@ -923,7 +924,7 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
-        expect(json.dig('data', 'attributes', 'creators')).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin", "nameIdentifiers"=>[{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405","nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}], "name"=>"Fenner, Martin", "nameType"=>"Personal"}])
+        expect(json.dig('data', 'attributes', 'creators')).to eq([{"affiliation"=>[],"familyName"=>"Fenner", "givenName"=>"Martin", "nameIdentifiers"=>[{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405","nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}], "name"=>"Fenner, Martin", "nameType"=>"Personal"}])
         expect(json.dig('data', 'attributes', 'publisher')).to eq("DataCite")
         expect(json.dig('data', 'attributes', 'publicationYear')).to eq(2016)
         # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
@@ -952,6 +953,49 @@ describe "dois", type: :request do
 
       it 'validates a Doi' do
         post '/dois', params, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"lang"=>"en-US", "title"=>"Full DataCite XML Example"}, {"lang"=>"en-US", "title"=>"Demonstration of DataCite Properties.", "titleType"=>"Subtitle"}])
+        expect(json.dig('data', 'attributes', 'creators').length).to eq(3)
+        expect(json.dig('data', 'attributes', 'creators')[0]).to eq("affiliation" => ["DataCite"],
+          "familyName" => "Miller",
+          "givenName" => "Elizabeth",
+          "name" => "Miller, Elizabeth",
+          "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0001-5000-0007", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+          "nameType" => "Personal")
+        expect(json.dig('data', 'attributes', 'creators')[1]).to eq("affiliation" => ["Brown University", "Wesleyan University"],
+          "familyName" => "Carberry",
+          "givenName" => "Josiah",
+          "name" => "Carberry, Josiah",
+          "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0002-1825-0097", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+          "nameType" => "Personal")
+        expect(json.dig('data', 'attributes', 'creators')[2]).to eq("nameType"=>"Organizational", "name"=>"The Psychoceramics Study Group", "affiliation"=>["Brown University"])
+
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("creators", "creator")[0]).to eq("affiliation" => {"__content__"=>"DataCite", "affiliationIdentifier"=>"https://ror.org/04wxnsj81", "affiliationIdentifierScheme"=>"ROR"},
+          "creatorName" => {"__content__"=>"Miller, Elizabeth", "nameType"=>"Personal"},
+          "familyName" => "Miller",
+          "givenName" => "Elizabeth",
+          "nameIdentifier" => {"__content__"=>"0000-0001-5000-0007", "nameIdentifierScheme"=>"ORCID", "schemeURI"=>"http://orcid.org/"})
+      end
+    end
+
+    context 'with affiliation and query parameter' do
+      let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('datacite-example-affiliation.xml'))) }
+      let(:params) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "xml" => xml
+            }
+          }
+        }
+      end
+
+      it 'validates a Doi' do
+        post '/dois?affiliation=true', params, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"lang"=>"en-US", "title"=>"Full DataCite XML Example"}, {"lang"=>"en-US", "title"=>"Demonstration of DataCite Properties.", "titleType"=>"Subtitle"}])
@@ -1564,7 +1608,7 @@ describe "dois", type: :request do
     end
 
     context 'when the creators change' do
-      let(:creators) { [{ "name"=>"Ollomi, Benjamin" }, { "name"=>"Duran, Patrick" }] }
+      let(:creators) { [{ "affiliation"=>[], "name"=>"Ollomi, Benjamin" }, { "affiliation"=>[], "name"=>"Duran, Patrick" }] }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
         {
@@ -2149,7 +2193,7 @@ describe "dois", type: :request do
       end
 
       it 'updates the Doi' do
-        patch "/dois/#{doi.doi}", update_attributes, headers
+        patch "/dois/#{doi.doi}?affiliation=true", update_attributes, headers
 
         expect(json.dig('data', 'attributes', 'creators')).to eq(creators)
 

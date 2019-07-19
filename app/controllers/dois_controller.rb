@@ -188,8 +188,9 @@ class DoisController < ApplicationController
           options[:include] = @include
           options[:is_collection] = true
           options[:params] = {
-            :current_ability => current_ability,
-            :detail => params[:detail]
+            current_ability: current_ability,
+            detail: params[:detail],
+            affiliation: params[:affiliation]
           }
 
           bmr = Benchmark.ms {
@@ -234,7 +235,8 @@ class DoisController < ApplicationController
         options[:is_collection] = false
         options[:params] = {
           current_ability: current_ability,
-          detail: true
+          detail: true,
+          affiliation: params[:affiliation]
         }
 
         render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
@@ -289,7 +291,8 @@ class DoisController < ApplicationController
       options[:is_collection] = false
       options[:params] = {
         current_ability: current_ability,
-        detail: true
+        detail: true,
+        affiliation: params[:affiliation]
       }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :created, location: @doi
@@ -336,7 +339,8 @@ class DoisController < ApplicationController
       options[:is_collection] = false
       options[:params] = {
         current_ability: current_ability,
-        detail: true
+        detail: true,
+        affiliation: params[:affiliation]
       }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
@@ -360,7 +364,8 @@ class DoisController < ApplicationController
       options[:is_collection] = false
       options[:params] = {
         current_ability: current_ability,
-        detail: true
+        detail: true,
+        
       }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
