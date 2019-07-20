@@ -16,16 +16,16 @@ class OrganizationType < BaseObject
   field :wikidata, [String], null: true, description: "Wikidata identifiers for organization"
   field :grid, [String], null: true, description: "GRID identifiers for organization"
 
-  field :datasets, OrganizationDatasetConnectionWithMetaType, null: false, description: "Funded datasets", connection: true, max_page_size: 100 do
+  field :datasets, OrganizationDatasetConnectionWithMetaType, null: false, description: "Datasets from this organization", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, OrganizationPublicationConnectionWithMetaType, null: false, description: "Funded publications", connection: true do
+  field :publications, OrganizationPublicationConnectionWithMetaType, null: false, description: "Publications from this organization", connection: true do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, OrganizationSoftwareConnectionWithMetaType, null: false, description: "Funded software", connection: true, max_page_size: 100 do
+  field :softwares, OrganizationSoftwareConnectionWithMetaType, null: false, description: "Software from this organization", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
   end
 

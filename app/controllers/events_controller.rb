@@ -110,7 +110,7 @@ class EventsController < ApplicationController
     end
 
     total = response.results.total
-    total_for_pages = page[:cursor].nil? ? total.to_f : [total.to_f, 10000].min
+    total_for_pages = page[:cursor].nil? ? [total.to_f, 10000].min : total.to_f
     total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
 
     sources = total.positive? ? facet_by_source(response.response.aggregations.sources.buckets) : nil
