@@ -119,7 +119,7 @@ describe Doi, vcr: true do
       response = subject.get_url
 
       expect(response.body.dig("data", "responseCode")).to eq(1)
-      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-science-europe/"}, "ttl"=>86400, "timestamp"=>"2018-09-26T08:52:02Z"}])
+      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-science-europe/"}, "ttl"=>86400, "timestamp"=>"2019-07-20T08:59:55Z"}])
     end
 
     it 'draft doi' do
@@ -145,7 +145,7 @@ describe Doi, vcr: true do
     it 'should get dois' do
       options = { prefix: "10.5438", username: client.symbol, password: client.password, role_id: "client_admin" }
       dois = Doi.get_dois(options)
-      expect(dois.length).to eq(442)
+      expect(dois.length).to eq(443)
       expect(dois.first).to eq("10.5438/0000-00SS")
     end
 

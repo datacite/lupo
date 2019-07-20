@@ -8,7 +8,7 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.2.1; +https://github.com/datacite/maremma)
+      - Mozilla/5.0 (compatible; Maremma/4.2.6; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
       Authorization:
@@ -19,7 +19,7 @@ http_interactions:
       message: Server Error
     headers:
       Date:
-      - Sun, 03 Feb 2019 17:39:55 GMT
+      - Sat, 20 Jul 2019 08:59:56 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Content-Length:
@@ -31,5 +31,5 @@ http_interactions:
       string: '{"responseCode":2,"message":"HandleException (INVALID_VALUE) The requested
         prefix doesn''t live here","handle":"10.70001"}'
     http_version: 
-  recorded_at: Sun, 03 Feb 2019 17:39:55 GMT
+  recorded_at: Sat, 20 Jul 2019 08:59:56 GMT
 recorded_with: VCR 3.0.3

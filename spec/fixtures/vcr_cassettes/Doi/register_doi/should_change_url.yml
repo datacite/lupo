@@ -8,7 +8,7 @@ http_interactions:
       string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"TEST/ADMIN","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/re3data-science-europe/"}}]'
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.1.1; +https://github.com/datacite/maremma)
+      - Mozilla/5.0 (compatible; Maremma/4.2.6; mailto:info@datacite.org)
       Content-Type:
       - application/json;charset=UTF-8
       Accept:
@@ -21,7 +21,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 26 Sep 2018 08:52:02 GMT
+      - Sat, 20 Jul 2019 08:59:55 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Connection:
@@ -32,7 +32,7 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"responseCode":1,"handle":"10.5438/MCNV-GA6N"}'
     http_version: 
-  recorded_at: Wed, 26 Sep 2018 08:52:02 GMT
+  recorded_at: Sat, 20 Jul 2019 08:59:55 GMT
 - request:
     method: get
     uri: https://handle.test.datacite.org/api/handles/10.5438/MCNV-GA6N?index=1
@@ -41,7 +41,7 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.1.1; +https://github.com/datacite/maremma)
+      - Mozilla/5.0 (compatible; Maremma/4.2.6; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
   response:
@@ -50,7 +50,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 26 Sep 2018 08:52:02 GMT
+      - Sat, 20 Jul 2019 08:59:55 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Connection:
@@ -59,7 +59,7 @@ http_interactions:
       - Accept-Encoding
     body:
       encoding: ASCII-8BIT
-      string: '{"responseCode":1,"handle":"10.5438/MCNV-GA6N","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/re3data-science-europe/"},"ttl":86400,"timestamp":"2018-09-26T08:52:02Z"}]}'
+      string: '{"responseCode":1,"handle":"10.5438/MCNV-GA6N","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/re3data-science-europe/"},"ttl":86400,"timestamp":"2019-07-20T08:59:55Z"}]}'
     http_version: 
-  recorded_at: Wed, 26 Sep 2018 08:52:02 GMT
+  recorded_at: Sat, 20 Jul 2019 08:59:55 GMT
 recorded_with: VCR 3.0.3

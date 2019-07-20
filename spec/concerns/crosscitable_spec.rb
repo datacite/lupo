@@ -166,7 +166,7 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("datacite")
       expect(meta["doi"]).to eq("10.5061/dryad.8515")
       expect(meta["creators"].length).to eq(8)
-      expect(meta["creators"].first).to eq("familyName"=>"Ollomo", "givenName"=>"Benjamin", "name"=>"Ollomo, Benjamin", "nameType"=>"Personal")
+      expect(meta["creators"].first).to eq("familyName"=>"Ollomo", "givenName"=>"Benjamin", "name"=>"Ollomo, Benjamin", "nameType"=>"Personal", "nameIdentifiers" => [], "affiliation" => [])
       expect(meta["titles"]).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
       expect(meta["publication_year"]).to eq("2011")
       expect(meta["publisher"]).to eq("Dryad Digital Repository")
@@ -179,10 +179,10 @@ describe Doi, vcr: true do
       expect(meta["string"]).to eq(string)
       expect(meta["from"]).to eq("datacite")
       expect(meta["doi"]).to eq("10.14454/testpub")
-      expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"Smith, John", "nameType"=>"Personal"}, {"name"=>"つまらないものですが", "nameIdentifiers"=>
+      expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"Smith, John", "nameType"=>"Personal", "nameIdentifiers" => [], "affiliation" => []}, {"name"=>"つまらないものですが", "nameIdentifiers"=>
         [{"nameIdentifier"=>"abc123",
-          "nameIdentifierScheme"=>"ISNI",
-          "schemeUri"=>"Other"}]}])
+          "nameIdentifierScheme"=>"ISNI"}],
+          "affiliation" => []}])
       expect(meta["titles"]).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
       expect(meta["publication_year"]).to eq("2010")
       expect(meta["publisher"]).to eq("Springer")
@@ -246,15 +246,21 @@ describe Doi, vcr: true do
     end
 
     it "from datacite url" do
-      string = "https://doi.org/10.7272/q6g15xs4"
+      string = "10.14454/1x4x-9056"
       meta = subject.parse_xml(string)
+      puts meta
       expect(meta["from"]).to eq("datacite")
-      expect(meta["doi"]).to eq("10.7272/q6g15xs4")
-      expect(meta["creators"].length).to eq(2)
-      expect(meta["creators"].first).to eq("affiliation"=>[{"name"=>"UC San Francisco"}], "familyName"=>"Rodriguez", "givenName"=>"Robert", "name"=>"Rodriguez, Robert", "nameType"=>"Personal")
-      expect(meta["titles"]).to eq([{"title"=>"NEXUS Head CT"}])
-      expect(meta["publication_year"]).to eq("2017")
-      expect(meta["publisher"]).to eq("UC San Francisco")
+      expect(meta["doi"]).to eq("10.14454/1x4x-9056")
+      expect(meta["creators"].length).to eq(1)
+      expect(meta["creators"].first).to eq("affiliation" => [{"affiliationIdentifier"=>"https://ror.org/04wxnsj81", "affiliationIdentifierScheme"=>"ROR", "name"=>"DataCite"}],
+        "familyName" => "Fenner",
+        "givenName" => "Martin",
+        "name" => "Fenner, Martin",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameType" => "Personal")
+      expect(meta["titles"]).to eq([{"title"=>"Cool DOI's"}])
+      expect(meta["publication_year"]).to eq("2016")
+      expect(meta["publisher"]).to eq("DataCite")
       expect(meta["agency"]).to eq("DataCite")
     end
 
@@ -281,7 +287,7 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("ris")
       expect(meta["doi"]).to eq("10.7554/elife.01567")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "nameType"=>"Personal")
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "nameType"=>"Personal", "nameIdentifiers" => [], "affiliation" => [])
       expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("(:unav)")
@@ -358,7 +364,7 @@ describe Doi, vcr: true do
 
       expect(meta["doi"]).to eq("10.5061/dryad.8515")
       expect(meta["creators"].length).to eq(8)
-      expect(meta["creators"].first).to eq("familyName"=>"Ollomo", "givenName"=>"Benjamin", "name"=>"Ollomo, Benjamin", "nameType"=>"Personal")
+      expect(meta["creators"].first).to eq("familyName"=>"Ollomo", "givenName"=>"Benjamin", "name"=>"Ollomo, Benjamin", "nameType"=>"Personal", "nameIdentifiers" => [], "affiliation" => [])
       expect(meta["titles"]).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
       expect(meta["publication_year"]).to eq("2011")
       expect(meta["publisher"]).to eq("Dryad Digital Repository")
@@ -369,10 +375,10 @@ describe Doi, vcr: true do
       meta = subject.parse_xml(string)
 
       expect(meta["doi"]).to eq("10.14454/testpub")
-      expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"Smith, John", "nameType"=>"Personal"}, {"name"=>"つまらないものですが", "nameIdentifiers"=>
+      expect(meta["creators"]).to eq([{"familyName"=>"Smith", "givenName"=>"John", "name"=>"Smith, John", "nameType"=>"Personal", "nameIdentifiers" => [], "affiliation" => []}, {"name"=>"つまらないものですが", "nameIdentifiers"=>
         [{"nameIdentifier"=>"abc123",
-          "nameIdentifierScheme"=>"ISNI",
-          "schemeUri"=>"Other"}]}])
+          "nameIdentifierScheme"=>"ISNI"}],
+          "affiliation" => []}])
       expect(meta["titles"]).to eq([{"title"=>"Właściwości rzutowań podprzestrzeniowych"}, {"title"=>"Translation of Polish titles", "titleType"=>"TranslatedTitle"}])
       expect(meta["publication_year"]).to eq("2010")
       expect(meta["publisher"]).to eq("Springer")
@@ -421,7 +427,7 @@ describe Doi, vcr: true do
 
       expect(meta["doi"]).to eq("10.7554/elife.01567")
       expect(meta["creators"].length).to eq(5)
-      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "nameType"=>"Personal")
+      expect(meta["creators"].first).to eq("familyName"=>"Sankar", "givenName"=>"Martial", "name"=>"Sankar, Martial", "nameType"=>"Personal", "nameIdentifiers" => [], "affiliation" => [])
       expect(meta["titles"]).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("(:unav)")

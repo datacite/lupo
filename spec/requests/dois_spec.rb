@@ -969,7 +969,7 @@ describe "dois", type: :request do
           "name" => "Carberry, Josiah",
           "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0002-1825-0097", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
           "nameType" => "Personal")
-        expect(json.dig('data', 'attributes', 'creators')[2]).to eq("nameType"=>"Organizational", "name"=>"The Psychoceramics Study Group", "affiliation"=>["Brown University"])
+        expect(json.dig('data', 'attributes', 'creators')[2]).to eq("nameType"=>"Organizational", "name"=>"The Psychoceramics Study Group", "affiliation"=>["Brown University"], "nameIdentifiers" => [])
 
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
         expect(xml.dig("creators", "creator")[0]).to eq("affiliation" => {"__content__"=>"DataCite", "affiliationIdentifier"=>"https://ror.org/04wxnsj81", "affiliationIdentifierScheme"=>"ROR"},
@@ -1012,7 +1012,7 @@ describe "dois", type: :request do
           "name" => "Carberry, Josiah",
           "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0002-1825-0097", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
           "nameType" => "Personal")
-        expect(json.dig('data', 'attributes', 'creators')[2]).to eq("nameType"=>"Organizational", "name"=>"The Psychoceramics Study Group", "affiliation"=>[{"affiliationIdentifier"=>"https://ror.org/05gq02987", "name"=>"Brown University", "affiliationIdentifierScheme"=>"ROR"}])
+        expect(json.dig('data', 'attributes', 'creators')[2]).to eq("nameType"=>"Organizational", "name"=>"The Psychoceramics Study Group", "affiliation"=>[{"affiliationIdentifier"=>"https://ror.org/05gq02987", "name"=>"Brown University", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers" => [])
 
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
         expect(xml.dig("creators", "creator")[0]).to eq("affiliation" => {"__content__"=>"DataCite", "affiliationIdentifier"=>"https://ror.org/04wxnsj81", "affiliationIdentifierScheme"=>"ROR"},

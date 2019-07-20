@@ -8,11 +8,11 @@ http_interactions:
       string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"TEST/ADMIN","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/"}}]'
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.1.1; +https://github.com/datacite/maremma)
-      Accept:
-      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      - Mozilla/5.0 (compatible; Maremma/4.2.6; mailto:info@datacite.org)
       Content-Type:
       - application/json;charset=UTF-8
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
       Authorization:
       - Basic <HANDLE_TOKEN>
   response:
@@ -21,7 +21,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 10 May 2019 12:45:27 GMT
+      - Sat, 20 Jul 2019 08:59:54 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Connection:
@@ -32,7 +32,7 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"responseCode":1,"handle":"10.5438/MCNV-GA6N"}'
     http_version: 
-  recorded_at: Fri, 10 May 2019 12:45:27 GMT
+  recorded_at: Sat, 20 Jul 2019 08:59:54 GMT
 - request:
     method: get
     uri: https://handle.test.datacite.org/api/handles/10.5438/MCNV-GA6N?index=1
@@ -41,7 +41,7 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.1.1; +https://github.com/datacite/maremma)
+      - Mozilla/5.0 (compatible; Maremma/4.2.6; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
   response:
@@ -50,7 +50,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 10 May 2019 12:45:27 GMT
+      - Sat, 20 Jul 2019 08:59:54 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Connection:
@@ -61,5 +61,5 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"responseCode":1,"handle":"10.5438/MCNV-GA6N","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/"},"ttl":86400,"timestamp":"2019-05-10T12:45:27Z"}]}'
     http_version: 
-  recorded_at: Fri, 10 May 2019 12:45:27 GMT
+  recorded_at: Sat, 20 Jul 2019 08:59:55 GMT
 recorded_with: VCR 3.0.3
