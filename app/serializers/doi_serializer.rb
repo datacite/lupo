@@ -53,6 +53,10 @@ class DoiSerializer
     end.compact
   end
 
+  attribute :rights_list do |object|
+    Array.wrap(object.rights_list)
+  end
+
   attribute :state do |object|
     object.aasm_state
   end
