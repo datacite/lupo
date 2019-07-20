@@ -104,7 +104,7 @@ class DoisController < ApplicationController
       else
         results = response.results
         total = response.results.total
-        total_for_pages = page[:cursor].nil? ? total.to_f : [total.to_f, 10000].min
+        total_for_pages = page[:cursor].present? ? total.to_f : [total.to_f, 10000].min
         total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
       end
 
@@ -365,7 +365,7 @@ class DoisController < ApplicationController
       options[:params] = {
         current_ability: current_ability,
         detail: true,
-        
+
       }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
