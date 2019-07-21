@@ -34,7 +34,15 @@ module DoiItem
   field :provider, ProviderType, null: true, description: "The provider account managing this resource"
 
   def creators(first: nil)
-    object.creators[0...first]
+    Array.wrap(object.creators[0...first]).map do |c|
+      Hashie::Mash.new(
+        "id" => c.fetch("nameIdentifiers", []).find { |n| n.fetch("nameIdentifierScheme", nil) == "ORCID" }.to_h.fetch("nameIdentifier", nil),
+        "name_type" => c.fetch("nameType", nil),
+        "name" => c.fetch("name", nil),
+        "given_name" => c.fetch("givenName", nil),
+        "family_name" => c.fetch("familyName", nil),
+        "affiliation" => c.fetch("affiliation", []))
+    end
   end
 
   def titles(first: nil)

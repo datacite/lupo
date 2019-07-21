@@ -6,7 +6,10 @@ describe Funder, type: :model, vcr: true do
       id = "https://doi.org/10.13039/100011326"
       funders = Funder.find_by_id(id)
       expect(funders[:data].size).to eq(1)
-      expect(funders[:data].first).to eq(id: "https://doi.org/10.13039/100011326", name: "London School of Economics and Political Science", alternate_name: ["London School of Economics & Political Science", "LSE"], date_modified: "2019-04-18T00:00:00Z")
+      funder = funders[:data].first
+      expect(funder.id).to eq("https://doi.org/10.13039/100011326")
+      expect(funder.name).to eq("London School of Economics and Political Science")
+      expect(funder.alternate_name).to eq(["London School of Economics & Political Science", "LSE"])
     end
 
     it "not found" do
@@ -22,7 +25,10 @@ describe Funder, type: :model, vcr: true do
       funders = Funder.query(query)
       expect(funders.dig(:meta, "total")).to eq(19662)
       expect(funders[:data].size).to eq(100)
-      expect(funders[:data].first).to eq(id: "https://doi.org/10.13039/100002569", name: "American Association of Endodontists Foundation", alternate_name: ["AAE Foundation for Endodontics", "AAE Foundation", "Foundation for Endodontics", "AAEF"], country: {"code"=>"US", "name"=>"United States"}, date_modified: "2019-04-18T00:00:00Z")
+      funder = funders[:data].first
+      expect(funder.id).to eq("https://doi.org/10.13039/100002569")
+      expect(funder.name).to eq("American Association of Endodontists Foundation")
+      expect(funder.alternate_name).to eq(["AAE Foundation for Endodontics", "AAE Foundation", "Foundation for Endodontics", "AAEF"])
     end
 
     it "limit" do
@@ -30,7 +36,10 @@ describe Funder, type: :model, vcr: true do
       funders = Funder.query(query, limit: 10)
       expect(funders.dig(:meta, "total")).to eq(19662)
       expect(funders[:data].size).to eq(10)
-      expect(funders[:data].first).to eq(id: "https://doi.org/10.13039/100002569", name: "American Association of Endodontists Foundation", alternate_name: ["AAE Foundation for Endodontics", "AAE Foundation", "Foundation for Endodontics", "AAEF"], country: {"code"=>"US", "name"=>"United States"}, date_modified: "2019-04-18T00:00:00Z")
+      funder = funders[:data].first
+      expect(funder.id).to eq("https://doi.org/10.13039/100002569")
+      expect(funder.name).to eq("American Association of Endodontists Foundation")
+      expect(funder.alternate_name).to eq(["AAE Foundation for Endodontics", "AAE Foundation", "Foundation for Endodontics", "AAEF"])
     end
 
     it "found" do
@@ -38,7 +47,10 @@ describe Funder, type: :model, vcr: true do
       funders = Funder.query(query)
       expect(funders.dig(:meta, "total")).to eq(3)
       expect(funders[:data].size).to eq(3)
-      expect(funders[:data].first).to eq(id: "https://doi.org/10.13039/501100001659", name: "Deutsche Forschungsgemeinschaft", alternate_name: ["DFG", "German Research Association", "German Research Foundation"], date_modified: "2019-04-18T00:00:00Z")
+      funder = funders[:data].first
+      expect(funder.id).to eq("https://doi.org/10.13039/501100001659")
+      expect(funder.name).to eq("Deutsche Forschungsgemeinschaft")
+      expect(funder.alternate_name).to eq(["DFG", "German Research Association", "German Research Foundation"])
     end
 
     it "not found" do

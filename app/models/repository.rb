@@ -47,7 +47,7 @@ class Repository
   end
 
   def self.parse_message(id: nil, message: nil)
-    {
+    Hashie::Mash.new({
       id: id,
       re3data_id: message["re3dataId"],
       name: message["repositoryName"],
@@ -65,7 +65,7 @@ class Repository
       data_uploads: message["dataUploads"],
       pid_systems: message["pidSystems"],
       apis: message["apis"],
-      software: message["software"] }.compact
+      software: message["software"] })
   end
 
   def self.doi_from_url(url)

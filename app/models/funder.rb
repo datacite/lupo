@@ -53,11 +53,11 @@ class Funder
       country = nil
     end
     
-    {
+    Hashie::Mash.new({
       id: id,
       name: message["name"],
       alternate_name: message["alt-names"],
       country: country,
-      date_modified: "2019-04-18T00:00:00Z" }.compact
+      date_modified: "2019-04-18T00:00:00Z" })
   end
 end

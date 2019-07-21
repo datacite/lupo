@@ -20,7 +20,7 @@ class Organization
     # rows = options[:limit] || 25
 
     if query.present?
-      url = "https://api.ror.org/organizations?query=#{query}&qp"
+      url = "https://api.ror.org/organizations?query=#{query}"
     else
       url = "https://api.ror.org/organizations"
     end
@@ -50,7 +50,7 @@ class Organization
         name: label["label"] }.compact
     end
     
-    {
+    Hashie::Mash.new({
       id: id,
       name: message["name"],
       aliases: message["aliases"],
@@ -59,10 +59,10 @@ class Organization
       links: message["links"],
       wikipedia_url: message["wikipedia_url"],
       country: country,
-      isni: message.dig("ISNI", "all"),
-      fund_ref: message.dig("FundRef", "all"),
-      wikidata: message.dig("Wikidata", "all"),
-      grid: message.dig("GRID", "all") }.compact
+      isni: message.dig("external_ids", "ISNI", "all"),
+      fund_ref: message.dig("external_ids", "FundRef", "all"),
+      wikidata: message.dig("external_ids", "Wikidata", "all"),
+      grid: message.dig("external_ids", "GRID", "all") })
   end
 
   def self.ror_id_from_url(url)

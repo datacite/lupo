@@ -14,7 +14,7 @@ class OrganizationType < BaseObject
   field :isni, [String], null: true, description: "ISNI identifiers for organization"
   field :fund_ref, [String], null: true, description: "Crossref Funder ID identifiers for organization"
   field :wikidata, [String], null: true, description: "Wikidata identifiers for organization"
-  field :grid, [String], null: true, description: "GRID identifiers for organization"
+  field :grid, String, null: true, description: "GRID identifiers for organization"
 
   field :datasets, OrganizationDatasetConnectionWithMetaType, null: false, description: "Datasets from this organization", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
@@ -27,14 +27,6 @@ class OrganizationType < BaseObject
 
   field :softwares, OrganizationSoftwareConnectionWithMetaType, null: false, description: "Software from this organization", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
-  end
-
-  def id
-    object.id || object.fetch("affiliationIdentifier", nil)
-  end
-
-  def name
-    object.name || object.fetch("name", nil)
   end
 
   def datasets(**args)
