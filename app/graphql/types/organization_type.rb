@@ -3,7 +3,7 @@
 class OrganizationType < BaseObject
   description "Information about organizations"
 
-  field :id, ID, null: false, description: "ROR ID"
+  field :id, ID, null: true, description: "ROR ID"
   field :name, String, null: false, description: "Organization name"
   field :aliases, [String], null: true, description: "Aliases for organization name"
   field :acronyms, [String], null: true, description: "Acronyms for organization name"
