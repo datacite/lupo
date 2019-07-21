@@ -8,7 +8,7 @@ class ResearcherType < BaseObject
   field :name_type, String, null: true, hash_key: "nameType", description: "The type of name"
   field :given_name, String, null: true, hash_key: "givenName", description: "Researcher given name"
   field :family_name, String, null: true, hash_key: "familyName", description: "Researcher family name"
-  field :affiliation, [String], null: true, description: "Researcher affiliation"
+  field :affiliation, [OrganizationType], null: true, description: "Researcher affiliation"
   field :datasets, ResearcherDatasetConnectionWithMetaType, null: true, description: "Authored datasets", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
   end

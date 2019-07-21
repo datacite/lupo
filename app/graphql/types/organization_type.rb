@@ -29,6 +29,14 @@ class OrganizationType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
+  def id
+    object.id || object.fetch("affiliationIdentifier", nil)
+  end
+
+  def name
+    object.name || object.fetch("name", nil)
+  end
+
   def datasets(**args)
     ids = Event.query(nil, obj_id: object[:id], citation_type: "Dataset-Organization").results.to_a.map do |e|
       doi_from_url(e.subj_id)
