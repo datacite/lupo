@@ -10,6 +10,7 @@ class SoftwareConnectionWithMetaType < BaseConnection
   field :dataset_connection_count, Integer, null: false, cache: true
   field :researcher_connection_count, Integer, null: false, cache: true
   field :funder_connection_count, Integer, null: false, cache: true
+  field :organization_connection_count, Integer, null: false, cache: true
 
   def total_count
     args = object.arguments
@@ -35,5 +36,9 @@ class SoftwareConnectionWithMetaType < BaseConnection
 
   def funder_connection_count
     Event.query(nil, citation_type: "Funder-SoftwareSourceCode").results.total
+  end
+
+  def organization_connection_count
+    Event.query(nil, citation_type: "Organization-SoftwareSourceCode").results.total
   end
 end
