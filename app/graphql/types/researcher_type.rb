@@ -26,7 +26,7 @@ class ResearcherType < BaseObject
   end
 
   def name
-    object.name || object.fetch("name", nil)
+    object.name
   end
 
   def affiliation

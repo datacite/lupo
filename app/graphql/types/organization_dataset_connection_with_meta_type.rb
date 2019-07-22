@@ -7,6 +7,6 @@ class OrganizationDatasetConnectionWithMetaType < BaseConnection
   field :total_count, Integer, null: false, cache: true
 
   def total_count
-    Event.query(nil, obj_id: object.parent[:id], citation_type: "Dataset-Organization").results.total
+    Event.query(nil, obj_id: object.parent.id, citation_type: "Dataset-Organization").results.total
   end
 end
