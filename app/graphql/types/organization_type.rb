@@ -56,8 +56,8 @@ class OrganizationType < BaseObject
   end
 
   def researchers(**args)
-    ids = Event.query(nil, obj_id: object[:id], citation_type: "Organization-Person").results.to_a.map do |e|
-      e.subj_id
+    ids = Event.query(nil, obj_id: object.id, citation_type: "Organization-Person").results.to_a.map do |e|
+      orcid_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Researcher).load_many(ids)
   end
