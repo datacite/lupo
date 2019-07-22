@@ -47,6 +47,28 @@ class Researcher < ActiveRecord::Base
     ['uid^10', 'name^5', 'given_names^5', 'family_name^5', '_all']
   end
 
+  # return results for one or more ids
+  def self.find_by_id(ids, options={})
+    ids = ids.split(",") if ids.is_a?(String)
+
+    options[:page] ||= {}
+    options[:page][:number] ||= 1
+    options[:page][:size] ||= 1000
+    options[:sort] ||= { created_at: { order: "asc" }}
+
+    __elasticsearch__.search({
+      from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
+      size: options.dig(:page, :size),
+      sort: [options[:sort]],
+      query: {
+        terms: {
+          uid: ids.map(&:upcase)
+        }
+      },
+      aggregations: query_aggregations
+    })
+  end
+
   def self.query_aggregations
     {}
   end
