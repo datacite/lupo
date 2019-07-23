@@ -447,7 +447,7 @@ class Provider < ActiveRecord::Base
   end
 
   def consortium_lead
-    Provider.find_by_id(parent_id).results.first if parent_id.present?
+    Provider.find_by_id(consortium_lead_id).results.first if consortium_lead_id.present?
   end
 
   # count years account has been active. Ignore if deleted the same year as created
