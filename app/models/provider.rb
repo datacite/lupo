@@ -103,7 +103,7 @@ class Provider < ActiveRecord::Base
       indexes :focus_area,    type: :keyword
       indexes :organization_type, type: :keyword
       indexes :member_type,   type: :keyword
-      indexes :consortium_lead, type: :object
+      indexes :consortium_lead_id, type: :keyword
       indexes :country_code,  type: :keyword
       indexes :role_name,     type: :keyword
       indexes :cache_key,     type: :keyword
@@ -182,7 +182,7 @@ class Provider < ActiveRecord::Base
       "focus_area" => focus_area,
       "organization_type" => organization_type,
       "member_type" => member_type,
-      "consortium_lead" => consortium_lead,
+      "consortium_lead_id" => consortium_lead_id,
       "role_name" => role_name,
       "password" => password,
       "cache_key" => cache_key,
@@ -444,10 +444,6 @@ class Provider < ActiveRecord::Base
       "ROLE_FOR_PROFIT_PROVIDER"  => "for_profit_provider",
       "ROLE_REGISTRATION_AGENCY"  => "registration_agency"
      }
-  end
-
-  def consortium_lead
-    Provider.find_by_id(consortium_lead_id).results.first if consortium_lead_id.present?
   end
 
   # count years account has been active. Ignore if deleted the same year as created
