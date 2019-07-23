@@ -190,7 +190,8 @@ class DoisController < ApplicationController
           options[:params] = {
             current_ability: current_ability,
             detail: params[:detail],
-            affiliation: params[:affiliation]
+            affiliation: params[:affiliation],
+            is_collection: options[:is_collection]
           }
 
           bmr = Benchmark.ms {
