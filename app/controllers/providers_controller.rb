@@ -264,7 +264,7 @@ class ProvidersController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_provider
-    @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM_LEAD' , 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: params[:id]).first
+    @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM_LEAD' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @provider.present?
   end
 
@@ -275,7 +275,7 @@ class ProvidersController < ApplicationController
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params,
       only: [
-        :name, "displayName", :symbol, :description, :website, :joined, "organizationType", "focusArea", "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation",{ "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType",
+        :name, "displayName", :symbol, :description, :website, :joined, "organizationType", "focusArea", "consortiumLeadId", "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation",{ "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType",
       "technicalContact",{ "technicalContact": [:email, "givenName", "familyName"]},
       "secondaryTechnicalContact",{ "secondaryTechnicalContact": [:email, "givenName", "familyName"]},
       "secondaryBillingContact",{ "secondaryBillingContact": [:email, "givenName", "familyName"]},
@@ -286,7 +286,7 @@ class ProvidersController < ApplicationController
       ],
       keys: {
         "displayName" => :display_name,
-        "organizationType" => :organization_type, "focusArea" => :focus_area, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" => :twitter_handle, "memberType" => :member_type,
+        "organizationType" => :organization_type, "focusArea" => :focus_area, "consortiumLeadId" => :consortium_lead_id, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" => :twitter_handle, "memberType" => :member_type,
         "technicalContact" => :technical_contact,
         "secondaryTechnicalContact" => :secondary_technical_contact,
         "secondaryBillingContact" => :secondary_billing_contact,

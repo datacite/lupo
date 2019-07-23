@@ -37,7 +37,7 @@ class Provider < ActiveRecord::Base
   validates_format_of :system_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, message: "system_email should be an email"
   validates_format_of :group_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, if: :group_email?, message: "group_email should be an email"
   validates_format_of :website, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be a url"
-  validates_inclusion_of :role_name, :in => %w( ROLE_FOR_PROFIT_PROVIDER ROLE_CONTRACTUAL_PROVIDER ROLE_CONSORTIUM_LEAD ROLE_ALLOCATOR ROLE_MEMBER ROLE_REGISTRATION_AGENCY ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
+  validates_inclusion_of :role_name, :in => %w( ROLE_FOR_PROFIT_PROVIDER ROLE_CONTRACTUAL_PROVIDER ROLE_CONSORTIUM_LEAD ROLE_CONSORTIUM_ORGANIZATION ROLE_ALLOCATOR ROLE_MEMBER ROLE_REGISTRATION_AGENCY ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
   validates_inclusion_of :organization_type, :in => %w(researchInstitution academicInstitution governmentAgency nationalInstitution professionalSociety publisher serviceProvider other), message: "organization type %s is not included in the list", if: :organization_type?
   validates_inclusion_of :focus_area, :in => %w(naturalSciences engineeringAndTechnology medicalAndHealthSciences agriculturalSciences socialSciences humanities general), message: "focus area %s is not included in the list", if: :focus_area?
   validate :freeze_symbol, :on => :update
@@ -103,6 +103,7 @@ class Provider < ActiveRecord::Base
       indexes :focus_area,    type: :keyword
       indexes :organization_type, type: :keyword
       indexes :member_type,   type: :keyword
+      indexes :consortium_lead, type: :object
       indexes :country_code,  type: :keyword
       indexes :role_name,     type: :keyword
       indexes :cache_key,     type: :keyword
@@ -181,6 +182,7 @@ class Provider < ActiveRecord::Base
       "focus_area" => focus_area,
       "organization_type" => organization_type,
       "member_type" => member_type,
+      "consortium_lead" => consortium_lead,
       "role_name" => role_name,
       "password" => password,
       "cache_key" => cache_key,
@@ -414,6 +416,7 @@ class Provider < ActiveRecord::Base
       "ROLE_MEMBER"               => "Member Only",
       "ROLE_ALLOCATOR"            => "Member Provider",
       "ROLE_CONSORTIUM_LEAD"      => "Consortium Lead",
+      "ROLE_CONSORTIUM_ORGANIZATION" => "Consortium Lead",
       "ROLE_CONTRACTUAL_PROVIDER" => "Contractual Provider",
       "ROLE_ADMIN"                => "DataCite admin",
       "ROLE_DEV"                  => "DataCite admin",
@@ -436,10 +439,15 @@ class Provider < ActiveRecord::Base
       "ROLE_MEMBER"               => "member_only",
       "ROLE_ALLOCATOR"            => "provider",
       "ROLE_CONSORTIUM_LEAD"      => "consortium_lead",
+      "ROLE_CONSORTIUM_ORGANIZATION" => "consortium_organization",
       "ROLE_CONTRACTUAL_PROVIDER" => "contractual_provider",
       "ROLE_FOR_PROFIT_PROVIDER"  => "for_profit_provider",
       "ROLE_REGISTRATION_AGENCY"  => "registration_agency"
      }
+  end
+
+  def consortium_lead
+    Provider.find_by_id(parent_id).results.first if parent_id.present?
   end
 
   # count years account has been active. Ignore if deleted the same year as created

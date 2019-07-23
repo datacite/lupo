@@ -62,7 +62,7 @@ class Researcher < ActiveRecord::Base
       sort: [options[:sort]],
       query: {
         terms: {
-          uid: ids.map(&:upcase)
+          uid: ids
         }
       },
       aggregations: query_aggregations
