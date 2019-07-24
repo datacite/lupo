@@ -193,14 +193,14 @@ class Event < ActiveRecord::Base
         aggs: {
           dois: { terms: { field: 'obj_id', size: 50, min_doc_count: 1 }, aggs: { relation_types: { terms: { field: 'relation_type_id',size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: 'total' }}}}} } }
       },
-      dois_citations: {
+      citations_histogram: {
         filter: {
           script: {
             script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
           }
         },
         aggs: { years: { terms: { script:  { source: "
-          if(Integer.parseInt(params['_source']['obj']['date_published']) > Integer.parseInt(params['_source']['subj']['date_published']) )
+          if(Integer.parseInt(params['_source']['obj']['date_published'].substring(0, 4)) > Integer.parseInt(params['_source']['subj']['date_published'].substring(0, 4)) )
           {
             params['_source']['obj']['date_published']
           }
@@ -209,7 +209,7 @@ class Event < ActiveRecord::Base
           }
         " }}}}
       },
-      unique_citations: {
+      citations: {
         filter: {
           script: {
             script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
