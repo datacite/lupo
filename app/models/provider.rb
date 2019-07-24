@@ -59,6 +59,8 @@ class Provider < ActiveRecord::Base
   has_many :dois, through: :clients
   has_many :provider_prefixes, foreign_key: :allocator, dependent: :destroy
   has_many :prefixes, through: :provider_prefixes
+  has_many :consortium_organizations, class_name: "Provider", foreign_key: "consortium_lead_id"
+  belongs_to :consortium_lead, class_name: "Provider", foreign_key: "consortium_lead_id", optional: true
 
   before_validation :set_region, :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
@@ -157,6 +159,8 @@ class Provider < ActiveRecord::Base
       indexes :updated,       type: :date
       indexes :deleted_at,    type: :date
       indexes :cumulative_years, type: :integer, index: "false"
+
+      indexes :consortium_lead, type: :object
     end
   end
 
@@ -208,7 +212,8 @@ class Provider < ActiveRecord::Base
       "created" => created,
       "updated" => updated,
       "deleted_at" => deleted_at,
-      "cumulative_years" => cumulative_years
+      "cumulative_years" => cumulative_years,
+      "consortium_lead" => consortium_lead.try(:as_indexed_json),
     }
   end
 

@@ -6,6 +6,7 @@ class ProvidersController < ApplicationController
 
   prepend_before_action :authenticate_user!
   before_action :set_provider, only: [:show, :update, :destroy]
+  before_action :set_include
   load_and_authorize_resource :except => [:totals]
 
   def index
@@ -262,7 +263,15 @@ class ProvidersController < ApplicationController
 
   protected
 
-  # Use callbacks to share common setup or constraints between actions.
+  def set_include
+    if params[:include].present?
+      @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
+      @include = @include & [:consortium_lead]
+    else
+      @include = []
+    end
+  end
+
   def set_provider
     @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM_LEAD' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @provider.present?
