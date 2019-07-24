@@ -208,16 +208,16 @@ class Event < ActiveRecord::Base
             params['_source']['subj']['date_published']
           }
         " }}}}
-      # },
-      # unique_citations: {
-      #   filter: {
-      #     script: {
-      #       script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
-      #     }
-      #   },
-      #   aggs: { dois: {
-      #      terms: { field: 'obj_id', size: 50, min_doc_count: 1 }, aggs: { unique_citations: { cardinality: { field: 'citation_id' }}}
-      #   }}
+      },
+      unique_citations: {
+        filter: {
+          script: {
+            script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
+          }
+        },
+        aggs: { dois: {
+           terms: { field: 'obj_id', size: 50, min_doc_count: 1 }, aggs: { unique_citations: { cardinality: { field: 'citation_id' }}}
+        }}
       }
     }
   end

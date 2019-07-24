@@ -122,7 +122,7 @@ class EventsController < ApplicationController
     dois = total.positive? && params[:extra] ? facet_by_dois(response.response.aggregations.dois.buckets) : nil
     dois_usage = total.positive? && params[:extra] ? facet_by_dois(response.response.aggregations.dois_usage.dois.buckets) : nil
     dois_citations = total.positive? && params[:extra] ? facet_citations_by_year(response.response.aggregations.dois_citations.years.buckets) : nil
-    # unique_citations = total.positive? && params[:extra] ? facet_citations_by_dois(response.response.aggregations.unique_citations.dois.buckets) : nil
+    unique_citations = total.positive? && params[:extra] ? facet_citations_by_dois(response.response.aggregations.unique_citations.dois.buckets) : nil
  
     results = response.results
 
@@ -140,7 +140,7 @@ class EventsController < ApplicationController
       "doisRelationTypes": dois,
       "doisUsageTypes": dois_usage,
       "doisCitations": dois_citations,
-      # "uniqueCitations": unique_citations
+      "uniqueCitations": unique_citations
     }.compact
 
     options[:links] = {
