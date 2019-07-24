@@ -43,7 +43,7 @@ describe Provider, type: :model do
   describe "provider with ROLE_CONSORTIUM_LEAD" do
     subject { create(:provider, role_name: "ROLE_CONSORTIUM_LEAD", name: "Virtual Library of Virginia", symbol: "VIVA") }
 
-    let!(:consortium_organizations) { create_list(:provider, 3, role_name: "ROLE_CONSORTIUM_ORGANIZATION", consortium_lead_id: subject.id) }
+    let!(:consortium_organizations) { create_list(:provider, 3, role_name: "ROLE_CONSORTIUM_ORGANIZATION", consortium_lead_id: subject.symbol) }
 
     it "works" do
       expect(subject.role_name).to eq("ROLE_CONSORTIUM_LEAD")

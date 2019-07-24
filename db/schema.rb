@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_24_043038) do
+ActiveRecord::Schema.define(version: 2019_07_23_114539) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -68,7 +68,7 @@ ActiveRecord::Schema.define(version: 2019_07_24_043038) do
     t.string "group_email"
     t.json "secondary_service_contact"
     t.json "secondary_technical_contact"
-    t.integer "consortium_lead_id"
+    t.string "consortium_lead_id"
     t.index ["organization_type"], name: "index_allocator_organization_type"
     t.index ["symbol"], name: "symbol", unique: true
   end

@@ -9,7 +9,7 @@ class ProviderSerializer
 
   has_many :clients, record_type: :clients
   has_many :prefixes, record_type: :prefixes
-  belongs_to :consortium_lead, record_type: :providers, if: Proc.new { |provider| provider.consortium_lead_id }
+  belongs_to :consortium_lead, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |provider| provider.consortium_lead_id }
 
   attribute :country do |object|
     object.country_code
