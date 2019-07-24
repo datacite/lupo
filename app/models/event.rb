@@ -180,12 +180,6 @@ class Event < ActiveRecord::Base
       }
     }
 
-    sum_year_distribution = {
-      sum_bucket: {
-        buckets_path: "years>total_by_year"
-      }
-    }
-
     {
       sources: { terms: { field: 'source_id', size: 50, min_doc_count: 1 } },
       prefixes: { terms: { field: 'prefix', size: 50, min_doc_count: 1 } },
@@ -205,7 +199,15 @@ class Event < ActiveRecord::Base
             script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
           }
         },
-        aggs: { years: { date_histogram: { field: 'occurred_at', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
+        aggs: { years: { terms: { script:  { source: "
+          if(Integer.parseInt(params['_source']['obj']['date_published']) > Integer.parseInt(params['_source']['subj']['date_published']) )
+          {
+            params['_source']['obj']['date_published']
+          }
+          else{
+            params['_source']['subj']['date_published']
+          }
+        " }}}}
       # },
       # unique_citations: {
       #   filter: {
