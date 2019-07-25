@@ -173,7 +173,7 @@ module Indexable
 
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
         if options[:exclude_registration_agencies]
-          must_not << { terms: { role_name: ["ROLE_ADMIN", "ROLE_REGISTRATION_AGENCY"] }}
+          must_not << { terms: { role_name: ["ROLE_ADMIN", "ROLE_REGISTRATION_AGENCY", "ROLE_CONSORTIUM_ORGANIZATION"] }}
         else
           must_not << { term: { role_name: "ROLE_ADMIN" }}
         end

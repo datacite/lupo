@@ -162,6 +162,7 @@ class Provider < ActiveRecord::Base
       indexes :cumulative_years, type: :integer, index: "false"
 
       indexes :consortium_lead, type: :object
+      indexes :consortium_organizations, type: :object
     end
   end
 
