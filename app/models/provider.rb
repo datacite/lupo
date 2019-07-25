@@ -107,6 +107,7 @@ class Provider < ActiveRecord::Base
       indexes :organization_type, type: :keyword
       indexes :member_type,   type: :keyword
       indexes :consortium_lead_id, type: :keyword
+      indexes :consortium_organization_ids, type: :keyword
       indexes :country_code,  type: :keyword
       indexes :role_name,     type: :keyword
       indexes :cache_key,     type: :keyword
@@ -189,6 +190,7 @@ class Provider < ActiveRecord::Base
       "organization_type" => organization_type,
       "member_type" => member_type,
       "consortium_lead_id" => consortium_lead_id,
+      "consortium_organization_ids" => consortium_organization_ids,
       "role_name" => role_name,
       "password" => password,
       "cache_key" => cache_key,
@@ -292,6 +294,10 @@ class Provider < ActiveRecord::Base
 
   def uid
     symbol.downcase
+  end
+
+  def consortium_organization_ids
+    consortium_organizations.pluck(:symbol) if consortium_organizations.present?
   end
 
   def cache_key
