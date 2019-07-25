@@ -168,6 +168,99 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
     end
 
+    context 'create provider member_role consortium_organization' do
+      let(:consortium_lead) { create(:provider, member_type: "consortium_lead") }
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "symbol" => "FG",
+                        "name" => "Figshare",
+                        "displayName" => "Figshare",
+                        "region" => "EMEA",
+                        "systemEmail" => "doe@joe.joe",
+                        "memberType" => "consortium_organization",
+                        "country" => "GB" },
+                        "relationships": {
+                          "consortiumLead": {
+                            "data":{
+                              "type": "providers",
+                              "id": consortium_lead.symbol.downcase
+                            }
+                          }
+                        }} }
+      end
+
+      it 'creates a provider' do
+        post '/providers', params, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
+        expect(json.dig('data', 'attributes', 'name')).to eq("Figshare")
+        expect(json.dig('data', 'attributes', 'memberType')).to eq("consortium_organization")
+        expect(json.dig('data', 'relationships', 'consortiumLead', 'data', 'id')).to eq(consortium_lead.symbol.downcase)
+      end
+    end
+
+    context 'create provider not member_role consortium_organization' do
+      let(:consortium_lead) { create(:provider, member_type: "consortium_lead") }
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "symbol" => "FG",
+                        "name" => "Figshare",
+                        "displayName" => "Figshare",
+                        "region" => "EMEA",
+                        "systemEmail" => "doe@joe.joe",
+                        "memberType" => "provider",
+                        "country" => "GB" },
+                        "relationships": {
+                          "consortiumLead": {
+                            "data":{
+                              "type": "providers",
+                              "id": consortium_lead.symbol.downcase
+                            }
+                          }
+                        }} }
+      end
+
+      it 'creates a provider' do
+        post '/providers', params, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json["errors"].first).to eq("source"=>"consortium_lead_id", "title"=>"The provider must be of member_type consortium_organization")
+      end
+    end
+
+    context 'create provider not member_role consortium_lead' do
+      let(:consortium_lead) { create(:provider, member_type: "provider") }
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "symbol" => "FG",
+                        "name" => "Figshare",
+                        "displayName" => "Figshare",
+                        "region" => "EMEA",
+                        "systemEmail" => "doe@joe.joe",
+                        "memberType" => "consortium_organization",
+                        "country" => "GB" },
+                        "relationships": {
+                          "consortiumLead": {
+                            "data":{
+                              "type": "providers",
+                              "id": consortium_lead.symbol.downcase
+                            }
+                          }
+                        }} }
+      end
+
+      it 'creates a provider' do
+        post '/providers', params, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json["errors"].first).to eq("source"=>"consortium_lead_id", "title"=>"The consortium_lead must be of member_type consortium_lead")
+      end
+    end
+
     context 'request is valid with billing information' do
       let(:params) do
         {

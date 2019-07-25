@@ -41,6 +41,7 @@ class Provider < ActiveRecord::Base
   validates_inclusion_of :organization_type, :in => %w(researchInstitution academicInstitution governmentAgency nationalInstitution professionalSociety publisher serviceProvider other), message: "organization type %s is not included in the list", if: :organization_type?
   validates_inclusion_of :focus_area, :in => %w(naturalSciences engineeringAndTechnology medicalAndHealthSciences agriculturalSciences socialSciences humanities general), message: "focus area %s is not included in the list", if: :focus_area?
   validate :freeze_symbol, :on => :update
+  validate :can_have_consortium_lead
   validates_format_of :ror_id, :with => /\Ahttps:\/\/ror\.org\/0\w{6}\d{2}\z/, if: :ror_id?, message: "ROR ID should be a url"
   validates_format_of :twitter_handle, :with => /\A@[a-zA-Z0-9_]{1,15}\z/, if: :twitter_handle?
 
@@ -503,6 +504,14 @@ class Provider < ActiveRecord::Base
 
   def prefix_ids
     prefixes.pluck(:prefix)
+  end
+
+  def can_have_consortium_lead
+    if consortium_lead_id && member_type != "consortium_organization"
+      errors.add(:consortium_lead_id, "The provider must be of member_type consortium_organization")
+    elsif consortium_lead_id && consortium_lead.member_type != "consortium_lead"
+      errors.add(:consortium_lead_id, "The consortium_lead must be of member_type consortium_lead")
+    end
   end
 
   def freeze_symbol
