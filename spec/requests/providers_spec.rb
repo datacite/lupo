@@ -156,15 +156,10 @@ describe "Providers", type: :request, elasticsearch: true  do
       it 'creates a provider' do
         post '/providers', params, headers
 
+        expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
         expect(json.dig('data', 'attributes', 'name')).to eq("Figshare")
         expect(json.dig('data', 'attributes', 'memberType')).to eq("contractual_provider")
-      end
-
-      it 'returns status code 201' do
-        post '/providers', params, headers
-
-        expect(last_response.status).to eq(200)
       end
     end
 
@@ -226,8 +221,11 @@ describe "Providers", type: :request, elasticsearch: true  do
       it 'creates a provider' do
         post '/providers', params, headers
 
-        expect(last_response.status).to eq(422)
-        expect(json["errors"].first).to eq("source"=>"consortium_lead_id", "title"=>"The provider must be of member_type consortium_organization")
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
+        expect(json.dig('data', 'attributes', 'name')).to eq("Figshare")
+        expect(json.dig('data', 'attributes', 'memberType')).to eq("provider")
+        expect(json.dig('data', 'relationships', 'consortiumLead', 'data', 'id')).to be_nil
       end
     end
 

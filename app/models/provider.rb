@@ -574,5 +574,6 @@ class Provider < ActiveRecord::Base
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
     self.billing_information = {} unless billing_information.present?
+    self.consortium_lead_id = nil unless member_type == "consortium_organization"
   end
 end
