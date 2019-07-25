@@ -60,8 +60,8 @@ class Provider < ActiveRecord::Base
   has_many :dois, through: :clients
   has_many :provider_prefixes, foreign_key: :allocator, dependent: :destroy
   has_many :prefixes, through: :provider_prefixes
-  has_many :consortium_organizations, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_lead_id"
-  belongs_to :consortium_lead, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_lead_id", optional: true
+  has_many :consortium_organizations, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_lead_id", inverse_of: :consortium_lead
+  belongs_to :consortium_lead, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_lead_id", inverse_of: :consortium_organizations, optional: true
 
   before_validation :set_region, :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
