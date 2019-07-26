@@ -106,7 +106,7 @@ class Provider < ActiveRecord::Base
       indexes :focus_area,    type: :keyword
       indexes :organization_type, type: :keyword
       indexes :member_type,   type: :keyword
-      indexes :consortium_lead_id, type: :keyword
+      indexes :consortium_lead_id, type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }}
       indexes :consortium_organization_ids, type: :keyword
       indexes :country_code,  type: :keyword
       indexes :role_name,     type: :keyword
@@ -297,7 +297,7 @@ class Provider < ActiveRecord::Base
   end
 
   def consortium_organization_ids
-    consortium_organizations.pluck(:symbol) if consortium_organizations.present?
+    consortium_organizations.pluck(:symbol).map(&:downcase) if consortium_organizations.present?
   end
 
   def cache_key
