@@ -167,6 +167,7 @@ module Indexable
       if self.name == "Provider"
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { term: { region: options[:region].upcase }} if options[:region].present?
+        must << { term: { consortium_lead_id: options[:consortium_lead].upcase }} if options[:consortium_lead].present?
         must << { term: { member_type: options[:member_type] }} if options[:member_type].present?
         must << { term: { organization_type: options[:organization_type] }} if options[:organization_type].present?
         must << { term: { focus_area: options[:focus_area] }} if options[:focus_area].present?

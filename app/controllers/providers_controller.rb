@@ -30,6 +30,7 @@ class ProvidersController < ApplicationController
         exclude_registration_agencies: params[:exclude_registration_agencies],
         year: params[:year], 
         region: params[:region], 
+        consortium_lead: params[:consortium_lead], 
         member_type: params[:member_type], 
         organization_type: params[:organization_type], 
         focus_area: params[:focus_area], 
