@@ -1311,7 +1311,6 @@ describe "dois", type: :request do
 
       it 'updates the record' do
         patch "/dois/10.14454/q6g15xs4", valid_attributes, headers
-        puts last_response.body
         expect(last_response.status).to eq(201)
         expect(json.dig('data', 'attributes', 'url')).to eq("https://datashare.ucsf.edu/stash/dataset/doi:10.7272/Q6G15XS4")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/q6g15xs4")

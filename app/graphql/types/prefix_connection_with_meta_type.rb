@@ -21,7 +21,6 @@ class PrefixConnectionWithMetaType < BaseConnection
       collection = collection.state(args[:state].underscore.dasherize) if args[:state].present?
       collection = collection.query(args[:query]) if args[:query].present?
       
-      puts collection.inspect
       if args[:state].present?
         [{ id: args[:state],
            title: args[:state].underscore.humanize,

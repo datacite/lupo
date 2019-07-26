@@ -50,6 +50,9 @@ describe Provider, type: :model do
       expect(subject.member_type).to eq("consortium_lead")
       expect(subject.member_type_label).to eq("Consortium Lead")
       expect(subject.consortium_organizations.length).to eq(3)
+      consortium_organization = subject.consortium_organizations.last
+      expect(consortium_organization.consortium_lead_id).to eq("VIVA")
+      expect(consortium_organization.member_type).to eq("consortium_organization")
     end
   end
   

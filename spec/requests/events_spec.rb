@@ -181,7 +181,6 @@ describe "/events", type: :request, elasticsearch: true do
         post uri, params, headers
         expect(last_response.status).to eq(401)
 
-        puts last_response.body
         expect(json["errors"]).to eq(errors)
         expect(json["data"]).to be_blank
       end

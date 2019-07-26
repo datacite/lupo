@@ -81,6 +81,7 @@ Rails.application.routes.draw do
 
   resources :providers do
     resources :clients, constraints: { :id => /.+/ }, shallow: true
+    resources :organizations, constraints: { :id => /.+/ }, shallow: true
     resources :dois, constraints: { :id => /.+/ }
     resources :prefixes, constraints: { :id => /.+/ }
   end

@@ -193,6 +193,26 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(json.dig('data', 'attributes', 'name')).to eq("Figshare")
         expect(json.dig('data', 'attributes', 'memberType')).to eq("consortium_organization")
         expect(json.dig('data', 'relationships', 'consortiumLead', 'data', 'id')).to eq(consortium_lead.symbol.downcase)
+      
+        sleep 1
+        
+        get "/providers/#{consortium_lead.symbol.downcase}?include=consortium-organizations", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig('included', 0, 'attributes', 'systemEmail')).to eq("doe@joe.joe")
+        expect(json.dig('included', 0, 'attributes', 'name')).to eq("Figshare")
+        expect(json.dig('included', 0, 'attributes', 'memberType')).to eq("consortium_organization")
+        expect(json.dig('included', 0, 'relationships', 'consortiumLead', 'data', 'id')).to eq(consortium_lead.symbol)
+      
+        get "/providers?consortium-lead-id=#{consortium_lead.symbol.downcase}", nil, headers
+
+        expect(last_response.status).to eq(200)
+        puts last_response.body
+
+        get "/providers/#{consortium_lead.symbol.downcase}/organizations", nil, headers
+
+        expect(last_response.status).to eq(200)
+        puts last_response.body
       end
     end
 
