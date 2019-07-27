@@ -1,7 +1,7 @@
-class RepositorySerializer
+class PeriodicalSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :camel_lower
-  set_type :repositories
+  set_type :periodicals
   set_id :uid
   
   attributes :name, :symbol, :year, :contact_name, :contact_email, :description, :domains, :url, :created, :updated

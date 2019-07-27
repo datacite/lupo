@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Clients', type: :request, elasticsearch: true do
+describe 'Repositories', type: :request, elasticsearch: true do
   let(:ids) { clients.map { |c| c.uid }.join(",") }
   let(:bearer) { User.generate_token }
   let(:provider) { create(:provider, password_input: "12345") }
@@ -26,7 +26,7 @@ describe 'Clients', type: :request, elasticsearch: true do
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer}}
   let(:query) { "jamon"}
 
-  describe 'GET /clients', elasticsearch: true do
+  describe 'GET /repositories', elasticsearch: true do
     let!(:clients)  { create_list(:client, 3) }
 
     before do
@@ -34,17 +34,12 @@ describe 'Clients', type: :request, elasticsearch: true do
       sleep 1
     end
 
-    it 'returns clients' do
-      get '/clients', nil, headers
-
-      expect(json['data'].size).to eq(4)
-      expect(json.dig('meta', 'total')).to eq(4)
-    end
-
-    it 'returns status code 200' do
-      get '/clients', nil, headers
+    it 'returns repositories' do
+      get '/repositories', nil, headers
 
       expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(4)
+      expect(json.dig('meta', 'total')).to eq(4)
     end
   end
 
@@ -78,10 +73,10 @@ describe 'Clients', type: :request, elasticsearch: true do
   #   end
   # end
 
-  describe 'GET /clients/:id' do
+  describe 'GET /repositories/:id' do
     context 'when the record exists' do
-      it 'returns the client' do
-        get "/clients/#{client.uid}", nil, headers
+      it 'returns the repository' do
+        get "/repositories/#{client.uid}", nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
@@ -90,7 +85,7 @@ describe 'Clients', type: :request, elasticsearch: true do
 
     context 'when the record does not exist' do
       it 'returns status code 404' do
-        get "/clients/xxx", nil, headers
+        get "/repositories/xxx", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
@@ -98,11 +93,11 @@ describe 'Clients', type: :request, elasticsearch: true do
     end
   end
 
-  describe 'POST /clients' do
+  describe 'POST /repositories' do
     context 'when the request is valid' do    
-      it 'creates a client' do
-        post '/clients', params, headers
-
+      it 'creates a repository' do
+        post '/repositories', params, headers
+        puts last_response.body
         expect(last_response.status).to eq(201)
         attributes = json.dig('data', 'attributes')
         expect(attributes["name"]).to eq("Imperial College")
@@ -111,20 +106,12 @@ describe 'Clients', type: :request, elasticsearch: true do
 
         relationships = json.dig('data', 'relationships')
         expect(relationships.dig("provider", "data", "id")).to eq(provider.symbol.downcase)
-
-        Client.import
-        sleep 1
-        
-        get '/clients', nil, headers
-
-        expect(json['data'].size).to eq(2)
-        expect(json.dig('meta', 'clientTypes')).to eq([{"count"=>2, "id"=>"repository", "title"=>"Repository"}])
       end
     end
 
     context 'when the request is invalid' do
       let(:params) do
-        { "data" => { "type" => "clients",
+        { "data" => { "type" => "repositories",
                       "attributes" => {
                         "symbol" => provider.symbol + ".IMPERIAL",
                         "name" => "Imperial College",
@@ -141,44 +128,34 @@ describe 'Clients', type: :request, elasticsearch: true do
       end
 
       it 'returns status code 422' do
-        post '/clients', params, headers
+        post '/repositories', params, headers
 
         expect(last_response.status).to eq(422)
-      end
-
-      it 'returns a validation failure message' do
-        post '/clients', params, headers
-
         expect(json["errors"]).to eq([{"source"=>"contact_email", "title"=>"Can't be blank"}, {"source"=>"contact_email", "title"=>"Is invalid"}])
       end
     end
   end
 
-  describe 'PUT /clients/:id' do
+  describe 'PUT /repositories/:id' do
     context 'when the record exists' do
       let(:params) do
-        { "data" => { "type" => "clients",
+        { "data" => { "type" => "repositories",
                       "attributes" => {
                         "name" => "Imperial College 2"}} }
       end
 
       it 'updates the record' do
-        put "/clients/#{client.symbol}", params, headers
-
-        expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
-        expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
-      end
-
-      it 'returns status code 200' do
-        put "/clients/#{client.symbol}", params, headers
+        put "/repositories/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
+        expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
       end
     end
 
     context 'using basic auth', vcr: true do
       let(:params) do
-        { "data" => { "type" => "clients",
+        { "data" => { "type" => "repositories",
                       "attributes" => {
                         "name" => "Imperial College 2"}} }
       end
@@ -186,22 +163,17 @@ describe 'Clients', type: :request, elasticsearch: true do
       let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Basic ' + credentials } }
 
       it 'updates the record' do
-        put "/clients/#{client.symbol}", params, headers
-
-        expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
-        expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
-      end
-
-      it 'returns status code 200' do
-        put "/clients/#{client.symbol}", params, headers
+        put "/repositories/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
+        expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
       end
     end
 
     context 'when the request is invalid' do
       let(:params) do
-        { "data" => { "type" => "clients",
+        { "data" => { "type" => "repositories",
                       "attributes" => {
                         "symbol" => client.symbol + "MegaCLient",
                         "email" => "bob@example.com",
@@ -209,14 +181,9 @@ describe 'Clients', type: :request, elasticsearch: true do
       end
 
       it 'returns status code 422' do
-        put "/clients/#{client.symbol}", params, headers
+        put "/repositories/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(422)
-      end
-
-      it 'returns a validation failure message' do
-        put "/clients/#{client.symbol}", params, headers
-
         expect(json["errors"].first).to eq("source"=>"symbol", "title"=>"Cannot be changed")
       end
     end
@@ -224,20 +191,20 @@ describe 'Clients', type: :request, elasticsearch: true do
 
   describe 'DELETE /clients/:id' do
     it 'returns status code 204' do
-      delete "/clients/#{client.uid}", nil, headers
+      delete "/repositories/#{client.uid}", nil, headers
 
       expect(last_response.status).to eq(204)
     end
 
     context 'when the resource doesnt exist' do
       it 'returns status code 404' do
-        delete '/clients/xxx', nil, headers
+        delete '/repositories/xxx', nil, headers
 
         expect(last_response.status).to eq(404)
       end
 
       it 'returns a validation failure message' do
-        delete '/clients/xxx', nil, headers
+        delete '/repositories/xxx', nil, headers
 
         expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
       end
@@ -248,7 +215,7 @@ describe 'Clients', type: :request, elasticsearch: true do
     let!(:dois) { create_list(:doi, 3, client: client) }
     let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
     let(:params) do
-      { "data" => { "type" => "clients",
+      { "data" => { "type" => "repositories",
                     "attributes" => {
                       "targetId" => target.symbol }} }
     end
@@ -259,7 +226,7 @@ describe 'Clients', type: :request, elasticsearch: true do
     end
 
     it 'returns status code 200' do
-      put "/clients/#{client.symbol}", params, headers
+      put "/repositories/#{client.symbol}", params, headers
       sleep 1
 
       expect(last_response.status).to eq(200)
