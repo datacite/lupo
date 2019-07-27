@@ -46,7 +46,7 @@ namespace :client do
 
   desc 'Import all clients'
   task :import => :environment do
-    Provider.import(index: Client.inactive_index)
+    Client.import(index: Client.inactive_index)
   end
 
   desc 'Index DOIs by client'
