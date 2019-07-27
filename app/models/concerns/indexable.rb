@@ -405,10 +405,10 @@ module Indexable
       stats = client.indices.stats index: [index_name, alternate_index_name], docs: true
       index_name_count = stats.dig("indices", index_name, "primaries", "docs", "count")
       alternate_index_name_count = stats.dig("indices", alternate_index_name, "primaries", "docs", "count")
-      last_id = self.maximum(:id) || 1
+      database_count = self.all.count
 
       message = "Index #{index_name} has #{index_name_count} documents, " \
-        "#{alternate_index_name} has #{alternate_index_name_count} documents, last_id is #{last_id}."
+        "#{alternate_index_name} has #{alternate_index_name_count} documents, database has #{database_count} documents."
       return message
     end
 

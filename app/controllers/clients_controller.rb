@@ -62,6 +62,7 @@ class ClientsController < ApplicationController
           query: params[:query],
           "provider-id" => params[:provider_id],
           software: params[:software],
+          "clientTypes" => params[:client_type],
           year: params[:year],
           "page[number]" => page[:number] + 1,
           "page[size]" => page[:size],
