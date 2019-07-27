@@ -60,6 +60,16 @@ Rails.application.routes.draw do
     resources :dois, constraints: { id: /.+/ }
   end
 
+  resources :repositories, constraints: { id: /.+/ } do
+    resources :prefixes, constraints: { id: /.+/ }
+    resources :dois, constraints: { id: /.+/ }
+  end
+
+  resources :periodicals, constraints: { id: /.+/ } do
+    resources :prefixes, constraints: { id: /.+/ }
+    resources :dois, constraints: { id: /.+/ }
+  end
+
   resources :client_prefixes, path: "client-prefixes"
   resources :dois, constraints: { id: /.+/ } do
     resources :metadata
@@ -81,6 +91,8 @@ Rails.application.routes.draw do
 
   resources :providers do
     resources :clients, constraints: { :id => /.+/ }, shallow: true
+    resources :repositories, constraints: { :id => /.+/ }, shallow: true
+    resources :periodicals, constraints: { :id => /.+/ }, shallow: true
     resources :organizations, constraints: { :id => /.+/ }, shallow: true
     resources :dois, constraints: { :id => /.+/ }
     resources :prefixes, constraints: { :id => /.+/ }
