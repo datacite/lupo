@@ -35,6 +35,7 @@ class Client < ActiveRecord::Base
   validates_uniqueness_of :symbol, message: "This Client ID has already been taken"
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
   validates_inclusion_of :role_name, :in => %w( ROLE_DATACENTRE ), :message => "Role %s is not included in the list"
+  validates_inclusion_of :client_type, :in => %w( repository serial other ), :message => "Client type %s is not included in the list", if: :client_type?
   validates_associated :provider
   validate :check_id, :on => :create
   validate :freeze_symbol, :on => :update
@@ -87,6 +88,7 @@ class Client < ActiveRecord::Base
       indexes :url,           type: :text, fields: { keyword: { type: "keyword" }}
       indexes :software,      type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
       indexes :cache_key,     type: :keyword
+      indexes :client_type,   type: :keyword
       indexes :created,       type: :date
       indexes :updated,       type: :date
       indexes :deleted_at,    type: :date
@@ -117,6 +119,7 @@ class Client < ActiveRecord::Base
       "is_active" => is_active,
       "password" => password,
       "cache_key" => cache_key,
+      "client_type" => client_type,
       "created" => created,
       "updated" => updated,
       "deleted_at" => deleted_at,
@@ -135,7 +138,8 @@ class Client < ActiveRecord::Base
       years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
       cumulative_years: { terms: { field: 'cumulative_years', min_doc_count: 1, order: { _count: "asc" } } },
       providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } },
-      software: { terms: { field: 'software.keyword', size: 15, min_doc_count: 1 } }
+      software: { terms: { field: 'software.keyword', size: 15, min_doc_count: 1 } },
+      client_types: { terms: { field: 'client_type', size: 15, min_doc_count: 1 } }
     }
   end
 

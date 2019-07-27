@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_23_114539) do
+ActiveRecord::Schema.define(version: 2019_07_27_035047) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -127,6 +127,7 @@ ActiveRecord::Schema.define(version: 2019_07_23_114539) do
     t.text "url"
     t.string "software", limit: 191
     t.text "description"
+    t.string "client_type", limit: 191
     t.index ["allocator"], name: "FK6695D60546EBD781"
     t.index ["re3data"], name: "index_datacentre_on_re3data"
     t.index ["symbol"], name: "symbol", unique: true

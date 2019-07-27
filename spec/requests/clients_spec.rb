@@ -11,7 +11,8 @@ describe 'Clients', type: :request, elasticsearch: true do
                     "symbol" => provider.symbol + ".IMPERIAL",
                     "name" => "Imperial College",
                     "contactName" => "Madonna",
-                    "contactEmail" => "bob@example.com"
+                    "contactEmail" => "bob@example.com",
+                    "clientType" => "repository"
                   },
                   "relationships": {
               			"provider": {
@@ -82,13 +83,8 @@ describe 'Clients', type: :request, elasticsearch: true do
       it 'returns the client' do
         get "/clients/#{client.uid}", nil, headers
 
-        expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
-      end
-
-      it 'returns status code 200' do
-        get "/clients/#{client.uid}", nil, headers
-
         expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
       end
     end
 
@@ -97,11 +93,6 @@ describe 'Clients', type: :request, elasticsearch: true do
         get "/clients/xxx", nil, headers
 
         expect(last_response.status).to eq(404)
-      end
-
-      it 'returns a not found message' do
-        get "/clients/xxx", nil, headers
-
         expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
       end
     end
@@ -112,18 +103,14 @@ describe 'Clients', type: :request, elasticsearch: true do
       it 'creates a client' do
         post '/clients', params, headers
 
+        expect(last_response.status).to eq(201)
         attributes = json.dig('data', 'attributes')
         expect(attributes["name"]).to eq("Imperial College")
         expect(attributes["contactName"]).to eq("Madonna")
+        expect(attributes["clientType"]).to eq("repository")
 
         relationships = json.dig('data', 'relationships')
         expect(relationships.dig("provider", "data", "id")).to eq(provider.symbol.downcase)
-      end
-    
-      it 'returns status code 201' do
-        post '/clients', params, headers
-
-        expect(last_response.status).to eq(201)
       end
     end
 

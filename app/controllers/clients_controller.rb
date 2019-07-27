@@ -30,6 +30,7 @@ class ClientsController < ApplicationController
         provider_id: params[:provider_id],
         repository_id: params[:repository_id],
         software: params[:software], 
+        client_type: params[:client_type], 
         page: page, 
         sort: sort)
     end
@@ -40,7 +41,8 @@ class ClientsController < ApplicationController
       years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
       providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
       software = total > 0 ? facet_by_software(response.response.aggregations.software.buckets) : nil
-
+      client_types = total > 0 ? facet_by_key(response.response.aggregations.client_types.buckets) : nil
+      
       @clients = response.results
 
       options = {}
@@ -50,7 +52,8 @@ class ClientsController < ApplicationController
         page: page[:number],
         years: years,
         providers: providers,
-        software: software
+        software: software,
+        "clientTypes" => client_types
       }.compact
 
       options[:links] = {
@@ -196,8 +199,8 @@ class ClientsController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:symbol, :name, "contactName", "contactEmail", :domains, :provider, :url, :repository, :description, :software, "targetId", "isActive", "passwordInput"],
-              keys: { "contactName" => :contact_name, "contactEmail" => :contact_email, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input }
+      params, only: [:symbol, :name, "contactName", "contactEmail", :domains, :provider, :url, :repository, :description, :software, "targetId", "isActive", "passwordInput", "clientType"],
+              keys: { "contactName" => :contact_name, "contactEmail" => :contact_email, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input, "clientType" => :client_type }
     )
   end
 end
