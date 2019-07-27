@@ -35,7 +35,7 @@ class Client < ActiveRecord::Base
   validates_uniqueness_of :symbol, message: "This Client ID has already been taken"
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
   validates_inclusion_of :role_name, :in => %w( ROLE_DATACENTRE ), :message => "Role %s is not included in the list"
-  validates_inclusion_of :client_type, :in => %w( repository serial other ), :message => "Client type %s is not included in the list", if: :client_type?
+  validates_inclusion_of :client_type, :in => %w( repository periodical other ), :message => "Client type %s is not included in the list", if: :client_type?
   validates_associated :provider
   validate :check_id, :on => :create
   validate :freeze_symbol, :on => :update

@@ -111,6 +111,14 @@ describe 'Clients', type: :request, elasticsearch: true do
 
         relationships = json.dig('data', 'relationships')
         expect(relationships.dig("provider", "data", "id")).to eq(provider.symbol.downcase)
+
+        Client.import
+        sleep 1
+        
+        get '/clients', nil, headers
+
+        expect(json['data'].size).to eq(2)
+        expect(json.dig('meta', 'clientTypes')).to eq([{"count"=>1, "id"=>"repository", "title"=>"Repository"}])
       end
     end
 
