@@ -398,17 +398,18 @@ module Indexable
 
     # show stats for both indexes
     def index_stats(options={})
-      index_name = self.index_name + "_v1"
-      alternate_index_name = self.index_name + "_v2"
+      active_index = self.active_index
+      inactive_index = self.inactive_index
 
       client = Elasticsearch::Model.client
-      stats = client.indices.stats index: [index_name, alternate_index_name], docs: true
-      index_name_count = stats.dig("indices", index_name, "primaries", "docs", "count")
-      alternate_index_name_count = stats.dig("indices", alternate_index_name, "primaries", "docs", "count")
+      stats = client.indices.stats index: [active_index, inactive_index], docs: true
+      active_index_count = stats.dig("indices", active_index, "primaries", "docs", "count")
+      inactive_index_count = stats.dig("indices", inactive_index, "primaries", "docs", "count")
       database_count = self.all.count
 
-      message = "Index #{index_name} has #{index_name_count} documents, " \
-        "#{alternate_index_name} has #{alternate_index_name_count} documents, database has #{database_count} documents."
+      message = "Active index #{active_index} has #{active_index_count} documents, " \
+        "inactive index #{inactive_index} has #{inactive_index_count} documents, " \
+        "database has #{database_count} documents."
       return message
     end
 
