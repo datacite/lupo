@@ -48,7 +48,6 @@ class OrcidAutoUpdateByIdJob < ActiveJob::Base
     if [200, 201].include?(response.status)
       logger.info "ORCID #{orcid} added."
     else
-      puts response.body["errors"].inspect
       logger.warn "[Error for ORCID #{orcid}]: " + response.body["errors"].inspect
     end
   end

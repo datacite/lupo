@@ -248,7 +248,6 @@ describe Doi, vcr: true do
     it "from datacite url" do
       string = "10.14454/1x4x-9056"
       meta = subject.parse_xml(string)
-      puts meta
       expect(meta["from"]).to eq("datacite")
       expect(meta["doi"]).to eq("10.14454/1x4x-9056")
       expect(meta["creators"].length).to eq(1)
