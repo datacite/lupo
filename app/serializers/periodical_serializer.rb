@@ -3,8 +3,8 @@ class PeriodicalSerializer
   set_key_transform :camel_lower
   set_type :periodicals
   set_id :uid
-  
-  attributes :name, :symbol, :year, :contact_name, :contact_email, :description, :domains, :url, :created, :updated
+
+  attributes :name, :alternate_name, :symbol, :year, :contact_name, :contact_email, :description, :language, :domains, :issn, :url, :created, :updated
 
   belongs_to :provider, record_type: :providers
   has_many :prefixes, record_type: :prefixes

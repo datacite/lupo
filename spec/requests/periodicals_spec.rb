@@ -6,13 +6,14 @@ describe 'Periodicals', type: :request, elasticsearch: true do
   let(:provider) { create(:provider, password_input: "12345") }
   let!(:client) { create(:client, provider: provider, client_type: "periodical") }
   let(:params) do
-    { "data" => { "type" => "clients",
+    { "data" => { "type" => "periodicals",
                   "attributes" => {
                     "symbol" => provider.symbol + ".IMPERIAL",
                     "name" => "Imperial College",
                     "contactName" => "Madonna",
                     "contactEmail" => "bob@example.com",
-                    "clientType" => "periodical"
+                    "clientType" => "periodical",
+                    "issn" => ["2328-1316"]
                   },
                   "relationships": {
               			"provider": {
@@ -77,7 +78,7 @@ describe 'Periodicals', type: :request, elasticsearch: true do
     context 'when the record exists' do
       it 'returns the periodical' do
         get "/periodicals/#{client.uid}", nil, headers
-        puts last_response.body
+
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
       end
@@ -108,6 +109,35 @@ describe 'Periodicals', type: :request, elasticsearch: true do
       end
     end
 
+    context 'when the issn is in the wrong format' do
+      let(:params) do
+        { "data" => { "type" => "periodicals",
+                      "attributes" => {
+                        "symbol" => provider.symbol + ".IMPERIAL",
+                        "name" => "Imperial College",
+                        "contactName" => "Madonna",
+                        "contactEmail" => "bob@example.com",
+                        "clientType" => "periodical",
+                        "issn" => ["2328-13XX"]
+                      },
+                      "relationships": {
+                        "provider": {
+                          "data":{
+                            "type": "providers",
+                            "id": provider.symbol.downcase
+                          }
+                        }
+                      }} }
+      end
+
+      it 'returns an error' do
+        post '/periodicals', params, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json["errors"]).to eq([{"source"=>"issn", "title"=>"Issn 2328-13xx is in the wrong format."}])
+      end
+    end
+
     context 'when the request is invalid' do
       let(:params) do
         { "data" => { "type" => "periodicals",
@@ -128,7 +158,7 @@ describe 'Periodicals', type: :request, elasticsearch: true do
 
       it 'returns status code 422' do
         post '/periodicals', params, headers
-        puts last_response.body
+
         expect(last_response.status).to eq(422)
         expect(json["errors"]).to eq([{"source"=>"contact_email", "title"=>"Can't be blank"}, {"source"=>"contact_email", "title"=>"Is invalid"}])
       end
@@ -144,7 +174,7 @@ describe 'Periodicals', type: :request, elasticsearch: true do
       end
 
       it 'updates the record' do
-        put "/periodicals/#{client.symbol}", params, headers
+        put "/periodicals/#{client.symbol.downcase}", params, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")

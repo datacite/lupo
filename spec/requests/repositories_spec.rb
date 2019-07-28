@@ -12,7 +12,8 @@ describe 'Repositories', type: :request, elasticsearch: true do
                     "name" => "Imperial College",
                     "contactName" => "Madonna",
                     "contactEmail" => "bob@example.com",
-                    "clientType" => "repository"
+                    "clientType" => "repository",
+                    "certificate" => ["CoreTrustSeal"]
                   },
                   "relationships": {
               			"provider": {
@@ -97,12 +98,12 @@ describe 'Repositories', type: :request, elasticsearch: true do
     context 'when the request is valid' do    
       it 'creates a repository' do
         post '/repositories', params, headers
-        puts last_response.body
+
         expect(last_response.status).to eq(201)
         attributes = json.dig('data', 'attributes')
         expect(attributes["name"]).to eq("Imperial College")
         expect(attributes["contactName"]).to eq("Madonna")
-        expect(attributes["clientType"]).to eq("repository")
+        expect(attributes["certificate"]).to eq(["CoreTrustSeal"])
 
         relationships = json.dig('data', 'relationships')
         expect(relationships.dig("provider", "data", "id")).to eq(provider.symbol.downcase)

@@ -4,7 +4,7 @@ class PeriodicalsController < ApplicationController
   before_action :set_periodical, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
-  load_and_authorize_resource :except => [:index, :show, :totals]
+  load_and_authorize_resource :client, :parent => false, :except => [:index, :show, :totals]
 
   def index
     sort = case params[:sort]
@@ -52,7 +52,7 @@ class PeriodicalsController < ApplicationController
 
       options[:links] = {
         self: request.original_url,
-        next: response.results.blank? ? nil : request.base_url + "/clients?" + {
+        next: response.results.blank? ? nil : request.base_url + "/periodicals?" + {
           query: params[:query],
           "provider-id" => params[:provider_id],
           software: params[:software],
@@ -80,44 +80,41 @@ class PeriodicalsController < ApplicationController
   end
 
   def show
-    @periodical = Client.where(symbol: params[:id]).where(deleted_at: nil).where(client_type: "periodical").first
-    fail ActiveRecord::RecordNotFound unless @periodical.present?
-
     options = {}
     options[:meta] = { dois: doi_count(client_id: params[:id]) }
     options[:include] = @include
     options[:is_collection] = false
 
-    render json: PeriodicalSerializer.new(@periodical, options).serialized_json, status: :ok
+    render json: PeriodicalSerializer.new(@client, options).serialized_json, status: :ok
   end
 
   def create
     logger = Logger.new(STDOUT)
-    @periodical = Client.new(safe_params.merge(client_type: "periodical"))
-    authorize! :create, @periodical
+    @client = Client.new(safe_params.merge(client_type: "periodical"))
+    authorize! :create, @client
 
-    if @periodical.save
+    if @client.save
       options = {}
       options[:is_collection] = false
   
-      render json: PeriodicalSerializer.new(@periodical, options).serialized_json, status: :created
+      render json: PeriodicalSerializer.new(@client, options).serialized_json, status: :created
     else
-      logger.warn @periodical.errors.inspect
-      render json: serialize_errors(@periodical.errors), status: :unprocessable_entity
+      logger.warn @client.errors.inspect
+      render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
 
   def update
     logger = Logger.new(STDOUT)
-    if @periodical.update_attributes(safe_params.merge(client_type: "periodical"))
+    if @client.update_attributes(safe_params.merge(client_type: "periodical"))
       options = {}
       options[:meta] = { dois: doi_count(client_id: params[:id]) }
       options[:is_collection] = false
   
-      render json: PeriodicalSerializer.new(@periodical, options).serialized_json, status: :ok
+      render json: PeriodicalSerializer.new(@client, options).serialized_json, status: :ok
     else
-      logger.warn @periodical.errors.inspect
-      render json: serialize_errors(@periodical.errors), status: :unprocessable_entity
+      logger.warn @client.errors.inspect
+      render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
 
@@ -125,17 +122,17 @@ class PeriodicalsController < ApplicationController
   # a periodical with dois or prefixes can't be deleted
   def destroy
     logger = Logger.new(STDOUT)
-    if @periodical.dois.present?
+    if @client.dois.present?
       message = "Can't delete periodical that has DOIs."
       status = 400
       logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
-    elsif @periodical.update_attributes(is_active: nil, deleted_at: Time.zone.now)
-      @periodical.send_delete_email unless Rails.env.test?
+    elsif @client.update_attributes(is_active: nil, deleted_at: Time.zone.now)
+      @client.send_delete_email unless Rails.env.test?
       head :no_content
     else
-      logger.warn @periodical.errors.inspect
-      render json: serialize_errors(@periodical.errors), status: :unprocessable_entity
+      logger.warn @client.errors.inspect
+      render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
 
@@ -163,8 +160,8 @@ class PeriodicalsController < ApplicationController
   end
 
   def set_periodical
-    @periodical = Client.where(symbol: params[:id]).where(client_type: "periodical").where(deleted_at: nil).first
-    fail ActiveRecord::RecordNotFound unless @periodical.present?
+    @client = Client.where(symbol: params[:id]).where(client_type: "periodical").where(deleted_at: nil).first
+    fail ActiveRecord::RecordNotFound unless @client.present?
   end
 
   private
@@ -172,8 +169,8 @@ class PeriodicalsController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:symbol, :name, "contactName", "contactEmail", :domains, :provider, :url, :repository, :description, :software, "targetId", "isActive", "passwordInput", "clientType"],
-              keys: { "contactName" => :contact_name, "contactEmail" => :contact_email, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input, "clientType" => :client_type }
+      params, only: [:symbol, :name, "contactName", "contactEmail", :domains, :provider, :url, :repository, :description, :language, "alternateName", :software, "targetId", "isActive", "passwordInput", "clientType", :issn, { issn: [] }, :certificate, { certificate: [] }],
+              keys: { "contactName" => :contact_name, "contactEmail" => :contact_email, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input, "clientType" => :client_type, "alternateName" => :alternate_name }
     )
   end
 end
