@@ -249,7 +249,7 @@ class Event < ActiveRecord::Base
     # get every id between from_id and until_id
     (from_id..until_id).step(500).each do |id|
       EventImportByIdJob.perform_later(id: id)
-      puts "Queued importing for events with IDs starting with #{id}."
+      puts "Queued importing for events with IDs starting with #{id}." unless Rails.env.test?
     end
   end
 

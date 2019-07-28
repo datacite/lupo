@@ -30,4 +30,48 @@ describe Client, type: :model do
       expect(client.reload.symbol).to eq(client.symbol)
     end
   end
+
+  describe "issn" do
+    let(:client)  { build(:client, provider: provider, client_type: "periodical") }
+
+    it "should support issn" do
+      client.issn = ["1544-9173"]
+      expect(client.save).to be true
+      expect(client.errors.details).to be_empty
+    end
+
+    it "should support multiple issn" do
+      client.issn = ["1544-9173", "1545-7885"]
+      expect(client.save).to be true
+      expect(client.errors.details).to be_empty
+    end
+
+    it "should reject invalid issn" do
+      client.issn = ["1544-91XX"]
+      expect(client.save).to be false
+      expect(client.errors.details).to eq(:issn=>[{:error=>"ISSN 1544-91XX is in the wrong format."}])
+    end
+  end
+
+  describe "certificate" do
+    let(:client)  { build(:client, provider: provider, client_type: "repository") }
+
+    it "should support certificate" do
+      client.certificate = ["CoreTrustSeal"]
+      expect(client.save).to be true
+      expect(client.errors.details).to be_empty
+    end
+
+    it "should support multiple certificates" do
+      client.certificate = ["WDS", "DSA"]
+      expect(client.save).to be true
+      expect(client.errors.details).to be_empty
+    end
+
+    it "should reject unknown certificate" do
+      client.certificate = ["MyHomeGrown Certificate"]
+      expect(client.save).to be false
+      expect(client.errors.details).to eq(:certificate=>[{:error=>"Certificate MyHomeGrown Certificate is not included in the list of supported certificates."}])
+    end
+  end
 end

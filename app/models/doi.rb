@@ -460,7 +460,7 @@ class Doi < ActiveRecord::Base
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
       DoiImportByIdJob.perform_later(options.merge(id: id))
-      puts "Queued importing for DOIs with IDs starting with #{id}."
+      puts "Queued importing for DOIs with IDs starting with #{id}." unless Rails.env.test?
     end
 
     (from_id..until_id).to_a.length

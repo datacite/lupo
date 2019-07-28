@@ -39,6 +39,8 @@ class Client < ActiveRecord::Base
   validates_associated :provider
   validate :check_id, :on => :create
   validate :freeze_symbol, :on => :update
+  validate :check_issn, if: :issn?
+  validate :check_certificate, if: :certificate?
   strip_attributes
 
   belongs_to :provider, foreign_key: :allocator, touch: true
@@ -76,11 +78,15 @@ class Client < ActiveRecord::Base
       indexes :symbol,        type: :keyword
       indexes :provider_id,   type: :keyword
       indexes :repository_id, type: :keyword
+      indexes :issn,          type: :keyword
       indexes :prefix_ids,    type: :keyword
       indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
+      indexes :alternate_name, type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
       indexes :description,   type: :text
       indexes :contact_name,  type: :text
       indexes :contact_email, type: :text, fields: { keyword: { type: "keyword" }}
+      indexes :certificate,      type: :keyword
+      indexes :language,      type: :keyword
       indexes :version,       type: :integer
       indexes :is_active,     type: :keyword
       indexes :domains,       type: :text
@@ -106,11 +112,15 @@ class Client < ActiveRecord::Base
       "uid" => uid,
       "provider_id" => provider_id,
       "repository_id" => repository_id,
+      "issn" => Array.wrap(issn),
       "prefix_ids" => prefix_ids,
       "name" => name,
+      "alternate_name" => alternate_name,
       "description" => description,
+      "certificate" => Array.wrap(certificate),
       "symbol" => symbol,
       "year" => year,
+      "language" => language,
       "contact_name" => contact_name,
       "contact_email" => contact_email,
       "domains" => domains,
@@ -251,6 +261,18 @@ class Client < ActiveRecord::Base
 
   protected
 
+  def check_issn
+    Array.wrap(issn).each do |i|
+      errors.add(:issn, "ISSN #{i} is in the wrong format.") unless /\A\d{4}(-)?\d{3}[0-9X]+\z/.match(i)
+    end
+  end
+
+  def check_certificate
+    Array.wrap(certificate).each do |c|
+      errors.add(:certificate, "Certificate #{c} is not included in the list of supported certificates.") unless %w(CoreTrustSeal DSA WDS DINI).include?(c)
+    end
+  end
+
   def freeze_symbol
     errors.add(:symbol, "cannot be changed") if symbol_changed?
   end
@@ -270,6 +292,8 @@ class Client < ActiveRecord::Base
   def set_defaults
     self.contact_name = "" unless contact_name.present?
     self.domains = "*" unless domains.present?
+    self.issn = [] if issn.blank? || client_type == "repository"
+    self.certificate = [] if certificate.blank? || client_type == "periodical"
     self.is_active = is_active ? "\x01" : "\x00"
     self.version = version.present? ? version + 1 : 0
     self.role_name = "ROLE_DATACENTRE" unless role_name.present?
