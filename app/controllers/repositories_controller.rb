@@ -180,8 +180,8 @@ class RepositoriesController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:symbol, :name, "contactName", "contactEmail", :domains, :provider, :url, :repository, :description, :language, "alternateName", :software, "targetId", "isActive", "passwordInput", "clientType", :issn, { issn: [] }, :certificate, { certificate: [] }],
-              keys: { "contactName" => :contact_name, "contactEmail" => :contact_email, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input, "clientType" => :client_type, "alternateName" => :alternate_name }
+      params, only: [:symbol, :name, "contactName", "contactEmail", :domains, :provider, :url, "repositoryType", :description, :language, "alternateName", :software, "targetId", "isActive", "passwordInput", "clientType", :issn, { issn: [] }, :certificate, { certificate: [] }],
+              keys: { "contactName" => :contact_name, "contactEmail" => :contact_email, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input, "clientType" => :client_type, "alternateName" => :alternate_name, "repositoryType" => :repository_type }
     )
   end
 end

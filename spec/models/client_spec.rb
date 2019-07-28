@@ -74,4 +74,26 @@ describe Client, type: :model do
       expect(client.errors.details).to eq(:certificate=>[{:error=>"Certificate MyHomeGrown Certificate is not included in the list of supported certificates."}])
     end
   end
+
+  describe "repository_type" do
+    let(:client)  { build(:client, provider: provider, client_type: "repository") }
+
+    it "should support repository_type" do
+      client.repository_type = ["institutional"]
+      expect(client.save).to be true
+      expect(client.errors.details).to be_empty
+    end
+
+    it "should support multiple repository_types" do
+      client.repository_type = ["institutional", "governmental"]
+      expect(client.save).to be true
+      expect(client.errors.details).to be_empty
+    end
+
+    it "should reject unknown repository_type" do
+      client.repository_type = ["interplanetary"]
+      expect(client.save).to be false
+      expect(client.errors.details).to eq(:repository_type=>[{:error=>"Repository type interplanetary is not included in the list of supported repository types."}])
+    end
+  end
 end
