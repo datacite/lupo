@@ -174,6 +174,14 @@ class Client < ActiveRecord::Base
     write_attribute(:allocator, r.id)
   end
 
+  def re3data=(value)
+    write_attribute(:re3data_id, value[16..-1]) if value.present?
+  end
+
+  def opendoar=(value)
+    write_attribute(:opendoar_id, value[38..-1]) if value.present?
+  end
+
   def prefix_ids
     prefixes.pluck(:prefix)
   end
