@@ -28,8 +28,10 @@ class ClientsController < ApplicationController
       response = Client.query(params[:query], 
         year: params[:year], 
         provider_id: params[:provider_id],
-        repository_id: params[:repository_id],
-        software: params[:software], 
+        re3data_id: params[:re3data_id],
+        opendoar_id: params[:opendoar_id],
+        software: params[:software],
+        certificate: params[:certificate], 
         client_type: params[:client_type], 
         page: page, 
         sort: sort)

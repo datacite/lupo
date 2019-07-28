@@ -26,8 +26,7 @@ class PeriodicalsController < ApplicationController
       response = Client.query(params[:query], 
         year: params[:year], 
         provider_id: params[:provider_id],
-        repository_id: params[:repository_id],
-        software: params[:software], 
+        issn: params[:issn],
         client_type: "periodical", 
         page: page, 
         sort: sort)

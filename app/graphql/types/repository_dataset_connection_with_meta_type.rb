@@ -9,6 +9,6 @@ class RepositoryDatasetConnectionWithMetaType < BaseConnection
   def total_count
     args = object.arguments
 
-    Doi.query(args[:query], repository_id: doi_from_url(object.parent[:id]), resource_type_id: "Dataset", state: "findable", page: { number: 1, size: args[:first] }).results.total
+    Doi.query(args[:query], re3data_id: doi_from_url(object.parent[:id]), resource_type_id: "Dataset", state: "findable", page: { number: 1, size: args[:first] }).results.total
   end
 end

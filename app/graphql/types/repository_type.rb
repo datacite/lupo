@@ -38,14 +38,14 @@ class RepositoryType < BaseObject
   end
 
   def datasets(**args)
-    Doi.query(args[:query], repository_id: doi_from_url(object[:id]), resource_type_id: "Dataset", page: { number: 1, size: args[:first] }).results.to_a
+    Doi.query(args[:query], re3data_id: doi_from_url(object[:id]), resource_type_id: "Dataset", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   def publications(**args)
-    Doi.query(args[:query], repository_id: doi_from_url(object[:id]), resource_type_id: "Text", page: { number: 1, size: args[:first] }).results.to_a
+    Doi.query(args[:query], re3data_id: doi_from_url(object[:id]), resource_type_id: "Text", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   def softwares(**args)
-    Doi.query(args[:query], repository_id: doi_from_url(object[:id]), resource_type_id: "Software", page: { number: 1, size: args[:first] }).results.to_a
+    Doi.query(args[:query], re3data_id: doi_from_url(object[:id]), resource_type_id: "Software", page: { number: 1, size: args[:first] }).results.to_a
   end
 end

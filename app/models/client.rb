@@ -77,7 +77,8 @@ class Client < ActiveRecord::Base
       indexes :id,            type: :keyword
       indexes :symbol,        type: :keyword
       indexes :provider_id,   type: :keyword
-      indexes :repository_id, type: :keyword
+      indexes :re3data_id,    type: :keyword
+      indexes :opendoar_id,   type: :integer
       indexes :issn,          type: :keyword
       indexes :prefix_ids,    type: :keyword
       indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
@@ -111,7 +112,8 @@ class Client < ActiveRecord::Base
       "id" => uid,
       "uid" => uid,
       "provider_id" => provider_id,
-      "repository_id" => repository_id,
+      "re3data_id" => re3data_id,
+      "opendoar_id" => opendoar_id,
       "issn" => Array.wrap(issn),
       "prefix_ids" => prefix_ids,
       "name" => name,
@@ -172,14 +174,6 @@ class Client < ActiveRecord::Base
 
   def prefix_ids
     prefixes.pluck(:prefix)
-  end
-
-  def repository_id
-    re3data
-  end
-
-  def repository_id=(value)
-    write_attribute(:re3data, value)
   end
 
   def cached_repository

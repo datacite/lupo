@@ -123,7 +123,7 @@ ActiveRecord::Schema.define(version: 2019_07_27_170040) do
     t.bigint "allocator", null: false
     t.string "experiments"
     t.datetime "deleted_at"
-    t.string "re3data"
+    t.string "re3data_id"
     t.text "url"
     t.string "software", limit: 191
     t.text "description"
@@ -132,8 +132,9 @@ ActiveRecord::Schema.define(version: 2019_07_27_170040) do
     t.json "certificate"
     t.string "alternate_name", limit: 191
     t.string "language", limit: 191
+    t.integer "opendoar_id"
     t.index ["allocator"], name: "FK6695D60546EBD781"
-    t.index ["re3data"], name: "index_datacentre_on_re3data"
+    t.index ["re3data_id"], name: "index_datacentre_on_re3data_id"
     t.index ["symbol"], name: "symbol", unique: true
     t.index ["url"], name: "index_datacentre_on_url", length: 100
   end
