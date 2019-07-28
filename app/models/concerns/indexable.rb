@@ -182,7 +182,7 @@ module Indexable
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { terms: { "software.raw" => options[:software].split(",") }} if options[:software].present?
         must << { terms: { certificate: options[:certificate].split(",") }} if options[:certificate].present?
-        must << { term: { re3data_id: options[:re3data_id].gsub("/", '\/') }} if options[:re3data_id].present?
+        must << { terms: { repository_type: options[:repository_type].split(",") }} if options[:repository_type].present?must << { term: { re3data_id: options[:re3data_id].gsub("/", '\/') }} if options[:re3data_id].present?
         must << { term: { opendoar_id: options[:opendoar_id] }} if options[:opendoar_id].present?
         must << { term: { client_type: options[:client_type] }} if options[:client_type].present?
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]

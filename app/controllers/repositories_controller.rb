@@ -29,7 +29,8 @@ class RepositoriesController < ApplicationController
         re3data_id: params[:re3data_id],
         opendoar_id: params[:opendoar_id],
         software: params[:software],
-        certificate: params[:certificate],  
+        certificate: params[:certificate], 
+        repository_type: params[:repository_type],   
         client_type: "repository", 
         page: page, 
         sort: sort)
@@ -42,6 +43,7 @@ class RepositoriesController < ApplicationController
       providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
       software = total > 0 ? facet_by_software(response.response.aggregations.software.buckets) : nil
       certificates = total > 0 ? facet_by_key(response.response.aggregations.certificates.buckets) : nil
+      repository_types = total > 0 ? facet_by_key(response.response.aggregations.repository_types.buckets) : nil
       
       options = {}
       options[:meta] = {
@@ -51,7 +53,8 @@ class RepositoriesController < ApplicationController
         years: years,
         providers: providers,
         software: software,
-        certificates: certificates
+        certificates: certificates,
+        repository_types: repository_types
       }.compact
 
       options[:links] = {
@@ -61,6 +64,7 @@ class RepositoriesController < ApplicationController
           "provider-id" => params[:provider_id],
           software: params[:software],
           certificates: params[:certificates],
+          repository_types: params[:repository_types],
           year: params[:year],
           "page[number]" => page[:number] + 1,
           "page[size]" => page[:size],

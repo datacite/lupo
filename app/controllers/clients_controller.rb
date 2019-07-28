@@ -31,7 +31,8 @@ class ClientsController < ApplicationController
         re3data_id: params[:re3data_id],
         opendoar_id: params[:opendoar_id],
         software: params[:software],
-        certificate: params[:certificate], 
+        certificate: params[:certificate],
+        repository_type: params[:repository_type],
         client_type: params[:client_type], 
         page: page, 
         sort: sort)
@@ -44,6 +45,8 @@ class ClientsController < ApplicationController
       providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
       software = total > 0 ? facet_by_software(response.response.aggregations.software.buckets) : nil
       client_types = total > 0 ? facet_by_key(response.response.aggregations.client_types.buckets) : nil
+      certificates = total > 0 ? facet_by_key(response.response.aggregations.certificates.buckets) : nil
+      repository_types = total > 0 ? facet_by_key(response.response.aggregations.repository_types.buckets) : nil
       
       @clients = response.results
 
@@ -55,6 +58,8 @@ class ClientsController < ApplicationController
         years: years,
         providers: providers,
         software: software,
+        certificates: certificates,
+        repository_types: repository_types,
         "clientTypes" => client_types
       }.compact
 
@@ -64,6 +69,8 @@ class ClientsController < ApplicationController
           query: params[:query],
           "provider-id" => params[:provider_id],
           software: params[:software],
+          certificate: params[:certificate],
+          "repositoryType" => params[:repository_type],
           "clientTypes" => params[:client_type],
           year: params[:year],
           "page[number]" => page[:number] + 1,

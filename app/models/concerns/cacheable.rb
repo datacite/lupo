@@ -79,16 +79,6 @@ module Cacheable
         resource_type.present? ? resource_type[:data] : nil
       end
     end
-
-    def cached_repository_response(id, options={})
-      Rails.cache.fetch("repository_response/#{id}", expires_in: 1.day) do
-        url = Rails.env.production? ? "https://api.datacite.org" : "https://api.test.datacite.org"
-        response = Maremma.get(url + "/repositories/" + id)
-        attributes = response.body.dig("data", "attributes").to_h
-        attributes = attributes.transform_keys! { |key| key.tr('-', '_') }
-        attributes.merge("id" => id, "cache_key" => "repositories/#{id}-#{attributes["updated"]}")
-      end
-    end
   end
 
   module ClassMethods

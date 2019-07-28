@@ -130,6 +130,7 @@ ActiveRecord::Schema.define(version: 2019_07_27_170040) do
     t.string "client_type", limit: 191, default: "repository"
     t.json "issn"
     t.json "certificate"
+    t.json "repository_type"
     t.string "alternate_name", limit: 191
     t.string "language", limit: 191
     t.integer "opendoar_id"

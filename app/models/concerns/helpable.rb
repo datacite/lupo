@@ -58,13 +58,13 @@ module Helpable
       if [200, 201].include?(response.status)
         # update minted column after first successful registration in handle system
         self.update_attributes(minted: Time.zone.now, updated: Time.zone.now) if minted.blank?
-        logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "."
+        logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "." unless Rails.env.test?
 
         self.__elasticsearch__.index_document
 
         response
       else
-        logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect
+        logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect unless Rails.env.test?
         response
       end
     end
@@ -77,7 +77,7 @@ module Helpable
         response
       else
         logger = Logger.new(STDOUT)
-        logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect
+        logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect unless Rails.env.test?
         response
       end
     end

@@ -9,7 +9,7 @@ class RepositorySerializer
   belongs_to :provider, record_type: :providers
   has_many :prefixes, record_type: :prefixes
 
-  attribute :re3data_id do |object|
+  attribute :re3data do |object|
     "https://doi.org/#{object.re3data_id}" if object.re3data_id.present?
   end
 

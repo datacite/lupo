@@ -180,9 +180,12 @@ paths:
               - eprints
               - escidoc
               - fedora
+              - hal
               - invenio
+              - islandora
               - mysql
               - nesstar
+              - opus
         - in: query
           name: 'page[number]'
           schema:

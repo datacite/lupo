@@ -41,6 +41,7 @@ class Client < ActiveRecord::Base
   validate :freeze_symbol, :on => :update
   validate :check_issn, if: :issn?
   validate :check_certificate, if: :certificate?
+  validate :check_repository_type, if: :repository_type?
   strip_attributes
 
   belongs_to :provider, foreign_key: :allocator, touch: true
@@ -88,6 +89,7 @@ class Client < ActiveRecord::Base
       indexes :contact_email, type: :text, fields: { keyword: { type: "keyword" }}
       indexes :certificate,   type: :keyword
       indexes :language,      type: :keyword
+      indexes :repository_type, type: :keyword
       indexes :version,       type: :integer
       indexes :is_active,     type: :keyword
       indexes :domains,       type: :text
@@ -103,7 +105,6 @@ class Client < ActiveRecord::Base
 
       # include parent objects
       indexes :provider,      type: :object
-      indexes :repository,    type: :object
     end
   end
 
@@ -122,7 +123,8 @@ class Client < ActiveRecord::Base
       "certificate" => Array.wrap(certificate),
       "symbol" => symbol,
       "year" => year,
-      "language" => language,
+      "language" => Array.wrap(language),
+      "repository_type" => Array.wrap(repository_type),
       "contact_name" => contact_name,
       "contact_email" => contact_email,
       "domains" => domains,
@@ -136,8 +138,7 @@ class Client < ActiveRecord::Base
       "updated" => updated,
       "deleted_at" => deleted_at,
       "cumulative_years" => cumulative_years,
-      "provider" => provider.as_indexed_json,
-      "repository" => cached_repository
+      "provider" => provider.as_indexed_json
     }
   end
 
@@ -152,6 +153,7 @@ class Client < ActiveRecord::Base
       providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } },
       software: { terms: { field: 'software.keyword', size: 15, min_doc_count: 1 } },
       client_types: { terms: { field: 'client_type', size: 15, min_doc_count: 1 } },
+      repository_types: { terms: { field: 'repository_type', size: 15, min_doc_count: 1 } },
       certificates: { terms: { field: 'certificate', size: 15, min_doc_count: 1 } }
     }
   end
@@ -174,14 +176,6 @@ class Client < ActiveRecord::Base
 
   def prefix_ids
     prefixes.pluck(:prefix)
-  end
-
-  def cached_repository
-    cached_repository_response(re3data) if re3data.present?
-  end
-
-  def repository
-    OpenStruct.new(cached_repository)
   end
 
   def target_id=(value)
@@ -241,7 +235,8 @@ class Client < ActiveRecord::Base
       "contact-name" => contact_name,
       "contact-email" => contact_email,
       "url" => url,
-      "re3data" => re3data,
+      "re3data_id" => re3data_id,
+      "opendoar_id" => opendoar_id,
       "domains" => domains,
       "provider-id" => provider_id,
       "prefixes" => prefixes.map { |p| p.prefix },
@@ -265,6 +260,12 @@ class Client < ActiveRecord::Base
   def check_certificate
     Array.wrap(certificate).each do |c|
       errors.add(:certificate, "Certificate #{c} is not included in the list of supported certificates.") unless %w(CoreTrustSeal DSA WDS DINI).include?(c)
+    end
+  end
+
+  def check_repository_type
+    Array.wrap(repository_type).each do |r|
+      errors.add(:repository_type, "Repository type #{r} is not included in the list of supported repository types.") unless %w(disciplinary governmental institutional multidisciplinary project-related other).include?(r)
     end
   end
 
