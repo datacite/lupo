@@ -170,7 +170,8 @@ describe 'Periodicals', type: :request, elasticsearch: true do
       let(:params) do
         { "data" => { "type" => "periodicals",
                       "attributes" => {
-                        "name" => "Imperial College 2"}} }
+                        "name" => "Imperial College 2",
+                        "clientType" => "repository"}} }
       end
 
       it 'updates the record' do
@@ -179,6 +180,7 @@ describe 'Periodicals', type: :request, elasticsearch: true do
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
         expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
+        expect(json.dig('data', 'attributes', 'clientType')).to eq("repository")
       end
     end
 

@@ -102,7 +102,7 @@ class RepositoriesController < ApplicationController
 
   def create
     logger = Logger.new(STDOUT)
-    @client = Client.new(safe_params.merge(client_type: "repository"))
+    @client = Client.new(safe_params)
     authorize! :create, @client
 
     if @client.save
@@ -118,7 +118,7 @@ class RepositoriesController < ApplicationController
 
   def update
     logger = Logger.new(STDOUT)
-    if @client.update_attributes(safe_params.merge(client_type: "repository"))
+    if @client.update_attributes(safe_params)
       options = {}
       options[:meta] = { dois: doi_count(client_id: params[:id]) }
       options[:is_collection] = false

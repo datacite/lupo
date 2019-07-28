@@ -4,7 +4,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
   let(:ids) { clients.map { |c| c.uid }.join(",") }
   let(:bearer) { User.generate_token }
   let(:provider) { create(:provider, password_input: "12345") }
-  let!(:client) { create(:client, provider: provider) }
+  let!(:client) { create(:client, provider: provider, client_type: "repository") }
   let(:params) do
     { "data" => { "type" => "clients",
                   "attributes" => {
@@ -142,7 +142,8 @@ describe 'Repositories', type: :request, elasticsearch: true do
       let(:params) do
         { "data" => { "type" => "repositories",
                       "attributes" => {
-                        "name" => "Imperial College 2"}} }
+                        "name" => "Imperial College 2",
+                        "clientType" => "periodical" }} }
       end
 
       it 'updates the record' do
@@ -151,6 +152,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
         expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
+        expect(json.dig('data', 'attributes', 'clientType')).to eq("periodical")
       end
     end
 
