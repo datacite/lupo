@@ -85,7 +85,7 @@ class Client < ActiveRecord::Base
       indexes :description,   type: :text
       indexes :contact_name,  type: :text
       indexes :contact_email, type: :text, fields: { keyword: { type: "keyword" }}
-      indexes :certificate,      type: :keyword
+      indexes :certificate,   type: :keyword
       indexes :language,      type: :keyword
       indexes :version,       type: :integer
       indexes :is_active,     type: :keyword
@@ -149,7 +149,8 @@ class Client < ActiveRecord::Base
       cumulative_years: { terms: { field: 'cumulative_years', min_doc_count: 1, order: { _count: "asc" } } },
       providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } },
       software: { terms: { field: 'software.keyword', size: 15, min_doc_count: 1 } },
-      client_types: { terms: { field: 'client_type', size: 15, min_doc_count: 1 } }
+      client_types: { terms: { field: 'client_type', size: 15, min_doc_count: 1 } },
+      certificates: { terms: { field: 'certificate', size: 15, min_doc_count: 1 } }
     }
   end
 
