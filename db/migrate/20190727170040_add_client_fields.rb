@@ -1,7 +1,5 @@
 class AddClientFields < ActiveRecord::Migration[5.2]
   def change
-    change_column_default :datacentre, :client_type, from: nil, to: "repository"
-
     remove_index :datacentre, [:re3data]
     rename_column :datacentre, :re3data, :re3data_id
     add_index :datacentre, [:re3data_id]

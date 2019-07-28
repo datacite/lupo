@@ -5,7 +5,7 @@ class ClientSerializer
   set_id :uid
   cache_options enabled: true, cache_length: 24.hours
   
-  attributes :name, :alternate_name, :symbol, :year, :contact_name, :contact_email, :description, :language, :client_type, :domains, :url, :created, :updated
+  attributes :name, :symbol, :year, :contact_name, :contact_email, :alternate_name, :description, :language, :client_type, :domains, :url, :created, :updated
 
   belongs_to :provider, record_type: :providers
   has_many :prefixes, record_type: :prefixes

@@ -296,6 +296,7 @@ class Client < ActiveRecord::Base
   def set_defaults
     self.contact_name = "" unless contact_name.present?
     self.domains = "*" unless domains.present?
+    self.client_type = "repository" unless client_type.present?
     self.issn = [] if issn.blank? || client_type == "repository"
     self.certificate = [] if certificate.blank? || client_type == "periodical"
     self.is_active = is_active ? "\x01" : "\x00"
