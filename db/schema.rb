@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema.define(version: 2019_07_27_170040) do
 
-  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 2019_07_27_170040) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.string "key", limit: 191, null: false
     t.string "filename", limit: 191, null: false
     t.string "content_type", limit: 191
@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 2019_07_27_170040) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "allocator", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "allocator", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
     t.string "system_email", null: false
     t.datetime "created"
     t.integer "doi_quota_allowed", null: false
@@ -73,7 +73,7 @@ ActiveRecord::Schema.define(version: 2019_07_27_170040) do
     t.index ["symbol"], name: "symbol", unique: true
   end
 
-  create_table "allocator_prefixes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "allocator_prefixes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
     t.bigint "allocator", null: false
     t.bigint "prefixes", null: false
     t.datetime "created_at"
@@ -83,7 +83,7 @@ ActiveRecord::Schema.define(version: 2019_07_27_170040) do
     t.index ["prefixes"], name: "FKE7FBD674AF86A1C7"
   end
 
-  create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.integer "auditable_id"
     t.string "auditable_type"
     t.integer "associated_id"
@@ -105,7 +105,7 @@ ActiveRecord::Schema.define(version: 2019_07_27_170040) do
     t.index ["user_id", "user_type"], name: "user_index"
   end
 
-  create_table "datacentre", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "datacentre", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
     t.text "comments", limit: 4294967295
     t.string "contact_email", null: false
     t.string "contact_name", limit: 80, null: false
@@ -128,11 +128,12 @@ ActiveRecord::Schema.define(version: 2019_07_27_170040) do
     t.string "software", limit: 191
     t.text "description"
     t.string "client_type", limit: 191, default: "repository"
+    t.string "doaj_journal_id", limit: 191
     t.json "issn"
     t.json "certificate"
     t.json "repository_type"
     t.string "alternate_name", limit: 191
-    t.string "language", limit: 191
+    t.json "language"
     t.integer "opendoar_id"
     t.index ["allocator"], name: "FK6695D60546EBD781"
     t.index ["re3data_id"], name: "index_datacentre_on_re3data_id"
@@ -140,7 +141,7 @@ ActiveRecord::Schema.define(version: 2019_07_27_170040) do
     t.index ["url"], name: "index_datacentre_on_url", length: 100
   end
 
-  create_table "datacentre_prefixes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "datacentre_prefixes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
     t.bigint "datacentre", null: false
     t.bigint "prefixes", null: false
     t.datetime "created_at"
@@ -152,7 +153,7 @@ ActiveRecord::Schema.define(version: 2019_07_27_170040) do
     t.index ["prefixes"], name: "FK13A1B3BAAF86A1C7"
   end
 
-  create_table "dataset", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "dataset", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
     t.datetime "created"
     t.string "doi", null: false
     t.binary "is_active", limit: 1, null: false
@@ -207,7 +208,7 @@ ActiveRecord::Schema.define(version: 2019_07_27_170040) do
     t.index ["url"], name: "index_dataset_on_url", length: 100
   end
 
-  create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.text "uuid", null: false
     t.text "subj_id", null: false
     t.text "obj_id"

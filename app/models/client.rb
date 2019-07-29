@@ -265,6 +265,12 @@ class Client < ActiveRecord::Base
     end
   end
 
+  def check_language
+    Array.wrap(language).each do |l|
+      errors.add(:issn, "Language can't be empty.") unless l.present?
+    end
+  end
+
   def check_certificate
     Array.wrap(certificate).each do |c|
       errors.add(:certificate, "Certificate #{c} is not included in the list of supported certificates.") unless %w(CoreTrustSeal DSA WDS DINI).include?(c)
@@ -299,6 +305,7 @@ class Client < ActiveRecord::Base
     self.client_type = "repository" unless client_type.present?
     self.issn = [] if issn.blank? || client_type == "repository"
     self.certificate = [] if certificate.blank? || client_type == "periodical"
+    self.repository_type = [] if repository_type.blank? || client_type == "periodical"
     self.is_active = is_active ? "\x01" : "\x00"
     self.version = version.present? ? version + 1 : 0
     self.role_name = "ROLE_DATACENTRE" unless role_name.present?
