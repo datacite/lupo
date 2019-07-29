@@ -121,8 +121,8 @@ class EventsController < ApplicationController
     pairings = total.positive? && params[:extra] ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
     dois = total.positive? && params[:extra] ? facet_by_dois(response.response.aggregations.dois.buckets) : nil
     dois_usage = total.positive? && params[:extra] ? facet_by_dois(response.response.aggregations.dois_usage.dois.buckets) : nil
-    dois_citations = total.positive? && params[:extra] ? facet_citations_by_year(response.response.aggregations.dois_citations) : nil
-    # unique_citations = total.positive? && params[:extra] ? facet_citations_by_dois(response.response.aggregations.unique_citations.dois.buckets) : nil
+    citations_histogram = total.positive? && params[:extra] ? facet_citations_by_year(response.response.aggregations.citations_histogram.years.buckets) : nil
+    citations = total.positive? && params[:extra] ? facet_citations_by_dois(response.response.aggregations.citations.dois.buckets) : nil
  
     results = response.results
 
@@ -139,8 +139,8 @@ class EventsController < ApplicationController
       registrants: registrants,
       "doisRelationTypes": dois,
       "doisUsageTypes": dois_usage,
-      "doisCitations": dois_citations,
-      # "uniqueCitations": unique_citations
+      "doisCitations": citations_histogram,
+      "uniqueCitations": citations
     }.compact
 
     options[:links] = {
@@ -165,41 +165,20 @@ class EventsController < ApplicationController
         "page[size]" => page[:size] }.compact.to_query
       }.compact
 
-    
+    options[:include] = []
     options[:is_collection] = true
     
     bmr = Benchmark.ms {
-
-      ##### Batchloading doi metadata
-      ### Unfotunately fast_json fetches relations by item and one cannot pass and the includes
-      ### We obtain all the events' dois, we batchload them and serilize them 
-      ### Then we serlize all the events and we merged them both together
-      ### TODO: remove after benchmark
-      if @include.include?(:dois) && params["batchload"].present?
-        if  params["batchload"].start_with?("batchload")
-          options[:include] = @include
-          render json: BatchSerializer.new(results, options).serialized_json, status: :ok
-        elsif params["batchload"].start_with?("singlecall")
-          options[:include] = []
-          doi_names = (results.map { |event| event.doi}).join(",")
-          # doi_names = "10.18711/0jdfnq2c,10.14288/1.0043659,10.25620/iciber.issn.1476-4687"
-          events_serialized = EventSerializer.new(results, options).serializable_hash
-          events_serialized[:included] = DoiSerializer.new((Doi.find_by_id(doi_names).results), {is_collection: true}).serializable_hash.dig(:data) 
-
-          render json: events_serialized, status: :ok
-        end
-      else
-        options[:include] = @include
-        params['batchload'] = "Normal"
-        render json: EventSerializer.new(results, options).serialized_json, status: :ok
-      end
-      
+      doi_names = (results.map { |event| event.doi}).uniq().join(",")
+      events_serialized = EventSerializer.new(results, options).serializable_hash
+      events_serialized[:included] = DoiSerializer.new((Doi.find_by_id(doi_names).results), {is_collection: true}).serializable_hash.dig(:data) 
+      render json: events_serialized, status: :ok
     }
 
     if bmr > 3000
-      logger.warn "[Benchmark Warning] Events render. batchload: #{params['batchload']} " + bmr.to_s + " ms"
+      logger.warn "[Benchmark Warning] Events render.} " + bmr.to_s + " ms"
     else
-      logger.info "[Benchmark] Events render. batchload: #{params['batchload']} " + bmr.to_s + " ms"
+      logger.info "[Benchmark] Events render.} " + bmr.to_s + " ms"
     end
   end
 
