@@ -203,7 +203,7 @@ class Event < ActiveRecord::Base
           String subjDatePublished = params['_source']['subj']['date_published']?.substring(0, 4);
           String objDatePublished  = params['_source']['obj']['date_published']?.substring(0, 4);
           
-          if( subjDatePublished != 'null' && objDatePublished != 'null'){
+          if( params['_source']['subj']['date_published']?.substring(0, 4) !== null && params['_source']['obj']['date_published']?.substring(0, 4) !== null){
 
             if(Integer.parseInt(objDatePublished) > Integer.parseInt(subjDatePublished) )
             {
