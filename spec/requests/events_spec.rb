@@ -545,8 +545,38 @@ describe "/events", type: :request, elasticsearch: true do
   end
 
   context "index" do
-    let!(:event) { create(:event) }
-    let(:uri) { "/events" }
+  #   # let!(:event) { create(:event) }
+  #   # let(:uri) { "/events" }
+    
+  ## TODO: need further setup
+  #   context "check meta unique" do
+  #     let!(:event) { create_list(:event_for_datacite_related, 5) }
+  #     let(:uri) { "/events?extra=true" }
+  #     ## to import events from factory
+  #     let(:import_events) do
+  #       Event.import_by_id(id: 1) 
+  #       sleep 1
+  #     end
+
+  #     # Exclude the token header.
+  #     let(:headers) do
+  #       { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
+  #     end
+
+  #     it "json" do
+  #       import_events ## to import events from factory
+  #       get uri, nil, headers
+
+  #       expect(last_response.status).to eq(200)
+  #       response = JSON.parse(last_response.body)
+  #       attributes = response.dig("data", 0, "attributes")
+  #       citations = response.dig("meta", "uniqueCitations")
+  #       puts response
+  #       puts attributes
+  #       puts citations
+  #       expect(citations).to eq(1)
+  #     end
+  #   end
 
     # Just test that the API can be accessed without a token.
     # context "with no API key" do

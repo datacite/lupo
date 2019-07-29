@@ -293,7 +293,7 @@ FactoryBot.define do
     factory :event_for_datacite_related do
       source_id { "datacite_related" }
       source_token { "datacite_related_123" }
-      subj_id { "http://doi.org/10.5061/DRYAD.47SD5" }
+      sequence(:subj_id) { |n| "http://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
       subj { nil }
       obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
       relation_type_id { "has_part" }

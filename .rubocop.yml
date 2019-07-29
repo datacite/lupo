@@ -1,7 +1,6 @@
 inherit_from: .rubocop_todo.yml
 
 # from https://github.com/rails/rails/blob/master/.rubocop.yml
-require: rubocop-performance
 
 AllCops:
   TargetRubyVersion: 2.5
