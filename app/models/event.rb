@@ -200,13 +200,19 @@ class Event < ActiveRecord::Base
           }
         },
         aggs: { years: { terms: { script:  { source: "
-          if(Integer.parseInt(params['_source']['obj']['date_published'].substring(0, 4)) > Integer.parseInt(params['_source']['subj']['date_published'].substring(0, 4)) )
-          {
-            params['_source']['obj']['date_published']
-          }
-          else{
-            params['_source']['subj']['date_published']
-          }
+          String subjDatePublished = params['_source']['subj']['date_published']?.substring(0, 4);
+          String objDatePublished  = params['_source']['obj']['date_published']?.substring(0, 4);
+          
+          if( subjDatePublished != 'null' && objDatePublished != 'null'){
+
+            if(Integer.parseInt(objDatePublished) > Integer.parseInt(subjDatePublished) )
+            {
+              objDatePublished
+            }
+            else{
+              subjDatePublished
+            }
+          } 
         " }}}}
       },
       citations: {
