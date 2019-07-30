@@ -727,11 +727,11 @@ class Doi < ActiveRecord::Base
   end
 
   # register DOIs in the handle system that have not been registered yet
-  # providers ethz and europ register their DOIs in the handle system themselves and are ignored
+  # provider europ registers their DOIs in the handle system themselves and are ignored
   def self.set_handle
     logger = Logger.new(STDOUT)
 
-    response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:ethz -provider_id:europ", page: { size: 1, cursor: [] })
+    response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:Crossref", page: { size: 1, cursor: [] })
     logger.info "#{response.results.total} DOIs found that are not registered in the Handle system."
 
     if response.results.total > 0
@@ -739,7 +739,7 @@ class Doi < ActiveRecord::Base
       cursor = []
 
       while response.results.results.length > 0 do
-        response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:ethz -provider_id:europ", page: { size: 1000, cursor: cursor })
+        response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:Crossref", page: { size: 1000, cursor: cursor })
         break unless response.results.results.length > 0
 
         logger.info "[Handle] Register #{response.results.results.length} DOIs in the handle system starting with _id #{response.results.to_a.first[:_id]}."
@@ -779,7 +779,7 @@ class Doi < ActiveRecord::Base
   def self.set_minted
     logger = Logger.new(STDOUT)
 
-    response = Doi.query("url:* +provider_id:ethz +aasm_state:draft", page: { size: 1, cursor: [] })
+    response = Doi.query("provider_id:ethz AND +aasm_state:draft +url:*", page: { size: 1, cursor: [] })
     logger.info "#{response.results.total} draft DOIs from provider ETHZ found in the database."
 
     if response.results.total > 0
@@ -787,7 +787,7 @@ class Doi < ActiveRecord::Base
       cursor = []
 
       while response.results.results.length > 0 do
-        response = Doi.query("url:* +provider_id:ethz  +aasm_state:draft", page: { size: 1000, cursor: cursor })
+        response = Doi.query("provider_id:ethz AND +aasm_state:draft +url:*", page: { size: 1000, cursor: cursor })
         break unless response.results.results.length > 0
 
         logger.info "[MySQL] Set minted for #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
