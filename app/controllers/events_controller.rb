@@ -121,8 +121,9 @@ class EventsController < ApplicationController
     pairings = total.positive? && params[:extra] ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
     dois = total.positive? && params[:extra] ? facet_by_dois(response.response.aggregations.dois.buckets) : nil
     dois_usage = total.positive? && params[:extra] ? facet_by_dois(response.response.aggregations.dois_usage.dois.buckets) : nil
-    citations_histogram = total.positive? && params[:extra] ? facet_citations_by_year(response.response.aggregations.citations_histogram.years.buckets) : nil
-    citations = total.positive? && params[:extra] ? facet_citations_by_dois(response.response.aggregations.citations.dois.buckets) : nil
+    citations_histogram = total.positive? && params[:extra] ? facet_citations_by_year(response.response.aggregations.dois_citations) : nil
+    # citations_histogram = total.positive? && params[:extra] ? facet_citations_by_year(response.response.aggregations.citations_histogram.years.buckets) : nil
+    # citations = total.positive? && params[:extra] ? facet_citations_by_dois(response.response.aggregations.citations.dois.buckets) : nil
  
     results = response.results
 
@@ -139,8 +140,8 @@ class EventsController < ApplicationController
       registrants: registrants,
       "doisRelationTypes": dois,
       "doisUsageTypes": dois_usage,
-      "doisCitations": citations_histogram,
-      "uniqueCitations": citations
+      "doisCitations": citations_histogram
+      # "uniqueCitations": citations
     }.compact
 
     options[:links] = {
@@ -165,14 +166,16 @@ class EventsController < ApplicationController
         "page[size]" => page[:size] }.compact.to_query
       }.compact
 
-    options[:include] = []
     options[:is_collection] = true
     
     bmr = Benchmark.ms {
-      doi_names = (results.map { |event| event.doi}).uniq().join(",")
       events_serialized = EventSerializer.new(results, options).serializable_hash
-      events_serialized[:included] = DoiSerializer.new((Doi.find_by_id(doi_names).results), {is_collection: true}).serializable_hash.dig(:data) 
-      render json: events_serialized, status: :ok
+      if @include.include?(:dois)
+        options[:include] =[]
+        doi_names = (results.map { |event| event.doi}).uniq().join(",")
+        events_serialized[:included] = DoiSerializer.new((Doi.find_by_id(doi_names).results), {is_collection: true}).serializable_hash.dig(:data) 
+      end
+        render json: events_serialized, status: :ok
     }
 
     if bmr > 3000
