@@ -502,7 +502,6 @@ class DoisController < ApplicationController
       { dates: [:date, :dateType, :dateInformation] },
       :subjects,
       { subjects: [:subject, :subjectScheme, :schemeUri, :valueUri, :lang] },
-      :landingPage,
       {
         landingPage: [
           :checked,

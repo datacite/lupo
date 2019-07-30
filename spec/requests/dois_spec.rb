@@ -2379,6 +2379,13 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'landingPage')).to eq(landing_page)
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
       end
+
+      it 'fails to create a doi with bad data' do
+        valid_attributes['data']['attributes']['landingPage'] = "http://example.com"
+        post '/dois', valid_attributes.to_json, { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }
+
+        expect(last_response.status).to eq(422)
+      end
     end
 
     context 'update with landing page info as admin' do
