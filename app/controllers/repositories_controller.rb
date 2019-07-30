@@ -52,9 +52,9 @@ class RepositoriesController < ApplicationController
         page: page[:number],
         years: years,
         providers: providers,
-        software: software,
+        "repositoryTypes" => repository_types,
         certificates: certificates,
-        repository_types: repository_types
+        software: software
       }.compact
 
       options[:links] = {
@@ -64,7 +64,7 @@ class RepositoriesController < ApplicationController
           "provider-id" => params[:provider_id],
           software: params[:software],
           certificates: params[:certificates],
-          repository_types: params[:repository_types],
+          "repositoryTypes" => params[:repository_types],
           year: params[:year],
           "page[number]" => page[:number] + 1,
           "page[size]" => page[:size],
