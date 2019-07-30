@@ -31,7 +31,7 @@ class RepositoriesController < ApplicationController
         software: params[:software],
         certificate: params[:certificate], 
         repository_type: params[:repository_type],   
-        client_type: "repository", 
+        client_type: params[:client_type],
         page: page, 
         sort: sort)
     end
@@ -43,6 +43,7 @@ class RepositoriesController < ApplicationController
       providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
       software = total > 0 ? facet_by_software(response.response.aggregations.software.buckets) : nil
       certificates = total > 0 ? facet_by_key(response.response.aggregations.certificates.buckets) : nil
+      client_types = total > 0 ? facet_by_key(response.response.aggregations.client_types.buckets) : nil
       repository_types = total > 0 ? facet_by_key(response.response.aggregations.repository_types.buckets) : nil
       
       options = {}
@@ -52,6 +53,7 @@ class RepositoriesController < ApplicationController
         page: page[:number],
         years: years,
         providers: providers,
+        "clientTypes" => client_types,
         "repositoryTypes" => repository_types,
         certificates: certificates,
         software: software
@@ -64,6 +66,7 @@ class RepositoriesController < ApplicationController
           "provider-id" => params[:provider_id],
           software: params[:software],
           certificate: params[:certificate],
+          "client-type" => params[:client_type],
           "repository-type" => params[:repository_type],
           year: params[:year],
           "page[number]" => page[:number] + 1,
