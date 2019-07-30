@@ -193,6 +193,7 @@ module Indexable
         must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
         must << { term: { "client.re3data_id" => options[:re3data_id].upcase.gsub("/", '\/') }} if options[:re3data_id].present?
         must << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
+        must << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
         must_not << { terms: { provider_id: ["crossref", "medra", "op"] }} if options[:exclude_registration_agencies]
       elsif self.name == "Event"
         must << { term: { subj_id: options[:subj_id] }} if options[:subj_id].present?
