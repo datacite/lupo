@@ -99,7 +99,7 @@ module Indexable
       return send(:query_aggregations) if aggregations.blank?
       aggs = {}
       aggregations.split(",").each do |agg|
-        agg = :query_aggregations if agg.blank?
+        agg = :query_aggregations if agg.blank? || !respond_to?(agg)
         aggs.merge! send(agg)
       end
       aggs
