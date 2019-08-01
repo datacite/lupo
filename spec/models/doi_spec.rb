@@ -216,6 +216,46 @@ describe Doi, type: :model, vcr: true do
     # end
   end
 
+  describe "dates" do
+    let(:doi) { build(:doi) }
+
+    it "full date" do
+      doi.dates = [{ "date" => "2019-08-01" }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+    end
+
+    it "year-month" do
+      doi.dates = [{ "date" => "2019-08" }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+    end
+
+    it "year" do
+      doi.dates = [{ "date" => "2019" }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+    end
+
+    it "date range" do
+      doi.dates = [{ "date" => "2019-07-31/2019-08-01" }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+    end
+
+    it "date range years" do
+      doi.dates = [{ "date" => "2018/2019" }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+    end
+
+    it "invalid" do
+      doi.dates = [{ "date" => "08/01/2019" }]
+      expect(doi.save).to be false
+      expect(doi.errors.details).to eq(:dates=>[{:error=>"Date 08/01/2019 is not in a supported format."}])
+    end
+  end
+
   describe "metadata" do
     subject  { create(:doi) }
 

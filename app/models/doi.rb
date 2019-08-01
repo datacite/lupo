@@ -83,6 +83,7 @@ class Doi < ActiveRecord::Base
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
   validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
+  validate :check_dates, if: :dates?
 
   after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
@@ -741,6 +742,12 @@ class Doi < ActiveRecord::Base
 
   def event=(value)
     self.send(value) if %w(register publish hide show).include?(value)
+  end
+
+  def check_dates
+    Array.wrap(dates).each do |d|
+      errors.add(:dates, "Date #{d["date"]} is not in a supported format.") unless Date.edtf(d["date"]).present?
+    end
   end
 
   # to be used after DOIs were transferred to another DOI RA
