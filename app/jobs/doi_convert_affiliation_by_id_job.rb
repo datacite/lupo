@@ -1,12 +1,12 @@
-class IndexJob < ActiveJob::Base
-  queue_as :lupo
+class DoiConvertAffiliationByIdJob < ActiveJob::Base
+  queue_as :lupo_background
 
   rescue_from ActiveJob::DeserializationError, Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
     logger = Logger.new(STDOUT)
     logger.error error.message
   end
 
-  def perform(obj)
-    obj.__elasticsearch__.index_document
+  def perform(options={})
+    Doi.convert_affiliation_by_id(options)
   end
 end

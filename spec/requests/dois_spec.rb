@@ -2726,8 +2726,8 @@ describe "dois", type: :request do
       it 'returns nil' do
         get "/dois/#{doi.doi}/get-url", nil, headers
 
-        expect(last_response.status).to eq(404)
-        expect(json['url']).to be_nil
+        expect(last_response.status).to eq(403)
+        expect(json).to eq("errors"=>[{"status"=>403, "title"=>"SERVER NOT RESPONSIBLE FOR HANDLE"}])
       end
     end
   end

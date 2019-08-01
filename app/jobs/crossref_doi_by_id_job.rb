@@ -6,6 +6,11 @@ class CrossrefDoiByIdJob < ActiveJob::Base
 
   # discard_on ActiveJob::DeserializationError
 
+  rescue_from ActiveJob::DeserializationError, Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
+    logger = Logger.new(STDOUT)
+    logger.error error.message
+  end
+
   def perform(id, options={})
     logger = Logger.new(STDOUT)
 

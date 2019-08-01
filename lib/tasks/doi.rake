@@ -79,7 +79,10 @@ namespace :doi do
 
   desc 'Convert affiliations to new format'
   task :convert_affiliations => :environment do
-    Doi.convert_affiliations
+    from_id = (ENV['FROM_ID'] || Doi.minimum(:id)).to_i
+    until_id = (ENV['UNTIL_ID'] || Doi.maximum(:id)).to_i
+
+    Doi.convert_affiliations(from_id: from_id, until_id: until_id)
   end
 
   desc 'Migrates landing page data handling camelCase changes at same time'

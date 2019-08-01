@@ -207,7 +207,7 @@ class Doi < ActiveRecord::Base
         awardTitle: { type: :keyword }
       }
       indexes :dates,                          type: :object, properties: {
-        date: { type: :date, format: "date_optional_time", ignore_malformed: true, fields: { raw: { type: :text }} },
+        date: { type: :text },
         dateType: { type: :keyword }
       }
       indexes :geo_locations,                  type: :object, properties: {
@@ -572,7 +572,58 @@ class Doi < ActiveRecord::Base
     end
   end
 
-  def convert_affiliation
+  def self.convert_affiliations(options={})
+    from_id = (options[:from_id] || Doi.minimum(:id)).to_i
+    until_id = (options[:until_id] || Doi.maximum(:id)).to_i
+
+    # get every id between from_id and end_id
+    (from_id..until_id).step(500).each do |id|
+      DoiConvertAffiliationByIdJob.perform_later(options.merge(id: id))
+      puts "Queued converting affiliations for DOIs with IDs starting with #{id}." unless Rails.env.test?
+    end
+
+    (from_id..until_id).to_a.length
+  end
+
+  def self.convert_affiliation_by_id(options={})
+    return nil unless options[:id].present?
+
+    id = options[:id].to_i
+    count = 0
+
+    logger = Logger.new(STDOUT)
+
+    Doi.where(id: id..(id + 499)).find_each do |doi|
+      should_update = false
+      creators = Array.wrap(doi.creators).map do |c|
+        if c["affiliation"].is_a?(String)
+          c["affiliation"] = { "name" => c["affiliation"] } 
+          should_update = true
+        end
+
+        c
+      end
+      contributors = Array.wrap(doi.contributors).map do |c|
+        if c["affiliation"].is_a?(String)
+          c["affiliation"] = { "name" => c["affiliation"] }
+          should_update = true
+        end
+
+        c
+      end
+
+      if should_update
+        Doi.non_audited_columns = [:creators, :contributors]
+        doi.update_attributes(creators: creators, contributors: contributors)
+        count += 1
+      end
+    end
+        
+    logger.info "[Elasticsearch] Converted affiliations for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
+
+    count
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
+    logger.info "[Elasticsearch] Error #{error.message} converting affiliations for DOIs with IDs #{id} - #{(id + 499)}."
   end
 
   def doi=(value)
@@ -849,45 +900,6 @@ class Doi < ActiveRecord::Base
     self.is_active = (aasm_state == "findable") ? "\x01" : "\x00"
     self.version = version.present? ? version + 1 : 1
     self.updated = Time.zone.now.utc.iso8601
-  end
-
-  # convert affiliations from string to hash, following changes in schema 4.3
-  def self.convert_affiliations
-    logger = Logger.new(STDOUT)
-
-    response = Doi.query("creators.affiliation:*", page: { size: 1, cursor: [] })
-    logger.info "#{response.results.total} DOIs found that have the affiliation in the old format."
-
-    if response.results.total > 0
-      # walk through results using cursor
-      cursor = []
-
-      while response.results.results.length > 0 do
-        response = Doi.query("creators.affiliation:*", page: { size: 1000, cursor: cursor })
-        break unless response.results.results.length > 0
-
-        logger.info "[Affiliation] Updating #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
-        cursor = response.results.to_a.last[:sort]
-
-        response.results.results.each do |d|
-          AffiliationJob.perform_later(d.doi)
-        end
-      end
-    end
-  end
-      
-  def creators_with_affiliations
-    Array.wrap(creators).map do |c|
-      c["affiliation"] = { "name" => c["affiliation"] } if c["affiliation"].is_a?(String)
-      c
-    end
-  end
-
-  def contributors_with_affiliations
-    Array.wrap(contributors).map do |c|
-      c["affiliation"] = { "name" => c["affiliation"] } if c["affiliation"].is_a?(String)
-      c
-    end
   end
 
   def self.migrate_landing_page(options={})

@@ -467,8 +467,7 @@ class DoisController < ApplicationController
   protected
 
   def set_doi
-    response = Doi.find_by_id(params[:id])
-    @doi = response.records.first
+    @doi = Doi.where(doi: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @doi.present?
   end
 
