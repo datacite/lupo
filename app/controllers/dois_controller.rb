@@ -59,6 +59,7 @@ class DoisController < ApplicationController
                           client_id: params[:client_id],
                           re3data_id: params[:re3data_id],
                           opendoar_id: params[:opendoar_id],
+                          certificate: params[:certificate],
                           prefix: params[:prefix],
                           person_id: params[:person_id],
                           resource_type_id: params[:resource_type_id],
@@ -143,6 +144,7 @@ class DoisController < ApplicationController
         link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
         links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
         subjects = total > 0 ? facet_by_key(response.response.aggregations.subjects.buckets) : nil
+        certificates = total > 0 ? facet_by_key(response.response.aggregations.certificates.buckets) : nil
       }
       if bma > 1000
         logger.warn "[Benchmark Warning] aggregations " + bma.to_s + " ms"
@@ -164,6 +166,7 @@ class DoisController < ApplicationController
             providers: providers,
             clients: clients,
             prefixes: prefixes,
+            certificates: certificates,
             "schemaVersions" => schema_versions,
             sources: sources,
             "linkChecksStatus" => link_checks_status,
@@ -181,6 +184,7 @@ class DoisController < ApplicationController
               query: params[:query],
               "provider-id" => params[:provider_id],
               "client-id" => params[:client_id],
+              certificate: params[:certificate],
               # The cursor link should be an array of values, but we want to encode it into a single string for the URL
               "page[cursor]" => page[:cursor] ? Base64.urlsafe_encode64(Array.wrap(results.to_a.last[:sort]).join(','), padding: false) : nil,
               "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,

@@ -381,7 +381,8 @@ class Doi < ActiveRecord::Base
       link_checks_citation_doi: { value_count: { field: "landing_page.citationDoi" } },
       links_checked: { value_count: { field: "landing_page.checked" } },
       sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
-      subjects: { terms: { field: 'subjects.subject', size: 15, min_doc_count: 1 } }
+      subjects: { terms: { field: 'subjects.subject', size: 15, min_doc_count: 1 } },
+      certificates: { terms: { field: 'client.certificate', size: 15, min_doc_count: 1 } },
     }
   end
 
