@@ -127,6 +127,7 @@ class Event < ActiveRecord::Base
     indexes :indexed_at,       type: :date
     indexes :occurred_at,      type: :date
     indexes :citation_id,      type: :keyword
+    indexes :citation_year,    type: :keyword
     indexes :cache_key,        type: :keyword
   end
 
@@ -161,6 +162,7 @@ class Event < ActiveRecord::Base
       "indexed_at" => indexed_at,
       "occurred_at" => occurred_at,
       "citation_id" => citation_id,
+      "citation_year" => citation_year,
       "cache_key" => cache_key
     }
   end
@@ -205,28 +207,15 @@ class Event < ActiveRecord::Base
             script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
           }
         },
-        aggs: { years: { date_histogram: { field: 'occurred_at', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
+        aggs: { years: { date_histogram: { field: 'citation_year', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
+      # },
       # citations_histogram: {
       #   filter: {
       #     script: {
       #       script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
       #     }
       #   },
-      #   aggs: { years: { terms: { script:  { source: "
-      #     String subjDatePublished = params['_source']['subj']['date_published']?.substring(0, 4);
-      #     String objDatePublished  = params['_source']['obj']['date_published']?.substring(0, 4);
-          
-      #     if( params['_source']['subj']['date_published']?.substring(0, 4) !== null && params['_source']['obj']['date_published']?.substring(0, 4) !== null){
-
-      #       if(Integer.parseInt(objDatePublished) > Integer.parseInt(subjDatePublished) )
-      #       {
-      #         objDatePublished
-      #       }
-      #       else{
-      #         subjDatePublished
-      #       }
-      #     } 
-      #   " }}}}
+      #   aggs: { years: { date_histogram: { field: 'citation_year', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
       # },
       # citations: {
       #   filter: {
@@ -532,6 +521,19 @@ class Event < ActiveRecord::Base
   def obj_cache_key
     timestamp = obj["dateModified"] || Time.zone.now.iso8601
     "objects/#{obj_id}-#{timestamp}"
+  end
+
+  def citation_year
+    "" unless INCLUDED_RELATION_TYPES.include?(relation_type_id)
+    subj_publication = subj['date_published'] || (date_published(subj_id) || year_month)
+    obj_publication =  obj['date_published']  || (date_published(obj_id) || year_month)
+    [subj_publication[0..3].to_i, obj_publication[0..3].to_i].max
+  end
+
+  def date_published(doi)
+    ## TODO: we need to make sure all the dois from other RA are indexed 
+    doi = Doi.where(doi: doi).first
+    doi[:published] if doi.present? 
   end
 
   def set_defaults
