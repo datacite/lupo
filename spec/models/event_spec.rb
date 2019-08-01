@@ -22,7 +22,7 @@ describe Event, :type => :model, vcr: true do
     end
   
     it "has citation_year" do
-      expect(subject.citation_year).to eq(2006)
+      expect(subject.citation_year).to eq(2015)
     end
   
     it "has published_dates" do
