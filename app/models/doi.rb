@@ -746,7 +746,7 @@ class Doi < ActiveRecord::Base
 
   def check_dates
     Array.wrap(dates).each do |d|
-      errors.add(:dates, "Date #{d["date"]} is not in a supported format.") unless Date.edtf(d["date"]).present?
+      errors.add(:dates, "Date #{d["date"]} is not a valid date in ISO8601 format.") unless Date.edtf(d["date"]).present?
     end
   end
 
