@@ -148,7 +148,7 @@ class EventsController < ApplicationController
       "doisUsageTypes": dois_usage,
       "doisCitations": dois_citations,
       "citationsHistogram": citations_histogram,
-      "citations": citations,
+      "uniqueCitations": citations,
       "viewsHistogram": views_histogram,
       "downloadsHistogram": downloads_histogram
     }.compact
