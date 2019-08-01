@@ -584,6 +584,7 @@ class Doi < ActiveRecord::Base
       creators = Array.wrap(doi.creators).map do |c|
         if c["affiliation"].nil?
           c["affiliation"] = []
+          should_update = true
         elsif c["affiliation"].is_a?(String)
           c["affiliation"] = [{ "name" => c["affiliation"] }] 
           should_update = true
@@ -597,6 +598,7 @@ class Doi < ActiveRecord::Base
       contributors = Array.wrap(doi.contributors).map do |c|
         if c["affiliation"].nil?
           c["affiliation"] = []
+          should_update = true
         elsif c["affiliation"].is_a?(String)
           c["affiliation"] = [{ "name" => c["affiliation"] }] 
           should_update = true

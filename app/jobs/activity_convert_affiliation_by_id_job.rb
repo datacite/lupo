@@ -1,4 +1,4 @@
-class ActivityImportByIdJob < ActiveJob::Base
+class ActivityConvertAffiliationByIdJob < ActiveJob::Base
   queue_as :lupo_background
 
   rescue_from ActiveJob::DeserializationError, Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
@@ -7,6 +7,6 @@ class ActivityImportByIdJob < ActiveJob::Base
   end
 
   def perform(options={})
-    Activity.import_by_id(options)
+    Activity.convert_affiliation_by_id(options)
   end
 end

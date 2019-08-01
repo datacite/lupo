@@ -250,6 +250,82 @@ class Activity < Audited::Audit
     count
   end
 
+  def self.convert_affiliations(options={})
+    from_id = (options[:from_id] || Doi.minimum(:id)).to_i
+    until_id = (options[:until_id] || Doi.maximum(:id)).to_i
+
+    # get every id between from_id and end_id
+    (from_id..until_id).step(500).each do |id|
+      ActivityConvertAffiliationByIdJob.perform_later(options.merge(id: id))
+      puts "Queued converting affiliations for activities with IDs starting with #{id}." unless Rails.env.test?
+    end
+
+    (from_id..until_id).to_a.length
+  end
+
+  def self.convert_affiliation_by_id(options={})
+    return nil unless options[:id].present?
+
+    id = options[:id].to_i
+    count = 0
+
+    logger = Logger.new(STDOUT)
+
+    Activity.where(id: id..(id + 499)).find_each do |activity|
+      should_update = false
+      audited_changes = activity.audited_changes
+      creators = Array.wrap(audited_changes["creators"]).map do |c|
+        # c is an array if there are changes
+        return [] if c.blank?
+        c = c.last if c.is_a?(Array)
+
+        if c["affiliation"].nil?
+          c["affiliation"] = []
+          should_update = true
+        elsif c["affiliation"].is_a?(String)
+          c["affiliation"] = [{ "name" => c["affiliation"] }] 
+          should_update = true
+        else c["affiliation"].is_a?(Hash)
+          c["affiliation"] = Array.wrap(c["affiliation"])
+          should_update = true
+        end
+
+        c
+      end
+      contributors = Array.wrap(audited_changes["contributors"]).map do |c|
+        # c is an array if there are changes
+        return [] if c.blank?
+        c = c.last if c.is_a?(Array)
+
+        if c["affiliation"].nil?
+          c["affiliation"] = []
+          should_update = true
+        elsif c["affiliation"].is_a?(String)
+          c["affiliation"] = [{ "name" => c["affiliation"] }] 
+          should_update = true
+        else c["affiliation"].is_a?(Hash)
+          c["affiliation"] = Array.wrap(c["affiliation"])
+          should_update = true
+        end
+
+        c
+      end
+
+      if should_update
+        audited_changes["creators"] = creators
+        audited_changes["contributors"] = contributors
+        activity.update_attributes(audited_changes: audited_changes)
+        count += 1
+      end
+    end
+        
+    logger.info "[Elasticsearch] Converted affiliations for #{count} activities with IDs #{id} - #{(id + 499)}." if count > 0
+
+    count
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
+    logger.info "[Elasticsearch] Error #{error.message} converting affiliations for DOIs with IDs #{id} - #{(id + 499)}."
+  end
+
   def uid
     doi.present? ? doi.uid : changes.to_h['doi']
   end

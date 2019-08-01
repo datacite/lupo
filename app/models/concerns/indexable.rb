@@ -396,9 +396,13 @@ module Indexable
       inactive_index ||= self.inactive_index
       
       self.__elasticsearch__.delete_index!(index: inactive_index) if self.__elasticsearch__.index_exists?(index: inactive_index)
-      self.__elasticsearch__.create_index!(index: inactive_index)
 
-      "Upgraded inactive index #{inactive_index}."
+      if self.__elasticsearch__.index_exists?(index: inactive_index)
+        "Error: inactive index #{inactive_index} could not be upgraded."
+      else
+        self.__elasticsearch__.create_index!(index: inactive_index)
+        "Upgraded inactive index #{inactive_index}."
+      end
     end
 
     # show stats for both indexes
