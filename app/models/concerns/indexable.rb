@@ -95,7 +95,7 @@ module Indexable
       })
     end
 
-    def get_aggregations_hash(aggregations="")
+    def get_aggregations_hash(aggregations = "")
       return send(:query_aggregations) if aggregations.blank?
       aggs = {}
       aggregations.split(",").each do |agg|

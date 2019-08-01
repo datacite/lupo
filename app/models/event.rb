@@ -74,14 +74,11 @@ class Event < ActiveRecord::Base
   ]
 
   VIEWS_RELATION_TYPES = [
-    "unique-dataset-investigations-regular",
-    "total-dataset-investigations-regular"
+    "unique-dataset-investigations-regular"
   ]
   
-  
   DOWNLOADS_RELATION_TYPES = [
-    "unique-dataset-requests-regular",
-    "total-dataset-requests-regular"
+    "unique-dataset-requests-regular"
   ]
 
   validates :subj_id, :source_id, :source_token, presence: true
@@ -224,7 +221,11 @@ class Event < ActiveRecord::Base
   end
 
   def self.metrics_aggregations
-
+    sum_distribution = {
+      sum_bucket: {
+        buckets_path: "year_months>total_by_year_month"
+      }
+    }
     sum_year_distribution = {
       sum_bucket: {
         buckets_path: "years>total_by_year"
@@ -233,69 +234,29 @@ class Event < ActiveRecord::Base
 
     {
       citations_histogram: {
-        filter: {
-          script: {
-            script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
-          }
+        filter: {script: {script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"}
         },
         aggs: { years: { date_histogram: { field: 'citation_year', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
       },
       citations: {
-        filter: {
-          script: {
-            script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
-          }
+        filter: {script: {script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"}
         },
         aggs: { dois: {
            terms: { field: 'obj_id', size: 50, min_doc_count: 1 }, aggs: { unique_citations: { cardinality: { field: 'citation_id' }}}
         }}
       },
       views: {
-        filter: {
-          script: {
-            script: "#{VIEWS_RELATION_TYPES}.contains(doc['relation_type_id'].value) && doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()" ,
-          }
+        filter: {script: {script: "#{VIEWS_RELATION_TYPES}.contains(doc['relation_type_id'].value) && doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()"}
         },
         aggs: {
-          dois: {
-            terms: {
-              field: 'obj_id',
-              size: 50,
-              min_doc_count: 1
-            },
-            aggs: {
-              "total_by_type" => {
-                sum: {
-                  field: 'total'
-                }
-              }
-            }
-          },
-          years: { date_histogram: { field: 'occurred_at', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' } } } }, "sum_distribution" => sum_year_distribution
+          year_months: { date_histogram: { field: 'occurred_at', interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' } } } }, "sum_distribution" => sum_distribution
           }
         },
       downloads: {
-        filter: {
-          script: {
-            script: "#{DOWNLOADS_RELATION_TYPES}.contains(doc['relation_type_id'].value) && doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()" ,
-          }
+        filter: {script: {script: "#{DOWNLOADS_RELATION_TYPES}.contains(doc['relation_type_id'].value) && doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()"}
         },
         aggs: {
-          dois: {
-            terms: {
-              field: 'obj_id',
-              size: 50,
-              min_doc_count: 1
-            },
-            aggs: {
-              "total_by_type" => {
-                sum: {
-                  field: 'total'
-                }
-              }
-            }
-          },
-          years: { date_histogram: { field: 'occurred_at', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' } } } }, "sum_distribution" => sum_year_distribution
+          year_months: { date_histogram: { field: 'occurred_at', interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' } } } }, "sum_distribution" => sum_distribution
           }
       }   
   }
