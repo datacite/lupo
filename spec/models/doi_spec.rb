@@ -255,17 +255,17 @@ describe Doi, type: :model, vcr: true do
       expect(doi.errors.details).to be_empty
     end
 
-    it "invalid" do
-      doi.dates = [{ "date" => "08/01/2019" }]
-      expect(doi.save).to be false
-      expect(doi.errors.details).to eq(:dates=>[{:error=>"Date 08/01/2019 is not a valid date in ISO8601 format."}])
-    end
+    # it "invalid" do
+    #   doi.dates = [{ "date" => "08/01/2019" }]
+    #   expect(doi.save).to be false
+    #   expect(doi.errors.details).to eq(:dates=>[{:error=>"Date 08/01/2019 is not a valid date in ISO8601 format."}])
+    # end
 
-    it "invalid datetime" do
-      doi.dates = [{ "date" => "2019-08-01 20:28:15" }]
-      expect(doi.save).to be false
-      expect(doi.errors.details).to eq(:dates => [{:error=>"Date 2019-08-01 20:28:15 is not a valid date in ISO8601 format."}])
-    end
+    # it "invalid datetime" do
+    #   doi.dates = [{ "date" => "2019-08-01 20:28:15" }]
+    #   expect(doi.save).to be false
+    #   expect(doi.errors.details).to eq(:dates => [{:error=>"Date 2019-08-01 20:28:15 is not a valid date in ISO8601 format."}])
+    # end
   end
 
   describe "metadata" do
