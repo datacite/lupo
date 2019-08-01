@@ -249,10 +249,22 @@ describe Doi, type: :model, vcr: true do
       expect(doi.errors.details).to be_empty
     end
 
+    it "datetime" do
+      doi.dates = [{ "date" => "2019-08-01T20:28:15" }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+    end
+
     it "invalid" do
       doi.dates = [{ "date" => "08/01/2019" }]
       expect(doi.save).to be false
       expect(doi.errors.details).to eq(:dates=>[{:error=>"Date 08/01/2019 is not in a supported format."}])
+    end
+
+    it "invalid datetime" do
+      doi.dates = [{ "date" => "2019-08-01 20:28:15" }]
+      expect(doi.save).to be false
+      expect(doi.errors.details).to eq(:dates => [{:error=>"Date 2019-08-01 20:28:15 is not in a supported format."}])
     end
   end
 
