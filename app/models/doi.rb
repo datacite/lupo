@@ -83,7 +83,7 @@ class Doi < ActiveRecord::Base
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
   validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
-  validate :check_dates, if: :dates?
+  # validate :check_dates, if: :dates?
 
   after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
