@@ -582,16 +582,26 @@ class Doi < ActiveRecord::Base
     Doi.where(id: id..(id + 499)).find_each do |doi|
       should_update = false
       creators = Array.wrap(doi.creators).map do |c|
-        if c["affiliation"].is_a?(String)
-          c["affiliation"] = { "name" => c["affiliation"] } 
+        if c["affiliation"].nil?
+          c["affiliation"] = []
+        elsif c["affiliation"].is_a?(String)
+          c["affiliation"] = [{ "name" => c["affiliation"] }] 
+          should_update = true
+        else c["affiliation"].is_a?(Hash)
+          c["affiliation"] = Array.wrap(c["affiliation"])
           should_update = true
         end
 
         c
       end
       contributors = Array.wrap(doi.contributors).map do |c|
-        if c["affiliation"].is_a?(String)
-          c["affiliation"] = { "name" => c["affiliation"] }
+        if c["affiliation"].nil?
+          c["affiliation"] = []
+        elsif c["affiliation"].is_a?(String)
+          c["affiliation"] = [{ "name" => c["affiliation"] }] 
+          should_update = true
+        else c["affiliation"].is_a?(Hash)
+          c["affiliation"] = Array.wrap(c["affiliation"])
           should_update = true
         end
 
