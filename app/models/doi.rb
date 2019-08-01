@@ -316,8 +316,8 @@ class Doi < ActiveRecord::Base
       "doi" => doi,
       "identifier" => identifier,
       "url" => url,
-      "creators" => creators_with_affiliations,
-      "contributors" => contributors_with_affiliations,
+      "creators" => creators,
+      "contributors" => contributors,
       "creator_names" => creator_names,
       "titles" => titles,
       "descriptions" => descriptions,
@@ -555,21 +555,6 @@ class Doi < ActiveRecord::Base
       else
         a["name"]
       end
-    end
-  end
-
-  # use newer index with old database following schema 4.3 changes
-  def creators_with_affiliations
-    Array.wrap(creators).map do |c|
-      c["affiliation"] = { "name" => c["affiliation"] } if c["affiliation"].is_a?(String)
-      c
-    end
-  end
-
-  def contributors_with_affiliations
-    Array.wrap(contributors).map do |c|
-      c["affiliation"] = { "name" => c["affiliation"] } if c["affiliation"].is_a?(String)
-      c
     end
   end
 
