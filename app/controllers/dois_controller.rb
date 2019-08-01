@@ -127,6 +127,7 @@ class DoisController < ApplicationController
       link_checks_citation_doi = nil
       links_checked = nil
       subjects = nil
+      certificates = nil
       bma = Benchmark.ms {
         states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
         resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
