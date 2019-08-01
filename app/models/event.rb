@@ -208,26 +208,38 @@ class Event < ActiveRecord::Base
           }
         },
         aggs: { years: { date_histogram: { field: 'citation_year', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
-      # },
-      # citations_histogram: {
-      #   filter: {
-      #     script: {
-      #       script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
-      #     }
-      #   },
-      #   aggs: { years: { date_histogram: { field: 'citation_year', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
-      # },
-      # citations: {
-      #   filter: {
-      #     script: {
-      #       script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
-      #     }
-      #   },
-      #   aggs: { dois: {
-      #      terms: { field: 'obj_id', size: 50, min_doc_count: 1 }, aggs: { unique_citations: { cardinality: { field: 'citation_id' }}}
-      #   }}
       }
     }
+  end
+
+  def self.metrics_aggregations
+
+    sum_year_distribution = {
+      sum_bucket: {
+        buckets_path: "years>total_by_year"
+      }
+    }
+
+    {
+      citations_histogram: {
+        filter: {
+          script: {
+            script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
+          }
+        },
+        aggs: { years: { date_histogram: { field: 'citation_year', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
+      },
+      citations: {
+        filter: {
+          script: {
+            script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
+          }
+        },
+        aggs: { dois: {
+           terms: { field: 'obj_id', size: 50, min_doc_count: 1 }, aggs: { unique_citations: { cardinality: { field: 'citation_id' }}}
+        }}
+    }
+  }
   end
 
   # return results for one or more ids
