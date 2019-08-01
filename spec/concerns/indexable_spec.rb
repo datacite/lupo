@@ -100,6 +100,11 @@ describe "Indexable class methods", elasticsearch: true do
     it 'query by description' do
       results = Doi.query("description").results
       expect(results.total).to eq(1)
+
+      expect(results.response.aggregations.states).not_to be_nil
+      expect(results.response.aggregations.prefixes).not_to be_nil
+      expect(results.response.aggregations.created).not_to be_nil
+      expect(results.response.aggregations.schema_versions).not_to be_nil
     end
 
     it 'query by description not found' do
@@ -117,6 +122,63 @@ describe "Indexable class methods", elasticsearch: true do
       # Move onto next based on search_after
       results = Doi.query(nil, page: { size: 1, cursor: results.to_a.last[:sort] }).results
       expect(results.to_a.length).to eq(1)
+    end
+
+    context "aggregations" do
+      it 'returns query_aggregation when filters aggregation with empty' do
+        aggregations = Doi.get_aggregations_hash("")
+        expect(aggregations[:resource_types]).not_to be_nil
+        expect(aggregations[:states]).not_to be_nil
+        expect(aggregations[:created]).not_to be_nil
+        expect(aggregations[:schema_versions]).not_to be_nil
+      end
+  
+      it 'returns multiple aggregations when filters aggregations with multiple' do
+        aggregations = Doi.get_aggregations_hash("query_aggregations,metrics_aggregations")
+        expect(aggregations[:resource_types]).not_to be_nil
+        expect(aggregations[:states]).not_to be_nil
+        expect(aggregations[:created]).not_to be_nil
+        expect(aggregations[:schema_versions]).not_to be_nil
+      end
+    end
+  end
+
+  context "when event" do
+    let!(:event) { create(:event) }
+    let!(:events) { create_list(:event, 3) }
+
+    before do
+      Event.import
+      sleep 1
+    end
+
+    context "aggregations" do
+      it 'returns query_aggregation when filters aggregation with empty' do
+        aggregations = Event.get_aggregations_hash("")
+        expect(aggregations[:sources]).not_to be_nil
+        expect(aggregations[:prefixes]).not_to be_nil
+        expect(aggregations[:citation_types]).not_to be_nil
+        expect(aggregations[:relation_types]).not_to be_nil
+        expect(aggregations[:registrants]).not_to be_nil
+        expect(aggregations[:pairings]).not_to be_nil
+        expect(aggregations[:dois_usage]).not_to be_nil
+        expect(aggregations[:citations_histogram]).to be_nil
+        expect(aggregations[:citations]).to be_nil
+      end
+  
+      it 'returns multiple aggregations when filters aggregations with multiple' do
+        aggregations = Event.get_aggregations_hash("query_aggregations,metrics_aggregations")
+        expect(aggregations[:sources]).not_to be_nil
+        expect(aggregations[:prefixes]).not_to be_nil
+        expect(aggregations[:citation_types]).not_to be_nil
+        expect(aggregations[:relation_types]).not_to be_nil
+        expect(aggregations[:registrants]).not_to be_nil
+        expect(aggregations[:pairings]).not_to be_nil
+        expect(aggregations[:dois]).not_to be_nil
+        expect(aggregations[:dois_usage]).not_to be_nil
+        expect(aggregations[:citations_histogram]).not_to be_nil
+        expect(aggregations[:citations]).not_to be_nil
+      end
     end
   end
 end
