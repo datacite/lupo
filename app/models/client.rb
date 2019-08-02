@@ -273,7 +273,7 @@ class Client < ActiveRecord::Base
 
   def check_certificate
     Array.wrap(certificate).each do |c|
-      errors.add(:certificate, "Certificate #{c} is not included in the list of supported certificates.") unless %w(CoreTrustSeal DSA WDS DINI).include?(c)
+      errors.add(:certificate, "Certificate #{c} is not included in the list of supported certificates.") unless ["CoreTrustSeal", "DIN 31644", "DINI", "DSA", "WDS").include?(c)
     end
   end
 
