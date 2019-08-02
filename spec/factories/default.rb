@@ -294,7 +294,7 @@ FactoryBot.define do
       source_id { "datacite_related" }
       source_token { "datacite_related_123" }
       sequence(:subj_id) { |n| "http://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
-      subj { nil }
+      subj { {"datePublished"=>"2006-06-13T16:14:19Z"} }
       obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
       relation_type_id { "has_part" }
     end
