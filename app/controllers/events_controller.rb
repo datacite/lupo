@@ -128,8 +128,10 @@ class EventsController < ApplicationController
     dois_citations = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_citations_by_year(response.response.aggregations.dois_citations) : nil
     citations_histogram = total.positive? && aggregations.include?("metrics_aggregations") ? facet_citations_by_year(response.response.aggregations.citations_histogram) : nil
     citations = total.positive? && aggregations.include?("metrics_aggregations") ? facet_citations_by_dois(response.response.aggregations.citations.dois.buckets) : nil
-    views_histogram = total.positive? && aggregations.include?("metrics_aggregations") ? facet_counts_by_year_month(response.response.aggregations.views) : nil
-    downloads_histogram = total.positive? && aggregations.include?("metrics_aggregations") ? facet_counts_by_year_month(response.response.aggregations.downloads) : nil
+    views_histogram = total.positive? && aggregations.include?("metrics_aggregations") ? facet_counts_by_year_month(response.response.aggregations.views_histogram) : nil
+    downloads_histogram = total.positive? && aggregations.include?("metrics_aggregations") ? facet_counts_by_year_month(response.response.aggregations.downloads_histogram) : nil
+    views = total.positive? && aggregations.include?("metrics_aggregations") ? facet_by_source(response.response.aggregations.views.dois.buckets) : nil
+    downloads = total.positive? && aggregations.include?("metrics_aggregations") ? facet_by_source(response.response.aggregations.downloads.dois.buckets) : nil
  
     results = response.results
 
@@ -150,7 +152,9 @@ class EventsController < ApplicationController
       "citationsHistogram": citations_histogram,
       "uniqueCitations": citations,
       "viewsHistogram": views_histogram,
-      "downloadsHistogram": downloads_histogram
+      "views": views,
+      "downloadsHistogram": downloads_histogram,
+      "downloads": downloads
     }.compact
 
     options[:links] = {
