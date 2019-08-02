@@ -135,7 +135,7 @@ class Event < ActiveRecord::Base
     indexes :indexed_at,       type: :date
     indexes :occurred_at,      type: :date
     indexes :citation_id,      type: :keyword
-    indexes :citation_year,    type: :keyword
+    indexes :citation_year,    type: :integer
     indexes :cache_key,        type: :keyword
   end
 
@@ -232,11 +232,15 @@ class Event < ActiveRecord::Base
       }
     }
 
+    views_filter = {script: {script: "#{VIEWS_RELATION_TYPES}.contains(doc['relation_type_id'].value) && doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()"}}
+
+    downloads_filter = {script: {script: "#{DOWNLOADS_RELATION_TYPES}.contains(doc['relation_type_id'].value) && doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()"} }
+
     {
       citations_histogram: {
         filter: {script: {script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"}
         },
-        aggs: { years: { date_histogram: { field: 'citation_year', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
+        aggs: { years: { histogram: { field: 'citation_year', interval: 1 , min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
       },
       citations: {
         filter: {script: {script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"}
@@ -246,15 +250,25 @@ class Event < ActiveRecord::Base
         }}
       },
       views: {
-        filter: {script: {script: "#{VIEWS_RELATION_TYPES}.contains(doc['relation_type_id'].value) && doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()"}
-        },
+        filter: views_filter,
+        aggs: { dois: {
+          terms: { field: 'obj_id', size: 50, min_doc_count: 1 }
+        }}
+      },
+      views_histogram: {
+        filter: views_filter,
         aggs: {
           year_months: { date_histogram: { field: 'occurred_at', interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' } } } }, "sum_distribution" => sum_distribution
           }
         },
       downloads: {
-        filter: {script: {script: "#{DOWNLOADS_RELATION_TYPES}.contains(doc['relation_type_id'].value) && doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()"}
+          filter: downloads_filter,
+          aggs: { dois: {
+            terms: { field: 'obj_id', size: 50, min_doc_count: 1 }
+          }}
         },
+      downloads_histogram: {
+        filter: downloads_filter,
         aggs: {
           year_months: { date_histogram: { field: 'occurred_at', interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' } } } }, "sum_distribution" => sum_distribution
           }

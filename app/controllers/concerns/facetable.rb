@@ -136,8 +136,8 @@ module Facetable
 
     def facet_citations_by_year(hash)
       arr = hash.dig('years', 'buckets').map do |h|
-        year = h['key_as_string'][0..3].to_i
-        title = h['key_as_string'][0..3]
+        year = h['key']
+        title = h['key'].to_i.to_s
 
         {
           'id' => year,
