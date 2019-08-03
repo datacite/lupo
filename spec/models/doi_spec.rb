@@ -216,6 +216,54 @@ describe Doi, type: :model, vcr: true do
     # end
   end
 
+  describe "descriptions" do
+    let(:doi) { build(:doi) }
+
+    it "hash" do
+      doi.descriptions = [{ "description" => "This is a description." }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+    end
+
+    it "string" do
+      doi.descriptions = ["This is a description."]
+      expect(doi.save).to be false
+      expect(doi.errors.details).to eq(:descriptions=>[{:error=>"Description 'This is a description.' should be an object instead of a string."}])
+    end
+  end
+
+  describe "rights_list" do
+    let(:doi) { build(:doi) }
+
+    it "hash" do
+      doi.rights_list = [{ "rights" => "Creative Commons Attribution 4.0 International license (CC BY 4.0)" }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+    end
+
+    it "string" do
+      doi.rights_list = ["Creative Commons Attribution 4.0 International license (CC BY 4.0)"]
+      expect(doi.save).to be false
+      expect(doi.errors.details).to eq(:rights_list => [{:error=>"Rights 'Creative Commons Attribution 4.0 International license (CC BY 4.0)' should be an object instead of a string."}])
+    end
+  end
+
+  describe "subjects" do
+    let(:doi) { build(:doi) }
+
+    it "hash" do
+      doi.subjects = [{ "subject" => "Tree" }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+    end
+
+    it "string" do
+      doi.subjects = ["Tree"]
+      expect(doi.save).to be false
+      expect(doi.errors.details).to eq(:subjects=>[{:error=>"Subject 'Tree' should be an object instead of a string."}])
+    end
+  end
+
   describe "dates" do
     let(:doi) { build(:doi) }
 
@@ -253,6 +301,12 @@ describe Doi, type: :model, vcr: true do
       doi.dates = [{ "date" => "2019-08-01T20:28:15" }]
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
+    end
+
+    it "string" do
+      doi.dates = ["2019-08-01"]
+      expect(doi.save).to be false
+      expect(doi.errors.details).to eq(:dates=>[{:error=>"Date 2019-08-01 should be an object instead of a string."}])
     end
 
     # it "invalid" do

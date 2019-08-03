@@ -83,7 +83,10 @@ class Doi < ActiveRecord::Base
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
   validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
-  # validate :check_dates, if: :dates?
+  validate :check_dates, if: :dates?
+  validate :check_rights_list, if: :rights_list?
+  validate :check_descriptions, if: :descriptions?
+  validate :check_subjects, if: :subjects?
 
   after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
@@ -771,7 +774,26 @@ class Doi < ActiveRecord::Base
 
   def check_dates
     Array.wrap(dates).each do |d|
-      errors.add(:dates, "Date #{d["date"]} is not a valid date in ISO8601 format.") unless Date.edtf(d["date"]).present?
+      errors.add(:dates, "Date #{d} should be an object instead of a string.") unless d.is_a?(Hash)
+      #errors.add(:dates, "Date #{d["date"]} is not a valid date in ISO8601 format.") unless Date.edtf(d["date"]).present?
+    end
+  end
+
+  def check_rights_list
+    Array.wrap(rights_list).each do |r|
+      errors.add(:rights_list, "Rights '#{r}' should be an object instead of a string.") unless r.is_a?(Hash)
+    end
+  end
+
+  def check_descriptions
+    Array.wrap(descriptions).each do |d|
+      errors.add(:descriptions, "Description '#{d}' should be an object instead of a string.") unless d.is_a?(Hash)
+    end
+  end
+
+  def check_subjects
+    Array.wrap(subjects).each do |s|
+      errors.add(:subjects, "Subject '#{s}' should be an object instead of a string.") unless s.is_a?(Hash)
     end
   end
 
