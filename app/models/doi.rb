@@ -642,17 +642,16 @@ class Doi < ActiveRecord::Base
       end
 
       if should_update
-        Doi.non_audited_columns = [:creators, :contributors]
-        doi.update_attributes(creators: creators, contributors: contributors)
+        doi.update_columns(creators: creators, contributors: contributors)
         count += 1
       end
     end
         
-    logger.info "[Elasticsearch] Converted affiliations for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
+    logger.info "[MySQL] Converted affiliations for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
 
     count
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    logger.info "[Elasticsearch] Error #{error.message} converting affiliations for DOIs with IDs #{id} - #{(id + 499)}."
+  rescue Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
+    logger.info "[MySQL] Error #{error.message} converting affiliations for DOIs with IDs #{id} - #{(id + 499)}."
   end
 
   def doi=(value)
