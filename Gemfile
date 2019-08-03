@@ -89,7 +89,7 @@ group :test do
   gem 'codeclimate-test-reporter', '~> 1.0', '>= 1.0.8'
   gem 'factory_bot_rails', '~> 4.8', '>= 4.8.2'
   gem 'shoulda-matchers', '~> 3.1'
-  gem 'faker'
+  gem 'faker', '~> 1.9'
   gem 'database_cleaner'
   gem 'elasticsearch-extensions', '~> 0.0.29'
 end
