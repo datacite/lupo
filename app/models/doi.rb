@@ -585,7 +585,9 @@ class Doi < ActiveRecord::Base
     Doi.where(id: id..(id + 499)).find_each do |doi|
       should_update = false
       creators = Array.wrap(doi.creators).map do |c|
-        if c["affiliation"].nil?
+        if !c.is_a?(Hash)
+          logger.error "[MySQL] creators for DOI #{doi.doi} should be a hash."
+        elsif c["affiliation"].nil?
           c["affiliation"] = []
           should_update = true
         elsif c["affiliation"].is_a?(String)
@@ -613,7 +615,9 @@ class Doi < ActiveRecord::Base
         c
       end
       contributors = Array.wrap(doi.contributors).map do |c|
-        if c["affiliation"].nil?
+        if !c.is_a?(Hash)
+          logger.error "[MySQL] creators for DOI #{doi.doi} should be a hash."
+        elsif c["affiliation"].nil?
           c["affiliation"] = []
           should_update = true
         elsif c["affiliation"].is_a?(String)
