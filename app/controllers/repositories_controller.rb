@@ -174,7 +174,7 @@ class RepositoriesController < ApplicationController
   end
 
   def set_repository
-    @client = Client.where(symbol: params[:id]).where(client_type: "repository").where(deleted_at: nil).first
+    @client = Client.where(symbol: params[:id]).where(deleted_at: nil).first
     fail ActiveRecord::RecordNotFound unless @client.present?
   end
 
