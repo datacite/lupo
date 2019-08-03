@@ -285,7 +285,7 @@ class ProvidersController < ApplicationController
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params,
       only: [
-        :name, "displayName", :symbol, :description, :website, :joined, "organizationType", "focusArea", "consortiumLead", "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation",{ "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType",
+        :name, "displayName", :symbol, :description, :website, :joined, "organizationType", "focusArea", "consortiumLead", "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation", { "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType",
       "technicalContact",{ "technicalContact": [:email, "givenName", "familyName"]},
       "secondaryTechnicalContact",{ "secondaryTechnicalContact": [:email, "givenName", "familyName"]},
       "secondaryBillingContact",{ "secondaryBillingContact": [:email, "givenName", "familyName"]},

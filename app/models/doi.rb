@@ -588,9 +588,23 @@ class Doi < ActiveRecord::Base
         elsif c["affiliation"].is_a?(String)
           c["affiliation"] = [{ "name" => c["affiliation"] }] 
           should_update = true
-        else c["affiliation"].is_a?(Hash)
+        elsif c["affiliation"].is_a?(Hash)
           c["affiliation"] = Array.wrap(c["affiliation"])
           should_update = true
+        elsif c["affiliation"].is_a?(Array)
+          c["affiliation"].map do |a|
+            if a.nil?
+              should_update = true
+
+              a
+            elsif a.is_a?(String)
+              should_update = true
+
+              { "name" => a }
+            else
+              a
+            end
+          end.compact
         end
 
         c
@@ -602,9 +616,23 @@ class Doi < ActiveRecord::Base
         elsif c["affiliation"].is_a?(String)
           c["affiliation"] = [{ "name" => c["affiliation"] }] 
           should_update = true
-        else c["affiliation"].is_a?(Hash)
+        elsif c["affiliation"].is_a?(Hash)
           c["affiliation"] = Array.wrap(c["affiliation"])
           should_update = true
+        elsif c["affiliation"].is_a?(Array)
+          c["affiliation"].map do |a|
+            if a.nil?
+              should_update = true
+
+              a
+            elsif a.is_a?(String)
+              should_update = true
+
+              { "name" => a }
+            else
+              a
+            end
+          end.compact
         end
 
         c

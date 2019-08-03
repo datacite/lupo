@@ -80,7 +80,10 @@ class Client < ActiveRecord::Base
       indexes :provider_id,   type: :keyword
       indexes :re3data_id,    type: :keyword
       indexes :opendoar_id,   type: :integer
-      indexes :issn,          type: :keyword
+      indexes :issn,          type: :object, properties: {
+        issnl: { type: :keyword },
+        electronic: { type: :keyword },
+        print: { type: :keyword }}
       indexes :prefix_ids,    type: :keyword
       indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
       indexes :alternate_name, type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
@@ -115,7 +118,7 @@ class Client < ActiveRecord::Base
       "provider_id" => provider_id,
       "re3data_id" => re3data_id,
       "opendoar_id" => opendoar_id,
-      "issn" => Array.wrap(issn),
+      "issn" => issn,
       "prefix_ids" => prefix_ids,
       "name" => name,
       "alternate_name" => alternate_name,
@@ -261,7 +264,15 @@ class Client < ActiveRecord::Base
 
   def check_issn
     Array.wrap(issn).each do |i|
-      errors.add(:issn, "ISSN #{i} is in the wrong format.") unless /\A\d{4}(-)?\d{3}[0-9X]+\z/.match(i)
+      if i["issnl"].present?
+        errors.add(:issn, "ISSN-L #{i["issnl"]} is in the wrong format.") unless /\A\d{4}(-)?\d{3}[0-9X]+\z/.match(i["issnl"])
+      end
+      if i["electronic"].present?
+        errors.add(:issn, "ISSN (electronic) #{i["electronic"]} is in the wrong format.") unless /\A\d{4}(-)?\d{3}[0-9X]+\z/.match(i["electronic"])
+      end
+      if i["print"].present?
+        errors.add(:issn, "ISSN (print) #{i["print"]} is in the wrong format.") unless /\A\d{4}(-)?\d{3}[0-9X]+\z/.match(i["print"])
+      end
     end
   end
 
@@ -303,7 +314,7 @@ class Client < ActiveRecord::Base
     self.contact_name = "" unless contact_name.present?
     self.domains = "*" unless domains.present?
     self.client_type = "repository" unless client_type.present?
-    self.issn = [] if issn.blank? || client_type == "repository"
+    self.issn = {} if issn.blank? || client_type == "repository"
     self.certificate = [] if certificate.blank? || client_type == "periodical"
     self.repository_type = [] if repository_type.blank? || client_type == "periodical"
     self.is_active = is_active ? "\x01" : "\x00"

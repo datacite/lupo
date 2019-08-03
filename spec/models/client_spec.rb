@@ -35,21 +35,21 @@ describe Client, type: :model do
     let(:client)  { build(:client, provider: provider, client_type: "periodical") }
 
     it "should support issn" do
-      client.issn = ["1544-9173"]
+      client.issn = { "issnl" => "1544-9173" }
       expect(client.save).to be true
       expect(client.errors.details).to be_empty
     end
 
     it "should support multiple issn" do
-      client.issn = ["1544-9173", "1545-7885"]
+      client.issn = { "electronic" => "1544-9173", "print" => "1545-7885" }
       expect(client.save).to be true
       expect(client.errors.details).to be_empty
     end
 
     it "should reject invalid issn" do
-      client.issn = ["1544-91XX"]
+      client.issn = { "issnl" => "1544-91XX" }
       expect(client.save).to be false
-      expect(client.errors.details).to eq(:issn=>[{:error=>"ISSN 1544-91XX is in the wrong format."}])
+      expect(client.errors.details).to eq(:issn=>[{:error=>"ISSN-L 1544-91XX is in the wrong format."}])
     end
   end
 
