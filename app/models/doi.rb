@@ -585,7 +585,7 @@ class Doi < ActiveRecord::Base
     Doi.where(id: id..(id + 499)).find_each do |doi|
       should_update = false
       creators = Array.wrap(doi.creators).map do |c|
-        if !c.is_a?(Hash)
+        if !(c.is_a?(Hash))
           logger.error "[MySQL] creators for DOI #{doi.doi} should be a hash."
         elsif c["affiliation"].nil?
           c["affiliation"] = []
@@ -597,7 +597,7 @@ class Doi < ActiveRecord::Base
           c["affiliation"] = Array.wrap(c["affiliation"])
           should_update = true
         elsif c["affiliation"].is_a?(Array)
-          c["affiliation"].map do |a|
+          c["affiliation"] = c["affiliation"].map do |a|
             if a.nil?
               should_update = true
 
@@ -615,7 +615,7 @@ class Doi < ActiveRecord::Base
         c
       end
       contributors = Array.wrap(doi.contributors).map do |c|
-        if !c.is_a?(Hash)
+        if !(c.is_a?(Hash))
           logger.error "[MySQL] creators for DOI #{doi.doi} should be a hash."
         elsif c["affiliation"].nil?
           c["affiliation"] = []
@@ -627,7 +627,7 @@ class Doi < ActiveRecord::Base
           c["affiliation"] = Array.wrap(c["affiliation"])
           should_update = true
         elsif c["affiliation"].is_a?(Array)
-          c["affiliation"].map do |a|
+          c["affiliation"] = c["affiliation"].map do |a|
             if a.nil?
               should_update = true
 
@@ -646,16 +646,25 @@ class Doi < ActiveRecord::Base
       end
 
       if should_update
+        Doi.auditing_enabled = false
         doi.update_columns(creators: creators, contributors: contributors)
+        Doi.auditing_enabled = true
+
         count += 1
       end
+ 
+      unless (Array.wrap(doi.creators).all? { |c| c.is_a?(Hash) && c["affiliation"].is_a?(Array) && c["affiliation"].all? { |a| a.is_a?(Hash) } } && Array.wrap(doi.contributors).all? { |c| c.is_a?(Hash) && c["affiliation"].is_a?(Array) && c["affiliation"].all? { |a| a.is_a?(Hash) } }) 
+        logger.error "[MySQL] Error converting affiliations for doi #{doi.doi}: creators #{doi.creators.inspect} contributors #{doi.contributors.inspect}."
+        fail TypeError, "Affiliation for doi #{doi.doi} is of wrong type" if Rails.env.test?
+      end    
     end
         
     logger.info "[MySQL] Converted affiliations for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
 
     count
-  rescue Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    logger.info "[MySQL] Error #{error.message} converting affiliations for DOIs with IDs #{id} - #{(id + 499)}."
+  rescue TypeError, ActiveRecord::ActiveRecordError, ActiveRecord::LockWaitTimeout => error
+    logger.error "[MySQL] Error converting affiliations for DOIs with IDs #{id} - #{(id + 499)}."
+    count
   end
 
   def doi=(value)

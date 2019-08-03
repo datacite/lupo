@@ -540,6 +540,102 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
+  describe "convert_affiliations" do
+    let(:doi) { create(:doi)}
+
+    context "affiliation nil" do
+      let(:creators) { [{
+        "name": "Ausmees, K.",
+        "nameType": "Personal",
+        "givenName": "K.",
+        "familyName": "Ausmees",
+        "affiliation": nil
+      }] }
+      let(:doi) { create(:doi, creators: creators, contributors: [])}
+
+      it "convert" do
+        expect(Doi.convert_affiliation_by_id(id: doi.id)).to eq(1)
+      end
+    end
+
+    context "affiliation empty array" do
+      let(:creators) { [{
+        "name": "Ausmees, K.",
+        "nameType": "Personal",
+        "givenName": "K.",
+        "familyName": "Ausmees",
+        "affiliation": []
+      }] }
+      let(:doi) { create(:doi, creators: creators, contributors: [])}
+
+      it "convert" do
+        expect(Doi.convert_affiliation_by_id(id: doi.id)).to eq(0)
+      end
+    end
+
+    context "affiliation array of hashes" do
+      let(:creators) { [{
+        "name": "Ausmees, K.",
+        "nameType": "Personal",
+        "givenName": "K.",
+        "familyName": "Ausmees",
+        "affiliation": [{ "name": "Department of Microbiology; Tartu University; Tartu Estonia" }]
+      }] }
+      let(:doi) { create(:doi, creators: creators, contributors: [])}
+
+      it "convert" do
+        expect(Doi.convert_affiliation_by_id(id: doi.id)).to eq(0)
+      end
+    end
+
+    context "affiliation hash" do
+      let(:creators) { [{
+        "name": "Ausmees, K.",
+        "nameType": "Personal",
+        "givenName": "K.",
+        "familyName": "Ausmees",
+        "affiliation": { "name": "Department of Microbiology; Tartu University; Tartu Estonia" }
+      }] }
+      let(:doi) { create(:doi, creators: creators, contributors: [])}
+
+      it "convert" do
+        expect(Doi.convert_affiliation_by_id(id: doi.id)).to eq(1)
+      end
+    end
+
+    context "affiliation array of strings" do
+      let(:creators) { [{
+        "name": "Ausmees, K.",
+        "nameType": "Personal",
+        "givenName": "K.",
+        "familyName": "Ausmees",
+        "affiliation": ["Andrology Centre; Tartu University Hospital; Tartu Estonia", "Department of Surgery; Tartu University; Tartu Estonia"]
+      }] }
+      let(:doi) { create(:doi, creators: creators, contributors: [])}
+
+      it "convert" do
+        expect(Doi.convert_affiliation_by_id(id: doi.id)).to eq(1)
+      end
+    end
+
+    context "affiliation string" do
+      let(:creators) { [{
+        "name": "Ausmees, K.",
+        "nameType": "Personal",
+        "givenName": "K.",
+        "familyName": "Ausmees",
+        "affiliation": "Andrology Centre; Tartu University Hospital; Tartu Estonia"
+      }] }
+      let(:doi) { create(:doi, creators: creators, contributors: [])}
+
+      it "convert" do
+        expect(Doi.convert_affiliation_by_id(id: doi.id)).to eq(1)
+      end
+    end
+  end
+
+
+
   describe "migrates landing page" do
     let(:provider)  { create(:provider, symbol: "ADMIN") }
     let(:client)  { create(:client, provider: provider) }
