@@ -125,7 +125,7 @@ class EventsController < ApplicationController
     pairings = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
     dois = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_dois(response.response.aggregations.dois.buckets) : nil
     dois_usage = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_dois(response.response.aggregations.dois_usage.dois.buckets) : nil
-    dois_citations = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_citations_by_year(response.response.aggregations.dois_citations) : nil
+    dois_citations = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_citations_by_year_v1(response.response.aggregations.dois_citations) : nil
     citations_histogram = total.positive? && aggregations.include?("metrics_aggregations") ? facet_citations_by_year(response.response.aggregations.citations_histogram) : nil
     citations = total.positive? && aggregations.include?("metrics_aggregations") ? facet_citations_by_dois(response.response.aggregations.citations.dois.buckets) : nil
     views_histogram = total.positive? && aggregations.include?("metrics_aggregations") ? facet_counts_by_year_month(response.response.aggregations.views_histogram) : nil

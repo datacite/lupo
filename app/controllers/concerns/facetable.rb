@@ -148,6 +148,20 @@ module Facetable
         "years" => arr }
     end
 
+    def facet_citations_by_year_v1(hash)
+      arr = hash.dig('years', 'buckets').map do |h|
+        year = h["key_as_string"][0..3].to_i
+        title = h["key_as_string"][0..3]
+
+        {
+          'id' => year,
+          'title' => title,
+          'sum' => h.dig('total_by_year', 'value') }
+      end
+      { "count" => hash.dig("sum_distribution", "value"),
+        "years" => arr }
+    end
+
     def facet_counts_by_year_month(hash)
       arr = hash.dig('year_months', 'buckets').map do |h|
         month = h["key_as_string"][5..6].to_i
