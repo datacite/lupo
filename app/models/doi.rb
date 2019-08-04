@@ -710,7 +710,7 @@ class Doi < ActiveRecord::Base
         should_update = true
         container = { 
           "type" => doi.container["type"],
-          "identifier" => parse_attributes(doi.container["identifier"]),
+          "identifier" => parse_attributes(doi.container["identifier"], first: true),
           "identifierType" => doi.container["identifierType"],
           "title" => parse_attributes(doi.container["title"]),
           "volume" => parse_attributes(doi.container["volume"]),
