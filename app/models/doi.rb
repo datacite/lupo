@@ -696,11 +696,11 @@ class Doi < ActiveRecord::Base
         container = {}
       elsif !(doi.container.is_a?(Hash))
         logger.error "[MySQL] container for DOI #{doi.doi} should be a hash."
-      elsif [doi.container["title"], doi.container["volume"], doi.container["issue"]].any? { |c| c.is_a?(Hash) }
+      elsif [doi.container["title"], doi.container["volume"], doi.container["issue"], doi.container["identifier"]].any? { |c| c.is_a?(Hash) }
         should_update = true
         container = { 
           "type" => doi.container["type"],
-          "identifier" => doi.container["identifier"],
+          "identifier" => parse_attributes(doi.container["identifier"]),
           "identifierType" => doi.container["identifierType"],
           "title" => parse_attributes(doi.container["title"]),
           "volume" => parse_attributes(doi.container["volume"]),
