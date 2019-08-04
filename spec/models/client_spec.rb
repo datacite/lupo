@@ -75,6 +75,28 @@ describe Client, type: :model do
     end
   end
 
+  describe "client_type" do
+    let(:client)  { build(:client, provider: provider) }
+
+    it "repository" do
+      client.client_type = "repository"
+      expect(client.save).to be true
+      expect(client.errors.details).to be_empty
+    end
+
+    it "periodical" do
+      client.client_type = "periodical"
+      expect(client.save).to be true
+      expect(client.errors.details).to be_empty
+    end
+
+    it "unsupported" do
+      client.client_type = "conference"
+      expect(client.save).to be false
+      expect(client.errors.details).to eq(:client_type=>[{:error=>:inclusion, :value=>"conference"}])
+    end
+  end
+
   describe "repository_type" do
     let(:client)  { build(:client, provider: provider, client_type: "repository") }
 

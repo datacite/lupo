@@ -313,7 +313,7 @@ class Client < ActiveRecord::Base
   def set_defaults
     self.contact_name = "" unless contact_name.present?
     self.domains = "*" unless domains.present?
-    self.client_type = "repository" unless client_type.present?
+    self.client_type = "repository" if client_type.blank?
     self.issn = {} if issn.blank? || client_type == "repository"
     self.certificate = [] if certificate.blank? || client_type == "periodical"
     self.repository_type = [] if repository_type.blank? || client_type == "periodical"

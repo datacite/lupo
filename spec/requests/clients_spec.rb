@@ -165,14 +165,24 @@ describe 'Clients', type: :request, elasticsearch: true do
       it 'updates the record' do
         put "/clients/#{client.symbol}", params, headers
 
+        expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
         expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
       end
+    end
 
-      it 'returns status code 200' do
+    context 'change client_type' do
+      let(:params) do
+        { "data" => { "type" => "clients",
+                      "attributes" => {
+                        "clientType" => "periodical"}} }
+      end
+
+      it 'updates the record' do
         put "/clients/#{client.symbol}", params, headers
 
         expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'clientType')).to eq("periodical")
       end
     end
 
@@ -188,14 +198,9 @@ describe 'Clients', type: :request, elasticsearch: true do
       it 'updates the record' do
         put "/clients/#{client.symbol}", params, headers
 
+        expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
         expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
-      end
-
-      it 'returns status code 200' do
-        put "/clients/#{client.symbol}", params, headers
-
-        expect(last_response.status).to eq(200)
       end
     end
 
@@ -208,15 +213,10 @@ describe 'Clients', type: :request, elasticsearch: true do
                         "name" => "Imperial College"}} }
       end
 
-      it 'returns status code 422' do
-        put "/clients/#{client.symbol}", params, headers
-
-        expect(last_response.status).to eq(422)
-      end
-
       it 'returns a validation failure message' do
         put "/clients/#{client.symbol}", params, headers
 
+        expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq("source"=>"symbol", "title"=>"Cannot be changed")
       end
     end
