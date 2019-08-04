@@ -634,7 +634,54 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
+  describe "convert_containers" do
+    let(:doi) { create(:doi)}
 
+    context "container nil" do
+      let(:container) { nil }
+      let(:doi) { create(:doi, container: container)}
+
+      it "convert" do
+        expect(Doi.convert_container_by_id(id: doi.id)).to eq(1)
+      end
+    end
+
+    context "container hash with strings" do
+      let(:container) { {
+        "type": "Journal", 
+        "issue": "6", 
+        "title": "Journal of Crustacean Biology", 
+        "volume": "32", 
+        "lastPage": "961", 
+        "firstPage": "949", 
+        "identifier": "1937-240X", 
+        "identifierType": "ISSN"
+      } }
+      let(:doi) { create(:doi, container: container)}
+
+      it "not convert" do
+        expect(Doi.convert_container_by_id(id: doi.id)).to eq(0)
+      end
+    end
+
+    context "container hash with hashes" do
+      let(:container) { {
+        "type": "Journal", 
+        "issue": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "6"}, 
+        "title": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "Journal of Crustacean Biology"}, 
+        "volume": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "32"}, 
+        "lastPage": "961", 
+        "firstPage": "949", 
+        "identifier": "1937-240X", 
+        "identifierType": "ISSN"
+      } }
+      let(:doi) { create(:doi, container: container)}
+
+      it "convert" do
+        expect(Doi.convert_container_by_id(id: doi.id)).to eq(1)
+      end
+    end
+  end
 
   describe "migrates landing page" do
     let(:provider)  { create(:provider, symbol: "ADMIN") }
