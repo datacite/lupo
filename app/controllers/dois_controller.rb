@@ -487,9 +487,6 @@ class DoisController < ApplicationController
 
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
 
-    # default values for attributes stored as JSON
-    defaults = { data: { titles: [], descriptions: [], types: {}, dates: [], rightsList: [], creators: [], contributors: [] }}
-
     attributes = [
       :doi,
       :confirmDoi,
@@ -507,8 +504,8 @@ class DoisController < ApplicationController
       { dates: [:date, :dateType, :dateInformation] },
       :subjects,
       { subjects: [:subject, :subjectScheme, :schemeUri, :valueUri, :lang] },
-      {
-        landingPage: [
+      :landingPage,
+      { landingPage: [
           :checked,
           :url,
           :status,
@@ -567,6 +564,9 @@ class DoisController < ApplicationController
     ]
     relationships = [{ client: [data: [:type, :id]] }]
 
+    # default values for attributes stored as JSON
+    defaults = { data: { titles: [], descriptions: [], types: {}, container: {}, dates: [], subjects: [], rightsList: [], creators: [], contributors: [], sizes: [], formats: [], contentUrl: [], identifiers: [], relatedIdentifiers: [], fundingReferences: [], geoLocations: [] }}
+
     p = params.require(:data).permit(:type, :id, attributes: attributes, relationships: relationships).reverse_merge(defaults)
     client_id = p.dig("relationships", "client", "data", "id") || current_user.try(:client_id)
     p = p.fetch("attributes").merge(client_id: client_id)
@@ -619,7 +619,7 @@ class DoisController < ApplicationController
     # merge attributes from xml into regular attributes
     # make sure we don't accidentally set any attributes to nil
     read_attrs_keys.each do |attr|
-      p.merge!(attr.to_s.underscore => p[attr].presence || meta[attr.to_s.underscore].presence || p[attr]) if p.has_key?(attr) || meta.has_key?(attr.to_s.underscore)
+      p.merge!(attr.to_s.underscore => p[attr] || meta[attr.to_s.underscore] || p[attr]) if p.has_key?(attr) || meta.has_key?(attr.to_s.underscore)
     end
     p.merge!(version_info: p[:version] || meta["version_info"]) if p.has_key?(:version_info) || meta["version_info"].present?
 

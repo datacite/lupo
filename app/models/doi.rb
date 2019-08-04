@@ -85,8 +85,18 @@ class Doi < ActiveRecord::Base
   validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
   validate :check_dates, if: :dates?
   validate :check_rights_list, if: :rights_list?
+  validate :check_titles, if: :titles?
   validate :check_descriptions, if: :descriptions?
+  validate :check_types, if: :types?
+  validate :check_container, if: :container?
   validate :check_subjects, if: :subjects?
+  validate :check_creators, if: :creators?
+  validate :check_contributors, if: :contributors?
+  validate :check_landing_page, if: :landing_page?
+  validate :check_identifiers, if: :identifiers?
+  validate :check_related_identifiers, if: :related_identifiers?
+  validate :check_funding_references, if: :funding_references?
+  validate :check_geo_locations, if: :geo_locations?
 
   after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
@@ -727,6 +737,18 @@ class Doi < ActiveRecord::Base
     write_attribute(:doi, value.upcase) if value.present?
   end
 
+  def formats=(value)
+    write_attribute(:formats, Array.wrap(value))
+  end
+
+  def sizes=(value)
+    write_attribute(:sizes, Array.wrap(value))
+  end
+
+  def content_url=(value)
+    write_attribute(:content_url, Array.wrap(value))
+  end
+
   def identifier
     normalize_doi(doi, sandbox: !Rails.env.production?)
   end
@@ -787,8 +809,8 @@ class Doi < ActiveRecord::Base
 
     media.delete_all
 
-    Array.wrap(content_url).each do |c|
-      media << Media.create(url: c, media_type: formats)
+    Array.wrap(content_url).each_with_index do |c, index|
+      media << Media.create(url: c, media_type: Array.wrap(formats)[index])
     end
   end
 
@@ -853,6 +875,12 @@ class Doi < ActiveRecord::Base
     end
   end
 
+  def check_titles
+    Array.wrap(titles).each do |t|
+      errors.add(:titles, "Title '#{t}' should be an object instead of a string.") unless t.is_a?(Hash)
+    end
+  end
+
   def check_descriptions
     Array.wrap(descriptions).each do |d|
       errors.add(:descriptions, "Description '#{d}' should be an object instead of a string.") unless d.is_a?(Hash)
@@ -863,6 +891,54 @@ class Doi < ActiveRecord::Base
     Array.wrap(subjects).each do |s|
       errors.add(:subjects, "Subject '#{s}' should be an object instead of a string.") unless s.is_a?(Hash)
     end
+  end
+
+  def check_creators
+    Array.wrap(creators).each do |c|
+      errors.add(:creators, "Creator '#{c}' should be an object instead of a string.") unless c.is_a?(Hash)
+    end
+  end
+
+  def check_contributors
+    Array.wrap(contributors).each do |c|
+      errors.add(:contributors, "Contributor '#{c}' should be an object instead of a string.") unless c.is_a?(Hash)
+    end
+  end
+
+  def check_identifiers
+    Array.wrap(identifiers).each do |i|
+      errors.add(:identifiers, "Identifier '#{i}' should be an object instead of a string.") unless i.is_a?(Hash)
+    end
+  end
+
+  def check_related_identifiers
+    Array.wrap(related_identifiers).each do |r|
+      errors.add(:related_identifiers, "Related identifier '#{r}' should be an object instead of a string.") unless r.is_a?(Hash)
+    end
+  end
+
+  def check_funding_references
+    Array.wrap(funding_references).each do |f|
+      errors.add(:funding_references, "Funding reference '#{f}' should be an object instead of a string.") unless f.is_a?(Hash)
+    end
+  end
+
+  def check_geo_locations
+    Array.wrap(geo_locations).each do |g|
+      errors.add(:geo_locations, "Geolocation '#{g}' should be an object instead of a string.") unless g.is_a?(Hash)
+    end
+  end
+
+  def check_landing_page
+    errors.add(:landing_page, "Landing page '#{landing_page}' should be an object instead of a string.") unless landing_page.is_a?(Hash)
+  end
+
+  def check_types
+    errors.add(:types, "Types '#{types}' should be an object instead of a string.") unless types.is_a?(Hash)
+  end
+
+  def check_container
+    errors.add(:container, "Container '#{container}' should be an object instead of a string.") unless container.is_a?(Hash)
   end
 
   # to be used after DOIs were transferred to another DOI RA

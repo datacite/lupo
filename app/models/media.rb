@@ -45,7 +45,7 @@ class Media < ActiveRecord::Base
   def set_defaults
     current_media = Media.where(dataset: dataset).order('media.created DESC').first
     self.version = current_media.present? ? current_media.version + 1 : 0
-    self.media_type = "text/plain " if media_type.blank?
+    self.media_type = "text/plain" if media_type.blank?
     self.updated = Time.zone.now.utc.iso8601
   end
 end

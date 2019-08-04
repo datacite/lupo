@@ -338,7 +338,7 @@ describe "dois", type: :request do
 
       it 'updates the doi' do
         put "/dois/#{doi.doi}", valid_attributes, admin_headers
-
+        
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'sizes')).to eq(sizes)
       end
@@ -560,6 +560,64 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
         expect(json.dig('data', 'attributes', 'titles')).to eq(titles)
+      end
+
+      it 'sets state to findable' do
+        patch "/dois/#{doi.doi}", valid_attributes, headers
+
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
+    end
+
+    context 'when the title is changed wrong format' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:titles) { "Submitted chemical data for InChIKey=YAPQBXQYLJRXSA-UHFFFAOYSA-N" }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "xml" => xml,
+              "titles" => titles,
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      it 'error' do
+        patch "/dois/#{doi.doi}", valid_attributes, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json['errors']).to eq([{"source"=>"titles", "title"=>"Title 'submitted chemical data for inchikey=yapqbxqyljrxsa-uhfffaoysa-n' should be an object instead of a string."}])
+      end
+    end
+
+    context 'when the description is changed to empty' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:descriptions) { [] }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "xml" => xml,
+              "descriptions" => descriptions,
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      it 'updates the record' do
+        patch "/dois/#{doi.doi}", valid_attributes, headers
+        puts last_response.body
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'descriptions')).to eq([])
       end
 
       it 'sets state to findable' do
@@ -1041,7 +1099,7 @@ describe "dois", type: :request do
 
       it 'updates the record' do
         patch "/dois/10.14454/8na3-9s47", valid_attributes, headers
-
+        puts last_response.body
         expect(last_response.status).to eq(201)
         expect(json.dig('data', 'attributes', 'url')).to eq("https://ors.datacite.org/doi:/10.14454/8na3-9s47")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/8na3-9s47")
@@ -2174,6 +2232,7 @@ describe "dois", type: :request do
       it 'updates the Doi' do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
+        expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'contentUrl')).to eq(content_url)
       end
     end
@@ -2330,7 +2389,7 @@ describe "dois", type: :request do
         patch "/dois/#{doi.doi}", update_attributes_again, headers
 
         expect(json.dig('data', 'attributes', 'descriptions').size).to eq(1)
-        expect(json.dig('data', 'attributes', 'container')).to be_nil
+        expect(json.dig('data', 'attributes', 'container')).to be_empty
       end
     end
 
