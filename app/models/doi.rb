@@ -667,6 +667,62 @@ class Doi < ActiveRecord::Base
     count
   end
 
+  def self.convert_containers(options={})
+    from_id = (options[:from_id] || Doi.minimum(:id)).to_i
+    until_id = (options[:until_id] || Doi.maximum(:id)).to_i
+
+    # get every id between from_id and end_id
+    (from_id..until_id).step(500).each do |id|
+      DoiConvertContainerByIdJob.perform_later(options.merge(id: id))
+      puts "Queued converting containers for DOIs with IDs starting with #{id}." unless Rails.env.test?
+    end
+
+    (from_id..until_id).to_a.length
+  end
+
+  def self.convert_container_by_id(options={})
+    return nil unless options[:id].present?
+
+    id = options[:id].to_i
+    count = 0
+
+    logger = Logger.new(STDOUT)
+
+    Doi.where(id: id..(id + 499)).find_each do |doi|
+      should_update = false
+
+      if doi.container.nil?
+        should_update = true
+        container = {}
+      elsif !(doi.container.is_a?(Hash))
+        logger.error "[MySQL] container for DOI #{doi.doi} should be a hash."
+      elsif [doi.container["title"], doi.container["volume"], doi.container["issue"]].any? { |c| c.is_a?(Hash) }
+        should_update = true
+        container = { 
+          "type" => doi.container["type"],
+          "identifier" => doi.container["identifier"],
+          "identifierType" => doi.container["identifierType"],
+          "title" => parse_attributes(doi.container["title"]),
+          "volume" => parse_attributes(doi.container["volume"]),
+          "issue" => parse_attributes(doi.container["issue"]),
+          "firstPage" => doi.container["firstPage"],
+          "lastPage" => doi.container["lastPage"] }.compact
+      end
+
+      if should_update
+        doi.update_columns(container: container)
+        count += 1
+      end   
+    end
+        
+    logger.info "[MySQL] Converted containers for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
+
+    count
+  rescue TypeError, ActiveRecord::ActiveRecordError, ActiveRecord::LockWaitTimeout => error
+    logger.error "[MySQL] Error converting containers for DOIs with IDs #{id} - #{(id + 499)}."
+    count
+  end
+
   def doi=(value)
     write_attribute(:doi, value.upcase) if value.present?
   end
