@@ -29,9 +29,9 @@ class DoiSerializer
     Array.wrap(object.creators).map do |c|
       c["affiliation"] = Array.wrap(c["affiliation"]).map do |a|
         if params[:affiliation]
-          a.is_a?(Hash) ? a : { "name" => a }.compact
+          a
         else
-          a.is_a?(Hash) ? a["name"] : a
+          a["name"] 
         end
       end.compact
       c
@@ -44,9 +44,9 @@ class DoiSerializer
     Array.wrap(object.contributors).map do |c|
       c["affiliation"] = Array.wrap(c["affiliation"]).map do |a|
         if params[:affiliation]
-          a.is_a?(Hash) ? a : { "name" => a }.compact
+          a
         else
-          a.is_a?(Hash) ? a["name"] : a
+          a["name"] 
         end
       end.compact
       c
@@ -55,6 +55,14 @@ class DoiSerializer
 
   attribute :rights_list do |object|
     Array.wrap(object.rights_list)
+  end
+
+  attribute :container do |object|
+    object.container || {}
+  end
+
+  attribute :types do |object|
+    object.types || {}
   end
 
   attribute :state do |object|

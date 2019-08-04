@@ -642,7 +642,7 @@ describe Doi, type: :model, vcr: true do
       let(:doi) { create(:doi, container: container)}
 
       it "convert" do
-        expect(Doi.convert_container_by_id(id: doi.id)).to eq(1)
+        expect(Doi.convert_container_by_id(id: doi.id)).to eq(0)
       end
     end
 

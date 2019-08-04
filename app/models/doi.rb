@@ -749,6 +749,18 @@ class Doi < ActiveRecord::Base
     write_attribute(:content_url, Array.wrap(value))
   end
 
+  def container=(value)
+    write_attribute(:container, value || {})
+  end
+
+  def types=(value)
+    write_attribute(:types, value || {})
+  end
+
+  def landing_page=(value)
+    write_attribute(:landing_page, value || {})
+  end
+
   def identifier
     normalize_doi(doi, sandbox: !Rails.env.production?)
   end
