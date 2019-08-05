@@ -30,7 +30,7 @@ class ProvidersController < ApplicationController
         exclude_registration_agencies: params[:exclude_registration_agencies],
         year: params[:year], 
         region: params[:region], 
-        consortium_lead_id: params[:consortium_lead_id], 
+        consortium_id: params[:consortium_id], 
         member_type: params[:member_type], 
         organization_type: params[:organization_type], 
         focus_area: params[:focus_area], 
@@ -267,14 +267,14 @@ class ProvidersController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:consortium_lead, :consortium_organizations]
+      @include = @include & [:consortium, :consortium_organizations]
     else
       @include = []
     end
   end
 
   def set_provider
-    @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM_LEAD' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: params[:id]).first
+    @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @provider.present?
   end
 
@@ -285,7 +285,7 @@ class ProvidersController < ApplicationController
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params,
       only: [
-        :name, "displayName", :symbol, :description, :website, :joined, "organizationType", "focusArea", "consortiumLead", "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation", { "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType",
+        :name, "displayName", :symbol, :description, :website, :joined, "organizationType", "focusArea", :consortium, "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation", { "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType",
       "technicalContact",{ "technicalContact": [:email, "givenName", "familyName"]},
       "secondaryTechnicalContact",{ "secondaryTechnicalContact": [:email, "givenName", "familyName"]},
       "secondaryBillingContact",{ "secondaryBillingContact": [:email, "givenName", "familyName"]},
@@ -296,7 +296,7 @@ class ProvidersController < ApplicationController
       ],
       keys: {
         "displayName" => :display_name,
-        "organizationType" => :organization_type, "focusArea" => :focus_area, "consortiumLead" => :consortium_lead, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" => :twitter_handle, "memberType" => :member_type,
+        "organizationType" => :organization_type, "focusArea" => :focus_area, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" => :twitter_handle, "memberType" => :member_type,
         "technicalContact" => :technical_contact,
         "secondaryTechnicalContact" => :secondary_technical_contact,
         "secondaryBillingContact" => :secondary_billing_contact,

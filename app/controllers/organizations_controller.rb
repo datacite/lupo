@@ -24,7 +24,7 @@ class OrganizationsController < ApplicationController
       response = Provider.query(params[:query],
         year: params[:year], 
         region: params[:region], 
-        consortium_lead_id: params[:provider_id], 
+        consortium_id: params[:provider_id], 
         organization_type: params[:organization_type], 
         focus_area: params[:focus_area],
         page: page, 
@@ -159,7 +159,7 @@ class OrganizationsController < ApplicationController
   protected
 
   def set_provider
-    @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM_LEAD' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: params[:id]).first
+    @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @provider.present?
   end
 end

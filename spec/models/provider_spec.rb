@@ -40,18 +40,18 @@ describe Provider, type: :model do
     end
   end
 
-  describe "provider with ROLE_CONSORTIUM_LEAD" do
-    subject { create(:provider, role_name: "ROLE_CONSORTIUM_LEAD", name: "Virtual Library of Virginia", symbol: "VIVA") }
+  describe "provider with ROLE_CONSORTIUM" do
+    subject { create(:provider, role_name: "ROLE_CONSORTIUM", name: "Virtual Library of Virginia", symbol: "VIVA") }
 
-    let!(:consortium_organizations) { create_list(:provider, 3, role_name: "ROLE_CONSORTIUM_ORGANIZATION", consortium_lead_id: subject.symbol) }
+    let!(:consortium_organizations) { create_list(:provider, 3, role_name: "ROLE_CONSORTIUM_ORGANIZATION", consortium_id: subject.symbol) }
 
     it "works" do
-      expect(subject.role_name).to eq("ROLE_CONSORTIUM_LEAD")
-      expect(subject.member_type).to eq("consortium_lead")
-      expect(subject.member_type_label).to eq("Consortium Lead")
+      expect(subject.role_name).to eq("ROLE_CONSORTIUM")
+      expect(subject.member_type).to eq("consortium")
+      expect(subject.member_type_label).to eq("Consortium")
       expect(subject.consortium_organizations.length).to eq(3)
       consortium_organization = subject.consortium_organizations.last
-      expect(consortium_organization.consortium_lead_id).to eq("VIVA")
+      expect(consortium_organization.consortium_id).to eq("VIVA")
       expect(consortium_organization.member_type).to eq("consortium_organization")
     end
   end

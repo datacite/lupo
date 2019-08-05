@@ -9,8 +9,8 @@ class ProviderSerializer
 
   has_many :clients, record_type: :clients
   has_many :prefixes, record_type: :prefixes
-  belongs_to :consortium_lead, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |provider| provider.consortium_lead_id }
-  has_many :consortium_organizations, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |provider| provider.member_type == "consortium_lead" }
+  belongs_to :consortium, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |provider| provider.consortium_id }
+  has_many :consortium_organizations, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |provider| provider.member_type == "consortium" }
 
   attribute :country do |object|
     object.country_code

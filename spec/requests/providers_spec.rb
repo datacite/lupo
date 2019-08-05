@@ -164,7 +164,7 @@ describe "Providers", type: :request, elasticsearch: true  do
     end
 
     context 'create provider member_role consortium_organization' do
-      let(:consortium_lead) { create(:provider, member_type: "consortium_lead") }
+      let(:consortium) { create(:provider, member_type: "consortium") }
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
@@ -176,10 +176,10 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "memberType" => "consortium_organization",
                         "country" => "GB" },
                         "relationships": {
-                          "consortiumLead": {
+                          "consortium": {
                             "data":{
                               "type": "providers",
-                              "id": consortium_lead.symbol.downcase
+                              "id": consortium.symbol.downcase
                             }
                           }
                         }} }
@@ -192,17 +192,17 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
         expect(json.dig('data', 'attributes', 'name')).to eq("Figshare")
         expect(json.dig('data', 'attributes', 'memberType')).to eq("consortium_organization")
-        expect(json.dig('data', 'relationships', 'consortiumLead', 'data', 'id')).to eq(consortium_lead.symbol.downcase)
+        expect(json.dig('data', 'relationships', 'consortium', 'data', 'id')).to eq(consortium.symbol.downcase)
       
         sleep 1
 
-        get "/providers/#{consortium_lead.symbol.downcase}?include=consortium-organizations", nil, headers
+        get "/providers/#{consortium.symbol.downcase}?include=consortium-organizations", nil, headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig('included', 0, 'attributes', 'systemEmail')).to eq("doe@joe.joe")
         expect(json.dig('included', 0, 'attributes', 'name')).to eq("Figshare")
         expect(json.dig('included', 0, 'attributes', 'memberType')).to eq("consortium_organization")
-        expect(json.dig('included', 0, 'relationships', 'consortiumLead', 'data', 'id')).to eq(consortium_lead.symbol)
+        expect(json.dig('included', 0, 'relationships', 'consortium', 'data', 'id')).to eq(consortium.symbol)
       
         # get "/providers?consortium-lead-id=#{consortium_lead.symbol.downcase}", nil, headers
 
@@ -217,7 +217,7 @@ describe "Providers", type: :request, elasticsearch: true  do
     end
 
     context 'create provider not member_role consortium_organization' do
-      let(:consortium_lead) { create(:provider, member_type: "consortium_lead") }
+      let(:consortium) { create(:provider, member_type: "consortium") }
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
@@ -229,10 +229,10 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "memberType" => "provider",
                         "country" => "GB" },
                         "relationships": {
-                          "consortiumLead": {
+                          "consortium": {
                             "data":{
                               "type": "providers",
-                              "id": consortium_lead.symbol.downcase
+                              "id": consortium.symbol.downcase
                             }
                           }
                         }} }
@@ -245,12 +245,12 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
         expect(json.dig('data', 'attributes', 'name')).to eq("Figshare")
         expect(json.dig('data', 'attributes', 'memberType')).to eq("provider")
-        expect(json.dig('data', 'relationships', 'consortiumLead', 'data', 'id')).to be_nil
+        expect(json.dig('data', 'relationships', 'consortium', 'data', 'id')).to be_nil
       end
     end
 
-    context 'create provider not member_role consortium_lead' do
-      let(:consortium_lead) { create(:provider, member_type: "provider") }
+    context 'create provider not member_role consortium' do
+      let(:consortium) { create(:provider, member_type: "provider") }
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
@@ -262,10 +262,10 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "memberType" => "consortium_organization",
                         "country" => "GB" },
                         "relationships": {
-                          "consortiumLead": {
+                          "consortium": {
                             "data":{
                               "type": "providers",
-                              "id": consortium_lead.symbol.downcase
+                              "id": consortium.symbol.downcase
                             }
                           }
                         }} }
@@ -275,7 +275,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         post '/providers', params, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"].first).to eq("source"=>"consortium_lead_id", "title"=>"The consortium_lead must be of member_type consortium_lead")
+        expect(json["errors"].first).to eq("source"=>"consortium_id", "title"=>"The consortium must be of member_type consortium")
       end
     end
 

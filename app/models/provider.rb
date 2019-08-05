@@ -37,11 +37,11 @@ class Provider < ActiveRecord::Base
   validates_format_of :system_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, message: "system_email should be an email"
   validates_format_of :group_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, if: :group_email?, message: "group_email should be an email"
   validates_format_of :website, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be a url"
-  validates_inclusion_of :role_name, :in => %w( ROLE_FOR_PROFIT_PROVIDER ROLE_CONTRACTUAL_PROVIDER ROLE_CONSORTIUM_LEAD ROLE_CONSORTIUM_ORGANIZATION ROLE_ALLOCATOR ROLE_MEMBER ROLE_REGISTRATION_AGENCY ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
+  validates_inclusion_of :role_name, :in => %w( ROLE_FOR_PROFIT_PROVIDER ROLE_CONTRACTUAL_PROVIDER ROLE_CONSORTIUM ROLE_CONSORTIUM_ORGANIZATION ROLE_ALLOCATOR ROLE_MEMBER ROLE_REGISTRATION_AGENCY ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
   validates_inclusion_of :organization_type, :in => %w(researchInstitution academicInstitution governmentAgency nationalInstitution professionalSociety publisher serviceProvider other), message: "organization type %s is not included in the list", if: :organization_type?
   validates_inclusion_of :focus_area, :in => %w(naturalSciences engineeringAndTechnology medicalAndHealthSciences agriculturalSciences socialSciences humanities general), message: "focus area %s is not included in the list", if: :focus_area?
   validate :freeze_symbol, :on => :update
-  validate :can_have_consortium_lead
+  validate :can_be_in_consortium
   validates_format_of :ror_id, :with => /\Ahttps:\/\/ror\.org\/0\w{6}\d{2}\z/, if: :ror_id?, message: "ROR ID should be a url"
   validates_format_of :twitter_handle, :with => /\A@[a-zA-Z0-9_]{1,15}\z/, if: :twitter_handle?
 
@@ -60,8 +60,8 @@ class Provider < ActiveRecord::Base
   has_many :dois, through: :clients
   has_many :provider_prefixes, foreign_key: :allocator, dependent: :destroy
   has_many :prefixes, through: :provider_prefixes
-  has_many :consortium_organizations, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_lead_id", inverse_of: :consortium_lead
-  belongs_to :consortium_lead, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_lead_id", inverse_of: :consortium_organizations, optional: true
+  has_many :consortium_organizations, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_id", inverse_of: :consortium
+  belongs_to :consortium, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_id", inverse_of: :consortium_organizations, optional: true
 
   before_validation :set_region, :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
@@ -106,7 +106,7 @@ class Provider < ActiveRecord::Base
       indexes :focus_area,    type: :keyword
       indexes :organization_type, type: :keyword
       indexes :member_type,   type: :keyword
-      indexes :consortium_lead_id, type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }}
+      indexes :consortium_id, type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }}
       indexes :consortium_organization_ids, type: :keyword
       indexes :country_code,  type: :keyword
       indexes :role_name,     type: :keyword
@@ -162,7 +162,7 @@ class Provider < ActiveRecord::Base
       indexes :deleted_at,    type: :date
       indexes :cumulative_years, type: :integer, index: "false"
 
-      indexes :consortium_lead, type: :object
+      indexes :consortium, type: :object
       indexes :consortium_organizations, type: :object
     end
   end
@@ -189,7 +189,7 @@ class Provider < ActiveRecord::Base
       "focus_area" => focus_area,
       "organization_type" => organization_type,
       "member_type" => member_type,
-      "consortium_lead_id" => consortium_lead_id,
+      "consortium_id" => consortium_id,
       "consortium_organization_ids" => consortium_organization_ids,
       "role_name" => role_name,
       "password" => password,
@@ -217,7 +217,7 @@ class Provider < ActiveRecord::Base
       "updated" => updated,
       "deleted_at" => deleted_at,
       "cumulative_years" => cumulative_years,
-      "consortium_lead" => consortium_lead.try(:as_indexed_json),
+      "consortium" => consortium.try(:as_indexed_json),
     }
   end
 
@@ -428,7 +428,7 @@ class Provider < ActiveRecord::Base
     {
       "ROLE_MEMBER"               => "Member Only",
       "ROLE_ALLOCATOR"            => "Member Provider",
-      "ROLE_CONSORTIUM_LEAD"      => "Consortium Lead",
+      "ROLE_CONSORTIUM"           => "Consortium",
       "ROLE_CONSORTIUM_ORGANIZATION" => "Consortium Lead",
       "ROLE_CONTRACTUAL_PROVIDER" => "Contractual Provider",
       "ROLE_ADMIN"                => "DataCite admin",
@@ -451,7 +451,7 @@ class Provider < ActiveRecord::Base
     {
       "ROLE_MEMBER"               => "member_only",
       "ROLE_ALLOCATOR"            => "provider",
-      "ROLE_CONSORTIUM_LEAD"      => "consortium_lead",
+      "ROLE_CONSORTIUM"           => "consortium",
       "ROLE_CONSORTIUM_ORGANIZATION" => "consortium_organization",
       "ROLE_CONTRACTUAL_PROVIDER" => "contractual_provider",
       "ROLE_FOR_PROFIT_PROVIDER"  => "for_profit_provider",
@@ -513,11 +513,11 @@ class Provider < ActiveRecord::Base
     prefixes.pluck(:prefix)
   end
 
-  def can_have_consortium_lead
-    if consortium_lead_id && member_type != "consortium_organization"
-      errors.add(:consortium_lead_id, "The provider must be of member_type consortium_organization")
-    elsif consortium_lead_id && consortium_lead.member_type != "consortium_lead"
-      errors.add(:consortium_lead_id, "The consortium_lead must be of member_type consortium_lead")
+  def can_be_in_consortium
+    if consortium_id && member_type != "consortium_organization"
+      errors.add(:consortium_id, "The provider must be of member_type consortium_organization")
+    elsif consortium_id && consortium.member_type != "consortium"
+      errors.add(:consortium_id, "The consortium must be of member_type consortium")
     end
   end
 
@@ -581,6 +581,6 @@ class Provider < ActiveRecord::Base
     self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
     self.billing_information = {} unless billing_information.present?
-    self.consortium_lead_id = nil unless member_type == "consortium_organization"
+    self.consortium_id = nil unless member_type == "consortium_organization"
   end
 end
