@@ -2,11 +2,13 @@ module Countable
   extend ActiveSupport::Concern
 
   included do
-    def doi_count(client_id: nil, provider_id: nil)
+    def doi_count(client_id: nil, provider_id: nil, consortium_id: nil)
       if client_id
         response = Doi.query(nil, client_id: client_id, page: { number: 1, size: 0 })
       elsif provider_id
         response = Doi.query(nil, provider_id: provider_id, page: { number: 1, size: 0 })
+      elsif consortium_id
+        response = Doi.query(nil, consortium_id: consortium_id, page: { number: 1, size: 0 })
       else
         response = Doi.query(nil, page: { number: 1, size: 0 })
       end
@@ -17,9 +19,11 @@ module Countable
     # cumulative count clients by year
     # count until the previous year if client has been deleted
     # show all clients for admin
-    def client_count(provider_id: nil)
+    def client_count(provider_id: nil, consortium_id: nil)
       if provider_id
         response = Client.query(nil, provider_id: provider_id, include_deleted: true, page: { number: 1, size: 0 })
+      elsif consortium_id
+        response = Client.query(nil, consortium_id: consortium_id, include_deleted: true, page: { number: 1, size: 0 })
       else
         response = Client.query(nil, include_deleted: true, page: { number: 1, size: 0 })
       end
@@ -35,13 +39,16 @@ module Countable
       response.results.total
     end
 
-    # show provider count for admin
+    # show provider counts for admin and consortium
     # count until the previous year if provider has been deleted
-    def provider_count(provider_id: nil)
-      return nil if provider_id 
-
-      response = Provider.query(nil, include_deleted: true, page: { number: 1, size: 0 })
-      response.results.total > 0 ? facet_by_cumulative_year(response.response.aggregations.cumulative_years.buckets) : []
+    def provider_count(consortium_id: nil)
+      if consortium_id
+        response = Provider.query(nil, consortium_id: consortium_id, include_deleted: true, page: { number: 1, size: 0 })
+        response.results.total > 0 ? facet_by_cumulative_year(response.response.aggregations.cumulative_years.buckets) : []
+      else
+        response = Provider.query(nil, include_deleted: true, page: { number: 1, size: 0 })
+        response.results.total > 0 ? facet_by_cumulative_year(response.response.aggregations.cumulative_years.buckets) : []
+      end
     end
   end
 end

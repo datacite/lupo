@@ -150,11 +150,25 @@ class ProvidersController < ApplicationController
   end
 
   def show
+    if params[:id] == "admin"
+      providers = provider_count(consortium_id: nil)
+      clients = client_count(provider_id: nil)
+      dois = doi_count(provider_id: nil)
+    elsif @provider.member_type == "consortium"
+      providers = provider_count(consortium_id: params[:id])
+      clients = client_count(consortium_id: params[:id])
+      dois = doi_count(consortium_id: params[:id])
+    else
+      providers = nil
+      clients = client_count(provider_id: params[:id])
+      dois = doi_count(provider_id: params[:id])
+    end
+
     options = {}
     options[:meta] = {
-      providers: provider_count(provider_id: params[:id] == "admin" ? nil : params[:id]),
-      clients: client_count(provider_id: params[:id] == "admin" ? nil : params[:id]),
-      dois: doi_count(provider_id: params[:id] == "admin" ? nil : params[:id]) }.compact
+      providers: providers,
+      clients: clients,
+      dois: dois }.compact
     options[:include] = @include
     options[:is_collection] = false
     options[:params] = {
@@ -186,11 +200,25 @@ class ProvidersController < ApplicationController
     logger = Logger.new(STDOUT)
     # logger.debug safe_params.inspect
     if @provider.update_attributes(safe_params)
+      if params[:id] == "admin"
+        providers = provider_count(consortium_id: nil)
+        clients = client_count(provider_id: nil)
+        dois = doi_count(provider_id: nil)
+      elsif @provider.member_type == "consortium"
+        providers = provider_count(consortium_id: params[:id])
+        clients = client_count(consortium_id: params[:id])
+        dois = doi_count(consortium_id: params[:id])
+      else
+        providers = nil
+        clients = client_count(provider_id: params[:id])
+        dois = doi_count(provider_id: params[:id])
+      end
+
       options = {}
       options[:meta] = {
-        providers: provider_count(provider_id: params[:id] == "admin" ? nil : params[:id]),
-        clients: client_count(provider_id: params[:id] == "admin" ? nil : params[:id]),
-        dois: doi_count(provider_id: params[:id] == "admin" ? nil : params[:id]) }.compact
+        providers: providers,
+        clients: clients,
+        dois: dois }.compact
       options[:include] = @include
       options[:is_collection] = false
       options[:params] = {

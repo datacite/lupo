@@ -145,8 +145,7 @@ class OrganizationsController < ApplicationController
   def show
     options = {}
     options[:meta] = {
-      providers: provider_count(provider_id: params[:id] == "admin" ? nil : params[:id]),
-      clients: client_count(provider_id: params[:id] == "admin" ? nil : params[:id]),
+      repositories: client_count(provider_id: params[:id] == "admin" ? nil : params[:id]),
       dois: doi_count(provider_id: params[:id] == "admin" ? nil : params[:id]) }.compact
     options[:include] = @include
     options[:is_collection] = false

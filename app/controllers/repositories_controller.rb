@@ -26,6 +26,7 @@ class RepositoriesController < ApplicationController
       response = Client.query(params[:query], 
         year: params[:year], 
         provider_id: params[:provider_id],
+        consortium_id: params[:consortium_id],
         re3data_id: params[:re3data_id],
         opendoar_id: params[:opendoar_id],
         software: params[:software],

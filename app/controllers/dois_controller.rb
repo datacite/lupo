@@ -56,6 +56,7 @@ class DoisController < ApplicationController
                           created: params[:created],
                           registered: params[:registered],
                           provider_id: params[:provider_id],
+                          consortium_id: params[:consortium_id],
                           client_id: params[:client_id],
                           re3data_id: params[:re3data_id],
                           opendoar_id: params[:opendoar_id],
@@ -184,6 +185,7 @@ class DoisController < ApplicationController
             next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/dois?" + {
               query: params[:query],
               "provider-id" => params[:provider_id],
+              "consortium-id" => params[:consortium_id],
               "client-id" => params[:client_id],
               certificate: params[:certificate],
               # The cursor link should be an array of values, but we want to encode it into a single string for the URL
