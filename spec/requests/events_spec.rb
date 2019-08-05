@@ -229,6 +229,51 @@ describe "/events", type: :request, elasticsearch: true do
         # expect(json.dig("data", "relationships", "dois", "data")).to eq([{"id"=>"10.1371/journal.pmed.0030186", "type"=>"dois"}])
       end
     end
+
+    context "with registrant information" do
+      let(:uri) { "/events" }
+      let(:params) do
+        { "data" => { "type" => "events",
+                      "attributes" => {
+                        "subjId" => "https://doi.org/10.18713/jimis-170117-1-2",
+                        "subj" => {"@id":"https://doi.org/10.18713/jimis-170117-1-2","@type":"ScholarlyArticle","datePublished":"2017","proxyIdentifiers":[],"registrantId":"datacite.inist.umr7300"},
+                        "obj" => {"@id":"https://doi.org/10.1016/j.jastp.2013.05.001","@type":"ScholarlyArticle","datePublished":"2013-09","proxyIdentifiers":["13646826"],"registrantId":"datacite.crossref.citations"},
+                        "objId" => "https://doi.org/10.1016/j.jastp.2013.05.001",
+                        "relationTypeId" => "references",
+                        "sourceId" => "datacite-crossref",
+                        "sourceToken" => "sourceToken" } } }
+      end
+
+      it "has registrant aggregation" do
+        post uri, params, headers
+      
+
+        expect(last_response.status).to eq(201)
+        expect(json["errors"]).to be_nil
+        expect(json.dig("data", "id")).not_to eq(event.uuid)
+        expect(json.dig("data", "attributes", "objId")).to eq("https://doi.org/10.1016/j.jastp.2013.05.001")
+
+        Event.import
+        sleep 1
+        get uri, nil, headers
+
+        expect(json.dig("meta", "registrants",0,"count")).to eq(1)
+        expect(json.dig("meta", "registrants",0,"id")).to eq("datacite.crossref.citations")
+      end
+
+      it "has citationsHistogram aggregation with correct citation year" do
+        post uri, params, headers
+      
+        expect(last_response.status).to eq(201)
+        expect(json["errors"]).to be_nil
+   
+        Event.import
+        sleep 1
+        get uri+"?aggregations=metrics_aggregations", nil, headers
+
+        expect(json.dig("meta", "citationsHistogram","years",0,"title")).to eq("2017")
+      end
+    end
   end
 
   context "upsert" do
