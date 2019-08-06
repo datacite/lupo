@@ -29,6 +29,8 @@ class Client < ActiveRecord::Base
   alias_attribute :updated_at, :updated
   attr_readonly :symbol
   delegate :symbol, to: :provider, prefix: true
+  delegate :consortium_id, to: :provider, allow_nil: true
+
   attr_accessor :password_input
 
   validates_presence_of :symbol, :name, :contact_name, :contact_email
@@ -78,6 +80,7 @@ class Client < ActiveRecord::Base
       indexes :id,            type: :keyword
       indexes :symbol,        type: :keyword
       indexes :provider_id,   type: :keyword
+      indexes :consortium_id, type: :keyword
       indexes :re3data_id,    type: :keyword
       indexes :opendoar_id,   type: :integer
       indexes :issn,          type: :object, properties: {
@@ -194,6 +197,7 @@ class Client < ActiveRecord::Base
       "id" => uid,
       "uid" => uid,
       "provider_id" => provider_id,
+      "consortium_id" => consortium_id,
       "re3data_id" => re3data_id,
       "opendoar_id" => opendoar_id,
       "issn" => issn,

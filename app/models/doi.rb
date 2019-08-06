@@ -73,6 +73,7 @@ class Doi < ActiveRecord::Base
   has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
 
   delegate :provider, to: :client
+  delegate :consortium_id, to: :provider, allow_nil: true
 
   validates_presence_of :doi
   validates_presence_of :url, if: Proc.new { |doi| doi.is_registered_or_findable? }
@@ -179,6 +180,7 @@ class Doi < ActiveRecord::Base
       indexes :publication_year,               type: :date, format: "yyyy", ignore_malformed: true
       indexes :client_id,                      type: :keyword
       indexes :provider_id,                    type: :keyword
+      indexes :consortium_id,                  type: :keyword
       indexes :resource_type_id,               type: :keyword
       indexes :media_ids,                      type: :keyword
       indexes :media,                          type: :object, properties: {
@@ -415,6 +417,7 @@ class Doi < ActiveRecord::Base
       "publisher" => publisher,
       "client_id" => client_id,
       "provider_id" => provider_id,
+      "consortium_id" => consortium_id,
       "resource_type_id" => resource_type_id,
       "media_ids" => media_ids,
       "prefix" => prefix,

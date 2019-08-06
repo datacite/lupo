@@ -7,6 +7,7 @@ class ClientSerializer
   attributes :name, :symbol, :year, :contact_name, :contact_email, :alternate_name, :description, :language, :client_type, :domains, :url, :created, :updated
 
   belongs_to :provider, record_type: :providers
+  belongs_to :consortium, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |client| client.consortium_id }
   has_many :prefixes, record_type: :prefixes
 
   attribute :is_active do |object|
