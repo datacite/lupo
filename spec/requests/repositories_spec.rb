@@ -10,8 +10,8 @@ describe 'Repositories', type: :request, elasticsearch: true do
                   "attributes" => {
                     "symbol" => provider.symbol + ".IMPERIAL",
                     "name" => "Imperial College",
-                    "contactName" => "Madonna",
-                    "contactEmail" => "bob@example.com",
+                    "systemEmail" => "bob@example.com",
+                    "salesforceId" => "abc012345678901234",
                     "clientType" => "repository",
                     "certificate" => ["CoreTrustSeal"]
                   },
@@ -102,8 +102,9 @@ describe 'Repositories', type: :request, elasticsearch: true do
         expect(last_response.status).to eq(201)
         attributes = json.dig('data', 'attributes')
         expect(attributes["name"]).to eq("Imperial College")
-        expect(attributes["contactName"]).to eq("Madonna")
+        expect(attributes["systemEmail"]).to eq("bob@example.com")
         expect(attributes["certificate"]).to eq(["CoreTrustSeal"])
+        expect(attributes["salesforceId"]).to eq("abc012345678901234")
 
         relationships = json.dig('data', 'relationships')
         expect(relationships.dig("provider", "data", "id")).to eq(provider.symbol.downcase)
@@ -115,8 +116,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
         { "data" => { "type" => "repositories",
                       "attributes" => {
                         "symbol" => provider.symbol + ".IMPERIAL",
-                        "name" => "Imperial College",
-                        "contactName" => "Madonna"
+                        "name" => "Imperial College"
                       },
                       "relationships": {
                   			"provider": {
@@ -132,7 +132,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
         post '/repositories', params, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{"source"=>"contact_email", "title"=>"Can't be blank"}, {"source"=>"contact_email", "title"=>"Is invalid"}])
+        expect(json["errors"]).to eq([{"source"=>"system_email", "title"=>"Can't be blank"}, {"source"=>"system_email", "title"=>"Is invalid"}])
       end
     end
   end

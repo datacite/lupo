@@ -5,12 +5,12 @@ class ProviderSerializer
   set_id :uid
   # cache_options enabled: true, cache_length: 24.hours ### we cannot filter if we cache
 
-  attributes :name, :display_name, :symbol, :website, :system_email, :group_email, :description, :region, :country, :logo_url, :member_type, :organization_type, :focus_area, :is_active, :has_password, :joined, :twitter_handle, :billing_information, :ror_id, :technical_contact, :secondary_technical_contact, :billing_contact, :secondary_billing_contact, :service_contact, :secondary_service_contact, :voting_contact, :created, :updated
+  attributes :name, :display_name, :symbol, :website, :system_email, :group_email, :description, :region, :country, :logo_url, :member_type, :organization_type, :focus_area, :is_active, :has_password, :joined, :twitter_handle, :billing_information, :ror_id, :salesforce_id, :technical_contact, :secondary_technical_contact, :billing_contact, :secondary_billing_contact, :service_contact, :secondary_service_contact, :voting_contact, :created, :updated
 
   has_many :clients, record_type: :clients
   has_many :prefixes, record_type: :prefixes
   belongs_to :consortium, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |provider| provider.consortium_id }
-  has_many :consortium_organizations, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |provider| provider.member_type == "consortium" }
+  has_many :consortium_organizations, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |provider| provider.member_type == "consortium_member" }
 
   attribute :country do |object|
     object.country_code
@@ -59,5 +59,9 @@ class ProviderSerializer
 
   attribute :voting_contact do |object|
     object.voting_contact.present? ? object.voting_contact.transform_keys!{ |key| key.to_s.camelcase(:lower) } : {}
+  end
+
+  attribute :salesforce_id, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_salesforce_id, object) == true } do |object|
+    object.salesforce_id
   end
 end

@@ -25,8 +25,8 @@ describe Provider, type: :model do
 
     it "works" do
       expect(subject.role_name).to eq("ROLE_CONTRACTUAL_PROVIDER")
-      expect(subject.member_type).to eq("contractual_provider")
-      expect(subject.member_type_label).to eq("Contractual Provider")
+      expect(subject.member_type).to eq("contractual_member")
+      expect(subject.member_type_label).to eq("Contractual Member")
     end
   end
 
@@ -40,6 +40,56 @@ describe Provider, type: :model do
     end
   end
 
+  describe "non-profit status" do
+    subject { build(:provider) }
+
+    it "non-profit" do
+      subject.non_profit_status = "non-profit"
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+    end
+  
+    it "for-profit" do
+      subject.non_profit_status = "for-profit"
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+    end
+
+    it "default" do
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+      expect(subject.non_profit_status).to eq("non-profit")
+    end
+
+    it "not_supported" do
+      subject.non_profit_status = "super-profit"
+      expect(subject.save).to be false
+      expect(subject.errors.details).to eq(:non_profit_status=>[{:error=>:inclusion, :value=>"super-profit"}])
+    end
+  end
+
+  describe "salesforce id" do
+    subject { build(:provider) }
+
+    it "valid" do
+      subject.salesforce_id = "abc012345678901234"
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+    end
+  
+    it "invalid" do
+      subject.salesforce_id = "abc"
+      expect(subject.save).to be false
+      expect(subject.errors.details).to eq(:salesforce_id=>[{:error=>:invalid, :value=>"abc"}])
+    end
+
+    it "blank" do
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+      expect(subject.salesforce_id).to be_nil
+    end
+  end
+
   describe "provider with ROLE_CONSORTIUM" do
     subject { create(:provider, role_name: "ROLE_CONSORTIUM", name: "Virtual Library of Virginia", symbol: "VIVA") }
 
@@ -47,8 +97,8 @@ describe Provider, type: :model do
 
     it "works" do
       expect(subject.role_name).to eq("ROLE_CONSORTIUM")
-      expect(subject.member_type).to eq("consortium")
-      expect(subject.member_type_label).to eq("Consortium")
+      expect(subject.member_type).to eq("consortium_member")
+      expect(subject.member_type_label).to eq("Consortium Member")
       expect(subject.consortium_organizations.length).to eq(3)
       consortium_organization = subject.consortium_organizations.last
       expect(consortium_organization.consortium_id).to eq("VIVA")

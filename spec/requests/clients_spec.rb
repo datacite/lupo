@@ -10,8 +10,7 @@ describe 'Clients', type: :request, elasticsearch: true do
                   "attributes" => {
                     "symbol" => provider.symbol + ".IMPERIAL",
                     "name" => "Imperial College",
-                    "contactName" => "Madonna",
-                    "contactEmail" => "bob@example.com",
+                    "systemEmail" => "bob@example.com",
                     "clientType" => "repository"
                   },
                   "relationships": {
@@ -37,14 +36,9 @@ describe 'Clients', type: :request, elasticsearch: true do
     it 'returns clients' do
       get '/clients', nil, headers
 
+      expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(4)
       expect(json.dig('meta', 'total')).to eq(4)
-    end
-
-    it 'returns status code 200' do
-      get '/clients', nil, headers
-
-      expect(last_response.status).to eq(200)
     end
   end
 
@@ -106,7 +100,7 @@ describe 'Clients', type: :request, elasticsearch: true do
         expect(last_response.status).to eq(201)
         attributes = json.dig('data', 'attributes')
         expect(attributes["name"]).to eq("Imperial College")
-        expect(attributes["contactName"]).to eq("Madonna")
+        expect(attributes["contactEmail"]).to eq("bob@example.com")
         expect(attributes["clientType"]).to eq("repository")
 
         relationships = json.dig('data', 'relationships')
@@ -127,8 +121,7 @@ describe 'Clients', type: :request, elasticsearch: true do
         { "data" => { "type" => "clients",
                       "attributes" => {
                         "symbol" => provider.symbol + ".IMPERIAL",
-                        "name" => "Imperial College",
-                        "contactName" => "Madonna"
+                        "name" => "Imperial College"
                       },
                       "relationships": {
                   			"provider": {
@@ -149,7 +142,7 @@ describe 'Clients', type: :request, elasticsearch: true do
       it 'returns a validation failure message' do
         post '/clients', params, headers
 
-        expect(json["errors"]).to eq([{"source"=>"contact_email", "title"=>"Can't be blank"}, {"source"=>"contact_email", "title"=>"Is invalid"}])
+        expect(json["errors"]).to eq([{"source"=>"system_email", "title"=>"Can't be blank"}, {"source"=>"system_email", "title"=>"Is invalid"}])
       end
     end
   end

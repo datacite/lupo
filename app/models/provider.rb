@@ -37,8 +37,10 @@ class Provider < ActiveRecord::Base
   validates_format_of :system_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, message: "system_email should be an email"
   validates_format_of :group_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, if: :group_email?, message: "group_email should be an email"
   validates_format_of :website, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be a url"
+  validates_format_of :salesforce_id, :with => /[a-zA-Z0-9]{18}/, message: "wrong format for salesforce id", if: :salesforce_id?
   validates_inclusion_of :role_name, :in => %w( ROLE_FOR_PROFIT_PROVIDER ROLE_CONTRACTUAL_PROVIDER ROLE_CONSORTIUM ROLE_CONSORTIUM_ORGANIZATION ROLE_ALLOCATOR ROLE_MEMBER ROLE_REGISTRATION_AGENCY ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
   validates_inclusion_of :organization_type, :in => %w(researchInstitution academicInstitution governmentAgency nationalInstitution professionalSociety publisher serviceProvider other), message: "organization type %s is not included in the list", if: :organization_type?
+  validates_inclusion_of :non_profit_status, :in => %w(non-profit for-profit), message: "non-profit status %s is not included in the list"
   validates_inclusion_of :focus_area, :in => %w(naturalSciences engineeringAndTechnology medicalAndHealthSciences agriculturalSciences socialSciences humanities general), message: "focus area %s is not included in the list", if: :focus_area?
   validate :freeze_symbol, :on => :update
   validate :can_be_in_consortium
@@ -51,8 +53,6 @@ class Provider < ActiveRecord::Base
   # validates :service_contact, contact: true
   # validates :voting_contact, contact: true
   #validates :billing_information, billing_information: true
-
-  before_validation :set_region
 
   strip_attributes
 
@@ -114,6 +114,7 @@ class Provider < ActiveRecord::Base
       indexes :joined,        type: :date
       indexes :twitter_handle,type: :keyword
       indexes :ror_id,        type: :keyword
+      indexes :salesforce_id, type: :keyword
       indexes :billing_information, type: :object, properties: {
         postCode: { type: :keyword },
         state: { type: :text},
@@ -197,6 +198,7 @@ class Provider < ActiveRecord::Base
       "joined" => joined,
       "twitter_handle" => twitter_handle,
       "ror_id" => ror_id,
+      "salesforce_id" => salesforce_id,
       "billing_information" => {
         "address" => billing_address,
         "organization" => billing_organization,
@@ -427,10 +429,10 @@ class Provider < ActiveRecord::Base
   def member_type_labels
     {
       "ROLE_MEMBER"               => "Member Only",
-      "ROLE_ALLOCATOR"            => "Member Provider",
-      "ROLE_CONSORTIUM"           => "Consortium",
-      "ROLE_CONSORTIUM_ORGANIZATION" => "Consortium Lead",
-      "ROLE_CONTRACTUAL_PROVIDER" => "Contractual Provider",
+      "ROLE_ALLOCATOR"            => "Direct Member",
+      "ROLE_CONSORTIUM"           => "Consortium Member",
+      "ROLE_CONSORTIUM_ORGANIZATION" => "Consortium Organization",
+      "ROLE_CONTRACTUAL_PROVIDER" => "Contractual Member",
       "ROLE_ADMIN"                => "DataCite admin",
       "ROLE_DEV"                  => "DataCite admin",
       "ROLE_FOR_PROFIT_PROVIDER"  => "For-profit Provider",
@@ -450,10 +452,10 @@ class Provider < ActiveRecord::Base
   def member_types
     {
       "ROLE_MEMBER"               => "member_only",
-      "ROLE_ALLOCATOR"            => "provider",
-      "ROLE_CONSORTIUM"           => "consortium",
+      "ROLE_ALLOCATOR"            => "direct_member",
+      "ROLE_CONSORTIUM"           => "consortium_member",
       "ROLE_CONSORTIUM_ORGANIZATION" => "consortium_organization",
-      "ROLE_CONTRACTUAL_PROVIDER" => "contractual_provider",
+      "ROLE_CONTRACTUAL_PROVIDER" => "contractual_member",
       "ROLE_FOR_PROFIT_PROVIDER"  => "for_profit_provider",
       "ROLE_REGISTRATION_AGENCY"  => "registration_agency"
      }
@@ -516,8 +518,8 @@ class Provider < ActiveRecord::Base
   def can_be_in_consortium
     if consortium_id && member_type != "consortium_organization"
       errors.add(:consortium_id, "The provider must be of member_type consortium_organization")
-    elsif consortium_id && consortium.member_type != "consortium"
-      errors.add(:consortium_id, "The consortium must be of member_type consortium")
+    elsif consortium_id && consortium.member_type != "consortium_member"
+      errors.add(:consortium_id, "The consortium must be of member_type consortium_member")
     end
   end
 
@@ -582,5 +584,6 @@ class Provider < ActiveRecord::Base
     self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
     self.billing_information = {} unless billing_information.present?
     self.consortium_id = nil unless member_type == "consortium_organization"
+    self.non_profit_status = "non-profit" unless non_profit_status.present?
   end
 end

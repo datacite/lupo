@@ -7,8 +7,7 @@ describe Client, type: :model do
   describe "Validations" do
     it { should validate_presence_of(:symbol) }
     it { should validate_presence_of(:name) }
-    it { should validate_presence_of(:contact_email) }
-    it { should validate_presence_of(:contact_name) }
+    it { should validate_presence_of(:system_email) }
     it { is_expected.to strip_attribute(:name) }
     it { is_expected.to strip_attribute(:domains) }
   end
@@ -18,7 +17,7 @@ describe Client, type: :model do
       params = client.to_jsonapi
       expect(params.dig("id")).to eq(client.symbol.downcase)
       expect(params.dig("attributes","symbol")).to eq(client.symbol)
-      expect(params.dig("attributes","contact-email")).to eq(client.contact_email)
+      expect(params.dig("attributes","system-email")).to eq(client.system_email)
       expect(params.dig("attributes","provider-id")).to eq(client.provider_id)
       expect(params.dig("attributes","is-active")).to be true
     end
@@ -72,6 +71,28 @@ describe Client, type: :model do
       client.certificate = ["MyHomeGrown Certificate"]
       expect(client.save).to be false
       expect(client.errors.details).to eq(:certificate=>[{:error=>"Certificate MyHomeGrown Certificate is not included in the list of supported certificates."}])
+    end
+  end
+
+  describe "salesforce id" do
+    subject { build(:client) }
+
+    it "valid" do
+      subject.salesforce_id = "abc012345678901234"
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+    end
+  
+    it "invalid" do
+      subject.salesforce_id = "abc"
+      expect(subject.save).to be false
+      expect(subject.errors.details).to eq(:salesforce_id=>[{:error=>:invalid, :value=>"abc"}])
+    end
+
+    it "blank" do
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+      expect(subject.salesforce_id).to be_nil
     end
   end
 

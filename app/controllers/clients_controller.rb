@@ -79,6 +79,7 @@ class ClientsController < ApplicationController
         }.compact
       options[:include] = @include
       options[:is_collection] = true
+      options[:params] = { current_ability: current_ability }
 
       fields = fields_from_params(params)
       if fields
@@ -100,6 +101,7 @@ class ClientsController < ApplicationController
     options[:meta] = { dois: doi_count(client_id: params[:id]) }
     options[:include] = @include
     options[:is_collection] = false
+    options[:params] = { current_ability: current_ability }
 
     render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
   end
@@ -112,6 +114,7 @@ class ClientsController < ApplicationController
     if @client.save
       options = {}
       options[:is_collection] = false
+      options[:params] = { current_ability: current_ability }
   
       render json: ClientSerializer.new(@client, options).serialized_json, status: :created
     else
@@ -126,6 +129,7 @@ class ClientsController < ApplicationController
       options = {}
       options[:meta] = { dois: doi_count(client_id: params[:id]) }
       options[:is_collection] = false
+      options[:params] = { current_ability: current_ability }
   
       render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
     else
@@ -209,8 +213,8 @@ class ClientsController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:symbol, :name, "contactName", "contactEmail", :domains, :provider, :url, "repositoryType", { "repositoryType" => [] }, :description, :language, { language: [] }, "alternateName", :software, "targetId", "isActive", "passwordInput", "clientType", :re3data, :opendoar, :issn, { issn: [] }, :certificate, { certificate: [] }],
-              keys: { "contactName" => :contact_name, "contactEmail" => :contact_email, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input, "clientType" => :client_type, "alternateName" => :alternate_name, "repositoryType" => :repository_type }
+      params, only: [:symbol, :name, "systemEmail", :domains, :provider, :url, "repositoryType", { "repositoryType" => [] }, :description, :language, { language: [] }, "alternateName", :software, "targetId", "isActive", "passwordInput", "clientType", :re3data, :opendoar, :issn, { issn: [] }, :certificate, { certificate: [] }, "serviceContact", { "serviceContact": [:email, "givenName", "familyName"] }, "salesforceId"],
+              keys: { "systemEmail" => :system_email, "salesforceId" => :salesforce_id, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input, "clientType" => :client_type, "alternateName" => :alternate_name, "repositoryType" => :repository_type, "serviceContact" => :service_contact }
     )
   end
 end

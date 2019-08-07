@@ -77,9 +77,7 @@ class ProvidersController < ApplicationController
               }.compact
             options[:include] = @include
             options[:is_collection] = true
-            options[:params] = {
-              :current_ability => current_ability,
-            }
+            options[:params] = { current_ability: current_ability }
 
             fields = fields_from_params(params)
             if fields
@@ -171,9 +169,8 @@ class ProvidersController < ApplicationController
       dois: dois }.compact
     options[:include] = @include
     options[:is_collection] = false
-    options[:params] = {
-      :current_ability => current_ability,
-    }
+    options[:params] = { current_ability: current_ability }
+
     render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
   end
 
@@ -186,9 +183,8 @@ class ProvidersController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-      options[:params] = {
-        :current_ability => current_ability,
-      }
+      options[:params] = { current_ability: current_ability }
+
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
       logger.warn @provider.errors.inspect
@@ -221,9 +217,7 @@ class ProvidersController < ApplicationController
         dois: dois }.compact
       options[:include] = @include
       options[:is_collection] = false
-      options[:params] = {
-        :current_ability => current_ability,
-      }
+      options[:params] = { current_ability: current_ability }
 
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
@@ -313,18 +307,18 @@ class ProvidersController < ApplicationController
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params,
       only: [
-        :name, "displayName", :symbol, :description, :website, :joined, "organizationType", "focusArea", :consortium, "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation", { "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType",
-      "technicalContact",{ "technicalContact": [:email, "givenName", "familyName"]},
-      "secondaryTechnicalContact",{ "secondaryTechnicalContact": [:email, "givenName", "familyName"]},
-      "secondaryBillingContact",{ "secondaryBillingContact": [:email, "givenName", "familyName"]},
-      "billingContact",{ "billingContact": [:email, "givenName", "familyName"]},
-      "serviceContact",{ "serviceContact": [:email, "givenName", "familyName"]},
-      "secondaryServiceContact",{ "secondaryServiceContact": [:email, "givenName", "familyName"]},
-      "votingContact",{ "votingContact": [:email, "givenName", "familyName"]}
+        :name, "displayName", :symbol, :description, :website, :joined, "organizationType", "focusArea", :consortium, "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation", { "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType", "nonProfitStatus", "salesforceId",
+      "technicalContact", { "technicalContact": [:email, "givenName", "familyName"] },
+      "secondaryTechnicalContact", { "secondaryTechnicalContact": [:email, "givenName", "familyName"] },
+      "secondaryBillingContact", { "secondaryBillingContact": [:email, "givenName", "familyName"] },
+      "billingContact", { "billingContact": [:email, "givenName", "familyName"] },
+      "serviceContact", { "serviceContact": [:email, "givenName", "familyName"] },
+      "secondaryServiceContact", { "secondaryServiceContact": [:email, "givenName", "familyName"] },
+      "votingContact", { "votingContact": [:email, "givenName", "familyName"] }
       ],
       keys: {
         "displayName" => :display_name,
-        "organizationType" => :organization_type, "focusArea" => :focus_area, "contactEmail" => :contact_email, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" => :twitter_handle, "memberType" => :member_type,
+        "organizationType" => :organization_type, "focusArea" => :focus_area, :country => :country_code, "isActive" => :is_active, "passwordInput" => :password_input,  "billingInformation" => :billing_information , "postCode" => :post_code, "rorId" => :ror_id, "twitterHandle" => :twitter_handle, "memberType" => :member_type,
         "technicalContact" => :technical_contact,
         "secondaryTechnicalContact" => :secondary_technical_contact,
         "secondaryBillingContact" => :secondary_billing_contact,
@@ -333,7 +327,9 @@ class ProvidersController < ApplicationController
         "secondaryServiceContact" => :secondary_service_contact,
         "votingContact" => :voting_contact,
         "groupEmail" => :group_email,
-        "systemEmail" => :system_email
+        "systemEmail" => :system_email,
+        "nonProfitStatus" => :non_profit_status,
+        "salesforceId" => :salesforce_id
       }
     )
   end

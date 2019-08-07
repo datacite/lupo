@@ -103,6 +103,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "symbol" => "BL",
                         "name" => "British Library",
                         "displayName" => "British Library",
+                        "salesforceId" => "abc012345678901234",
                         "region" => "EMEA",
                         "systemEmail" => "doe@joe.joe",
                         "country" => "GB" } } }
@@ -111,13 +112,10 @@ describe "Providers", type: :request, elasticsearch: true  do
       it 'creates a provider' do
         post '/providers', params, headers
 
-        expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
-      end
-
-      it 'returns status code 201' do
-        post '/providers', params, headers
-
         expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'name')).to eq("British Library")
+        expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
+        expect(json.dig('data', 'attributes', 'salesforceId')).to eq("abc012345678901234")
       end
     end
 
@@ -140,7 +138,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
     end
 
-    context 'create provider member_role contractual_provider' do
+    context 'create provider member_role contractual_member' do
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
@@ -149,7 +147,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "displayName" => "Figshare",
                         "region" => "EMEA",
                         "systemEmail" => "doe@joe.joe",
-                        "memberType" => "contractual_provider",
+                        "memberType" => "contractual_member",
                         "country" => "GB" } } }
       end
 
@@ -159,12 +157,12 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
         expect(json.dig('data', 'attributes', 'name')).to eq("Figshare")
-        expect(json.dig('data', 'attributes', 'memberType')).to eq("contractual_provider")
+        expect(json.dig('data', 'attributes', 'memberType')).to eq("contractual_member")
       end
     end
 
     context 'create provider member_role consortium_organization' do
-      let(:consortium) { create(:provider, member_type: "consortium") }
+      let(:consortium) { create(:provider, member_type: "consortium_member") }
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
@@ -244,7 +242,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
         expect(json.dig('data', 'attributes', 'name')).to eq("Figshare")
-        expect(json.dig('data', 'attributes', 'memberType')).to eq("provider")
+        expect(json.dig('data', 'attributes', 'memberType')).to eq("direct_member")
         expect(json.dig('data', 'relationships', 'consortium', 'data', 'id')).to be_nil
       end
     end
@@ -275,7 +273,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         post '/providers', params, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"].first).to eq("source"=>"consortium_id", "title"=>"The consortium must be of member_type consortium")
+        expect(json["errors"].first).to eq("source"=>"consortium_id", "title"=>"The consortium must be of member_type consortium_member")
       end
     end
 

@@ -4,7 +4,7 @@ class RepositorySerializer
   set_type :repositories
   set_id :uid
   
-  attributes :name, :symbol, :re3data, :opendoar, :year, :contact_name, :contact_email, :alternate_name, :description, :client_type, :repository_type, :language, :certificate, :domains, :url, :created, :updated
+  attributes :name, :symbol, :re3data, :opendoar, :year, :system_email, :alternate_name, :description, :client_type, :repository_type, :language, :certificate, :domains, :url, :salesforce_id, :created, :updated
 
   belongs_to :provider, record_type: :providers
   has_many :prefixes, record_type: :prefixes
@@ -23,5 +23,13 @@ class RepositorySerializer
 
   attribute :has_password do |object|
     object.password.present?
+  end
+
+  attribute :service_contact do |object|
+    object.service_contact.present? ? object.service_contact.transform_keys!{ |key| key.to_s.camelcase(:lower) } : {}
+  end
+
+  attribute :salesforce_id, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_salesforce_id, object) == true } do |object|
+    object.salesforce_id
   end
 end
