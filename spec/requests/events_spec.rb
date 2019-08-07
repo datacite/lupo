@@ -1,4 +1,6 @@
 require "rails_helper"
+require 'pp'
+ 
 
 describe "/events", type: :request, elasticsearch: true do
   before(:each) do
@@ -548,35 +550,95 @@ describe "/events", type: :request, elasticsearch: true do
   #   # let!(:event) { create(:event) }
   #   # let(:uri) { "/events" }
     
-  ## TODO: need further setup
-  #   context "check meta unique" do
-  #     let!(:event) { create_list(:event_for_datacite_related, 5) }
-  #     let(:uri) { "/events?extra=true" }
-  #     ## to import events from factory
-  #     let(:import_events) do
-  #       Event.import_by_id(id: 1) 
-  #       sleep 1
-  #     end
+  # TODO: need further setup
+    context "check meta unique" do
+      let!(:event) { create_list(:event_for_datacite_related, 5) }
+      let(:uri) { "/events?aggregations=metrics_aggregations" }
+      ## to import events from factory
+      let(:import_events) do
+        Event.import
+        sleep 1
+      end
 
-  #     # Exclude the token header.
-  #     let(:headers) do
-  #       { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
-  #     end
+      # Exclude the token header.
+      let(:headers) do
+        { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
+      end
 
-  #     it "json" do
-  #       import_events ## to import events from factory
-  #       get uri, nil, headers
+      it "json" do
+        import_events ## to import events from factory
+        get uri, nil, headers
 
-  #       expect(last_response.status).to eq(200)
-  #       response = JSON.parse(last_response.body)
-  #       attributes = response.dig("data", 0, "attributes")
-  #       citations = response.dig("meta", "uniqueCitations")
-  #       puts response
-  #       puts attributes
-  #       puts citations
-  #       expect(citations).to eq(1)
-  #     end
-  #   end
+        expect(last_response.status).to eq(200)
+        response = JSON.parse(last_response.body)
+        citations = response.dig("meta", "uniqueCitations")
+        total = response.dig("meta", "total")
+    
+        expect(total).to eq(5)
+        expect(citations.first["citations"]).to eq(5)
+        expect(citations.first["id"]).to eq("10.5061/dryad.47sd5/1")
+      end
+    end
+
+    context "check meta duplicated" do
+      let!(:event) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v1") }
+      let!(:copies) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v1", relation_type_id: "cites") }
+      let(:uri) { "/events?aggregations=metrics_aggregations" }
+      ## to import events from factory
+      let(:import_events) do
+        Event.import
+        sleep 1
+      end
+
+      # Exclude the token header.
+      let(:headers) do
+        { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
+      end
+
+      it "json" do
+        import_events ## to import events from factory
+        get uri, nil, headers
+
+        expect(last_response.status).to eq(200)
+        response = JSON.parse(last_response.body)
+        citations = response.dig("meta", "uniqueCitations")
+        total = response.dig("meta", "total")
+
+        expect(total).to eq(2)
+        expect(citations.first["citations"]).to eq(1)
+        expect(citations.first["id"]).to eq("10.0260/co.2004960.v1")
+      end
+    end
+
+    context "unique citations for a list of dois" do
+      let!(:event) { create_list(:event_for_datacite_related, 50) }
+      let!(:copies) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v1", relation_type_id: "cites") }
+      let(:dois) {"10.5061/dryad.47sd5e/2,10.5061/dryad.47sd5e/3,10.5061/dryad.47sd5e/4,10.0260/co.2004960.v1"}
+      let(:uri) { "/events?aggregations=metrics_aggregations&dois=#{dois}" }
+      ## to import events from factory
+      let(:import_events) do
+        Event.import
+        sleep 1
+      end
+
+      # Exclude the token header.
+      let(:headers) do
+        { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
+      end
+
+      it "json" do
+        import_events ## to import events from factory
+        get uri, nil, headers
+
+        expect(last_response.status).to eq(200)
+        response = JSON.parse(last_response.body)
+        citations = response.dig("meta", "uniqueCitations")
+        total = response.dig("meta", "total")
+
+        expect(total).to eq(51)
+        expect((citations.select{|doi| dois.split(",").include?(doi["id"])}).length).to eq(4)
+      end
+    end
 
     # Just test that the API can be accessed without a token.
     # context "with no API key" do
