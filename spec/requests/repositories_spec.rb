@@ -178,7 +178,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
       let(:params) do
         { "data" => { "type" => "repositories",
                       "attributes" => {
-                        "symbol" => client.symbol + "MegaCLient",
+                        "symbol" => client.symbol + "M",
                         "email" => "bob@example.com",
                         "name" => "Imperial College"}} }
       end

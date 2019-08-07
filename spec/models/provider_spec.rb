@@ -8,7 +8,12 @@ describe Provider, type: :model do
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:display_name) }
     it { should validate_presence_of(:system_email) }
+    it { should validate_presence_of(:website) }
     it { is_expected.to strip_attribute(:name) }
+    it { should allow_value("AB").for(:symbol) }
+    it { should_not allow_value("A").for(:symbol) }
+    it { should_not allow_value("A9").for(:symbol) }
+    it { should_not allow_value("AAAAAAAAAA").for(:symbol) }
     it { expect(provider).to be_valid }
   end
 
@@ -21,7 +26,7 @@ describe Provider, type: :model do
   end
 
   describe "provider with ROLE_CONTRACTUAL_PROVIDER" do
-    subject { create(:provider, role_name: "ROLE_CONTRACTUAL_PROVIDER", name: "Contractor", symbol: "CONTRACT_SLASH") }
+    subject { create(:provider, role_name: "ROLE_CONTRACTUAL_PROVIDER", name: "Contractor", symbol: "CONTRCTR") }
 
     it "works" do
       expect(subject.role_name).to eq("ROLE_CONTRACTUAL_PROVIDER")

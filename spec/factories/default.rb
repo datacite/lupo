@@ -205,9 +205,10 @@ FactoryBot.define do
 
   factory :provider do
     system_email { "josiah@example.org" }
-    sequence(:symbol) { |n| "TEST#{n}" }
+    sequence(:symbol, 'A') { |n| "TEST#{n}" }
     name { "My provider" }
     display_name { "My provider" }
+    website { Faker::Internet.url }
     country_code { "DE" }
     password_input { "12345" }
     twitter_handle { "@egaTwitterlac" }

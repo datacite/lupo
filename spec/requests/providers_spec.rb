@@ -10,6 +10,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                     "name" => "British Library",
                     "displayName" => "British Library",
                     "systemEmail" => "bob@example.com",
+                    "website" => "https://www.bl.uk",
                     "country" => "GB" } } }
   end
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + token } }
@@ -56,7 +57,7 @@ describe "Providers", type: :request, elasticsearch: true  do
     end
 
     context 'get provider type ROLE_CONTRACTUAL_PROVIDER and check it works ' do
-      let(:provider)  { create(:provider, role_name: "ROLE_CONTRACTUAL_PROVIDER", name: "Contractor", symbol: "CONTRACT_SLASH") }
+      let(:provider)  { create(:provider, role_name: "ROLE_CONTRACTUAL_PROVIDER", name: "Contractor", symbol: "CONTRCTR") }
 
       it 'get provider' do
         get "/providers/#{provider.symbol.downcase}", nil, headers
@@ -103,6 +104,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "symbol" => "BL",
                         "name" => "British Library",
                         "displayName" => "British Library",
+                        "website" => "https://www.bl.uk",
                         "salesforceId" => "abc012345678901234",
                         "region" => "EMEA",
                         "systemEmail" => "doe@joe.joe",
@@ -147,6 +149,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "displayName" => "Figshare",
                         "region" => "EMEA",
                         "systemEmail" => "doe@joe.joe",
+                        "website" => "https://www.bl.uk",
                         "memberType" => "contractual_member",
                         "country" => "GB" } } }
       end
@@ -171,6 +174,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "displayName" => "Figshare",
                         "region" => "EMEA",
                         "systemEmail" => "doe@joe.joe",
+                        "website" => "https://www.bl.uk",
                         "memberType" => "consortium_organization",
                         "country" => "GB" },
                         "relationships": {
@@ -225,6 +229,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "region" => "EMEA",
                         "systemEmail" => "doe@joe.joe",
                         "memberType" => "provider",
+                        "website" => "https://www.bl.uk",
                         "country" => "GB" },
                         "relationships": {
                           "consortium": {
@@ -257,6 +262,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "displayName" => "Figshare",
                         "region" => "EMEA",
                         "systemEmail" => "doe@joe.joe",
+                        "website" => "https://www.bl.uk",
                         "memberType" => "consortium_organization",
                         "country" => "GB" },
                         "relationships": {
@@ -293,6 +299,7 @@ describe "Providers", type: :request, elasticsearch: true  do
               "joined"=>"",
               "keepPassword"=>"[FILTERED]",
               "logoUrl"=>"",
+              "website" => "https://www.bl.uk",
               "name"=>"Carnegie Mellon University",
               "displayName"=>"Carnegie Mellon University",
               "organizationType"=>"academicInstitution",
@@ -309,9 +316,8 @@ describe "Providers", type: :request, elasticsearch: true  do
                 "postCode"=>"122dc"
               },
               "region"=>"",
-              "symbol"=>"CMfddff33333dd111d111113f4d",
-              "updated"=>"",
-              "website"=>""
+              "symbol"=>"CM",
+              "updated"=>""
             }
           }
         }
@@ -320,17 +326,12 @@ describe "Providers", type: :request, elasticsearch: true  do
       it 'creates a provider' do
         post '/providers', params, headers
 
+        expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'systemEmail')).to eq("jkiritha@andrew.cmu.edu")
         expect(json.dig('data', 'attributes', 'billingInformation',"state")).to eq("Rennes")
         expect(json.dig('data', 'attributes', 'billingInformation',"postCode")).to eq("122dc")
         expect(json.dig('data', 'attributes', 'twitterHandle')).to eq("@meekakitty")
         expect(json.dig('data', 'attributes', 'rorId')).to eq("https://ror.org/05njkjr15")
-      end
-
-      it 'returns status code 201' do
-        post '/providers', params, headers
-
-        expect(last_response.status).to eq(200)
       end
     end
 
@@ -382,9 +383,9 @@ describe "Providers", type: :request, elasticsearch: true  do
                 "familyName"=> "Dasler"
               },
               "region"=>"",
-              "symbol"=>"CMfddff33333dd111d111113f4d",
+              "symbol"=>"CM",
               "updated"=>"",
-              "website"=>""
+              "website" => "https://www.bl.uk"
             }
           }
         }
@@ -392,7 +393,8 @@ describe "Providers", type: :request, elasticsearch: true  do
 
       it 'creates a provider' do
         post '/providers', params, headers
-        
+
+        expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'technicalContact',"email")).to eq("kristian@example.com")
         expect(json.dig('data', 'attributes', 'technicalContact',"givenName")).to eq("Kristian")
         expect(json.dig('data', 'attributes', 'technicalContact',"familyName")).to eq("Garza")
@@ -408,12 +410,6 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(json.dig('data', 'attributes', 'votingContact',"email")).to eq("robin@example.com")
         expect(json.dig('data', 'attributes', 'votingContact',"givenName")).to eq("Robin")
         expect(json.dig('data', 'attributes', 'votingContact',"familyName")).to eq("Dasler")
-      end
-
-      it 'returns status code 201' do
-        post '/providers', params, headers
-
-        expect(last_response.status).to eq(200)
       end
     end
 
@@ -437,10 +433,14 @@ describe "Providers", type: :request, elasticsearch: true  do
               "organizationType" => "academicInstitution",
               "focusArea" => "general", "logoUrl" => "",
               "systemEmail" => "jkiritha@andrew.cmu.edu",
-              "website" => "", "isActive" => true,
-              "passwordInput" => "@change", "hasPassword" => false,
-              "keepPassword" => false, "joined" => ""
-            }, "type" => "providers"
+              "website" => "https://www.bl.uk",
+              "isActive" => true,
+              "passwordInput" => "@change", 
+              "hasPassword" => false,
+              "keepPassword" => false, 
+              "joined" => ""
+            }, 
+            "type" => "providers"
           }
         }
 
@@ -467,6 +467,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "symbol" => "ADMIN",
                         "name" => "Admin",
                         "displayName" => "Admin",
+                        "website" => "https://www.bl.uk",
                         "region" => "EMEA",
                         "systemEmail" => "doe@joe.joe",
                         "country" => "GB" } } }
@@ -492,6 +493,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "symbol" => "BL",
                         "name" => "British Library",
                         "displayName" => "British Library",
+                        "website" => "https://www.bl.uk",
                         "region" => "EMEA",
                         "systemEmail" => "doe@joe.joe",
                         "country" => "GB" } } }
@@ -520,6 +522,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "symbol" => "BL",
                         "name" => "British Library",
                         "displayName" => "British Library",
+                        "website" => "https://www.bl.uk",
                         "country" => "GB" } } }
       end
 
@@ -539,6 +542,7 @@ describe "Providers", type: :request, elasticsearch: true  do
             "systemEmail" => "timAus",
             "name" => "British Library",
             "displayName" => "British Library",
+            "website" => "https://www.bl.uk",
             "country" => "GB" } }
       end
 
@@ -561,6 +565,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                       "attributes" => {
                         "name" => "British Library",
                         "displayName" => "British Library",
+                        "website" => "https://www.bl.uk",
                         "region" => "Americas",
                         "systemEmail" => "Pepe@mdm.cod",
                         "country" => "GB" } } }
@@ -597,6 +602,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "displayName" => "British Library",
                         "region" => "Americas",
                         "systemEmail" => "Pepe@mdm.cod",
+                        "website" => "https://www.bl.uk",
                         "country" => "GB" } } }
       end
       let(:admin) { create(:provider, symbol: "ADMIN", role_name: "ROLE_ADMIN", password_input: "12345") }
@@ -618,6 +624,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "name" => "British Library",
                         "displayName" => "British Library",
                         "region" => "Americas",
+                        "website" => "https://www.bl.uk",
                         "systemEmail" => "Pepe@mdm.cod",
                         "country" => "GB" } } }
       end

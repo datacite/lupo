@@ -32,15 +32,17 @@ class Provider < ActiveRecord::Base
   attr_readonly :symbol
   attr_accessor :password_input
 
-  validates_presence_of :symbol, :name, :display_name, :system_email
+  validates_presence_of :symbol, :name, :display_name, :system_email, :website
   validates_uniqueness_of :symbol, message: "This name has already been taken"
+  validates_format_of :symbol, :with => /\A([A-Z]+)\Z/, message: "should only contain capital letters"
+  validates_length_of :symbol, minimum: 2, maximum: 8
   validates_format_of :system_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, message: "system_email should be an email"
   validates_format_of :group_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, if: :group_email?, message: "group_email should be an email"
   validates_format_of :website, :with => /https?:\/\/[\S]+/ , if: :website?, message: "Website should be a url"
   validates_format_of :salesforce_id, :with => /[a-zA-Z0-9]{18}/, message: "wrong format for salesforce id", if: :salesforce_id?
   validates_inclusion_of :role_name, :in => %w( ROLE_FOR_PROFIT_PROVIDER ROLE_CONTRACTUAL_PROVIDER ROLE_CONSORTIUM ROLE_CONSORTIUM_ORGANIZATION ROLE_ALLOCATOR ROLE_MEMBER ROLE_REGISTRATION_AGENCY ROLE_ADMIN ROLE_DEV ), :message => "Role %s is not included in the list"
   validates_inclusion_of :organization_type, :in => %w(researchInstitution academicInstitution governmentAgency nationalInstitution professionalSociety publisher serviceProvider other), message: "organization type %s is not included in the list", if: :organization_type?
-  validates_inclusion_of :non_profit_status, :in => %w(non-profit for-profit), message: "non-profit status %s is not included in the list"
+  validates_inclusion_of :non_profit_status, :in => %w(non-profit for-profit), message: "non-profit status '%s' is not included in the list"
   validates_inclusion_of :focus_area, :in => %w(naturalSciences engineeringAndTechnology medicalAndHealthSciences agriculturalSciences socialSciences humanities general), message: "focus area %s is not included in the list", if: :focus_area?
   validate :freeze_symbol, :on => :update
   validate :can_be_in_consortium
@@ -568,15 +570,6 @@ class Provider < ActiveRecord::Base
     end
     write_attribute(:region, r)
   end
-
-  # def set_provider_type
-  #   if doi_quota_allowed != 0
-  #     r = "allocating"
-  #   else
-  #     r = "non_allocating"
-  #   end
-  #   write_attribute(:provider_type, r)
-  # end
 
   def set_defaults
     self.symbol = symbol.upcase if symbol.present?

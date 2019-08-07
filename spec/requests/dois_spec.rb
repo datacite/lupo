@@ -772,7 +772,7 @@ describe "dois", type: :request do
       let(:provider_headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'CONTENT_TYPE'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + provider_bearer}}
 
       let(:doi) { create(:doi, client: client) }
-      let(:new_client) { create(:client, symbol: "#{provider.symbol}.magic", provider: provider, password: ENV['MDS_PASSWORD']) }
+      let(:new_client) { create(:client, symbol: "#{provider.symbol}.M", provider: provider, password: ENV['MDS_PASSWORD']) }
 
       # attributes MUST be empty
       let(:valid_attributes) do
@@ -806,7 +806,7 @@ describe "dois", type: :request do
 
     context 'when we transfer a DOI as staff' do
       let(:doi) { create(:doi, doi: "10.14454/119495", url: "http://www.bl.uk/pdf/pat.pdf", client: client, aasm_state: "registered") }
-      let(:new_client) { create(:client, symbol: "#{provider.symbol}.magic", provider: provider, password: ENV['MDS_PASSWORD']) }
+      let(:new_client) { create(:client, symbol: "#{provider.symbol}.M", provider: provider, password: ENV['MDS_PASSWORD']) }
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
         {
@@ -2605,7 +2605,7 @@ describe "dois", type: :request do
 
     # Create a different dummy client and a doi with entry associated
     # This is so we can test clients accessing others information
-    let(:other_client) { create(:client, provider: provider, symbol: 'DATACITE.DOESNTEXIST', password: 'notarealpassword') }
+    let(:other_client) { create(:client, provider: provider, symbol: 'DATACITE.DNE', password: 'notarealpassword') }
     let(:other_doi) { create(:doi, doi: "10.24425/2210181332",
       client: other_client,
       state: "findable",

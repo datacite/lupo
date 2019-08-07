@@ -47,7 +47,7 @@ describe Provider, type: :model do
   describe 'encode_auth_param' do
     it "works" do
       credentials = subject.encode_auth_param(username: subject.symbol, password: 12345)
-      expect(credentials).to start_with("VEVTVD")
+      expect(credentials).to start_with("VEVTVE")
     end
 
     it "no password" do
