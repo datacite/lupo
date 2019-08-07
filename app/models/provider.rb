@@ -236,7 +236,8 @@ class Provider < ActiveRecord::Base
       regions: { terms: { field: 'region', size: 10, min_doc_count: 1 } },
       member_types: { terms: { field: 'member_type', size: 10, min_doc_count: 1 } },
       organization_types: { terms: { field: 'organization_type', size: 10, min_doc_count: 1 } },
-      focus_areas: { terms: { field: 'focus_area', size: 10, min_doc_count: 1 } }
+      focus_areas: { terms: { field: 'focus_area', size: 10, min_doc_count: 1 } },
+      non_profit_statuses: { terms: { field: 'non_profit_status', size: 10, min_doc_count: 1 } }
     }
   end
 

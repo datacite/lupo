@@ -180,6 +180,7 @@ module Indexable
         must << { term: { "consortium_id.raw" => options[:consortium_id] }} if options[:consortium_id].present?
         must << { term: { member_type: options[:member_type] }} if options[:member_type].present?
         must << { term: { organization_type: options[:organization_type] }} if options[:organization_type].present?
+        must << { term: { non_profit_status: options[:non_profit_status] }} if options[:non_profit_status].present?
         must << { term: { focus_area: options[:focus_area] }} if options[:focus_area].present?
 
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]

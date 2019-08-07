@@ -34,6 +34,7 @@ class ProvidersController < ApplicationController
         member_type: params[:member_type], 
         organization_type: params[:organization_type], 
         focus_area: params[:focus_area], 
+        non_profit_status: params[:non_profit_status],
         page: page, 
         sort: sort)
     end
@@ -46,6 +47,7 @@ class ProvidersController < ApplicationController
       member_types = total > 0 ? facet_by_key(response.response.aggregations.member_types.buckets) : nil
       organization_types = total > 0 ? facet_by_key(response.response.aggregations.organization_types.buckets) : nil
       focus_areas = total > 0 ? facet_by_key(response.response.aggregations.focus_areas.buckets) : nil
+      non_profit_statuses = total > 0 ? facet_by_key(response.response.aggregations.non_profit_statuses.buckets) : nil
 
       @providers = response.results
       respond_to do |format|
@@ -59,7 +61,8 @@ class ProvidersController < ApplicationController
               regions: regions,
               "memberTypes" => member_types,
               "organizationTypes" => organization_types,
-              "focusAreas" => focus_areas
+              "focusAreas" => focus_areas,
+              "nonProfitStatuses" => non_profit_statuses
             }.compact
 
             options[:links] = {
@@ -71,6 +74,7 @@ class ProvidersController < ApplicationController
                 "member_type" => params[:member_type],
                 "organization_type" => params[:organization_type],
                 "focus-area" => params[:focus_area],
+                "non-profit-status" => params[:non_profit_status],
                 "page[number]" => page[:number] + 1,
                 "page[size]" => page[:size],
                 sort: sort }.compact.to_query
