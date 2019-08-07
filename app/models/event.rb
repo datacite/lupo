@@ -578,8 +578,8 @@ class Event < ActiveRecord::Base
 
   def date_published(doi)
     ## TODO: we need to make sure all the dois from other RA are indexed 
-    doi = Doi.where(doi: doi).first
-    doi[:published] if doi.present? 
+    item = Doi.where(doi: doi_from_url(doi)).first
+    item[:publication_year] if item.present? 
   end
 
   def set_defaults

@@ -29,5 +29,12 @@ describe Event, :type => :model, vcr: true do
       expect(subject.subj["datePublished"]).to eq("2006-06-13T16:14:19Z")
       expect(subject.obj["datePublished"]).to be_nil
     end
+
+    let(:doi) { create(:doi) }
+
+    it "date_published from the database" do
+      published = subject.date_published("https://doi.org/"+doi.doi)
+      expect(published).to eq(2011)
+    end
   end
 end

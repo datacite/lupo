@@ -595,7 +595,6 @@ describe "/events", type: :request, elasticsearch: true do
   #   # let!(:event) { create(:event) }
   #   # let(:uri) { "/events" }
     
-  # TODO: need further setup
     context "check meta unique" do
       let!(:event) { create_list(:event_for_datacite_related, 5) }
       let(:uri) { "/events?aggregations=metrics_aggregations" }
