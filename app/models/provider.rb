@@ -106,6 +106,7 @@ class Provider < ActiveRecord::Base
       indexes :focus_area,    type: :keyword
       indexes :organization_type, type: :keyword
       indexes :member_type,   type: :keyword
+      indexes :non_profit_status, type: :keyword
       indexes :consortium_id, type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }}
       indexes :consortium_organization_ids, type: :keyword
       indexes :country_code,  type: :keyword
@@ -190,6 +191,7 @@ class Provider < ActiveRecord::Base
       "focus_area" => focus_area,
       "organization_type" => organization_type,
       "member_type" => member_type,
+      "non_profit_status" => non_profit_status,
       "consortium_id" => consortium_id,
       "consortium_organization_ids" => consortium_organization_ids,
       "role_name" => role_name,
