@@ -656,7 +656,7 @@ describe "/events", type: :request, elasticsearch: true do
     context "unique citations for a list of dois" do
       let!(:event) { create_list(:event_for_datacite_related, 50) }
       let!(:copies) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v1", relation_type_id: "cites") }
-      let(:dois) {"10.5061/dryad.47sd5e/2,10.5061/dryad.47sd5e/3,10.5061/dryad.47sd5e/4,10.0260/co.2004960.v1"}
+      let(:dois) { ((event.map{ |e| e['subj_id'].gsub("https://doi.org/","")})[1, 20]).join(",")}
       let(:uri) { "/events?aggregations=metrics_aggregations&dois=#{dois}" }
 
       before do
@@ -678,8 +678,7 @@ describe "/events", type: :request, elasticsearch: true do
         total = response.dig("meta", "total")
 
         expect(total).to eq(51)
-        # TODO
-        # expect((citations.select { |doi| dois.split(",").include?(doi["id"]) }).length).to eq(4)
+        expect((citations.select { |doi| dois.split(",").include?(doi["id"]) }).length).to eq(20)
       end
     end
 
