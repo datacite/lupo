@@ -156,7 +156,7 @@ class ProvidersController < ApplicationController
       providers = provider_count(consortium_id: nil)
       clients = client_count(provider_id: nil)
       dois = doi_count(provider_id: nil)
-    elsif @provider.member_type == "consortium"
+    elsif @provider.member_type == "consortium_member"
       providers = provider_count(consortium_id: params[:id])
       clients = client_count(consortium_id: params[:id])
       dois = doi_count(consortium_id: params[:id])
@@ -184,9 +184,27 @@ class ProvidersController < ApplicationController
     authorize! :create, @provider
 
     if @provider.save
+      if @provider.symbol == "ADMIN"
+        providers = provider_count(consortium_id: nil)
+        clients = client_count(provider_id: nil)
+        dois = doi_count(provider_id: nil)
+      elsif @provider.member_type == "consortium_member"
+        providers = provider_count(consortium_id: params[:id])
+        clients = client_count(consortium_id: params[:id])
+        dois = doi_count(consortium_id: params[:id])
+      else
+        providers = nil
+        clients = client_count(provider_id: params[:id])
+        dois = doi_count(provider_id: params[:id])
+      end
+
       options = {}
       options[:include] = @include
       options[:is_collection] = false
+      options[:meta] = {
+        providers: providers,
+        clients: clients,
+        dois: dois }.compact
       options[:params] = { current_ability: current_ability }
 
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
@@ -204,7 +222,7 @@ class ProvidersController < ApplicationController
         providers = provider_count(consortium_id: nil)
         clients = client_count(provider_id: nil)
         dois = doi_count(provider_id: nil)
-      elsif @provider.member_type == "consortium"
+      elsif @provider.member_type == "consortium_member"
         providers = provider_count(consortium_id: params[:id])
         clients = client_count(consortium_id: params[:id])
         dois = doi_count(consortium_id: params[:id])
