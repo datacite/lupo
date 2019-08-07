@@ -522,7 +522,7 @@ class Event < ActiveRecord::Base
   end
 
   def registrant_id
-    [subj["registrantId"], obj["registrantId"], subj["provider_id"], obj["provider_id"]].compact
+    [subj["registrant_id"], obj["registrant_id"], subj["provider_id"], obj["provider_id"]].compact
   end
 
   def subtype
