@@ -300,7 +300,7 @@ FactoryBot.define do
       sequence(:subj_id) { |n| "http://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
       subj { {"datePublished"=>"2006-06-13T16:14:19Z"} }
       obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
-      relation_type_id { "has_part" }
+      relation_type_id { "references" }
     end
   end
 end
