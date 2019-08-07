@@ -4,8 +4,12 @@ FactoryBot.define do
   factory :client do
     provider
 
-    contact_email { "josiah@example.org" }
-    contact_name { "Josiah Carberry" }
+    system_email { "josiah@example.org" }
+    service_contact {{
+      "email": "martin@example.com",
+      "given_name": "Martin",
+      "family_name": "Fenner"
+    }}
     sequence(:symbol) { |n| provider.symbol + ".TEST#{n}" }
     name { "My data center" }
     role_name { "ROLE_DATACENTRE" }

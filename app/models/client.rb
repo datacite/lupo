@@ -27,15 +27,17 @@ class Client < ActiveRecord::Base
   alias_attribute :flipper_id, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
+  alias_attribute :contact_email, :system_email
   attr_readonly :symbol
   delegate :symbol, to: :provider, prefix: true
   delegate :consortium_id, to: :provider, allow_nil: true
 
   attr_accessor :password_input
 
-  validates_presence_of :symbol, :name, :contact_name, :contact_email
+  validates_presence_of :symbol, :name, :system_email
   validates_uniqueness_of :symbol, message: "This Client ID has already been taken"
-  validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
+  validates_format_of :system_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
+  validates_format_of :salesforce_id, :with => /[a-zA-Z0-9]{18}/, message: "wrong format for salesforce id", if: :salesforce_id?
   validates_inclusion_of :role_name, :in => %w( ROLE_DATACENTRE ), :message => "Role %s is not included in the list"
   validates_inclusion_of :client_type, :in => %w( repository periodical ), :message => "Client type %s is not included in the list"
   validates_associated :provider
@@ -83,6 +85,7 @@ class Client < ActiveRecord::Base
       indexes :consortium_id, type: :keyword
       indexes :re3data_id,    type: :keyword
       indexes :opendoar_id,   type: :integer
+      indexes :salesforce_id, type: :keyword
       indexes :issn,          type: :object, properties: {
         issnl: { type: :keyword },
         electronic: { type: :keyword },
@@ -91,8 +94,13 @@ class Client < ActiveRecord::Base
       indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
       indexes :alternate_name, type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
       indexes :description,   type: :text
-      indexes :contact_name,  type: :text
       indexes :contact_email, type: :text, fields: { keyword: { type: "keyword" }}
+      indexes :system_email,  type: :text, fields: { keyword: { type: "keyword" }}
+      indexes :service_contact, type: :object, properties: {
+        email: { type: :text },
+        given_name: { type: :text},
+        family_name: { type: :text }
+      }
       indexes :certificate,   type: :keyword
       indexes :language,      type: :keyword
       indexes :repository_type, type: :keyword
@@ -138,6 +146,7 @@ class Client < ActiveRecord::Base
         joined: { type: :date },
         twitter_handle: { type: :keyword },
         ror_id: { type: :keyword },
+        salesforce_id: { type: :keyword },
         billing_information: { type: :object, properties: {
           postCode: { type: :keyword },
           state: { type: :text},
@@ -200,6 +209,7 @@ class Client < ActiveRecord::Base
       "consortium_id" => consortium_id,
       "re3data_id" => re3data_id,
       "opendoar_id" => opendoar_id,
+      "salesforce_id" => salesforce_id,
       "issn" => issn,
       "prefix_ids" => prefix_ids,
       "name" => name,
@@ -210,8 +220,9 @@ class Client < ActiveRecord::Base
       "year" => year,
       "language" => Array.wrap(language),
       "repository_type" => Array.wrap(repository_type),
-      "contact_name" => contact_name,
+      "service_contact" => service_contact,
       "contact_email" => contact_email,
+      "system_email" => system_email,
       "domains" => domains,
       "url" => url,
       "software" => software,
@@ -228,7 +239,7 @@ class Client < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['uid^10', 'symbol^10', 'name^5', 'description^5', 'contact_name^5', 'contact_email^5', 'domains', 'url', 'software^3', 'repository.subjects.text^3', 'repository.certificates.text^3', '_all']
+    ['uid^10', 'symbol^10', 'name^5', 'description^5', 'system_email^5', 'url', 'software^3', 'repository.subjects.text^3', 'repository.certificates.text^3', '_all']
   end
 
   def self.query_aggregations
@@ -280,6 +291,18 @@ class Client < ActiveRecord::Base
     Doi.transfer(client_id: symbol.downcase, target_id: target.id)
   end
 
+  def service_contact_email
+    service_contact.fetch("email",nil) if service_contact.present?
+  end
+
+  def service_contact_given_name
+    service_contact.fetch("given_name",nil) if service_contact.present?
+  end
+
+  def service_contact_family_name
+    service_contact.fetch("family_name",nil) if service_contact.present?
+  end
+
   def index_all_dois
     Doi.index(from_date: "2011-01-01", client_id: id)
   end
@@ -320,13 +343,11 @@ class Client < ActiveRecord::Base
     end
   end
 
-  # attributes to be sent to elasticsearch index
   def to_jsonapi
     attributes = {
       "symbol" => symbol,
       "name" => name,
-      "contact-name" => contact_name,
-      "contact-email" => contact_email,
+      "system-email" => system_email,
       "url" => url,
       "re3data_id" => re3data_id,
       "opendoar_id" => opendoar_id,
@@ -393,7 +414,6 @@ class Client < ActiveRecord::Base
   private
 
   def set_defaults
-    self.contact_name = "" unless contact_name.present?
     self.domains = "*" unless domains.present?
     self.client_type = "repository" if client_type.blank?
     self.issn = {} if issn.blank? || client_type == "repository"
