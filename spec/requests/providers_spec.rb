@@ -384,8 +384,7 @@ describe "Providers", type: :request, elasticsearch: true  do
               },
               "region"=>"",
               "symbol"=>"CM",
-              "updated"=>"",
-              "website" => "https://www.bl.uk"
+              "updated"=>""
             }
           }
         }
@@ -433,7 +432,6 @@ describe "Providers", type: :request, elasticsearch: true  do
               "organizationType" => "academicInstitution",
               "focusArea" => "general", "logoUrl" => "",
               "systemEmail" => "jkiritha@andrew.cmu.edu",
-              "website" => "https://www.bl.uk",
               "isActive" => true,
               "passwordInput" => "@change", 
               "hasPassword" => false,
@@ -467,7 +465,6 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "symbol" => "ADMIN",
                         "name" => "Admin",
                         "displayName" => "Admin",
-                        "website" => "https://www.bl.uk",
                         "region" => "EMEA",
                         "systemEmail" => "doe@joe.joe",
                         "country" => "GB" } } }
