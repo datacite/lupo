@@ -34,7 +34,8 @@ describe Event, :type => :model, vcr: true do
 
     it "date_published from the database" do
       published = subject.date_published("https://doi.org/"+doi.doi)
-      expect(published).to eq(2011)
+      expect(published).to eq("2011")
+      expect(published).not_to eq(2011)
     end
   end
 end
