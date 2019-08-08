@@ -369,7 +369,9 @@ class Client < ActiveRecord::Base
 
   def check_issn
     Array.wrap(issn).each do |i|
-      if i["issnl"].present?
+      if !(i.is_a?(Hash))
+        errors.add(:issn, "ISSN should be an object and not a string.")
+      elsif i["issnl"].present?
         errors.add(:issn, "ISSN-L #{i["issnl"]} is in the wrong format.") unless /\A\d{4}(-)?\d{3}[0-9X]+\z/.match(i["issnl"])
       end
       if i["electronic"].present?

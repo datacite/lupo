@@ -174,6 +174,27 @@ describe 'Repositories', type: :request, elasticsearch: true do
       end
     end
 
+    context 'updating with ISSNs' do
+      let(:params) do
+        { "data" => { "type" => "repositories",
+                      "attributes" => {
+                        "name" => "Journal of Insignificant Results",
+                        "clientType" => "periodical",
+                        "issn" => { "electronic" => "1544-9173",
+                                    "print" => "1545-7885" } }} }
+      end
+
+      it 'updates the record' do
+        put "/repositories/#{client.symbol}", params, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'name')).to eq("Journal of Insignificant Results")
+        expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
+        expect(json.dig('data', 'attributes', 'clientType')).to eq("periodical")
+        expect(json.dig('data', 'attributes', 'issn')).to eq("electronic"=>"1544-9173", "print"=>"1545-7885")
+      end
+    end
+
     context 'when the request is invalid' do
       let(:params) do
         { "data" => { "type" => "repositories",

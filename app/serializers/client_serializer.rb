@@ -4,7 +4,7 @@ class ClientSerializer
   set_type :clients
   set_id :uid
   
-  attributes :name, :symbol, :year, :contact_email, :alternate_name, :description, :language, :client_type, :domains, :url, :salesforce_id, :created, :updated
+  attributes :name, :symbol, :year, :contact_email, :alternate_name, :description, :language, :client_type, :domains, :issn, :url, :salesforce_id, :created, :updated
 
   belongs_to :provider, record_type: :providers
   belongs_to :consortium, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |client| client.consortium_id }

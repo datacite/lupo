@@ -4,7 +4,7 @@ class RepositorySerializer
   set_type :repositories
   set_id :uid
   
-  attributes :name, :symbol, :re3data, :opendoar, :year, :system_email, :alternate_name, :description, :client_type, :repository_type, :language, :certificate, :domains, :url, :salesforce_id, :created, :updated
+  attributes :name, :symbol, :re3data, :opendoar, :year, :system_email, :alternate_name, :description, :client_type, :repository_type, :language, :certificate, :domains, :issn, :url, :salesforce_id, :created, :updated
 
   belongs_to :provider, record_type: :providers
   has_many :prefixes, record_type: :prefixes
