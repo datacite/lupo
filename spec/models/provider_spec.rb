@@ -8,7 +8,6 @@ describe Provider, type: :model do
     it { should validate_presence_of(:name) }
     it { should validate_presence_of(:display_name) }
     it { should validate_presence_of(:system_email) }
-    it { should validate_presence_of(:website) }
     it { is_expected.to strip_attribute(:name) }
     it { should allow_value("AB").for(:symbol) }
     it { should_not allow_value("A").for(:symbol) }

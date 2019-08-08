@@ -32,7 +32,7 @@ class Provider < ActiveRecord::Base
   attr_readonly :symbol
   attr_accessor :password_input
 
-  validates_presence_of :symbol, :name, :display_name, :system_email, :website
+  validates_presence_of :symbol, :name, :display_name, :system_email
   validates_uniqueness_of :symbol, message: "This name has already been taken"
   validates_format_of :symbol, :with => /\A([A-Z]+)\Z/, message: "should only contain capital letters"
   validates_length_of :symbol, minimum: 2, maximum: 8
