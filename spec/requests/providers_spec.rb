@@ -473,13 +473,8 @@ describe "Providers", type: :request, elasticsearch: true  do
       it 'creates a provider' do
         post '/providers', params, headers
 
-        expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
-      end
-
-      it 'returns status code 200' do
-        post '/providers', params, headers
-
         expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
       end
     end
 
@@ -502,13 +497,27 @@ describe "Providers", type: :request, elasticsearch: true  do
       it 'creates a provider' do
         post '/providers', params, headers
 
+        expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
       end
+    end
 
-      it 'returns status code 200' do
+    context 'generate random symbol' do
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "name" => "Admin",
+                        "displayName" => "Admin",
+                        "region" => "EMEA",
+                        "systemEmail" => "doe@joe.joe",
+                        "country" => "GB" } } }
+      end
+
+      it 'creates a provider' do
         post '/providers', params, headers
 
         expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'symbol')).to match(/\A[A-Z]{4}\Z/) 
       end
     end
 

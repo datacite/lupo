@@ -7,7 +7,7 @@ class ProvidersController < ApplicationController
   prepend_before_action :authenticate_user!
   before_action :set_provider, only: [:show, :update, :destroy]
   before_action :set_include
-  load_and_authorize_resource :except => [:totals]
+  load_and_authorize_resource :except => [:totals, :random]
 
   def index
     sort = case params[:sort]
@@ -180,7 +180,9 @@ class ProvidersController < ApplicationController
 
   def create
     logger = Logger.new(STDOUT)
-    @provider = Provider.new(safe_params)
+
+    # generate random symbol if not symbol is provided
+    @provider = Provider.new(safe_params.reverse_merge(symbol: generate_random_provider_symbol))
     authorize! :create, @provider
 
     if @provider.save
@@ -304,6 +306,11 @@ class ProvidersController < ApplicationController
       logger.warn @provider.errors.inspect
       render json: serialize_errors(@provider.errors), status: :unprocessable_entity
     end
+  end
+
+  def random
+    symbol = generate_random_provider_symbol
+    render json: { symbol: symbol }.to_json
   end
 
   protected

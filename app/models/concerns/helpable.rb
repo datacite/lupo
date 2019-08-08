@@ -82,6 +82,10 @@ module Helpable
       end
     end
 
+    def generate_random_provider_symbol
+      "4:X".gen
+    end
+
     def generate_random_dois(str, options={})
       prefix = validate_prefix(str)
       fail IdentifierError, "No valid prefix found" unless prefix.present?

@@ -3,6 +3,12 @@ require 'rails_helper'
 describe Doi, vcr: true do
   subject { create(:doi) }
 
+  context "generate_random_symbol" do
+    it 'should generate' do
+      expect(subject.generate_random_symbol).to match(/\A[A-Z]{4}\Z/) 
+    end
+  end
+
   context "validate_prefix" do
     it 'should validate' do
       str = "10.14454"

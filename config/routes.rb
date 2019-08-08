@@ -36,6 +36,7 @@ Rails.application.routes.draw do
   get '/dois/text/csv', :to => 'dois#index', defaults: { format: :csv }
   get '/dois/text/x-bibliography', :to => 'dois#index', defaults: { format: :citation }
   get '/providers/text/csv', :to => 'providers#index', defaults: { format: :csv }
+  get 'providers/random', :to => 'providers#random'
 
   # manage DOIs
   post 'dois/validate', :to => 'dois#validate'
