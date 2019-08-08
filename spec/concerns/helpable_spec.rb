@@ -5,7 +5,7 @@ describe Doi, vcr: true do
 
   context "generate_random_symbol" do
     it 'should generate' do
-      expect(subject.generate_random_symbol).to match(/\A[A-Z]{4}\Z/) 
+      expect(subject.generate_random_provider_symbol).to match(/\A[A-Z]{4}\Z/) 
     end
   end
 
