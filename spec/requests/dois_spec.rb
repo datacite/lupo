@@ -2383,6 +2383,7 @@ describe "dois", type: :request do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(json.dig('data', 'attributes', 'descriptions').size).to eq(2)
+        expect(json.dig('data', 'attributes', 'titles',0,'title')).to eq("Percussive Scoop Sampling in Extreme Terrain")
         expect(json.dig('data', 'attributes', 'descriptions').last).to eq("description"=>"Keck Institute for Space Studies", "descriptionType"=>"SeriesInformation")
         expect(json.dig('data', 'attributes', 'container')).to eq("title"=>"Keck Institute for Space Studies", "type"=>"Series")
 

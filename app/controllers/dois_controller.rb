@@ -621,7 +621,7 @@ class DoisController < ApplicationController
     # merge attributes from xml into regular attributes
     # make sure we don't accidentally set any attributes to nil
     read_attrs_keys.each do |attr|
-      p.merge!(attr.to_s.underscore => p[attr] || meta[attr.to_s.underscore] || p[attr]) if p.has_key?(attr) || meta.has_key?(attr.to_s.underscore)
+      p.merge!(attr.to_s.underscore => p[attr].presence || meta[attr.to_s.underscore] || p[attr]) if p.has_key?(attr) || meta.has_key?(attr.to_s.underscore)
     end
     p.merge!(version_info: p[:version] || meta["version_info"]) if p.has_key?(:version_info) || meta["version_info"].present?
 

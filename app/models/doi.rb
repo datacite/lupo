@@ -86,6 +86,7 @@ class Doi < ActiveRecord::Base
   validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
   validate :check_dates, if: :dates?
   validate :check_rights_list, if: :rights_list?
+  validates :titles, :presence => true
   validate :check_titles, if: :titles?
   validate :check_descriptions, if: :descriptions?
   validate :check_types, if: :types?
