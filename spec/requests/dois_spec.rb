@@ -913,6 +913,23 @@ describe "dois", type: :request do
       end
     end
 
+    context 'when the request with geopolygon' do
+      let(:valid_attributes) { JSON.parse(file_fixture('datacite_with_geopolygon.json').read) }
+
+      it 'creates a Doi' do
+        post '/dois', valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        puts json
+        # expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        # expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        # expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+    
+        expect(json.dig('data', 'attributes', 'geoLocations')).to eq("http://datacite.org/schema/kernel-4")
+    
+      end
+    end
+
     context 'when the request is valid random doi' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do

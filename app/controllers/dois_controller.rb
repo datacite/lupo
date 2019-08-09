@@ -562,7 +562,7 @@ class DoisController < ApplicationController
       :fundingReferences,
       { fundingReferences: [:funderName, :funderIdentifier, :funderIdentifierType, :awardNumber, :awardUri, :awardTitle] },
       :geoLocations,
-      { geoLocations: [{ geoLocationPoint: [:pointLongitude, :pointLatitude] }, { geoLocationBox: [:westBoundLongitude, :eastBoundLongitude, :southBoundLatitude, :northBoundLatitude] }, :geoLocationPlace] }
+      { geoLocations: [{ geoLocationPoint: [:pointLongitude, :pointLatitude] }, { geoLocationBox: [:westBoundLongitude, :eastBoundLongitude, :southBoundLatitude, :northBoundLatitude] }, :geoLocationPlace,:geoLocationPolygon,{geoLocationPolygon: {polygonPoint:[:pointLatitude,:pointLongitude ]}}] }
     ]
     relationships = [{ client: [data: [:type, :id]] }]
 

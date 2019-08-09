@@ -1,0 +1,436 @@
+{
+	"data": {
+    "id": "10.14454/ingv.it-cpti11",
+		"attributes": {
+      "event": "register",
+
+			"schemaVersion": "http://datacite.org/schema/kernel-4",
+			"doi": "10.14454/ingv.it-cpti11",
+			"prefix": "10.14454",
+			"suffix": "ingv.it-cpti11",
+			"identifiers": [
+				{
+					"identifier": "https://doi.org/10.6092/ingv.it-cpti11",
+					"identifierType": "DOI"
+				}
+			],
+			"url": "https://emidius.mi.ingv.it/CPTI11/",
+			"version": "1.0",
+			"creators": [
+				{
+					"name": "Rovida, Andrea",
+					"nameType": "Personal",
+					"givenName": "Andrea",
+					"familyName": "Rovida",
+					"affiliation": [
+						{
+							"name": "Istituto Nazionale di Geofisica e Vulcanologia (INGV) - Sezione di Milano"
+						}
+					],
+					"nameIdentifiers": [
+						{
+							"schemeUri": "https://orcid.org",
+							"nameIdentifierScheme": "ORCID",
+							"nameIdentifier": "https://orcid.org/0000-0001-6147-9981"
+						}
+					]
+				},
+				{
+					"name": "Camassi, Romano Daniele",
+					"nameType": "Personal",
+					"givenName": "Romano Daniele",
+					"familyName": "Camassi",
+					"affiliation": [
+						{
+							"name": "Istituto Nazionale di Geofisica e Vulcanologia (INGV) - Sezione di Bologna"
+						}
+					],
+					"nameIdentifiers": [
+						{
+							"schemeUri": "https://orcid.org",
+							"nameIdentifierScheme": "ORCID",
+							"nameIdentifier": "https://orcid.org/0000-0001-5957-2773"
+						}
+					]
+				},
+				{
+					"name": "Gasperini, Paolo",
+					"nameType": "Personal",
+					"givenName": "Paolo",
+					"familyName": "Gasperini",
+					"affiliation": [
+						{
+							"name": "University of Bologna (UniBO)"
+						}
+					],
+					"nameIdentifiers": [
+						{
+							"schemeUri": "https://orcid.org",
+							"nameIdentifierScheme": "ORCID",
+							"nameIdentifier": "https://orcid.org/0000-0002-5314-0563"
+						}
+					]
+				},
+				{
+					"name": "Stucchi, Massimiliano",
+					"nameType": "Personal",
+					"givenName": "Massimiliano",
+					"familyName": "Stucchi",
+					"affiliation": [
+						{
+							"name": "Istituto Nazionale di Geofisica e Vulcanologia (INGV) - Sezione di Milano"
+						}
+					],
+					"nameIdentifiers": [
+						{
+							"schemeUri": "https://orcid.org",
+							"nameIdentifierScheme": "ORCID",
+							"nameIdentifier": "https://orcid.org/0000-0002-5870-1542"
+						}
+					]
+				}
+			],
+			"titles": [
+				{
+					"title": "Catalogo Parametrico dei Terremoti Italiani (CPTI11)"
+				}
+			],
+			"contributors": [
+				{
+					"name": "Rovida, Andrea",
+					"nameType": "Personal",
+					"givenName": "Andrea",
+					"familyName": "Rovida",
+					"affiliation": [
+						{
+							"name": "Istituto Nazionale di Geofisica e Vulcanologia (INGV) - Sezione di Milano"
+						}
+					],
+					"nameIdentifiers": [
+						{
+							"schemeUri": "https://orcid.org",
+							"nameIdentifierScheme": "ORCID",
+							"nameIdentifier": "https://orcid.org/0000-0001-6147-9981"
+						}
+					],
+					"contributorType": "ContactPerson"
+				},
+				{
+					"name": "Meletti, Carlo",
+					"nameType": "Personal",
+					"givenName": "Carlo",
+					"familyName": "Meletti",
+					"affiliation": [
+						{
+							"name": "Istituto Nazionale di Geofisica e Vulcanologia (INGV) - Sezione di Pisa"
+						}
+					],
+					"nameIdentifiers": [
+						{
+							"schemeUri": "https://orcid.org",
+							"nameIdentifierScheme": "ORCID",
+							"nameIdentifier": "https://orcid.org/0000-0003-2571-8345"
+						}
+					],
+					"contributorType": "Researcher"
+				},
+				{
+					"name": "Gómez Capera, Augusto Antonio",
+					"nameType": "Personal",
+					"givenName": "Augusto Antonio",
+					"familyName": "Gómez Capera",
+					"affiliation": [
+						{
+							"name": "Istituto Nazionale di Geofisica e Vulcanologia (INGV) - Sezione di Milano"
+						}
+					],
+					"nameIdentifiers": [
+						{
+							"schemeUri": "https://orcid.org",
+							"nameIdentifierScheme": "ORCID",
+							"nameIdentifier": "https://orcid.org/0000-0003-4076-3371"
+						}
+					],
+					"contributorType": "Researcher"
+				},
+				{
+					"name": "D'Amico, Vera",
+					"nameType": "Personal",
+					"givenName": "Vera",
+					"familyName": "D'Amico",
+					"affiliation": [
+						{
+							"name": "Istituto Nazionale di Geofisica e Vulcanologia (INGV) - Sezione di Pisa"
+						}
+					],
+					"nameIdentifiers": [
+						{
+							"schemeUri": "https://orcid.org",
+							"nameIdentifierScheme": "ORCID",
+							"nameIdentifier": "https://orcid.org/0000-0002-6133-6750"
+						}
+					],
+					"contributorType": "Researcher"
+				},
+				{
+					"name": "Azzaro, Raffaele",
+					"nameType": "Personal",
+					"givenName": "Raffaele",
+					"familyName": "Azzaro",
+					"affiliation": [
+						{
+							"name": "Istituto Nazionale di Geofisica e Vulcanologia (INGV) - Osservatorio Etneo"
+						}
+					],
+					"nameIdentifiers": [
+						{
+							"schemeUri": "https://orcid.org",
+							"nameIdentifierScheme": "ORCID",
+							"nameIdentifier": "https://orcid.org/0000-0001-8294-8687"
+						}
+					],
+					"contributorType": "Researcher"
+				},
+				{
+					"name": "Mirto, Carmen",
+					"nameType": "Personal",
+					"givenName": "Carmen",
+					"familyName": "Mirto",
+					"affiliation": [
+						{
+							"name": "Istituto Nazionale di Geofisica e Vulcanologia (INGV) - Sezione di Milano"
+						}
+					],
+					"contributorType": "Researcher"
+				},
+				{
+					"name": "Locati, Mario",
+					"nameType": "Personal",
+					"givenName": "Mario",
+					"familyName": "Locati",
+					"affiliation": [
+						{
+							"name": "Istituto Nazionale di Geofisica e Vulcanologia (INGV) - Sezione di Milano"
+						}
+					],
+					"nameIdentifiers": [
+						{
+							"schemeUri": "https://orcid.org",
+							"nameIdentifierScheme": "ORCID",
+							"nameIdentifier": "https://orcid.org/0000-0003-2185-3267"
+						}
+					],
+					"contributorType": "Researcher"
+				},
+				{
+					"name": "D'Amico, Salvatore",
+					"nameType": "Personal",
+					"givenName": "Salvatore",
+					"familyName": "D'Amico",
+					"affiliation": [
+						{
+							"name": "Istituto Nazionale di Geofisica e Vulcanologia (INGV) - Osservatorio Etneo"
+						}
+					],
+					"nameIdentifiers": [
+						{
+							"schemeUri": "https://orcid.org",
+							"nameIdentifierScheme": "ORCID",
+							"nameIdentifier": "https://orcid.org/0000-0003-0027-5381"
+						}
+					],
+					"contributorType": "Researcher"
+				},
+				{
+					"name": "Viganò, Daniele",
+					"nameType": "Personal",
+					"givenName": "Daniele",
+					"familyName": "Viganò",
+					"affiliation": [
+						{
+							"name": "Istituto Nazionale di Geofisica e Vulcanologia (INGV) - Sezione di Milano"
+						}
+					],
+					"nameIdentifiers": [
+						{
+							"schemeUri": "https://orcid.org",
+							"nameIdentifierScheme": "ORCID",
+							"nameIdentifier": "https://orcid.org/0000-0003-2713-8387"
+						}
+					],
+					"contributorType": "Researcher"
+				},
+				{
+					"name": "Cassera, Andrea",
+					"nameType": "Personal",
+					"givenName": "Andrea",
+					"familyName": "Cassera",
+					"affiliation": [
+						{
+							"name": "Istituto Nazionale di Geofisica e Vulcanologia (INGV) - Sezione di Milano"
+						}
+					],
+					"contributorType": "Researcher"
+				},
+				{
+					"name": "Istituto Nazionale di Geofisica e Vulcanologia (INGV)",
+					"nameType": "Organizational",
+					"contributorType": "RightsHolder"
+				}
+			],
+			"publisher": "Istituto Nazionale di Geofisica e Vulcanologia (INGV)",
+			"publicationYear": "2011",
+			"types": {
+				"ris": "DATA",
+				"bibtex": "misc",
+				"citeproc": "dataset",
+				"schemaOrg": "Dataset",
+				"resourceTypeGeneral": "Dataset",
+				"resourceType": "Parametric Earthquake Catalogue"
+			},
+			"descriptions": [
+				{
+					"descriptionType": "Abstract",
+					"description": "CPTI11 updates and improves the 2004 version of CPTI with respect to background information and structure. It is based on updated macroseismic (DBMI11; Locati et al., 2011) and instrumental databases; it contains records of foreshocks and aftershocks; for some offshore events, macroseismic earthquake parameters have been determined by means of the method by Bakun and Wentworth (1997); when both macroseismic and instrumental parameters are available, the two determinations and a default one are provided (in this case, the epicentre is selected according to expert judgement, while Mw is obtained as a weighted mean); for some events, whose macroseismic data are poor, no macroseismic parameters have been determined. CPTI11 does not include the results of some methodological developments performed in the frame of the EC project \"SHARE\". It does not consider the information background provided by: Molin et al. (2008); Camassi et al. (2011); recent studies on individual earthquakes; ECOS 2009 (Faeh et al., 2011) and SisFrance, 2010, yet, which will be considered in the next version. The area covered by CPTI11 is slightly reduced with respect to the one of CPTI04 (Fig. 1). The catalogue is composed of two sections: the main one (1000-2006) and the “Etna” earthquakes, for which a specific calibration is used for determining earthquake parameters. Appendix 4 supplies the list of the events which were included in CPTI04 but not in CPTI11 and the relevant explanation.",
+					"lang": "en"
+				}
+			],
+	"geoLocations": [
+    {
+      "geoLocationBox": {
+        "eastBoundLongitude": "40.5",
+        "northBoundLatitude": "35",
+        "southBoundLatitude": "-60.2",
+        "westBoundLongitude": "-10.5"
+      },
+      "geoLocationPlace": "Australia NSW",
+      "geoLocationPoint": {
+        "pointLatitude": "12.2",
+        "pointLongitude": "10.5"
+      }
+    },
+    {
+      "geoLocationPolygon": [
+        {
+          "polygonPoint": {
+            "pointLatitude": "15",
+            "pointLongitude": "-12.5"
+          }
+        },
+        {
+          "polygonPoint": {
+            "pointLatitude": "45.2",
+            "pointLongitude": "30.5"
+          }
+        },
+        {
+          "polygonPoint": {
+            "pointLatitude": "-50",
+            "pointLongitude": "50"
+          }
+        },
+        {
+          "polygonPoint": {
+            "pointLatitude": "60",
+            "pointLongitude": "75.6"
+          }
+        }
+      ]
+    }
+  ],
+			"rightsList": [
+				{
+					"rights": "CC BY-NC-SA 4.0",
+					"rightsUri": "https://creativecommons.org/licenses/by-nc-sa/4.0"
+				}
+			],
+			"language": "it",
+			"subjects": [
+				{
+					"subject": "earthquake catalog"
+				},
+				{
+					"subject": "earthquake parameters"
+				},
+				{
+					"subject": "magnitude"
+				},
+				{
+					"subject": "seismology"
+				},
+				{
+					"subject": "historical earthquakes"
+				},
+				{
+					"subject": "Earth sciences and geology"
+				},
+				{
+					"subject": "QE - Geology",
+					"subjectScheme": "LCC"
+				},
+				{
+					"subject": "551 Geology, hydrology, meteorology",
+					"subjectScheme": "DDC"
+				},
+				{
+					"subject": "945 General history of Europe"
+				},
+				{
+					"subject": "Italian Peninsula and adjacent islands",
+					"subjectScheme": "DDC"
+				}
+			],
+			"sizes": [
+				"3182 earthquakes"
+			],
+			"formats": [
+				"text/html",
+				"image/jpeg",
+				"application/vnd.google-earth.kml+xml",
+				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+				"application/pdf"
+			],
+			"dates": [
+				{
+					"dateType": "Valid",
+					"date": "1000-01-01/2006-12-31"
+				},
+				{
+					"dateType": "Issued",
+					"date": "2011-12-23"
+				},
+				{
+					"dateType": "Available",
+					"date": "2011-12-16"
+				}
+			],
+			"relatedIdentifiers": [
+				{
+					"resourceTypeGeneral": "Dataset",
+					"relationType": "IsNewVersionOf",
+					"relatedIdentifierType": "DOI",
+					"relatedIdentifier": "10.6092/ingv.it-cpti04"
+				},
+				{
+					"resourceTypeGeneral": "Dataset",
+					"relationType": "IsPreviousVersionOf",
+					"relatedIdentifierType": "DOI",
+					"relatedIdentifier": "10.6092/ingv.it-cpti15"
+				},
+				{
+					"resourceTypeGeneral": "Dataset",
+					"relationType": "IsCompiledBy",
+					"relatedIdentifierType": "DOI",
+					"relatedIdentifier": "10.6092/ingv.it-dbmi11"
+				},
+				{
+					"resourceTypeGeneral": "Collection",
+					"relationType": "IsReferencedBy",
+					"relatedIdentifierType": "DOI",
+					"relatedIdentifier": "10.13127/asmi"
+				}
+			]
+		}
+	},
+	"type": "dois"
+}
