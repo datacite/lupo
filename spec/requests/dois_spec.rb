@@ -617,7 +617,7 @@ describe "dois", type: :request do
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'descriptions')).to eq([])
+        expect(json.dig('data', 'attributes', 'descriptions')).to respond_to(:any?)
       end
 
       it 'sets state to findable' do
@@ -626,6 +626,50 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
       end
     end
+
+    context 'when the xml field has  json' do
+      let(:valid_attributes) do
+        {
+          "data"=> {
+            "id"=> doi.doi,
+            "attributes"=> {
+              "doi"=> doi.doi,
+              "confirmDoi"=> nil,
+              "creators"=> nil,
+              "titles"=> [],
+              "publisher"=> nil,
+              "publicationYear"=> nil,
+              "types"=> {},
+              "descriptions"=> [],
+              "landingPage"=> nil,
+              "xml"=> "ewogICJ0eXBlcyI6IHsKICAgICJyZXNvdXJjZVR5cGUiOiAiRGlzc2VydGF0aW9uIiwKICAgICJyZXNvdXJjZVR5cGVHZW5lcmFsIjogIlRleHQiCiAgfSwKICAiaWRlbnRpZmllcnMiOiBbewogICAgImlkZW50aWZpZXIiOiJodHRwczovL2RvaS5vcmcvMTAuMTc5MTgvOXp3Yi1yYjkxIiwKICAgICJpZGVudGlmaWVyX3R5cGUiOiAiRE9JIgogIH1dLAogICJjcmVhdG9ycyI6IFt7CiAgICAibmFtZVR5cGUiOiAiUGVyc29uYWwiLAogICAgImdpdmVuTmFtZSI6ICJKdWxpYSBNLiIsCiAgICAiZmFtaWx5TmFtZSI6ICJSb3ZlcmEiLAogICAgImFmZmlsaWF0aW9uIjogWyJEcmV4ZWwgVW5pdmVyc2l0eSJdLAogICAgIm5hbWVJZGVudGlmaWVycyI6IFt7CiAgICAgICJzY2hlbWVVcmkiOiAiaHR0cHM6Ly9vcmNpZC5vcmciLAogICAgICAibmFtZUlkZW50aWZpZXIiOiAiIiwKICAgICAgIm5hbWVJZGVudGlmaWVyU2NoZW1lIjogIk9SQ0lEIgogICAgfV0KICB9XSwKICAidGl0bGVzIjogW3sKICAgICJsYW5nIjogImVuIiwKICAgICJ0aXRsZSI6ICJUaGUgUmVsYXRpb25zaGlwIEFtb25nIFNwb3J0IFR5cGUsIE1pY3JvbnV0cmllbnQgSW50YWtlIGFuZCBCb25lIE1pbmVyYWwgRGVuc2l0eSBpbiBhbiBBdGhsZXRlIFBvcHVsYXRpb24iLAogICAgInRpdGxlVHlwZSI6IG51bGwKICB9LCB7CiAgICAibGFuZyI6ICJlbiIsCiAgICAidGl0bGUiOiAiIiwKICAgICJ0aXRsZVR5cGUiOiAiU3VidGl0bGUiCiAgfV0sCiAgInB1Ymxpc2hlciI6ICJEcmV4ZWwgVW5pdmVyc2l0eSIsCiAgInB1YmxpY2F0aW9uX3llYXIiOiAyMDE5LAogICJkZXNjcmlwdGlvbnMiOiBbewogICAgImxhbmciOiAiZW4iLAogICAgImRlc2NyaXB0aW9uIjogIkRpZXQgYW5kIHBoeXNpY2FsIGFjdGl2aXR5IGFyZSB0d28gbW9kaWZpYWJsZSBmYWN0b3JzIHRoYXQgY2FuIGN1cnRhaWwgdGhlIGRldmVsb3BtZW50IG9mIG9zdGVvcG9yb3NpcyBpbiB0aGUgYWdpbmcgcG9wdWxhdGlvbi4gT25lIHB1cnBvc2Ugb2YgdGhpcyBzdHVkeSB3YXMgdG8gYXNzZXNzIHRoZSBkaWZmZXJlbmNlcyBpbiBkaWV0YXJ5IGludGFrZSBhbmQgYm9uZSBtaW5lcmFsIGRlbnNpdHkgKEJNRCkgaW4gYSBNYXN0ZXJzIGF0aGxldGUgcG9wdWxhdGlvbiAobj04Nywgbj00OSBmZW1hbGU7IDQxLjA2IMKxIDUuMDAgeWVhcnMgb2YgYWdlKSBhbmQgZXhhbWluZSBzZXgtIGFuZCBzcG9ydC1yZWxhdGVkIGRpZmZlcmVuY2VzIGluIGRpZXRhcnkgYW5kIHRvdGFsIGNhbGNpdW0gYW5kIHZpdGFtaW4gSyBpbnRha2UgYW5kIEJNRCBvZiB0aGUgdG90YWwgYm9keSwgbHVtYmFyIHNwaW5lLCBhbmQgZHVhbCBmZW1vcmFsIG5lY2sgKFRCQk1ELCBMU0JNRCBhbmQgREZCTUQsIHJlc3BlY3RpdmVseSkuIFRvdGFsIGNhbGNpdW0gaXMgZGVmaW5lZCBhcyBjYWxjaXVtIGludGFrZSBmcm9tIGRpZXQgYW5kIHN1cHBsZW1lbnRzLiBBdGhsZXRlcyB3ZXJlIGNhdGVnb3JpemVkIGFzIHBhcnRpY2lwYXRpbmcgaW4gYW4gZW5kdXJhbmNlIG9yIGludGVydmFsIHNwb3J0LiBCTUQgd2FzIG1lYXN1cmVkIHVzaW5nIGR1YWwtZW5lcmd5IFgtcmF5IGFic29ycHRpb21ldHJ5IChEWEEpLiBEYXRhIG9uIGRpZXRhcnkgaW50YWtlIHdhcyBjb2xsZWN0ZWQgZnJvbSBCbG9jayAyMDA1IEZvb2QgRnJlcXVlbmN5IFF1ZXN0aW9ubmFpcmVzIChGRlFzKS4gRGlldGFyeSBjYWxjaXVtLCB0b3RhbCBjYWxjaXVtLCBvciB2aXRhbWluIEsgaW50YWtlIGRpZCBub3QgZGlmZmVyIGJldHdlZW4gdGhlIGZlbWFsZSBlbmR1cmFuY2UgYW5kIGludGVydmFsIGF0aGxldGVzLiBBbGwgdGhyZWUgQk1EIHNpdGVzIHdlcmUgc2lnbmlmaWNhbnRseSBkaWZmZXJlbnQgYW1vbmcgdGhlIGZlbWFsZSBlbmR1cmFuY2UgYW5kIGludGVydmFsIGF0aGxldGVzLCB3aXRoIGZlbWFsZSBpbnRlcnZhbCBhdGhsZXRlcyBoYXZpbmcgaGlnaGVyIEJNRCBhdCBlYWNoIHNpdGUgKFRCQk1EOiAxLjI2IMKxIDAuMTAgZy9jbTIsIHA8MC4wNTsgTFNCTUQ6IDEuMzcgwrEgMC4xNCBnL2NtMiwgcDwwLjAxOyBERkJNRDogMS4xMSDCsSAwLjEyIGcvY20yLCBwPDAuMDUsIGZvciBmZW1hbGUgaW50ZXJ2YWwgYXRobGV0ZXM7IFRCQk1EOiAxLjE5IMKxIDAuMDkgZy9jbTI7IExTQk1EOiAxLjIzIMKxIDAuMTYgZy9jbTI7IERGQk1EOiAxLjA0IMKxIDAuMTAgZy9jbTIsIGZvciBmZW1hbGUgZW5kdXJhbmNlIGF0aGxldGVzKS4gTWFsZSBpbnRlcnZhbCBhdGhsZXRlcyBoYWQgaGlnaGVyIEJNRCBhdCBhbGwgdGhyZWUgc2l0ZXMgKFRCQk1EIDEuNDQgwrEgMC4xMSBnL2NtMiwgcDwwLjA1OyBMU0JNRCAxLjQyIMKxIDAuMTUgZy9jbTIsIHA9MC4xNzk7IERGQk1EIDEuMjYgwrEgMC4xNCBnL2NtMiwgcDwwLjAxLCBmb3IgbWFsZSBpbnRlcnZhbCBhdGhsZXRlczsgVEJCTUQgMS4zMyDCsSAwLjExIGcvY20yOyBMU0JNRCAxLjMzIMKxIDAuMTcgZy9jbTI7IERGQk1EIDEuMTAgwrEgMC4xMiBnL2NtMiBmb3IgbWFsZSBlbmR1cmFuY2UgYXRobGV0ZXMpLiBEaWV0YXJ5IGNhbGNpdW0sIHRvdGFsIGRhaWx5IGNhbGNpdW0gYW5kIHZpdGFtaW4gSyBpbnRha2UgZGlkIG5vdCBkaWZmZXIgYmV0d2VlbiB0aGUgbWFsZSBlbmR1cmFuY2UgYW5kIGludGVydmFsIGF0aGxldGVzLiBUaGlzIHN0dWR5IGV2YWx1YXRlZCB0aGUgcmVsYXRpb25zaGlwIGJldHdlZW4gY2FsY2l1bSBpbnRha2UgYW5kIEJNRC4gTm8gcmVsYXRpb25zaGlwIGJldHdlZW4gZGlldGFyeSBvciB0b3RhbCBjYWxjaXVtIGludGFrZSBhbmQgQk1EIHdhcyBldmlkZW50IGluIGFsbCBmZW1hbGUgYXRobGV0ZXMsIGZlbWFsZSBlbmR1cmFuY2UgYXRobGV0ZXMgb3IgZmVtYWxlIGludGVydmFsIGF0aGxldGVzLiBJbiBhbGwgbWFsZSBhdGhsZXRlcywgdGhlcmUgd2FzIG5vIHNpZ25pZmljYW50IGNvcnJlbGF0aW9uIGJldHdlZW4gZGlldGFyeSBvciB0b3RhbCBjYWxjaXVtIGludGFrZSBhbmQgQk1EIGF0IGFueSBvZiB0aGUgbWVhc3VyZWQgc2l0ZXMuIEhvd2V2ZXIsIHRoZSBtYWxlIGludGVydmFsIGF0aGxldGUgZ3JvdXAgaGFkIGEgbmVnYXRpdmUgcmVsYXRpb25zaGlwIGJldHdlZW4gZGlldGFyeSBjYWxjaXVtIGludGFrZSBhbmQgVEJCTUQgKHI9LTAuNzM4LCBwPDAuMDUpIGFuZCBMU0JNRCAocj0tMC43MzgsIHA8MC4wNSkuIFRoZSBuZWdhdGl2ZSByZWxhdGlvbnNoaXAgcGVyc2lzdGVkIGJldHdlZW4gdG90YWwgY2FsY2l1bSBpbnRha2UgYW5kIExTQk1EIChyPS0wLjcxNCwgcDwwLjA1KSwgYnV0IG5vdCBUQkJNRCwgd2hlbiBjYWxjaXVtIGZyb20gc3VwcGxlbWVudHMgd2FzIGluY2x1ZGVkLiBUaGUgdGhpcmQgcHVycG9zZSBvZiB0aGlzIHN0dWR5IHdhcyB0byBldmFsdWF0ZSB0aGUgcmVsYXRpb25zaGlwIGJldHdlZW4gdml0YW1pbiBLIGludGFrZSAoYXMgcGh5bGxvcXVpbm9uZSkgYW5kIEJNRC4gSW4gYWxsIGZlbWFsZSBhdGhsZXRlcywgdGhlcmUgd2FzIG5vIHNpZ25pZmljYW50IGNvcnJlbGF0aW9uIGJldHdlZW4gdml0YW1pbiBLIGludGFrZSBhbmQgQk1EIGF0IGFueSBvZiB0aGUgbWVhc3VyZWQgc2l0ZXMuIE5vIHJlbGF0aW9uc2hpcCBiZXR3ZWVuIHZpdGFtaW4gSyBhbmQgQk1EIHdhcyBldmlkZW50IGluIGZlbWFsZSBpbnRlcnZhbCBvciBmZW1hbGUgZW5kdXJhbmNlIGF0aGxldGVzLiBTaW1pbGFybHksIHRoZXJlIHdhcyBubyByZWxhdGlvbnNoaXAgYmV0d2VlbiB2aXRhbWluIEsgaW50YWtlIGFuZCBCTUQgaW4gdGhlIG1hbGUgZW5kdXJhbmNlIGFuZCBpbnRlcnZhbCBncm91cHMuIFRoZSBmaW5hbCBwdXJwb3NlIG9mIHRoaXMgc3R1ZHkgd2FzIHRvIGFzc2VzcyB0aGUgcmVsYXRpb25zaGlwIGJldHdlZW4gdGhlIENhbGNpdW0tdG8tVml0YW1pbiBLIChDYTpLKSByYXRpbyBhbmQgQk1ELiBBIGxpbmVhciByZWdyZXNzaW9uIG1vZGVsIGVzdGFibGlzaGVkIHRoYXQgdGhlIHJhdGlvIHByZWRpY3RlZCBUQkJNRCBpbiBmZW1hbGUgYXRobGV0ZXMsIEYoMSw0NykgPSA0LjY1MiwgcCA8MC4wNSwgYW5kIHRoZSByYXRpbyBhY2NvdW50ZWQgZm9yIDklIG9mIHRoZSB2YXJpYWJpbGl0eSBpbiBUQkJNRC4gVGhlIHJlZ3Jlc3Npb24gZXF1YXRpb24gd2FzOiBwcmVkaWN0ZWQgVEJCTUQgaW4gYSBmZW1hbGUgYXRobGV0ZSA9IDEuMjUwIC0gMC4wMDggeCAoQ2E6SykuIEluIGNvbmNsdXNpb24sIE1hc3RlcnMgaW50ZXJ2YWwgYXRobGV0ZXMgaGF2ZSBoaWdoZXIgQk1EIHRoYW4gTWFzdGVycyBlbmR1cmFuY2UgYXRobGV0ZXM7IGhvd2V2ZXIsIG5laXRoZXIgZGlldGFyeSBvciBzdXBwbGVtZW50YWwgY2FsY2l1bSBub3Igdml0YW1pbiBLIHdlcmUgcmVsYXRlZCB0byBCTUQgaW4gc2tlbGV0YWwgc2l0ZXMgcHJvbmUgdG8gZnJhY3R1cmUgaW4gb2xkZXIgYWR1bHRob29kLiBXZSBmb3VuZCB0aGF0IGEgQ2E6SyByYXRpbyBjb3VsZCBwcmVkaWN0IFRCQk1EIGluIGZlbWFsZSBhdGhsZXRlcy4gRnVydGhlciByZXNlYXJjaCBzaG91bGQgY29uc2lkZXIgdGhlIGNhbGNpdW0tdG8tdml0YW1pbiBLIHJlbGF0aW9uc2hpcCBpbiBjb25qdW5jdGlvbiB3aXRoIG90aGVyIG1vZGlmaWFibGUsIGxpZmVzdHlsZSBmYWN0b3JzIGFzc29jaWF0ZWQgd2l0aCBib25lIGhlYWx0aCBpbiB0aGUgaW52ZXN0aWdhdGlvbiBvZiBtZXRob2RzIHRvIG1pbmltaXplIHRoZSBkZXZlbG9wbWVudCBhbmQgZWZmZWN0IG9mIG9zdGVvcG9yb3NpcyBpbiB0aGUgb2xkZXIgYXRobGV0ZSBwb3B1bGF0aW9uLiIsCiAgICAiZGVzY3JpcHRpb25UeXBlIjogIkFic3RyYWN0IgogIH1dCn0=",
+              "source"=> "fabrica",
+              "state"=> "draft",
+              "reason"=> nil,
+              "event"=> nil,
+              "mode"=> "modify"
+            },
+            "type"=> "dois"
+          }
+        }
+      end
+
+      it 'updates the record' do
+        patch "/dois/#{doi.doi}", valid_attributes, headers
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'titles',0,'title')).to eq("The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population")
+        expect(json.dig('data', 'attributes', 'descriptions',0,'description')).to start_with("Diet and physical activity are two modifiable factors that can curtail the development of osteoporosis in the aging population. ")
+
+      end
+
+      it 'sets state to findable' do
+        patch "/dois/#{doi.doi}", valid_attributes, headers
+
+        expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+      end
+    end
+
 
     context 'when a doi is created ignore reverting back' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
