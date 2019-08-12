@@ -617,7 +617,7 @@ describe "dois", type: :request do
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'descriptions')).to respond_to(:any?)
+        expect(json.dig('data', 'attributes', 'descriptions')).to eq([])
       end
 
       it 'sets state to findable' do
@@ -627,27 +627,16 @@ describe "dois", type: :request do
       end
     end
 
-    context 'when the xml field has  json' do
+    context 'when the xml field has datacite_json' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite-user-example.json').read) }
       let(:valid_attributes) do
         {
           "data"=> {
             "id"=> doi.doi,
             "attributes"=> {
               "doi"=> doi.doi,
-              "confirmDoi"=> nil,
-              "creators"=> nil,
-              "titles"=> [],
-              "publisher"=> nil,
-              "publicationYear"=> nil,
-              "types"=> {},
-              "descriptions"=> [],
-              "landingPage"=> nil,
-              "xml"=> "ewogICJ0eXBlcyI6IHsKICAgICJyZXNvdXJjZVR5cGUiOiAiRGlzc2VydGF0aW9uIiwKICAgICJyZXNvdXJjZVR5cGVHZW5lcmFsIjogIlRleHQiCiAgfSwKICAiaWRlbnRpZmllcnMiOiBbewogICAgImlkZW50aWZpZXIiOiJodHRwczovL2RvaS5vcmcvMTAuMTc5MTgvOXp3Yi1yYjkxIiwKICAgICJpZGVudGlmaWVyX3R5cGUiOiAiRE9JIgogIH1dLAogICJjcmVhdG9ycyI6IFt7CiAgICAibmFtZVR5cGUiOiAiUGVyc29uYWwiLAogICAgImdpdmVuTmFtZSI6ICJKdWxpYSBNLiIsCiAgICAiZmFtaWx5TmFtZSI6ICJSb3ZlcmEiLAogICAgImFmZmlsaWF0aW9uIjogWyJEcmV4ZWwgVW5pdmVyc2l0eSJdLAogICAgIm5hbWVJZGVudGlmaWVycyI6IFt7CiAgICAgICJzY2hlbWVVcmkiOiAiaHR0cHM6Ly9vcmNpZC5vcmciLAogICAgICAibmFtZUlkZW50aWZpZXIiOiAiIiwKICAgICAgIm5hbWVJZGVudGlmaWVyU2NoZW1lIjogIk9SQ0lEIgogICAgfV0KICB9XSwKICAidGl0bGVzIjogW3sKICAgICJsYW5nIjogImVuIiwKICAgICJ0aXRsZSI6ICJUaGUgUmVsYXRpb25zaGlwIEFtb25nIFNwb3J0IFR5cGUsIE1pY3JvbnV0cmllbnQgSW50YWtlIGFuZCBCb25lIE1pbmVyYWwgRGVuc2l0eSBpbiBhbiBBdGhsZXRlIFBvcHVsYXRpb24iLAogICAgInRpdGxlVHlwZSI6IG51bGwKICB9LCB7CiAgICAibGFuZyI6ICJlbiIsCiAgICAidGl0bGUiOiAiIiwKICAgICJ0aXRsZVR5cGUiOiAiU3VidGl0bGUiCiAgfV0sCiAgInB1Ymxpc2hlciI6ICJEcmV4ZWwgVW5pdmVyc2l0eSIsCiAgInB1YmxpY2F0aW9uX3llYXIiOiAyMDE5LAogICJkZXNjcmlwdGlvbnMiOiBbewogICAgImxhbmciOiAiZW4iLAogICAgImRlc2NyaXB0aW9uIjogIkRpZXQgYW5kIHBoeXNpY2FsIGFjdGl2aXR5IGFyZSB0d28gbW9kaWZpYWJsZSBmYWN0b3JzIHRoYXQgY2FuIGN1cnRhaWwgdGhlIGRldmVsb3BtZW50IG9mIG9zdGVvcG9yb3NpcyBpbiB0aGUgYWdpbmcgcG9wdWxhdGlvbi4gT25lIHB1cnBvc2Ugb2YgdGhpcyBzdHVkeSB3YXMgdG8gYXNzZXNzIHRoZSBkaWZmZXJlbmNlcyBpbiBkaWV0YXJ5IGludGFrZSBhbmQgYm9uZSBtaW5lcmFsIGRlbnNpdHkgKEJNRCkgaW4gYSBNYXN0ZXJzIGF0aGxldGUgcG9wdWxhdGlvbiAobj04Nywgbj00OSBmZW1hbGU7IDQxLjA2IMKxIDUuMDAgeWVhcnMgb2YgYWdlKSBhbmQgZXhhbWluZSBzZXgtIGFuZCBzcG9ydC1yZWxhdGVkIGRpZmZlcmVuY2VzIGluIGRpZXRhcnkgYW5kIHRvdGFsIGNhbGNpdW0gYW5kIHZpdGFtaW4gSyBpbnRha2UgYW5kIEJNRCBvZiB0aGUgdG90YWwgYm9keSwgbHVtYmFyIHNwaW5lLCBhbmQgZHVhbCBmZW1vcmFsIG5lY2sgKFRCQk1ELCBMU0JNRCBhbmQgREZCTUQsIHJlc3BlY3RpdmVseSkuIFRvdGFsIGNhbGNpdW0gaXMgZGVmaW5lZCBhcyBjYWxjaXVtIGludGFrZSBmcm9tIGRpZXQgYW5kIHN1cHBsZW1lbnRzLiBBdGhsZXRlcyB3ZXJlIGNhdGVnb3JpemVkIGFzIHBhcnRpY2lwYXRpbmcgaW4gYW4gZW5kdXJhbmNlIG9yIGludGVydmFsIHNwb3J0LiBCTUQgd2FzIG1lYXN1cmVkIHVzaW5nIGR1YWwtZW5lcmd5IFgtcmF5IGFic29ycHRpb21ldHJ5IChEWEEpLiBEYXRhIG9uIGRpZXRhcnkgaW50YWtlIHdhcyBjb2xsZWN0ZWQgZnJvbSBCbG9jayAyMDA1IEZvb2QgRnJlcXVlbmN5IFF1ZXN0aW9ubmFpcmVzIChGRlFzKS4gRGlldGFyeSBjYWxjaXVtLCB0b3RhbCBjYWxjaXVtLCBvciB2aXRhbWluIEsgaW50YWtlIGRpZCBub3QgZGlmZmVyIGJldHdlZW4gdGhlIGZlbWFsZSBlbmR1cmFuY2UgYW5kIGludGVydmFsIGF0aGxldGVzLiBBbGwgdGhyZWUgQk1EIHNpdGVzIHdlcmUgc2lnbmlmaWNhbnRseSBkaWZmZXJlbnQgYW1vbmcgdGhlIGZlbWFsZSBlbmR1cmFuY2UgYW5kIGludGVydmFsIGF0aGxldGVzLCB3aXRoIGZlbWFsZSBpbnRlcnZhbCBhdGhsZXRlcyBoYXZpbmcgaGlnaGVyIEJNRCBhdCBlYWNoIHNpdGUgKFRCQk1EOiAxLjI2IMKxIDAuMTAgZy9jbTIsIHA8MC4wNTsgTFNCTUQ6IDEuMzcgwrEgMC4xNCBnL2NtMiwgcDwwLjAxOyBERkJNRDogMS4xMSDCsSAwLjEyIGcvY20yLCBwPDAuMDUsIGZvciBmZW1hbGUgaW50ZXJ2YWwgYXRobGV0ZXM7IFRCQk1EOiAxLjE5IMKxIDAuMDkgZy9jbTI7IExTQk1EOiAxLjIzIMKxIDAuMTYgZy9jbTI7IERGQk1EOiAxLjA0IMKxIDAuMTAgZy9jbTIsIGZvciBmZW1hbGUgZW5kdXJhbmNlIGF0aGxldGVzKS4gTWFsZSBpbnRlcnZhbCBhdGhsZXRlcyBoYWQgaGlnaGVyIEJNRCBhdCBhbGwgdGhyZWUgc2l0ZXMgKFRCQk1EIDEuNDQgwrEgMC4xMSBnL2NtMiwgcDwwLjA1OyBMU0JNRCAxLjQyIMKxIDAuMTUgZy9jbTIsIHA9MC4xNzk7IERGQk1EIDEuMjYgwrEgMC4xNCBnL2NtMiwgcDwwLjAxLCBmb3IgbWFsZSBpbnRlcnZhbCBhdGhsZXRlczsgVEJCTUQgMS4zMyDCsSAwLjExIGcvY20yOyBMU0JNRCAxLjMzIMKxIDAuMTcgZy9jbTI7IERGQk1EIDEuMTAgwrEgMC4xMiBnL2NtMiBmb3IgbWFsZSBlbmR1cmFuY2UgYXRobGV0ZXMpLiBEaWV0YXJ5IGNhbGNpdW0sIHRvdGFsIGRhaWx5IGNhbGNpdW0gYW5kIHZpdGFtaW4gSyBpbnRha2UgZGlkIG5vdCBkaWZmZXIgYmV0d2VlbiB0aGUgbWFsZSBlbmR1cmFuY2UgYW5kIGludGVydmFsIGF0aGxldGVzLiBUaGlzIHN0dWR5IGV2YWx1YXRlZCB0aGUgcmVsYXRpb25zaGlwIGJldHdlZW4gY2FsY2l1bSBpbnRha2UgYW5kIEJNRC4gTm8gcmVsYXRpb25zaGlwIGJldHdlZW4gZGlldGFyeSBvciB0b3RhbCBjYWxjaXVtIGludGFrZSBhbmQgQk1EIHdhcyBldmlkZW50IGluIGFsbCBmZW1hbGUgYXRobGV0ZXMsIGZlbWFsZSBlbmR1cmFuY2UgYXRobGV0ZXMgb3IgZmVtYWxlIGludGVydmFsIGF0aGxldGVzLiBJbiBhbGwgbWFsZSBhdGhsZXRlcywgdGhlcmUgd2FzIG5vIHNpZ25pZmljYW50IGNvcnJlbGF0aW9uIGJldHdlZW4gZGlldGFyeSBvciB0b3RhbCBjYWxjaXVtIGludGFrZSBhbmQgQk1EIGF0IGFueSBvZiB0aGUgbWVhc3VyZWQgc2l0ZXMuIEhvd2V2ZXIsIHRoZSBtYWxlIGludGVydmFsIGF0aGxldGUgZ3JvdXAgaGFkIGEgbmVnYXRpdmUgcmVsYXRpb25zaGlwIGJldHdlZW4gZGlldGFyeSBjYWxjaXVtIGludGFrZSBhbmQgVEJCTUQgKHI9LTAuNzM4LCBwPDAuMDUpIGFuZCBMU0JNRCAocj0tMC43MzgsIHA8MC4wNSkuIFRoZSBuZWdhdGl2ZSByZWxhdGlvbnNoaXAgcGVyc2lzdGVkIGJldHdlZW4gdG90YWwgY2FsY2l1bSBpbnRha2UgYW5kIExTQk1EIChyPS0wLjcxNCwgcDwwLjA1KSwgYnV0IG5vdCBUQkJNRCwgd2hlbiBjYWxjaXVtIGZyb20gc3VwcGxlbWVudHMgd2FzIGluY2x1ZGVkLiBUaGUgdGhpcmQgcHVycG9zZSBvZiB0aGlzIHN0dWR5IHdhcyB0byBldmFsdWF0ZSB0aGUgcmVsYXRpb25zaGlwIGJldHdlZW4gdml0YW1pbiBLIGludGFrZSAoYXMgcGh5bGxvcXVpbm9uZSkgYW5kIEJNRC4gSW4gYWxsIGZlbWFsZSBhdGhsZXRlcywgdGhlcmUgd2FzIG5vIHNpZ25pZmljYW50IGNvcnJlbGF0aW9uIGJldHdlZW4gdml0YW1pbiBLIGludGFrZSBhbmQgQk1EIGF0IGFueSBvZiB0aGUgbWVhc3VyZWQgc2l0ZXMuIE5vIHJlbGF0aW9uc2hpcCBiZXR3ZWVuIHZpdGFtaW4gSyBhbmQgQk1EIHdhcyBldmlkZW50IGluIGZlbWFsZSBpbnRlcnZhbCBvciBmZW1hbGUgZW5kdXJhbmNlIGF0aGxldGVzLiBTaW1pbGFybHksIHRoZXJlIHdhcyBubyByZWxhdGlvbnNoaXAgYmV0d2VlbiB2aXRhbWluIEsgaW50YWtlIGFuZCBCTUQgaW4gdGhlIG1hbGUgZW5kdXJhbmNlIGFuZCBpbnRlcnZhbCBncm91cHMuIFRoZSBmaW5hbCBwdXJwb3NlIG9mIHRoaXMgc3R1ZHkgd2FzIHRvIGFzc2VzcyB0aGUgcmVsYXRpb25zaGlwIGJldHdlZW4gdGhlIENhbGNpdW0tdG8tVml0YW1pbiBLIChDYTpLKSByYXRpbyBhbmQgQk1ELiBBIGxpbmVhciByZWdyZXNzaW9uIG1vZGVsIGVzdGFibGlzaGVkIHRoYXQgdGhlIHJhdGlvIHByZWRpY3RlZCBUQkJNRCBpbiBmZW1hbGUgYXRobGV0ZXMsIEYoMSw0NykgPSA0LjY1MiwgcCA8MC4wNSwgYW5kIHRoZSByYXRpbyBhY2NvdW50ZWQgZm9yIDklIG9mIHRoZSB2YXJpYWJpbGl0eSBpbiBUQkJNRC4gVGhlIHJlZ3Jlc3Npb24gZXF1YXRpb24gd2FzOiBwcmVkaWN0ZWQgVEJCTUQgaW4gYSBmZW1hbGUgYXRobGV0ZSA9IDEuMjUwIC0gMC4wMDggeCAoQ2E6SykuIEluIGNvbmNsdXNpb24sIE1hc3RlcnMgaW50ZXJ2YWwgYXRobGV0ZXMgaGF2ZSBoaWdoZXIgQk1EIHRoYW4gTWFzdGVycyBlbmR1cmFuY2UgYXRobGV0ZXM7IGhvd2V2ZXIsIG5laXRoZXIgZGlldGFyeSBvciBzdXBwbGVtZW50YWwgY2FsY2l1bSBub3Igdml0YW1pbiBLIHdlcmUgcmVsYXRlZCB0byBCTUQgaW4gc2tlbGV0YWwgc2l0ZXMgcHJvbmUgdG8gZnJhY3R1cmUgaW4gb2xkZXIgYWR1bHRob29kLiBXZSBmb3VuZCB0aGF0IGEgQ2E6SyByYXRpbyBjb3VsZCBwcmVkaWN0IFRCQk1EIGluIGZlbWFsZSBhdGhsZXRlcy4gRnVydGhlciByZXNlYXJjaCBzaG91bGQgY29uc2lkZXIgdGhlIGNhbGNpdW0tdG8tdml0YW1pbiBLIHJlbGF0aW9uc2hpcCBpbiBjb25qdW5jdGlvbiB3aXRoIG90aGVyIG1vZGlmaWFibGUsIGxpZmVzdHlsZSBmYWN0b3JzIGFzc29jaWF0ZWQgd2l0aCBib25lIGhlYWx0aCBpbiB0aGUgaW52ZXN0aWdhdGlvbiBvZiBtZXRob2RzIHRvIG1pbmltaXplIHRoZSBkZXZlbG9wbWVudCBhbmQgZWZmZWN0IG9mIG9zdGVvcG9yb3NpcyBpbiB0aGUgb2xkZXIgYXRobGV0ZSBwb3B1bGF0aW9uLiIsCiAgICAiZGVzY3JpcHRpb25UeXBlIjogIkFic3RyYWN0IgogIH1dCn0=",
-              "source"=> "fabrica",
-              "state"=> "draft",
-              "reason"=> nil,
-              "event"=> nil,
-              "mode"=> "modify"
+              "xml" => xml,
+              "event"=> "publish"
             },
             "type"=> "dois"
           }
@@ -658,15 +647,9 @@ describe "dois", type: :request do
         patch "/dois/#{doi.doi}", valid_attributes, headers
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'titles',0,'title')).to eq("The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population")
+        expect(json.dig('data', 'attributes', 'titles', 0, 'title')).to eq("The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population")
         expect(json.dig('data', 'attributes', 'descriptions',0,'description')).to start_with("Diet and physical activity are two modifiable factors that can curtail the development of osteoporosis in the aging population. ")
-
-      end
-
-      it 'sets state to findable' do
-        patch "/dois/#{doi.doi}", valid_attributes, headers
-
-        expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
       end
     end
 
@@ -1153,6 +1136,94 @@ describe "dois", type: :request do
 
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
         expect(xml.dig("titles", "title")).to eq("NWD165827.recab.cram")
+      end
+    end
+
+    context 'json' do
+      let(:attributes) { JSON.parse(<<~HEREDOC
+        {
+          "doi": "10.14454/9zwb-rb91",
+          "event": "publish",
+          "types": {
+            "resourceType": "Dissertation",
+            "resourceTypeGeneral": "Text"
+          },
+          "creators": [
+            {
+              "nameType": "Personal",
+              "givenName": "Julia M.",
+              "familyName": "Rovera",
+              "affiliation": [{
+                "name": "Drexel University"
+              }],
+              "nameIdentifiers": [
+                {
+                  "schemeUri": "https://orcid.org",
+                  "nameIdentifier": "https://orcid.org/0000-0001-7673-8253",
+                  "nameIdentifierScheme": "ORCID"
+                }
+              ]
+            }
+          ],
+          "titles": [
+            {
+              "lang": "en",
+              "title": "The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population",
+              "titleType": null
+            },
+            {
+              "lang": "en",
+              "title": "Subtitle",
+              "titleType": "Subtitle"
+            }
+          ],
+          "publisher": "Drexel University",
+          "publicationYear": 2019,
+          "descriptions": [
+            {
+              "lang": "en",
+              "description": "Diet and physical activity are two modifiable factors that can curtail the development of osteoporosis in the aging population. One purpose of this study was to assess the differences in dietary intake and bone mineral density (BMD) in a Masters athlete population (n=87, n=49 female; 41.06 ± 5.00 years of age) and examine sex- and sport-related differences in dietary and total calcium and vitamin K intake and BMD of the total body, lumbar spine, and dual femoral neck (TBBMD, LSBMD and DFBMD, respectively). Total calcium is defined as calcium intake from diet and supplements. Athletes were categorized as participating in an endurance or interval sport. BMD was measured using dual-energy X-ray absorptiometry (DXA). Data on dietary intake was collected from Block 2005 Food Frequency Questionnaires (FFQs). Dietary calcium, total calcium, or vitamin K intake did not differ between the female endurance and interval athletes. All three BMD sites were significantly different among the female endurance and interval athletes, with female interval athletes having higher BMD at each site (TBBMD: 1.26 ± 0.10 g/cm2, p<0.05; LSBMD: 1.37 ± 0.14 g/cm2, p<0.01; DFBMD: 1.11 ± 0.12 g/cm2, p<0.05, for female interval athletes; TBBMD: 1.19 ± 0.09 g/cm2; LSBMD: 1.23 ± 0.16 g/cm2; DFBMD: 1.04 ± 0.10 g/cm2, for female endurance athletes). Male interval athletes had higher BMD at all three sites (TBBMD 1.44 ± 0.11 g/cm2, p<0.05; LSBMD 1.42 ± 0.15 g/cm2, p=0.179; DFBMD 1.26 ± 0.14 g/cm2, p<0.01, for male interval athletes; TBBMD 1.33 ± 0.11 g/cm2; LSBMD 1.33 ± 0.17 g/cm2; DFBMD 1.10 ± 0.12 g/cm2 for male endurance athletes). Dietary calcium, total daily calcium and vitamin K intake did not differ between the male endurance and interval athletes. This study evaluated the relationship between calcium intake and BMD. No relationship between dietary or total calcium intake and BMD was evident in all female athletes, female endurance athletes or female interval athletes. In all male athletes, there was no significant correlation between dietary or total calcium intake and BMD at any of the measured sites. However, the male interval athlete group had a negative relationship between dietary calcium intake and TBBMD (r=-0.738, p<0.05) and LSBMD (r=-0.738, p<0.05). The negative relationship persisted between total calcium intake and LSBMD (r=-0.714, p<0.05), but not TBBMD, when calcium from supplements was included. The third purpose of this study was to evaluate the relationship between vitamin K intake (as phylloquinone) and BMD. In all female athletes, there was no significant correlation between vitamin K intake and BMD at any of the measured sites. No relationship between vitamin K and BMD was evident in female interval or female endurance athletes. Similarly, there was no relationship between vitamin K intake and BMD in the male endurance and interval groups. The final purpose of this study was to assess the relationship between the Calcium-to-Vitamin K (Ca:K) ratio and BMD. A linear regression model established that the ratio predicted TBBMD in female athletes, F(1,47) = 4.652, p <0.05, and the ratio accounted for 9% of the variability in TBBMD. The regression equation was: predicted TBBMD in a female athlete = 1.250 - 0.008 x (Ca:K). In conclusion, Masters interval athletes have higher BMD than Masters endurance athletes; however, neither dietary or supplemental calcium nor vitamin K were related to BMD in skeletal sites prone to fracture in older adulthood. We found that a Ca:K ratio could predict TBBMD in female athletes. Further research should consider the calcium-to-vitamin K relationship in conjunction with other modifiable, lifestyle factors associated with bone health in the investigation of methods to minimize the development and effect of osteoporosis in the older athlete population.",
+              "descriptionType": "Abstract"
+            }
+          ],
+          "url": "https://idea.library.drexel.edu/islandora/object/idea:9531"
+        }
+      HEREDOC
+      ) }
+        
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => attributes,
+            "relationships" => {
+              "client" =>  {
+                "data" => {
+                  "type" => "clients",
+                  "id" => client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+
+      it 'created the record' do
+        post "/dois", valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig('data', 'attributes', 'url')).to eq("https://idea.library.drexel.edu/islandora/object/idea:9531")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/9zwb-rb91")
+        expect(json.dig('data', 'attributes', 'types')).to eq("resourceType"=>"Dissertation", "resourceTypeGeneral"=>"Text")
+       expect(json.dig('data', 'attributes', 'descriptions', 0, 'description')).to start_with("Diet and physical activity")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"lang"=>"en", "title"=>"The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population","titleType"=>nil},{"lang"=>"en", "title"=>"Subtitle", "titleType"=>"Subtitle"}])
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("titles", "title")).to eq([{"__content__"=>
+          "The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population",
+          "xml:lang"=>"en"},
+         {"__content__"=>"Subtitle", "titleType"=>"Subtitle", "xml:lang"=>"en"}])
       end
     end
 
@@ -2427,7 +2498,7 @@ describe "dois", type: :request do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(json.dig('data', 'attributes', 'descriptions').size).to eq(2)
-        expect(json.dig('data', 'attributes', 'titles',0,'title')).to eq("Percussive Scoop Sampling in Extreme Terrain")
+        expect(json.dig('data', 'attributes', 'titles', 0, 'title')).to eq("Percussive Scoop Sampling in Extreme Terrain")
         expect(json.dig('data', 'attributes', 'descriptions').last).to eq("description"=>"Keck Institute for Space Studies", "descriptionType"=>"SeriesInformation")
         expect(json.dig('data', 'attributes', 'container')).to eq("title"=>"Keck Institute for Space Studies", "type"=>"Series")
 
