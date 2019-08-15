@@ -506,6 +506,32 @@ describe "dois", type: :request do
       end
     end
 
+    # no difference whether creators is nil, or attribute missing (see previous test)
+    context 'when the record doesn\'t exist no creators publish with json' do
+      let(:doi_id) { "10.14454/077d-fj48" }
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite_missing_creator.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "creators" => nil,
+              "xml" => xml,
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      it 'returns error' do
+        put "/dois/#{doi_id}", valid_attributes, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json["errors"]).to eq([{"source"=>"creators", "title"=>"Missing child element(s). expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0"}])
+      end
+    end
+
     context 'when the record exists with conversion' do
       let(:xml) { Base64.strict_encode64(file_fixture('crossref.bib').read) }
       let(:valid_attributes) do
