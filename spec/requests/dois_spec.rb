@@ -506,6 +506,32 @@ describe "dois", type: :request do
       end
     end
 
+    # no difference whether creators is nil, or attribute missing (see previous test)
+    context 'when the record doesn\'t exist no creators publish with json' do
+      let(:doi_id) { "10.14454/077d-fj48" }
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite_missing_creator.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "creators" => nil,
+              "xml" => xml,
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      it 'returns error' do
+        put "/dois/#{doi_id}", valid_attributes, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json["errors"]).to eq([{"source"=>"creators", "title"=>"Missing child element(s). expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0"}])
+      end
+    end
+
     context 'when the record exists with conversion' do
       let(:xml) { Base64.strict_encode64(file_fixture('crossref.bib').read) }
       let(:valid_attributes) do
@@ -626,6 +652,33 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
       end
     end
+
+    context 'when the xml field has datacite_json' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite-user-example.json').read) }
+      let(:valid_attributes) do
+        {
+          "data"=> {
+            "id"=> doi.doi,
+            "attributes"=> {
+              "doi"=> doi.doi,
+              "xml" => xml,
+              "event"=> "publish"
+            },
+            "type"=> "dois"
+          }
+        }
+      end
+
+      it 'updates the record' do
+        patch "/dois/#{doi.doi}", valid_attributes, headers
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'titles', 0, 'title')).to eq("The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population")
+        expect(json.dig('data', 'attributes', 'descriptions',0,'description')).to start_with("Diet and physical activity are two modifiable factors that can curtail the development of osteoporosis in the aging population. ")
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
+    end
+
 
     context 'when a doi is created ignore reverting back' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
@@ -1109,6 +1162,94 @@ describe "dois", type: :request do
 
         xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
         expect(xml.dig("titles", "title")).to eq("NWD165827.recab.cram")
+      end
+    end
+
+    context 'json' do
+      let(:attributes) { JSON.parse(<<~HEREDOC
+        {
+          "doi": "10.14454/9zwb-rb91",
+          "event": "publish",
+          "types": {
+            "resourceType": "Dissertation",
+            "resourceTypeGeneral": "Text"
+          },
+          "creators": [
+            {
+              "nameType": "Personal",
+              "givenName": "Julia M.",
+              "familyName": "Rovera",
+              "affiliation": [{
+                "name": "Drexel University"
+              }],
+              "nameIdentifiers": [
+                {
+                  "schemeUri": "https://orcid.org",
+                  "nameIdentifier": "https://orcid.org/0000-0001-7673-8253",
+                  "nameIdentifierScheme": "ORCID"
+                }
+              ]
+            }
+          ],
+          "titles": [
+            {
+              "lang": "en",
+              "title": "The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population",
+              "titleType": null
+            },
+            {
+              "lang": "en",
+              "title": "Subtitle",
+              "titleType": "Subtitle"
+            }
+          ],
+          "publisher": "Drexel University",
+          "publicationYear": 2019,
+          "descriptions": [
+            {
+              "lang": "en",
+              "description": "Diet and physical activity are two modifiable factors that can curtail the development of osteoporosis in the aging population. One purpose of this study was to assess the differences in dietary intake and bone mineral density (BMD) in a Masters athlete population (n=87, n=49 female; 41.06 ± 5.00 years of age) and examine sex- and sport-related differences in dietary and total calcium and vitamin K intake and BMD of the total body, lumbar spine, and dual femoral neck (TBBMD, LSBMD and DFBMD, respectively). Total calcium is defined as calcium intake from diet and supplements. Athletes were categorized as participating in an endurance or interval sport. BMD was measured using dual-energy X-ray absorptiometry (DXA). Data on dietary intake was collected from Block 2005 Food Frequency Questionnaires (FFQs). Dietary calcium, total calcium, or vitamin K intake did not differ between the female endurance and interval athletes. All three BMD sites were significantly different among the female endurance and interval athletes, with female interval athletes having higher BMD at each site (TBBMD: 1.26 ± 0.10 g/cm2, p<0.05; LSBMD: 1.37 ± 0.14 g/cm2, p<0.01; DFBMD: 1.11 ± 0.12 g/cm2, p<0.05, for female interval athletes; TBBMD: 1.19 ± 0.09 g/cm2; LSBMD: 1.23 ± 0.16 g/cm2; DFBMD: 1.04 ± 0.10 g/cm2, for female endurance athletes). Male interval athletes had higher BMD at all three sites (TBBMD 1.44 ± 0.11 g/cm2, p<0.05; LSBMD 1.42 ± 0.15 g/cm2, p=0.179; DFBMD 1.26 ± 0.14 g/cm2, p<0.01, for male interval athletes; TBBMD 1.33 ± 0.11 g/cm2; LSBMD 1.33 ± 0.17 g/cm2; DFBMD 1.10 ± 0.12 g/cm2 for male endurance athletes). Dietary calcium, total daily calcium and vitamin K intake did not differ between the male endurance and interval athletes. This study evaluated the relationship between calcium intake and BMD. No relationship between dietary or total calcium intake and BMD was evident in all female athletes, female endurance athletes or female interval athletes. In all male athletes, there was no significant correlation between dietary or total calcium intake and BMD at any of the measured sites. However, the male interval athlete group had a negative relationship between dietary calcium intake and TBBMD (r=-0.738, p<0.05) and LSBMD (r=-0.738, p<0.05). The negative relationship persisted between total calcium intake and LSBMD (r=-0.714, p<0.05), but not TBBMD, when calcium from supplements was included. The third purpose of this study was to evaluate the relationship between vitamin K intake (as phylloquinone) and BMD. In all female athletes, there was no significant correlation between vitamin K intake and BMD at any of the measured sites. No relationship between vitamin K and BMD was evident in female interval or female endurance athletes. Similarly, there was no relationship between vitamin K intake and BMD in the male endurance and interval groups. The final purpose of this study was to assess the relationship between the Calcium-to-Vitamin K (Ca:K) ratio and BMD. A linear regression model established that the ratio predicted TBBMD in female athletes, F(1,47) = 4.652, p <0.05, and the ratio accounted for 9% of the variability in TBBMD. The regression equation was: predicted TBBMD in a female athlete = 1.250 - 0.008 x (Ca:K). In conclusion, Masters interval athletes have higher BMD than Masters endurance athletes; however, neither dietary or supplemental calcium nor vitamin K were related to BMD in skeletal sites prone to fracture in older adulthood. We found that a Ca:K ratio could predict TBBMD in female athletes. Further research should consider the calcium-to-vitamin K relationship in conjunction with other modifiable, lifestyle factors associated with bone health in the investigation of methods to minimize the development and effect of osteoporosis in the older athlete population.",
+              "descriptionType": "Abstract"
+            }
+          ],
+          "url": "https://idea.library.drexel.edu/islandora/object/idea:9531"
+        }
+      HEREDOC
+      ) }
+        
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => attributes,
+            "relationships" => {
+              "client" =>  {
+                "data" => {
+                  "type" => "clients",
+                  "id" => client.symbol.downcase
+                }
+              }
+            }
+          }
+        }
+      end
+
+      it 'created the record' do
+        post "/dois", valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig('data', 'attributes', 'url')).to eq("https://idea.library.drexel.edu/islandora/object/idea:9531")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/9zwb-rb91")
+        expect(json.dig('data', 'attributes', 'types')).to eq("resourceType"=>"Dissertation", "resourceTypeGeneral"=>"Text")
+       expect(json.dig('data', 'attributes', 'descriptions', 0, 'description')).to start_with("Diet and physical activity")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"lang"=>"en", "title"=>"The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population","titleType"=>nil},{"lang"=>"en", "title"=>"Subtitle", "titleType"=>"Subtitle"}])
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+
+        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+        expect(xml.dig("titles", "title")).to eq([{"__content__"=>
+          "The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population",
+          "xml:lang"=>"en"},
+         {"__content__"=>"Subtitle", "titleType"=>"Subtitle", "xml:lang"=>"en"}])
       end
     end
 
@@ -2383,6 +2524,7 @@ describe "dois", type: :request do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
         expect(json.dig('data', 'attributes', 'descriptions').size).to eq(2)
+        expect(json.dig('data', 'attributes', 'titles', 0, 'title')).to eq("Percussive Scoop Sampling in Extreme Terrain")
         expect(json.dig('data', 'attributes', 'descriptions').last).to eq("description"=>"Keck Institute for Space Studies", "descriptionType"=>"SeriesInformation")
         expect(json.dig('data', 'attributes', 'container')).to eq("title"=>"Keck Institute for Space Studies", "type"=>"Series")
 
