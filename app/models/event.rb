@@ -252,7 +252,7 @@ class Event < ActiveRecord::Base
       views: {
         filter: views_filter,
         aggs: { dois: {
-          terms: { field: 'obj_id', size: 50, min_doc_count: 1 }
+          terms: { field: 'obj_id', size: 50, min_doc_count: 1} , aggs: { "total_by_type" => { sum: { field: 'total' }}}
         }}
       },
       views_histogram: {
@@ -264,7 +264,7 @@ class Event < ActiveRecord::Base
       downloads: {
           filter: downloads_filter,
           aggs: { dois: {
-            terms: { field: 'obj_id', size: 50, min_doc_count: 1 }
+            terms: { field: 'obj_id', size: 50, min_doc_count: 1} , aggs: { "total_by_type" => { sum: { field: 'total' }}}
           }}
         },
       downloads_histogram: {
