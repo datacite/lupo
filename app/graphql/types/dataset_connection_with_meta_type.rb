@@ -51,24 +51,6 @@ class DatasetConnectionWithMetaType < BaseConnection
     Event.query(nil, doi: doi_from_url(args[:query]), "page[size]": 0,aggregations: "metrics_aggregations").response.aggregations
   end
 
-  # def views_connection_count
-  #   args = object.arguments
-  #   aggregation = Event.query(nil, doi: doi_from_url(args[:query]), "page[size]": 0,aggregations: "metrics_aggregations").response.aggregations
-  #   views = aggregation.views.dois.buckets
-  #   views = views.first.fetch("doc_count", nil) if views.any?
-
-  #   downloads = aggregation.downloads.dois.buckets
-  #   downloads = downloads.first.fetch("doc_count", nil) if downloads.any?
-
-  #   citations = aggregation.citations.dois.buckets
-  #   citations = citations.first.fetch("unique_citations", {}).fetch("value", nil) if citations.any?
-  #   {
-  #     views: views,
-  #     downloads: downloads,
-  #     citations: citations
-  #   }
-  # end
-
   def views_connection_count
     args = object.arguments
     meta = aggregation_results(args).views.dois.buckets
