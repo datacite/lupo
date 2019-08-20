@@ -14,11 +14,11 @@ class SessionsController < ApplicationController
     render json: { "access_token" => user.jwt, "expires_in" => 3600 * 24 * 30 }.to_json, status: 200
   end
 
-  def get_oidc_token
-    credentials = request.headers["x-amzn-oidc-data"]
-    error_response("Missing token.") && return if credentials.blank?
+  def oidc_create
+    error_response("Missing token.") && return if
+    safe_params[:token].blank? || safe_params[:token] == "undefined" 
 
-    user = User.new(credentials, type: "oidc")
+    user = User.new(safe_params[:token], type: "oidc")
     error_response(user.errors) && return if user.errors.present?
 
     render json: { "access_token" => user.jwt, "expires_in" => 3600 * 24 * 30 }.to_json, status: 200
@@ -52,6 +52,6 @@ class SessionsController < ApplicationController
   end
 
   def safe_params
-    params.permit(:grant_type, :username, :password, :client_id, :client_secret, :refresh_token, :format, :controller, :action)
+    params.permit(:grant_type, :username, :password, :token, :client_id, :client_secret, :refresh_token, :format, :controller, :action)
   end
 end

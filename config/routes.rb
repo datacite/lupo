@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   post 'token', :to => 'sessions#create'
 
   # authentication via openid connect in load balancer
-  get 'oidc-token', :to => 'sessions#get_oidc_token'
+  post 'oidc-token', :to => 'sessions#oidc_create'
 
   # send reset link
   post 'reset', :to => 'sessions#reset'
