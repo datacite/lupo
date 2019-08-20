@@ -45,7 +45,7 @@ module Authenticable
     def decode_alb_token(token)
       logger = Logger.new(STDOUT)
 
-      public_key = OpenSSL::PKey::RSA.new(ENV['ALB_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
+      public_key = OpenSSL::PKey::EC.new(ENV['ALB_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
       payload = (JWT.decode token, public_key, true, { algorithm: 'ES256' }).first
 
       fail NoMethodError unless payload.is_a?(Hash)
@@ -63,7 +63,7 @@ module Authenticable
     rescue JWT::DecodeError => error
       logger.error "JWT::DecodeError: " + error.message + " for " + token
       return { errors: "The token could not be decoded." }
-    rescue OpenSSL::PKey::RSAError => error
+    rescue OpenSSL::PKey::RSAError, OpenSSL::PKey::ECError => error
       public_key = ENV['ALB_PUBLIC_KEY'].presence || "nil"
       logger.error "OpenSSL::PKey::RSAError: " + error.message + " for " + public_key
       return { errors: "An error occured." }
