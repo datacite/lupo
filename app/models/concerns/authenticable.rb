@@ -48,10 +48,15 @@ module Authenticable
       public_key = OpenSSL::PKey::RSA.new(ENV['ALB_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
       payload = (JWT.decode token, public_key, true, { algorithm: 'ES256' }).first
 
+      fail NoMethodError unless payload.is_a?(Hash)
+
       # check whether token has expired
       fail JWT::ExpiredSignature, "The token has expired." unless Time.now.to_i < payload["exp"].to_i
-
+      
       payload
+    rescue NoMethodError => error
+      logger.error "NoMethodError: " + payload.inspect
+      return { errors: "The token could not be decoded." }
     rescue JWT::ExpiredSignature => error
       logger.error "JWT::ExpiredSignature: " + error.message + " for " + token
       return { errors: "The token has expired." }
@@ -59,7 +64,7 @@ module Authenticable
       logger.error "JWT::DecodeError: " + error.message + " for " + token
       return { errors: "The token could not be decoded." }
     rescue OpenSSL::PKey::RSAError => error
-      public_key = ENV['JWT_PUBLIC_KEY'].presence || "nil"
+      public_key = ENV['ALB_PUBLIC_KEY'].presence || "nil"
       logger.error "OpenSSL::PKey::RSAError: " + error.message + " for " + public_key
       return { errors: "An error occured." }
     end
