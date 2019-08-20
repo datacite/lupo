@@ -18,6 +18,19 @@ class User
       username, password = ::Base64.decode64(credentials).split(":", 2)
       payload = decode_auth_param(username: username, password: password)
       @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30))
+    elsif credentials.present? && options.fetch(:type, "").downcase == "oidc"
+      payload = decode_alb_token(credentials)
+
+      # globus auth preferred_username looks like 0000-0003-1419-2405@orcid.org
+      # default to role user
+      payload = {
+        "uid" => payload["preferred_username"][0..18],
+        "name" => payload["name"],
+        "email" => payload["email"],
+        "role_id" => "user"
+      }
+
+      @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30))
     elsif credentials.present?
       payload = decode_token(credentials)
       @jwt = credentials
@@ -69,6 +82,12 @@ class User
     return nil unless client_id.present?
 
     ::Client.where(symbol: client_id).where(deleted_at: nil).first
+  end
+
+  def researcher
+    return nil unless uid.present?
+
+    Researcher.where(uid: uid).first
   end
 
   def self.reset(username)

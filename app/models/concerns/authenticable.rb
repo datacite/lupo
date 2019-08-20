@@ -45,10 +45,8 @@ module Authenticable
     def decode_alb_token(token)
       logger = Logger.new(STDOUT)
 
-      # https://public-keys.auth.elb.eu-west-1.amazonaws.com/key-id
-
-      public_key = OpenSSL::PKey::RSA.new(ENV['JWT_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
-      payload = (JWT.decode token, ecdsa_public, true, { algorithm: 'ES256' }).first
+      public_key = OpenSSL::PKey::RSA.new(ENV['ALB_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
+      payload = (JWT.decode token, public_key, true, { algorithm: 'ES256' }).first
 
       # check whether token has expired
       fail JWT::ExpiredSignature, "The token has expired." unless Time.now.to_i < payload["exp"].to_i
