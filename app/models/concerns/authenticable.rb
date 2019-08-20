@@ -41,6 +41,31 @@ module Authenticable
       return { errors: "An error occured." }
     end
 
+    # decode JWT token from AWS ALB using SHA-256 hash algorithm
+    def decode_alb_token(token)
+      logger = Logger.new(STDOUT)
+
+      # https://public-keys.auth.elb.eu-west-1.amazonaws.com/key-id
+
+      public_key = OpenSSL::PKey::RSA.new(ENV['JWT_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
+      payload = (JWT.decode token, ecdsa_public, true, { algorithm: 'ES256' }).first
+
+      # check whether token has expired
+      fail JWT::ExpiredSignature, "The token has expired." unless Time.now.to_i < payload["exp"].to_i
+
+      payload
+    rescue JWT::ExpiredSignature => error
+      logger.error "JWT::ExpiredSignature: " + error.message + " for " + token
+      return { errors: "The token has expired." }
+    rescue JWT::DecodeError => error
+      logger.error "JWT::DecodeError: " + error.message + " for " + token
+      return { errors: "The token could not be decoded." }
+    rescue OpenSSL::PKey::RSAError => error
+      public_key = ENV['JWT_PUBLIC_KEY'].presence || "nil"
+      logger.error "OpenSSL::PKey::RSAError: " + error.message + " for " + public_key
+      return { errors: "An error occured." }
+    end
+
     # basic auth
     def encode_auth_param(username: nil, password: nil)
       return nil unless username.present? && password.present?

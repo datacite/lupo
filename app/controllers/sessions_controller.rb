@@ -14,6 +14,20 @@ class SessionsController < ApplicationController
     render json: { "access_token" => user.jwt, "expires_in" => 3600 * 24 * 30 }.to_json, status: 200
   end
 
+  def get_oidc_token
+    credentials = request.headers["x-amzn-oidc-data"]
+    error_response("Missing token.") && return if credentials.blank?
+
+    # user = User.new(credentials, type: "oidc")
+    # error_response(user.errors) && return if user.errors.present?
+    
+    render json: { 
+      "x-amzn-oidc-accesstoken" => request.headers["x-amzn-oidc-accesstoken"],
+      "x-amzn-oidc-identity" => request.headers["x-amzn-oidc-identity"], 
+      "x-amzn-oidc-data" => request.headers["x-amzn-oidc-data"],  
+      "expires_in" => 3600 * 24 * 30 }.to_json, status: 200
+  end
+
   def reset
     if safe_params[:username].blank?
       message = "Missing account ID."
