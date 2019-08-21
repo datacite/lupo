@@ -35,6 +35,7 @@ class Ability
       end
       can [:read], User
       can [:read], Phrase
+      can [:read], Researcher
       can [:read], Activity do |activity|
         activity.doi.findable? || activity.doi.provider_id == user.provider_id
       end
@@ -50,6 +51,7 @@ class Ability
       end
       can [:read], User
       can [:read], Phrase
+      can [:read], Researcher
       can [:read], Activity do |activity|
         activity.doi.findable? || activity.doi.provider_id == user.provider_id
       end
@@ -72,6 +74,7 @@ class Ability
       end
       can [:read], User
       can [:read], Phrase
+      can [:read], Researcher
       can [:read], Activity do |activity|
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
@@ -84,6 +87,7 @@ class Ability
       end
       can [:read], User
       can [:read], Phrase
+      can [:read], Researcher
       can [:read], Activity do |activity|
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
@@ -96,6 +100,7 @@ class Ability
       end
       can [:read], User, :id => user.id
       can [:read], Phrase
+      can [:read], Researcher
       can [:read], Activity do |activity|
         activity.doi.findable?
       end
@@ -104,6 +109,7 @@ class Ability
         doi.findable?
       end
       can [:read], Provider
+      can [:read], Researcher
       can [:read], Activity do |activity|
         activity.doi.findable?
       end

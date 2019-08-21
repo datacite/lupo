@@ -96,7 +96,9 @@ Rails.application.routes.draw do
     resources :prefixes, constraints: { :id => /.+/ }
   end
   resources :providers, constraints: { :id => /.+/ }
-  resources :researchers
+  resources :researchers, constraints: { id: /.+/ } do
+    resources :dois, constraints: { id: /.+/ }
+  end
   resources :resource_types, path: 'resource-types', only: [:show, :index]
 
   # custom routes for maintenance tasks

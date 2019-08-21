@@ -157,7 +157,6 @@ module Indexable
       must << { terms: { client_id: options[:client_id].to_s.split(",") }} if options[:client_id].present?
       must << { terms: { prefix: options[:prefix].to_s.split(",") }} if options[:prefix].present?
       must << { term: { uid: options[:uid] }} if options[:uid].present?
-      must << { term: { "creators.nameIdentifiers.nameIdentifier" => "*#{options[:researcher_id]}" }} if options[:researcher_id].present?
       must << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
       must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
       must << { terms: { "subjects.subject": options[:subject].split(",") }} if options[:subject].present?
@@ -203,6 +202,7 @@ module Indexable
       elsif self.name == "Doi"
         must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
         must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
+        must << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{options[:researcher_id]}" }} if options[:researcher_id].present?
         must << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
         must << { term: { "client.re3data_id" => options[:re3data_id].upcase.gsub("/", '\/') }} if options[:re3data_id].present?
         must << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
