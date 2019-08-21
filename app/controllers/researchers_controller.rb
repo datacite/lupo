@@ -62,6 +62,7 @@ class ResearchersController < ApplicationController
 
   def show
     options = {}
+    options[:meta] = { dois: doi_count(researcher_id: params[:id]) }
     options[:is_collection] = false
     render json: ResearcherSerializer.new(@researcher, options).serialized_json, status: :ok
   end

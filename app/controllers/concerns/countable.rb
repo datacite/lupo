@@ -2,13 +2,15 @@ module Countable
   extend ActiveSupport::Concern
 
   included do
-    def doi_count(client_id: nil, provider_id: nil, consortium_id: nil)
+    def doi_count(client_id: nil, provider_id: nil, consortium_id: nil, researcher_id: nil)
       if client_id
         response = Doi.query(nil, client_id: client_id, page: { number: 1, size: 0 })
       elsif provider_id
         response = Doi.query(nil, provider_id: provider_id, page: { number: 1, size: 0 })
       elsif consortium_id
         response = Doi.query(nil, consortium_id: consortium_id, page: { number: 1, size: 0 })
+      elsif researcher_id
+        response = Doi.query(nil, researcher_id: researcher_id, page: { number: 1, size: 0 })
       else
         response = Doi.query(nil, page: { number: 1, size: 0 })
       end
