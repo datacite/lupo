@@ -62,7 +62,7 @@ class DoisController < ApplicationController
                           opendoar_id: params[:opendoar_id],
                           certificate: params[:certificate],
                           prefix: params[:prefix],
-                          person_id: params[:person_id],
+                          researcher_id: params[:researcher_id],
                           resource_type_id: params[:resource_type_id],
                           schema_version: params[:schema_version],
                           subject: params[:subject],

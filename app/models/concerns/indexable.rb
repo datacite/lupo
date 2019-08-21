@@ -157,7 +157,7 @@ module Indexable
       must << { terms: { client_id: options[:client_id].to_s.split(",") }} if options[:client_id].present?
       must << { terms: { prefix: options[:prefix].to_s.split(",") }} if options[:prefix].present?
       must << { term: { uid: options[:uid] }} if options[:uid].present?
-      must << { term: { "author.id" => "https://orcid.org/#{options[:person_id]}" }} if options[:person_id].present?
+      must << { term: { "creators.nameIdentifiers.nameIdentifier" => "*#{options[:researcher_id]}" }} if options[:researcher_id].present?
       must << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
       must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
       must << { terms: { "subjects.subject": options[:subject].split(",") }} if options[:subject].present?
