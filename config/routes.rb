@@ -5,10 +5,10 @@ Rails.application.routes.draw do
   root :to => 'index#index'
 
   # authentication
-  post 'token', :to => 'sessions#create'
+  post 'token', :to => 'sessions#create_token'
 
   # authentication via openid connect in load balancer
-  get 'oidc-token', :to => 'sessions#oidc_token'
+  post 'oidc-token', :to => 'sessions#create_oidc_token'
 
   # send reset link
   post 'reset', :to => 'sessions#reset'

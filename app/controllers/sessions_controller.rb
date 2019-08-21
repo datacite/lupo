@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-  def create
+  def create_token
     error_response("Wrong grant type.") && return if safe_params[:grant_type] != "password"
     error_response("Missing account ID or password.") && return if
       safe_params[:username].blank? || safe_params[:username] == "undefined" ||
@@ -14,16 +14,14 @@ class SessionsController < ApplicationController
     render json: { "access_token" => user.jwt, "expires_in" => 3600 * 24 * 30 }.to_json, status: 200
   end
 
-  def oidc_token
-    credentials = request.headers["x-amzn-oidc-data"]
-    error_response("Missing token.") && return if credentials.blank?
+  def create_oidc_token
+    error_response("Missing token.") && return if
+    safe_params[:token].blank? || safe_params[:token] == "undefined" 
 
-    user = User.new(credentials, type: "oidc")
+    user = User.new(safe_params[:token], type: "oidc")
     error_response(user.errors) && return if user.errors.present?
 
-    response.set_header('access_token', user.jwt)
-    response.set_header('expires_in', 3600 * 24 * 30)
-    render plain: "OK", status: 200
+    render json: { "access_token" => user.jwt, "expires_in" => 3600 * 24 * 30 }.to_json, status: 200
   end
 
   def reset
