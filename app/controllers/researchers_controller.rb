@@ -1,5 +1,6 @@
 class ResearchersController < ApplicationController
   include ActionController::MimeResponds
+  include Countable
 
   prepend_before_action :authenticate_user!
   before_action :set_researcher, only: [:show, :destroy]
