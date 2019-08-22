@@ -39,8 +39,6 @@ class User
         }
 
         @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30))
-      else
-        payload = nil
       end
     elsif credentials.present?
       payload = decode_token(credentials)

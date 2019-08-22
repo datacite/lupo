@@ -63,21 +63,21 @@ module Authenticable
       if Rails.env.test?
         public_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec256-public.pem").to_s))
       else
-        header = JSON.parse(urlsafe_decode64(token.split(".").first))
+        header = JSON.parse(Base64.urlsafe_decode64(token.split(".").first))
         kid = header["kid"]
-        public_key = cached_alb_public_key(kid)
+        public_key_string = cached_alb_public_key(kid)
+        public_key = OpenSSL::PKey::EC.new(public_key_string.gsub('\n', "\n"))
       end
       
       payload = (JWT.decode token, public_key, true, { algorithm: 'ES256' }).first
-
-      fail NoMethodError unless payload.is_a?(Hash)
+      fail NoMethodError, "Payload is not a hash" unless payload.is_a?(Hash)
 
       # check whether token has expired
       fail JWT::ExpiredSignature, "The token has expired." unless Time.now.to_i < payload["exp"].to_i
       
       payload
     rescue NoMethodError => error
-      logger.error "NoMethodError: " + payload.inspect
+      logger.error "NoMethodError: " + error.message + " for " + token
       return { errors: "The token could not be decoded." }
     rescue JWT::ExpiredSignature => error
       logger.error "JWT::ExpiredSignature: " + error.message + " for " + token
@@ -85,9 +85,8 @@ module Authenticable
     rescue JWT::DecodeError => error
       logger.error "JWT::DecodeError: " + error.message + " for " + token.to_s
       return { errors: "The token could not be decoded." }
-    rescue OpenSSL::PKey::RSAError, OpenSSL::PKey::ECError => error
-      # ecdsa_public = ENV['ALB_PUBLIC_KEY'].presence || "nil"
-      logger.error "OpenSSL::PKey::RSAError: " + error.message + " for " + ecdsa_public
+    rescue OpenSSL::PKey::ECError => error
+      logger.error "OpenSSL::PKey::RSAError: " + error.message
       return { errors: "An error occured." }
     end
 

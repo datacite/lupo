@@ -52,9 +52,6 @@ class SessionsController < ApplicationController
   end
 
   def safe_params
-    logger = Logger.new(STDOUT)
-    logger.info params.inspect
-
     params.permit(:grant_type, :username, :password, :token, :client_id, :client_secret, :refresh_token, :session, :format, :controller, :action)
   end
 end
