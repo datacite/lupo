@@ -63,7 +63,9 @@ module Authenticable
       if Rails.env.test?
         public_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec256-public.pem").to_s))
       else
-        public_key = OpenSSL::PKey::EC.new(ENV['ALB_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
+        header = JSON.parse(urlsafe_decode64(token.split(".").first))
+        kid = header["kid"]
+        public_key = cached_alb_public_key(kid)
       end
       
       payload = (JWT.decode token, public_key, true, { algorithm: 'ES256' }).first
