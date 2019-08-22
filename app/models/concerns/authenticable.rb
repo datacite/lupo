@@ -12,10 +12,25 @@ module Authenticable
       # replace newline characters with actual newlines
       private_key = OpenSSL::PKey::RSA.new(ENV['JWT_PRIVATE_KEY'].to_s.gsub('\n', "\n"))
       JWT.encode(payload, private_key, 'RS256')
-    rescue JSON::GeneratorError => error
+    rescue OpenSSL::PKey::RSAError => e
       logger = Logger.new(STDOUT)
-      logger.error "JSON::GeneratorError: " + error.message + " for " + payload
-      return nil
+      logger.error e.inspect + " for " + payload.inspect
+
+      nil
+    end
+
+    # use only for testing, as we don't have private key for JWT encoded by AWS ALB
+    def encode_alb_token(payload)
+      return nil if payload.blank? || !Rails.env.test?
+      
+      # replace newline characters with actual newlines
+      private_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec256-private.pem").to_s))
+      JWT.encode(payload, private_key, 'ES256')
+    rescue OpenSSL::PKey::ECError => e
+      logger = Logger.new(STDOUT)
+      logger.error e.inspect + " for " + payload.inspect
+
+      nil
     end
 
     # decode JWT token using SHA-256 hash algorithm
@@ -45,7 +60,12 @@ module Authenticable
     def decode_alb_token(token)
       logger = Logger.new(STDOUT)
 
-      public_key = OpenSSL::PKey::EC.new(ENV['ALB_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
+      if Rails.env.test?
+        public_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec256-public.pem").to_s))
+      else
+        public_key = OpenSSL::PKey::EC.new(ENV['ALB_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
+      end
+      
       payload = (JWT.decode token, public_key, true, { algorithm: 'ES256' }).first
 
       fail NoMethodError unless payload.is_a?(Hash)
@@ -61,11 +81,11 @@ module Authenticable
       logger.error "JWT::ExpiredSignature: " + error.message + " for " + token
       return { errors: "The token has expired." }
     rescue JWT::DecodeError => error
-      logger.error "JWT::DecodeError: " + error.message + " for " + token
+      logger.error "JWT::DecodeError: " + error.message + " for " + token.to_s
       return { errors: "The token could not be decoded." }
     rescue OpenSSL::PKey::RSAError, OpenSSL::PKey::ECError => error
-      public_key = ENV['ALB_PUBLIC_KEY'].presence || "nil"
-      logger.error "OpenSSL::PKey::RSAError: " + error.message + " for " + public_key
+      # ecdsa_public = ENV['ALB_PUBLIC_KEY'].presence || "nil"
+      logger.error "OpenSSL::PKey::RSAError: " + error.message + " for " + ecdsa_public
       return { errors: "An error occured." }
     end
 
@@ -142,12 +162,27 @@ module Authenticable
   module ClassMethods
     # encode token using SHA-256 hash algorithm
     def encode_token(payload)
+      return nil if payload.blank?
+
       # replace newline characters with actual newlines
       private_key = OpenSSL::PKey::RSA.new(ENV['JWT_PRIVATE_KEY'].to_s.gsub('\n', "\n"))
       JWT.encode(payload, private_key, 'RS256')
     rescue OpenSSL::PKey::RSAError => e
       logger = Logger.new(STDOUT)
-      logger.error e.inspect
+      logger.error e.inspect + " for " + payload.inspect
+
+      nil
+    end
+
+    # encode token using ECDSA with P-256 and SHA-256
+    # use this only for testing as private key is publicly available from ruby-jwt gem
+    def encode_alb_token(payload)
+      return nil if payload.blank? || !Rails.env.test?
+      private_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec256-private.pem").to_s))
+      JWT.encode(payload, private_key, 'ES256')
+    rescue OpenSSL::PKey::ECError => e
+      logger = Logger.new(STDOUT)
+      logger.error e.inspect + " for " + payload.inspect
 
       nil
     end
@@ -174,6 +209,23 @@ module Authenticable
       }.compact
 
       encode_token(payload)
+    end
+
+    def generate_alb_token(attributes={})
+      payload = {
+        uid:  attributes.fetch(:uid, "0000-0001-5489-3594"),
+        preferred_username: attributes.fetch(:preferred_username, "0000-0001-5489-3594@orcid.org"),
+        name: attributes.fetch(:name, "Josiah Carberry"),
+        email: attributes.fetch(:email, nil),
+        provider_id: attributes.fetch(:provider_id, nil),
+        client_id: attributes.fetch(:client_id, nil),
+        role_id: attributes.fetch(:role_id, "user"),
+        password: attributes.fetch(:password, nil),
+        iat: Time.now.to_i,
+        exp: Time.now.to_i + attributes.fetch(:exp, 30)
+      }.compact
+
+      encode_alb_token(payload)
     end
 
     def get_payload(uid: nil, user: nil, password: nil)

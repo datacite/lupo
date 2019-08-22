@@ -14,6 +14,8 @@ class User
   attr_accessor :name, :uid, :email, :role_id, :jwt, :password, :provider_id, :client_id, :beta_tester, :errors
 
   def initialize(credentials, options={})
+    logger = Logger.new(STDOUT)
+
     if credentials.present? && options.fetch(:type, "").downcase == "basic"
       username, password = ::Base64.decode64(credentials).split(":", 2)
       payload = decode_auth_param(username: username, password: password)
@@ -23,14 +25,23 @@ class User
 
       # globus auth preferred_username looks like 0000-0003-1419-2405@orcid.org
       # default to role user
-      payload = {
-        "uid" => payload["preferred_username"][0..18],
-        "name" => payload["name"],
-        "email" => payload["email"],
-        "role_id" => "user"
-      }
+      uid = payload["preferred_username"].present? ? payload["preferred_username"][0..18] : nil
+      
+      if uid.present?
+        researcher = Researcher.where(uid: uid).first
+        role_id = researcher.present? ? researcher.role_id : "user"
+        
+        payload = {
+          "uid" => uid,
+          "name" => payload["name"],
+          "email" => payload["email"],
+          "role_id" => role_id
+        }
 
-      @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30))
+        @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30))
+      else
+        payload = nil
+      end
     elsif credentials.present?
       payload = decode_token(credentials)
       @jwt = credentials

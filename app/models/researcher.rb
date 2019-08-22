@@ -2,6 +2,9 @@ class Researcher < ActiveRecord::Base
   # include helper module for Elasticsearch
   include Indexable
 
+  # include helper module for authentication
+  include Authenticable
+
   include Elasticsearch::Model
 
   validates_presence_of :uid
