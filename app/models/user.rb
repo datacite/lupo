@@ -29,13 +29,13 @@ class User
       
       if uid.present?
         researcher = Researcher.where(uid: uid).first
-        role_id = researcher.present? ? researcher.role_id : "user"
+        researcher = Researcher.create(uid: uid, name: payload["name"], email: payload["email"], role_id: "user") if researcher.nil?
         
         payload = {
           "uid" => uid,
           "name" => payload["name"],
           "email" => payload["email"],
-          "role_id" => role_id
+          "role_id" => researcher.role_id
         }
 
         @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30))
