@@ -32,9 +32,6 @@ module DoiItem
   field :url, String, null: true, description: "The URL registered for the resource"
   field :client, ClientType, null: true, description: "The client account managing this resource"
   field :provider, ProviderType, null: true, description: "The provider account managing this resource"
-  field :views, Integer, null: true, description: "The count of  doi views"
-  field :downloads, Integer, null: true, description: "The count of  doi downloads"
-  field :citations, Integer, null: true, description: "The count of doi events that represents citations"
   
   def creators(first: nil)
     Array.wrap(object.creators[0...first]).map do |c|
@@ -54,25 +51,5 @@ module DoiItem
 
   def descriptions(first: nil)
     object.descriptions[0...first]
-  end
-
-
-  def aggregation_results id
-    Event.query(nil, doi: doi_from_url(id), "page[size]": 0,aggregations: "metrics_aggregations").response.aggregations
-  end
-
-  def views
-    meta = aggregation_results(object.identifier).views.dois.buckets
-    meta.first.fetch("total_by_type", {}).fetch("value", nil) if meta.any?
-  end
-
-  def downloads
-    meta = aggregation_results(object.identifier).downloads.dois.buckets
-    meta.first.fetch("total_by_type", {}).fetch("value", nil) if meta.any?
-  end
-
-  def citations
-    meta = aggregation_results(object.identifier).citations.dois.buckets
-    meta.first.fetch("unique_citations", {}).fetch("value", nil) if meta.any?
   end
 end

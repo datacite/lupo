@@ -2,6 +2,7 @@
 
 class DatasetConnectionWithMetaType < BaseConnection
   edge_type(DatasetEdgeType)
+
   field_class GraphQL::Cache::Field
 
   field :total_count, Integer, null: false, cache: true
@@ -11,11 +12,6 @@ class DatasetConnectionWithMetaType < BaseConnection
   field :researcher_connection_count, Integer, null: false, cache: true
   field :funder_connection_count, Integer, null: false, cache: true
   field :organization_connection_count, Integer, null: false, cache: true
-  
-  field :views_connection_count, Integer, null: true, cache: true
-  field :downloads_connection_count, Integer, null: true, cache: true
-  field :citations_connection_count, Integer, null: true, cache: true 
-
 
   def total_count
     args = object.arguments
@@ -45,27 +41,5 @@ class DatasetConnectionWithMetaType < BaseConnection
 
   def organization_connection_count
     Event.query(nil, citation_type: "Dataset-Organization").results.total
-  end
-
-  def aggregation_results args
-    Event.query(nil, doi: doi_from_url(args[:query]), "page[size]": 0,aggregations: "metrics_aggregations").response.aggregations
-  end
-
-  def views_connection_count
-    args = object.arguments
-    meta = aggregation_results(args).views.dois.buckets
-    meta.first.fetch("total_by_type", {}).fetch("value", nil) if meta.any?
-  end
-
-  def downloads_connection_count
-    args = object.arguments
-    meta = aggregation_results(args).downloads.dois.buckets
-    meta.first.fetch("total_by_type", {}).fetch("value", nil) if meta.any?
-  end
-
-  def citations_connection_count
-    args = object.arguments
-    meta = aggregation_results(args).citations.dois.buckets
-    meta.first.fetch("unique_citations", {}).fetch("value", nil) if meta.any?
   end
 end
