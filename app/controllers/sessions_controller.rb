@@ -15,9 +15,6 @@ class SessionsController < ApplicationController
   end
 
   def create_oidc_token
-    logger = Logger.new(STDOUT)
-    logger.info safe_params.inspect
-    
     error_response("Missing token.") && return if
     safe_params[:token].blank? || safe_params[:token] == "undefined" 
 
@@ -55,6 +52,9 @@ class SessionsController < ApplicationController
   end
 
   def safe_params
-    params.permit(:grant_type, :username, :password, :token, :session, :client_id, :client_secret, :refresh_token, :format, :controller, :action)
+    logger = Logger.new(STDOUT)
+    logger.info params.inspect
+
+    params.permit(:grant_type, :username, :password, :token, :client_id, :client_secret, :refresh_token, :session, :format, :controller, :action)
   end
 end

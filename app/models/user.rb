@@ -24,7 +24,7 @@ class User
       payload = decode_alb_token(credentials)
 
       # globus auth preferred_username looks like 0000-0003-1419-2405@orcid.org
-      # default to role user
+      # default to role user unless database says otherwise
       uid = payload["preferred_username"].present? ? payload["preferred_username"][0..18] : nil
       
       if uid.present?
