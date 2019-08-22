@@ -65,6 +65,18 @@ describe User, type: :model do
       expect(token).to be_nil
     end
   end
+
+  describe 'encode_alb_token' do
+    it "with name" do
+      token = subject.encode_alb_token("name" => "Josiah Carberry")
+      expect(token).to start_with("eyJhbG")
+    end
+
+    it "empty string" do
+      token = subject.encode_alb_token("")
+      expect(token).to be_nil
+    end
+  end
 end
 
 describe Provider, type: :model do

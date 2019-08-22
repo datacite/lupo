@@ -213,9 +213,11 @@ module Authenticable
     end
 
     def generate_alb_token(attributes={})
+      preferred_username = attributes.fetch(:preferred_username, "0000-0001-5489-3594@orcid.org")
+      
       payload = {
-        uid:  attributes.fetch(:uid, "0000-0001-5489-3594"),
-        preferred_username: attributes.fetch(:preferred_username, "0000-0001-5489-3594@orcid.org"),
+        uid:  preferred_username[0..18],
+        preferred_username: preferred_username,
         name: attributes.fetch(:name, "Josiah Carberry"),
         email: attributes.fetch(:email, nil),
         provider_id: attributes.fetch(:provider_id, nil),
