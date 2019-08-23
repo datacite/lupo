@@ -2854,45 +2854,11 @@ describe "dois", type: :request do
         sleep 1
       end
 
-      it 'returns error' do
-        get "/dois/#{doi.doi}/get-url", nil, { 'HTTP_ACCEPT'=>'application/vnd.api+json' }
-
-        expect(last_response.status).to eq(401)
-        expect(json['errors']).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
-      end
-    end
-
-    context 'wrong password' do
-      let!(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
-      let(:credentials) { client.encode_auth_param(username: client.symbol.downcase, password: "12345") }
-
-      before do
-        Doi.import
-        sleep 1
-      end
-
-      it 'returns error' do
-        get "/dois/#{doi.doi}/get-url", nil, { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Basic ' + credentials }
-
-        expect(last_response.status).to eq(401)
-        expect(json['errors']).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
-      end
-    end
-
-    context 'no permission' do
-      let(:other_client) { create(:client, provider: provider) }
-      let!(:doi) { create(:doi, client: other_client, doi: "10.14454/8syz-ym47", event: "publish") }
-
-      before do
-        Doi.import
-        sleep 1
-      end
-
-      it 'returns error' do
+      it 'returns url' do
         get "/dois/#{doi.doi}/get-url", nil, headers
 
-        expect(last_response.status).to eq(403)
-        expect(json['errors']).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+        expect(json["url"]).to eq("https://www.datacite.org/roadmap.html")
+        expect(last_response.status).to eq(200)
       end
     end
 
