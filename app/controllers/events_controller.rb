@@ -132,6 +132,8 @@ class EventsController < ApplicationController
     downloads_histogram = total.positive? && aggregations.include?("metrics_aggregations") ? facet_counts_by_year_month(response.response.aggregations.downloads_histogram) : nil
     views = total.positive? && aggregations.include?("metrics_aggregations") ? facet_by_source(response.response.aggregations.views.dois.buckets) : nil
     downloads = total.positive? && aggregations.include?("metrics_aggregations") ? facet_by_source(response.response.aggregations.downloads.dois.buckets) : nil
+    unique_obj_count = total.positive? && aggregations.include?("advanced_aggregations") ? response.response.aggregations.unique_obj_count.value : nil
+    unique_subj_count = total.positive? && aggregations.include?("advanced_aggregations") ? response.response.aggregations.unique_subj_count.value : nil
  
     results = response.results
 
@@ -151,6 +153,10 @@ class EventsController < ApplicationController
       "doisCitations": dois_citations,
       "citationsHistogram": citations_histogram,
       "uniqueCitations": citations,
+      "uniqueNodes": {
+        "objCount": unique_obj_count,
+        "subjCount": unique_subj_count
+      },
       "viewsHistogram": views_histogram,
       "views": views,
       "downloadsHistogram": downloads_histogram,
