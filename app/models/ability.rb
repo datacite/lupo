@@ -105,7 +105,7 @@ class Ability
         activity.doi.findable?
       end
     elsif user.role_id == "anonymous"
-      can [:read], Doi do |doi|
+      can [:read, :get_url], Doi do |doi|
         doi.findable?
       end
       can [:read], Provider
