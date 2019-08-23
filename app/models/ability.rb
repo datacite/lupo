@@ -95,7 +95,7 @@ class Ability
       can [:read, :update], Provider, :symbol => user.provider_id.upcase if user.provider_id.present?
       can [:read, :update], Client, :symbol => user.client_id.upcase if user.client_id.present?
       can [:read], Doi, :client_id => user.client_id if user.client_id.present?
-      can [:read], Doi do |doi|
+      can [:read, :get_url], Doi do |doi|
         doi.findable?
       end
       can [:read], User, :id => user.id
