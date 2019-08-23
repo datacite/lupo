@@ -41,8 +41,8 @@ class DoisController < ApplicationController
 
     response = nil
 
-    # only show findable DOIs to anonymous users
-    params[:state] = "findable" if current_user.nil?
+    # only show findable DOIs to anonymous users and role user
+    params[:state] = "findable" if current_user.nil? || current_user.role_id == "user"
 
     if params[:id].present?
       logger.info "[Benchmark] find_by_id " + Benchmark.ms {
