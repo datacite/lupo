@@ -29,7 +29,7 @@ class Ability
       #   can [:read, :update], Doi, :provider_id => user.provider_id
       # end
 
-      can [:read, :transfer, :read_landing_page_results], Doi, :provider_id => user.provider_id
+      can [:read, :get_url, :transfer, :read_landing_page_results], Doi, :provider_id => user.provider_id
       can [:read], Doi do |doi|
         doi.findable?
       end
@@ -45,7 +45,7 @@ class Ability
       can [:read], ProviderPrefix, :provider_id => user.provider_id
       can [:read], Client, :provider_id => user.provider_id
       can [:read], ClientPrefix#, :client_id => user.client_id
-      can [:read, :read_landing_page_results], Doi, :provider_id => user.provider_id
+      can [:read, :get_url, :read_landing_page_results], Doi, :provider_id => user.provider_id
       can [:read], Doi do |doi|
         doi.findable?
       end
@@ -81,7 +81,7 @@ class Ability
     elsif user.role_id == "client_user" && user.client_id.present?
       can [:read], Client, :symbol => user.client_id.upcase
       can [:read], ClientPrefix, :client_id => user.client_id
-      can [:read, :read_landing_page_results], Doi, :client_id => user.client_id
+      can [:read, :get_url, :read_landing_page_results], Doi, :client_id => user.client_id
       can [:read], Doi do
         |doi| doi.findable?
       end
