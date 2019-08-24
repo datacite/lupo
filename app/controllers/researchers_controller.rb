@@ -62,8 +62,10 @@ class ResearchersController < ApplicationController
   end
 
   def show
+    state = current_user.nil? || current_user.role_id == "user" ? "findable" : nil
+    
     options = {}
-    options[:meta] = { dois: doi_count(researcher_id: params[:id]) }
+    options[:meta] = { dois: doi_count(researcher_id: params[:id], state: state) }
     options[:is_collection] = false
     render json: ResearcherSerializer.new(@researcher, options).serialized_json, status: :ok
   end
