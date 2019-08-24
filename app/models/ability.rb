@@ -104,6 +104,19 @@ class Ability
       can [:read], Activity do |activity|
         activity.doi.findable?
       end
+    elsif user.role_id == "temporary"
+      can [:read, :update], Provider, :symbol => user.provider_id.upcase if user.provider_id.present?
+      can [:read, :update], Client, :symbol => user.client_id.upcase if user.client_id.present?
+      can [:read], Doi, :client_id => user.client_id if user.client_id.present?
+      can [:read, :get_url], Doi do |doi|
+        doi.findable?
+      end
+      can [:read], User, :id => user.id
+      can [:read], Phrase
+      can [:read], Researcher
+      can [:read], Activity do |activity|
+        activity.doi.findable?
+      end
     elsif user.role_id == "anonymous"
       can [:read, :get_url], Doi do |doi|
         doi.findable?
