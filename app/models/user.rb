@@ -116,7 +116,7 @@ class User
 
     payload = {
       "uid" => uid,
-      "role_id" => "user",
+      "role_id" => "temporary",
       "name" => user.name,
       "client_id" => client_id,
       "provider_id" => provider_id
