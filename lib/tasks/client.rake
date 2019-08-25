@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :client do
   desc "Create index for clients"
   task :create_index => :environment do

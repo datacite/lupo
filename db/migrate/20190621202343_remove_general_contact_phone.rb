@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RemoveGeneralContactPhone < ActiveRecord::Migration[5.2]
   def up
     remove_column :allocator, :contact_name

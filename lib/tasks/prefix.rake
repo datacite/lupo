@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :prefix do
   desc 'Delete prefix and associated DOIs'
   task :delete => :environment do

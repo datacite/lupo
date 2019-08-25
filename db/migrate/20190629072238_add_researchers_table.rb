@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class AddResearchersTable < ActiveRecord::Migration[5.2]
   def up
     create_table "researchers", force: :cascade do |t|
@@ -11,7 +12,7 @@ class AddResearchersTable < ActiveRecord::Migration[5.2]
       t.string   "authentication_token", limit: 191
       t.string   "role_id",              limit: 255,   default: "user"
       t.boolean  "auto_update",                        default: true
-      t.datetime "expires_at",                         default: '1970-01-01 00:00:00', null: false
+      t.datetime "expires_at",                         default: "1970-01-01 00:00:00", null: false
       t.datetime "created_at",           precision: 3
       t.datetime "updated_at",           precision: 3
       t.text     "other_names",          limit: 65535
@@ -28,7 +29,7 @@ class AddResearchersTable < ActiveRecord::Migration[5.2]
       t.boolean  "is_public",                          default: true
       t.boolean  "beta_tester",                        default: false
     end
-  
+    
     add_index "researchers", ["uid"], name: "index_researchers_on_uid", unique: true, using: :btree
   end
 

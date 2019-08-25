@@ -35,7 +35,8 @@ class User
           "uid" => uid,
           "name" => payload["name"],
           "email" => payload["email"],
-          "role_id" => researcher.role_id
+          "role_id" => researcher.role_id,
+          "beta_tester" => researcher.beta_tester
         }
 
         @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30))

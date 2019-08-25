@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddEventsTable < ActiveRecord::Migration[5.2]
   def change
     create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|

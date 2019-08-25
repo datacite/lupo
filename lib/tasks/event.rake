@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :event do
   desc "Create index for events"
   task :create_index => :environment do

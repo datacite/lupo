@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :doi do
   desc "Create index for dois"
   task :create_index => :environment do

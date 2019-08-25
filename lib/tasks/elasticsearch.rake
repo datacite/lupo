@@ -1,2 +1,3 @@
-require 'elasticsearch/rails/tasks/import'
+# frozen_string_literal: true
 
+require 'elasticsearch/rails/tasks/import'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :activity do
   desc "Create index for activities"
   task :create_index => :environment do
