@@ -15,7 +15,11 @@ module Countable
         response = Doi.query(nil, page: { number: 1, size: 0 })
       end
 
-      response.results.total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : []
+      if researcher_id
+        response.results.total > 0 ? facet_by_cumulative_year(response.response.aggregations.created.buckets) : []
+      else
+        response.results.total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : []
+      end
     end
 
     # cumulative count clients by year
