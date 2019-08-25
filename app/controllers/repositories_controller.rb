@@ -98,7 +98,9 @@ class RepositoriesController < ApplicationController
     fail ActiveRecord::RecordNotFound unless repository.present?
 
     options = {}
-    options[:meta] = { dois: doi_count(client_id: params[:id]) }
+    options[:meta] = { 
+      dois: doi_count(client_id: params[:id]),
+      "resourceTypes" => resource_type_count(client_id: params[:id]) }.compact
     options[:include] = @include
     options[:is_collection] = false
     options[:params] = { current_ability: current_ability }

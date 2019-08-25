@@ -65,7 +65,9 @@ class ResearchersController < ApplicationController
     state = current_user.nil? || current_user.role_id == "user" ? "findable" : nil
     
     options = {}
-    options[:meta] = { dois: doi_count(researcher_id: params[:id], state: state) }
+    options[:meta] = { 
+      dois: doi_count(researcher_id: params[:id], state: state),
+      "resourceTypes" => resource_type_count(researcher_id: params[:id], state: state) }.compact
     options[:is_collection] = false
     render json: ResearcherSerializer.new(@researcher, options).serialized_json, status: :ok
   end

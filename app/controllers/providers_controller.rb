@@ -156,21 +156,25 @@ class ProvidersController < ApplicationController
       providers = provider_count(consortium_id: nil)
       clients = client_count(provider_id: nil)
       dois = doi_count(provider_id: nil)
+      resource_types = resource_type_count(provider_id: nil)
     elsif @provider.member_type == "consortium_member"
       providers = provider_count(consortium_id: params[:id])
       clients = client_count(consortium_id: params[:id])
       dois = doi_count(consortium_id: params[:id])
+      resource_types = resource_type_count(consortium_id: params[:id])
     else
       providers = nil
       clients = client_count(provider_id: params[:id])
       dois = doi_count(provider_id: params[:id])
+      resource_types = resource_type_count(provider_id: params[:id])
     end
 
     options = {}
     options[:meta] = {
       providers: providers,
       clients: clients,
-      dois: dois }.compact
+      dois: dois,
+      "resourceTypes" => resource_types }.compact
     options[:include] = @include
     options[:is_collection] = false
     options[:params] = { current_ability: current_ability }

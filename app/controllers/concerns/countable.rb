@@ -14,12 +14,8 @@ module Countable
       else
         response = Doi.query(nil, page: { number: 1, size: 0 })
       end
-
-      if researcher_id
-        response.results.total > 0 ? facet_by_cumulative_year(response.response.aggregations.created.buckets) : []
-      else
-        response.results.total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : []
-      end
+      
+      response.results.total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : []
     end
 
     # cumulative count clients by year
@@ -55,6 +51,22 @@ module Countable
         response = Provider.query(nil, include_deleted: true, page: { number: 1, size: 0 })
         response.results.total > 0 ? facet_by_cumulative_year(response.response.aggregations.cumulative_years.buckets) : []
       end
+    end
+
+    def resource_type_count(client_id: nil, provider_id: nil, consortium_id: nil, researcher_id: nil, state: nil)
+      if client_id
+        response = Doi.query(nil, client_id: client_id, page: { number: 1, size: 0 })
+      elsif provider_id
+        response = Doi.query(nil, provider_id: provider_id, page: { number: 1, size: 0 })
+      elsif consortium_id
+        response = Doi.query(nil, consortium_id: consortium_id, page: { number: 1, size: 0 })
+      elsif researcher_id
+        response = Doi.query(nil, researcher_id: researcher_id, state: state, page: { number: 1, size: 0 })
+      else
+        response = Doi.query(nil, page: { number: 1, size: 0 })
+      end
+      
+      response.results.total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : []
     end
   end
 end
