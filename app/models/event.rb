@@ -276,6 +276,13 @@ class Event < ActiveRecord::Base
   }
   end
 
+  def self.advanced_aggregations
+    {
+      unique_obj_count: { cardinality: { field: 'obj_id' }},
+      unique_subj_count: { cardinality: { field: 'subj_id' }}
+    }
+  end
+
   # return results for one or more ids
   def self.find_by_id(ids, options={})
     ids = ids.split(",") if ids.is_a?(String)
