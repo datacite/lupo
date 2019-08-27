@@ -2,7 +2,6 @@
 
 class DatasetConnectionWithMetaType < BaseConnection
   edge_type(DatasetEdgeType)
-
   field_class GraphQL::Cache::Field
 
   field :total_count, Integer, null: false, cache: true
