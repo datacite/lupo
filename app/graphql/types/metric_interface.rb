@@ -3,8 +3,8 @@
 module MetricInterface
   include GraphQL::Schema::Interface
 
-  field :view_count, Integer, null: true, description: "The count of DOI views according to the COUNTER code of Practice for Research Data"
-  field :download_count, Integer, null: true, description: "The count of  DOI dowloands according to the COUNTER code of Practice for Research Data"
+  field :view_count, Integer, null: true, description: "The count of DOI views according to the COUNTER code of Practice"
+  field :download_count, Integer, null: true, description: "The count of  DOI dowloands according to the COUNTER code of Practice"
   field :citation_count, Integer, null: true, description: "The count of DOI events that represents citations"
 
   def aggregation_results(**args)
