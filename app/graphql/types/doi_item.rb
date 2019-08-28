@@ -32,7 +32,7 @@ module DoiItem
   field :url, String, null: true, description: "The URL registered for the resource"
   field :client, ClientType, null: true, description: "The client account managing this resource"
   field :provider, ProviderType, null: true, description: "The provider account managing this resource"
-
+  
   def creators(first: nil)
     Array.wrap(object.creators[0...first]).map do |c|
       Hashie::Mash.new(

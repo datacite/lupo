@@ -2,6 +2,7 @@
 
 class SoftwareType < BaseObject
   implements DoiItem
+  implements MetricInterface
 
   field :datasets, SoftwareDatasetConnectionWithMetaType, null: false, description: "Referenced datasets", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25

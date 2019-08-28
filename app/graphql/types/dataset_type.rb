@@ -2,6 +2,7 @@
 
 class DatasetType < BaseObject
   implements DoiItem
+  implements MetricInterface
 
   field :usage_reports, DatasetUsageReportConnectionWithMetaType, null: false, description: "Usage reports for this dataset", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
