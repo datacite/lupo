@@ -17,7 +17,7 @@ module Mailable
 
       payload = {
         "uid" => symbol.downcase,
-        "role_id" => "user",
+        "role_id" => "temporary",
         "name" => name,
         "client_id" => client_id,
         "provider_id" => provider_id
