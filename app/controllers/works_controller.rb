@@ -40,7 +40,7 @@ class WorksController < ApplicationController
                           provider_id: params[:member_id],
                           client_id: params[:data_center_id],
                           prefix: params[:prefix],
-                          person_id: params[:person_id],
+                          researcher_id: params[:person_id],
                           resource_type_id: params[:resource_type_id],
                           schema_version: params[:schema_version],
                           sample_group: sample_group_field,
