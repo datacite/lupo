@@ -1,4 +1,5 @@
 class RepositoriesController < ApplicationController
+  include ActionController::MimeResponds
   include Countable
 
   before_action :set_repository, only: [:show, :update, :destroy]
@@ -19,21 +20,21 @@ class RepositoriesController < ApplicationController
     page = page_from_params(params)
 
     if params[:id].present?
-      response = Client.find_by_id(params[:id]) 
+      response = Client.find_by_id(params[:id])
     elsif params[:ids].present?
       response = Client.find_by_id(params[:ids], page: page, sort: sort)
     else
-      response = Client.query(params[:query], 
-        year: params[:year], 
+      response = Client.query(params[:query],
+        year: params[:year],
         provider_id: params[:provider_id],
         consortium_id: params[:consortium_id],
         re3data_id: params[:re3data_id],
         opendoar_id: params[:opendoar_id],
         software: params[:software],
-        certificate: params[:certificate], 
-        repository_type: params[:repository_type],   
+        certificate: params[:certificate],
+        repository_type: params[:repository_type],
         client_type: params[:client_type],
-        page: page, 
+        page: page,
         sort: sort)
     end
 
@@ -46,43 +47,65 @@ class RepositoriesController < ApplicationController
       certificates = total > 0 ? facet_by_key(response.response.aggregations.certificates.buckets) : nil
       client_types = total > 0 ? facet_by_key(response.response.aggregations.client_types.buckets) : nil
       repository_types = total > 0 ? facet_by_key(response.response.aggregations.repository_types.buckets) : nil
-      
-      options = {}
-      options[:meta] = {
-        total: total,
-        "totalPages" => total_pages,
-        page: page[:number],
-        years: years,
-        providers: providers,
-        "clientTypes" => client_types,
-        "repositoryTypes" => repository_types,
-        certificates: certificates,
-        software: software
-      }.compact
 
-      options[:links] = {
-        self: request.original_url,
-        next: response.results.blank? ? nil : request.base_url + "/clients?" + {
-          query: params[:query],
-          "provider-id" => params[:provider_id],
-          software: params[:software],
-          certificate: params[:certificate],
-          "client-type" => params[:client_type],
-          "repository-type" => params[:repository_type],
-          year: params[:year],
-          "page[number]" => page[:number] + 1,
-          "page[size]" => page[:size],
-          sort: params[:sort] }.compact.to_query
-        }.compact
-      options[:include] = @include
-      options[:is_collection] = true
-      options[:params] = { current_ability: current_ability }
+      respond_to do |format|
+        format.json do
+          options = {}
+          options[:meta] = {
+            total: total,
+            "totalPages" => total_pages,
+            page: page[:number],
+            years: years,
+            providers: providers,
+            "clientTypes" => client_types,
+            "repositoryTypes" => repository_types,
+            certificates: certificates,
+            software: software
+          }.compact
 
-      fields = fields_from_params(params)
-      if fields
-        render json: RepositorySerializer.new(response.results, options.merge(fields: fields)).serialized_json, status: :ok
-      else
-        render json: RepositorySerializer.new(response.results, options).serialized_json, status: :ok
+          options[:links] = {
+            self: request.original_url,
+            next: response.results.blank? ? nil : request.base_url + "/clients?" + {
+              query: params[:query],
+              "provider-id" => params[:provider_id],
+              software: params[:software],
+              certificate: params[:certificate],
+              "client-type" => params[:client_type],
+              "repository-type" => params[:repository_type],
+              year: params[:year],
+              "page[number]" => page[:number] + 1,
+              "page[size]" => page[:size],
+              sort: params[:sort] }.compact.to_query
+            }.compact
+          options[:include] = @include
+          options[:is_collection] = true
+          options[:params] = { current_ability: current_ability }
+
+          fields = fields_from_params(params)
+          if fields
+            render json: RepositorySerializer.new(response.results, options.merge(fields: fields)).serialized_json, status: :ok
+          else
+            render json: RepositorySerializer.new(response.results, options).serialized_json, status: :ok
+          end
+        end
+        header = %w(
+          accountName
+          fabricaAccountId
+          parentFabricaAccountId
+          salesForceId
+          parentSalesForceId
+          isActive
+          created
+          updated
+          re3data_id
+          client_type
+          alternate_name
+          description
+          url
+          software
+          system_email)
+          puts response.records.to_a[0].to_json
+        format.csv { render request.format.to_sym => response.records.to_a, header: header }
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
@@ -98,7 +121,7 @@ class RepositoriesController < ApplicationController
     fail ActiveRecord::RecordNotFound unless repository.present?
 
     options = {}
-    options[:meta] = { 
+    options[:meta] = {
       dois: doi_count(client_id: params[:id]),
       "resourceTypes" => resource_type_count(client_id: params[:id]) }.compact
     options[:include] = @include
@@ -117,7 +140,7 @@ class RepositoriesController < ApplicationController
       options = {}
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability }
-  
+
       render json: RepositorySerializer.new(@client, options).serialized_json, status: :created
     else
       logger.warn @client.errors.inspect
@@ -132,7 +155,7 @@ class RepositoriesController < ApplicationController
       options[:meta] = { dois: doi_count(client_id: params[:id]) }
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability }
-  
+
       render json: RepositorySerializer.new(@client, options).serialized_json, status: :ok
     else
       logger.warn @client.errors.inspect
@@ -160,7 +183,7 @@ class RepositoriesController < ApplicationController
 
   def totals
     page = { size: 0, number: 1}
-    
+
     state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
     response = Doi.query(nil, provider_id: params[:provider_id], state: state, page: page, totals_agg: true)
     total = response.results.total

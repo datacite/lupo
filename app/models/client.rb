@@ -75,8 +75,8 @@ class Client < ActiveRecord::Base
       normalizer: {
         keyword_lowercase: { type: "custom", filter: %w(lowercase) }
       },
-      filter: { 
-        ascii_folding: { type: 'asciifolding', preserve_original: true } 
+      filter: {
+        ascii_folding: { type: 'asciifolding', preserve_original: true }
       }
     }
   } do
@@ -254,6 +254,31 @@ class Client < ActiveRecord::Base
       repository_types: { terms: { field: 'repository_type', size: 15, min_doc_count: 1 } },
       certificates: { terms: { field: 'certificate', size: 15, min_doc_count: 1 } }
     }
+  end
+
+
+  def csv
+    client = {
+      name: name,
+      client_id: symbol,
+      provider_id: provider.present? ? provider.symbol : '',
+      salesforce_id: salesforce_id,
+      consortium_salesforce_id: provider.present? ? provider.salesforce_id : '',
+      is_active: is_active == "\x01",
+      created: created,
+      updated: updated,
+      re3data_id: re3data_id,
+      client_type: client_type,
+      alternate_name: alternate_name,
+      description: description,
+      url: url,
+      software: software,
+      system_email: system_email,
+      # "service_contact" => service_contact,
+      # "contact_email" => contact_email,
+    }.values
+
+    CSV.generate { |csv| csv << client }
   end
 
   def uid
