@@ -267,11 +267,6 @@ FactoryBot.define do
     association :provider, factory: :provider, strategy: :create
   end
 
-  factory :researcher do
-    sequence(:uid) { |n| "0000-0001-6528-202#{n}" }
-    name { Faker::Name.name }
-  end
-
   factory :activity do  
     association :doi, factory: :doi, strategy: :create
   end
