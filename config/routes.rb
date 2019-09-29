@@ -40,6 +40,9 @@ Rails.application.routes.draw do
   get '/dois/text/x-bibliography', :to => 'dois#index', defaults: { format: :citation }
   get '/providers/text/csv', :to => 'providers#index', defaults: { format: :csv }
   get 'providers/random', :to => 'providers#random'
+  get '/organizations/text/csv', :to => 'organizations#index', defaults: { format: :csv }
+  get '/repositories/text/csv', :to => 'repositories#index', defaults: { format: :csv }
+
 
   # manage DOIs
   post 'dois/validate', :to => 'dois#validate'
@@ -83,7 +86,7 @@ Rails.application.routes.draw do
   constraints(-> (req) { req.env["HTTP_ACCEPT"].to_s.exclude?("version=2") }) do
     resources :old_events, path: "events"
   end
-  
+
   resources :prefixes, constraints: { :id => /.+/ }
   resources :provider_prefixes, path: 'provider-prefixes'
   resources :random, only: [:index]

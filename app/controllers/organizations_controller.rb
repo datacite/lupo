@@ -22,12 +22,12 @@ class OrganizationsController < ApplicationController
       response = Provider.find_by_id(params[:ids], page: page, sort: sort)
     else
       response = Provider.query(params[:query],
-        year: params[:year], 
-        region: params[:region], 
-        consortium_id: params[:provider_id], 
-        organization_type: params[:organization_type], 
+        year: params[:year],
+        region: params[:region],
+        consortium_id: params[:provider_id],
+        organization_type: params[:organization_type],
         focus_area: params[:focus_area],
-        page: page, 
+        page: page,
         sort: sort)
     end
 
@@ -84,15 +84,18 @@ class OrganizationsController < ApplicationController
         header = %w(
           accountName
           fabricaAccountId
-          year
-          is_active
+          parentFabricaAccountId
+          salesForceId
+          parentSalesForceId
+          memberType
+          isActive
           accountDescription
           accountWebsite
           region
           country
-          logo_url
+          logoUrl
           focusArea
-          organisation_type
+          organisationType
           accountType
           generalContactEmail
           groupEmail
@@ -125,12 +128,11 @@ class OrganizationsController < ApplicationController
           secondaryBillingContactGivenName
           secondaryBillingContactFamilyName
           twitter
-          ror_id
-          member_type
-          joined
+          rorId
           created
           updated
-          deleted_at)
+          deletedAt)
+          puts response.records.to_a[0].to_json
         format.csv { render request.format.to_sym => response.records.to_a, header: header }
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
