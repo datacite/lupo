@@ -202,7 +202,7 @@ module Indexable
       elsif self.name == "Doi"
         must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
         must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
-        must << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{options[:researcher_id]}" }} if options[:researcher_id].present?
+        must << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{options[:user_id]}" }} if options[:user_id].present?
         must << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
         must << { term: { "client.re3data_id" => options[:re3data_id].upcase.gsub("/", '\/') }} if options[:re3data_id].present?
         must << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
