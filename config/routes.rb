@@ -57,6 +57,11 @@ Rails.application.routes.draw do
   get 'clients/totals', :to => 'clients#totals'
   get 'prefixes/totals', :to => 'prefixes#totals'
 
+  # Reporting
+  get 'reports/organizations', :to => 'reports#organizations',  defaults: { format: :csv }
+  get 'reports/contacts', :to => 'reports#contacts',  defaults: { format: :csv }
+
+
   resources :heartbeat, only: [:index]
   resources :index, only: [:index]
 
