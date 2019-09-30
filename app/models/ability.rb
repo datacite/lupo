@@ -14,6 +14,7 @@ class Ability
       cannot [:new, :create], Doi do |doi|
         doi.client.blank? || !(doi.client.prefixes.where(prefix: doi.prefix).first || %w(crossref medra kisti jalc op).include?(doi.client.symbol.downcase.split(".").first))
       end
+      can :read, :reports
     elsif user.role_id == "staff_user"
       can :read, :all
     elsif user.role_id == "provider_admin" && user.provider_id.present?
@@ -66,7 +67,7 @@ class Ability
       # end
 
       can [:read, :destroy, :update, :register_url, :validate, :undo, :get_url, :get_urls, :read_landing_page_results], Doi, :client_id => user.client_id
-      can [:new, :create], Doi do |doi| 
+      can [:new, :create], Doi do |doi|
         doi.client.prefixes.where(prefix: doi.prefix).present? || %w(crossref medra kisti jalc op).include?(doi.client.symbol.downcase.split(".").first)
       end
       can [:read], Doi do |doi|
