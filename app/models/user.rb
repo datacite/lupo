@@ -27,16 +27,11 @@ class User
       # default to role user unless database says otherwise
       uid = payload["preferred_username"].present? ? payload["preferred_username"][0..18] : nil
       
-      if uid.present?
-        researcher = Researcher.where(uid: uid).first
-        researcher = Researcher.create(uid: uid, name: payload["name"], email: payload["email"], role_id: "user") if researcher.nil?
-        
+      if uid.present?        
         payload = {
           "uid" => uid,
           "name" => payload["name"],
-          "email" => payload["email"],
-          "role_id" => researcher.role_id,
-          "beta_tester" => researcher.beta_tester
+          "email" => payload["email"]
         }
 
         @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30))
@@ -92,12 +87,6 @@ class User
     return nil unless client_id.present?
 
     ::Client.where(symbol: client_id).where(deleted_at: nil).first
-  end
-
-  def researcher
-    return nil unless uid.present?
-
-    Researcher.where(uid: uid).first
   end
 
   def self.reset(username)
