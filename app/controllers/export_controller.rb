@@ -1,6 +1,8 @@
 class ExportController < ApplicationController
     include ActionController::MimeResponds
 
+    before_action :authenticate_user!
+
     def contacts
         authorize! :export, :contacts
 
