@@ -1,8 +1,8 @@
-class ReportsController < ApplicationController
+class ExportController < ApplicationController
     include ActionController::MimeResponds
 
     def contacts
-        authorize! :read, :reports
+        authorize! :export, :contacts
 
         begin
             # Loop through all providers
@@ -104,7 +104,7 @@ class ReportsController < ApplicationController
       end
 
     def organizations
-        authorize! :read, :reports
+        authorize! :export, :organizations
         begin
             # Loop through all providers
             providers = []

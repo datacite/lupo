@@ -14,7 +14,8 @@ class Ability
       cannot [:new, :create], Doi do |doi|
         doi.client.blank? || !(doi.client.prefixes.where(prefix: doi.prefix).first || %w(crossref medra kisti jalc op).include?(doi.client.symbol.downcase.split(".").first))
       end
-      can :read, :reports
+      can :export, :contacts
+      can :export, :organizations
     elsif user.role_id == "staff_user"
       can :read, :all
     elsif user.role_id == "provider_admin" && user.provider_id.present?
