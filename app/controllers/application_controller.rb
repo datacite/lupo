@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+  include ActionController::HttpAuthentication::Basic::ControllerMethods
   include Authenticable
   include CanCan::ControllerAdditions
   include ErrorSerializable
@@ -52,6 +53,17 @@ class ApplicationController < ActionController::API
     request.format = :json if request.format.html?
   end
 
+  def authenticate_user_with_basic_auth!
+    @user = authenticate_user!
+
+    if !@user
+      request_http_basic_authentication(realm = ENV['REALM'])
+    end
+    puts @user.role_id
+
+    @user
+  end
+
   def authenticate_user!
     type, credentials = type_and_credentials_from_request_headers
     return false unless credentials.present?
@@ -83,7 +95,7 @@ class ApplicationController < ActionController::API
                when "ActionController::UnknownFormat" then 406
                when "ActiveRecord::RecordNotUnique" then 409
                when "ActiveModel::ForbiddenAttributesError", "ActionController::ParameterMissing", "ActionController::UnpermittedParameters", "ActiveModelSerializers::Adapter::JsonApi::Deserialization::InvalidDocument" then 422
-               when "SocketError" then 500 
+               when "SocketError" then 500
                else 400
                end
 
@@ -135,7 +147,7 @@ class ApplicationController < ActionController::API
     else
       Raven.user_context(
         ip_address: request.ip
-      ) 
+      )
     end
   end
 end
