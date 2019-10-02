@@ -59,7 +59,6 @@ class ApplicationController < ActionController::API
     if !@user
       request_http_basic_authentication(realm = ENV['REALM'])
     end
-    puts @user.role_id
 
     @user
   end
