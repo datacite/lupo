@@ -40,7 +40,7 @@ class OrganizationType < BaseObject
 
   def address
     { "type" => "postalAddress",
-      "address_country" => object.country.fetch("name", nil) }
+      "address_country" => object.country.to_h.fetch("name", nil) }
   end
 
   def datasets(**args)
