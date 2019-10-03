@@ -4,17 +4,11 @@ class OrganizationType < BaseObject
   description "Information about organizations"
 
   field :id, ID, null: true, description: "ROR ID"
-  field :name, String, null: false, description: "Organization name"
-  field :aliases, [String], null: true, description: "Aliases for organization name"
-  field :acronyms, [String], null: true, description: "Acronyms for organization name"
-  field :labels, [LabelType], null: true, description: "Labels for organization name"
-  field :links, [String], null: true, description: "Links for organization"
-  field :wikipedia_url, String, null: true, description: "Wikipedia URL for organization"
-  field :country, CountryType, null: true, description: "Country where organization is located"
-  field :isni, [String], null: true, description: "ISNI identifiers for organization"
-  field :fund_ref, [String], null: true, description: "Crossref Funder ID identifiers for organization"
-  field :wikidata, [String], null: true, description: "Wikidata identifiers for organization"
-  field :grid, String, null: true, description: "GRID identifiers for organization"
+  field :name, String, null: false, description: "The name of the organization."
+  field :alternate_name, [String], null: true, description: "An alias for the organization."
+  field :identifier, [IdentifierType], null: true, description: "The identifier(s) for the organization."
+  field :url, [String], null: true, hash_key: "links", description: "URL of the organization."
+  field :address, AddressType, null: true, description: "Physical address of the organization."
 
   field :datasets, OrganizationDatasetConnectionWithMetaType, null: false, description: "Datasets from this organization", connection: true, max_page_size: 1000 do
     argument :first, Int, required: false, default_value: 25
@@ -31,6 +25,22 @@ class OrganizationType < BaseObject
 
   field :researchers, OrganizationResearcherConnectionWithMetaType, null: false, description: "Researchers associated with this organization", connection: true, max_page_size: 1000 do
     argument :first, Int, required: false, default_value: 25
+  end
+
+  def alternate_name
+    object.aliases + object.acronyms
+  end
+
+  def identifier
+    Array.wrap(object.fund_ref).map { |o| { "name" => "fundRef", "value" => o } } + 
+    Array.wrap(object.wikidata).map { |o| { "name" => "wikidata", "value" => o } } + 
+    Array.wrap(object.grid).map { |o| { "name" => "grid", "value" => o } } + 
+    Array.wrap(object.wikipedia_url).map { |o| { "name" => "wikipedia", "value" => o } }
+  end
+
+  def address
+    { "type" => "postalAddress",
+      "address_country" => object.country.fetch("name", nil) }
   end
 
   def datasets(**args)
