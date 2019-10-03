@@ -30,9 +30,9 @@ class ExportController < ApplicationController
                 format.csv do
                     headers = %W(
                         fabricaAccountId
-                        email,
-                        firstName,
-                        lastName,
+                        email
+                        firstName
+                        lastName
                         type
                     )
 
