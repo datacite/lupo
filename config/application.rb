@@ -56,6 +56,7 @@ ENV['TRUSTED_IP'] ||= "10.0.40.1"
 ENV['MG_FROM'] ||= "support@datacite.org"
 ENV['MG_DOMAIN'] ||= "mg.datacite.org"
 ENV['HANDLES_MINTED'] ||= "10132"
+ENV['REALM'] ||= ENV['API_URL']
 
 module Lupo
   class Application < Rails::Application

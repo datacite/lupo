@@ -53,6 +53,7 @@ class DoisController < ApplicationController
     else
       response = Doi.query(params[:query],
                           state: params[:state],
+                          exclude_registration_agencies: params[:exclude_registration_agencies],
                           created: params[:created],
                           registered: params[:registered],
                           provider_id: params[:provider_id],
