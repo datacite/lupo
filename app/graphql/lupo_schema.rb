@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class LupoSchema < GraphQL::Schema
+  include ApolloFederation::Schema
+  
   # use(GraphQL::Tracing::DataDogTracing, analytics_enabled: Rails.env.production?)
 
   default_max_page_size 250

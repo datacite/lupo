@@ -62,6 +62,7 @@ gem 'graphql-errors', '~> 0.3.0'
 gem 'graphql-batch', '~> 0.4.0'
 gem 'batch-loader', '~> 1.4', '>= 1.4.1'
 gem 'graphql-cache', '~> 0.6.0', git: "https://github.com/stackshareio/graphql-cache"
+gem 'apollo-federation', '~> 0.4.0'
 # gem 'ddtrace', '~> 0.23.3'
 
 group :development, :test do
