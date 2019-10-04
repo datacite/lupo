@@ -19,11 +19,11 @@ class Ability
     elsif user.role_id == "staff_user"
       can :read, :all
     elsif user.role_id == "provider_admin" && user.provider_id.present?
-      can [:update, :read, :read_billing_information], Provider, :symbol => user.provider_id.upcase
-      can [:manage], Provider, :consortium_id => user.provider_id
+      can [:update, :read, :read_billing_information], Provider, symbol: user.provider_id.upcase
+      can [:manage], Provider, consortium_id: user.provider_id
       can [:read], Provider
-      can [:manage], ProviderPrefix, :provider_id => user.provider_id
-      can [:manage], Client,:provider_id => user.provider_id
+      can [:manage], ProviderPrefix, provider_id: user.provider_id
+      can [:manage], Client, provider_id: user.provider_id
       can [:manage], ClientPrefix #, :client_id => user.provider_id
 
       # if Flipper[:delete_doi].enabled?(user)
