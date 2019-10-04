@@ -53,6 +53,13 @@ namespace :event do
 
     Event.import_by_ids(from_id: from_id, until_id: until_id)
   end
+
+  desc 'update registrant metadata'
+  task :update_registrant => :environment do
+    cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id),Event.minimum(:id)]
+
+    Event.update_registrant(cursor: cursor, size: ENV['SIZE'])
+  end
 end
 
 namespace :crossref do
