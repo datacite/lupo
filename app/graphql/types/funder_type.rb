@@ -3,11 +3,6 @@
 class FunderType < BaseObject
   description "Information about funders"
 
-  field :id, ID, null: false, description: "Crossref Funder ID"
-  field :name, String, null: false, description: "The name of the funder."
-  field :alternate_name, [String], null: true, description: "An alias for the funder."
-  field :address, AddressType, null: true, description: "Physical address of the funder."
-
   field :datasets, FunderDatasetConnectionWithMetaType, null: false, description: "Funded datasets", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
   end
