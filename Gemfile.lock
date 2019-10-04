@@ -240,7 +240,7 @@ GEM
     git (1.5.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    google-protobuf (3.10.0-universal-darwin)
+    google-protobuf (3.10.0.rc.1)
     graphql (1.9.12)
     graphql-batch (0.4.1)
       graphql (>= 1.3, < 2)
@@ -574,7 +574,7 @@ DEPENDENCIES
   flipper-active_support_cache_store
   gender_detector (~> 0.1.2)
   git (~> 1.5)
-  google-protobuf (~> 3.10.0.rc.1)
+  google-protobuf (= 3.10.0.rc.1)
   graphql (~> 1.9, >= 1.9.4)
   graphql-batch (~> 0.4.0)
   graphql-cache (~> 0.6.0)!
