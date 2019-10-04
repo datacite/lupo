@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  post "/dois/graphql", to: "graphql#execute"
-  get "/dois/graphql", to: "index#method_not_allowed"
+  post "/client-api/graphql", to: "graphql#execute"
+  get "/client-api/graphql", to: "index#method_not_allowed"
 
   root :to => 'index#index'
 
