@@ -8,7 +8,7 @@ class SoftwareConnectionWithMetaType < BaseConnection
   field :software_connection_count, Integer, null: false, cache: true
   field :publication_connection_count, Integer, null: false, cache: true
   field :dataset_connection_count, Integer, null: false, cache: true
-  field :researcher_connection_count, Integer, null: false, cache: true
+  field :person_connection_count, Integer, null: false, cache: true
   field :funder_connection_count, Integer, null: false, cache: true
   field :organization_connection_count, Integer, null: false, cache: true
 
@@ -30,7 +30,7 @@ class SoftwareConnectionWithMetaType < BaseConnection
     Event.query(nil, citation_type: "Dataset-SoftwareSourceCode").results.total
   end
 
-  def researcher_connection_count
+  def person_connection_count
     Event.query(nil, citation_type: "Person-SoftwareSourceCode").results.total
   end
 

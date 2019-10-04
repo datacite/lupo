@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class OrganizationResearcherConnectionWithMetaType < BaseConnection
+class OrganizationPersonConnectionWithMetaType < BaseConnection
   edge_type(EventDataEdgeType, edge_class: EventDataEdge)
   field_class GraphQL::Cache::Field
   

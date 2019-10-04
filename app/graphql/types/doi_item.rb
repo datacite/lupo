@@ -6,7 +6,7 @@ module DoiItem
   description "Information about DOIs"
 
   field :id, ID, null: false, hash_key: "identifier", description: "The persistent identifier for the resource"
-  field :creators, [ResearcherType], null: true, description: "The main researchers involved in producing the data, or the authors of the publication, in priority order" do
+  field :creators, [PersonType], null: true, description: "The main researchers involved in producing the data, or the authors of the publication, in priority order" do
     argument :first, Int, required: false, default_value: 20
   end
   field :titles, [TitleType], null: true, description: "A name or title by which a resource is known" do

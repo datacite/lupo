@@ -10,7 +10,7 @@ gem 'json', '~> 1.8', '>= 1.8.5'
 gem 'oj', '>= 2.8.3'
 gem 'jsonlint', '~> 0.2.0'
 gem 'equivalent-xml', '~> 0.6.0'
-gem 'nokogiri', '~> 1.8.1'
+gem "nokogiri", ">= 1.10.4"
 gem 'diffy', '~> 3.2', '>= 3.2.1'
 gem 'commonmarker', '~> 0.17.9'
 gem 'iso8601', '~> 0.9.0'
