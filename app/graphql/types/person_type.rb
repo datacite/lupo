@@ -1,12 +1,7 @@
 # frozen_string_literal: true
 
 class PersonType < BaseObject
-  description "A person."
-
-  field :id, ID, null: true, description: "The ORCID ID of the person."
-  field :name, String, null: true, description: "The name of the person."
-  field :given_name, String, null: true, hash_key: "given_names", description: "Given name. In the U.S., the first name of a Person."
-  field :family_name, String, null: true, description: "Family name. In the U.S., the last name of an Person."
+  extend_type
 
   field :datasets, PersonDatasetConnectionWithMetaType, null: true, description: "Authored datasets", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
@@ -18,14 +13,6 @@ class PersonType < BaseObject
 
   field :softwares, PersonSoftwareConnectionWithMetaType, null: true, description: "Authored software", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
-  end
-
-  def id
-    object.uid ? "https://orcid.org/#{object.uid}" : object.id
-  end
-
-  def name
-    object.name
   end
 
   def datasets(**args)

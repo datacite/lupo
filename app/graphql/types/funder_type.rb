@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class FunderType < BaseObject
-  description "Information about funders"
+  extend_type
 
   field :datasets, FunderDatasetConnectionWithMetaType, null: false, description: "Funded datasets", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
@@ -14,11 +14,6 @@ class FunderType < BaseObject
 
   field :softwares, FunderSoftwareConnectionWithMetaType, null: false, description: "Funded software", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
-  end
-
-  def address
-    { "type" => "postalAddress",
-      "address_country" => object.country.to_h.fetch("name", nil) }
   end
 
   def datasets(**args)
