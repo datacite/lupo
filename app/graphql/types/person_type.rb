@@ -2,9 +2,9 @@
 
 class PersonType < BaseObject
   extend_type
-  # key fields: 'id'
+  key fields: 'id'
 
-  # field :id, ID, null: true, description: "The ORCID ID of the person.", external: true
+  field :id, ID, null: false, description: "The ORCID ID of the person.", external: true
 
   field :datasets, PersonDatasetConnectionWithMetaType, null: true, description: "Authored datasets", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
@@ -19,21 +19,21 @@ class PersonType < BaseObject
   end
 
   def datasets(**args)
-    ids = Event.query(nil, obj_id: https_to_http(object.uid || object.id), citation_type: "Dataset-Person").results.to_a.map do |e|
+    ids = Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Dataset-Person").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
   def publications(**args)
-    ids = Event.query(nil, obj_id: https_to_http(object.uid || object.id), citation_type: "Person-ScholarlyArticle").results.to_a.map do |e|
+    ids = Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Person-ScholarlyArticle").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
   def softwares(**args)
-    ids = Event.query(nil, obj_id: https_to_http(object.uid || object.id), citation_type: "Person-SoftwareSourceCode").results.to_a.map do |e|
+    ids = Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Person-SoftwareSourceCode").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)

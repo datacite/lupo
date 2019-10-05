@@ -7,7 +7,7 @@ class PersonSoftwareConnectionWithMetaType < BaseConnection
   field :total_count, Integer, null: false, cache: true
 
   def total_count
-    Event.query(nil, obj_id: https_to_http(object.parent.uid ? "https://orcid.org/#{object.parent.uid}" : nil || object.parent[:id]), citation_type: "Person-SoftwareSourceCode").results.total
+    Event.query(nil, obj_id: https_to_http(object.parent[:id] ? "https://orcid.org/#{object.parent[:id]}" : nil || object.parent[:id]), citation_type: "Person-SoftwareSourceCode").results.total
   end
 
   def https_to_http(url)
