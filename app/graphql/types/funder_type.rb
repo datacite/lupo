@@ -2,6 +2,9 @@
 
 class FunderType < BaseObject
   extend_type
+  # key fields: 'id'
+
+  # field :id, ID, null: false, description: "Crossref Funder ID", external: true
 
   field :datasets, FunderDatasetConnectionWithMetaType, null: false, description: "Funded datasets", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
