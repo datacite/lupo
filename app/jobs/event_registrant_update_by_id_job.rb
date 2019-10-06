@@ -24,7 +24,7 @@ class EventRegistrantUpdateByIdJob < ActiveJob::Base
       logger.info obj
       item.update_attributes(obj: obj) if obj.present?
     when "crossref"
-      registrant_id = get_crossref_member_id(item.subj) if get_doi_ra(item.subj_id) == "Crossref"
+      registrant_id = get_crossref_member_id(item.subj_id) if get_doi_ra(item.subj_id) == "Crossref"
       logger.info registrant_id
 
       subj = item.subj.merge("registrant_id" => registrant_id) unless registrant_id.nil?
