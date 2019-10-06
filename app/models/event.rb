@@ -447,6 +447,35 @@ class Event < ActiveRecord::Base
     response.results.total
   end
 
+  def self.update_registrant(options={})
+    logger = Logger.new(STDOUT)
+
+    size = (options[:size] || 1000).to_i
+    cursor = (options[:cursor] || [])
+    # ra = options[:ra] || "crossref"
+    source_id = "datacite-crossref,crossref"
+
+    response = Event.query(nil, source_id: source_id, page: { size: 1, cursor: cursor })
+    logger.info "[Update] #{response.results.total} events for sources #{source_id}."
+
+    # walk through results using cursor
+    if response.results.total > 0
+      while response.results.results.length > 0 do
+        response = Event.query(nil, source_id: source_id, page: { size: size, cursor: cursor })
+        break unless response.results.results.length > 0
+
+        logger.info "[Update] Updating #{response.results.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
+        cursor = response.results.to_a.last[:sort]
+
+        ids = response.results.results.map(&:uuid).uniq
+
+        EventRegistrantUpdateJob.perform_later(ids, options)
+      end
+    end
+
+    response.results.total
+  end
+
   def self.update_datacite_orcid_auto_update(options={})
     logger = Logger.new(STDOUT)
 
