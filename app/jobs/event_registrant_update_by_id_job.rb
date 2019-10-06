@@ -17,14 +17,14 @@ class EventRegistrantUpdateByIdJob < ActiveJob::Base
     
     case item.source_id 
     when "datacite-crossref"
-      registrant_id = get_crossref_member_id(item.obj_id) if get_doi_ra(item.obj_id) == "Crossref"
+      registrant_id = cached_get_crossref_member_id(item.obj_id) if cached_get_doi_ra(item.obj_id) == "Crossref"
       logger.info registrant_id
 
       obj = item.obj.merge("registrant_id" => registrant_id) unless registrant_id.nil?
       logger.info obj
       item.update_attributes(obj: obj) if obj.present?
     when "crossref"
-      registrant_id = get_crossref_member_id(item.subj_id) if get_doi_ra(item.subj_id) == "Crossref"
+      registrant_id = cached_get_crossref_member_id(item.subj_id) if cached_get_doi_ra(item.subj_id) == "Crossref"
       logger.info registrant_id
 
       subj = item.subj.merge("registrant_id" => registrant_id) unless registrant_id.nil?
@@ -53,6 +53,20 @@ class EventRegistrantUpdateByIdJob < ActiveJob::Base
     "crossref.#{message["member"]}"
   end 
 
+  def cached_get_doi_ra(doi)
+    Rails.cache.fetch("ras/#{doi}") do
+      puts "did not find key in cache, executing block ..."
+      get_doi_ra(doi)
+    end
+  end
+
+  def cached_get_crossref_member_id(doi)
+    Rails.cache.fetch("members_ids/#{doi}") do
+      puts "did not find key in cache, executing block ..."
+      get_crossref_member_id(doi)
+    end
+  end
+  
   def get_doi_ra(doi)
     prefix = validate_prefix(doi)
     return nil if prefix.blank?
