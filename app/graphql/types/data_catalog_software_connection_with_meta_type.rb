@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RepositorySoftwareConnectionWithMetaType < BaseConnection
+class DataCatalogSoftwareConnectionWithMetaType < BaseConnection
   edge_type(DatasetEdgeType)
   field_class GraphQL::Cache::Field
 

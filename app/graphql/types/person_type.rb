@@ -2,9 +2,9 @@
 
 class PersonType < BaseObject
   extend_type
-  key fields: 'id'
+  # key fields: "id"
 
-  field :id, ID, null: false, description: "The ORCID ID of the person.", external: true
+  # field :id, ID, null: false, external: true, description: "The ORCID ID of the person."
 
   field :datasets, PersonDatasetConnectionWithMetaType, null: true, description: "Authored datasets", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25

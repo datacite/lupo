@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class QueryType < BaseObject
+  extend_type
+
   field :providers, ProviderConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
@@ -76,32 +78,6 @@ class QueryType < BaseObject
 
   def organization(id:)
     result = Organization.find_by_id(id).fetch(:data, []).first
-    fail ActiveRecord::RecordNotFound if result.nil?
-
-    result
-  end
-
-  field :repositories, RepositoryConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
-    argument :query, String, required: false
-    argument :open, Boolean, required: false
-    argument :pid, Boolean, required: false
-    argument :certified, Boolean, required: false
-    argument :disciplinary, Boolean, required: false
-    argument :software, String, required: false
-    argument :subject, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-  end
-
-  def repositories(query: nil, open: nil, pid: nil, certified: nil, disciplinary: nil, software: nil, subject: nil, first: nil)
-    Repository.query(query, open: open, pid: pid, certified: certified, disciplinary: disciplinary, software: software, subject: subject, limit: first).fetch(:data, [])
-  end
-
-  field :repository, RepositoryType, null: false do
-    argument :id, ID, required: true
-  end
-
-  def repository(id:)
-    result = Repository.find_by_id(id).fetch(:data, []).first
     fail ActiveRecord::RecordNotFound if result.nil?
 
     result
