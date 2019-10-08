@@ -42,7 +42,7 @@ class EventRegistrantUpdateByIdJob < ActiveJob::Base
     # return "crossref.citations" unless doi.present?
   
     url = "https://api.crossref.org/works/#{Addressable::URI.encode(doi)}?mailto=info@datacite.org"	
-    sleep(0.03) # to avoid crossref rate limitting
+    sleep(0.24) # to avoid crossref rate limitting
     response =  Maremma.get(url, host: true)	
     logger.info "[Crossref Response] [#{response.status}] for DOI #{doi} metadata"
     return "" if response.status == 404  ### for cases when DOI is not in the crossreaf api 
@@ -55,14 +55,14 @@ class EventRegistrantUpdateByIdJob < ActiveJob::Base
 
   def cached_get_doi_ra(doi)
     Rails.cache.fetch("ras/#{doi}") do
-      puts "did not find key in cache, executing block ..."
+      puts "#{doi} [RA] did not find key in cache, executing block ..."
       get_doi_ra(doi)
     end
   end
 
   def cached_get_crossref_member_id(doi)
     Rails.cache.fetch("members_ids/#{doi}") do
-      puts "did not find key in cache, executing block ..."
+      puts "#{doi} [Crossref Member] did not find key in cache, executing block ..."
       get_crossref_member_id(doi)
     end
   end
