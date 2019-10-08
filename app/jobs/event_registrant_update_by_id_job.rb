@@ -42,7 +42,7 @@ class EventRegistrantUpdateByIdJob < ActiveJob::Base
     # return "crossref.citations" unless doi.present?
   
     url = "https://api.crossref.org/works/#{Addressable::URI.encode(doi)}?mailto=info@datacite.org"	
-    sleep(0.01) # to avoid crossref rate limitting
+    sleep(0.03) # to avoid crossref rate limitting
     response =  Maremma.get(url, host: true)	
     logger.info "[Crossref Response] [#{response.status}] for DOI #{doi} metadata"
     return "" if response.status == 404  ### for cases when DOI is not in the crossreaf api 
