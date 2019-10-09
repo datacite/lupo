@@ -453,7 +453,7 @@ class Event < ActiveRecord::Base
     size = (options[:size] || 1000).to_i
     cursor = (options[:cursor] || [])
     # ra = options[:ra] || "crossref"
-    source_id = options[:source_id] || "datacite-crossref"
+    source_id = options[:source_id] || "datacite-crossref,crossref"
     citation_type = options[:citation_type] || "Dataset-ScholarlyArticle"
     query = options[:query] || "registrant_id:*crossref.citations"
 

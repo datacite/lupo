@@ -30,7 +30,10 @@ class EventRegistrantUpdateByIdJob < ActiveJob::Base
     when "crossref"
       registrant_id = cached_get_crossref_member_id(item.subj_id) if cached_get_doi_ra(item.subj_id) == "Crossref"
       logger.info registrant_id
-      registrant_id = get_crossref_member_id(item.subj_id) if registrant_id == "crossref.citations" ## try without cache
+      if registrant_id == "crossref.citations" 
+        sleep(0.50)
+        registrant_id = get_crossref_member_id(item.subj_id)
+      end
 
       subj = item.subj.merge("registrant_id" => registrant_id) unless registrant_id.nil?
       logger.info subj
