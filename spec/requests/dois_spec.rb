@@ -22,7 +22,7 @@ describe "dois", type: :request do
       sleep 1
     end
 
-    it 'returns dois' do
+    it 'returns dois', vcr: true do
       get '/dois', nil, headers
 
       expect(last_response.status).to eq(200)
@@ -30,7 +30,7 @@ describe "dois", type: :request do
       expect(json.dig('meta', 'total')).to eq(3)
     end
 
-    it 'returns dois with extra detail' do
+    it 'returns dois with extra detail', vcr: true do
       get '/dois?detail=true', nil, headers
 
       expect(last_response.status).to eq(200)

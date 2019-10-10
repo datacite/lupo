@@ -20,7 +20,7 @@ describe "works", type: :request do
       sleep 1
     end
 
-    it 'returns dois' do
+    it 'returns dois', vcr: true do
       get '/works', nil, headers
 
       expect(last_response.status).to eq(200)
