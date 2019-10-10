@@ -6,6 +6,7 @@ module DoiItem
   description "Information about DOIs"
 
   field :id, ID, null: false, hash_key: "identifier", description: "The persistent identifier for the resource"
+  field :type, String, null: false, description: "The type of the item."
   field :creators, [PersonType], null: true, description: "The main researchers involved in producing the data, or the authors of the publication, in priority order" do
     argument :first, Int, required: false, default_value: 20
   end
@@ -33,6 +34,10 @@ module DoiItem
   field :client, ClientType, null: true, description: "The client account managing this resource"
   field :provider, ProviderType, null: true, description: "The provider account managing this resource"
   
+  def type
+    object.types["schema_org"]
+  end
+
   def creators(first: nil)
     Array.wrap(object.creators[0...first]).map do |c|
       Hashie::Mash.new(

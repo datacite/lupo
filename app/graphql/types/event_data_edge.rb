@@ -14,6 +14,14 @@ class EventDataEdge < GraphQL::Relay::Edge
     end
   end
 
+  def source_id
+    self.node[:id]
+  end
+
+  def target_id
+    self.parent[:id]
+  end
+
   def source
     event_data[:source_id].underscore.camelcase(:lower)
   end

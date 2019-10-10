@@ -3,7 +3,8 @@
 class OrganizationType < BaseObject
   description "Information about organizations"
 
-  field :id, ID, null: true, description: "ROR ID"
+  field :id, ID, null: false, description: "ROR ID"
+  field :type, String, null: false, description: "The type of the item."
   field :name, String, null: false, description: "The name of the organization."
   field :alternate_name, [String], null: true, description: "An alias for the organization."
   field :identifier, [IdentifierType], null: true, description: "The identifier(s) for the organization."
@@ -26,6 +27,10 @@ class OrganizationType < BaseObject
   # field :researchers, OrganizationResearcherConnectionWithMetaType, null: false, description: "Researchers associated with this organization", connection: true, max_page_size: 1000 do
   #   argument :first, Int, required: false, default_value: 25
   # end
+
+  def type
+    "Organization"
+  end
 
   def alternate_name
     object.aliases + object.acronyms
