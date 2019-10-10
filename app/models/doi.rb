@@ -72,7 +72,7 @@ class Doi < ActiveRecord::Base
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
   has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
 
-  delegate :provider, to: :client
+  delegate :provider, to: :client, allow_nil: true
   delegate :consortium_id, to: :provider, allow_nil: true
 
   validates_presence_of :doi
@@ -452,8 +452,8 @@ class Doi < ActiveRecord::Base
       "created" => created,
       "updated" => updated,
       "published" => published,
-      "client" => client.as_indexed_json,
-      "provider" => provider.as_indexed_json,
+      "client" => client.try(:as_indexed_json),
+      "provider" => provider.try(:as_indexed_json),
       "resource_type" => resource_type.try(:as_indexed_json),
       "media" => media.map { |m| m.try(:as_indexed_json) }
     }
@@ -628,6 +628,8 @@ class Doi < ActiveRecord::Base
 
   def resource_type_id
     types["resourceTypeGeneral"].underscore.dasherize if types.to_h["resourceTypeGeneral"].present?
+  rescue TypeError
+    nil
   end
 
   def media_ids

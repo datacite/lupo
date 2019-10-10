@@ -35,7 +35,7 @@ module DoiItem
   field :provider, ProviderType, null: true, description: "The provider account managing this resource"
   
   def type
-    object.types["schema_org"]
+    object.types["schemaOrg"]
   end
 
   def creators(first: nil)
