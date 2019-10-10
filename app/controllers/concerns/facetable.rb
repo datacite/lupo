@@ -109,7 +109,7 @@ module Facetable
 
       arr.map do |hsh|
         { "id" => hsh["key"],
-          "title" => affiliations.find { |a| a["id"] == hsh["key"] }.to_h["name"],
+          "title" => affiliations.find { |a| a["id"] == hsh["key"] }.to_h["name"] || hsh["key"],
           "count" => hsh["doc_count"] }
       end
     end
