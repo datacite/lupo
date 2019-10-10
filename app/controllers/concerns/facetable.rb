@@ -101,6 +101,19 @@ module Facetable
       end
     end
 
+    def facet_by_affiliation(arr)
+      # generate hash with id and name for each provider in facet
+
+      ids = arr.map { |hsh| "\"#{hsh["key"]}\"" }.join(" ")
+      affiliations = Organization.query(ids, size: 1000)[:data]
+
+      arr.map do |hsh|
+        { "id" => hsh["key"],
+          "title" => affiliations.find { |a| a["id"] == hsh["key"] }.to_h["name"],
+          "count" => hsh["doc_count"] }
+      end
+    end
+
     def facet_by_provider(arr)
       # generate hash with id and name for each provider in facet
 

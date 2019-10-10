@@ -59,6 +59,7 @@ class DoisController < ApplicationController
                           provider_id: params[:provider_id],
                           consortium_id: params[:consortium_id],
                           client_id: params[:client_id],
+                          affiliation_id: params[:affiliation_id],
                           re3data_id: params[:re3data_id],
                           opendoar_id: params[:opendoar_id],
                           certificate: params[:certificate],
@@ -119,6 +120,7 @@ class DoisController < ApplicationController
       registered = nil
       providers = nil
       clients = nil
+      affiliations = nil
       prefixes = nil
       schema_versions = nil
       sources = nil
@@ -137,6 +139,7 @@ class DoisController < ApplicationController
         registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
         providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
         clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
+        affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
         prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
         schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
         sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
@@ -168,6 +171,7 @@ class DoisController < ApplicationController
             registered: registered,
             providers: providers,
             clients: clients,
+            affiliations: affiliations,
             prefixes: prefixes,
             certificates: certificates,
             "schemaVersions" => schema_versions,

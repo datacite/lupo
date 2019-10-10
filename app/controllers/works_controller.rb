@@ -39,6 +39,7 @@ class WorksController < ApplicationController
                           registered: params[:registered],
                           provider_id: params[:member_id],
                           client_id: params[:data_center_id],
+                          affiliation_id: params[:affiliation_id],
                           prefix: params[:prefix],
                           user_id: params[:person_id],
                           resource_type_id: params[:resource_type_id],
@@ -58,6 +59,7 @@ class WorksController < ApplicationController
       registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
       providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
       clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
+      affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
 
       @dois = response.results
 
@@ -66,6 +68,7 @@ class WorksController < ApplicationController
         "resource-types" => resource_types,
         registered: registered,
         "data-centers" => clients,
+        affiliations: affiliations,
         total: total,
         "total-pages" => total_pages,
         page: page[:number]

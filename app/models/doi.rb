@@ -468,6 +468,7 @@ class Doi < ActiveRecord::Base
       registered: { date_histogram: { field: 'registered', interval: 'year', min_doc_count: 1 } },
       providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1} },
       clients: { terms: { field: 'client_id', size: 15, min_doc_count: 1 } },
+      affiliations: { terms: { field: 'creators.affiliation.affiliationIdentifier', size: 15, min_doc_count: 1 } },
       prefixes: { terms: { field: 'prefix', size: 15, min_doc_count: 1 } },
       schema_versions: { terms: { field: 'schema_version', size: 15, min_doc_count: 1 } },
       link_checks_status: { terms: { field: 'landing_page.status', size: 15, min_doc_count: 1 } },
