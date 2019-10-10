@@ -12,22 +12,28 @@ class EventRegistrantUpdateByIdJob < ActiveJob::Base
    
     item = Event.where(uuid: id).first
     return false unless item.present?
-    logger.info "djdjdj"
-    logger.info id
-    logger.info item.source_id
+
 
     
     case item.source_id 
     when "datacite-crossref"
-      registrant_id = get_crossref_member_id(item.obj_id) if get_doi_ra(item.obj_id) == "Crossref"
+      registrant_id = cached_get_crossref_member_id(item.obj_id) if cached_get_doi_ra(item.obj_id) == "Crossref"
       logger.info registrant_id
+      if registrant_id == "crossref.citations" 
+        sleep(0.50)
+        registrant_id = get_crossref_member_id(item.obj_id)
+      end
 
       obj = item.obj.merge("registrant_id" => registrant_id) unless registrant_id.nil?
       logger.info obj
       item.update_attributes(obj: obj) if obj.present?
     when "crossref"
-      registrant_id = get_crossref_member_id(item.subj) if get_doi_ra(item.subj) == "Crossref"
+      registrant_id = cached_get_crossref_member_id(item.subj_id) if cached_get_doi_ra(item.subj_id) == "Crossref"
       logger.info registrant_id
+      if registrant_id == "crossref.citations" 
+        sleep(0.50)
+        registrant_id = get_crossref_member_id(item.subj_id)
+      end
 
       subj = item.subj.merge("registrant_id" => registrant_id) unless registrant_id.nil?
       logger.info subj
@@ -44,7 +50,7 @@ class EventRegistrantUpdateByIdJob < ActiveJob::Base
     # return "crossref.citations" unless doi.present?
   
     url = "https://api.crossref.org/works/#{Addressable::URI.encode(doi)}?mailto=info@datacite.org"	
-    sleep(0.01) # to avoid crossref rate limitting
+    sleep(0.24) # to avoid crossref rate limitting
     response =  Maremma.get(url, host: true)	
     logger.info "[Crossref Response] [#{response.status}] for DOI #{doi} metadata"
     return "" if response.status == 404  ### for cases when DOI is not in the crossreaf api 
@@ -55,6 +61,20 @@ class EventRegistrantUpdateByIdJob < ActiveJob::Base
     "crossref.#{message["member"]}"
   end 
 
+  def cached_get_doi_ra(doi)
+    Rails.cache.fetch("ras/#{doi}") do
+      puts "#{doi} [RA] did not find key in cache, executing block ..."
+      get_doi_ra(doi)
+    end
+  end
+
+  def cached_get_crossref_member_id(doi)
+    Rails.cache.fetch("members_ids/#{doi}") do
+      puts "#{doi} [Crossref Member] did not find key in cache, executing block ..."
+      get_crossref_member_id(doi)
+    end
+  end
+  
   def get_doi_ra(doi)
     prefix = validate_prefix(doi)
     return nil if prefix.blank?
