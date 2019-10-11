@@ -20,7 +20,7 @@ class OrganizationType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, OrganizationSoftwareConnectionWithMetaType, null: false, description: "Software from this organization", connection: true, max_page_size: 1000 do
+  field :software_source_codes, OrganizationSoftwareConnectionWithMetaType, null: false, description: "Software from this organization", connection: true, max_page_size: 1000 do
     argument :first, Int, required: false, default_value: 25
   end
 
@@ -63,7 +63,7 @@ class OrganizationType < BaseObject
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
-  def softwares(**args)
+  def software_source_codes(**args)
     ids = Event.query(nil, obj_id: object.id, citation_type: "Organization-SoftwareSourceCode").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end

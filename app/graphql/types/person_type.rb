@@ -17,7 +17,7 @@ class PersonType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, PersonSoftwareConnectionWithMetaType, null: true, description: "Authored software", connection: true, max_page_size: 100 do
+  field :software_source_codes, PersonSoftwareConnectionWithMetaType, null: true, description: "Authored software", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
   end
 
@@ -39,7 +39,7 @@ class PersonType < BaseObject
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
-  def softwares(**args)
+  def software_source_codes(**args)
     ids = Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Person-SoftwareSourceCode").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end

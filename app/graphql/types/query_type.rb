@@ -330,20 +330,20 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :softwares, SoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
+  field :software_source_codes, SoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def softwares(query: nil, first: nil)
+  def software_source_codes(query: nil, first: nil)
     Doi.query(query, resource_type_id: "Software", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
-  field :software, SoftwareType, null: false do
+  field :software_source_code, SoftwareType, null: false do
     argument :id, ID, required: true
   end
 
-  def software(id:)
+  def software_source_code(id:)
     set_doi(id)
   end
 

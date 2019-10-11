@@ -14,7 +14,7 @@ class DatasetType < BaseObject
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
-  field :softwares, DatasetSoftwareConnectionWithMetaType, null: false, description: "Referenced software", connection: true, max_page_size: 100 do
+  field :software_source_codes, DatasetSoftwareConnectionWithMetaType, null: false, description: "Referenced software", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
   end
 
@@ -40,7 +40,7 @@ class DatasetType < BaseObject
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
-  def softwares(**args)
+  def softwsoftware_source_codesares(**args)
     ids = Event.query(nil, doi: doi_from_url(object.identifier), citation_type: "Dataset-SoftwareSourceCode").results.to_a.map do |e|
       object.identifier == e.subj_id ? doi_from_url(e.obj_id) : doi_from_url(e.subj_id)
     end

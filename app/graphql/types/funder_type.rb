@@ -17,7 +17,7 @@ class FunderType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, FunderSoftwareConnectionWithMetaType, null: false, description: "Funded software", connection: true, max_page_size: 100 do
+  field :software_source_codes, FunderSoftwareConnectionWithMetaType, null: false, description: "Funded software", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
   end
 
@@ -45,7 +45,7 @@ class FunderType < BaseObject
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
-  def softwares(**args)
+  def software_source_codes(**args)
     ids = Event.query(nil, obj_id: object[:id], citation_type: "Funder-SoftwareSourceCode").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end

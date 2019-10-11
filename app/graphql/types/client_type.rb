@@ -26,7 +26,7 @@ class ClientType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, ClientSoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 100, description: "Software managed by the client" do
+  field :software_source_codes, ClientSoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 100, description: "Software managed by the client" do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
@@ -46,7 +46,7 @@ class ClientType < BaseObject
     Doi.query(args[:query], client_id: object.uid, resource_type_id: "Text", page: { number: 1, size: args[:first] }).results.to_a
   end
 
-  def softwares(**args)
+  def software_source_codes(**args)
     Doi.query(args[:query], client_id: object.uid, resource_type_id: "Software", page: { number: 1, size: args[:first] }).results.to_a
   end
 end

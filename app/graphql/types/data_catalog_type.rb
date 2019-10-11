@@ -33,7 +33,7 @@ class DataCatalogType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, DataCatalogSoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 100, description: "Software hosted by the repository" do
+  field :software_source_codes, DataCatalogSoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 100, description: "Software hosted by the repository" do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
@@ -85,7 +85,7 @@ class DataCatalogType < BaseObject
     Doi.query(args[:query], re3data_id: doi_from_url(object[:id]), resource_type_id: "Text", page: { number: 1, size: args[:first] }).results.to_a
   end
 
-  def softwares(**args)
+  def software_source_codes(**args)
     Doi.query(args[:query], re3data_id: doi_from_url(object[:id]), resource_type_id: "Software", page: { number: 1, size: args[:first] }).results.to_a
   end
 end
