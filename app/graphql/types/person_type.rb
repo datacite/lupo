@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 class PersonType < BaseObject
-  extend_type
-  # key fields: "id"
+  description "A person."
 
-  # field :id, ID, null: false, external: true, description: "The ORCID ID of the person."
+  field :id, ID, null: true, description: "The ORCID ID of the person."
+  field :type, String, null: false, description: "The type of the item."
+  field :name, String, null: true, description: "The name of the person."
+  field :given_name, String, null: true, hash_key: "given_names", description: "Given name. In the U.S., the first name of a Person."
+  field :family_name, String, null: true, description: "Family name. In the U.S., the last name of an Person."
 
   field :datasets, PersonDatasetConnectionWithMetaType, null: true, description: "Authored datasets", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
@@ -16,6 +19,10 @@ class PersonType < BaseObject
 
   field :softwares, PersonSoftwareConnectionWithMetaType, null: true, description: "Authored software", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
+  end
+
+  def type
+    "Person"
   end
 
   def datasets(**args)

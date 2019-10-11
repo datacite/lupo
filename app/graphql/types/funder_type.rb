@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 class FunderType < BaseObject
-  extend_type
-  # key fields: 'id'
-
-  # field :id, ID, null: false, description: "Crossref Funder ID", external: true
-
+  description "Information about funders"
+  
+  field :id, ID, null: false, description: "Crossref Funder ID"
+  field :type, String, null: false, description: "The type of the item."
+  field :name, String, null: false, description: "The name of the funder."
+  field :alternate_name, [String], null: true, description: "An alias for the funder."
+  field :address, AddressType, null: true, description: "Physical address of the funder."
   field :datasets, FunderDatasetConnectionWithMetaType, null: false, description: "Funded datasets", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
   end
@@ -17,6 +19,15 @@ class FunderType < BaseObject
 
   field :softwares, FunderSoftwareConnectionWithMetaType, null: false, description: "Funded software", connection: true, max_page_size: 100 do
     argument :first, Int, required: false, default_value: 25
+  end
+
+  def type
+    "Funder"
+  end
+
+  def address
+    { "type" => "postalAddress",
+      "address_country" => object.country.to_h.fetch("name", nil) }
   end
 
   def datasets(**args)

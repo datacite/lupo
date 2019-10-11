@@ -63,6 +63,46 @@ class QueryType < BaseObject
     Prefix.where(prefix: id).first
   end
 
+  field :funders, FunderConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
+    argument :query, String, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+
+  def funders(query: nil, first: nil)
+    Funder.query(query, limit: first).fetch(:data, [])
+  end
+
+  field :funder, FunderType, null: false do
+    argument :id, ID, required: true
+  end
+
+  def funder(id:)
+    result = Funder.find_by_id(id).fetch(:data, []).first
+    fail ActiveRecord::RecordNotFound if result.nil?
+
+    result
+  end
+
+  field :data_catalog, DataCatalogType, null: false do
+    argument :id, ID, required: true
+  end
+
+  def data_catalog(id:)
+    result = DataCatalog.find_by_id(id).fetch(:data, []).first
+    fail ActiveRecord::RecordNotFound if result.nil?
+
+    result
+  end
+
+  field :data_catalogs, DataCatalogConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
+    argument :query, String, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+
+  def data_catalogs(query: nil, first: nil)
+    DataCatalog.query(query, limit: first).fetch(:data, [])
+  end
+
   field :organizations, OrganizationConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
@@ -81,6 +121,26 @@ class QueryType < BaseObject
     fail ActiveRecord::RecordNotFound if result.nil?
 
     result
+  end
+
+  field :person, PersonType, null: true do
+    argument :id, ID, required: true
+  end
+
+  def person(id:)
+    result = Person.find_by_id(id).fetch(:data, []).first
+    fail ActiveRecord::RecordNotFound if result.nil?
+
+    result
+  end
+
+  field :people, PersonConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
+    argument :query, String, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+
+  def people(query: nil, first: nil)
+    Person.query(query, limit: first).fetch(:data, [])
   end
 
   field :datasets, DatasetConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do

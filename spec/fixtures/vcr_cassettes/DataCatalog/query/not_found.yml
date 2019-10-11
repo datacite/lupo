@@ -1,0 +1,46 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.datacite.org/re3data?page%5Bnumber%5D=1&page%5Bsize%5D=25&query=xxx
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.4; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 11 Oct 2019 08:28:07 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Origin
+      Etag:
+      - W/"8a2e50dd71ab95eba00f90776adb367e"
+      X-Runtime:
+      - '0.072491'
+      X-Request-Id:
+      - cf725bef-2018-45d3-afa6-2ab8a1fe4f40
+      X-Powered-By:
+      - Phusion Passenger 5.2.3
+      Server:
+      - nginx/1.12.2 + Phusion Passenger 5.2.3
+    body:
+      encoding: ASCII-8BIT
+      string: '{"data":[],"meta":{"total":0,"totalPages":0,"page":1},"links":{"self":"https://api.datacite.org/re3data?page%5Bnumber%5D=1\u0026page%5Bsize%5D=25\u0026query=xxx"}}'
+    http_version: 
+  recorded_at: Fri, 11 Oct 2019 08:28:07 GMT
+recorded_with: VCR 3.0.3
