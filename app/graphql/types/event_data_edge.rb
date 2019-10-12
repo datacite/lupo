@@ -10,12 +10,13 @@ class EventDataEdge < GraphQL::Relay::Edge
 
   def event_data
     @event_data ||= begin
-      Event.query(nil, subj_id: self.node.id, obj_id: self.parent.id).results.first.to_h
+      return nil unless self.node.present?
+      Event.query(nil, subj_id: doi_from_node(self.node), obj_id: self.parent.id).results.first.to_h.fetch("_source", nil)
     end
   end
 
   def source_id
-    self.node.id
+    self.node.identifier if self.node.present?
   end
 
   def target_id
@@ -23,16 +24,20 @@ class EventDataEdge < GraphQL::Relay::Edge
   end
 
   def source
-    event_data.source_id.underscore.camelcase(:lower)
+    event_data.source_id if event_data.present?
   end
 
-  # We are switching subj and obj, and thus need to change direction of relation type
   def relation_type
-    rt = event_data.relation_type_id.underscore.camelcase(:lower)
-    RELATION_TYPES.fetch(rt, rt) 
+    event_data.relation_type_id.underscore.camelcase(:lower) if event_data.present?
   end
 
   def total
-    event_data.total
+    event_data.total if event_data.present?
+  end
+
+  def doi_from_node(node)
+    return nil unless node.present?
+
+    "https://doi.org/#{node.uid.downcase}"
   end
 end
