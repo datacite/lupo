@@ -966,6 +966,30 @@ describe "dois", type: :request do
       end
     end
 
+    context 'when the request is valid no password' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "source" => "test",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      it 'fails to create a Doi' do
+        post '/dois', valid_attributes
+
+        expect(last_response.status).to eq(401)
+      end
+    end
+
     context 'when the request is valid random doi' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
