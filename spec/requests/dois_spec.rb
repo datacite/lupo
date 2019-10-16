@@ -338,7 +338,7 @@ describe "dois", type: :request do
 
       it 'updates the doi' do
         put "/dois/#{doi.doi}", valid_attributes, admin_headers
-        
+
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'sizes')).to eq(sizes)
       end
@@ -386,7 +386,7 @@ describe "dois", type: :request do
         put "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{"source"=>"creators", "title"=>"Missing child element(s). expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0"}])
+        expect(json["errors"]).to eq([{"source"=>"creators", "title"=>"Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0"}])
       end
     end
 
@@ -502,7 +502,7 @@ describe "dois", type: :request do
         put "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{"source"=>"creators", "title"=>"Missing child element(s). expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0"}])
+        expect(json["errors"]).to eq([{"source"=>"creators", "title"=>"Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0"}])
       end
     end
 
@@ -528,7 +528,7 @@ describe "dois", type: :request do
         put "/dois/#{doi_id}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{"source"=>"creators", "title"=>"Missing child element(s). expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0"}])
+        expect(json["errors"]).to eq([{"source"=>"creators", "title"=>"Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0"}])
       end
     end
 
@@ -616,7 +616,7 @@ describe "dois", type: :request do
         patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json['errors']).to eq([{"source"=>"titles", "title"=>"Title 'submitted chemical data for inchikey=yapqbxqyljrxsa-uhfffaoysa-n' should be an object instead of a string."}])
+        expect(json['errors']).to eq([{"source"=>"titles", "title"=>"Title 'Submitted chemical data for InChIKey=YAPQBXQYLJRXSA-UHFFFAOYSA-N' should be an object instead of a string."}])
       end
     end
 
@@ -1216,7 +1216,7 @@ describe "dois", type: :request do
         }
       HEREDOC
       ) }
-        
+
       let(:valid_attributes) do
         {
           "data" => {
@@ -1975,7 +1975,7 @@ describe "dois", type: :request do
         post '/dois', not_valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{"source"=>"creators", "title"=>"Missing child element(s). expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0"}])
+        expect(json["errors"]).to eq([{"source"=>"creators", "title"=>"Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0"}])
       end
     end
 
@@ -2068,7 +2068,7 @@ describe "dois", type: :request do
 
           expect(last_response.status).to eq(200)
           expect(json['errors'].size).to eq(1)
-          expect(json['errors'].first).to eq("source"=>"creators", "title"=>"Missing child element(s). expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0")
+          expect(json['errors'].first).to eq("source"=>"creators", "title"=>"Missing child element(s). Expected is ( {http://datacite.org/schema/kernel-4}creator ). at line 4, column 0")
         end
       end
 
@@ -2091,7 +2091,29 @@ describe "dois", type: :request do
 
           expect(last_response.status).to eq(200)
           expect(json['errors'].size).to eq(1)
-          expect(json['errors'].first).to eq("source"=>"creatorName", "title"=>"This element is not expected. expected is ( {http://datacite.org/schema/kernel-4}affiliation ). at line 16, column 0")
+          expect(json['errors'].first).to eq("source"=>"creatorName", "title"=>"This element is not expected. Expected is ( {http://datacite.org/schema/kernel-4}affiliation ). at line 16, column 0")
+        end
+      end
+
+      context 'when attribute type names are wrong' do
+        let(:xml) { ::Base64.strict_encode64(File.read(file_fixture('datacite_malformed_creator_name_type.xml'))) }
+        let(:params) do
+          {
+            "data" => {
+              "type" => "dois",
+              "attributes" => {
+                "doi" => "10.14454/10703",
+                "xml" => xml,
+              }
+            }
+          }
+        end
+
+        it 'validates types are in right format' do
+          post '/dois/validate', params, headers
+
+          expect(last_response.status).to eq(200)
+          expect(json['errors'].first).to eq("source"=>"creatorName', attribute 'nameType","title"=>"[facet 'enumeration'] The value 'personal' is not an element of the set {'Organizational', 'Personal'}. at line 12, column 0")
         end
       end
 
