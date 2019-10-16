@@ -291,6 +291,7 @@ class DoisController < ApplicationController
   def create
     logger = Logger.new(STDOUT)
     # logger.info safe_params.inspect
+    fail CanCan::AuthorizationNotPerformed unless current_user.present?
 
     @doi = Doi.new(safe_params)
 
