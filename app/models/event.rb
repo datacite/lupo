@@ -62,14 +62,37 @@ class Event < ActiveRecord::Base
 
   INCLUDED_RELATION_TYPES = [
     "cites", "is-cited-by",
+    "is-supplement-to", "is-supplemented-by",
+    "references", "is-referenced-by"
+  ]
+
+  ACTIVE_RELATION_TYPES = [
+    "cites", 
+    "is-supplement-to",
+    "references"
+  ]
+
+  PASSIVE_RELATION_TYPES = [
+     "is-cited-by",
+     "is-supplemented-by",
+     "is-referenced-by"
+  ]
+
+
+  RELATIONS_RELATION_TYPES = [
     "compiles", "is-compiled-by",
     "documents", "is-documented-by",
     "has-metadata", "is-metadata-for",
-    "is-supplement-to", "is-supplemented-by",
     "is-derived-from", "is-source-of",
-    "references", "is-referenced-by",
     "reviews", "is-reviewed-by",
     "requires", "is-required-by",
+    "continues", "is-coutinued-by",
+    "has-version", "is-version-of",
+    "has-part", "is-part-of",
+    "is-variant-from-of", "is-original-form-of",
+    "is-identical-to", "obsoletes",
+    "is-obsolete-by",
+    "is-new-version-of", "is-previous-version-of",
     "describes", "is-described-by"
   ]
 
@@ -220,7 +243,8 @@ class Event < ActiveRecord::Base
     }
   end
 
-  def self.metrics_aggregations
+  def self.metrics_aggregations(doi=nil)  
+    doi = Event.new.normalize_doi(doi) if doi.present?
     sum_distribution = {
       sum_bucket: {
         buckets_path: "year_months>total_by_year_month"
@@ -236,19 +260,12 @@ class Event < ActiveRecord::Base
 
     downloads_filter = {script: {script: "#{DOWNLOADS_RELATION_TYPES}.contains(doc['relation_type_id'].value) && doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()"} }
 
-    {
-      citations_histogram: {
-        filter: {script: {script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"}
-        },
-        aggs: { years: { histogram: { field: 'citation_year', interval: 1 , min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
-      },
-      citations: {
-        filter: {script: {script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"}
-        },
-        aggs: { dois: {
-           terms: { field: 'doi', size: 100, min_doc_count: 1 }, aggs: { unique_citations: { cardinality: { field: 'citation_id' }}}
-        }}
-      },
+    citations_filter = {script: {script: "(#{PASSIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['subj_id'].value) || (#{ACTIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['obj_id'].value)"}}
+
+
+    references_filter = {script: {script: "(#{PASSIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['obj_id'].value) || (#{ACTIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['subj_id'].value)"}}
+
+    usage = {
       views: {
         filter: views_filter,
         aggs: { dois: {
@@ -273,7 +290,35 @@ class Event < ActiveRecord::Base
           year_months: { date_histogram: { field: 'occurred_at', interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' } } } }, "sum_distribution" => sum_distribution
           }
       }   
-  }
+    }
+    
+    links = {
+      citations_histogram: {
+        filter: citations_filter,
+        aggs: { years: { histogram: { field: 'citation_year', interval: 1 , min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
+      },
+      citations: {
+        filter: citations_filter,
+        aggs: { dois: {
+          terms: { field: 'doi', size: 100, min_doc_count: 1 }, aggs: { unique_citations: { cardinality: { field: 'citation_id' }}}
+        }}
+      },
+      references: {
+        filter: references_filter,
+        aggs: { dois: {
+          terms: { field: 'doi', size: 100, min_doc_count: 1 }, aggs: { references: { cardinality: { field: 'citation_id' }}}
+        }}
+      },
+      relations: {
+        filter: {script: {script: "#{RELATIONS_RELATION_TYPES}.contains(doc['relation_type_id'].value)"}
+        },
+        aggs: { dois: {
+          terms: { field: 'doi', size: 100, min_doc_count: 1 }, aggs: { relations: { cardinality: { field: 'citation_id' }}}
+        }}
+      }
+    } if doi.present?
+
+    doi.present? ? usage.merge!(links) : usage
   end
 
   def self.advanced_aggregations
@@ -608,7 +653,7 @@ class Event < ActiveRecord::Base
   end
 
   def citation_year
-    "" unless INCLUDED_RELATION_TYPES.include?(relation_type_id)
+    "" unless (INCLUDED_RELATION_TYPES+RELATIONS_RELATION_TYPES).include?(relation_type_id)
     subj_publication = subj['date_published'] || (date_published(subj_id) || year_month)
     obj_publication =  obj['date_published']  || (date_published(obj_id) || year_month)
     [subj_publication[0..3].to_i, obj_publication[0..3].to_i].max
