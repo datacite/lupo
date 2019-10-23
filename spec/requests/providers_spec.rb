@@ -90,7 +90,7 @@ describe "Providers", type: :request, elasticsearch: true  do
     context "text/csv" do
       it 'returns status code 200' do
         get "/providers/", nil, { "HTTP_ACCEPT" => "text/csv", 'Authorization' => 'Bearer ' + token }
-        
+
         expect(last_response.status).to eq(200)
       end
     end
@@ -195,7 +195,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(json.dig('data', 'attributes', 'name')).to eq("Figshare")
         expect(json.dig('data', 'attributes', 'memberType')).to eq("consortium_organization")
         expect(json.dig('data', 'relationships', 'consortium', 'data', 'id')).to eq(consortium.symbol.downcase)
-      
+
         sleep 1
 
         get "/providers/#{consortium.symbol.downcase}?include=consortium-organizations", nil, headers
@@ -205,7 +205,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(json.dig('included', 0, 'attributes', 'name')).to eq("Figshare")
         expect(json.dig('included', 0, 'attributes', 'memberType')).to eq("consortium_organization")
         expect(json.dig('included', 0, 'relationships', 'consortium', 'data', 'id')).to eq(consortium.symbol)
-      
+
         # get "/providers?consortium-lead-id=#{consortium_lead.symbol.downcase}", nil, headers
 
         # expect(last_response.status).to eq(200)
@@ -424,7 +424,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                   "count" => 1
                 }],
                 "dois" => []
-              }, 
+              },
               "name" => "Carnegie Mellon University",
               "displayName" => "Carnegie Mellon University",
               "symbol" => "CMU", "description" => nil,
@@ -433,11 +433,11 @@ describe "Providers", type: :request, elasticsearch: true  do
               "focusArea" => "general", "logoUrl" => "",
               "systemEmail" => "jkiritha@andrew.cmu.edu",
               "isActive" => true,
-              "passwordInput" => "@change", 
+              "passwordInput" => "@change",
               "hasPassword" => false,
-              "keepPassword" => false, 
+              "keepPassword" => false,
               "joined" => ""
-            }, 
+            },
             "type" => "providers"
           }
         }
@@ -517,7 +517,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         post '/providers', params, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig('data', 'attributes', 'symbol')).to match(/\A[A-Z]{4}\Z/) 
+        expect(json.dig('data', 'attributes', 'symbol')).to match(/\A[A-Z]{4}\Z/)
       end
     end
 
@@ -596,7 +596,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         put "/providers/#{provider.symbol}", params, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"].first).to eq("source" => "ror_id", "title" => "Ror id should be a url")
+        expect(json["errors"].first).to eq("source" => "ror_id", "title" => "ROR ID should be a url")
       end
     end
 
