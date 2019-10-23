@@ -194,7 +194,7 @@ module Indexable
         must << { terms: { certificate: options[:certificate].split(",") }} if options[:certificate].present?
         must << { terms: { repository_type: options[:repository_type].split(",") }} if options[:repository_type].present?
         must << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
-        must << { term: { re3data_id: options[:re3data_id].gsub("/", '\/') }} if options[:re3data_id].present?
+        must << { term: { re3data_id: options[:re3data_id].gsub("/", '\/').upcase }} if options[:re3data_id].present?
         must << { term: { opendoar_id: options[:opendoar_id] }} if options[:opendoar_id].present?
         must << { term: { client_type: options[:client_type] }} if options[:client_type].present?
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
@@ -205,7 +205,7 @@ module Indexable
         must << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{options[:user_id]}" }} if options[:user_id].present?
         must << { term: { "creators.affiliation.affiliationIdentifier" => URI.decode(options[:affiliation_id]) }} if options[:affiliation_id].present?
         must << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
-        must << { term: { "client.re3data_id" => options[:re3data_id].upcase }} if options[:re3data_id].present?
+        must << { term: { "client.re3data_id" => options[:re3data_id].gsub("/", '\/').upcase }} if options[:re3data_id].present?
         must << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
         must << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
         must_not << { terms: { provider_id: ["crossref", "medra", "op"] }} if options[:exclude_registration_agencies]
