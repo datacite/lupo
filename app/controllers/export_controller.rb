@@ -141,7 +141,7 @@ class ExportController < ApplicationController
             page_num = 2
             while page_num <= total_pages
                 page = { size: 1000, number: page_num }
-                response = Client.query(nil, page: page)
+                response = Client.query(nil, page: page, include_deleted: true)
                 clients = clients + response.records.to_a
                 page_num += 1
             end
