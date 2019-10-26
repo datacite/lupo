@@ -596,7 +596,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         put "/providers/#{provider.symbol}", params, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"].first).to eq("source" => "ror_id", "title" => "Ror id should be a url")
+        expect(json["errors"].first).to eq("source" => "ror_id", "title" => "ROR ID should be a url")
       end
     end
 
