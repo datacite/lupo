@@ -4,7 +4,7 @@ class ClientSerializer
   set_type :clients
   set_id :uid
   
-  attributes :name, :symbol, :year, :contact_email, :alternate_name, :description, :language, :client_type, :domains, :issn, :url, :salesforce_id, :created, :updated
+  attributes :name, :symbol, :year, :contact_email, :alternate_name, :description, :language, :client_type, :domains, :re3data, :opendoar, :issn, :url, :salesforce_id, :created, :updated
 
   belongs_to :provider, record_type: :providers
   belongs_to :consortium, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |client| client.consortium_id }
@@ -20,5 +20,13 @@ class ClientSerializer
 
   attribute :salesforce_id, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_salesforce_id, object) == true } do |object|
     object.salesforce_id
+  end
+
+  attribute :re3data do |object|
+    "https://doi.org/#{object.re3data_id}" if object.re3data_id.present?
+  end
+
+  attribute :opendoar do |object|
+    "https://v2.sherpa.ac.uk/id/repository/#{object.opendoar_id}" if object.opendoar_id.present?
   end
 end
