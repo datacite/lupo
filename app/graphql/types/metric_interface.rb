@@ -6,6 +6,8 @@ module MetricInterface
   field :view_count, Integer, null: true, description: "The count of DOI views according to the COUNTER code of Practice"
   field :download_count, Integer, null: true, description: "The count of  DOI dowloands according to the COUNTER code of Practice"
   field :citation_count, Integer, null: true, description: "The count of DOI events that represents citations"
+  field :reference_count, Integer, null: true, description: "The count of DOI events that represents references"
+  field :relation_count, Integer, null: true, description: "The count of DOI events that represents relations"
   # field :citations_list, [String], null: true, description: "List of DOIS citing a given DOI"
   # field :referenceslist, [String], null: true, description: "List of DOIS that a given DOI references to"
   # field :relations_list, [String], null: true, description: "List of DOIS relations a given DOI has"
@@ -29,12 +31,12 @@ module MetricInterface
     meta.first.fetch("total", {}).fetch("value", nil) if meta.any?
   end
 
-  def references_count
+  def reference_count
     meta = references_aggs
     meta.first.fetch("total", {}).fetch("value", nil) if meta.any?
   end
 
-  def relations_count
+  def relation_count
     meta = relations_aggs
     meta.first.fetch("total", {}).fetch("value", nil) if meta.any?
   end
