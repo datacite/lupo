@@ -312,7 +312,7 @@ module Facetable
       arr.map do |hsh|
         { "id" => hsh["key"],
           "title" => hsh["key"],
-          "citations" => hsh.dig("unique_citations", "value")}
+          "count" => hsh.dig("total", "value")}
       end
     end
 

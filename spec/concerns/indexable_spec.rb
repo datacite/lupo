@@ -126,7 +126,7 @@ describe "Indexable class methods", elasticsearch: true do
 
     context "aggregations" do
       it 'returns query_aggregation when filters aggregation with empty' do
-        aggregations = Doi.get_aggregations_hash("")
+        aggregations = Doi.get_aggregations_hash({aggregations:""})
         expect(aggregations[:resource_types]).not_to be_nil
         expect(aggregations[:states]).not_to be_nil
         expect(aggregations[:created]).not_to be_nil
@@ -134,7 +134,7 @@ describe "Indexable class methods", elasticsearch: true do
       end
   
       it 'returns multiple aggregations when filters aggregations with multiple' do
-        aggregations = Doi.get_aggregations_hash("query_aggregations,metrics_aggregations")
+        aggregations = Doi.get_aggregations_hash({aggregations:""})
         expect(aggregations[:resource_types]).not_to be_nil
         expect(aggregations[:states]).not_to be_nil
         expect(aggregations[:created]).not_to be_nil
@@ -154,7 +154,7 @@ describe "Indexable class methods", elasticsearch: true do
 
     context "aggregations" do
       it 'returns query_aggregation when filters aggregation with empty' do
-        aggregations = Event.get_aggregations_hash("")
+        aggregations = Event.get_aggregations_hash({aggregations:""})
         expect(aggregations[:sources]).not_to be_nil
         expect(aggregations[:prefixes]).not_to be_nil
         expect(aggregations[:citation_types]).not_to be_nil
@@ -167,7 +167,7 @@ describe "Indexable class methods", elasticsearch: true do
       end
   
       it 'returns multiple aggregations when filters aggregations with multiple' do
-        aggregations = Event.get_aggregations_hash("query_aggregations,metrics_aggregations")
+        aggregations = Event.get_aggregations_hash({aggregations:"query_aggregations,metrics_aggregations"})
         expect(aggregations[:sources]).not_to be_nil
         expect(aggregations[:prefixes]).not_to be_nil
         expect(aggregations[:citation_types]).not_to be_nil
@@ -176,8 +176,8 @@ describe "Indexable class methods", elasticsearch: true do
         expect(aggregations[:pairings]).not_to be_nil
         expect(aggregations[:dois]).not_to be_nil
         expect(aggregations[:dois_usage]).not_to be_nil
-        expect(aggregations[:citations_histogram]).not_to be_nil
-        expect(aggregations[:citations]).not_to be_nil
+        expect(aggregations[:citations_histogram]).to be_nil
+        expect(aggregations[:citations]).to be_nil
       end
     end
   end
