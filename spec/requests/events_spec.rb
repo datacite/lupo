@@ -623,7 +623,7 @@ describe "/events", type: :request, elasticsearch: true do
         expect(total).to eq(6)
         # puts citations.dig(:count)
         expect(citations.first["count"]).to eq(5)
-        expect(citations.first["id"]).to eq("10.5061/dryad.47sd5e/1")
+        expect(citations.first["id"]).to start_with("10.5061/dryad.47sd5e/")
       end
     end
 

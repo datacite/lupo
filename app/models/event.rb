@@ -206,7 +206,7 @@ class Event < ActiveRecord::Base
     ['subj_id^10', 'obj_id^10', 'subj.name^5', 'subj.author^5', 'subj.periodical^5', 'subj.publisher^5', 'obj.name^5', 'obj.author^5', 'obj.periodical^5', 'obj.publisher^5', '_all']
   end
 
-  def self.query_aggregations
+  def self.query_aggregations(doi=nil) 
     sum_distribution = {
       sum_bucket: {
         buckets_path: "year_months>total_by_year_month"
@@ -243,7 +243,7 @@ class Event < ActiveRecord::Base
     }
   end
 
-  def self.metrics_aggregations  
+  def self.metrics_aggregations(doi=nil)  
     sum_distribution = {
       sum_bucket: {
         buckets_path: "year_months>total_by_year_month"
