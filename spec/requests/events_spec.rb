@@ -271,8 +271,8 @@ describe "/events", type: :request, elasticsearch: true do
    
         Event.import
         sleep 1
-        get uri+"?aggregations=metrics_aggregations", nil, headers
-
+        get uri+"?aggregations=citations_aggregations&doi=10.1016/j.jastp.2013.05.001", nil, headers
+        puts json.dig("meta", "citationsHistogram")
         expect(json.dig("meta", "citationsHistogram","years",0,"title")).to eq("2017")
       end
     end
@@ -596,8 +596,45 @@ describe "/events", type: :request, elasticsearch: true do
   #   # let(:uri) { "/events" }
     
     context "check meta unique" do
-      let!(:event) { create_list(:event_for_datacite_related, 5) }
-      let(:uri) { "/events?aggregations=metrics_aggregations" }
+      let!(:event) { create(:event_for_datacite_related) }
+      let!(:events) { create_list(:event_for_datacite_related, 5, obj_id: event.subj_id) }
+      let(:doi) { (event.subj_id).gsub("https://doi.org/","")}
+      let(:uri) { "/events?aggregations=citations_aggregations&doi=#{doi}" }
+
+      before do
+        Event.import
+        sleep 1
+      end
+
+      # Exclude the token header.
+      let(:headers) do
+        { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
+      end
+
+      it "json" do
+        get uri, nil, headers
+
+        expect(last_response.status).to eq(200)
+        response = JSON.parse(last_response.body)
+        citations = (response.dig("meta", "uniqueCitations")).select { |item| item["id"] == doi }
+
+        total = response.dig("meta", "total")
+    
+        expect(total).to eq(6)
+        # puts citations.dig(:count)
+        expect(citations.first["count"]).to eq(5)
+        expect(citations.first["id"]).to eq("10.5061/dryad.47sd5e/1")
+      end
+    end
+
+    context "has citations, references, relations" do
+      let!(:event) { create(:event_for_datacite_related) }
+      let!(:event1) { create(:event_for_datacite_related, subj_id: event.subj_id, obj_id: "#{event.subj_id}234") }
+      let!(:event2) { create(:event_for_datacite_related, obj_id: event.subj_id) }
+      let!(:event3) { create(:event_for_datacite_related, obj_id: event.subj_id) }
+      let!(:event4) { create(:event_for_datacite_related, obj_id: event.subj_id, relation_type_id:"has-part") }
+      let(:doi) { (event.subj_id).gsub("https://doi.org/","")}
+      let(:uri) { "/events?aggregations=citations_aggregations&doi=#{doi}" }
       
       before do
         Event.import
@@ -614,19 +651,29 @@ describe "/events", type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(200)
         response = JSON.parse(last_response.body)
-        citations = response.dig("meta", "uniqueCitations")
+        puts response
+
+        citations = (response.dig("meta", "uniqueCitations")).select { |item| item["id"] == doi }
+        references = (response.dig("meta", "references")).select { |item| item["id"] == doi }
+        relations = (response.dig("meta", "relations")).select { |item| item["id"] == doi }
         total = response.dig("meta", "total")
-    
+
+        expect(json.dig("meta", "citationsHistogram","years",0,"title")).to eq("2015")    
         expect(total).to eq(5)
-        expect(citations.first["citations"]).to eq(5)
-        expect(citations.first["id"]).to eq("10.5061/dryad.47sd5/1")
+        expect(citations.first["count"]).to eq(2)
+        expect(citations.first["id"]).to eq(doi)
+        expect(references.first["count"]).to eq(2)
+        expect(references.first["id"]).to eq(doi)
+        expect(relations.first["count"]).to eq(1)
+        expect(relations.first["id"]).to eq(doi)
       end
     end
 
     context "check meta duplicated" do
-      let!(:event) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v1") }
-      let!(:copies) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v1", relation_type_id: "cites") }
-      let(:uri) { "/events?aggregations=metrics_aggregations" }
+      let!(:event) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v2", obj_id:"http://doi.org/10.0260/co.2004960.v1") }
+      let!(:copies) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v2", obj_id:"http://doi.org/10.0260/co.2004960.v1", relation_type_id: "cites") }
+      let(:doi) { (event.obj_id).gsub("https://doi.org/","")}
+      let(:uri) { "/events?aggregations=citations_aggregations&doi=#{doi}" }
 
       before do
         Event.import
@@ -643,43 +690,44 @@ describe "/events", type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(200)
         response = JSON.parse(last_response.body)
-        citations = response.dig("meta", "uniqueCitations")
+        citations = (response.dig("meta", "uniqueCitations")).select { |item| item["id"] == doi }
         total = response.dig("meta", "total")
 
         expect(total).to eq(2)
-        expect(citations.first["citations"]).to eq(1)
+        expect(citations.first["count"]).to eq(1)
         expect(citations.first["id"]).to eq("10.0260/co.2004960.v1")
       end
     end
 
-    context "unique citations for a list of dois" do
-      let!(:event) { create_list(:event_for_datacite_related, 50) }
-      let!(:copies) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v1", relation_type_id: "cites") }
-      let(:dois) { ((event.map{ |e| e['subj_id'].gsub("https://doi.org/","")})[1, 20]).join(",")}
-      let(:uri) { "/events?aggregations=metrics_aggregations&dois=#{dois}" }
+    # # We cannot do this anymore as the aggregation needs to be done per doi
+    # context "unique citations for a list of dois" do
+    #   let!(:event) { create_list(:event_for_datacite_related, 50) }
+    #   let!(:copies) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v1", relation_type_id: "cites") }
+    #   let(:dois) { ((event.map{ |e| e['subj_id'].gsub("https://doi.org/","")})[1, 20]).join(",")}
+    #   let(:uri) { "/events?aggregations=metrics_aggregations&dois=#{dois}" }
 
-      before do
-        Event.import
-        sleep 1
-      end
+    #   before do
+    #     Event.import
+    #     sleep 1
+    #   end
 
-      # Exclude the token header.
-      let(:headers) do
-        { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
-      end
+    #   # Exclude the token header.
+    #   let(:headers) do
+    #     { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
+    #   end
 
-      it "json" do
-        get uri, nil, headers
+    #   it "json" do
+    #     get uri, nil, headers
 
-        expect(last_response.status).to eq(200)
-        response = JSON.parse(last_response.body)
-        citations = response.dig("meta", "uniqueCitations")
-        total = response.dig("meta", "total")
+    #     expect(last_response.status).to eq(200)
+    #     response = JSON.parse(last_response.body)
+    #     citations = (response.dig("meta", "uniqueCitations")).select { |item| item["id"] == doi }
+    #     total = response.dig("meta", "total")
 
-        expect(total).to eq(51)
-        expect((citations.select { |doi| dois.split(",").include?(doi["id"]) }).length).to eq(20)
-      end
-    end
+    #     expect(total).to eq(51)
+    #     expect((citations.select { |doi| dois.split(",").include?(doi["id"]) }).length).to eq(20)
+    #   end
+    # end
 
     # Just test that the API can be accessed without a token.
     # context "with no API key" do

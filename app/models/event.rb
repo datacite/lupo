@@ -243,29 +243,18 @@ class Event < ActiveRecord::Base
     }
   end
 
-  def self.metrics_aggregations(doi=nil)  
-    doi = Event.new.normalize_doi(doi) if doi.present?
+  def self.metrics_aggregations  
     sum_distribution = {
       sum_bucket: {
         buckets_path: "year_months>total_by_year_month"
       }
     }
-    sum_year_distribution = {
-      sum_bucket: {
-        buckets_path: "years>total_by_year"
-      }
-    }
-
+ 
     views_filter = {script: {script: "#{VIEWS_RELATION_TYPES}.contains(doc['relation_type_id'].value) && doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()"}}
 
     downloads_filter = {script: {script: "#{DOWNLOADS_RELATION_TYPES}.contains(doc['relation_type_id'].value) && doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()"} }
 
-    citations_filter = {script: {script: "(#{PASSIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['subj_id'].value) || (#{ACTIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['obj_id'].value)"}}
-
-
-    references_filter = {script: {script: "(#{PASSIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['obj_id'].value) || (#{ACTIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['subj_id'].value)"}}
-
-    usage = {
+   {
       views: {
         filter: views_filter,
         aggs: { dois: {
@@ -291,8 +280,23 @@ class Event < ActiveRecord::Base
           }
       }   
     }
-    
-    links = {
+
+  end
+
+  def self.citations_aggregations(doi)  
+    doi = Event.new.normalize_doi(doi) if doi.present?
+
+    sum_year_distribution = {
+      sum_bucket: {
+        buckets_path: "years>total_by_year"
+      }
+    }
+
+    citations_filter = {script: {script: "(#{PASSIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['subj_id'].value) || (#{ACTIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['obj_id'].value)"}}
+
+    references_filter = {script: {script: "(#{PASSIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['obj_id'].value) || (#{ACTIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['subj_id'].value)"}}
+
+    {
       citations_histogram: {
         filter: citations_filter,
         aggs: { years: { histogram: { field: 'citation_year', interval: 1 , min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
@@ -300,25 +304,23 @@ class Event < ActiveRecord::Base
       citations: {
         filter: citations_filter,
         aggs: { dois: {
-          terms: { field: 'doi', size: 100, min_doc_count: 1 }, aggs: { unique_citations: { cardinality: { field: 'citation_id' }}}
+          terms: { field: 'doi', size: 100, min_doc_count: 1 }, aggs: { total: { cardinality: { field: 'citation_id' }}}
         }}
       },
       references: {
         filter: references_filter,
         aggs: { dois: {
-          terms: { field: 'doi', size: 100, min_doc_count: 1 }, aggs: { references: { cardinality: { field: 'citation_id' }}}
+          terms: { field: 'doi', size: 100, min_doc_count: 1 }, aggs: { total: { cardinality: { field: 'citation_id' }}}
         }}
       },
       relations: {
         filter: {script: {script: "#{RELATIONS_RELATION_TYPES}.contains(doc['relation_type_id'].value)"}
         },
         aggs: { dois: {
-          terms: { field: 'doi', size: 100, min_doc_count: 1 }, aggs: { relations: { cardinality: { field: 'citation_id' }}}
+          terms: { field: 'doi', size: 100, min_doc_count: 1 }, aggs: { total: { cardinality: { field: 'citation_id' }}}
         }}
       }
-    } if doi.present?
-
-    doi.present? ? usage.merge!(links) : usage
+    } 
   end
 
   def self.advanced_aggregations

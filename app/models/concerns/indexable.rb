@@ -95,18 +95,20 @@ module Indexable
       })
     end
 
-    def get_aggregations_hash(aggregations = "")
+    def get_aggregations_hash(options={})
+      aggregations = options[:aggregations] || ""
       return send(:query_aggregations) if aggregations.blank?
       aggs = {}
       aggregations.split(",").each do |agg|
         agg = :query_aggregations if agg.blank? || !respond_to?(agg)
-        aggs.merge! send(agg)
+        doi = options[:doi].present? ? options[:doi].downcase.split(",").first : nil
+        aggs.merge! send(agg,doi)
       end
       aggs
     end
 
     def query(query, options={})
-      aggregations = options[:totals_agg] == true ? totals_aggregations : get_aggregations_hash(options[:aggregations])
+      aggregations = options[:totals_agg] == true ? totals_aggregations : get_aggregations_hash(options)
       options[:page] ||= {}
       options[:page][:number] ||= 1
       options[:page][:size] ||= 25
