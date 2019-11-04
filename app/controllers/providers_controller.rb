@@ -157,7 +157,7 @@ class ProvidersController < ApplicationController
       clients = client_count(provider_id: nil)
       dois = doi_count(provider_id: nil)
       resource_types = resource_type_count(provider_id: nil)
-    elsif @provider.member_type == "consortium_member"
+    elsif @provider.member_type == "consortium"
       providers = provider_count(consortium_id: params[:id])
       clients = client_count(consortium_id: params[:id])
       dois = doi_count(consortium_id: params[:id])
@@ -194,7 +194,7 @@ class ProvidersController < ApplicationController
         providers = provider_count(consortium_id: nil)
         clients = client_count(provider_id: nil)
         dois = doi_count(provider_id: nil)
-      elsif @provider.member_type == "consortium_member"
+      elsif @provider.member_type == "consortium"
         providers = provider_count(consortium_id: params[:id])
         clients = client_count(consortium_id: params[:id])
         dois = doi_count(consortium_id: params[:id])
@@ -228,7 +228,7 @@ class ProvidersController < ApplicationController
         providers = provider_count(consortium_id: nil)
         clients = client_count(provider_id: nil)
         dois = doi_count(provider_id: nil)
-      elsif @provider.member_type == "consortium_member"
+      elsif @provider.member_type == "consortium"
         providers = provider_count(consortium_id: params[:id])
         clients = client_count(consortium_id: params[:id])
         dois = doi_count(consortium_id: params[:id])

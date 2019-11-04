@@ -436,7 +436,7 @@ class Provider < ActiveRecord::Base
     {
       "ROLE_MEMBER"               => "Member Only",
       "ROLE_ALLOCATOR"            => "Direct Member",
-      "ROLE_CONSORTIUM"           => "Consortium Member",
+      "ROLE_CONSORTIUM"           => "Consortium",
       "ROLE_CONSORTIUM_ORGANIZATION" => "Consortium Organization",
       "ROLE_CONTRACTUAL_PROVIDER" => "Contractual Member",
       "ROLE_ADMIN"                => "DataCite admin",
@@ -459,7 +459,7 @@ class Provider < ActiveRecord::Base
     {
       "ROLE_MEMBER"               => "member_only",
       "ROLE_ALLOCATOR"            => "direct_member",
-      "ROLE_CONSORTIUM"           => "consortium_member",
+      "ROLE_CONSORTIUM"           => "consortium",
       "ROLE_CONSORTIUM_ORGANIZATION" => "consortium_organization",
       "ROLE_CONTRACTUAL_PROVIDER" => "contractual_member",
       "ROLE_FOR_PROFIT_PROVIDER"  => "for_profit_provider",
@@ -524,8 +524,8 @@ class Provider < ActiveRecord::Base
   def can_be_in_consortium
     if consortium_id && member_type != "consortium_organization"
       errors.add(:consortium_id, "The provider must be of member_type consortium_organization")
-    elsif consortium_id && consortium.member_type != "consortium_member"
-      errors.add(:consortium_id, "The consortium must be of member_type consortium_member")
+    elsif consortium_id && consortium.member_type != "consortium"
+      errors.add(:consortium_id, "The consortium must be of member_type consortium")
     end
   end
 

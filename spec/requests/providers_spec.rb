@@ -165,7 +165,7 @@ describe "Providers", type: :request, elasticsearch: true  do
     end
 
     context 'create provider member_role consortium_organization' do
-      let(:consortium) { create(:provider, member_type: "consortium_member") }
+      let(:consortium) { create(:provider, member_type: "consortium") }
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
@@ -279,7 +279,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         post '/providers', params, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"].first).to eq("source"=>"consortium_id", "title"=>"The consortium must be of member_type consortium_member")
+        expect(json["errors"].first).to eq("source"=>"consortium_id", "title"=>"The consortium must be of member_type consortium")
       end
     end
 
