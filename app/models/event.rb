@@ -323,7 +323,7 @@ class Event < ActiveRecord::Base
     } 
   end
 
-  def self.advanced_aggregations
+  def self.advanced_aggregations(doi=nil)
     {
       unique_obj_count: { cardinality: { field: 'obj_id' }},
       unique_subj_count: { cardinality: { field: 'subj_id' }}
