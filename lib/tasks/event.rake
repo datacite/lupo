@@ -65,7 +65,7 @@ end
 namespace :crossref do
   desc 'Import crossref dois for all events'
   task :import_doi => :environment do
-    cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
+    cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id),Event.minimum(:id)]
 
     Event.update_crossref(cursor: cursor)
   end

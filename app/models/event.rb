@@ -410,7 +410,7 @@ class Event < ActiveRecord::Base
     logger = Logger.new(STDOUT)
 
     size = (options[:size] || 1000).to_i
-    cursor = [(options[:cursor] || [])]
+    cursor = (options[:cursor] || [])
 
     response = Event.query(nil, source_id: "crossref", page: { size: 1, cursor: [] })
     logger.info "[Update] #{response.results.total} events for source crossref."
