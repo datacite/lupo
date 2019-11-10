@@ -13,7 +13,7 @@ describe Doi, vcr: true do
 
     it "clean_xml malformed" do
       string = file_fixture('datacite_malformed.xml').read
-      expect { subject.clean_xml(string) }.to raise_error(Nokogiri::XML::SyntaxError, "39:18: FATAL: Premature end of data in tag resource line 2")
+      expect { subject.clean_xml(string) }.to raise_error(Nokogiri::XML::SyntaxError, "39:18: FATAL: EndTag: '</' not found")
     end
 
     it "clean_xml namespace" do
@@ -40,7 +40,7 @@ describe Doi, vcr: true do
 
     it "from_xml malformed" do
       string = file_fixture('datacite_malformed.xml').read
-      expect { subject.from_xml(string) }.to raise_error(Nokogiri::XML::SyntaxError, "40:1: FATAL: Premature end of data in tag resource line 2")
+      expect { subject.from_xml(string) }.to raise_error(Nokogiri::XML::SyntaxError, "40:1: FATAL: EndTag: '</' not found")
     end
   end
 
@@ -74,7 +74,7 @@ describe Doi, vcr: true do
 
     it "from_xml malformed" do
       string = file_fixture('datacite_malformed.xml').read
-      expect { subject.well_formed_xml(string) }.to raise_error(Nokogiri::XML::SyntaxError, "40:1: FATAL: Premature end of data in tag resource line 2")
+      expect { subject.well_formed_xml(string) }.to raise_error(Nokogiri::XML::SyntaxError, "40:1: FATAL: EndTag: '</' not found")
     end
 
     it "from_json" do
