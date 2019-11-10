@@ -70,6 +70,7 @@ module Indexable
         from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
         size: options.dig(:page, :size),
         sort: [options[:sort]],
+        track_total_hits: true,
         query: {
           terms: {
             symbol: ids.map(&:upcase)
@@ -86,6 +87,7 @@ module Indexable
         from: options[:page].present? ? (options.dig(:page, :number) - 1) * options.dig(:page, :size) : 0,
         size: options[:size] || 25,
         sort: [options[:sort]],
+        track_total_hits: true,
         query: {
           terms: {
             id: ids.split(",")
@@ -296,7 +298,8 @@ module Indexable
         sort: sort,
         query: es_query,
         collapse: unique,
-        aggregations: aggregations
+        aggregations: aggregations,
+        track_total_hits: true,
       }.compact)
     end
 
