@@ -323,7 +323,7 @@ class Event < ActiveRecord::Base
     } 
   end
 
-  def self.advanced_aggregations
+  def self.advanced_aggregations(doi=nil)
     {
       unique_obj_count: { cardinality: { field: 'obj_id' }},
       unique_subj_count: { cardinality: { field: 'subj_id' }}
@@ -410,7 +410,7 @@ class Event < ActiveRecord::Base
     logger = Logger.new(STDOUT)
 
     size = (options[:size] || 1000).to_i
-    cursor = [(options[:cursor] || [])]
+    cursor = (options[:cursor] || [])
 
     response = Event.query(nil, source_id: "crossref", page: { size: 1, cursor: [] })
     logger.info "[Update] #{response.results.total} events for source crossref."
