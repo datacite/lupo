@@ -90,14 +90,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Activity'
   '/activities/{id}':
-    parameters:
-      - name: id
-        in: path
-        description: Activity ID
-        required: true
-        schema:
-          type: string
     get:
+      parameters:
+        - name: id
+          in: path
+          description: Activity ID
+          required: true
+          schema:
+            type: string
       tags:
         - activities
       summary: Get a JSON API result of a specific activity
@@ -250,14 +250,14 @@ paths:
         '200':
           description: A JSON array of clients stats.
   '/clients/{id}':
-    parameters:
+    get:
+      parameters:
       - name: id
         in: path
         description: Client ID
         required: true
         schema:
           type: string
-    get:
       tags:
         - clients
       summary: Returns a client.
@@ -270,6 +270,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Client'
     put:
+      parameters:
+      - name: id
+        in: path
+        description: Client ID
+        required: true
+        schema:
+          type: string
       tags:
         - clients
       summary: Update a client.
@@ -283,6 +290,13 @@ paths:
         '200':
           description: OK
     delete:
+      parameters:
+      - name: id
+        in: path
+        description: Client ID
+        required: true
+        schema:
+          type: string
       tags:
         - clients
       summary: Delete a client.
@@ -400,14 +414,14 @@ paths:
         '201':
           description: Created
   '/dois/{id}':
-    parameters:
+    get:
+      parameters:
       - name: id
         in: path
         description: DOI
         required: true
         schema:
           type: string
-    get:
       tags:
         - dois
       summary: Returns a doi.
@@ -420,6 +434,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Doi'
     put:
+      parameters:
+      - name: id
+        in: path
+        description: DOI
+        required: true
+        schema:
+          type: string
       tags:
         - dois
       summary: Update a doi.
@@ -433,6 +454,13 @@ paths:
         '200':
           description: OK
     delete:
+      parameters:
+      - name: id
+        in: path
+        description: DOI
+        required: true
+        schema:
+          type: string
       tags:
         - dois
       summary: Delete a doi.
@@ -440,14 +468,14 @@ paths:
         '204':
           description: No content
   '/dois/{id}/activities':
-    parameters:
+    get:
+      parameters:
       - name: id
         in: path
         description: DOI
         required: true
         schema:
           type: string
-    get:
       tags:
         - dois
         - activities
@@ -573,14 +601,14 @@ paths:
         '201':
           description: Created
   '/events/{id}':
-    parameters:
+    get:
+      parameters:
       - name: id
         in: path
         description: Event
         required: true
         schema:
           type: string
-    get:
       tags:
         - events
       summary: Returns an event.
@@ -593,6 +621,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
     put:
+      parameters:
+      - name: id
+        in: path
+        description: Event
+        required: true
+        schema:
+          type: string
       tags:
         - events
       summary: Update an event.
@@ -606,6 +641,13 @@ paths:
         '200':
           description: OK
     delete:
+      parameters:
+      - name: id
+        in: path
+        description: Event
+        required: true
+        schema:
+          type: string
       tags:
         - events
       summary: Delete an event.
@@ -795,14 +837,14 @@ paths:
         '200':
           description: A JSON array of providers stats.
   '/providers/{id}':
-    parameters:
+    get:
+      parameters:
       - name: id
         in: path
         description: DOI
         required: true
         schema:
           type: string
-    get:
       tags:
         - providers
       summary: A provider.
@@ -814,6 +856,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Provider'
     put:
+      parameters:
+      - name: id
+        in: path
+        description: DOI
+        required: true
+        schema:
+          type: string
       tags:
         - providers
       summary: Update a provider.
@@ -827,6 +876,13 @@ paths:
         '200':
           description: OK
     delete:
+      parameters:
+      - name: id
+        in: path
+        description: DOI
+        required: true
+        schema:
+          type: string
       tags:
         - providers
       summary: Delete a provider.
@@ -906,14 +962,14 @@ paths:
         '201':
           description: Created
   '/reports/{id}':
-    parameters:
+    get:
+      parameters:
       - name: id
         in: path
         description: Report
         required: true
         schema:
           type: string
-    get:
       tags:
         - reports
       summary: A report.
@@ -925,6 +981,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Report'
     put:
+      parameters:
+      - name: id
+        in: path
+        description: Report
+        required: true
+        schema:
+          type: string
       tags:
         - reports
       summary: Update a report.
@@ -938,6 +1001,13 @@ paths:
         '200':
           description: OK
     delete:
+      parameters:
+      - name: id
+        in: path
+        description: Report
+        required: true
+        schema:
+          type: string
       tags:
         - reports
       summary: Delete a report.
