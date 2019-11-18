@@ -59,9 +59,8 @@ module DoiItem
     object.descriptions[0...first]
   end
 
-  def formatted_citation(style: "apa", locale: "en-US")
-    object.style = style
-    object.locale = locale
+  def formatted_citation
+    # defaults to style: apa and locale: en-US
     object.citation
   end
 end
