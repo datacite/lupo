@@ -34,7 +34,10 @@ module DoiItem
   field :url, String, null: true, description: "The URL registered for the resource"
   field :client, ClientType, null: true, description: "The client account managing this resource"
   field :provider, ProviderType, null: true, description: "The provider account managing this resource"
-  field :formatted_citation, String, null: true, description: "Metadata as formatted citation"
+  field :formatted_citation, String, null: true, description: "Metadata as formatted citation" do
+    argument :style, String, required: false, default_value: "apa"
+    argument :locale, String, required: false, default_value: "en-US"
+  end
   
   def type
     object.types["schemaOrg"]
@@ -61,8 +64,8 @@ module DoiItem
   end
 
   # defaults to style: apa and locale: en-US
-  def formatted_citation(style: "apa", locale: "en-US")
-    cp = CiteProc::Processor.new(style: style, locale: locale, format: 'html')
+  def formatted_citation(style: nil, locale: nil)
+    cp = CiteProc::Processor.new(style: style || "apa", locale: locale || "en-US", format: "html")
     cp.import Array.wrap(citeproc_hsh)
     bibliography = cp.render :bibliography, id: normalize_doi(object.doi)
     bibliography.first
