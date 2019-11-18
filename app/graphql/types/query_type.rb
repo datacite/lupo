@@ -143,20 +143,20 @@ class QueryType < BaseObject
     Person.query(query, limit: first).fetch(:data, [])
   end
 
-  field :dois, DoiConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
+  field :creative_works, CreativeWorkConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def dois(query: nil, first: nil)
+  def creative_works(query: nil, first: nil)
     Doi.query(query, state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
-  field :doi, DoiItem, null: false do
+  field :creative_work, CreativeWorkType, null: false do
     argument :id, ID, required: true
   end
 
-  def doi(id:)
+  def creative_work(id:)
     set_doi(id)
   end
 
