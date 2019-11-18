@@ -33,6 +33,7 @@ module DoiItem
   field :url, String, null: true, description: "The URL registered for the resource"
   field :client, ClientType, null: true, description: "The client account managing this resource"
   field :provider, ProviderType, null: true, description: "The provider account managing this resource"
+  field :formatted_citation, String, null: true, description: "Metadata as formatted citation"
   
   def type
     object.types["schemaOrg"]
@@ -56,5 +57,11 @@ module DoiItem
 
   def descriptions(first: nil)
     object.descriptions[0...first]
+  end
+
+  def formatted_citation(style: "apa", locale: "en-US")
+    object.style = style
+    object.locale = locale
+    object.citation
   end
 end
