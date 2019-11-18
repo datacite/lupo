@@ -268,7 +268,6 @@ class Doi < ActiveRecord::Base
       indexes :source,                         type: :keyword
       indexes :prefix,                         type: :keyword
       indexes :suffix,                         type: :keyword
-      indexes :citation,                       type: :text
       indexes :reason,                         type: :text
       indexes :landing_page, type: :object, properties: {
         checked: { type: :date, ignore_malformed: true },
@@ -446,7 +445,6 @@ class Doi < ActiveRecord::Base
       "aasm_state" => aasm_state,
       "schema_version" => schema_version,
       "metadata_version" => metadata_version,
-      "citation" => citation,
       "reason" => reason,
       "source" => source,
       "cache_key" => cache_key,
