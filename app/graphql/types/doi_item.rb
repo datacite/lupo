@@ -86,7 +86,7 @@ module DoiItem
       "issued" => get_date(object.dates, "Issued") ? get_date_parts(get_date(object.dates, "Issued")) : nil,
       "submitted" => Array.wrap(object.dates).find { |d| d["dateType"] == "Submitted" }.to_h.fetch("__content__", nil),
       "abstract" => parse_attributes(object.descriptions, content: "description", first: true),
-      "container-title" => object.container_title,
+      "container-title" => object.container.to_h["title"],
       "DOI" => object.doi,
       "volume" => object.container.to_h["volume"],
       "issue" => object.container.to_h["issue"],
