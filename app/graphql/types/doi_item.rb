@@ -2,6 +2,7 @@
 
 module DoiItem
   include BaseInterface
+  include Bolognese::MetadataUtils
 
   description "Information about DOIs"
 
@@ -59,8 +60,41 @@ module DoiItem
     object.descriptions[0...first]
   end
 
-  def formatted_citation
-    # defaults to style: apa and locale: en-US
-    object.citation
+  # defaults to style: apa and locale: en-US
+  def formatted_citation(style: "apa", locale: "en-US")
+    cp = CiteProc::Processor.new(style: style, locale: locale, format: 'html')
+    cp.import Array.wrap(citeproc_hsh)
+    bibliography = cp.render :bibliography, id: normalize_doi(object.doi)
+    bibliography.first
+  end
+
+  def citeproc_hsh
+    page = object.container.to_h["firstPage"].present? ? [object.container["firstPage"], object.container["lastPage"]].compact.join("-") : nil
+    if Array.wrap(object.creators).size == 1 && Array.wrap(object.creators).first.fetch("name", nil) == ":(unav)"
+      author = nil
+    else
+      author = to_citeproc(object.creators)
+    end
+
+    {
+      "type" => object.types["citeproc"],
+      "id" => normalize_doi(object.doi),
+      "categories" => Array.wrap(object.subjects).map { |k| parse_attributes(k, content: "subject", first: true) }.presence,
+      "language" => object.language,
+      "author" => author,
+      "contributor" => to_citeproc(object.contributors),
+      "issued" => get_date(object.dates, "Issued") ? get_date_parts(get_date(object.dates, "Issued")) : nil,
+      "submitted" => Array.wrap(object.dates).find { |d| d["dateType"] == "Submitted" }.to_h.fetch("__content__", nil),
+      "abstract" => parse_attributes(object.descriptions, content: "description", first: true),
+      "container-title" => object.container_title,
+      "DOI" => object.doi,
+      "volume" => object.container.to_h["volume"],
+      "issue" => object.container.to_h["issue"],
+      "page" => page,
+      "publisher" => object.publisher,
+      "title" => parse_attributes(object.titles, content: "title", first: true),
+      "URL" => object.url,
+      "version" => object.version_info
+    }.compact.symbolize_keys
   end
 end
