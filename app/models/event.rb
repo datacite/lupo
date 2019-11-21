@@ -207,7 +207,7 @@ class Event < ActiveRecord::Base
 
     sum_year_distribution = {
       sum_bucket: {
-        buckets_path: "years > total_by_year"
+        buckets_path: "years>total_by_year"
       }
     }
 
@@ -238,7 +238,7 @@ class Event < ActiveRecord::Base
   def self.metrics_aggregations(doi = nil)
     sum_distribution = {
       sum_bucket: {
-        buckets_path: "year_months > total_by_year_month"
+        buckets_path: "year_months>total_by_year_month"
       }
     }
  
@@ -278,7 +278,7 @@ class Event < ActiveRecord::Base
 
     sum_year_distribution = {
       sum_bucket: {
-        buckets_path: "years > total_by_year"
+        buckets_path: "years>total_by_year"
       }
     }
 
