@@ -484,21 +484,50 @@ class Doi < ActiveRecord::Base
   end
 
   def self.totals_aggregations
+    # {
+    #   providers_totals: {
+    #     composite: {
+    #       sources: [
+    #         { provider: { terms: { field: "provider_id", size: ::Provider.__elasticsearch__.count, min_doc_count: 1 } } },
+    #         { year: { date_histogram: { field: "created", calendar_interval: "year", format: "yyyy" } } }
+    #       ]
+    #     }
+    #   },
+    #   clients_totals: {
+    #     composite: {
+    #       sources: [
+    #         { client: { terms: { field: "client_id", size: ::Client.__elasticsearch__.count, min_doc_count: 1 } } },
+    #         { year: { date_histogram: { field: "created", calendar_interval: "year", format: "yyyy" } } }
+    #       ]
+    #     }
+    #   },
+    #   prefixes_totals: {
+    #     composite: {
+    #       sources: [
+    #         { prefix: { terms: { field: "prefix", size: ::Prefix.count, min_doc_count: 1 } } },
+    #         { year: { date_histogram: { field: "created", calendar_interval: "year", format: "yyyy" } } }
+    #       ]
+    #     }
+    #   }
+    # }
+
     {
-      providers_totals: { terms: { field: 'provider_id', size: ::Provider.__elasticsearch__.count, min_doc_count: 1 }, aggs: sub_aggregations},
+      providers_totals: { terms: { field: 'provider_id', size: ::Provider.__elasticsearch__.count, min_doc_count: 1 }, aggs: sub_aggregations },
       clients_totals: { terms: { field: 'client_id', size: ::Client.__elasticsearch__.count, min_doc_count: 1 }, aggs: sub_aggregations },
       prefixes_totals: { terms: { field: 'prefix', size: ::Prefix.count, min_doc_count: 1 }, aggs: sub_aggregations },
     }
   end
 
   def self.sub_aggregations
-    {
-      states: { terms: { field: 'aasm_state', size: 4, min_doc_count: 1 } },
-      this_month: { date_range: { field: 'created', ranges: { from: "now/M", to: "now/d" } } },
-      this_year: { date_range: { field: 'created', ranges: { from: "now/y", to: "now/d" } } },
-      last_year: { date_range: { field: 'created', ranges: { from: "now-1y/y", to: "now/y-1d" } } },
-      two_years_ago: { date_range: { field: 'created', ranges: { from: "now-2y/y", to: "now-1y/y-1d" } } }
-    }
+    { year: { date_histogram: { field: "created", calendar_interval: "year", format: "yyyy" } } }
+
+    # {
+    #   states: { terms: { field: 'aasm_state', size: 4, min_doc_count: 1 } },
+    #   this_month: { date_range: { field: 'created', ranges: { from: "now/M", to: "now/d" } } },
+    #   this_year: { date_range: { field: 'created', ranges: { from: "now/y", to: "now/d" } } },
+    #   last_year: { date_range: { field: 'created', ranges: { from: "now-1y/y", to: "now/y-1d" } } },
+    #   two_years_ago: { date_range: { field: 'created', ranges: { from: "now-2y/y", to: "now-1y/y-1d" } } }
+    # }
   end
 
   def self.query_fields

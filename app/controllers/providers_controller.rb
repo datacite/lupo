@@ -252,19 +252,6 @@ class ProvidersController < ApplicationController
     end
   end
 
-  def totals
-    logger = Logger.new(STDOUT)
-
-    page = { size: 0, number: 1 }
-
-    state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
-    response = Doi.query(nil, state: state, page: page, totals_agg: true)
-    total = response.results.total
-    registrant = total > 0 ? providers_totals(response.response.aggregations.providers_totals.buckets) : nil
-
-    render json: registrant, status: :ok
-  end
-
   # don't delete, but set deleted_at timestamp
   # a provider with active clients or with prefixes can't be deleted
   def destroy
@@ -286,6 +273,17 @@ class ProvidersController < ApplicationController
   def random
     symbol = generate_random_provider_symbol
     render json: { symbol: symbol }.to_json
+  end
+
+  def totals
+    page = { size: 0, number: 1 }
+
+    state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
+    response = Doi.query(nil, state: state, page: page, totals_agg: true)
+    total = response.results.total
+    registrant = total > 0 ? providers_totals(response.response.aggregations.providers_totals.buckets) : nil
+
+    render json: registrant, status: :ok
   end
 
   protected

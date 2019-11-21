@@ -96,6 +96,30 @@ describe "Providers", type: :request, elasticsearch: true  do
     end
   end
 
+  # describe 'GET /providers/totals' do
+  #   let(:provider)  { create(:provider) }
+  #   let(:client)  { create(:client, provider: provider) }
+  #   let!(:prefixes)  { create_list(:prefix, 10) }
+  #   let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+
+  #   before do
+  #     Provider.import
+  #     Client.import
+  #     sleep 2
+  #   end
+
+  #   it "returns providers" do
+  #     get "/providers/totals", nil, headers
+
+  #     puts last_response.body
+
+  #     expect(last_response.status).to eq(200)
+  #     expect(json['data'].size).to eq(4)
+  #     expect(json.dig('meta', 'total')).to eq(4)
+  #     expect(json.dig('meta')).to eq(4)
+  #   end
+  # end
+
   describe 'POST /providers' do
     context 'request is valid' do
       let(:params) do

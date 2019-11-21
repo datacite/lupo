@@ -80,8 +80,6 @@ class EventsController < ApplicationController
 
     page = page_from_params(params)
 
-    logger = Logger.new(STDOUT)
-
     if params[:id].present?
       response = Event.find_by_id(params[:id])
     elsif params[:ids].present?
