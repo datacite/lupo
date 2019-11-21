@@ -1,5 +1,3 @@
-require 'benchmark'
-
 class EventsController < ApplicationController
   include Identifiable
 
@@ -191,21 +189,15 @@ class EventsController < ApplicationController
 
     options[:is_collection] = true
     
-    bmr = Benchmark.ms {
-      events_serialized = EventSerializer.new(results, options).serializable_hash
-      if @include.include?(:dois)
-        options[:include] =[]
-        doi_names = (results.map { |event| event.doi}).uniq().join(",")
-        events_serialized[:included] = DoiSerializer.new((Doi.find_by_id(doi_names).results), {is_collection: true}).serializable_hash.dig(:data) 
-      end
-        render json: events_serialized, status: :ok
-    }
+    events_serialized = EventSerializer.new(results, options).serializable_hash
 
-    if bmr > 3000
-      logger.warn "[Benchmark Warning] Events render.} " + bmr.to_s + " ms"
-    else
-      logger.info "[Benchmark] Events render.} " + bmr.to_s + " ms"
+    if @include.include?(:dois)
+      options[:include] = []
+      doi_names = (results.map { |event| event.doi}).uniq().join(",")
+      events_serialized[:included] = DoiSerializer.new((Doi.find_by_id(doi_names).results), {is_collection: true}).serializable_hash.dig(:data) 
     end
+
+    render json: events_serialized, status: :ok
   end
 
   def destroy

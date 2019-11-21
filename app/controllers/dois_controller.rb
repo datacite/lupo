@@ -1,6 +1,5 @@
 require 'uri'
 require 'base64'
-require 'benchmark'
 
 class DoisController < ApplicationController
   include ActionController::MimeResponds
@@ -45,9 +44,7 @@ class DoisController < ApplicationController
     params[:state] = "findable" if current_user.nil? || current_user.role_id == "user"
 
     if params[:id].present?
-      logger.info "[Benchmark] find_by_id " + Benchmark.ms {
-        response = Doi.find_by_id(params[:id])
-      }.to_s + " ms"
+      response = Doi.find_by_id(params[:id])
     elsif params[:ids].present?
       response = Doi.find_by_id(params[:ids], page: page, sort: sort)
     else
@@ -84,12 +81,6 @@ class DoisController < ApplicationController
     end
 
     begin
-      if response.took > 1000
-        logger.warn "[Benchmark Warning] Elasticsearch request " + response.took.to_s + " ms"
-      else
-        logger.info "[Benchmark] Elasticsearch request " + response.took.to_s + " ms"
-      end
-
       # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
       if sample_group_field.present?
         sample_dois = []
@@ -113,50 +104,24 @@ class DoisController < ApplicationController
         total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
       end
 
-      # we need to define those variables before the block
-      states = nil
-      resource_types = nil
-      created = nil
-      registered = nil
-      providers = nil
-      clients = nil
-      affiliations = nil
-      prefixes = nil
-      schema_versions = nil
-      sources = nil
-      link_checks_status = nil
-      links_with_schema_org = nil
-      link_checks_schema_org_id = nil
-      link_checks_dc_identifier = nil
-      link_checks_citation_doi = nil
-      links_checked = nil
-      subjects = nil
-      certificates = nil
-      bma = Benchmark.ms {
-        states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
-        resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
-        created = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
-        registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
-        providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
-        clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
-        affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
-        prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
-        schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
-        sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
-        link_checks_status = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_status.buckets) : nil
-        links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_has_schema_org.buckets) : nil
-        link_checks_schema_org_id = total > 0 ? response.response.aggregations.link_checks_schema_org_id.value : nil
-        link_checks_dc_identifier = total > 0 ? response.response.aggregations.link_checks_dc_identifier.value : nil
-        link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
-        links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
-        subjects = total > 0 ? facet_by_key(response.response.aggregations.subjects.buckets) : nil
-        certificates = total > 0 ? facet_by_key(response.response.aggregations.certificates.buckets) : nil
-      }
-      if bma > 1000
-        logger.warn "[Benchmark Warning] aggregations " + bma.to_s + " ms"
-      else
-        logger.info "[Benchmark] aggregations " + bma.to_s + " ms"
-      end
+      states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
+      resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
+      created = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
+      registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
+      providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+      clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
+      affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
+      prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
+      schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
+      sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
+      link_checks_status = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_status.buckets) : nil
+      links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_has_schema_org.buckets) : nil
+      link_checks_schema_org_id = total > 0 ? response.response.aggregations.link_checks_schema_org_id.value : nil
+      link_checks_dc_identifier = total > 0 ? response.response.aggregations.link_checks_dc_identifier.value : nil
+      link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
+      links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
+      subjects = total > 0 ? facet_by_key(response.response.aggregations.subjects.buckets) : nil
+      certificates = total > 0 ? facet_by_key(response.response.aggregations.certificates.buckets) : nil
 
       respond_to do |format|
         format.json do
@@ -207,20 +172,12 @@ class DoisController < ApplicationController
             is_collection: options[:is_collection]
           }
 
-          bmr = Benchmark.ms {
-            # sparse fieldsets
-            fields = fields_from_params(params)
-            if fields
-              render json: DoiSerializer.new(results, options.merge(fields: fields)).serialized_json, status: :ok
-            else
-              render json: DoiSerializer.new(results, options).serialized_json, status: :ok
-            end
-          }
-
-          if bmr > 3000
-            logger.warn "[Benchmark Warning] render " + bmr.to_s + " ms"
+          # sparse fieldsets
+          fields = fields_from_params(params)
+          if fields
+            render json: DoiSerializer.new(results, options.merge(fields: fields)).serialized_json, status: :ok
           else
-            logger.info "[Benchmark] render " + bmr.to_s + " ms"
+            render json: DoiSerializer.new(results, options).serialized_json, status: :ok
           end
         end
 

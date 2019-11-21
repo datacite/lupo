@@ -1,5 +1,3 @@
-require 'benchmark'
-
 class ClientsController < ApplicationController
   include Countable
 
@@ -160,36 +158,12 @@ class ClientsController < ApplicationController
     logger = Logger.new(STDOUT)
 
     page = { size: 0, number: 1}
-    response = nil
-    bmt = Benchmark.ms {
-      state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
-      response = Doi.query(nil, provider_id: params[:provider_id], state: state, page: page, totals_agg: true)
-    }
-    if bmt > 10000
-      logger.warn "[Benchmark Warning] clients totals " + bmt.to_s + " ms"
-    else
-      logger.info "[Benchmark] clients totals " + bmt.to_s + " ms"
-    end
+    state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
+    response = Doi.query(nil, provider_id: params[:provider_id], state: state, page: page, totals_agg: true)
     total = response.results.total
 
-    registrant = nil
-    bmc = Benchmark.ms {
-      registrant = total > 0 ? clients_totals(response.response.aggregations.clients_totals.buckets) : nil
-    }
-    if bmc > 10000
-      logger.warn "[Benchmark Warning] clients clients_totals " + bmc.to_s + " ms"
-    else
-      logger.info "[Benchmark] clients clients_totals " + bmc.to_s + " ms"
-    end
-
-    bmr = Benchmark.ms {
-      render json: registrant, status: :ok
-    }
-    if bmr > 10000
-      logger.warn "[Benchmark Warning] clients render " + bmr.to_s + " ms"
-    else
-      logger.info "[Benchmark] clients render " + bmr.to_s + " ms"
-    end
+    registrant = total > 0 ? clients_totals(response.response.aggregations.clients_totals.buckets) : nil
+    render json: registrant, status: :ok
   end
 
   protected
