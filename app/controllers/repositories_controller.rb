@@ -186,9 +186,8 @@ class RepositoriesController < ApplicationController
 
     state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
     response = Doi.query(nil, provider_id: params[:provider_id], state: state, page: page, totals_agg: true)
-    total = response.results.total
-
-    registrant = total > 0 ? clients_totals(response.response.aggregations.clients_totals.buckets) : nil
+    registrant = clients_totals(response.response.aggregations.clients_totals.buckets)
+    
     render json: registrant, status: :ok
   end
 

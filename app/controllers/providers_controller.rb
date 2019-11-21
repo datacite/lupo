@@ -280,8 +280,7 @@ class ProvidersController < ApplicationController
 
     state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
     response = Doi.query(nil, state: state, page: page, totals_agg: true)
-    total = response.results.total
-    registrant = total > 0 ? providers_totals(response.response.aggregations.providers_totals.buckets) : nil
+    registrant = providers_totals(response.response.aggregations.providers_totals.buckets)
 
     render json: registrant, status: :ok
   end
