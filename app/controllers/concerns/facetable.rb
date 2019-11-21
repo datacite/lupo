@@ -33,10 +33,10 @@ module Facetable
       end
     end
 
-    def facet_anual(arr)
+    def facet_annual(arr)
       arr.map do |hsh|
-        { "id" => hsh["key"][0..3],
-          "title" => hsh["key"][0..3],
+        { "id" => hsh["key_as_string"],
+          "title" => hsh["key_as_string"],
           "count" => hsh["doc_count"] }
       end
     end
@@ -323,7 +323,7 @@ module Facetable
         { "id" => hsh["key"],
           "title" => providers[hsh["key"].upcase],
           "count" => hsh["doc_count"],
-          "year" => facet_anual(hsh.year.buckets)
+          "year" => facet_annual(hsh.year.buckets)
 
           # "this_month" => facet_anual(hsh.this_month.buckets),
           # "this_year" => facet_anual(hsh.this_year.buckets),
@@ -339,7 +339,7 @@ module Facetable
         { "id" => hsh["key"],
           "title" => hsh["key"],
           "count" => hsh["doc_count"],
-          "year" => facet_anual(hsh.year.buckets)
+          "year" => facet_annual(hsh.year.buckets)
           # "temporal" => {
           #   "this_month" => facet_anual(hsh.this_month.buckets),
           #   "this_year" => facet_anual(hsh.this_year.buckets),
@@ -360,7 +360,7 @@ module Facetable
         { "id" => hsh["key"],
           "title" => clients[hsh["key"].upcase],
           "count" => hsh["doc_count"],
-          "year" => facet_anual(hsh.year.buckets)
+          "year" => facet_annual(hsh.year.buckets)
           # "temporal" => {
           #   "this_month" => facet_anual(hsh.this_month.buckets),
           #   "this_year" => facet_anual(hsh.this_year.buckets),
