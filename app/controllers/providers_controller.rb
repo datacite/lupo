@@ -1,5 +1,3 @@
-require 'benchmark'
-
 class ProvidersController < ApplicationController
   include ActionController::MimeResponds
   include Countable
@@ -258,40 +256,13 @@ class ProvidersController < ApplicationController
     logger = Logger.new(STDOUT)
 
     page = { size: 0, number: 1 }
-    response = nil
-    bmt = Benchmark.ms {
-      state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
-      response = Doi.query(nil, state: state, page: page, totals_agg: true)
-    }
-    
-    if bmt > 10000
-      logger.warn "[Benchmark Warning] providers totals " + bmt.to_s + " ms"
-    else
-      logger.info "[Benchmark] providers totals " + bmt.to_s + " ms"
-    end
 
-    logger.info response.results.inspect
-
+    state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
+    response = Doi.query(nil, state: state, page: page, totals_agg: true)
     total = response.results.total
+    registrant = total > 0 ? providers_totals(response.response.aggregations.providers_totals.buckets) : nil
 
-    registrant = nil
-    bmp = Benchmark.ms {
-      registrant = total > 0 ? providers_totals(response.response.aggregations.providers_totals.buckets) : nil
-    }
-    if bmp > 10000
-      logger.warn "[Benchmark Warning] providers providers_totals " + bmp.to_s + " ms"
-    else
-      logger.info "[Benchmark] providers providers_totals " + bmp.to_s + " ms"
-    end
-
-    bmr = Benchmark.ms {
-      render json: registrant, status: :ok
-    }
-    if bmr > 10000
-      logger.warn "[Benchmark Warning] providers render " + bmr.to_s + " ms"
-    else
-      logger.info "[Benchmark] providers render " + bmr.to_s + " ms"
-    end
+    render json: registrant, status: :ok
   end
 
   # don't delete, but set deleted_at timestamp
