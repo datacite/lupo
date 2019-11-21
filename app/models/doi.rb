@@ -515,9 +515,9 @@ class Doi < ActiveRecord::Base
     # }
 
     {
-      providers_totals: { terms: { field: 'provider_id', size: 25, min_doc_count: 1 }, aggs: sub_aggregations },
-      clients_totals: { terms: { field: 'client_id', size: 25, min_doc_count: 1 }, aggs: sub_aggregations },
-      prefixes_totals: { terms: { field: 'prefix', size: 25, min_doc_count: 1 }, aggs: sub_aggregations },
+      providers_totals: { terms: { field: 'provider_id', size: 250, min_doc_count: 1 }, aggs: sub_aggregations },
+      clients_totals: { terms: { field: 'client_id', size: 250, min_doc_count: 1 }, aggs: sub_aggregations },
+      prefixes_totals: { terms: { field: 'prefix', size: 250, min_doc_count: 1 }, aggs: sub_aggregations },
     }
   end
 
