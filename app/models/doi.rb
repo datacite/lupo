@@ -522,7 +522,10 @@ class Doi < ActiveRecord::Base
   end
 
   def self.sub_aggregations
-    { year: { date_histogram: { field: "created", interval: "year", format: "yyyy" } } }
+    {
+      states: { terms: { field: 'aasm_state', size: 4, min_doc_count: 1 } },
+      year: { date_histogram: { field: "created", interval: "year", format: "yyyy" } }
+    }
 
     # {
     #   states: { terms: { field: 'aasm_state', size: 4, min_doc_count: 1 } },

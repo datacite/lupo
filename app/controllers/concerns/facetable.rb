@@ -323,7 +323,8 @@ module Facetable
         { "id" => hsh["key"],
           "title" => providers[hsh["key"].upcase],
           "count" => hsh["doc_count"],
-          "year" => facet_annual(hsh.year.buckets)
+          "year" => facet_annual(hsh.year.buckets),
+          "states" => facet_by_key(hsh.states.buckets)
 
           # "this_month" => facet_anual(hsh.this_month.buckets),
           # "this_year" => facet_anual(hsh.this_year.buckets),
@@ -339,7 +340,9 @@ module Facetable
         { "id" => hsh["key"],
           "title" => hsh["key"],
           "count" => hsh["doc_count"],
-          "year" => facet_annual(hsh.year.buckets)
+          "year" => facet_annual(hsh.year.buckets),
+          "states" => facet_by_key(hsh.states.buckets)
+
           # "temporal" => {
           #   "this_month" => facet_anual(hsh.this_month.buckets),
           #   "this_year" => facet_anual(hsh.this_year.buckets),
@@ -360,7 +363,9 @@ module Facetable
         { "id" => hsh["key"],
           "title" => clients[hsh["key"].upcase],
           "count" => hsh["doc_count"],
-          "year" => facet_annual(hsh.year.buckets)
+          "year" => facet_annual(hsh.year.buckets),
+          "states" => facet_by_key(hsh.states.buckets)
+          
           # "temporal" => {
           #   "this_month" => facet_anual(hsh.this_month.buckets),
           #   "this_year" => facet_anual(hsh.this_year.buckets),
