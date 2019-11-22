@@ -147,7 +147,7 @@ class ExportController < ApplicationController
             end
 
             # Get doi counts via DOIS query and combine next to clients.
-            response = Doi.query(nil, state: "registered,findable", page: { size: 0, number: 1}, totals_agg: true)
+            response = Doi.query(nil, state: "registered,findable", page: { size: 0, number: 1}, totals_agg: "client")
 
             client_totals = {}
             totals_buckets = response.response.aggregations.clients_totals.buckets

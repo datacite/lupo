@@ -110,7 +110,16 @@ module Indexable
     end
 
     def query(query, options={})
-      aggregations = options[:totals_agg] == true ? totals_aggregations : get_aggregations_hash(options)
+      if options[:totals_agg] == "provider"
+        aggregations = provider_aggregations
+      elsif options[:totals_agg] == "client"
+        aggregations = client_aggregations
+      elsif options[:totals_agg] == "prefix"
+        aggregations = prefix_aggregations
+      else
+        aggregations = get_aggregations_hash(options)
+      end
+
       options[:page] ||= {}
       options[:page][:number] ||= 1
       options[:page][:size] ||= 25

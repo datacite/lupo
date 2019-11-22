@@ -136,8 +136,10 @@ class PrefixesController < ApplicationController
   end
 
   def totals
+    return [] unless params[:client_id].present?
+
     page = { size: 0, number: 1}
-    response = Doi.query(nil, client_id: params[:client_id], state: "findable,registered", page: page, totals_agg: true)
+    response = Doi.query(nil, client_id: params[:client_id], state: "findable,registered", page: page, totals_agg: "prefix")
     registrant = prefixes_totals(response.response.aggregations.prefixes_totals.buckets)
     
     render json: registrant, status: :ok

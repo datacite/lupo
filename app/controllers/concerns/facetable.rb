@@ -35,8 +35,8 @@ module Facetable
 
     def facet_annual(arr)
       arr.map do |hsh|
-        { "id" => hsh["key_as_string"],
-          "title" => hsh["key_as_string"],
+        { "id" => hsh["key"][0..3],
+          "title" => hsh["key"][0..3],
           "count" => hsh["doc_count"] }
       end
     end
@@ -189,8 +189,6 @@ module Facetable
         "yearMonths" => arr }
     end
 
-    
-
     def facet_by_relation_type(arr)
       arr.map do |hsh|
         arr = hsh.dig("year_months", "buckets").map do |h|
@@ -323,7 +321,13 @@ module Facetable
         { "id" => hsh["key"],
           "title" => providers[hsh["key"].upcase],
           "count" => hsh["doc_count"],
-          "year" => facet_annual(hsh.year.buckets)
+          "temporal" => {
+            "this_month" => facet_annual(hsh.this_month.buckets),
+            "this_year" => facet_annual(hsh.this_year.buckets),
+            "last_year" => facet_annual(hsh.last_year.buckets),
+            "two_years_ago" => facet_annual(hsh.two_years_ago.buckets)
+          },
+          "states"    => facet_by_key(hsh.states.buckets)
         }
       end
     end
@@ -333,11 +337,15 @@ module Facetable
         { "id" => hsh["key"],
           "title" => hsh["key"],
           "count" => hsh["doc_count"],
-          "year" => facet_annual(hsh.year.buckets)
+          "temporal" => {
+            "this_month" => facet_annual(hsh.this_month.buckets),
+            "this_year" => facet_annual(hsh.this_year.buckets),
+            "last_year" => facet_annual(hsh.last_year.buckets)
+          },
+          "states"    => facet_by_key(hsh.states.buckets)
         }
       end
     end
-
 
     def clients_totals(arr)
       logger = Logger.new(STDOUT)
@@ -348,7 +356,13 @@ module Facetable
         { "id" => hsh["key"],
           "title" => clients[hsh["key"].upcase],
           "count" => hsh["doc_count"],
-          "year" => facet_annual(hsh.year.buckets)
+          "temporal" => {
+            "this_month" => facet_annual(hsh.this_month.buckets),
+            "this_year" => facet_annual(hsh.this_year.buckets),
+            "last_year" => facet_annual(hsh.last_year.buckets),
+            "two_years_ago" => facet_annual(hsh.two_years_ago.buckets)
+          },
+          "states"    => facet_by_key(hsh.states.buckets)
         }
       end
     end
