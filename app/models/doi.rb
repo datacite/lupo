@@ -522,18 +522,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.sub_aggregations
-    {
-      states: { terms: { field: 'aasm_state', size: 4, min_doc_count: 1 } },
-      year: { date_histogram: { field: "created", interval: "year", format: "yyyy" } }
-    }
-
-    # {
-    #   states: { terms: { field: 'aasm_state', size: 4, min_doc_count: 1 } },
-    #   this_month: { date_range: { field: 'created', ranges: { from: "now/M", to: "now/d" } } },
-    #   this_year: { date_range: { field: 'created', ranges: { from: "now/y", to: "now/d" } } },
-    #   last_year: { date_range: { field: 'created', ranges: { from: "now-1y/y", to: "now/y-1d" } } },
-    #   two_years_ago: { date_range: { field: 'created', ranges: { from: "now-2y/y", to: "now-1y/y-1d" } } }
-    # }
+    { year: { date_histogram: { field: "created", interval: "year", format: "yyyy" } } }
   end
 
   def self.query_fields

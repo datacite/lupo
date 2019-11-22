@@ -323,14 +323,7 @@ module Facetable
         { "id" => hsh["key"],
           "title" => providers[hsh["key"].upcase],
           "count" => hsh["doc_count"],
-          "year" => facet_annual(hsh.year.buckets),
-          "states" => facet_by_key(hsh.states.buckets)
-
-          # "this_month" => facet_anual(hsh.this_month.buckets),
-          # "this_year" => facet_anual(hsh.this_year.buckets),
-          # "last_year" => facet_anual(hsh.last_year.buckets)},
-          # "two_years_ago" => facet_anual(hsh.two_years_ago.buckets),
-          # "states"    => facet_by_key(hsh.states.buckets)
+          "year" => facet_annual(hsh.year.buckets)
         }
       end
     end
@@ -340,15 +333,7 @@ module Facetable
         { "id" => hsh["key"],
           "title" => hsh["key"],
           "count" => hsh["doc_count"],
-          "year" => facet_annual(hsh.year.buckets),
-          "states" => facet_by_key(hsh.states.buckets)
-
-          # "temporal" => {
-          #   "this_month" => facet_anual(hsh.this_month.buckets),
-          #   "this_year" => facet_anual(hsh.this_year.buckets),
-          #   "last_year" => facet_anual(hsh.last_year.buckets)
-          # },
-          #"states"    => facet_by_key(hsh.states.buckets)
+          "year" => facet_annual(hsh.year.buckets)
         }
       end
     end
@@ -363,16 +348,7 @@ module Facetable
         { "id" => hsh["key"],
           "title" => clients[hsh["key"].upcase],
           "count" => hsh["doc_count"],
-          "year" => facet_annual(hsh.year.buckets),
-          "states" => facet_by_key(hsh.states.buckets)
-          
-          # "temporal" => {
-          #   "this_month" => facet_anual(hsh.this_month.buckets),
-          #   "this_year" => facet_anual(hsh.this_year.buckets),
-          #   "last_year" => facet_anual(hsh.last_year.buckets),
-          #   "two_years_ago" => facet_anual(hsh.two_years_ago.buckets)
-          # },
-          # "states"    => facet_by_key(hsh.states.buckets)
+          "year" => facet_annual(hsh.year.buckets)
         }
       end
     end
