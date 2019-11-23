@@ -19,7 +19,7 @@ else
   #     request: { timeout: 30 }
   #   }
   # }
-  Elasticsearch::Model.client = Elasticsearch::Client.new(host: ENV['ES_HOST'], user: "elastic", password: ENV['ELASTIC_PASSWORD']) do |f|
+  Elasticsearch::Model.client = Elasticsearch::Client.new(host: ENV['ES_HOST'], port: ENV['ES_PORT'], scheme: ENV['ES_SCHEME'], user: "elastic", password: ENV['ELASTIC_PASSWORD']) do |f|
     f.adapter :excon
   end
 end
