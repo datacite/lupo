@@ -1,3 +1,0 @@
-service_name: 'lupo'
-secret_token: <%= ENV['APM_SECRET_TOKEN'] %>
-server_url: <%= ENV['APM_SERVER_URL'] %>
