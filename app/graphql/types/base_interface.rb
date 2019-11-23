@@ -2,6 +2,7 @@
 
 module BaseInterface
   include GraphQL::Schema::Interface
-  
-  field_class GraphQL::Cache::Field
+  include ApolloFederation::Interface
+
+  field_class BaseField
 end
