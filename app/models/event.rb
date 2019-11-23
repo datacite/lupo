@@ -214,10 +214,10 @@ class Event < ActiveRecord::Base
     {
       sources: { terms: { field: 'source_id', size: 50, min_doc_count: 1 } },
       prefixes: { terms: { field: 'prefix', size: 50, min_doc_count: 1 } },
-      registrants: { terms: { field: 'registrant_id', size: 50, min_doc_count: 1 }, aggs: { year: { date_histogram: { field: 'occurred_at', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}}} },
+      registrants: { terms: { field: 'registrant_id', size: 50, min_doc_count: 1 }, aggs: { year: { date_histogram: { field: 'occurred_at', calendar_interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}}} },
       pairings: { terms: { field: 'registrant_id', size: 50, min_doc_count: 1 }, aggs: { recipient: { terms: { field: 'registrant_id', size: 50, min_doc_count: 1 }, aggs: { "total" => { sum: { field: 'total' }}}}} },
-      citation_types: { terms: { field: 'citation_type', size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: 'occurred_at', interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' }}}}} },
-      relation_types: { terms: { field: 'relation_type_id', size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: 'occurred_at', interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_distribution} },
+      citation_types: { terms: { field: 'citation_type', size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: 'occurred_at', calendar_interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' }}}}} },
+      relation_types: { terms: { field: 'relation_type_id', size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: 'occurred_at', calendar_interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_distribution} },
       dois: { terms: { field: 'obj_id', size: 50, min_doc_count: 1 }, aggs: { relation_types: { terms: { field: 'relation_type_id',size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: 'total' }}}}} },
       dois_usage: {
         filter: { script: { script: "doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].size() > 0 && doc['obj.datePublished'].size() > 0 && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()" }},
@@ -230,7 +230,7 @@ class Event < ActiveRecord::Base
             script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
           }
         },
-        aggs: { years: { date_histogram: { field: 'occurred_at', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
+        aggs: { years: { date_histogram: { field: 'occurred_at', calendar_interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
       }
     }
   end
@@ -255,7 +255,7 @@ class Event < ActiveRecord::Base
       views_histogram: {
         filter: views_filter,
         aggs: {
-          year_months: { date_histogram: { field: 'occurred_at', interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' } } } }, "sum_distribution" => sum_distribution
+          year_months: { date_histogram: { field: 'occurred_at', calendar_interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' } } } }, "sum_distribution" => sum_distribution
         }
       },
       downloads: {
@@ -267,7 +267,7 @@ class Event < ActiveRecord::Base
       downloads_histogram: {
         filter: downloads_filter,
         aggs: {
-          year_months: { date_histogram: { field: 'occurred_at', interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' } } } }, "sum_distribution" => sum_distribution
+          year_months: { date_histogram: { field: 'occurred_at', calendar_interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' } } } }, "sum_distribution" => sum_distribution
         }
       }
     }
