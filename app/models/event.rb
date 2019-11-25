@@ -312,6 +312,21 @@ class Event < ActiveRecord::Base
     } 
   end
 
+
+  def self.citation_count_aggregation(doi)
+    # doi = Event.new.normalize_doi(doi) if doi.present?
+    # citations_filter = { script: { script: "(#{PASSIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['subj_id'].value) || (#{ACTIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['obj_id'].value)" } }
+    # references_filter = { script: { script: "(#{PASSIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['obj_id'].value) || (#{ACTIVE_RELATION_TYPES}.contains(doc['relation_type_id'].value) && '#{doi}' == doc['subj_id'].value)" } }
+
+    {      
+      citations: {
+        terms: { field: 'doi', size: 100, min_doc_count: 1 }, aggs: { total: { cardinality: { field: 'citation_id' }}}
+      }
+    }
+    
+  end
+  
+
   def self.advanced_aggregations(doi=nil)
     {
       unique_obj_count: { cardinality: { field: 'obj_id' }},
