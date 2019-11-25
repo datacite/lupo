@@ -104,6 +104,7 @@ Rails.application.routes.draw do
     resources :prefixes, constraints: { :id => /.+/ }
   end
   resources :providers, constraints: { :id => /.+/ }
+  resources :repository_prefixes, path: "repository-prefixes"
   resources :resource_types, path: 'resource-types', only: [:show, :index]
 
   # custom routes for maintenance tasks

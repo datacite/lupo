@@ -40,6 +40,18 @@ class ClientPrefix < ActiveRecord::Base
     self.datacentre = r.id
   end
 
+  def repository_id
+    client_symbol.downcase
+  end
+
+  # workaround for non-standard database column names and association
+  def repository_id=(value)
+    r = ::Client.where(symbol: value).first
+    fail ActiveRecord::RecordNotFound unless r.present?
+
+    self.datacentre = r.id
+  end
+
   def prefix_id
     prefix.prefix
   end

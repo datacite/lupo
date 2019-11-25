@@ -1,24 +1,24 @@
 require 'rails_helper'
 
-describe "Client Prefixes", type: :request do
+describe "Repository Prefixes", type: :request do
   let!(:client_prefixes)  { create_list(:client_prefix, 5) }
   let(:client_prefix) { create(:client_prefix) }
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
 
-  describe 'GET /client-prefixes' do
-    it 'returns client-prefixes' do
-      get '/client-prefixes', nil, headers
+  describe 'GET /repository-prefixes' do
+    it 'returns repository-prefixes' do
+      get '/repository-prefixes', nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(5)
     end
   end
 
-  describe 'GET /client-prefixes/:uid' do
+  describe 'GET /repository-prefixes/:uid' do
     context 'when the record exists' do
-      it 'returns the client-prefix' do
-        get "/client-prefixes/#{client_prefix.uid}", nil, headers
+      it 'returns the repository-prefix' do
+        get "/repository-prefixes/#{client_prefix.uid}", nil, headers
         
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "id")).to eq(client_prefix.uid)
@@ -27,7 +27,7 @@ describe "Client Prefixes", type: :request do
 
     context 'when the record does not exist' do
       it 'returns status code 404' do
-        get "/client-prefixes/xxx", nil, headers
+        get "/repository-prefixes/xxx", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
@@ -35,16 +35,16 @@ describe "Client Prefixes", type: :request do
     end
   end
 
-  describe 'PATCH /client-prefixes/:uid' do
+  describe 'PATCH /repository-prefixes/:uid' do
     it 'returns method not supported error' do
-      patch "/client-prefixes/#{client_prefix.uid}", nil, headers
-      
+      patch "/repository-prefixes/#{client_prefix.uid}", nil, headers
+
       expect(last_response.status).to eq(405)
       expect(json.dig("errors")).to eq([{"status"=>"405", "title"=>"Method not allowed"}])
     end
   end
 
-  describe 'POST /client-prefixes' do
+  describe 'POST /repository-prefixes' do
     context 'when the request is valid' do
       let(:provider) { create(:provider) }
       let(:client) { create(:client, provider: provider) }
@@ -53,11 +53,11 @@ describe "Client Prefixes", type: :request do
       let(:valid_attributes) do
         {
           "data" => {
-            "type" => "client-prefixes",
+            "type" => "repository-prefixes",
             "relationships": {
-              "client": {
+              "repository": {
                 "data":{
-                  "type": "clients",
+                  "type": "repositories",
                   "id": client.symbol.downcase
                 }
               },
@@ -78,8 +78,8 @@ describe "Client Prefixes", type: :request do
         }
       end
 
-      it 'creates a client-prefix' do
-        post '/client-prefixes', valid_attributes, headers
+      it 'creates a repository-prefix' do
+        post '/repository-prefixes', valid_attributes, headers
 
         expect(last_response.status).to eq(201)
         expect(json.dig('data', 'id')).not_to be_nil
@@ -91,13 +91,13 @@ describe "Client Prefixes", type: :request do
       let(:not_valid_attributes) do
         {
           "data" => {
-            "type" => "client-prefixes"
+            "type" => "repository-prefixes"
           }
         }
       end
 
       it 'returns status code 422' do
-        post '/client-prefixes', not_valid_attributes, headers
+        post '/repository-prefixes', not_valid_attributes, headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq("source"=>"client", "title"=>"Must exist")
