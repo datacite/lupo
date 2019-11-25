@@ -699,35 +699,40 @@ describe "/events", type: :request, elasticsearch: true do
       end
     end
 
-    # # We cannot do this anymore as the aggregation needs to be done per doi
-    # context "unique citations for a list of dois" do
-    #   let!(:event) { create_list(:event_for_datacite_related, 50) }
-    #   let!(:copies) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v1", relation_type_id: "cites") }
-    #   let(:dois) { ((event.map{ |e| e['subj_id'].gsub("https://doi.org/","")})[1, 20]).join(",")}
-    #   let(:uri) { "/events?aggregations=metrics_aggregations&dois=#{dois}" }
+    # We cannot do this anymore as the aggregation needs to be done per doi
+    context "unique citations for a list of dois" do
+      let!(:event) { create_list(:event_for_datacite_related, 50, relation_type_id: "is-cited-by") }
+      let(:doi) { "https://doi.org/10.5061/dryad.47sd5/1".gsub("https://doi.org/","")}
+      let!(:copies) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v1", relation_type_id: "cites") }
+      let(:dois) { ((event.map{ |e| e['subj_id'].gsub("https://doi.org/","")})[1, 20]).join(",")}
+      let(:uri) { "/events?aggregations=metrics_aggregations&doi=#{dois}" }
 
-    #   before do
-    #     Event.import
-    #     sleep 1
-    #   end
+      before do
+        Event.import
+        sleep 1
+      end
 
-    #   # Exclude the token header.
-    #   let(:headers) do
-    #     { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
-    #   end
+      # Exclude the token header.
+      let(:headers) do
+        { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
+      end
 
-    #   it "json" do
-    #     get uri, nil, headers
+      it "json" do
+        get uri, nil, headers
 
-    #     expect(last_response.status).to eq(200)
-    #     response = JSON.parse(last_response.body)
-    #     citations = (response.dig("meta", "uniqueCitations")).select { |item| item["id"] == doi }
-    #     total = response.dig("meta", "total")
+        puts event[2].inspect
 
-    #     expect(total).to eq(51)
-    #     expect((citations.select { |doi| dois.split(",").include?(doi["id"]) }).length).to eq(20)
-    #   end
-    # end
+
+        expect(last_response.status).to eq(200)
+        response = JSON.parse(last_response.body)
+        puts response.dig("meta", "uniqueCitations")
+        citations = (response.dig("meta", "uniqueCitations")).select { |item| item["id"] == doi }
+        total = response.dig("meta", "total")
+
+        expect(total).to eq(51)
+        expect((citations.select { |doi| dois.split(",").include?(doi["id"]) }).length).to eq(20)
+      end
+    end
 
     # Just test that the API can be accessed without a token.
     # context "with no API key" do
