@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Event < ActiveRecord::Base
   # include helper module for query caching
   include Cacheable
@@ -23,8 +25,8 @@ class Event < ActiveRecord::Base
   # include state machine
   include AASM
 
-  aasm :whiny_transitions => false do
-    state :waiting, :initial => true
+  aasm whiny_transitions: false do
+    state :waiting, initial: true
     state :working, :failed, :done
 
     # Reset after failure
@@ -67,7 +69,7 @@ class Event < ActiveRecord::Base
   ]
 
   ACTIVE_RELATION_TYPES = [
-    "cites", 
+    "cites",
     "is-supplement-to",
     "references"
   ]
@@ -139,7 +141,7 @@ class Event < ActiveRecord::Base
     indexes :access_method,    type: :keyword
     indexes :metric_type,      type: :keyword
     indexes :total,            type: :integer
-    indexes :license,          type: :text, fields: { keyword: { type: "keyword" }}
+    indexes :license,          type: :text, fields: { keyword: { type: "keyword" } }
     indexes :error_messages,   type: :object
     indexes :callback,         type: :text
     indexes :aasm_state,       type: :keyword
@@ -154,7 +156,7 @@ class Event < ActiveRecord::Base
     indexes :cache_key,        type: :keyword
   end
 
-  def as_indexed_json(options={})
+  def as_indexed_json(options = {})
     {
       "uuid" => uuid,
       "subj_id" => subj_id,
@@ -195,10 +197,10 @@ class Event < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['subj_id^10', 'obj_id^10', 'subj.name^5', 'subj.author^5', 'subj.periodical^5', 'subj.publisher^5', 'obj.name^5', 'obj.author^5', 'obj.periodical^5', 'obj.publisher^5', '_all']
+    ["subj_id^10", "obj_id^10", "subj.name^5", "subj.author^5", "subj.periodical^5", "subj.publisher^5", "obj.name^5", "obj.author^5", "obj.periodical^5", "obj.publisher^5", "_all"]
   end
 
-  def self.query_aggregations(doi=nil) 
+  def self.query_aggregations(doi = nil)
     sum_distribution = {
       sum_bucket: {
         buckets_path: "year_months>total_by_year_month"
@@ -212,17 +214,17 @@ class Event < ActiveRecord::Base
     }
 
     {
-      sources: { terms: { field: 'source_id', size: 50, min_doc_count: 1 } },
-      prefixes: { terms: { field: 'prefix', size: 50, min_doc_count: 1 } },
-      registrants: { terms: { field: 'registrant_id', size: 50, min_doc_count: 1 }, aggs: { year: { date_histogram: { field: 'occurred_at', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}}} },
-      pairings: { terms: { field: 'registrant_id', size: 50, min_doc_count: 1 }, aggs: { recipient: { terms: { field: 'registrant_id', size: 50, min_doc_count: 1 }, aggs: { "total" => { sum: { field: 'total' }}}}} },
-      citation_types: { terms: { field: 'citation_type', size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: 'occurred_at', interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' }}}}} },
-      relation_types: { terms: { field: 'relation_type_id', size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: 'occurred_at', interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_distribution} },
-      dois: { terms: { field: 'obj_id', size: 50, min_doc_count: 1 }, aggs: { relation_types: { terms: { field: 'relation_type_id',size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: 'total' }}}}} },
+      sources: { terms: { field: "source_id", size: 50, min_doc_count: 1 } },
+      prefixes: { terms: { field: "prefix", size: 50, min_doc_count: 1 } },
+      registrants: { terms: { field: "registrant_id", size: 50, min_doc_count: 1 }, aggs: { year: { date_histogram: { field: "occurred_at", interval: "year", min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: "total" } } } } } },
+      pairings: { terms: { field: "registrant_id", size: 50, min_doc_count: 1 }, aggs: { recipient: { terms: { field: "registrant_id", size: 50, min_doc_count: 1 }, aggs: { "total" => { sum: { field: "total" } } } } } },
+      citation_types: { terms: { field: "citation_type", size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: "occurred_at", interval: "month", min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: "total" } } } } } },
+      relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: "occurred_at", interval: "month", min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: "total" } } } }, "sum_distribution" => sum_distribution } },
+      dois: { terms: { field: "obj_id", size: 50, min_doc_count: 1 }, aggs: { relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: "total" } } } } } },
       dois_usage: {
-        filter: { script: { script: "doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].size() > 0 && doc['obj.datePublished'].size() > 0 && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()" }},
+        filter: { script: { script: "doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].size() > 0 && doc['obj.datePublished'].size() > 0 && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()" } },
         aggs: {
-          dois: { terms: { field: 'obj_id', size: 50, min_doc_count: 1 }, aggs: { relation_types: { terms: { field: 'relation_type_id',size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: 'total' }}}}} } }
+          dois: { terms: { field: "obj_id", size: 50, min_doc_count: 1 }, aggs: { relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: "total" } } } } } } }
       },
       dois_citations: {
         filter: {
@@ -230,7 +232,7 @@ class Event < ActiveRecord::Base
             script: "#{INCLUDED_RELATION_TYPES}.contains(doc['relation_type_id'].value)"
           }
         },
-        aggs: { years: { date_histogram: { field: 'occurred_at', interval: 'year', min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}},"sum_distribution"=>sum_year_distribution}
+        aggs: { years: { date_histogram: { field: "occurred_at", interval: "year", min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: "total" } } } }, "sum_distribution" => sum_year_distribution }
       }
     }
   end
@@ -241,7 +243,7 @@ class Event < ActiveRecord::Base
         buckets_path: "year_months>total_by_year_month"
       }
     }
- 
+
     views_filter = { script: { script: "doc['relation_type_id'].value == 'unique-dataset-investigations-regular' && doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].size() > 0 && doc['obj.datePublished'].size() > 0 && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()" } }
     downloads_filter = { script: { script: "doc['relation_type_id'].value == 'unique-dataset-requests-regular' && doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].size() > 0 && doc['obj.datePublished'].size() > 0 && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()" } }
 
@@ -249,31 +251,31 @@ class Event < ActiveRecord::Base
       views: {
         filter: views_filter,
         aggs: { dois: {
-          terms: { field: 'obj_id', size: 50, min_doc_count: 1 } , aggs: { "total_by_type" => { sum: { field: 'total' }}}
-        }}
+          terms: { field: "obj_id", size: 50, min_doc_count: 1 } , aggs: { "total_by_type" => { sum: { field: "total" } } }
+        } }
       },
       views_histogram: {
         filter: views_filter,
         aggs: {
-          year_months: { date_histogram: { field: 'occurred_at', interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' } } } }, "sum_distribution" => sum_distribution
+          year_months: { date_histogram: { field: "occurred_at", interval: "month", min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: "total" } } } }, "sum_distribution" => sum_distribution
         }
       },
       downloads: {
         filter: downloads_filter,
         aggs: { dois: {
-          terms: { field: 'obj_id', size: 50, min_doc_count: 1} , aggs: { "total_by_type" => { sum: { field: 'total' }}}
-        }}
+          terms: { field: "obj_id", size: 50, min_doc_count: 1 } , aggs: { "total_by_type" => { sum: { field: "total" } } }
+        } }
       },
       downloads_histogram: {
         filter: downloads_filter,
         aggs: {
-          year_months: { date_histogram: { field: 'occurred_at', interval: 'month', min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: 'total' } } } }, "sum_distribution" => sum_distribution
+          year_months: { date_histogram: { field: "occurred_at", interval: "month", min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: "total" } } } }, "sum_distribution" => sum_distribution
         }
       }
     }
   end
 
-  def self.citations_aggregations(doi)  
+  def self.citations_aggregations(doi)
     doi = Event.new.normalize_doi(doi) if doi.present?
 
     sum_year_distribution = {
@@ -288,49 +290,49 @@ class Event < ActiveRecord::Base
     {
       citations_histogram: {
         filter: citations_filter,
-        aggs: { years: { histogram: { field: 'citation_year', interval: 1 , min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: 'total' }}}}, "sum_distribution" => sum_year_distribution }
+        aggs: { years: { histogram: { field: "citation_year", interval: 1 , min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: "total" } } } }, "sum_distribution" => sum_year_distribution }
       },
       references: {
         filter: references_filter,
         aggs: { dois: {
-          terms: { field: 'doi', size: 100, min_doc_count: 1 }, aggs: { total: { cardinality: { field: 'citation_id' }}}
-        }}
+          terms: { field: "doi", size: 100, min_doc_count: 1 }, aggs: { total: { cardinality: { field: "citation_id" } } }
+        } }
       },
       relations: {
         filter: { script: { script: "#{RELATIONS_RELATION_TYPES}.contains(doc['relation_type_id'].value)" }
         },
         aggs: { dois: {
-          terms: { field: 'doi', size: 100, min_doc_count: 1 }, aggs: { total: { cardinality: { field: 'citation_id' }}}
-        }}
+          terms: { field: "doi", size: 100, min_doc_count: 1 }, aggs: { total: { cardinality: { field: "citation_id" } } }
+        } }
       }
-    } 
+    }
   end
 
 
   def self.citation_count_aggregation(doi)
-    {      
+    {
       citations: {
-        terms: { field: 'doi', size: 100, min_doc_count: 1 }, aggs: { total: { cardinality: { field: 'citation_id' }}}
+        terms: { field: "doi", size: 100, min_doc_count: 1 }, aggs: { total: { cardinality: { field: "citation_id" } } }
       }
     }
   end
-  
 
-  def self.advanced_aggregations(doi=nil)
+
+  def self.advanced_aggregations(doi = nil)
     {
-      unique_obj_count: { cardinality: { field: 'obj_id' }},
-      unique_subj_count: { cardinality: { field: 'subj_id' }}
+      unique_obj_count: { cardinality: { field: "obj_id" } },
+      unique_subj_count: { cardinality: { field: "subj_id" } }
     }
   end
 
   # return results for one or more ids
-  def self.find_by_id(ids, options={})
+  def self.find_by_id(ids, options = {})
     ids = ids.split(",") if ids.is_a?(String)
 
     options[:page] ||= {}
     options[:page][:number] ||= 1
     options[:page][:size] ||= 1000
-    options[:sort] ||= { created_at: { order: "asc" }}
+    options[:sort] ||= { created_at: { order: "asc" } }
 
     __elasticsearch__.search({
       from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
@@ -345,7 +347,7 @@ class Event < ActiveRecord::Base
     })
   end
 
-  def self.import_by_ids(options={})
+  def self.import_by_ids(options = {})
     from_id = (options[:from_id] || Event.minimum(:id)).to_i
     until_id = (options[:until_id] || Event.maximum(:id)).to_i
 
@@ -356,7 +358,7 @@ class Event < ActiveRecord::Base
     end
   end
 
-  def self.import_by_id(options={})
+  def self.import_by_id(options = {})
     return nil unless options[:id].present?
 
     id = options[:id].to_i
@@ -373,8 +375,8 @@ class Event < ActiveRecord::Base
         body:    events.map { |event| { index: { _id: event.id, data: event.as_indexed_json } } }
 
       # log errors
-      errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
-      response['items'].select { |k, v| k.values.first['error'].present? }.each do |err|
+      errors += response["items"].map { |k, v| k.values.first["error"] }.compact.length
+      response["items"].select { |k, v| k.values.first["error"].present? }.each do |err|
         logger.error "[Elasticsearch] " + err.inspect
       end
 
@@ -399,7 +401,7 @@ class Event < ActiveRecord::Base
     logger.info "[Elasticsearch] Imported #{count} events with IDs #{id} - #{(id + 499)}."
   end
 
-  def self.update_crossref(options={})
+  def self.update_crossref(options = {})
     logger = Logger.new(STDOUT)
 
     size = (options[:size] || 1000).to_i
@@ -425,39 +427,39 @@ class Event < ActiveRecord::Base
     response.results.total
   end
 
-  def self.update_datacite_crossref(options={})
+  def self.update_datacite_crossref(options = {})
     update_datacite_ra(options.merge(ra: "crossref"))
   end
 
-  def self.update_datacite_medra(options={})
+  def self.update_datacite_medra(options = {})
     update_datacite_ra(options.merge(ra: "medra"))
   end
 
-  def self.update_datacite_kisti(options={})
+  def self.update_datacite_kisti(options = {})
     update_datacite_ra(options.merge(ra: "kisti"))
   end
 
-  def self.update_datacite_jalc(options={})
+  def self.update_datacite_jalc(options = {})
     update_datacite_ra(options.merge(ra: "jalc"))
   end
 
-  def self.update_datacite_op(options={})
+  def self.update_datacite_op(options = {})
     update_datacite_ra(options.merge(ra: "op"))
   end
 
-  def self.update_datacite_medra(options={})
+  def self.update_datacite_medra(options = {})
     update_datacite_ra(options.merge(ra: "medra"))
   end
 
-  def self.update_datacite_medra(options={})
+  def self.update_datacite_medra(options = {})
     update_datacite_ra(options.merge(ra: "medra"))
   end
 
-  def self.update_datacite_medra(options={})
+  def self.update_datacite_medra(options = {})
     update_datacite_ra(options.merge(ra: "medra"))
   end
 
-  def self.update_datacite_ra(options={})
+  def self.update_datacite_ra(options = {})
     logger = Logger.new(STDOUT)
 
     size = (options[:size] || 1000).to_i
@@ -487,7 +489,7 @@ class Event < ActiveRecord::Base
     response.results.total
   end
 
-  def self.update_registrant(options={})
+  def self.update_registrant(options = {})
     logger = Logger.new(STDOUT)
 
     size = (options[:size] || 1000).to_i
@@ -518,7 +520,7 @@ class Event < ActiveRecord::Base
     response.results.total
   end
 
-  def self.update_datacite_orcid_auto_update(options={})
+  def self.update_datacite_orcid_auto_update(options = {})
     logger = Logger.new(STDOUT)
 
     size = (options[:size] || 1000).to_i
@@ -557,8 +559,8 @@ class Event < ActiveRecord::Base
                "messageAction" => message_action,
                "sourceToken" => source_token,
                "total" => total,
-               "timestamp" => timestamp }}
-    Maremma.post(callback, data: data.to_json, token: ENV['API_KEY'])
+               "timestamp" => timestamp } }
+    Maremma.post(callback, data: data.to_json, token: ENV["API_KEY"])
   end
 
   def access_method
@@ -583,7 +585,7 @@ class Event < ActiveRecord::Base
   end
 
   def prefix
-    [doi.map { |d| d.to_s.split('/', 2).first }].compact
+    [doi.map { |d| d.to_s.split("/", 2).first }].compact
   end
 
   def orcid
@@ -616,7 +618,7 @@ class Event < ActiveRecord::Base
   def doi_from_url(url)
     if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match(url)
       uri = Addressable::URI.parse(url)
-      uri.path.gsub(/^\//, '').downcase
+      uri.path.gsub(/^\//, "").downcase
     end
   end
 
@@ -648,16 +650,16 @@ class Event < ActiveRecord::Base
   end
 
   def citation_year
-    "" unless (INCLUDED_RELATION_TYPES+RELATIONS_RELATION_TYPES).include?(relation_type_id)
-    subj_publication = subj['date_published'] || (date_published(subj_id) || year_month)
-    obj_publication =  obj['date_published']  || (date_published(obj_id) || year_month)
+    "" unless (INCLUDED_RELATION_TYPES + RELATIONS_RELATION_TYPES).include?(relation_type_id)
+    subj_publication = subj["date_published"] || (date_published(subj_id) || year_month)
+    obj_publication =  obj["date_published"]  || (date_published(obj_id) || year_month)
     [subj_publication[0..3].to_i, obj_publication[0..3].to_i].max
   end
 
   def date_published(doi)
-    ## TODO: we need to make sure all the dois from other RA are indexed 
+    ## TODO: we need to make sure all the dois from other RA are indexed
     item = Doi.where(doi: doi_from_url(doi)).first
-    item[:publication_year].to_s if item.present? 
+    item[:publication_year].to_s if item.present?
   end
 
   def set_defaults
