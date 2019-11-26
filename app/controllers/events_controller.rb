@@ -85,7 +85,6 @@ class EventsController < ApplicationController
     elsif params[:ids].present?
       response = Event.find_by_id(params[:ids], page: page, sort: sort)
     else
-      # params[:query] = '(subj_id:"https://doi.org/10.11646/zootaxa.4263.2.11" AND (relation_type_id:cites OR relation_type_id:is-supplement-to OR relation_type_id:references)) OR (obj_id:"https://doi.org/10.11646/zootaxa.4263.2.11" AND (relation_type_id:is-cited-by OR relation_type_id:is-supplemented-by OR relation_type_id:is-referenced-by))'
       response = Event.query(params[:query],
                              subj_id: params[:subj_id],
                              obj_id: params[:obj_id],
@@ -125,7 +124,6 @@ class EventsController < ApplicationController
     dois_citations = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_citations_by_year_v1(response.response.aggregations.dois_citations) : nil
     citations_histogram = total.positive? && params[:doi].present? && aggregations.include?("citations_aggregations") ? facet_citations_by_year(response.response.aggregations.citations_histogram) : nil
     citations = params[:doi].present? ? EventsQuery.new.citations(params[:doi]) : []
-    # citations = total.positive? && params[:doi].present? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.citations.dois.buckets) : nil
     references = total.positive? && params[:doi].present? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.references.dois.buckets) : nil
     relations = total.positive? && params[:doi].present? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.relations.dois.buckets) : nil
     views_histogram = total.positive? && aggregations.include?("metrics_aggregations") ? facet_counts_by_year_month(response.response.aggregations.views_histogram) : nil

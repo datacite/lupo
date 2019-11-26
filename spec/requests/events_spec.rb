@@ -728,38 +728,6 @@ describe "/events", type: :request, elasticsearch: true do
         expect(total).to eq(51)
         expect((citations.select { |doi| dois.split(",").include?(doi["id"]) }).length).to eq(20)
       end
-
-      # let(:uri) { "/events?doi=#{dois}" }
-
-      # it "performance test" do
-
-
-      #   expect {  
-      #     get uri, nil, headers
-      #   }.to perform_under(2000).ms
-
-
-      #   expect {  
-      #     get "/events", nil, headers
-      #   }.to perform_under(1800).ms
-
-
-        # expect { 
-        #   get uri, nil, headers
-        #  }.to perform_at_least(10).within(0.4).warmup(0.2).ips
-
-
-        # expect{
-        #   get("/events?doi=10.5061/dryad.47sd5/1", nil, {"HTTP_ACCEPT" => "application/vnd.api+json; version=2" })
-        # }.to perform_slower_than.within(2).warmup(0.2) { 
-        #   get("/events", nil,  {"HTTP_ACCEPT" => "application/vnd.api+json; version=2" })
-        # }.once
-
-
-        
-      # end
-
-
     end
 
     # Just test that the API can be accessed without a token.
