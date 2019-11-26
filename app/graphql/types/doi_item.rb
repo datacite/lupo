@@ -68,7 +68,15 @@ module DoiItem
     cp = CiteProc::Processor.new(style: style || "apa", locale: locale || "en-US", format: "html")
     cp.import Array.wrap(citeproc_hsh)
     bibliography = cp.render :bibliography, id: normalize_doi(object.doi)
-    bibliography.first
+    url = object.doi 
+    unless /^https?:\/\//i.match?(object.doi)
+      url = "https://doi.org/#{object.doi}"      
+    end
+    bibliography.first.gsub(url,doi_link(url))
+  end
+
+  def doi_link(url)
+    "<a href='#{url}' target='_blank' title='Go to landing page' class='item'> #{url} </a>"
   end
 
   def citeproc_hsh
