@@ -74,6 +74,22 @@ describe Client, type: :model do
     end
   end
 
+  describe "re3data_id" do
+    subject { build(:client, re3data_id: "10.17616/R3989R") }
+
+    it "change" do
+      subject.re3data = "https://doi.org/10.17616/R3949C"
+      expect(subject.save).to be true
+      expect(subject.re3data_id).to eq("10.17616/R3949C")
+    end
+
+    it "change to nil" do
+      subject.re3data = nil
+      expect(subject.save).to be true
+      expect(subject.re3data_id).to be_nil
+    end
+  end
+
   describe "salesforce id" do
     subject { build(:client) }
 

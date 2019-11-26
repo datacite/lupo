@@ -298,11 +298,13 @@ class Client < ActiveRecord::Base
   end
 
   def re3data=(value)
-    write_attribute(:re3data_id, value[16..-1]) if value.present?
+    attr = value.present? ? value[16..-1] : nil
+    write_attribute(:re3data_id, attr)
   end
 
   def opendoar=(value)
-    write_attribute(:opendoar_id, value[38..-1]) if value.present?
+    attr = value.present? ? value[38..-1] : nil
+    write_attribute(:opendoar_id, attr)
   end
 
   def prefix_ids
