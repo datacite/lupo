@@ -33,6 +33,4 @@ class EventsQuery
       { id: item, count: EventsQuery.new.doi_citations(item) }
     end
   end
-
-
 end
