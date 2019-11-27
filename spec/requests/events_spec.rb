@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 require "rails_helper"
-require 'pp'
- 
+require "pp"
+
 
 describe "/events", type: :request, elasticsearch: true do
   before(:each) do
@@ -9,36 +11,36 @@ describe "/events", type: :request, elasticsearch: true do
   end
 
   let(:event) { build(:event) }
-  let(:errors) { [{ "status" => "401", "title"=>"Bad credentials."}] }
+  let(:errors) { [{ "status" => "401", "title" => "Bad credentials." }] }
 
   # Successful response from creating via the API.
   let(:success) { { "id" => event.uuid,
                     "type" => "events",
-                    "attributes"=>{
+                    "attributes" => {
                       "subjId" => "http://www.citeulike.org/user/dbogartoit",
                       "objId" => "http://doi.org/10.1371/journal.pmed.0030186",
-                      "messageAction"=>"create",
-                      "sourceToken"=>"citeulike_123",
-                      "relationTypeId"=>"bookmarks",
-                      "sourceId"=>"citeulike",
-                      "total"=>1,
-                      "license"=>"https://creativecommons.org/publicdomain/zero/1.0/",
-                      "occurredAt"=>"2015-04-08T00:00:00.000Z",
-                      "subj"=> {"@id"=>"http://www.citeulike.org/user/dbogartoit",
-                                "@type"=>"CreativeWork",
-                                "author"=>[{"givenName"=>"dbogartoit"}],
-                                "name"=>"CiteULike bookmarks for user dbogartoit",
-                                "publisher"=> { "@type" => "Organization", "name" => "CiteULike" },
-                                "periodical"=> { "@type" => "Periodical",  "@id" => "https://doi.org/10.13039/100011326", "name" => "CiteULike", "issn" => "9812-847X" },
-                                "funder"=> { "@type" => "Organization", "@id" => "https://doi.org/10.13039/100011326", "name" => "CiteULike" },
+                      "messageAction" => "create",
+                      "sourceToken" => "citeulike_123",
+                      "relationTypeId" => "bookmarks",
+                      "sourceId" => "citeulike",
+                      "total" => 1,
+                      "license" => "https://creativecommons.org/publicdomain/zero/1.0/",
+                      "occurredAt" => "2015-04-08T00:00:00.000Z",
+                      "subj" => { "@id" => "http://www.citeulike.org/user/dbogartoit",
+                                "@type" => "CreativeWork",
+                                "author" => [{ "givenName" => "dbogartoit" }],
+                                "name" => "CiteULike bookmarks for user dbogartoit",
+                                "publisher" => { "@type" => "Organization", "name" => "CiteULike" },
+                                "periodical" => { "@type" => "Periodical",  "@id" => "https://doi.org/10.13039/100011326", "name" => "CiteULike", "issn" => "9812-847X" },
+                                "funder" => { "@type" => "Organization", "@id" => "https://doi.org/10.13039/100011326", "name" => "CiteULike" },
                                 "version" => "1.0",
                                 "proxyIdentifiers" => ["10.13039/100011326"],
-                                "datePublished"=>"2006-06-13T16:14:19Z",
-                                "dateModified"=>"2006-06-13T16:14:19Z",
-                                "url"=>"http://www.citeulike.org/user/dbogartoit"
+                                "datePublished" => "2006-06-13T16:14:19Z",
+                                "dateModified" => "2006-06-13T16:14:19Z",
+                                "url" => "http://www.citeulike.org/user/dbogartoit"
                       },
-                      "obj"=>{}
-                    }}}
+                      "obj" => {}
+                    } }}
 
   let(:token) { User.generate_token(role_id: "staff_admin") }
   let(:uuid) { SecureRandom.uuid }
@@ -73,7 +75,7 @@ describe "/events", type: :request, elasticsearch: true do
     end
 
     context "with very long url" do
-      let(:url) {"http://navigator.eumetsat.int/soapservices/cswstartup?service=csw&version=2.0.2&request=getrecordbyid&outputschema=http%3A%2F%2Fwww.isotc211.org%2F2005%2Fgmd&id=eo%3Aeum%3Adat%3Amult%3Arac-m11-iasia"}
+      let(:url) { "http://navigator.eumetsat.int/soapservices/cswstartup?service=csw&version=2.0.2&request=getrecordbyid&outputschema=http%3A%2F%2Fwww.isotc211.org%2F2005%2Fgmd&id=eo%3Aeum%3Adat%3Amult%3Arac-m11-iasia" }
       let(:params) do
         { "data" => { "type" => "events",
                       "attributes" => {
@@ -102,7 +104,7 @@ describe "/events", type: :request, elasticsearch: true do
         post uri, params, headers
 
         expect(last_response.status).to eq(403)
-        expect(json["errors"]).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+        expect(json["errors"]).to eq([{ "status" => "403", "title" => "You are not authorized to access this resource." }])
         expect(json["data"]).to be_nil
       end
     end
@@ -114,7 +116,7 @@ describe "/events", type: :request, elasticsearch: true do
         post uri, params, headers
 
         expect(last_response.status).to eq(403)
-        expect(json["errors"]).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+        expect(json["errors"]).to eq([{ "status" => "403", "title" => "You are not authorized to access this resource." }])
         expect(json["data"]).to be_blank
       end
     end
@@ -132,7 +134,7 @@ describe "/events", type: :request, elasticsearch: true do
         post uri, params, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{"status"=>422, "title"=>"Source token can't be blank"}])
+        expect(json["errors"]).to eq([{ "status" => 422, "title" => "Source token can't be blank" }])
         expect(json["data"]).to be_nil
       end
     end
@@ -150,7 +152,7 @@ describe "/events", type: :request, elasticsearch: true do
         post uri, params, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{"status"=>422, "title"=>"Source can't be blank"}])
+        expect(json["errors"]).to eq([{ "status" => 422, "title" => "Source can't be blank" }])
         expect(json["data"]).to be_blank
       end
     end
@@ -168,7 +170,7 @@ describe "/events", type: :request, elasticsearch: true do
         post uri, params, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{"status"=>422, "title"=>"Subj can't be blank"}])
+        expect(json["errors"]).to eq([{ "status" => 422, "title" => "Subj can't be blank" }])
         expect(json["data"]).to be_blank
       end
     end
@@ -238,8 +240,8 @@ describe "/events", type: :request, elasticsearch: true do
         { "data" => { "type" => "events",
                       "attributes" => {
                         "subjId" => "https://doi.org/10.18713/jimis-170117-1-2",
-                        "subj" => {"@id":"https://doi.org/10.18713/jimis-170117-1-2","@type":"ScholarlyArticle","datePublished":"2017","proxyIdentifiers":[],"registrantId":"datacite.inist.umr7300"},
-                        "obj" => {"@id":"https://doi.org/10.1016/j.jastp.2013.05.001","@type":"ScholarlyArticle","datePublished":"2013-09","proxyIdentifiers":["13646826"],"registrantId":"datacite.crossref.citations"},
+                        "subj" => { "@id":"https://doi.org/10.18713/jimis-170117-1-2", "@type":"ScholarlyArticle", "datePublished":"2017", "proxyIdentifiers":[], "registrantId":"datacite.inist.umr7300" },
+                        "obj" => { "@id":"https://doi.org/10.1016/j.jastp.2013.05.001", "@type":"ScholarlyArticle", "datePublished":"2013-09", "proxyIdentifiers":["13646826"], "registrantId":"datacite.crossref.citations" },
                         "objId" => "https://doi.org/10.1016/j.jastp.2013.05.001",
                         "relationTypeId" => "references",
                         "sourceId" => "datacite-crossref",
@@ -248,7 +250,7 @@ describe "/events", type: :request, elasticsearch: true do
 
       it "has registrant aggregation" do
         post uri, params, headers
-      
+
 
         expect(last_response.status).to eq(201)
         expect(json["errors"]).to be_nil
@@ -259,21 +261,21 @@ describe "/events", type: :request, elasticsearch: true do
         sleep 1
         get uri, nil, headers
 
-        expect(json.dig("meta", "registrants",0,"count")).to eq(1)
-        expect(json.dig("meta", "registrants",0,"id")).to eq("datacite.crossref.citations")
+        expect(json.dig("meta", "registrants", 0, "count")).to eq(1)
+        expect(json.dig("meta", "registrants", 0, "id")).to eq("datacite.crossref.citations")
       end
 
       it "has citationsHistogram aggregation with correct citation year" do
         post uri, params, headers
-      
+
         expect(last_response.status).to eq(201)
         expect(json["errors"]).to be_nil
-   
+
         Event.import
         sleep 1
-        get uri+"?aggregations=citations_aggregations&doi=10.1016/j.jastp.2013.05.001", nil, headers
+        get uri + "?aggregations=citations_aggregations&doi=10.1016/j.jastp.2013.05.001", nil, headers
         puts json.dig("meta", "citationsHistogram")
-        expect(json.dig("meta", "citationsHistogram","years",0,"title")).to eq("2017")
+        expect(json.dig("meta", "citationsHistogram", "years", 0, "title")).to eq("2017")
       end
     end
   end
@@ -310,7 +312,7 @@ describe "/events", type: :request, elasticsearch: true do
         put uri, params, headers
 
         expect(last_response.status).to eq(403)
-        expect(json["errors"]).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+        expect(json["errors"]).to eq([{ "status" => "403", "title" => "You are not authorized to access this resource." }])
         expect(json["data"]).to be_nil
       end
     end
@@ -322,7 +324,7 @@ describe "/events", type: :request, elasticsearch: true do
         put uri, params, headers
 
         expect(last_response.status).to eq(403)
-        expect(json["errors"]).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+        expect(json["errors"]).to eq([{ "status" => "403", "title" => "You are not authorized to access this resource." }])
         expect(json["data"]).to be_blank
       end
     end
@@ -340,7 +342,7 @@ describe "/events", type: :request, elasticsearch: true do
         put uri, params, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{"status"=>422, "title"=>"Source token can't be blank"}])
+        expect(json["errors"]).to eq([{ "status" => 422, "title" => "Source token can't be blank" }])
         expect(json["data"]).to be_nil
       end
     end
@@ -358,7 +360,7 @@ describe "/events", type: :request, elasticsearch: true do
         put uri, params, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{"status"=>422, "title"=>"Source can't be blank"}])
+        expect(json["errors"]).to eq([{ "status" => 422, "title" => "Source can't be blank" }])
         expect(json["data"]).to be_blank
       end
     end
@@ -376,7 +378,7 @@ describe "/events", type: :request, elasticsearch: true do
         put uri, params, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"]).to eq([{"status"=>422, "title"=>"Subj can't be blank"}])
+        expect(json["errors"]).to eq([{ "status" => 422, "title" => "Subj can't be blank" }])
         expect(json["data"]).to be_blank
       end
     end
@@ -474,7 +476,7 @@ describe "/events", type: :request, elasticsearch: true do
         put uri, params, headers
 
         expect(last_response.status).to eq(403)
-        expect(json["errors"]).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+        expect(json["errors"]).to eq([{ "status" => "403", "title" => "You are not authorized to access this resource." }])
         expect(json["data"]).to be_nil
       end
     end
@@ -486,7 +488,7 @@ describe "/events", type: :request, elasticsearch: true do
         put uri, params, headers
 
         expect(last_response.status).to eq(403)
-        expect(json["errors"]).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+        expect(json["errors"]).to eq([{ "status" => "403", "title" => "You are not authorized to access this resource." }])
         expect(json["data"]).to be_blank
       end
     end
@@ -516,7 +518,7 @@ describe "/events", type: :request, elasticsearch: true do
 
       it "JSON" do
         put uri, params, headers
-        
+
         expect(last_response.status).to eq(422)
         expect(json.dig("errors", 0, "title")).to start_with("Invalid payload")
         expect(json["data"]).to be_blank
@@ -585,7 +587,7 @@ describe "/events", type: :request, elasticsearch: true do
         get uri, nil, headers
 
         expect(last_response.status).to eq(404)
-        expect(json["errors"]).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
+        expect(json["errors"]).to eq([{ "status" => "404", "title" => "The resource you are looking for doesn't exist." }])
         expect(json["data"]).to be_nil
       end
     end
@@ -594,11 +596,11 @@ describe "/events", type: :request, elasticsearch: true do
   context "index" do
   #   # let!(:event) { create(:event) }
   #   # let(:uri) { "/events" }
-    
+
     context "check meta unique" do
       let!(:event) { create(:event_for_datacite_related) }
       let!(:events) { create_list(:event_for_datacite_related, 5, obj_id: event.subj_id) }
-      let(:doi) { (event.subj_id).gsub("https://doi.org/","")}
+      let(:doi) { (event.subj_id).gsub("https://doi.org/", "") }
       let(:uri) { "/events?aggregations=citations_aggregations&doi=#{doi}" }
 
       before do
@@ -619,7 +621,7 @@ describe "/events", type: :request, elasticsearch: true do
         citations = (response.dig("meta", "uniqueCitations")).select { |item| item["id"] == doi }
 
         total = response.dig("meta", "total")
-    
+
         expect(total).to eq(6)
         # puts citations.dig(:count)
         expect(citations.first["count"]).to eq(5)
@@ -633,9 +635,9 @@ describe "/events", type: :request, elasticsearch: true do
       let!(:event2) { create(:event_for_datacite_related, obj_id: event.subj_id) }
       let!(:event3) { create(:event_for_datacite_related, obj_id: event.subj_id) }
       let!(:event4) { create(:event_for_datacite_related, obj_id: event.subj_id, relation_type_id:"has-part") }
-      let(:doi) { (event.subj_id).gsub("https://doi.org/","")}
+      let(:doi) { (event.subj_id).gsub("https://doi.org/", "") }
       let(:uri) { "/events?aggregations=citations_aggregations&doi=#{doi}" }
-      
+
       before do
         Event.import
         sleep 1
@@ -658,7 +660,7 @@ describe "/events", type: :request, elasticsearch: true do
         relations = (response.dig("meta", "relations")).select { |item| item["id"] == doi }
         total = response.dig("meta", "total")
 
-        expect(json.dig("meta", "citationsHistogram","years",0,"title")).to eq("2015")    
+        expect(json.dig("meta", "citationsHistogram", "years", 0, "title")).to eq("2015")
         expect(total).to eq(5)
         expect(citations.first["count"]).to eq(2)
         expect(citations.first["id"]).to eq(doi)
@@ -669,10 +671,38 @@ describe "/events", type: :request, elasticsearch: true do
       end
     end
 
+    context "has views and downloads" do
+      let!(:event) { create_list(:event_for_datacite_usage, 5) }
+      let!(:events) { create_list(:event_for_datacite_usage_empty, 8) }
+      let(:uri) { "/events?aggregations=metrics_aggregations" }
+      let(:doi) { (event.first.obj_id) }
+
+      before do
+        Event.import
+        sleep 1
+      end
+
+      # Exclude the token header.
+      let(:headers) do
+        { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
+      end
+
+      it "json" do
+        get uri, nil, headers
+
+        expect(last_response.status).to eq(200)
+        response = JSON.parse(last_response.body)
+
+        views = (response.dig("meta", "views")).select { |item| item["id"] == doi }
+        expect(views.first["count"]).to eq(5)
+        expect(views.first["id"]).to eq(doi)
+      end
+    end
+
     context "check meta duplicated" do
       let!(:event) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v2", obj_id:"http://doi.org/10.0260/co.2004960.v1") }
       let!(:copies) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v2", obj_id:"http://doi.org/10.0260/co.2004960.v1", relation_type_id: "cites") }
-      let(:doi) { (event.obj_id).gsub("https://doi.org/","")}
+      let(:doi) { (event.obj_id).gsub("https://doi.org/", "") }
       let(:uri) { "/events?aggregations=citations_aggregations&doi=#{doi}" }
 
       before do
@@ -961,7 +991,7 @@ describe "/events", type: :request, elasticsearch: true do
         delete uri, nil, headers
 
         expect(last_response.status).to eq(404)
-        expect(json["errors"]).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
+        expect(json["errors"]).to eq([{ "status" => "404", "title" => "The resource you are looking for doesn't exist." }])
         expect(json["data"]).to be_nil
       end
     end
