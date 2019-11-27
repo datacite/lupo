@@ -120,7 +120,6 @@ class EventsController < ApplicationController
     registrants = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations")  ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
     pairings = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
     dois = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_dois(response.response.aggregations.dois.buckets) : nil
-    dois_usage = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_dois(response.response.aggregations.dois_usage.dois.buckets) : nil
     dois_citations = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_citations_by_year_v1(response.response.aggregations.dois_citations) : nil
     citations_histogram = total.positive? && params[:doi].present? && aggregations.include?("citations_aggregations") ? facet_citations_by_year(response.response.aggregations.citations_histogram) : nil
     citations = total.positive? && params[:doi].present? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.citations.dois.buckets) : nil
@@ -147,7 +146,6 @@ class EventsController < ApplicationController
       pairings: pairings,
       registrants: registrants,
       "doisRelationTypes": dois,
-      "doisUsageTypes": dois_usage,
       "doisCitations": dois_citations,
       "citationsHistogram": citations_histogram,
       "uniqueCitations": citations,
