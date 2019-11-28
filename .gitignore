@@ -54,4 +54,4 @@ doc/dependencies*
 docker-compose.override.yml
 .ruby-version
 .vscode
-.solargraph
+.solargraph.yml
