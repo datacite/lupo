@@ -30,4 +30,28 @@ describe EventsQuery, elasticsearch: true do
       expect(no_citations[:count]).to eq(0)
     end
   end
+
+
+  context "usage events" do
+    let!(:views) { create_list(:event_for_datacite_usage, 1,  obj_id:"http://doi.org/10.0260/co.2004960.v1", relation_type_id:"unique-dataset-investigations-regular") }
+    let!(:downloads) { create_list(:event_for_datacite_usage, 1,  obj_id:"http://doi.org/10.0260/co.2004960.v1", relation_type_id:"unique-dataset-requests-regular") }
+
+    before do
+      Event.import
+      sleep 1
+    end
+
+    it "doi_views" do
+      expect(EventsQuery.new.doi_views("10.0260/co.2004960.v1")).to eq(views.first.total)
+    end
+
+    it "doi_downloads" do
+      expect(EventsQuery.new.doi_downloads("10.0260/co.2004960.v1")).to eq(downloads.first.total)
+    end
+
+    it "usage" do
+      puts EventsQuery.new.usage("10.0260/co.2004960.v1")
+      expect(EventsQuery.new.usage("10.0260/co.2004960.v1").first).to eq(id: "https://doi.org/10.0260/co.2004960.v1", title: "https://doi.org/10.0260/co.2004960.v1", relationTypes: [{ id: "unique-dataset-requests-regular", title: "unique-dataset-requests-regular", sum: downloads.first.total }, { id: "unique-dataset-investigations-regular", title: "unique-dataset-investigations-regular", sum: views.first.total }])
+    end
+  end
 end
