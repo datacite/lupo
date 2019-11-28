@@ -145,11 +145,17 @@ class QueryType < BaseObject
 
   field :creative_works, CreativeWorkConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def creative_works(query: nil, first: nil)
-    Doi.query(query, state: "findable", page: { number: 1, size: first }).results.to_a
+  def creative_works(query: nil, ids: nil, first: nil)
+    if ids.present?
+      dois = ids.split(",").map { |i| doi_from_url(i) }
+      Doi.find_by_id(dois, page: { number: 1, size: first }).results.to_a
+    else
+      Doi.query(query, state: "findable", page: { number: 1, size: first }).results.to_a
+    end
   end
 
   field :creative_work, CreativeWorkType, null: false do

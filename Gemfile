@@ -65,7 +65,6 @@ gem 'graphql-cache', '~> 0.6.0', git: "https://github.com/stackshareio/graphql-c
 gem 'apollo-federation', '~> 0.5.1'
 gem 'google-protobuf', '3.10.0.rc.1'
 gem 'sprockets', '~> 3.7', '>= 3.7.2'
-gem 'elastic-apm', '~> 3.2'
 
 group :development, :test do
   gem 'rspec-rails', '~> 3.8', '>= 3.8.2'
