@@ -161,7 +161,7 @@ describe "Indexable class methods", elasticsearch: true do
         expect(aggregations[:relation_types]).not_to be_nil
         expect(aggregations[:registrants]).not_to be_nil
         expect(aggregations[:pairings]).not_to be_nil
-        expect(aggregations[:dois_usage]).not_to be_nil
+        # expect(aggregations[:dois_usage]).not_to be_nil
         expect(aggregations[:citations_histogram]).to be_nil
         expect(aggregations[:citations]).to be_nil
       end
@@ -175,7 +175,7 @@ describe "Indexable class methods", elasticsearch: true do
         expect(aggregations[:registrants]).not_to be_nil
         expect(aggregations[:pairings]).not_to be_nil
         expect(aggregations[:dois]).not_to be_nil
-        expect(aggregations[:dois_usage]).not_to be_nil
+        # expect(aggregations[:dois_usage]).not_to be_nil
         expect(aggregations[:citations_histogram]).to be_nil
         expect(aggregations[:citations]).to be_nil
       end
