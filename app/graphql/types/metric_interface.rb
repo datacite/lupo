@@ -19,13 +19,11 @@ module MetricInterface
   end
 
   def view_count
-    meta = aggregation_results(id: object.identifier).views.dois.buckets
-    meta.first.fetch("total_by_type", {}).fetch("value", nil) if meta.any?
+    EventsQuery.new.doi_views(doi_from_url(object.identifier))
   end
 
   def download_count
-    meta = aggregation_results(id: object.identifier).downloads.dois.buckets
-    meta.first.fetch("total_by_type", {}).fetch("value", nil) if meta.any?
+    EventsQuery.new.doi_downloads(doi_from_url(object.identifier))
   end
 
   def citation_count
