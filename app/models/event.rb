@@ -221,11 +221,11 @@ class Event < ActiveRecord::Base
       citation_types: { terms: { field: "citation_type", size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: "occurred_at", interval: "month", min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: "total" } } } } } },
       relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: "occurred_at", interval: "month", min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: "total" } } } }, "sum_distribution" => sum_distribution } },
       dois: { terms: { field: "obj_id", size: 50, min_doc_count: 1 }, aggs: { relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: "total" } } } } } },
-      dois_usage: {
-        filter: { script: { script: "doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].size() > 0 && doc['obj.datePublished'].size() > 0 && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()" } },
-        aggs: {
-          dois: { terms: { field: "obj_id", size: 50, min_doc_count: 1 }, aggs: { relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: "total" } } } } } } }
-      },
+      # dois_usage: {
+      #   filter: { script: { script: "doc['source_id'].value == 'datacite-usage'" } },
+      #   aggs: {
+      #     dois: { terms: { field: "obj_id", size: 50, min_doc_count: 1 }, aggs: { relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: "total" } } } } } } }
+      # },
       dois_citations: {
         filter: {
           script: {
@@ -244,8 +244,8 @@ class Event < ActiveRecord::Base
       }
     }
 
-    views_filter = { script: { script: "doc['relation_type_id'].value == 'unique-dataset-investigations-regular' && doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].size() > 0 && doc['obj.datePublished'].size() > 0 && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()" } }
-    downloads_filter = { script: { script: "doc['relation_type_id'].value == 'unique-dataset-requests-regular' && doc['source_id'].value == 'datacite-usage' && doc['occurred_at'].size() > 0 && doc['obj.datePublished'].size() > 0 && doc['occurred_at'].value.getMillis() >= doc['obj.datePublished'].value.getMillis() && doc['occurred_at'].value.getMillis() < new Date().getTime()" } }
+    views_filter = { script: { script: "doc['relation_type_id'].value == 'unique-dataset-investigations-regular' && doc['source_id'].value == 'datacite-usage'" } }
+    downloads_filter = { script: { script: "doc['relation_type_id'].value == 'unique-dataset-requests-regular' && doc['source_id'].value == 'datacite-usage'" } }
 
    {
       views: {
@@ -313,6 +313,14 @@ class Event < ActiveRecord::Base
     {
       citations: {
         terms: { field: "doi", size: 100, min_doc_count: 1 }, aggs: { total: { cardinality: { field: "citation_id" } } }
+      }
+    }
+  end
+
+  def self.usage_count_aggregation(doi)
+    {
+      usage: {
+        terms: { field: "obj_id", size: 50, min_doc_count: 1 } , aggs: { "total_by_type" => { sum: { field: "total" } } }
       }
     }
   end
