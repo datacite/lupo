@@ -29,8 +29,7 @@ module MetricInterface
   end
 
   def citation_count
-    meta = citations_aggs
-    meta.first.fetch("total", {}).fetch("value", nil) if meta.any?
+    EventsQuery.new.doi_citations(doi_from_url(object.identifier))
   end
 
   def reference_count

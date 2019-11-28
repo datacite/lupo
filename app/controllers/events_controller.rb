@@ -123,7 +123,7 @@ class EventsController < ApplicationController
     dois_usage = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_dois(response.response.aggregations.dois_usage.dois.buckets) : nil
     dois_citations = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_citations_by_year_v1(response.response.aggregations.dois_citations) : nil
     citations_histogram = total.positive? && params[:doi].present? && aggregations.include?("citations_aggregations") ? facet_citations_by_year(response.response.aggregations.citations_histogram) : nil
-    citations = total.positive? && params[:doi].present? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.citations.dois.buckets) : nil
+    citations = params[:doi].present? ? EventsQuery.new.citations(params[:doi]) : []
     references = total.positive? && params[:doi].present? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.references.dois.buckets) : nil
     relations = total.positive? && params[:doi].present? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.relations.dois.buckets) : nil
     views_histogram = total.positive? && aggregations.include?("metrics_aggregations") ? facet_counts_by_year_month(response.response.aggregations.views_histogram) : nil
