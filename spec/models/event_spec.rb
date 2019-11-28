@@ -10,7 +10,7 @@ describe Event, :type => :model, vcr: true do
     it { is_expected.to validate_presence_of(:source_id) }
 
     it "has subj" do
-      expect(subject.subj["date-published"]).to eq("2006-06-13T16:14:19Z")
+      expect(subject.subj["datePublished"]).to eq("2006-06-13T16:14:19Z")
     end
   end
 
