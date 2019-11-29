@@ -5,13 +5,13 @@ class EventsQuery
 
   ACTIVE_RELATION_TYPES = [
     "cites",
-    "is-supplement-to",
+    "is-supplement-by",
     "references"
   ]
 
   PASSIVE_RELATION_TYPES = [
      "is-cited-by",
-     "is-supplemented-by",
+     "is-supplemented-to",
      "is-referenced-by"
   ]
 
@@ -31,6 +31,14 @@ class EventsQuery
     end
   end
 
+  def citations_histogram(doi)
+    pid = Event.new.normalize_doi(doi)
+    query = "(subj_id:\"#{pid}\" AND (relation_type_id:#{PASSIVE_RELATION_TYPES.join(' OR relation_type_id:')})) OR (obj_id:\"#{pid}\" AND (relation_type_id:#{ACTIVE_RELATION_TYPES.join(' OR relation_type_id:')}))"
+    results = Event.query(query, doi: doi, aggregations: "yearly_histogram_aggregation", page: { size: 1, cursor: [] }).response.aggregations.histogram.buckets
+    facet_counts_by_year_month(results)
+  end
+
+
   def doi_views(doi)
     query = "(relation_type_id:unique-dataset-investigations-regular AND source_id:datacite-usage)"
     results = Event.query(query, doi: doi, aggregations: "usage_count_aggregation", page: { size: 1, cursor: [] }).response.aggregations.usage.buckets
@@ -43,6 +51,12 @@ class EventsQuery
     end
   end
 
+  def views_histogram(doi)
+    query = "(relation_type_id:unique-dataset-investigations-regular AND source_id:datacite-usage)"
+    results = Event.query(query, doi: doi, aggregations: "monthly_histogram_aggregation", page: { size: 1, cursor: [] }).response.aggregations.histogram.buckets
+    facet_counts_by_year_month(results)
+  end
+
   def doi_downloads(doi)
     query = "(relation_type_id:unique-dataset-requests-regular AND source_id:datacite-usage)"
     results = Event.query(query, doi: doi, aggregations: "usage_count_aggregation", page: { size: 1, cursor: [] }).response.aggregations.usage.buckets
@@ -53,6 +67,12 @@ class EventsQuery
     doi.downcase.split(",").map do |item|
       { id: item, count: EventsQuery.new.doi_downloads(item) }
     end
+  end
+
+  def downloads_histogram(doi)
+    query = "(relation_type_id:unique-dataset-requests-regular AND source_id:datacite-usage)"
+    results = Event.query(query, doi: doi, aggregations: "monthly_histogram_aggregation", page: { size: 1, cursor: [] }).response.aggregations.histogram.buckets
+    facet_counts_by_year_month(results)
   end
 
   def usage(doi)
