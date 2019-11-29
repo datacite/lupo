@@ -122,18 +122,18 @@ class EventsController < ApplicationController
     registrants = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations")  ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
     pairings = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
     dois = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_dois(response.response.aggregations.dois.buckets) : nil
-    dois_usage = total.positive? && params[:doi].present? ? EventsQuery.new.usage(params[:doi]) : []
+    dois_usage = total.positive? && params[:doi].present? ? EventsQuery.new.usage(params[:doi]) : nil
     # dois_citations = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_citations_by_year_v1(response.response.aggregations.dois_citations) : nil
-    citations = total.positive? && params[:doi].present? ? EventsQuery.new.citations(params[:doi]) : []
-    citations_histogram = total.positive? && params[:doi].present? ? EventsQuery.new.citations_histogram(params[:doi]) : []
+    citations = total.positive? && params[:doi].present? ? EventsQuery.new.citations(params[:doi]) : nil
+    citations_histogram = total.positive? && params[:doi].present? ? EventsQuery.new.citations_histogram(params[:doi]) : nil
     references = total.positive? && params[:doi].present? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.references.dois.buckets) : nil
     relations = total.positive? && params[:doi].present? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.relations.dois.buckets) : nil
 
-    views_histogram = total.positive? && params[:doi].present? ? EventsQuery.new.views_histogram(params[:doi]) : []
-    downloads_histogram = total.positive? && params[:doi].present? ? EventsQuery.new.downloads_histogram(params[:doi]) : []
+    views_histogram = total.positive? && params[:doi].present? ? EventsQuery.new.views_histogram(params[:doi]) : nil
+    downloads_histogram = total.positive? && params[:doi].present? ? EventsQuery.new.downloads_histogram(params[:doi]) : nil
 
-    views = total.positive? && params[:doi].present? ? EventsQuery.new.views(params[:doi]) : []
-    downloads = total.positive? && params[:doi].present? ? EventsQuery.new.downloads(params[:doi]) : []
+    views = total.positive? && params[:doi].present? ? EventsQuery.new.views(params[:doi]) : nil
+    downloads = total.positive? && params[:doi].present? ? EventsQuery.new.downloads(params[:doi]) : nil
     unique_obj_count = total.positive? && aggregations.include?("advanced_aggregations") ? response.response.aggregations.unique_obj_count.value : nil
     unique_subj_count = total.positive? && aggregations.include?("advanced_aggregations") ? response.response.aggregations.unique_subj_count.value : nil
  
