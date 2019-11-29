@@ -125,7 +125,7 @@ class EventsController < ApplicationController
     dois_usage = total.positive? && params[:doi].present? ? EventsQuery.new.usage(params[:doi]) : []
     # dois_citations = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_citations_by_year_v1(response.response.aggregations.dois_citations) : nil
     citations = total.positive? && params[:doi].present? ? EventsQuery.new.citations(params[:doi]) : []
-    citations_histogram = params[:doi].present? ? EventsQuery.new.citations_histogram(params[:doi]) : []
+    citations_histogram = total.positive? && params[:doi].present? ? EventsQuery.new.citations_histogram(params[:doi]) : []
     references = total.positive? && params[:doi].present? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.references.dois.buckets) : nil
     relations = total.positive? && params[:doi].present? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.relations.dois.buckets) : nil
 
@@ -137,18 +137,6 @@ class EventsController < ApplicationController
     unique_obj_count = total.positive? && aggregations.include?("advanced_aggregations") ? response.response.aggregations.unique_obj_count.value : nil
     unique_subj_count = total.positive? && aggregations.include?("advanced_aggregations") ? response.response.aggregations.unique_subj_count.value : nil
  
-
-
-    bmt = Benchmark.ms {
-      total.positive? && params[:doi].present? ? EventsQuery.new.citations(params[:doi]) : []
-    }
-    if bmt > 10000
-      logger.warn "[Benchmark Warning] citations " + bmt.to_s + " ms"
-    else
-      logger.info "[Benchmark] citations " + bmt.to_s + " ms"
-    end
-
-
     results = response.results
 
     options = {}
