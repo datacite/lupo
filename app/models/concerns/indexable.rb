@@ -103,8 +103,7 @@ module Indexable
       aggs = {}
       aggregations.split(",").each do |agg|
         agg = :query_aggregations if agg.blank? || !respond_to?(agg)
-        doi = options[:doi].present? ? options[:doi].downcase.split(",").first : nil
-        aggs.merge! send(agg,doi)
+        aggs.merge! send(agg)
       end
       aggs
     end

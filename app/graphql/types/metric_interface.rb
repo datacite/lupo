@@ -30,15 +30,15 @@ module MetricInterface
     EventsQuery.new.doi_citations(doi_from_url(object.identifier))
   end
 
-  def reference_count
-    meta = references_aggs
-    meta.first.fetch("total", {}).fetch("value", nil) if meta.any?
-  end
+  # def reference_count
+  #   meta = references_aggs
+  #   meta.first.fetch("total", {}).fetch("value", nil) if meta.any?
+  # end
 
-  def relation_count
-    meta = relations_aggs
-    meta.first.fetch("total", {}).fetch("value", nil) if meta.any?
-  end
+  # def relation_count
+  #   meta = relations_aggs
+  #   meta.first.fetch("total", {}).fetch("value", nil) if meta.any?
+  # end
 
   # def references_list
   #   references_aggs.map { |item| item[:key]}
@@ -56,27 +56,19 @@ module MetricInterface
   #   # end
   # end
 
-  def citations_aggs
-    aggregation_results(id: object.identifier, aggregations: "citations_aggregations" ).citations.dois.buckets 
-  end
+  # def citations_aggs
+  #   aggregation_results(id: object.identifier, aggregations: "citations_aggregations" ).citations.dois.buckets 
+  # end
 
-  def references_aggs
-    aggregation_results(id: object.identifier, aggregations: "citations_aggregations").references.dois.buckets
-  end
+  # def references_aggs
+  #   aggregation_results(id: object.identifier, aggregations: "citations_aggregations").references.dois.buckets
+  # end
 
-  def relations_aggs
-    aggregation_results(id: object.identifier, aggregations: "citations_aggregations").relations.dois.buckets
-  end
+  # def relations_aggs
+  #   aggregation_results(id: object.identifier, aggregations: "citations_aggregations").relations.dois.buckets
+  # end
 
   def citation_histogram
-    hash = aggregation_results(id: object.identifier, aggregations: "citations_aggregations").citations_histogram
-
-    hash.dig('years', 'buckets').map do |h|
-      year = h['key']
-      {
-        'id' => year,
-        'sum' => h.dig('total_by_year', 'value') 
-      }
-    end
+    EventsQuery.new.citations_histogram(doi_from_url(object.identifier))
   end
 end
