@@ -80,8 +80,8 @@ class EventsQuery
   def usage(doi)
     doi.downcase.split(",").map do |item|
       pid = Event.new.normalize_doi(item)
-      requests = EventsQuery.new.doi_downloads(doi)
-      investigations = EventsQuery.new.doi_views(doi)
+      requests = EventsQuery.new.doi_downloads(item)
+      investigations = EventsQuery.new.doi_views(item)
       { id: pid, 
         title: pid,
       relationTypes: [
