@@ -250,10 +250,7 @@ class Event < ActiveRecord::Base
     }
 
     {
-      histogram: {
-        filter: { script: { script: "true"}},
-        aggs: { years: { histogram: { field: "citation_year", interval: 1 , min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: "total" } } } }, "sum_distribution" => sum_year_distribution }
-      },
+      years: { histogram: { field: "citation_year", interval: 1 , min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: "total" } } } }, "sum_distribution" => sum_year_distribution 
     }
   end
 
@@ -264,12 +261,8 @@ class Event < ActiveRecord::Base
       }
     }
     {
-      histogram: {
-      filter: { script: { script: "true"}},
-      aggs: {
-        year_months: { date_histogram: { field: "occurred_at", interval: "month", min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: "total" } } } }, "sum_distribution" => sum_distribution
-      }
-    }}
+      year_months: { date_histogram: { field: "occurred_at", interval: "month", min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: "total" } } } }, "sum_distribution" => sum_distribution
+    }
   end
 
 

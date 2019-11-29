@@ -5,13 +5,13 @@ class EventsQuery
 
   ACTIVE_RELATION_TYPES = [
     "cites",
-    "is-supplement-by",
+    "is-supplemented-by",
     "references"
   ]
 
   PASSIVE_RELATION_TYPES = [
      "is-cited-by",
-     "is-supplemented-to",
+     "is-supplement-to",
      "is-referenced-by"
   ]
 
@@ -34,7 +34,7 @@ class EventsQuery
   def citations_histogram(doi)
     pid = Event.new.normalize_doi(doi.downcase.split(",").first)
     query = "(subj_id:\"#{pid}\" AND (relation_type_id:#{PASSIVE_RELATION_TYPES.join(' OR relation_type_id:')})) OR (obj_id:\"#{pid}\" AND (relation_type_id:#{ACTIVE_RELATION_TYPES.join(' OR relation_type_id:')}))"
-    results = Event.query(query, doi: doi, aggregations: "yearly_histogram_aggregation", page: { size: 1, cursor: [] }).response.aggregations.histogram
+    results = Event.query(query, doi: doi, aggregations: "yearly_histogram_aggregation", page: { size: 1, cursor: [] }).response.aggregations
     facet_citations_by_year(results)
   end
 
@@ -54,7 +54,7 @@ class EventsQuery
   def views_histogram(doi)
     doi = doi.downcase.split(",").first
     query = "(relation_type_id:unique-dataset-investigations-regular AND source_id:datacite-usage)"
-    results = Event.query(query, doi: doi, aggregations: "monthly_histogram_aggregation", page: { size: 1, cursor: [] }).response.aggregations.histogram
+    results = Event.query(query, doi: doi, aggregations: "monthly_histogram_aggregation", page: { size: 1, cursor: [] }).response.aggregations
     facet_counts_by_year_month(results)
   end
 
@@ -73,7 +73,7 @@ class EventsQuery
   def downloads_histogram(doi)
     doi = doi.downcase.split(",").first
     query = "(relation_type_id:unique-dataset-requests-regular AND source_id:datacite-usage)"
-    results = Event.query(query, doi: doi, aggregations: "monthly_histogram_aggregation", page: { size: 1, cursor: [] }).response.aggregations.histogram
+    results = Event.query(query, doi: doi, aggregations: "monthly_histogram_aggregation", page: { size: 1, cursor: [] }).response.aggregations
     facet_counts_by_year_month(results)
   end
 
