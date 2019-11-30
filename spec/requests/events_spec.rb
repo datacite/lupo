@@ -670,32 +670,32 @@ describe "/events", type: :request, elasticsearch: true do
       end
     end
 
-    context "has views and downloads" do
-      let!(:event) { create_list(:event_for_datacite_usage, 2) }
-      let(:doi) { (event.first.obj_id).gsub("https://doi.org/", "") }
-      let(:uri) { "/events?doi=#{doi}" }
+    # context "has views and downloads" do
+    #   let!(:event) { create_list(:event_for_datacite_usage, 2) }
+    #   let(:doi) { (event.first.obj_id).gsub("https://doi.org/", "") }
+    #   let(:uri) { "/events?doi=#{doi}" }
 
-      before do
-        Event.import
-        sleep 1
-      end
+    #   before do
+    #     Event.import
+    #     sleep 1
+    #   end
 
-      # Exclude the token header.
-      let(:headers) do
-        { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
-      end
+    #   # Exclude the token header.
+    #   let(:headers) do
+    #     { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
+    #   end
 
-      it "json" do
-        get uri, nil, headers
+    #   it "json" do
+    #     get uri, nil, headers
 
-        expect(last_response.status).to eq(200)
-        response = JSON.parse(last_response.body)
+    #     expect(last_response.status).to eq(200)
+    #     response = JSON.parse(last_response.body)
 
-        views = (response.dig("meta", "views")).select { |item| item["id"] == doi }
-        expect(views.first["count"]).not_to eq(0)
-        expect(views.first["id"]).to eq(doi)
-      end
-    end
+    #     views = (response.dig("meta", "views")).select { |item| item["id"] == doi }
+    #     expect(views.first["count"]).not_to eq(0)
+    #     expect(views.first["id"]).to eq(doi)
+    #   end
+    # end
 
     context "check meta duplicated" do
       let!(:event) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v2", obj_id:"http://doi.org/10.0260/co.2004960.v1") }
