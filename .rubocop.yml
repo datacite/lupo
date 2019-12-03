@@ -1,4 +1,4 @@
-require: rubocop-performance
+# require: rubocop-performance
 inherit_from: .rubocop_todo.yml
 
 # from https://github.com/rails/rails/blob/master/.rubocop.yml
@@ -91,7 +91,7 @@ Style/HashSyntax:
 # extra level of indentation.
 Layout/IndentationConsistency:
   Enabled: true
-  EnforcedStyle: rails
+  EnforcedStyle: indented_internal_methods
 
 # Two spaces, no tabs (for indentation).
 Layout/IndentationWidth:
@@ -184,7 +184,7 @@ Layout/TrailingWhitespace:
   Enabled: true
 
 # Use quotes for string literals when they are enough.
-Style/UnneededPercentQ:
+Style/RedundantPercentQ:
   Enabled: true
 
 Lint/AmbiguousOperator:
