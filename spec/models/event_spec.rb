@@ -20,6 +20,10 @@ describe Event, :type => :model, vcr: true do
     it "has citation_id" do
       expect(subject.citation_id).to eq("https://doi.org/10.5061/dryad.47sd5/1-https://doi.org/10.5061/dryad.47sd5e/1")
     end
+
+    it "has link_types" do
+      expect(subject.link_types).to eq(["10.5061/dryad.47sd5/1-citation", "10.5061/dryad.47sd5e/2-reference"])
+    end
   
     it "has citation_year" do
       expect(subject.citation_year).to eq(2015)

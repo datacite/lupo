@@ -225,6 +225,7 @@ module Indexable
         must << { term: { subj_id: URI.decode(options[:subj_id]) }} if options[:subj_id].present?
         must << { term: { obj_id: URI.decode(options[:obj_id]) }} if options[:obj_id].present?
         must << { term: { citation_type: options[:citation_type] }} if options[:citation_type].present?
+        must << { term: { link_types: options[:link_types] }} if options[:link_types].present?
         must << { term: { year_month: options[:year_month] }} if options[:year_month].present?
         must << { range: { "subj.datePublished" => { gte: "#{options[:publication_year].split("-").min}||/y", lte: "#{options[:publication_year].split("-").max}||/y", format: "yyyy" }}} if options[:publication_year].present?
         must << { range: { occurred_at: { gte: "#{options[:occurred_at].split("-").min}||/y", lte: "#{options[:occurred_at].split("-").max}||/y", format: "yyyy" }}} if options[:occurred_at].present?

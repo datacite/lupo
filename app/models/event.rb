@@ -152,6 +152,7 @@ class Event < ActiveRecord::Base
     indexes :indexed_at,       type: :date
     indexes :occurred_at,      type: :date
     indexes :citation_id,      type: :keyword
+    indexes :link_types,       type: :keyword
     indexes :citation_year,    type: :integer
     indexes :cache_key,        type: :keyword
   end
@@ -187,6 +188,7 @@ class Event < ActiveRecord::Base
       "indexed_at" => indexed_at,
       "occurred_at" => occurred_at,
       "citation_id" => citation_id,
+      "link_types" => link_types,
       "citation_year" => citation_year,
       "cache_key" => cache_key
     }
@@ -194,6 +196,33 @@ class Event < ActiveRecord::Base
 
   def citation_id
     [subj_id, obj_id].sort.join("-")
+  end
+
+  def link_types 
+    link_types = []
+    if PASSIVE_RELATION_TYPES.include?(relation_type_id)
+      link_types << [doi_from_url(subj_id), "citation"].join("-")
+      link_types << [doi_from_url(obj_id), "reference"].join("-")
+      return link_types
+    end
+    if ACTIVE_RELATION_TYPES.include?(relation_type_id)
+      link_types << [doi_from_url(obj_id), "citation"].join("-")
+      link_types << [doi_from_url(subj_id), "reference"].join("-")
+      return link_types
+    end
+    if RELATIONS_RELATION_TYPES.include?(relation_type_id)
+      link_types << [doi_from_url(obj_id), "relation"].join("-")
+      link_types << [doi_from_url(subj_id), "relation"].join("-")
+      return link_types
+    end
+    if relation_type_id == "unique-dataset-investigations-regular"
+      link_types << [doi_from_url(obj_id), "view"].join("-")
+      return link_types
+    end
+    if relation_type_id == "unique-dataset-requests-regular"
+      link_types << [doi_from_url(obj_id), "download"].join("-")
+      return link_types
+    end
   end
 
   def self.query_fields
@@ -224,12 +253,10 @@ class Event < ActiveRecord::Base
     }
   end
 
- 
-
   def self.citation_count_aggregation
     {
       citations: {
-        terms: { field: "doi", size: 100, min_doc_count: 1 }, aggs: { total: { cardinality: { field: "citation_id" } } }
+        terms: { field: "link_types", size: 100, min_doc_count: 1 }, aggs: { total: { cardinality: { field: "citation_id" } } }
       }
     }
   end
@@ -237,7 +264,7 @@ class Event < ActiveRecord::Base
   def self.usage_count_aggregation
     {
       usage: {
-        terms: { field: "obj_id", size: 50, min_doc_count: 1 } , aggs: { "total_by_type" => { sum: { field: "total" } } }
+        terms: { field: "link_types", size: 50, min_doc_count: 1 } , aggs: { "total_by_type" => { sum: { field: "total" } } }
       }
     }
   end
