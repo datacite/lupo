@@ -3,7 +3,7 @@
 class QueryType < BaseObject
   extend_type
 
-  field :providers, ProviderConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
+  field :providers, ProviderConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
@@ -20,7 +20,7 @@ class QueryType < BaseObject
     ElasticsearchLoader.for(Provider).load(id)
   end
 
-  field :clients, ClientConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
+  field :clients, ClientConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :year, String, required: false
     argument :software, String, required: false
@@ -63,7 +63,7 @@ class QueryType < BaseObject
     Prefix.where(prefix: id).first
   end
 
-  field :funders, FunderConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
+  field :funders, FunderConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
@@ -103,7 +103,7 @@ class QueryType < BaseObject
     DataCatalog.query(query, limit: first).fetch(:data, [])
   end
 
-  field :organizations, OrganizationConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
+  field :organizations, OrganizationConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
@@ -143,7 +143,7 @@ class QueryType < BaseObject
     Person.query(query, limit: first).fetch(:data, [])
   end
 
-  field :creative_works, CreativeWorkConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
+  field :creative_works, CreativeWorkConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :client_id, String, required: false
@@ -168,7 +168,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :datasets, DatasetConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
+  field :datasets, DatasetConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
@@ -187,7 +187,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :publications, PublicationConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
+  field :publications, PublicationConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
@@ -359,7 +359,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :software_source_codes, SoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
+  field :software_source_codes, SoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
@@ -429,7 +429,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :usage_reports, UsageReportConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
+  field :usage_reports, UsageReportConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :first, Int, required: false, default_value: 25
   end
 

@@ -7,7 +7,7 @@ class UsageReportType < BaseObject
   field :client_id, String, null: true, description: "Client who created the report"
   field :reporting_period, ReportingPeriodType, null: false, description: "Time period covered by the report"
   field :date_created, String, null: false, description: "Date information was created"
-  field :datasets, UsageReportDatasetConnectionWithMetaType, null: false, description: "Datasets included in usage report", connection: true, max_page_size: 100 do
+  field :datasets, UsageReportDatasetConnectionWithMetaType, null: false, description: "Datasets included in usage report", connection: true, max_page_size: 1000 do
     argument :first, Int, required: false, default_value: 25
   end
 

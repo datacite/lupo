@@ -15,7 +15,7 @@ class DatasetConnectionWithMetaType < BaseConnection
   def total_count
     args = object.arguments
 
-    Doi.query(args[:query], resource_type_id: "Dataset", state: "findable", page: { number: 1, size: args[:first] }).results.total
+    Doi.query(args[:query], client_id: args[:clent_id], provider_id: args[:provider_id], resource_type_id: "Dataset", state: "findable", page: { number: 1, size: args[:first] }).results.total
   end
 
   def dataset_connection_count

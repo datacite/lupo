@@ -5,7 +5,7 @@ class LupoSchema < GraphQL::Schema
   
   use ApolloFederation::Tracing
 
-  default_max_page_size 250
+  default_max_page_size 1000
   max_depth 10
 
   # mutation(Types::MutationType)
