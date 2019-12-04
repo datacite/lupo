@@ -4,6 +4,8 @@ class EventsController < ApplicationController
   include Facetable
 
   include BatchLoaderHelper
+  require 'benchmark'
+
 
 
   prepend_before_action :authenticate_user!, except: [:index, :show]
@@ -120,16 +122,18 @@ class EventsController < ApplicationController
     registrants = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations")  ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
     pairings = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
     dois = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_dois(response.response.aggregations.dois.buckets) : nil
-    dois_usage = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_dois(response.response.aggregations.dois_usage.dois.buckets) : nil
-    dois_citations = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_citations_by_year_v1(response.response.aggregations.dois_citations) : nil
-    citations_histogram = total.positive? && params[:doi].present? && aggregations.include?("citations_aggregations") ? facet_citations_by_year(response.response.aggregations.citations_histogram) : nil
-    citations = params[:doi].present? ? EventsQuery.new.citations(params[:doi]) : []
-    references = total.positive? && params[:doi].present? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.references.dois.buckets) : nil
-    relations = total.positive? && params[:doi].present? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.relations.dois.buckets) : nil
-    views_histogram = total.positive? && aggregations.include?("metrics_aggregations") ? facet_counts_by_year_month(response.response.aggregations.views_histogram) : nil
-    downloads_histogram = total.positive? && aggregations.include?("metrics_aggregations") ? facet_counts_by_year_month(response.response.aggregations.downloads_histogram) : nil
-    views = total.positive? && aggregations.include?("metrics_aggregations") ? facet_by_source(response.response.aggregations.views.dois.buckets) : nil
-    downloads = total.positive? && aggregations.include?("metrics_aggregations") ? facet_by_source(response.response.aggregations.downloads.dois.buckets) : nil
+    dois_usage = total.positive? ? EventsQuery.new.usage(params[:doi]) : nil
+    # dois_citations = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_citations_by_year_v1(response.response.aggregations.dois_citations) : nil
+    citations = total.positive? ? EventsQuery.new.citations(params[:doi]) : nil
+    citations_histogram = total.positive? ? EventsQuery.new.citations_histogram(params[:doi]) : nil
+    references = total.positive? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.references.dois.buckets) : nil
+    relations = total.positive? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.relations.dois.buckets) : nil
+
+    views_histogram = total.positive? ? EventsQuery.new.views_histogram(params[:doi]) : nil
+    downloads_histogram = total.positive? ? EventsQuery.new.downloads_histogram(params[:doi]) : nil
+
+    # views = total.positive? ? EventsQuery.new.views(params[:doi]) : nil
+    # downloads = total.positive? ? EventsQuery.new.downloads(params[:doi]) : nil
     unique_obj_count = total.positive? && aggregations.include?("advanced_aggregations") ? response.response.aggregations.unique_obj_count.value : nil
     unique_subj_count = total.positive? && aggregations.include?("advanced_aggregations") ? response.response.aggregations.unique_subj_count.value : nil
  
@@ -148,7 +152,7 @@ class EventsController < ApplicationController
       registrants: registrants,
       "doisRelationTypes": dois,
       "doisUsageTypes": dois_usage,
-      "doisCitations": dois_citations,
+      # "doisCitations": dois_citations,
       "citationsHistogram": citations_histogram,
       "uniqueCitations": citations,
       "references": references,
@@ -158,9 +162,9 @@ class EventsController < ApplicationController
         "subjCount": unique_subj_count
       },
       "viewsHistogram": views_histogram,
-      "views": views,
-      "downloadsHistogram": downloads_histogram,
-      "downloads": downloads
+      # "views": views,
+      "downloadsHistogram": downloads_histogram
+      # "downloads": downloads
     }.compact
 
     options[:links] = {
