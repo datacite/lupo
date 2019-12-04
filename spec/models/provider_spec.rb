@@ -101,8 +101,8 @@ describe Provider, type: :model do
 
     it "works" do
       expect(subject.role_name).to eq("ROLE_CONSORTIUM")
-      expect(subject.member_type).to eq("consortium")
-      expect(subject.member_type_label).to eq("Consortium")
+      expect(subject.member_type).to eq("consortium_member")
+      expect(subject.member_type_label).to eq("Consortium Member")
       expect(subject.consortium_organizations.length).to eq(3)
       consortium_organization = subject.consortium_organizations.last
       expect(consortium_organization.consortium_id).to eq("VIVA")

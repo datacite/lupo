@@ -146,15 +146,17 @@ class QueryType < BaseObject
   field :creative_works, CreativeWorkConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
     argument :ids, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def creative_works(query: nil, ids: nil, first: nil)
+  def creative_works(query: nil, ids: nil, client_id: nil, provider_id: nil, first: nil)
     if ids.present?
       dois = ids.split(",").map { |i| doi_from_url(i) }
       Doi.find_by_id(dois, page: { number: 1, size: first }).results.to_a
     else
-      Doi.query(query, state: "findable", page: { number: 1, size: first }).results.to_a
+      Doi.query(query, client_id: client_id, provider_id: provider_id, state: "findable", page: { number: 1, size: first }).results.to_a
     end
   end
 
@@ -168,11 +170,13 @@ class QueryType < BaseObject
 
   field :datasets, DatasetConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def datasets(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Dataset", state: "findable", page: { number: 1, size: first }).results.to_a
+  def datasets(query: nil, client_id: nil, provider_id: nil, first: nil)
+    Doi.query(query, client_id: client_id, provider_id: provider_id, resource_type_id: "Dataset", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :dataset, DatasetType, null: false do
@@ -185,11 +189,13 @@ class QueryType < BaseObject
 
   field :publications, PublicationConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def publications(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Text", state: "findable", page: { number: 1, size: first }).results.to_a
+  def publications(query: nil, client_id: nil, provider_id: nil, first: nil)
+    Doi.query(query, client_id: client_id, provider_id: provider_id, resource_type_id: "Text", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :publication, PublicationType, null: false do
@@ -355,11 +361,13 @@ class QueryType < BaseObject
 
   field :software_source_codes, SoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 100 do
     argument :query, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def software_source_codes(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Software", state: "findable", page: { number: 1, size: first }).results.to_a
+  def software_source_codes(query: nil, client_id: nil, provider_id: nil, first: nil)
+    Doi.query(query, client_id: client_id, provider_id: provider_id, resource_type_id: "Software", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :software_source_code, SoftwareType, null: false do
