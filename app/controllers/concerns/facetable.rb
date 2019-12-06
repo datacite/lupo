@@ -19,12 +19,6 @@ module Facetable
   }
 
   included do
-
-    REGIONS = { 
-      "amer" => "Americas",
-      "apac" => "Asia Pacific",
-      "emea" => "EMEA" }
-
     def facet_by_year(arr)
       arr.map do |hsh|
         { "id" => hsh["key_as_string"][0..3],

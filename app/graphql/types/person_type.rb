@@ -9,15 +9,15 @@ class PersonType < BaseObject
   field :given_name, String, null: true, hash_key: "given_names", description: "Given name. In the U.S., the first name of a Person."
   field :family_name, String, null: true, description: "Family name. In the U.S., the last name of an Person."
 
-  field :datasets, PersonDatasetConnectionWithMetaType, null: true, description: "Authored datasets", connection: true, max_page_size: 1000 do
+  field :datasets, PersonDatasetConnectionWithMetaType, null: true, description: "Authored datasets", connection: true do
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, PersonPublicationConnectionWithMetaType, null: true, description: "Authored publications", connection: true, max_page_size: 1000 do
+  field :publications, PersonPublicationConnectionWithMetaType, null: true, description: "Authored publications", connection: true do
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :software_source_codes, PersonSoftwareConnectionWithMetaType, null: true, description: "Authored software", connection: true, max_page_size: 1000 do
+  field :software_source_codes, PersonSoftwareConnectionWithMetaType, null: true, description: "Authored software", connection: true do
     argument :first, Int, required: false, default_value: 25
   end
 

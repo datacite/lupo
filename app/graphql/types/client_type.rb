@@ -10,23 +10,23 @@ class ClientType < BaseObject
   field :url, String, null: true, description: "The homepage of the client"
   field :system_email, String, null: true, description: "Client system email"
   field :software, String, null: true, description: "The name of the software that is used to run the repository"
-  field :prefixes, PrefixConnectionWithMetaType, null: false, description: "Prefixes managed by the client", connection: true, max_page_size: 1000 do
+  field :prefixes, PrefixConnectionWithMetaType, null: false, description: "Prefixes managed by the client", connection: true do
     argument :query, String, required: false
     argument :year, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :datasets, ClientDatasetConnectionWithMetaType, null: false, connection: true, max_page_size: 1000, description: "Datasets managed by the client" do
+  field :datasets, ClientDatasetConnectionWithMetaType, null: false, connection: true, description: "Datasets managed by the client" do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, ClientPublicationConnectionWithMetaType, null: false, connection: true, max_page_size: 1000, description: "Publications managed by the client" do
+  field :publications, ClientPublicationConnectionWithMetaType, null: false, connection: true, description: "Publications managed by the client" do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :software_source_codes, ClientSoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 1000, description: "Software managed by the client" do
+  field :software_source_codes, ClientSoftwareConnectionWithMetaType, null: false, connection: true, description: "Software managed by the client" do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end

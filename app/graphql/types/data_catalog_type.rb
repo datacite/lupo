@@ -23,17 +23,17 @@ class DataCatalogType < BaseObject
   # field :pid_systems, [String], null: true, description: "PID Systems"
   # field :apis, [ApiType], null: true, description: "APIs"
   field :software_application, [SoftwareApplicationType], null: true, description: "Software"
-  field :datasets, DataCatalogDatasetConnectionWithMetaType, null: false, connection: true, max_page_size: 1000, description: "Datasets hosted by the repository" do
+  field :datasets, DataCatalogDatasetConnectionWithMetaType, null: false, connection: true, description: "Datasets hosted by the repository" do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, DataCatalogPublicationConnectionWithMetaType, null: false, connection: true, max_page_size: 1000, description: "Publications hosted by the repository" do
+  field :publications, DataCatalogPublicationConnectionWithMetaType, null: false, connection: true, description: "Publications hosted by the repository" do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :software_source_codes, DataCatalogSoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 1000, description: "Software hosted by the repository" do
+  field :software_source_codes, DataCatalogSoftwareConnectionWithMetaType, null: false, connection: true, description: "Software hosted by the repository" do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end

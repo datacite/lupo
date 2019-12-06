@@ -4,14 +4,14 @@ class SoftwareType < BaseObject
   implements DoiItem
   implements MetricInterface
 
-  field :datasets, SoftwareDatasetConnectionWithMetaType, null: false, description: "Referenced datasets", connection: true, max_page_size: 1000 do
+  field :datasets, SoftwareDatasetConnectionWithMetaType, null: false, description: "Referenced datasets", connection: true do
     argument :first, Int, required: false, default_value: 25
   end
-  field :publications, SoftwarePublicationConnectionWithMetaType, null: false, description: "Referenced publications", connection: true, max_page_size: 1000 do
+  field :publications, SoftwarePublicationConnectionWithMetaType, null: false, description: "Referenced publications", connection: true do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
-  field :software_source_codes, SoftwareSoftwareConnectionWithMetaType, null: false, description: "Referenced software", connection: true, max_page_size: 1000 do
+  field :software_source_codes, SoftwareSoftwareConnectionWithMetaType, null: false, description: "Referenced software", connection: true do
     argument :first, Int, required: false, default_value: 25
   end
 

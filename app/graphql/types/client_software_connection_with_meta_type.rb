@@ -9,6 +9,6 @@ class ClientSoftwareConnectionWithMetaType < BaseConnection
   def total_count
     args = object.arguments
 
-    Doi.query(args[:query], client_id: object.parent.uid, resource_type_id: "Software", state: "findable", page: { number: 1, size: args[:first] }).results.total
+    Doi.query(args[:query], client_id: object.parent.uid, resource_type_id: "Software", state: "findable", page: { number: 1, size: 0 }).results.total
   end
 end

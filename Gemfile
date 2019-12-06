@@ -57,7 +57,7 @@ gem 'oj_mimic_json', '~> 1.0', '>= 1.0.1'
 gem 'turnout', '~> 2.5'
 gem 'audited', '~> 4.8'
 gem 'git', '~> 1.5'
-gem 'graphql', '~> 1.9', '>= 1.9.15'
+gem 'graphql', '~> 1.9', '>= 1.9.15', git: "https://github.com/rmosolgo/graphql-ruby"
 gem 'graphql-errors', '~> 0.4.0'
 gem 'graphql-batch', '~> 0.4.1'
 gem 'batch-loader', '~> 1.4', '>= 1.4.1'

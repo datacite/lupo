@@ -15,14 +15,14 @@ class ProviderType < BaseObject
   field :organization_type, String, null: true, description: "Type of organization"
   field :focus_area, String, null: true, description: "Field of science covered by provider"
   field :joined, String, null: true, description: "Date provider joined DataCite"
-  field :prefixes, PrefixConnectionWithMetaType, null: false, description: "Prefixes managed by the provider", connection: true, max_page_size: 1000 do
+  field :prefixes, PrefixConnectionWithMetaType, null: false, description: "Prefixes managed by the provider", connection: true do
     argument :query, String, required: false
     argument :state, String, required: false
     argument :year, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :clients, ClientConnectionWithMetaType, null: false, description: "Clients associated with the provider", connection: true, max_page_size: 1000 do
+  field :clients, ClientConnectionWithMetaType, null: false, description: "Clients associated with the provider", connection: true do
     argument :query, String, required: false
     argument :year, String, required: false
     argument :software, String, required: false

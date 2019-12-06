@@ -11,20 +11,20 @@ class OrganizationType < BaseObject
   field :url, [String], null: true, hash_key: "links", description: "URL of the organization."
   field :address, AddressType, null: true, description: "Physical address of the organization."
 
-  field :datasets, OrganizationDatasetConnectionWithMetaType, null: false, description: "Datasets from this organization", connection: true, max_page_size: 1000 do
+  field :datasets, OrganizationDatasetConnectionWithMetaType, null: false, description: "Datasets from this organization", connection: true do
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, OrganizationPublicationConnectionWithMetaType, null: false, description: "Publications from this organization", connection: true, max_page_size: 1000 do
+  field :publications, OrganizationPublicationConnectionWithMetaType, null: false, description: "Publications from this organization", connection: true do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :software_source_codes, OrganizationSoftwareConnectionWithMetaType, null: false, description: "Software from this organization", connection: true, max_page_size: 1000 do
+  field :software_source_codes, OrganizationSoftwareConnectionWithMetaType, null: false, description: "Software from this organization", connection: true do
     argument :first, Int, required: false, default_value: 25
   end
 
-  # field :researchers, OrganizationResearcherConnectionWithMetaType, null: false, description: "Researchers associated with this organization", connection: true, max_page_size: 1000 do
+  # field :researchers, OrganizationResearcherConnectionWithMetaType, null: false, description: "Researchers associated with this organization", connection: true do
   #   argument :first, Int, required: false, default_value: 25
   # end
 
