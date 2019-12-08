@@ -19,36 +19,57 @@ class ActivitiesController < ApplicationController
     elsif params[:ids].present?
       response = Activity.find_by_id(params[:ids], page: page, sort: sort)
     else
-      response = Activity.query(params[:query], uid: params[:doi_id], page: page, sort: sort)
+      response = Activity.query(params[:query], uid: params[:doi_id], page: page, sort: sort, scroll_id: params[:scroll_id])
     end
 
     begin
-      total = response.results.total
-      total_for_pages = page[:cursor].nil? ? total.to_f : [total.to_f, 10000].min
-      total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
+      if page[:scroll].present?
+        results = response.results
+        total = response.total
+      else
+        total = response.results.total
+        total_for_pages = page[:cursor].nil? ? total.to_f : [total.to_f, 10000].min
+        total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
+      end
 
-      @activities = response.results
-
-      options = {}
-      options[:meta] = {
-        total: total,
-        "totalPages" => total_pages,
-        page: page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
-      }.compact
-
-      options[:links] = {
-        self: request.original_url,
-        next: @activities.size < page[:size] ? nil : request.base_url + "/activities?" + {
-          query: params[:query],
-          "page[cursor]" => page[:cursor] ? Base64.urlsafe_encode64(Array.wrap(@activities.to_a.last[:sort]).join(","), padding: false) : nil,
-          "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
-          "page[size]" => page[:size],
-          sort: params[:sort] }.compact.to_query
+      if page[:scroll].present?
+        options = {}
+        options[:meta] = {
+          total: total,
+          "scroll-id" => response.scroll_id,
         }.compact
-      options[:include] = @include
-      options[:is_collection] = true
+        options[:links] = {
+          self: request.original_url,
+          next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/activities?" + {
+            "scroll-id" => response.scroll_id,
+            "page[scroll]" => "3m",
+            "page[size]" => page[:size] }.compact.to_query
+          }.compact
+        options[:is_collection] = true
 
-      render json: ActivitySerializer.new(@activities, options).serialized_json, status: :ok
+        render json: ActivitySerializer.new(results, options).serialized_json, status: :ok
+      else
+        options = {}
+        options[:meta] = {
+          total: total,
+          "totalPages" => total_pages,
+          page: page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
+        }.compact
+
+        options[:links] = {
+          self: request.original_url,
+          next: response.results.size < page[:size] ? nil : request.base_url + "/activities?" + {
+            query: params[:query],
+            "page[cursor]" => page[:cursor] ? Base64.urlsafe_encode64(Array.wrap(@activities.to_a.last[:sort]).join(","), padding: false) : nil,
+            "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
+            "page[size]" => page[:size],
+            sort: params[:sort] }.compact.to_query
+          }.compact
+        options[:include] = @include
+        options[:is_collection] = true
+
+        render json: ActivitySerializer.new(response.results, options).serialized_json, status: :ok
+      end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
 
