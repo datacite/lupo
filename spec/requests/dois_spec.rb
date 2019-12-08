@@ -30,6 +30,16 @@ describe "dois", type: :request do
       expect(json.dig('meta', 'total')).to eq(3)
     end
 
+    it 'returns dois with scroll', vcr: true do
+      get '/dois?page[scroll]=1m', nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(3)
+      expect(json.dig('meta', 'total')).to eq(3)
+      expect(json.dig('meta', 'scroll-id')).to be_present
+      expect(json.dig('links', 'next')).to be_nil
+    end
+
     it 'returns dois with extra detail', vcr: true do
       get '/dois?detail=true', nil, headers
 

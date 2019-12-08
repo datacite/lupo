@@ -112,12 +112,12 @@ class DoisController < ApplicationController
         options = {}
         options[:meta] = {
           total: total,
-          scroll_id: response.scroll_id,
+          "scroll-id" => response.scroll_id,
         }.compact
         options[:links] = {
           self: request.original_url,
           next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/dois?" + {
-            scroll_id: response.scroll_id,
+            "scroll-id" => response.scroll_id,
             "page[scroll]" => "3m",
             "page[size]" => page[:size] }.compact.to_query
           }.compact

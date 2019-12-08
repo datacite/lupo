@@ -109,6 +109,8 @@ module Indexable
     end
 
     def query(query, options={})
+      # support scroll api
+      # map function is small performance hit
       if options[:scroll_id].present? && options.dig(:page, :scroll)
         response = __elasticsearch__.client.scroll(body: 
           { scroll_id: options[:scroll_id],
@@ -311,12 +313,13 @@ module Indexable
         "max_concurrent_group_searches": 1
       }
 
-      logger = Logger.new(STDOUT)
-
       # three options for going through results are scroll, cursor and pagination
       # the default is pagination
       # scroll is triggered by the page[scroll] query parameter
       # cursor is triggered by the page[cursor] query parameter
+
+      # can't use search wrapper function for scroll api
+      # map function for scroll is small performance hit
       if options.dig(:page, :scroll).present?
         response = __elasticsearch__.client.search(
           index: self.index_name,

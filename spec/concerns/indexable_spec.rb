@@ -124,6 +124,18 @@ describe "Indexable class methods", elasticsearch: true do
       expect(results.to_a.length).to eq(1)
     end
 
+    it 'query with scroll' do
+      response = Doi.query(nil, page: { size: 2, scroll: "1m" })
+      expect(response.total).to eq(4)
+
+      # Initial length should match the size
+      expect(response.results.to_a.length).to eq(2)
+
+      # Move onto next based on scroll_id
+      response = Doi.query(nil, page: { size: 1, scroll: "1m" }, scroll_id: response.scroll_id)
+      expect(response.results.to_a.length).to eq(2)
+    end
+
     context "aggregations" do
       it 'returns query_aggregation when filters aggregation with empty' do
         aggregations = Doi.get_aggregations_hash({aggregations:""})
