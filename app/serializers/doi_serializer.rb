@@ -20,12 +20,12 @@ class DoiSerializer
   end
 
   attribute :doi do |object|
-    object.doi.downcase
+    object.uid
   end
 
   attribute :creators do |object, params|
     # Always return an array of creators and affiliations
-    # use new array format only if param present
+    # use new array format only if affiliation param present
     Array.wrap(object.creators).map do |c|
       c["affiliation"] = Array.wrap(c["affiliation"]).map do |a|
         if params[:affiliation]

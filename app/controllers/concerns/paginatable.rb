@@ -12,9 +12,11 @@ module Paginatable
         page = {}
       end
 
+      # Use scroll API for large number of results, e.g. to generate sitemaps      
+      # Alternatively use cursor
       # All cursors will need to be decoded from the param
       # Check for presence of :cursor key, value can be empty
-      if page.has_key?(:cursor)
+      if page.has_key?(:cursor) && !page.has_key?(:scroll)
         begin
           # When we decode and split, we'll always end up with an array
           # use urlsafe_decode to not worry about url-unsafe characters + and /

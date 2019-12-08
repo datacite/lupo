@@ -75,6 +75,7 @@ class DoisController < ApplicationController
                           sample_group: sample_group_field,
                           sample_size: params[:sample],
                           source: params[:source],
+                          scroll_id: params[:scroll_id],
                           page: page,
                           sort: sort,
                           random: params[:random])
@@ -84,7 +85,7 @@ class DoisController < ApplicationController
       # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
       if sample_group_field.present?
         sample_dois = []
-        response.response.aggregations.samples.buckets.each do |bucket|
+        response.aggregations.samples.buckets.each do |bucket|
           bucket.samples_hits.hits.hits.each do |hit|
             sample_dois << hit._source
           end
@@ -97,6 +98,9 @@ class DoisController < ApplicationController
         # The total is just the length because for sample grouping we get everything back in one shot no pagination.
         total = sample_dois.length
         total_pages = 1
+      elsif page[:scroll].present?
+        results = response.results
+        total = response.total
       else
         results = response.results
         total = response.results.total
@@ -104,90 +108,114 @@ class DoisController < ApplicationController
         total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
       end
 
-      states = total > 0 ? facet_by_key(response.response.aggregations.states.buckets) : nil
-      resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
-      created = total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : nil
-      registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
-      providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
-      clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
-      affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
-      prefixes = total > 0 ? facet_by_key(response.response.aggregations.prefixes.buckets) : nil
-      schema_versions = total > 0 ? facet_by_schema(response.response.aggregations.schema_versions.buckets) : nil
-      sources = total > 0 ? facet_by_key(response.response.aggregations.sources.buckets) : nil
-      link_checks_status = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_status.buckets) : nil
-      links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.response.aggregations.link_checks_has_schema_org.buckets) : nil
-      link_checks_schema_org_id = total > 0 ? response.response.aggregations.link_checks_schema_org_id.value : nil
-      link_checks_dc_identifier = total > 0 ? response.response.aggregations.link_checks_dc_identifier.value : nil
-      link_checks_citation_doi = total > 0 ? response.response.aggregations.link_checks_citation_doi.value : nil
-      links_checked = total > 0 ? response.response.aggregations.links_checked.value : nil
-      subjects = total > 0 ? facet_by_key(response.response.aggregations.subjects.buckets) : nil
-      certificates = total > 0 ? facet_by_key(response.response.aggregations.certificates.buckets) : nil
+      if page[:scroll].present?
+        options = {}
+        options[:meta] = {
+          total: total,
+          scroll_id: response.scroll_id,
+        }.compact
 
-      respond_to do |format|
-        format.json do
-          options = {}
-          options[:meta] = {
-            total: total,
-            "totalPages" => total_pages,
-            page: page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
-            states: states,
-            "resourceTypes" => resource_types,
-            created: created,
-            registered: registered,
-            providers: providers,
-            clients: clients,
-            affiliations: affiliations,
-            prefixes: prefixes,
-            certificates: certificates,
-            "schemaVersions" => schema_versions,
-            sources: sources,
-            "linkChecksStatus" => link_checks_status,
-            "linksChecked" => links_checked,
-            "linksWithSchemaOrg" => links_with_schema_org,
-            "linkChecksSchemaOrgId" => link_checks_schema_org_id,
-            "linkChecksDcIdentifier" => link_checks_dc_identifier,
-            "linkChecksCitationDoi" => link_checks_citation_doi,
-            subjects: subjects
-          }.compact
+        options[:is_collection] = true
+        options[:params] = {
+          current_ability: current_ability,
+          detail: params[:detail],
+          affiliation: params[:affiliation],
+          is_collection: options[:is_collection]
+        }
 
-          options[:links] = {
-            self: request.original_url,
-            next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/dois?" + {
-              query: params[:query],
-              "provider-id" => params[:provider_id],
-              "consortium-id" => params[:consortium_id],
-              "client-id" => params[:client_id],
-              certificate: params[:certificate],
-              # The cursor link should be an array of values, but we want to encode it into a single string for the URL
-              "page[cursor]" => page[:cursor] ? Base64.urlsafe_encode64(Array.wrap(results.to_a.last[:sort]).join(','), padding: false) : nil,
-              "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
-              "page[size]" => page[:size] }.compact.to_query
+        # sparse fieldsets
+        fields = fields_from_params(params)
+        if fields
+          render json: DoiSerializer.new(results, options.merge(fields: fields)).serialized_json, status: :ok
+        else
+          render json: DoiSerializer.new(results, options).serialized_json, status: :ok
+        end
+      else
+        states = total > 0 ? facet_by_key(response.aggregations.states.buckets) : nil
+        resource_types = total > 0 ? facet_by_resource_type(response.aggregations.resource_types.buckets) : nil
+        created = total > 0 ? facet_by_year(response.aggregations.created.buckets) : nil
+        registered = total > 0 ? facet_by_year(response.aggregations.registered.buckets) : nil
+        providers = total > 0 ? facet_by_provider(response.aggregations.providers.buckets) : nil
+        clients = total > 0 ? facet_by_client(response.aggregations.clients.buckets) : nil
+        affiliations = total > 0 ? facet_by_affiliation(response.aggregations.affiliations.buckets) : nil
+        prefixes = total > 0 ? facet_by_key(response.aggregations.prefixes.buckets) : nil
+        schema_versions = total > 0 ? facet_by_schema(response.aggregations.schema_versions.buckets) : nil
+        sources = total > 0 ? facet_by_key(response.aggregations.sources.buckets) : nil
+        link_checks_status = total > 0 ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
+        links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
+        link_checks_schema_org_id = total > 0 ? response.aggregations.link_checks_schema_org_id.value : nil
+        link_checks_dc_identifier = total > 0 ? response.aggregations.link_checks_dc_identifier.value : nil
+        link_checks_citation_doi = total > 0 ? response.aggregations.link_checks_citation_doi.value : nil
+        links_checked = total > 0 ? response.aggregations.links_checked.value : nil
+        subjects = total > 0 ? facet_by_key(response.aggregations.subjects.buckets) : nil
+        certificates = total > 0 ? facet_by_key(response.aggregations.certificates.buckets) : nil
+
+        respond_to do |format|
+          format.json do
+            options = {}
+            options[:meta] = {
+              total: total,
+              "totalPages" => total_pages,
+              page: page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
+              states: states,
+              "resourceTypes" => resource_types,
+              created: created,
+              registered: registered,
+              providers: providers,
+              clients: clients,
+              affiliations: affiliations,
+              prefixes: prefixes,
+              certificates: certificates,
+              "schemaVersions" => schema_versions,
+              sources: sources,
+              "linkChecksStatus" => link_checks_status,
+              "linksChecked" => links_checked,
+              "linksWithSchemaOrg" => links_with_schema_org,
+              "linkChecksSchemaOrgId" => link_checks_schema_org_id,
+              "linkChecksDcIdentifier" => link_checks_dc_identifier,
+              "linkChecksCitationDoi" => link_checks_citation_doi,
+              subjects: subjects
             }.compact
-          options[:include] = @include
-          options[:is_collection] = true
-          options[:params] = {
-            current_ability: current_ability,
-            detail: params[:detail],
-            affiliation: params[:affiliation],
-            is_collection: options[:is_collection]
-          }
 
-          # sparse fieldsets
-          fields = fields_from_params(params)
-          if fields
-            render json: DoiSerializer.new(results, options.merge(fields: fields)).serialized_json, status: :ok
-          else
-            render json: DoiSerializer.new(results, options).serialized_json, status: :ok
+            options[:links] = {
+              self: request.original_url,
+              next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/dois?" + {
+                query: params[:query],
+                "provider-id" => params[:provider_id],
+                "consortium-id" => params[:consortium_id],
+                "client-id" => params[:client_id],
+                certificate: params[:certificate],
+                # The cursor link should be an array of values, but we want to encode it into a single string for the URL
+                "page[cursor]" => page[:cursor] ? Base64.urlsafe_encode64(Array.wrap(results.to_a.last[:sort]).join(','), padding: false) : nil,
+                "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
+                "page[size]" => page[:size] }.compact.to_query
+              }.compact
+            options[:include] = @include
+            options[:is_collection] = true
+            options[:params] = {
+              current_ability: current_ability,
+              detail: params[:detail],
+              affiliation: params[:affiliation],
+              is_collection: options[:is_collection]
+            }
+
+            # sparse fieldsets
+            fields = fields_from_params(params)
+            if fields
+              render json: DoiSerializer.new(results, options.merge(fields: fields)).serialized_json, status: :ok
+            else
+              render json: DoiSerializer.new(results, options).serialized_json, status: :ok
+            end
           end
-        end
 
-        format.citation do
-          # fetch formatted citations
-          render citation: response.records.to_a, style: params[:style] || "apa", locale: params[:locale] || "en-US"
+          format.citation do
+            # fetch formatted citations
+            render citation: response.records.to_a, style: params[:style] || "apa", locale: params[:locale] || "en-US"
+          end
+          header = %w(doi url registered state resourceTypeGeneral resourceType title author publisher publicationYear)
+          format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => response.records.to_a }
+          format.csv { render request.format.to_sym => response.records.to_a, header: header }
         end
-        header = %w(doi url registered state resourceTypeGeneral resourceType title author publisher publicationYear)
-        format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => response.records.to_a }
-        format.csv { render request.format.to_sym => response.records.to_a, header: header }
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")

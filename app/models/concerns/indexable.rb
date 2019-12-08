@@ -109,6 +109,18 @@ module Indexable
     end
 
     def query(query, options={})
+      if options[:scroll_id].present? && options.dig(:page, :scroll)
+        response = __elasticsearch__.client.scroll(body: 
+          { scroll_id: options[:scroll_id],
+            scroll: options.dig(:page, :scroll)
+          })
+        return Hashie::Mash.new({
+            total: response.dig("hits", "total", "value"),
+            results: response.dig("hits", "hits").map { |r| r["_source"] },
+            scroll_id: response["_scroll_id"]
+          })
+      end
+
       if options[:totals_agg] == "provider"
         aggregations = provider_aggregations
       elsif options[:totals_agg] == "client"
@@ -299,16 +311,50 @@ module Indexable
         "max_concurrent_group_searches": 1
       }
 
-      __elasticsearch__.search({
-        size: options.dig(:page, :size),
-        from: from,
-        search_after: search_after,
-        sort: sort,
-        query: es_query,
-        collapse: unique,
-        aggregations: aggregations,
-        track_total_hits: true,
-      }.compact)
+      logger = Logger.new(STDOUT)
+
+      # three options for going through results are scroll, cursor and pagination
+      # the default is pagination
+      # scroll is triggered by the page[scroll] query parameter
+      # cursor is triggered by the page[cursor] query parameter
+      if options.dig(:page, :scroll).present?
+        response = __elasticsearch__.client.search(
+          index: self.index_name,
+          scroll: options.dig(:page, :scroll),
+          body: { 
+            size: options.dig(:page, :size),
+            sort: sort,
+            query: es_query,
+            collapse: unique,
+            aggregations: aggregations,
+            track_total_hits: true
+          }.compact)
+        Hashie::Mash.new({
+          total: response.dig("hits", "total", "value"),
+          results: response.dig("hits", "hits").map { |r| r["_source"] },
+          scroll_id: response["_scroll_id"]
+        })
+      elsif options.dig(:page, :cursor).present?
+        __elasticsearch__.search({
+          size: options.dig(:page, :size),
+          search_after: search_after,
+          sort: sort,
+          query: es_query,
+          collapse: unique,
+          aggregations: aggregations,
+          track_total_hits: true
+        }.compact)
+      else
+        __elasticsearch__.search({
+          size: options.dig(:page, :size),
+          from: from,
+          sort: sort,
+          query: es_query,
+          collapse: unique,
+          aggregations: aggregations,
+          track_total_hits: true
+        }.compact)
+      end
     end
 
     def recreate_index(options={})
