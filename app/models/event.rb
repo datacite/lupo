@@ -207,12 +207,6 @@ class Event < ActiveRecord::Base
       }
     }
 
-    sum_year_distribution = {
-      sum_bucket: {
-        buckets_path: "years>total_by_year"
-      }
-    }
-
     {
       sources: { terms: { field: "source_id", size: 50, min_doc_count: 1 } },
       prefixes: { terms: { field: "prefix", size: 50, min_doc_count: 1 } },
@@ -223,8 +217,6 @@ class Event < ActiveRecord::Base
       dois: { terms: { field: "obj_id", size: 50, min_doc_count: 1 }, aggs: { relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: "total" } } } } } }
     }
   end
-
- 
 
   def self.citation_count_aggregation
     {

@@ -98,61 +98,85 @@ class OldEventsController < ApplicationController
                              occurred_at: params[:occurred_at],
                              publication_year: params[:publication_year],
                              year_month: params[:year_month],
+                             scroll_id: params[:scroll_id],
                              page: page,
                              sort: sort)
     end
 
-    total = response.results.total
-    total_for_pages = page[:cursor].nil? ? total.to_f : [total.to_f, 10000].min
-    total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
+    if page[:scroll].present?
+      results = response.results
+      total = response.total
+    else
+      total = response.results.total
+      total_for_pages = page[:cursor].nil? ? total.to_f : [total.to_f, 10000].min
+      total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
+    end
 
-    sources = total > 0 ? facet_by_source(response.response.aggregations.sources.buckets) : nil
-    prefixes = total > 0 ? facet_by_source(response.response.aggregations.prefixes.buckets) : nil
-    citation_types = total > 0 ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
-    relation_types = total > 0 ? facet_by_relation_type_v1(response.response.aggregations.relation_types.buckets) : nil
-    registrants = total > 0  && params[:extra] ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
-    pairings = total > 0 && params[:extra] ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
-
-    results = response.results
-
-    options = {}
-    options[:meta] = {
-      total: total,
-      "total-pages" => total_pages,
-      page: page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
-      sources: sources,
-      prefixes: prefixes,
-      "citation-types" => citation_types,
-      "relation-types" => relation_types,
-      pairings: pairings,
-      registrants: registrants
-    }.compact
-
-    options[:links] = {
-      self: request.original_url,
-      next: results.size < page[:size] ? nil : request.base_url + "/events?" + {
-        "query" => params[:query],
-        "subj-id" => params[:subj_id],
-        "obj-id" => params[:obj_id],
-        "doi" => params[:doi],
-        "orcid" => params[:orcid],
-        "prefix" => params[:prefix],
-        "subtype" => params[:subtype],
-        "citation_type" => params[:citation_type],
-        "source-id" => params[:source_id],
-        "relation-type-id" => params[:relation_type_id],
-        "issn" => params[:issn],
-        "registrant-id" => params[:registrant_id],
-        "publication-year" => params[:publication_year],
-        "year-month" => params[:year_month],
-        "page[cursor]" => page[:cursor] ? Base64.strict_encode64(Array.wrap(results.to_a.last[:sort]).join(',')) : nil,
-        "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
-        "page[size]" => page[:size] }.compact.to_query
+    if page[:scroll].present?
+      options = {}
+      options[:meta] = {
+        total: total,
+        "scroll-id" => response.scroll_id,
       }.compact
-    options[:include] = @include
-    options[:is_collection] = true
+      options[:links] = {
+        self: request.original_url,
+        next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/events?" + {
+          "scroll-id" => response.scroll_id,
+          "page[scroll]" => "3m",
+          "page[size]" => page[:size] }.compact.to_query
+        }.compact
+      options[:is_collection] = true
 
-    render json: OldEventSerializer.new(results, options).serialized_json, status: :ok
+      render json: OldEventSerializer.new(results, options).serialized_json, status: :ok
+    else
+      sources = total > 0 ? facet_by_source(response.aggregations.sources.buckets) : nil
+      prefixes = total > 0 ? facet_by_source(response.aggregations.prefixes.buckets) : nil
+      citation_types = total > 0 ? facet_by_citation_type(response.aggregations.citation_types.buckets) : nil
+      relation_types = total > 0 ? facet_by_relation_type_v1(response.aggregations.relation_types.buckets) : nil
+      registrants = total > 0  && params[:extra] ? facet_by_registrants(response.aggregations.registrants.buckets) : nil
+      pairings = total > 0 && params[:extra] ? facet_by_pairings(response.aggregations.pairings.buckets) : nil
+
+      results = response.results
+
+      options = {}
+      options[:meta] = {
+        total: total,
+        "total-pages" => total_pages,
+        page: page[:cursor].nil? && page[:number].present? ? page[:number] : nil,
+        sources: sources,
+        prefixes: prefixes,
+        "citation-types" => citation_types,
+        "relation-types" => relation_types,
+        pairings: pairings,
+        registrants: registrants
+      }.compact
+
+      options[:links] = {
+        self: request.original_url,
+        next: results.size < page[:size] ? nil : request.base_url + "/events?" + {
+          "query" => params[:query],
+          "subj-id" => params[:subj_id],
+          "obj-id" => params[:obj_id],
+          "doi" => params[:doi],
+          "orcid" => params[:orcid],
+          "prefix" => params[:prefix],
+          "subtype" => params[:subtype],
+          "citation_type" => params[:citation_type],
+          "source-id" => params[:source_id],
+          "relation-type-id" => params[:relation_type_id],
+          "issn" => params[:issn],
+          "registrant-id" => params[:registrant_id],
+          "publication-year" => params[:publication_year],
+          "year-month" => params[:year_month],
+          "page[cursor]" => page[:cursor] ? Base64.strict_encode64(Array.wrap(results.to_a.last[:sort]).join(',')) : nil,
+          "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
+          "page[size]" => page[:size] }.compact.to_query
+        }.compact
+      options[:include] = @include
+      options[:is_collection] = true
+
+      render json: OldEventSerializer.new(results, options).serialized_json, status: :ok
+    end
   end
 
   def destroy
