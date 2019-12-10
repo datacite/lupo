@@ -99,6 +99,9 @@ class DoisController < ApplicationController
         total = sample_dois.length
         total_pages = 1
       elsif page[:scroll].present?
+        # if scroll_id has expired
+        fail ActiveRecord::RecordNotFound unless response.scroll_id.present?
+
         results = response.results
         total = response.total
       else
@@ -118,7 +121,7 @@ class DoisController < ApplicationController
           self: request.original_url,
           next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/dois?" + {
             "scroll-id" => response.scroll_id,
-            "page[scroll]" => "3m",
+            "page[scroll]" => page[:scroll],
             "page[size]" => page[:size] }.compact.to_query
           }.compact
         options[:is_collection] = true
