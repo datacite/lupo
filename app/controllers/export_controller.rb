@@ -127,38 +127,6 @@ class ExportController < ApplicationController
                 page_num += 1
             end
 
-            # Loop through all clients
-            clients = []
-
-            page = { size: 1000, number: 1}
-            response = Client.query(nil, page: page, include_deleted: true)
-            clients = clients + response.records.to_a
-
-            total = response.results.total
-            total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
-
-            # keep going for all pages
-            page_num = 2
-            while page_num <= total_pages
-                page = { size: 1000, number: page_num }
-                response = Client.query(nil, page: page, include_deleted: true)
-                clients = clients + response.records.to_a
-                page_num += 1
-            end
-
-            # Get doi counts via DOIS query and combine next to clients.
-            response = Doi.query(nil, state: "registered,findable", page: { size: 0, number: 1}, totals_agg: "client")
-
-            client_totals = {}
-            totals_buckets = response.response.aggregations.clients_totals.buckets
-            totals_buckets.each do |totals|
-                client_totals[totals["key"]] = {
-                    "count" => totals["doc_count"],
-                    "this_year" => totals.this_year.buckets[0]["doc_count"],
-                    "last_year" => totals.last_year.buckets[0]["doc_count"]
-                }
-            end
-
             respond_to do |format|
                 format.csv do
                     headers = %W(
@@ -229,6 +197,76 @@ class ExportController < ApplicationController
                         csv += CSV.generate_line row
                     end
 
+                    send_data csv, filename: "organizations-#{Date.today}.csv"
+                end
+            end
+
+        rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
+            Raven.capture_exception(exception)
+
+            message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+
+            render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+        end
+      end
+
+
+    def repositories
+        authorize! :export, :repositories
+        begin
+            # Loop through all clients
+            clients = []
+
+            page = { size: 1000, number: 1}
+            response = Client.query(nil, page: page, include_deleted: true)
+            clients = clients + response.records.to_a
+
+            total = response.results.total
+            total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
+
+            # keep going for all pages
+            page_num = 2
+            while page_num <= total_pages
+                page = { size: 1000, number: page_num }
+                response = Client.query(nil, page: page, include_deleted: true)
+                clients = clients + response.records.to_a
+                page_num += 1
+            end
+
+            # Get doi counts via DOIS query and combine next to clients.
+            response = Doi.query(nil, state: "registered,findable", page: { size: 0, number: 1}, totals_agg: "client")
+
+            client_totals = {}
+            totals_buckets = response.response.aggregations.clients_totals.buckets
+            totals_buckets.each do |totals|
+                client_totals[totals["key"]] = {
+                    "count" => totals["doc_count"],
+                    "this_year" => totals.this_year.buckets[0]["doc_count"],
+                    "last_year" => totals.last_year.buckets[0]["doc_count"]
+                }
+            end
+
+            respond_to do |format|
+                format.csv do
+                    headers = %W(
+                        accountName
+                        fabricaAccountId
+                        parentFabricaAccountId
+                        salesForceId
+                        parentSalesForceId
+                        isActive
+                        accountDescription
+                        accountWebsite
+                        generalContactEmail
+                        created
+                        deleted
+                        doisCountCurrentYear
+                        doisCountPreviousYear
+                        doisCountTotal
+                    )
+
+                    csv = headers.to_csv
+
                     clients.each do |client|
                         client_id = client.symbol.downcase
                         row = {
@@ -240,21 +278,7 @@ class ExportController < ApplicationController
                             isActive: client.is_active == "\x01",
                             accountDescription: client.description,
                             accountWebsite: client.url,
-                            region: nil,
-                            focusArea: nil,
-                            organisztionType: nil,
-                            accountType: 'repository',
                             generalContactEmail: client.system_email,
-                            groupEmail: nil,
-                            billingStreet: nil,
-                            billingPostalCode: nil,
-                            billingCity: nil,
-                            billingDepartment: nil,
-                            billingOrganization: nil,
-                            billingState: nil,
-                            billingCountry: nil,
-                            twitter: nil,
-                            rorId: nil,
                             created: client.created,
                             deleted: client.deleted_at,
                             doisCountCurrentYear: client_totals[client_id] ? client_totals[client_id]["this_year"] : nil,
@@ -265,7 +289,7 @@ class ExportController < ApplicationController
                         csv += CSV.generate_line row
                     end
 
-                    send_data csv, filename: "organizations-#{Date.today}.csv"
+                    send_data csv, filename: "repositories-#{Date.today}.csv"
                 end
             end
 
