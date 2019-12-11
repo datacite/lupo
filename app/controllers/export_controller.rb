@@ -155,9 +155,6 @@ class ExportController < ApplicationController
                         rorId
                         created
                         deleted
-                        doisCountCurrentYear
-                        doisCountPreviousYear
-                        doisCountTotal
                     )
 
                     csv = headers.to_csv
@@ -188,10 +185,7 @@ class ExportController < ApplicationController
                             twitter: provider.twitter_handle,
                             rorId: provider.ror_id,
                             created: provider.created,
-                            deleted: provider.deleted_at,
-                            doisCountCurrentYear: nil,
-                            doisCountPreviousYear: nil,
-                            doisCountTotal: nil
+                            deleted: provider.deleted_at
                         }.values
 
                         csv += CSV.generate_line row
