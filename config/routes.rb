@@ -59,6 +59,7 @@ Rails.application.routes.draw do
 
   # Reporting
   get 'export/organizations', :to => 'export#organizations',  defaults: { format: :csv }
+  get 'export/repositories', :to => 'export#repositories',  defaults: { format: :csv }
   get 'export/contacts', :to => 'export#contacts',  defaults: { format: :csv }
 
 
