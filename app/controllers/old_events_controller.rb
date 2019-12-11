@@ -122,7 +122,7 @@ class OldEventsController < ApplicationController
         self: request.original_url,
         next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/events?" + {
           "scroll-id" => response.scroll_id,
-          "page[scroll]" => "3m",
+          "page[scroll]" => page[:scroll],
           "page[size]" => page[:size] }.compact.to_query
         }.compact
       options[:is_collection] = true

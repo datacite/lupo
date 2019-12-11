@@ -112,15 +112,24 @@ module Indexable
       # support scroll api
       # map function is small performance hit
       if options[:scroll_id].present? && options.dig(:page, :scroll)
-        response = __elasticsearch__.client.scroll(body: 
-          { scroll_id: options[:scroll_id],
-            scroll: options.dig(:page, :scroll)
+        begin
+          response = __elasticsearch__.client.scroll(body: 
+            { scroll_id: options[:scroll_id],
+              scroll: options.dig(:page, :scroll)
+            })
+          return Hashie::Mash.new({
+              total: response.dig("hits", "total", "value"),
+              results: response.dig("hits", "hits").map { |r| r["_source"] },
+              scroll_id: response["_scroll_id"]
+            })
+        # handle expired scroll_id (Elasticsearch returns this error)
+        rescue Elasticsearch::Transport::Transport::Errors::NotFound
+          return Hashie::Mash.new({
+            total: 0,
+            results: [],
+            scroll_id: nil
           })
-        return Hashie::Mash.new({
-            total: response.dig("hits", "total", "value"),
-            results: response.dig("hits", "hits").map { |r| r["_source"] },
-            scroll_id: response["_scroll_id"]
-          })
+        end
       end
 
       if options[:totals_agg] == "provider"
