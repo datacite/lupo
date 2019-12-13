@@ -44,7 +44,7 @@ module Paginatable
 
     def make_cursor(results)
       # Base64-encode cursor
-      Base64.urlsafe_encode64(results.to_a.last[:sort], padding: false)
+      Base64.urlsafe_encode64(results.to_a.last[:sort].join(","), padding: false)
     end
   end
 end
