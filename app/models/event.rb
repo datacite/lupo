@@ -476,7 +476,7 @@ class Event < ActiveRecord::Base
         break unless response.results.results.length > 0
 
         logger.info "[Update] Updating #{response.results.results.length} datacite-orcid-auto-update events starting with _id #{response.results.to_a.first[:_id]}."
-        cursor = response.results.to_a.last[:sort].first.to_i
+        cursor = response.results.to_a.last[:sort]
 
         ids = response.results.results.map(&:obj_id).uniq
         OrcidAutoUpdateJob.perform_later(ids, options)

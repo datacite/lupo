@@ -20,7 +20,8 @@ module Paginatable
         begin
           # When we decode and split, we'll always end up with an array
           # use urlsafe_decode to not worry about url-unsafe characters + and /
-          page[:cursor] = Base64.urlsafe_decode64(page[:cursor].to_s).split(",")
+          # split into two strings so that DOIs with comma in them are left intact
+          page[:cursor] = Base64.urlsafe_decode64(page[:cursor].to_s).split(",", 2)
         rescue ArgumentError
           # If we fail to decode we'll just default back to an empty cursor
           page[:cursor] = []
@@ -39,6 +40,11 @@ module Paginatable
       page[:number] = page[:number].to_i > 0 ? [page[:number].to_i, max_number].min : 1
 
       page
+    end
+
+    def make_cursor(results)
+      # Base64-encode cursor
+      Base64.urlsafe_encode64(results.to_a.last[:sort], padding: false)
     end
   end
 end

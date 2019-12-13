@@ -49,6 +49,8 @@ class ActivitiesController < ApplicationController
 
         render json: ActivitySerializer.new(results, options).serialized_json, status: :ok
       else
+        results = response.results
+
         options = {}
         options[:meta] = {
           total: total,
@@ -60,7 +62,7 @@ class ActivitiesController < ApplicationController
           self: request.original_url,
           next: response.results.size < page[:size] ? nil : request.base_url + "/activities?" + {
             query: params[:query],
-            "page[cursor]" => page[:cursor] ? Base64.urlsafe_encode64(Array.wrap(@activities.to_a.last[:sort]).join(","), padding: false) : nil,
+            "page[cursor]" => page[:cursor] ? make_cursor(results) : nil,
             "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
             "page[size]" => page[:size],
             sort: params[:sort] }.compact.to_query
@@ -68,7 +70,7 @@ class ActivitiesController < ApplicationController
         options[:include] = @include
         options[:is_collection] = true
 
-        render json: ActivitySerializer.new(response.results, options).serialized_json, status: :ok
+        render json: ActivitySerializer.new(results, options).serialized_json, status: :ok
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
