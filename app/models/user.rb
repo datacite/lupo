@@ -115,7 +115,7 @@ class User
     jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24))
     url = ENV['BRACCO_URL'] + "?jwt=" + jwt
     reset_url = ENV['BRACCO_URL'] + "/reset"
-    title = Rails.env.stage? ? "DataCite DOI Fabrica Test" : "DataCite DOI Fabrica"
+    title = Rails.env.stage? ? "DataCite Fabrica Test" : "DataCite Fabrica"
     subject = "#{title}: Password Reset Request"
     text = User.format_message_text(template: "users/reset.text.erb", title: title, contact_name: user.name, name: user.symbol, url: url, reset_url: reset_url)
     html = User.format_message_html(template: "users/reset.html.erb", title: title, contact_name: user.name, name: user.symbol, url: url, reset_url: reset_url)

@@ -3,7 +3,7 @@ require 'rails_helper'
 describe "Mailable", type: :model, vcr: true do
   let(:token) { User.generate_token }
   let(:client) { create(:client, name: "DATACITE.DATACITE", contact_email: "test@datacite.org") }
-  let(:title) { "DataCite DOI Fabrica" }
+  let(:title) { "DataCite Fabrica" }
 
   it "send_welcome_email" do
     response = client.send_welcome_email
@@ -29,7 +29,7 @@ describe "Mailable", type: :model, vcr: true do
     text = <<~BODY
       Dear #{client.name},
 
-      Someone has requested a login link for the DataCite DOI Fabrica '#{client.name}' account.
+      Someone has requested a login link for the DataCite Fabrica '#{client.name}' account.
 
       You can change your password with the following link:
 

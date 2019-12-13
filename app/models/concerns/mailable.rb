@@ -26,7 +26,7 @@ module Mailable
       jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24))
       url = ENV['BRACCO_URL'] + "?jwt=" + jwt
       reset_url = ENV['BRACCO_URL'] + "/reset"
-      title = Rails.env.stage? ? "DataCite DOI Fabrica Test" : "DataCite DOI Fabrica"
+      title = Rails.env.stage? ? "DataCite Fabrica Test" : "DataCite Fabrica"
       subject = "#{title}: New Account"
       text = User.format_message_text(template: "users/welcome.text.erb", title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url)
       html = User.format_message_html(template: "users/welcome.html.erb", title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url)
@@ -44,7 +44,7 @@ module Mailable
     end
 
     def send_delete_email
-      title = Rails.env.stage? ? "DataCite DOI Fabrica Test" : "DataCite DOI Fabrica"
+      title = Rails.env.stage? ? "DataCite Fabrica Test" : "DataCite Fabrica"
       subject = "#{title}: Account Deleted"
       text = User.format_message_text(template: "users/delete.text.erb", title: title, contact_name: name, name: symbol)
       html = User.format_message_html(template: "users/delete.html.erb", title: title, contact_name: name, name: symbol)
