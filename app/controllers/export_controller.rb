@@ -127,6 +127,87 @@ class ExportController < ApplicationController
                 page_num += 1
             end
 
+            respond_to do |format|
+                format.csv do
+                    headers = %W(
+                        accountName
+                        fabricaAccountId
+                        parentFabricaAccountId
+                        salesForceId
+                        parentSalesForceId
+                        isActive
+                        accountDescription
+                        accountWebsite
+                        region
+                        focusArea
+                        organisationType
+                        accountType
+                        generalContactEmail
+                        groupEmail
+                        billingStreet
+                        billingPostalCode
+                        billingCity
+                        billingDepartment
+                        billingOrganization
+                        billingState
+                        billingCountry
+                        twitter
+                        rorId
+                        created
+                        deleted
+                    )
+
+                    csv = headers.to_csv
+
+                    providers.each do |provider|
+                        row = {
+                            accountName: provider.name,
+                            fabricaAccountId: provider.symbol,
+                            parentFabricaAccountId: provider.consortium.present? ? provider.consortium.symbol : nil,
+                            salesForceId: provider.salesforce_id,
+                            parentSalesForceId: provider.consortium.present? ? provider.consortium.salesforce_id : nil,
+                            isActive: provider.is_active == "\x01",
+                            accountDescription: provider.description,
+                            accountWebsite: provider.website,
+                            region: provider.region_human_name,
+                            focusArea: provider.focus_area,
+                            organizationType: provider.organization_type,
+                            accountType: provider.member_type_label,
+                            generalContactEmail: provider.system_email,
+                            groupEmail: provider.group_email,
+                            billingStreet: provider.billing_address,
+                            billingPostalCode: provider.billing_post_code,
+                            billingCity: provider.billing_city,
+                            billingDepartment: provider.billing_department,
+                            billingOrganization: provider.billing_organization,
+                            billingState: provider.billing_state,
+                            billingCountry: provider.billing_country,
+                            twitter: provider.twitter_handle,
+                            rorId: provider.ror_id,
+                            created: provider.created,
+                            deleted: provider.deleted_at
+                        }.values
+
+                        csv += CSV.generate_line row
+                    end
+
+                    send_data csv, filename: "organizations-#{Date.today}.csv"
+                end
+            end
+
+        rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
+            Raven.capture_exception(exception)
+
+            message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+
+            render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+        end
+      end
+
+
+    def repositories
+        authorize! :export, :repositories
+        begin
             # Loop through all clients
             clients = []
 
@@ -170,21 +251,7 @@ class ExportController < ApplicationController
                         isActive
                         accountDescription
                         accountWebsite
-                        region
-                        focusArea
-                        organisationType
-                        accountType
                         generalContactEmail
-                        groupEmail
-                        billingStreet
-                        billingPostalCode
-                        billingCity
-                        billingDepartment
-                        billingOrganization
-                        billingState
-                        billingCountry
-                        twitter
-                        rorId
                         created
                         deleted
                         doisCountCurrentYear
@@ -193,41 +260,6 @@ class ExportController < ApplicationController
                     )
 
                     csv = headers.to_csv
-
-                    providers.each do |provider|
-                        row = {
-                            accountName: provider.name,
-                            fabricaAccountId: provider.symbol,
-                            parentFabricaAccountId: provider.consortium.present? ? provider.consortium.symbol : nil,
-                            salesForceId: provider.salesforce_id,
-                            parentSalesForceId: provider.consortium.present? ? provider.consortium.salesforce_id : nil,
-                            isActive: provider.is_active == "\x01",
-                            accountDescription: provider.description,
-                            accountWebsite: provider.website,
-                            region: provider.region_human_name,
-                            focusArea: provider.focus_area,
-                            organizationType: provider.organization_type,
-                            accountType: provider.member_type_label,
-                            generalContactEmail: provider.system_email,
-                            groupEmail: provider.group_email,
-                            billingStreet: provider.billing_address,
-                            billingPostalCode: provider.billing_post_code,
-                            billingCity: provider.billing_city,
-                            billingDepartment: provider.billing_department,
-                            billingOrganization: provider.billing_organization,
-                            billingState: provider.billing_state,
-                            billingCountry: provider.billing_country,
-                            twitter: provider.twitter_handle,
-                            rorId: provider.ror_id,
-                            created: provider.created,
-                            deleted: provider.deleted_at,
-                            doisCountCurrentYear: nil,
-                            doisCountPreviousYear: nil,
-                            doisCountTotal: nil
-                        }.values
-
-                        csv += CSV.generate_line row
-                    end
 
                     clients.each do |client|
                         client_id = client.symbol.downcase
@@ -240,21 +272,7 @@ class ExportController < ApplicationController
                             isActive: client.is_active == "\x01",
                             accountDescription: client.description,
                             accountWebsite: client.url,
-                            region: nil,
-                            focusArea: nil,
-                            organisztionType: nil,
-                            accountType: 'repository',
                             generalContactEmail: client.system_email,
-                            groupEmail: nil,
-                            billingStreet: nil,
-                            billingPostalCode: nil,
-                            billingCity: nil,
-                            billingDepartment: nil,
-                            billingOrganization: nil,
-                            billingState: nil,
-                            billingCountry: nil,
-                            twitter: nil,
-                            rorId: nil,
                             created: client.created,
                             deleted: client.deleted_at,
                             doisCountCurrentYear: client_totals[client_id] ? client_totals[client_id]["this_year"] : nil,
@@ -265,7 +283,7 @@ class ExportController < ApplicationController
                         csv += CSV.generate_line row
                     end
 
-                    send_data csv, filename: "organizations-#{Date.today}.csv"
+                    send_data csv, filename: "repositories-#{Date.today}.csv"
                 end
             end
 

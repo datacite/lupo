@@ -16,6 +16,7 @@ class Ability
       end
       can :export, :contacts
       can :export, :organizations
+      can :export, :repositories
     elsif user.role_id == "staff_user"
       can :read, :all
     elsif user.role_id == "provider_admin" && user.provider_id.present?
