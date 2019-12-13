@@ -306,7 +306,7 @@ class Event < ActiveRecord::Base
     errors = 0
     count = 0
 
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     Event.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |events|
       response = Event.__elasticsearch__.client.bulk \
@@ -342,7 +342,7 @@ class Event < ActiveRecord::Base
   end
 
   def self.update_crossref(options = {})
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     size = (options[:size] || 1000).to_i
     cursor = (options[:cursor] || [])
@@ -400,7 +400,7 @@ class Event < ActiveRecord::Base
   end
 
   def self.update_datacite_ra(options = {})
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     size = (options[:size] || 1000).to_i
     cursor = (options[:cursor] || [])
@@ -430,7 +430,7 @@ class Event < ActiveRecord::Base
   end
 
   def self.update_registrant(options = {})
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     size = (options[:size] || 1000).to_i
     cursor = (options[:cursor] || [])
@@ -461,7 +461,7 @@ class Event < ActiveRecord::Base
   end
 
   def self.update_datacite_orcid_auto_update(options = {})
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     size = (options[:size] || 1000).to_i
     cursor = (options[:cursor] || []).to_i

@@ -532,7 +532,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.import_one(doi_id: nil)
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     doi = Doi.where(doi: doi_id).first
     unless doi.present?
@@ -588,7 +588,7 @@ class Doi < ActiveRecord::Base
     errors = 0
     count = 0
 
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     Doi.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |dois|
       response = Doi.__elasticsearch__.client.bulk \
@@ -679,7 +679,7 @@ class Doi < ActiveRecord::Base
     id = options[:id].to_i
     count = 0
 
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     Doi.where(id: id..(id + 499)).find_each do |doi|
       should_update = false
@@ -785,7 +785,7 @@ class Doi < ActiveRecord::Base
     id = options[:id].to_i
     count = 0
 
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     Doi.where(id: id..(id + 499)).find_each do |doi|
       should_update = false
@@ -1044,7 +1044,7 @@ class Doi < ActiveRecord::Base
 
   # to be used after DOIs were transferred to another DOI RA
   def self.delete_dois_by_prefix(prefix, options={})
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     if prefix.blank?
       Logger.error "[Error] No prefix provided."
@@ -1080,7 +1080,7 @@ class Doi < ActiveRecord::Base
   # register DOIs in the handle system that have not been registered yet
   # provider europ registers their DOIs in the handle system themselves and are ignored
   def self.set_handle
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:Crossref", page: { size: 1, cursor: [] })
     logger.info "#{response.results.total} DOIs found that are not registered in the Handle system."
@@ -1104,7 +1104,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.set_url
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 1, cursor: [] })
     logger.info "#{response.results.total} DOIs with no URL found in the database."
@@ -1128,7 +1128,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.set_minted
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     response = Doi.query("provider_id:ethz AND +aasm_state:draft +url:*", page: { size: 1, cursor: [] })
     logger.info "#{response.results.total} draft DOIs from provider ETHZ found in the database."
@@ -1152,7 +1152,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.transfer(options={})
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     if options[:client_id].blank?
       Logger.error "[Transfer] No client provided."
@@ -1202,7 +1202,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.migrate_landing_page(options={})
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     logger.info "Starting migration"
 
     # Handle camel casing first.

@@ -2,7 +2,7 @@ class UpdateStateJob < ActiveJob::Base
   queue_as :lupo_background
 
   def perform(doi_id, options={})
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     doi = Doi.where(doi: doi_id).first
 
     if doi.blank?

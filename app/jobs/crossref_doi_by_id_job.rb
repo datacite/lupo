@@ -7,12 +7,12 @@ class CrossrefDoiByIdJob < ActiveJob::Base
   # discard_on ActiveJob::DeserializationError
 
   rescue_from ActiveJob::DeserializationError, Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     logger.error error.message
   end
 
   def perform(id, options={})
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     doi = doi_from_url(id)
     return {} unless doi.present?

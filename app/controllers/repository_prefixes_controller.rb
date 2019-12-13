@@ -79,7 +79,7 @@ class RepositoryPrefixesController < ApplicationController
   end
 
   def create
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     @client_prefix = ClientPrefix.new(safe_params)
     authorize! :create, @client_prefix
 
@@ -90,7 +90,7 @@ class RepositoryPrefixesController < ApplicationController
   
       render json: RepositoryPrefixSerializer.new(@client_prefix, options).serialized_json, status: :created
     else
-      logger.warn @client_prefix.errors.inspect
+      logger.error @client_prefix.errors.inspect
       render json: serialize_errors(@client_prefix.errors), status: :unprocessable_entity
     end
   end

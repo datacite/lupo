@@ -13,7 +13,7 @@ module Authenticable
       private_key = OpenSSL::PKey::RSA.new(ENV['JWT_PRIVATE_KEY'].to_s.gsub('\n', "\n"))
       JWT.encode(payload, private_key, 'RS256')
     rescue OpenSSL::PKey::RSAError => e
-      logger = Logger.new(STDOUT)
+      logger = LogStashLogger.new(type: :stdout)
       logger.error e.inspect + " for " + payload.inspect
 
       nil
@@ -27,7 +27,7 @@ module Authenticable
       private_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec256-private.pem").to_s))
       JWT.encode(payload, private_key, 'ES256')
     rescue OpenSSL::PKey::ECError => e
-      logger = Logger.new(STDOUT)
+      logger = LogStashLogger.new(type: :stdout)
       logger.error e.inspect + " for " + payload.inspect
 
       nil
@@ -35,7 +35,7 @@ module Authenticable
 
     # decode JWT token using SHA-256 hash algorithm
     def decode_token(token)
-      logger = Logger.new(STDOUT)
+      logger = LogStashLogger.new(type: :stdout)
 
       public_key = OpenSSL::PKey::RSA.new(ENV['JWT_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
       payload = (JWT.decode token, public_key, true, { :algorithm => 'RS256' }).first
@@ -58,7 +58,7 @@ module Authenticable
 
     # decode JWT token from AWS ALB using SHA-256 hash algorithm
     def decode_alb_token(token)
-      logger = Logger.new(STDOUT)
+      logger = LogStashLogger.new(type: :stdout)
 
       if Rails.env.test?
         public_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec256-public.pem").to_s))
@@ -169,7 +169,7 @@ module Authenticable
       private_key = OpenSSL::PKey::RSA.new(ENV['JWT_PRIVATE_KEY'].to_s.gsub('\n', "\n"))
       JWT.encode(payload, private_key, 'RS256')
     rescue OpenSSL::PKey::RSAError => e
-      logger = Logger.new(STDOUT)
+      logger = LogStashLogger.new(type: :stdout)
       logger.error e.inspect + " for " + payload.inspect
 
       nil
@@ -182,7 +182,7 @@ module Authenticable
       private_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec256-private.pem").to_s))
       JWT.encode(payload, private_key, 'ES256')
     rescue OpenSSL::PKey::ECError => e
-      logger = Logger.new(STDOUT)
+      logger = LogStashLogger.new(type: :stdout)
       logger.error e.inspect + " for " + payload.inspect
 
       nil

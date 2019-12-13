@@ -3,12 +3,12 @@ class EventRegistrantUpdateByIdJob < ActiveJob::Base
 
 
   rescue_from ActiveJob::DeserializationError, Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     logger.error error.message
   end
 
   def perform(id, options={})
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
    
     item = Event.where(uuid: id).first
     return false unless item.present?
@@ -45,7 +45,7 @@ class EventRegistrantUpdateByIdJob < ActiveJob::Base
   end
 
   def get_crossref_member_id(id, options={})
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     doi = doi_from_url(id)
     # return "crossref.citations" unless doi.present?
   

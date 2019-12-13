@@ -13,7 +13,7 @@ class DoisController < ApplicationController
   def index
     authorize! :read, Doi
 
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     sort = case params[:sort]
           when "name" then { "doi" => { order: 'asc' }}
@@ -260,7 +260,7 @@ class DoisController < ApplicationController
   end
 
   def validate
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     # logger.info safe_params.inspect
 
     @doi = Doi.new(safe_params.merge(only_validate: true))
@@ -283,7 +283,7 @@ class DoisController < ApplicationController
   end
 
   def create
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     # logger.info safe_params.inspect
     fail CanCan::AuthorizationNotPerformed unless current_user.present?
 
@@ -306,13 +306,13 @@ class DoisController < ApplicationController
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :created, location: @doi
     else
-      logger.warn @doi.errors.inspect
+      logger.error @doi.errors.inspect
       render json: serialize_errors(@doi.errors), include: @include, status: :unprocessable_entity
     end
   end
 
   def update
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     # logger.info safe_params.inspect
 
     @doi = Doi.where(doi: params[:id]).first
@@ -354,13 +354,13 @@ class DoisController < ApplicationController
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
     else
-      logger.warn @doi.errors.messages
+      logger.error @doi.errors.messages
       render json: serialize_errors(@doi.errors.messages), include: @include, status: :unprocessable_entity
     end
   end
 
   def undo
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     @doi = Doi.where(doi: safe_params[:doi]).first
     fail ActiveRecord::RecordNotFound unless @doi.present?
@@ -379,13 +379,13 @@ class DoisController < ApplicationController
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
     else
-      logger.warn @doi.errors.messages
+      logger.error @doi.errors.messages
       render json: serialize_errors(@doi.errors.messages), include: @include, status: :unprocessable_entity
     end
   end
 
   def destroy
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     @doi = Doi.where(doi: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @doi.present?
 
@@ -395,7 +395,7 @@ class DoisController < ApplicationController
       if @doi.destroy
         head :no_content
       else
-        logger.warn @doi.errors.inspect
+        logger.error @doi.errors.inspect
         render json: serialize_errors(@doi.errors), status: :unprocessable_entity
       end
     else
@@ -485,7 +485,7 @@ class DoisController < ApplicationController
   private
 
   def safe_params
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
 

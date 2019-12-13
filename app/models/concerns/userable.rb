@@ -3,7 +3,7 @@ module Userable
 
   included do
     def remove_users(id: nil, jwt: nil)
-      logger = Logger.new(STDOUT)
+      logger = LogStashLogger.new(type: :stdout)
 
       result = Maremma.get user_url
       logger.info result.inspect

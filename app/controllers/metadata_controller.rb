@@ -52,7 +52,7 @@ class MetadataController < ApplicationController
   end
 
   def create
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     authorize! :update, @doi
 
     # convert back to plain xml
@@ -66,20 +66,20 @@ class MetadataController < ApplicationController
   
       render json: MetadataSerializer.new(@metadata, options).serialized_json, status: :created
     else
-      logger.warn @metadata.errors.inspect
+      logger.error @metadata.errors.inspect
       render json: serialize_errors(@metadata.errors), status: :unprocessable_entity
     end
   end
 
   def destroy
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     authorize! :update, @doi
 
     if @doi.draft?
       if @metadata.destroy
         head :no_content
       else
-        logger.warn @metadata.errors.inspect
+        logger.error @metadata.errors.inspect
         render json: serialize_errors(@metadata.errors), status: :unprocessable_entity
       end
     else

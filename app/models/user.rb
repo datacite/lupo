@@ -14,8 +14,6 @@ class User
   attr_accessor :name, :uid, :email, :role_id, :jwt, :password, :provider_id, :client_id, :beta_tester, :errors
 
   def initialize(credentials, options={})
-    logger = Logger.new(STDOUT)
-
     if credentials.present? && options.fetch(:type, "").downcase == "basic"
       username, password = ::Base64.decode64(credentials).split(":", 2)
       payload = decode_auth_param(username: username, password: password)

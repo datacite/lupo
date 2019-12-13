@@ -105,7 +105,7 @@ class ClientsController < ApplicationController
   end
 
   def create
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     @client = Client.new(safe_params)
     authorize! :create, @client
 
@@ -116,13 +116,13 @@ class ClientsController < ApplicationController
   
       render json: ClientSerializer.new(@client, options).serialized_json, status: :created
     else
-      logger.warn @client.errors.inspect
+      logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
 
   def update
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     if @client.update_attributes(safe_params)
       options = {}
       options[:meta] = { dois: doi_count(client_id: params[:id]) }
@@ -131,7 +131,7 @@ class ClientsController < ApplicationController
   
       render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
     else
-      logger.warn @client.errors.inspect
+      logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
@@ -139,7 +139,7 @@ class ClientsController < ApplicationController
   # don't delete, but set deleted_at timestamp
   # a client with dois or prefixes can't be deleted
   def destroy
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     if @client.dois.present?
       message = "Can't delete client that has DOIs."
       status = 400
@@ -149,7 +149,7 @@ class ClientsController < ApplicationController
       @client.send_delete_email unless Rails.env.test?
       head :no_content
     else
-      logger.warn @client.errors.inspect
+      logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end

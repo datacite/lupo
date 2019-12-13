@@ -113,7 +113,7 @@ class ProviderPrefixesController < ApplicationController
   end
 
   def create
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     @provider_prefix = ProviderPrefix.new(safe_params)
     authorize! :create, @provider_prefix
 
@@ -124,7 +124,7 @@ class ProviderPrefixesController < ApplicationController
   
       render json: ProviderPrefixSerializer.new(@provider_prefix, options).serialized_json, status: :created
     else
-      logger.warn @provider_prefix.errors.inspect
+      logger.error @provider_prefix.errors.inspect
       render json: serialize_errors(@provider_prefix.errors), status: :unprocessable_entity
     end
   end

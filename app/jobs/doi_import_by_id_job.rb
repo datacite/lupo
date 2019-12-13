@@ -2,7 +2,7 @@ class DoiImportByIdJob < ActiveJob::Base
   queue_as :lupo_background
 
   rescue_from ActiveJob::DeserializationError, Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     logger.error error.message
   end
 

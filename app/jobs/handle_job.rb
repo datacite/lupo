@@ -7,7 +7,7 @@ class HandleJob < ActiveJob::Base
   # discard_on ActiveJob::DeserializationError
 
   def perform(doi_id)
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     doi = Doi.where(doi: doi_id).first
 
     if doi.present?

@@ -342,7 +342,7 @@ module Facetable
     end
 
     def clients_totals(arr)
-      logger = Logger.new(STDOUT)
+      logger = LogStashLogger.new(type: :stdout)
 
       clients = Client.all.pluck(:symbol, :name).to_h
 

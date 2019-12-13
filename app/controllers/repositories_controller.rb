@@ -132,7 +132,7 @@ class RepositoriesController < ApplicationController
   end
 
   def create
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     @client = Client.new(safe_params)
     authorize! :create, @client
 
@@ -143,13 +143,13 @@ class RepositoriesController < ApplicationController
 
       render json: RepositorySerializer.new(@client, options).serialized_json, status: :created
     else
-      logger.warn @client.errors.inspect
+      logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
 
   def update
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     if @client.update_attributes(safe_params)
       options = {}
       options[:meta] = { dois: doi_count(client_id: params[:id]) }
@@ -158,7 +158,7 @@ class RepositoriesController < ApplicationController
 
       render json: RepositorySerializer.new(@client, options).serialized_json, status: :ok
     else
-      logger.warn @client.errors.inspect
+      logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
@@ -166,7 +166,7 @@ class RepositoriesController < ApplicationController
   # don't delete, but set deleted_at timestamp
   # a repository with dois or prefixes can't be deleted
   def destroy
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     if @client.dois.present?
       message = "Can't delete repository that has DOIs."
       status = 400
@@ -176,7 +176,7 @@ class RepositoriesController < ApplicationController
       @client.send_delete_email unless Rails.env.test?
       head :no_content
     else
-      logger.warn @client.errors.inspect
+      logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end

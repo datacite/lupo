@@ -13,7 +13,7 @@ module Helpable
     include Bolognese::DoiUtils
 
     def register_url
-      logger = Logger.new(STDOUT)
+      logger = LogStashLogger.new(type: :stdout)
 
       unless url.present?
         logger.error "[Handle] Error updating DOI " + doi + ": url missing."
@@ -76,7 +76,7 @@ module Helpable
       if response.status == 200
         response
       else
-        logger = Logger.new(STDOUT)
+        logger = LogStashLogger.new(type: :stdout)
         logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect unless Rails.env.test?
         response
       end
@@ -143,7 +143,7 @@ module Helpable
           else
             text = "Error " + response.body["errors"].inspect
 
-            logger = Logger.new(STDOUT)
+            logger = LogStashLogger.new(type: :stdout)
             logger.error "[Handle] " + text
             User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
           end
@@ -167,7 +167,7 @@ module Helpable
       else
         text = "Error " + response.body["errors"].inspect
 
-        logger = Logger.new(STDOUT)
+        logger = LogStashLogger.new(type: :stdout)
         logger.error "[Handle] " + text
         User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
         response
@@ -186,7 +186,7 @@ module Helpable
       else
         text = "Error " + response.body["errors"].inspect
 
-        logger = Logger.new(STDOUT)
+        logger = LogStashLogger.new(type: :stdout)
         logger.error "[Handle] " + text
         User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
         response

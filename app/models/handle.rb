@@ -48,7 +48,7 @@ class Handle
   def self.parse_data(result, options={})
     return nil if result.blank? || result['errors']
 
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     logger.debug result
 
     if options[:id]

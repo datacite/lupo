@@ -211,7 +211,7 @@ class Activity < Audited::Audit
     errors = 0
     count = 0
 
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     Activity.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |activities|
       response = Activity.__elasticsearch__.client.bulk \
@@ -269,7 +269,7 @@ class Activity < Audited::Audit
     id = options[:id].to_i
     count = 0
 
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     Activity.where(id: id..(id + 499)).find_each do |activity|
       should_update = false

@@ -181,7 +181,7 @@ class ProvidersController < ApplicationController
   end
 
   def create
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     # generate random symbol if not symbol is provided
     @provider = Provider.new(safe_params.reverse_merge(symbol: generate_random_provider_symbol))
@@ -213,13 +213,13 @@ class ProvidersController < ApplicationController
 
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
-      logger.warn @provider.errors.inspect
+      logger.error @provider.errors.inspect
       render json: serialize_errors(@provider.errors), status: :unprocessable_entity
     end
   end
 
   def update
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     # logger.debug safe_params.inspect
     if @provider.update_attributes(safe_params)
       if params[:id] == "admin"
@@ -247,7 +247,7 @@ class ProvidersController < ApplicationController
 
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
-      logger.warn @provider.errors.inspect
+      logger.error @provider.errors.inspect
       render json: serialize_errors(@provider.errors), status: :unprocessable_entity
     end
   end
@@ -255,7 +255,7 @@ class ProvidersController < ApplicationController
   # don't delete, but set deleted_at timestamp
   # a provider with active clients or with prefixes can't be deleted
   def destroy
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
     if active_client_count(provider_id: @provider.symbol) > 0
       message = "Can't delete provider that has active clients."
       status = 400
@@ -265,7 +265,7 @@ class ProvidersController < ApplicationController
       @provider.send_delete_email unless Rails.env.test?
       head :no_content
     else
-      logger.warn @provider.errors.inspect
+      logger.error @provider.errors.inspect
       render json: serialize_errors(@provider.errors), status: :unprocessable_entity
     end
   end

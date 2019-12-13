@@ -154,7 +154,7 @@ module Indexable
         search_after = options.dig(:page, :cursor).presence || [1, "1"]
 
         if self.name == "Doi"
-          sort = [{ created: "asc", doi: "asc" }]
+          sort = [{ created: "asc", uid: "asc" }]
         elsif self.name == "Event"
           sort = [{ created_at: "asc", uuid: "asc" }]
         elsif self.name == "Activity"
