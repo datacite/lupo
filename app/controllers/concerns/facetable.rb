@@ -99,7 +99,7 @@ module Facetable
       # generate hash with id and name for each provider in facet
 
       ids = arr.map { |hsh| "\"#{hsh["key"]}\"" }.join(" ")
-      affiliations = Organization.query(ids, size: 1000)[:data]
+      affiliations = Organization.query(ids, size: 1000)[:data] || []
 
       arr.map do |hsh|
         { "id" => hsh["key"],

@@ -51,5 +51,15 @@ describe Organization, type: :model, vcr: true do
       organizations = Organization.query(query)
       expect(organizations[:data]).to be_empty
     end
+
+    it "status code not 200" do
+      url = "https://api.ror.org/organizations?query=lincoln%20university"
+      stub = stub_request(:get, url).and_return(status: [408])
+      
+      query = "lincoln university"
+      organizations = Organization.query(query)
+      expect(organizations).to be_empty
+      expect(stub).to have_been_requested
+    end
   end
 end

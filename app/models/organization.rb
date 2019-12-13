@@ -27,8 +27,8 @@ class Organization
 
     response = Maremma.get(url, host: true)
 
-    return [] if response.status != 200
-    
+    return {} if response.status != 200
+
     data = Array.wrap(response.body.dig("data", "items")).map do |message|
       parse_message(id: message["id"], message: message)
     end
