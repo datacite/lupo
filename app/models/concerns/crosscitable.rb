@@ -51,7 +51,6 @@ module Crosscitable
     rescue NoMethodError, ArgumentError => exception
       Raven.capture_exception(exception)
 
-      logger = LogStashLogger.new(type: :stdout)
       logger.error "Error " + exception.message + " for doi " + @doi + "."
       logger.error exception
 
@@ -118,7 +117,6 @@ module Crosscitable
       doc = Nokogiri::XML(string) { |config| config.strict.noblanks }
       doc.to_xml
     rescue ArgumentError, Encoding::CompatibilityError => exception
-      logger = LogStashLogger.new(type: :stdout)
       logger.error "Error " + exception.message + "."
       logger.error exception
 

@@ -113,7 +113,6 @@ class ProviderPrefixesController < ApplicationController
   end
 
   def create
-    logger = LogStashLogger.new(type: :stdout)
     @provider_prefix = ProviderPrefix.new(safe_params)
     authorize! :create, @provider_prefix
 

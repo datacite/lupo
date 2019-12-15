@@ -7,7 +7,6 @@ class TransferJob < ActiveJob::Base
   # discard_on ActiveJob::DeserializationError
 
   def perform(doi_id, options={})
-    logger = LogStashLogger.new(type: :stdout) 
     doi = Doi.where(doi: doi_id).first
 
     if doi.present? && options[:target_id].present?
@@ -15,11 +14,11 @@ class TransferJob < ActiveJob::Base
 
       doi.__elasticsearch__.index_document
 
-      logger.info "[Transfer] Transferred DOI #{doi.doi}."
+      Rails.logger.info "[Transfer] Transferred DOI #{doi.doi}."
     elsif doi.present?
-      logger.info "[Transfer] Error transferring DOI " + doi_id + ": no target client"
+      Rails.logger.error "[Transfer] Error transferring DOI " + doi_id + ": no target client"
     else
-      logger.info "[Transfer] Error transferring DOI " + doi_id + ": not found"
+      Rails.logger.error "[Transfer] Error transferring DOI " + doi_id + ": not found"
     end
   end
 end

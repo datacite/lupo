@@ -532,8 +532,6 @@ class Doi < ActiveRecord::Base
   end
 
   def self.import_one(doi_id: nil)
-    logger = LogStashLogger.new(type: :stdout)
-
     doi = Doi.where(doi: doi_id).first
     unless doi.present?
       logger.error "[MySQL] DOI " + doi_id + " not found."
@@ -568,7 +566,7 @@ class Doi < ActiveRecord::Base
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
       DoiImportByIdJob.perform_later(options.merge(id: id))
-      puts "Queued importing for DOIs with IDs starting with #{id}." unless Rails.env.test?
+      Logger.info "Queued importing for DOIs with IDs starting with #{id}." unless Rails.env.test?
     end
 
     (from_id..until_id).to_a.length
@@ -587,8 +585,6 @@ class Doi < ActiveRecord::Base
             end
     errors = 0
     count = 0
-
-    logger = LogStashLogger.new(type: :stdout)
 
     Doi.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |dois|
       response = Doi.__elasticsearch__.client.bulk \
@@ -667,19 +663,17 @@ class Doi < ActiveRecord::Base
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
       DoiConvertAffiliationByIdJob.perform_later(options.merge(id: id))
-      puts "Queued converting affiliations for DOIs with IDs starting with #{id}." unless Rails.env.test?
+      logger.info "Queued converting affiliations for DOIs with IDs starting with #{id}." unless Rails.env.test?
     end
 
     (from_id..until_id).to_a.length
   end
 
   def self.convert_affiliation_by_id(options={})
-    return nil unless options[:id].present?
+    return nil if options[:id].blank?
 
     id = options[:id].to_i
     count = 0
-
-    logger = LogStashLogger.new(type: :stdout)
 
     Doi.where(id: id..(id + 499)).find_each do |doi|
       should_update = false
@@ -773,19 +767,17 @@ class Doi < ActiveRecord::Base
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
       DoiConvertContainerByIdJob.perform_later(options.merge(id: id))
-      puts "Queued converting containers for DOIs with IDs starting with #{id}." unless Rails.env.test?
+      logger.info "Queued converting containers for DOIs with IDs starting with #{id}." unless Rails.env.test?
     end
 
     (from_id..until_id).to_a.length
   end
 
   def self.convert_container_by_id(options={})
-    return nil unless options[:id].present?
+    return nil if options[:id].blank?
 
     id = options[:id].to_i
     count = 0
-
-    logger = LogStashLogger.new(type: :stdout)
 
     Doi.where(id: id..(id + 499)).find_each do |doi|
       should_update = false
@@ -1044,10 +1036,8 @@ class Doi < ActiveRecord::Base
 
   # to be used after DOIs were transferred to another DOI RA
   def self.delete_dois_by_prefix(prefix, options={})
-    logger = LogStashLogger.new(type: :stdout)
-
     if prefix.blank?
-      Logger.error "[Error] No prefix provided."
+      logger.error "[Error] No prefix provided."
       return nil
     end
 
@@ -1080,8 +1070,6 @@ class Doi < ActiveRecord::Base
   # register DOIs in the handle system that have not been registered yet
   # provider europ registers their DOIs in the handle system themselves and are ignored
   def self.set_handle
-    logger = LogStashLogger.new(type: :stdout)
-
     response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:Crossref", page: { size: 1, cursor: [] })
     logger.info "#{response.results.total} DOIs found that are not registered in the Handle system."
 
@@ -1104,8 +1092,6 @@ class Doi < ActiveRecord::Base
   end
 
   def self.set_url
-    logger = LogStashLogger.new(type: :stdout)
-
     response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 1, cursor: [] })
     logger.info "#{response.results.total} DOIs with no URL found in the database."
 
@@ -1113,9 +1099,9 @@ class Doi < ActiveRecord::Base
       # walk through results using cursor
       cursor = []
 
-      while response.results.results.length > 0 do
+      while response.results.results.length.postive? do
         response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 1000, cursor: cursor })
-        break unless response.results.results.length > 0
+        break unless response.results.results.length.positive?
 
         logger.info "[Handle] Update URL for #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
@@ -1128,8 +1114,6 @@ class Doi < ActiveRecord::Base
   end
 
   def self.set_minted
-    logger = LogStashLogger.new(type: :stdout)
-
     response = Doi.query("provider_id:ethz AND +aasm_state:draft +url:*", page: { size: 1, cursor: [] })
     logger.info "#{response.results.total} draft DOIs from provider ETHZ found in the database."
 
@@ -1137,9 +1121,9 @@ class Doi < ActiveRecord::Base
       # walk through results using cursor
       cursor = []
 
-      while response.results.results.length > 0 do
+      while response.results.results.length.positive? do
         response = Doi.query("provider_id:ethz AND +aasm_state:draft +url:*", page: { size: 1000, cursor: cursor })
-        break unless response.results.results.length > 0
+        break unless response.results.results.length.positive?
 
         logger.info "[MySQL] Set minted for #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
@@ -1152,15 +1136,13 @@ class Doi < ActiveRecord::Base
   end
 
   def self.transfer(options={})
-    logger = LogStashLogger.new(type: :stdout)
-
     if options[:client_id].blank?
-      Logger.error "[Transfer] No client provided."
+      logger.error "[Transfer] No client provided."
       return nil
     end
 
     if options[:target_id].blank?
-      Logger.error "[Transfer] No target client provided."
+      logger.error "[Transfer] No target client provided."
       return nil
     end
 
@@ -1174,9 +1156,9 @@ class Doi < ActiveRecord::Base
       # walk through results using cursor
       cursor = []
 
-      while response.results.results.length > 0 do
+      while response.results.results.length.positive? do
         response = Doi.query(nil, client_id: options[:client_id], page: { size: size, cursor: cursor })
-        break unless response.results.results.length > 0
+        break unless response.results.results.length.positive?
 
         logger.info "[Transfer] Transferring #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
@@ -1202,7 +1184,6 @@ class Doi < ActiveRecord::Base
   end
 
   def self.migrate_landing_page(options={})
-    logger = LogStashLogger.new(type: :stdout)
     logger.info "Starting migration"
 
     # Handle camel casing first.
@@ -1218,7 +1199,7 @@ class Doi < ActiveRecord::Base
           "schema-org-id" => "schemaOrgId",
           "has-schema-org" => "hasSchemaOrg",
           "redirect-count" => "redirectCount",
-          "download-latency" => "downloadLatency"
+          "download-latency" => "downloadLatency",
         }
         result = result.map {|k, v| [mappings[k] || k, v] }.to_h
         # doi.update_columns("last_landing_page_status_result": result)

@@ -342,8 +342,6 @@ module Facetable
     end
 
     def clients_totals(arr)
-      logger = LogStashLogger.new(type: :stdout)
-
       clients = Client.all.pluck(:symbol, :name).to_h
 
       arr = arr.map do |hsh|
@@ -356,7 +354,7 @@ module Facetable
             "last_year" => facet_annual(hsh.last_year.buckets),
             "two_years_ago" => facet_annual(hsh.two_years_ago.buckets)
           },
-          "states"    => facet_by_key(hsh.states.buckets)
+          "states" => facet_by_key(hsh.states.buckets)
         }
       end
     end

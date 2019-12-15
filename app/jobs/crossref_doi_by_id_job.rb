@@ -7,13 +7,10 @@ class CrossrefDoiByIdJob < ActiveJob::Base
   # discard_on ActiveJob::DeserializationError
 
   rescue_from ActiveJob::DeserializationError, Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
-    logger = LogStashLogger.new(type: :stdout)
-    logger.error error.message
+    Rails.logger.error error.message
   end
 
   def perform(id, options={})
-    logger = LogStashLogger.new(type: :stdout)
-
     doi = doi_from_url(id)
     return {} unless doi.present?
 
@@ -61,13 +58,13 @@ class CrossrefDoiByIdJob < ActiveJob::Base
                                 password: ENV["ADMIN_PASSWORD"])
 
     if response.status == 201
-      logger.info "DOI #{doi} record created."
+      Rails.logger.info "DOI #{doi} record created."
     elsif response.status == 200
-      logger.info "DOI #{doi} record updated."
+      Rails.logger.info "DOI #{doi} record updated."
     elsif response.status == 404
-      logger.warn "[Warn] #{ra} DOI #{doi} not found."
+      Rails.logger.warn "[Warn] #{ra} DOI #{doi} not found."
     else
-      logger.error "[Error parsing #{ra} DOI #{doi}]: " + response.body["errors"].inspect
+      Rails.logger.error "[Error parsing #{ra} DOI #{doi}]: " + response.body["errors"].inspect
     end
   end
 

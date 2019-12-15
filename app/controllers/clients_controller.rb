@@ -105,7 +105,6 @@ class ClientsController < ApplicationController
   end
 
   def create
-    logger = LogStashLogger.new(type: :stdout)
     @client = Client.new(safe_params)
     authorize! :create, @client
 
@@ -122,7 +121,6 @@ class ClientsController < ApplicationController
   end
 
   def update
-    logger = LogStashLogger.new(type: :stdout)
     if @client.update_attributes(safe_params)
       options = {}
       options[:meta] = { dois: doi_count(client_id: params[:id]) }
@@ -139,7 +137,6 @@ class ClientsController < ApplicationController
   # don't delete, but set deleted_at timestamp
   # a client with dois or prefixes can't be deleted
   def destroy
-    logger = LogStashLogger.new(type: :stdout)
     if @client.dois.present?
       message = "Can't delete client that has DOIs."
       status = 400

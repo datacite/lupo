@@ -294,7 +294,7 @@ class Event < ActiveRecord::Base
     # get every id between from_id and until_id
     (from_id..until_id).step(500).each do |id|
       EventImportByIdJob.perform_later(id: id)
-      puts "Queued importing for events with IDs starting with #{id}." unless Rails.env.test?
+      logger.info "Queued importing for events with IDs starting with #{id}." unless Rails.env.test?
     end
   end
 
@@ -305,8 +305,6 @@ class Event < ActiveRecord::Base
     index = Rails.env.test? ? "events-test" : self.inactive_index
     errors = 0
     count = 0
-
-    logger = LogStashLogger.new(type: :stdout)
 
     Event.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |events|
       response = Event.__elasticsearch__.client.bulk \
@@ -342,8 +340,6 @@ class Event < ActiveRecord::Base
   end
 
   def self.update_crossref(options = {})
-    logger = LogStashLogger.new(type: :stdout)
-
     size = (options[:size] || 1000).to_i
     cursor = (options[:cursor] || [])
 
@@ -387,21 +383,7 @@ class Event < ActiveRecord::Base
     update_datacite_ra(options.merge(ra: "op"))
   end
 
-  def self.update_datacite_medra(options = {})
-    update_datacite_ra(options.merge(ra: "medra"))
-  end
-
-  def self.update_datacite_medra(options = {})
-    update_datacite_ra(options.merge(ra: "medra"))
-  end
-
-  def self.update_datacite_medra(options = {})
-    update_datacite_ra(options.merge(ra: "medra"))
-  end
-
   def self.update_datacite_ra(options = {})
-    logger = LogStashLogger.new(type: :stdout)
-
     size = (options[:size] || 1000).to_i
     cursor = (options[:cursor] || [])
     ra = options[:ra] || "crossref"
@@ -430,8 +412,6 @@ class Event < ActiveRecord::Base
   end
 
   def self.update_registrant(options = {})
-    logger = LogStashLogger.new(type: :stdout)
-
     size = (options[:size] || 1000).to_i
     cursor = (options[:cursor] || [])
     # ra = options[:ra] || "crossref"
@@ -461,8 +441,6 @@ class Event < ActiveRecord::Base
   end
 
   def self.update_datacite_orcid_auto_update(options = {})
-    logger = LogStashLogger.new(type: :stdout)
-
     size = (options[:size] || 1000).to_i
     cursor = (options[:cursor] || []).to_i
 

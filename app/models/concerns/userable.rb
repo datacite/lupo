@@ -3,11 +3,7 @@ module Userable
 
   included do
     def remove_users(id: nil, jwt: nil)
-      logger = LogStashLogger.new(type: :stdout)
-
       result = Maremma.get user_url
-      logger.info result.inspect
-      
       Array.wrap(result.body["data"]).each do |user|
         url = ENV["VOLPINO_URL"] + "/users/" + user.fetch("id")
         data = { "data" => { "attributes" => { id => nil },

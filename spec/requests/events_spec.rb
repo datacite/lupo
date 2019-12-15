@@ -274,7 +274,7 @@ describe "/events", type: :request, elasticsearch: true do
         Event.import
         sleep 1
         get uri + "?doi=10.1016/j.jastp.2013.05.001", nil, headers
-        puts json.dig("meta", "citationsHistogram")
+
         expect(json.dig("meta", "citationsHistogram", "years", 0, "title")).to eq("2017")
       end
     end
@@ -652,7 +652,6 @@ describe "/events", type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(200)
         response = JSON.parse(last_response.body)
-        puts response
 
         citations = (response.dig("meta", "uniqueCitations")).select { |item| item["id"] == doi }
         # references = (response.dig("meta", "references")).select { |item| item["id"] == doi }

@@ -181,9 +181,7 @@ class ProvidersController < ApplicationController
   end
 
   def create
-    logger = LogStashLogger.new(type: :stdout)
-
-    # generate random symbol if not symbol is provided
+    # generate random symbol if no symbol is provided
     @provider = Provider.new(safe_params.reverse_merge(symbol: generate_random_provider_symbol))
     authorize! :create, @provider
 
@@ -219,8 +217,6 @@ class ProvidersController < ApplicationController
   end
 
   def update
-    logger = LogStashLogger.new(type: :stdout)
-    # logger.debug safe_params.inspect
     if @provider.update_attributes(safe_params)
       if params[:id] == "admin"
         providers = provider_count(consortium_id: nil)
@@ -255,8 +251,7 @@ class ProvidersController < ApplicationController
   # don't delete, but set deleted_at timestamp
   # a provider with active clients or with prefixes can't be deleted
   def destroy
-    logger = LogStashLogger.new(type: :stdout)
-    if active_client_count(provider_id: @provider.symbol) > 0
+    if active_client_count(provider_id: @provider.symbol).positive?
       message = "Can't delete provider that has active clients."
       status = 400
       logger.warn message

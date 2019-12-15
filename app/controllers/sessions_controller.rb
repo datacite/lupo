@@ -45,9 +45,8 @@ class SessionsController < ApplicationController
   private
 
   def error_response(message)
-    logger = LogStashLogger.new(type: :stdout)
     status = 400
-    logger.info message
+    logger.error message
     render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
   end
 

@@ -211,8 +211,6 @@ class Activity < Audited::Audit
     errors = 0
     count = 0
 
-    logger = LogStashLogger.new(type: :stdout)
-
     Activity.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |activities|
       response = Activity.__elasticsearch__.client.bulk \
         index:   index,
@@ -236,7 +234,7 @@ class Activity < Audited::Audit
 
     count
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    logger.info "[Elasticsearch] Error #{error.message} importing activities with IDs #{id} - #{(id + 499)}."
+    logger.error "[Elasticsearch] Error #{error.message} importing activities with IDs #{id} - #{(id + 499)}."
 
     count = 0
 
@@ -257,7 +255,7 @@ class Activity < Audited::Audit
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
       ActivityConvertAffiliationByIdJob.perform_later(options.merge(id: id))
-      puts "Queued converting affiliations for activities with IDs starting with #{id}." unless Rails.env.test?
+      Logger.info "Queued converting affiliations for activities with IDs starting with #{id}." unless Rails.env.test?
     end
 
     (from_id..until_id).to_a.length
@@ -268,8 +266,6 @@ class Activity < Audited::Audit
 
     id = options[:id].to_i
     count = 0
-
-    logger = LogStashLogger.new(type: :stdout)
 
     Activity.where(id: id..(id + 499)).find_each do |activity|
       should_update = false

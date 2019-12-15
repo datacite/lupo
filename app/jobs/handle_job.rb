@@ -7,13 +7,12 @@ class HandleJob < ActiveJob::Base
   # discard_on ActiveJob::DeserializationError
 
   def perform(doi_id)
-    logger = LogStashLogger.new(type: :stdout)
     doi = Doi.where(doi: doi_id).first
 
     if doi.present?
       doi.register_url
     else
-      logger.info "[Handle] Error updating URL for DOI " + doi_id + ": not found"
+      Rails.logger.error "[Handle] Error updating URL for DOI " + doi_id + ": not found"
     end
   end
 end

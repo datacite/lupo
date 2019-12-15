@@ -13,8 +13,6 @@ class DoisController < ApplicationController
   def index
     authorize! :read, Doi
 
-    logger = LogStashLogger.new(type: :stdout)
-
     sort = case params[:sort]
           when "name" then { "doi" => { order: 'asc' }}
           when "-name" then { "doi" => { order: 'desc' }}
@@ -260,9 +258,6 @@ class DoisController < ApplicationController
   end
 
   def validate
-    logger = LogStashLogger.new(type: :stdout)
-    # logger.info safe_params.inspect
-
     @doi = Doi.new(safe_params.merge(only_validate: true))
 
     authorize! :validate, @doi
@@ -283,9 +278,7 @@ class DoisController < ApplicationController
   end
 
   def create
-    logger = LogStashLogger.new(type: :stdout)
-    # logger.info safe_params.inspect
-    fail CanCan::AuthorizationNotPerformed unless current_user.present?
+    fail CanCan::AuthorizationNotPerformed if current_user.blank?
 
     @doi = Doi.new(safe_params)
 
@@ -312,9 +305,6 @@ class DoisController < ApplicationController
   end
 
   def update
-    logger = LogStashLogger.new(type: :stdout)
-    # logger.info safe_params.inspect
-
     @doi = Doi.where(doi: params[:id]).first
     exists = @doi.present?
 
@@ -360,8 +350,6 @@ class DoisController < ApplicationController
   end
 
   def undo
-    logger = LogStashLogger.new(type: :stdout)
-
     @doi = Doi.where(doi: safe_params[:doi]).first
     fail ActiveRecord::RecordNotFound unless @doi.present?
 
@@ -385,9 +373,8 @@ class DoisController < ApplicationController
   end
 
   def destroy
-    logger = LogStashLogger.new(type: :stdout)
     @doi = Doi.where(doi: params[:id]).first
-    fail ActiveRecord::RecordNotFound unless @doi.present?
+    fail ActiveRecord::RecordNotFound if @doi.blank?
 
     authorize! :destroy, @doi
 
@@ -485,8 +472,6 @@ class DoisController < ApplicationController
   private
 
   def safe_params
-    logger = LogStashLogger.new(type: :stdout)
-
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
 
     attributes = [

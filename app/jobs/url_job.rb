@@ -7,7 +7,6 @@ class UrlJob < ActiveJob::Base
   # discard_on ActiveJob::DeserializationError
 
   def perform(doi_id)
-    logger = LogStashLogger.new(type: :stdout)
     doi = Doi.where(doi: doi_id).first
 
     if doi.present?
@@ -24,12 +23,12 @@ class UrlJob < ActiveJob::Base
 
         doi.__elasticsearch__.index_document
 
-        logger.info "[Handle] URL #{url} set for DOI #{doi.doi}." unless Rails.env.test?
+        Rails.logger.info "[Handle] URL #{url} set for DOI #{doi.doi}." unless Rails.env.test?
       else
-        logger.error "[Handle] Error updating URL for DOI #{doi.doi}: URL not found." unless Rails.env.test?
+        Rails.logger.error "[Handle] Error updating URL for DOI #{doi.doi}: URL not found." unless Rails.env.test?
       end
     else
-      logger.info "[Handle] Error updating URL for DOI #{doi_id}: DOI not found" unless Rails.env.test?
+      Rails.logger.error "[Handle] Error updating URL for DOI #{doi_id}: DOI not found" unless Rails.env.test?
     end
   end
 end

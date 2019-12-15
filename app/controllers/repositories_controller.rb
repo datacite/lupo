@@ -104,7 +104,6 @@ class RepositoriesController < ApplicationController
           url
           software
           system_email)
-          puts response.records.to_a[0].to_json
         format.csv { render request.format.to_sym => response.records.to_a, header: header }
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
@@ -132,7 +131,6 @@ class RepositoriesController < ApplicationController
   end
 
   def create
-    logger = LogStashLogger.new(type: :stdout)
     @client = Client.new(safe_params)
     authorize! :create, @client
 
@@ -149,7 +147,6 @@ class RepositoriesController < ApplicationController
   end
 
   def update
-    logger = LogStashLogger.new(type: :stdout)
     if @client.update_attributes(safe_params)
       options = {}
       options[:meta] = { dois: doi_count(client_id: params[:id]) }
@@ -166,7 +163,6 @@ class RepositoriesController < ApplicationController
   # don't delete, but set deleted_at timestamp
   # a repository with dois or prefixes can't be deleted
   def destroy
-    logger = LogStashLogger.new(type: :stdout)
     if @client.dois.present?
       message = "Can't delete repository that has DOIs."
       status = 400

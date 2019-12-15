@@ -114,7 +114,6 @@ class PrefixesController < ApplicationController
   end
 
   def create
-    logger = LogStashLogger.new(type: :stdout)
     @prefix = Prefix.new(safe_params)
     authorize! :create, @prefix
 

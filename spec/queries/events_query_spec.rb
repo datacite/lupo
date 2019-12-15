@@ -50,7 +50,6 @@ describe EventsQuery, elasticsearch: true do
     end
 
     it "usage" do
-      puts EventsQuery.new.usage("10.0260/co.2004960.v1")
       expect(EventsQuery.new.usage("10.0260/co.2004960.v1").first).to eq(id: "https://doi.org/10.0260/co.2004960.v1", title: "https://doi.org/10.0260/co.2004960.v1", relationTypes: [{ id: "unique-dataset-requests-regular", title: "unique-dataset-requests-regular", sum: downloads.first.total }, { id: "unique-dataset-investigations-regular", title: "unique-dataset-investigations-regular", sum: views.first.total }])
     end
   end

@@ -13,8 +13,6 @@ module Helpable
     include Bolognese::DoiUtils
 
     def register_url
-      logger = LogStashLogger.new(type: :stdout)
-
       unless url.present?
         logger.error "[Handle] Error updating DOI " + doi + ": url missing."
         return OpenStruct.new(body: { "errors" => [{ "title" => "URL missing." }] })
@@ -47,7 +45,7 @@ module Helpable
           "type" => "URL",
           "data" => {
             "format" => "string",
-            "value" => url
+            "value" => url,
           }
         }
       ].to_json
@@ -61,25 +59,22 @@ module Helpable
         logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "." unless Rails.env.test?
 
         self.__elasticsearch__.index_document
-
-        response
       else
         logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect unless Rails.env.test?
-        response
       end
+
+      response
     end
 
     def get_url
       url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}?index=1"
       response = Maremma.get(url, ssl_self_signed: true, timeout: 10)
 
-      if response.status == 200
-        response
-      else
-        logger = LogStashLogger.new(type: :stdout)
+      if response.status != 200
         logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect unless Rails.env.test?
-        response
       end
+
+      response
     end
 
     def generate_random_provider_symbol
@@ -143,14 +138,13 @@ module Helpable
           else
             text = "Error " + response.body["errors"].inspect
 
-            logger = LogStashLogger.new(type: :stdout)
             logger.error "[Handle] " + text
             User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
           end
         end
       end
 
-      puts "#{total} DOIs found."
+      logger.info "#{total} DOIs found."
 
       dois
     end
@@ -162,16 +156,14 @@ module Helpable
       url += "/api/handles/#{options[:doi]}"
       response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
 
-      if response.status == 200
-        response
-      else
+      if response.status != 200
         text = "Error " + response.body["errors"].inspect
 
-        logger = LogStashLogger.new(type: :stdout)
         logger.error "[Handle] " + text
         User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
-        response
       end
+
+      response
     end
 
     def delete_doi(options={})
@@ -186,7 +178,6 @@ module Helpable
       else
         text = "Error " + response.body["errors"].inspect
 
-        logger = LogStashLogger.new(type: :stdout)
         logger.error "[Handle] " + text
         User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
         response

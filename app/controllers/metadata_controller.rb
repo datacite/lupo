@@ -52,7 +52,6 @@ class MetadataController < ApplicationController
   end
 
   def create
-    logger = LogStashLogger.new(type: :stdout)
     authorize! :update, @doi
 
     # convert back to plain xml
@@ -72,7 +71,6 @@ class MetadataController < ApplicationController
   end
 
   def destroy
-    logger = LogStashLogger.new(type: :stdout)
     authorize! :update, @doi
 
     if @doi.draft?

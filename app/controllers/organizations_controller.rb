@@ -132,7 +132,6 @@ class OrganizationsController < ApplicationController
           created
           updated
           deletedAt)
-          puts response.records.to_a[0].to_json
         format.csv { render request.format.to_sym => response.records.to_a, header: header }
       end
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception

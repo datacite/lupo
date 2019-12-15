@@ -79,7 +79,6 @@ class ClientPrefixesController < ApplicationController
   end
 
   def create
-    logger = LogStashLogger.new(type: :stdout)
     @client_prefix = ClientPrefix.new(safe_params)
     authorize! :create, @client_prefix
 

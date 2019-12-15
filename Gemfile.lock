@@ -1,10 +1,4 @@
 GIT
-  remote: https://github.com/rmosolgo/graphql-ruby
-  revision: b0e97e759c850cfbc03d75dfbb115f1bc443a985
-  specs:
-    graphql (1.9.16)
-
-GIT
   remote: https://github.com/stackshareio/graphql-cache
   revision: 5a6fa5a3316cd267d0829815b122e1e159321e17
   specs:
@@ -73,8 +67,8 @@ GEM
     audited (4.9.0)
       activerecord (>= 4.2, < 6.1)
     aws-eventstream (1.0.3)
-    aws-partitions (1.252.0)
-    aws-sdk-core (3.85.0)
+    aws-partitions (1.255.0)
+    aws-sdk-core (3.86.0)
       aws-eventstream (~> 1.0, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
@@ -140,7 +134,7 @@ GEM
       thor (~> 0.19)
     bootsnap (1.4.5)
       msgpack (~> 1.0)
-    builder (3.2.3)
+    builder (3.2.4)
     byebug (11.0.1)
     cancancan (2.3.0)
     capybara (3.29.0)
@@ -247,6 +241,7 @@ GEM
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     google-protobuf (3.10.0.rc.1)
+    graphql (1.9.16)
     graphql-batch (0.4.2)
       graphql (>= 1.3, < 2)
       promise.rb (~> 0.7.2)
@@ -268,7 +263,7 @@ GEM
     iso8601 (0.9.1)
     jaro_winkler (1.5.4)
     jmespath (1.4.0)
-    json (1.8.6)
+    json (2.3.0)
     json-ld (3.0.2)
       multi_json (~> 1.12)
       rdf (>= 2.2.8, < 4.0)
@@ -299,7 +294,7 @@ GEM
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
       ruby_dep (~> 1.2)
-    lograge (0.10.0)
+    lograge (0.11.2)
       actionpack (>= 4)
       activesupport (>= 4)
       railties (>= 4)
@@ -457,15 +452,18 @@ GEM
       rspec-mocks (~> 3.9.0)
       rspec-support (~> 3.9.0)
     rspec-support (3.9.0)
-    rubocop (0.68.1)
+    rubocop (0.77.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
-      parser (>= 2.5, != 2.5.1.1)
+      parser (>= 2.6)
       rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.7)
-      unicode-display_width (>= 1.4.0, < 1.6)
-    rubocop-performance (1.3.0)
-      rubocop (>= 0.68.0)
+      unicode-display_width (>= 1.4.0, < 1.7)
+    rubocop-performance (1.5.1)
+      rubocop (>= 0.71.0)
+    rubocop-rails (2.4.0)
+      rack (>= 1.1)
+      rubocop (>= 0.72.0)
     ruby-enum (0.7.2)
       i18n
     ruby-progressbar (1.10.1)
@@ -524,7 +522,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.6)
-    unicode-display_width (1.5.0)
+    unicode-display_width (1.6.0)
     unicode_utils (1.4.0)
     vcr (3.0.3)
     webmock (3.7.6)
@@ -582,24 +580,22 @@ DEPENDENCIES
   gender_detector (~> 0.1.2)
   git (~> 1.5)
   google-protobuf (= 3.10.0.rc.1)
-  graphql (~> 1.9, >= 1.9.15)!
+  graphql (~> 1.9, >= 1.9.16)
   graphql-batch (~> 0.4.1)
   graphql-cache (~> 0.6.0)!
   graphql-errors (~> 0.4.0)
   hashdiff (>= 1.0.0.beta1, < 2.0.0)
   iso8601 (~> 0.9.0)
-  json (~> 1.8, >= 1.8.5)
   jsonlint (~> 0.2.0)
   jwt
   kaminari (~> 1.0, >= 1.0.1)
   listen (>= 3.0.5, < 3.2)
-  lograge (~> 0.10.0)
+  lograge (~> 0.11.2)
   logstash-event (~> 1.2, >= 1.2.02)
   logstash-logger (~> 0.26.1)
   mailgun-ruby (~> 1.1, >= 1.1.8)
   maremma (>= 4.1)
   mini_magick (~> 4.8)
-  multi_json
   mysql2 (~> 0.4.4)
   nokogiri (>= 1.10.4)
   oj (>= 2.8.3)
@@ -612,8 +608,9 @@ DEPENDENCIES
   rake (~> 12.0)
   rspec-benchmark (~> 0.4.0)
   rspec-rails (~> 3.8, >= 3.8.2)
-  rubocop (~> 0.68.1)
-  rubocop-performance (~> 1.2)
+  rubocop (~> 0.77.0)
+  rubocop-performance (~> 1.5, >= 1.5.1)
+  rubocop-rails (~> 2.4)
   sentry-raven (~> 2.9)
   shoryuken (~> 4.0)
   shoulda-matchers (~> 3.1)

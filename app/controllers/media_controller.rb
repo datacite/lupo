@@ -49,7 +49,6 @@ class MediaController < ApplicationController
   end
 
   def create
-    logger = LogStashLogger.new(type: :stdout)
     authorize! :update, @doi
 
     @media = Media.new(safe_params.merge(doi: @doi))
@@ -67,7 +66,6 @@ class MediaController < ApplicationController
   end
 
   def update
-    logger = LogStashLogger.new(type: :stdout)
     authorize! :update, @doi
 
     if @media.update_attributes(safe_params.merge(doi: @doi))
@@ -83,7 +81,6 @@ class MediaController < ApplicationController
   end
 
   def destroy
-    logger = LogStashLogger.new(type: :stdout)
     authorize! :update, @doi
 
     if @media.destroy

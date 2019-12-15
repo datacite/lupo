@@ -649,7 +649,7 @@ describe "dois", type: :request do
 
       it 'updates the record' do
         patch "/dois/#{doi.doi}", valid_attributes, headers
-        puts last_response.body
+
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
@@ -1186,7 +1186,7 @@ describe "dois", type: :request do
 
       it 'updates the record' do
         patch "/dois/10.14454/8na3-9s47", valid_attributes, headers
-        puts last_response.body
+
         expect(last_response.status).to eq(201)
         expect(json.dig('data', 'attributes', 'url')).to eq("https://ors.datacite.org/doi:/10.14454/8na3-9s47")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/8na3-9s47")

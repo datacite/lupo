@@ -7,8 +7,6 @@ class OrcidAutoUpdateByIdJob < ActiveJob::Base
   # discard_on ActiveJob::DeserializationError
 
   def perform(id, options={})
-    logger = LogStashLogger.new(type: :stdout)
-
     orcid = orcid_from_url(id)
     return {} unless orcid.present?
 
@@ -46,9 +44,9 @@ class OrcidAutoUpdateByIdJob < ActiveJob::Base
                                 password: ENV["ADMIN_PASSWORD"])
 
     if [200, 201].include?(response.status)
-      logger.info "ORCID #{orcid} added."
+      Rails.logger.info "ORCID #{orcid} added."
     else
-      logger.info "[Error for ORCID #{orcid}]: " + response.body["errors"].inspect
+      Rails.logger.error "[Error for ORCID #{orcid}]: " + response.body["errors"].inspect
     end
   end
 

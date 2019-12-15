@@ -2,7 +2,6 @@ class AffiliationJob < ActiveJob::Base
   queue_as :lupo_background
 
   def perform(doi_id)
-    logger = LogStashLogger.new(type: :stdout)
     doi = Doi.where(doi: doi_id).first
 
     if doi.present?
@@ -18,7 +17,7 @@ class AffiliationJob < ActiveJob::Base
 
       doi.__elasticsearch__.index_document
     else
-      logger.info "[Affiliation] Error updaing DOI " + doi_id + ": not found"
+      Rails.logger.error "[Affiliation] Error updaing DOI " + doi_id + ": not found"
     end
   end
 end
