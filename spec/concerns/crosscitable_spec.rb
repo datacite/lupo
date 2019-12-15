@@ -52,12 +52,12 @@ describe Doi, vcr: true do
 
     it "from_json starts with unexpected character" do
       string = file_fixture('datacite.xml').read
-      expect { subject.from_json(string) }.to raise_error(JSON::ParserError, "unexpected character at line 1, column 1 [parse.c:671]")
+      expect { subject.from_json(string) }.to raise_error(JSON::ParserError, /Empty input \(\) at line 1, column 1/)
     end
 
     it "from_json malformed" do
       string = file_fixture('citeproc_malformed.json').read
-      expect { subject.from_json(string) }.to raise_error(JSON::ParserError, "expected comma, not a string at line 4, column 9 [parse.c:381]")
+      expect { subject.from_json(string) }.to raise_error(JSON::ParserError, /expected comma, not a string \(id\) at line 4, column 9/)
     end
 
     it "from_json duplicate keys" do
@@ -84,12 +84,12 @@ describe Doi, vcr: true do
 
     it "from_json starts with unexpected character" do
       string = 'abc'
-      expect { subject.well_formed_xml(string) }.to raise_error(JSON::ParserError, "unexpected character at line 1, column 1 [parse.c:671]")
+      expect { subject.well_formed_xml(string) }.to raise_error(JSON::ParserError, /Empty input \(\) at line 1, column 1/)
     end
 
     it "from_json malformed" do
       string = file_fixture('citeproc_malformed.json').read
-      expect { subject.well_formed_xml(string) }.to raise_error(JSON::ParserError, "expected comma, not a string at line 4, column 9 [parse.c:381]")
+      expect { subject.well_formed_xml(string) }.to raise_error(JSON::ParserError, /expected comma/)
     end
 
     it "from_json duplicate keys" do
