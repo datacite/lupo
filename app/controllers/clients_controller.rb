@@ -121,7 +121,7 @@ class ClientsController < ApplicationController
   end
 
   def update
-    if @client.update_attributes(safe_params)
+    if @client.update(safe_params)
       options = {}
       options[:meta] = { dois: doi_count(client_id: params[:id]) }
       options[:is_collection] = false
@@ -142,7 +142,7 @@ class ClientsController < ApplicationController
       status = 400
       logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
-    elsif @client.update_attributes(is_active: nil, deleted_at: Time.zone.now)
+    elsif @client.update(is_active: nil, deleted_at: Time.zone.now)
       @client.send_delete_email unless Rails.env.test?
       head :no_content
     else

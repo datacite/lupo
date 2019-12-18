@@ -65,7 +65,7 @@ class ApplicationController < ActionController::API
 
   def authenticate_user!
     type, credentials = type_and_credentials_from_request_headers
-    return false unless credentials.present?
+    return false if credentials.blank?
 
     @current_user = User.new(credentials, type: type)
   end
