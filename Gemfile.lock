@@ -364,7 +364,7 @@ GEM
     pwqgen.rb (0.1.0)
       docopt (~> 0.5)
       sysrandom
-    rack (2.0.7)
+    rack (2.0.8)
     rack-accept (0.4.5)
       rack (>= 0.4)
     rack-cors (1.1.0)
