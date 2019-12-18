@@ -58,6 +58,7 @@ class Ability
         activity.doi.findable? || activity.doi.provider_id == user.provider_id
       end
     elsif user.role_id == "client_admin" && user.client_id.present?
+      can [:read], Provider
       can [:read, :update], Client, :symbol => user.client_id.upcase
       can [:read], ClientPrefix, :client_id => user.client_id
 
@@ -80,6 +81,7 @@ class Ability
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
     elsif user.role_id == "client_user" && user.client_id.present?
+      can [:read], Provider
       can [:read], Client, :symbol => user.client_id.upcase
       can [:read], ClientPrefix, :client_id => user.client_id
       can [:read, :get_url, :read_landing_page_results], Doi, :client_id => user.client_id
@@ -92,7 +94,8 @@ class Ability
         activity.doi.findable? || activity.doi.client_id == user.client_id
       end
     elsif user.role_id == "user"
-      can [:read, :update], Provider, :symbol => user.provider_id.upcase if user.provider_id.present?
+      can [:read], Provider
+      can [:update], Provider, :symbol => user.provider_id.upcase if user.provider_id.present?
       can [:read, :update], Client, :symbol => user.client_id.upcase if user.client_id.present?
       can [:read], Doi, :client_id => user.client_id if user.client_id.present?
       can [:read, :get_url], Doi do |doi|
@@ -104,8 +107,9 @@ class Ability
         activity.doi.findable?
       end
     elsif user.role_id == "temporary"
-      can [:read, :update], Provider, :symbol => "ADMIN" if user.uid == "admin"
-      can [:read, :update], Provider, :symbol => user.provider_id.upcase if user.provider_id.present?
+      can [:read], Provider
+      can [:update], Provider, :symbol => "ADMIN" if user.uid == "admin"
+      can [:update], Provider, :symbol => user.provider_id.upcase if user.provider_id.present?
       can [:read, :update], Client, :symbol => user.client_id.upcase if user.client_id.present?
       can [:read], Doi, :client_id => user.client_id if user.client_id.present?
       can [:read, :get_url], Doi do |doi|
