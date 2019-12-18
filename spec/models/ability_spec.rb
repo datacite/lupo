@@ -27,8 +27,8 @@ describe User, type: :model do
       let(:token){ User.generate_token(role_id: "user") }
 
       it{ is_expected.to be_able_to(:read, user) }
+      it{ is_expected.to be_able_to(:read, provider) }
 
-      it{ is_expected.not_to be_able_to(:read, provider) }
       it{ is_expected.not_to be_able_to(:create, provider) }
       it{ is_expected.not_to be_able_to(:update, provider) }
       it{ is_expected.not_to be_able_to(:destroy, provider) }
@@ -54,8 +54,8 @@ describe User, type: :model do
       let(:token){ User.generate_token(role_id: "client_admin", provider_id: provider.symbol.downcase, client_id: client.symbol.downcase) }
 
       it{ is_expected.to be_able_to(:read, user) }
+      it{ is_expected.to be_able_to(:read, provider) }
 
-      it{ is_expected.not_to be_able_to(:read, provider) }
       it{ is_expected.not_to be_able_to(:create, provider) }
       it{ is_expected.not_to be_able_to(:update, provider) }
       it{ is_expected.not_to be_able_to(:destroy, provider) }
@@ -86,8 +86,8 @@ describe User, type: :model do
       let(:token){ User.generate_token(role_id: "client_user", provider_id: provider.symbol.downcase, client_id: client.symbol.downcase) }
 
       it{ is_expected.to be_able_to(:read, user) }
+      it{ is_expected.to be_able_to(:read, provider) }
 
-      it{ is_expected.not_to be_able_to(:read, provider) }
       it{ is_expected.not_to be_able_to(:create, provider) }
       it{ is_expected.not_to be_able_to(:update, provider) }
       it{ is_expected.not_to be_able_to(:destroy, provider) }
