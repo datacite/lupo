@@ -8,7 +8,7 @@ Rails.application.configure do
   config.lograge.logger =  LogStashLogger.new(type: :stdout)
   config.lograge.log_level = ENV["LOG_LEVEL"].to_sym
 
-  config.active_job.logger = config.logger
+  config.active_job.logger = config.lograge.logger
 
   config.lograge.ignore_actions = ["HeartbeatController#index", "IndexController#index"]
   config.lograge.ignore_custom = lambda do |event|
@@ -20,7 +20,7 @@ Rails.application.configure do
     exceptions = %w(controller action format id)
     {
       params: event.payload[:params].except(*exceptions),
-      uid: event.payload[:uid]
+      uid: event.payload[:uid],
     }
   end
 end

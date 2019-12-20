@@ -237,7 +237,7 @@ class EventsController < ApplicationController
   def load_event
     response = Event.find_by_id(params[:id])
     @event = response.results.first
-    fail ActiveRecord::RecordNotFound unless @event.present?
+    fail ActiveRecord::RecordNotFound if @event.blank?
   end
 
   def set_include

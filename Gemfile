@@ -93,7 +93,7 @@ group :test do
   gem "vcr", "~> 3.0.3"
   gem "codeclimate-test-reporter", "~> 1.0", ">= 1.0.8"
   gem "factory_bot_rails", "~> 4.8", ">= 4.8.2"
-  gem "shoulda-matchers", "~> 3.1"
+  gem "shoulda-matchers", "~> 4.1", ">= 4.1.2"
   gem "faker", "~> 1.9"
   gem "database_cleaner"
   gem "elasticsearch-extensions", "~> 0.0.29"
