@@ -29,46 +29,46 @@ class PersonType < BaseObject
     "Person"
   end
 
-  def datasets(**args)
+  def datasets(**_args)
     ids = Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Dataset-Person").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
-  def publications(**args)
+  def publications(**_args)
     ids = Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Person-ScholarlyArticle").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
-  def software_source_codes(**args)
+  def software_source_codes(**_args)
     ids = Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Person-SoftwareSourceCode").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
-  def citation_count(**args)
+  def citation_count(**_args)
     dois = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
-    EventsQuery.new.citations(dois).sum {|h| h[:count] }
+    EventsQuery.new.citations(dois).sum { |h| h[:count] }
   end
 
-  def view_count(**args)
+  def view_count(**_args)
     dois = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
-    EventsQuery.new.views(dois).sum {|h| h[:count] }
+    EventsQuery.new.views(dois).sum { |h| h[:count] }
   end
 
-  def download_count(**args)
+  def download_count(**_args)
     dois = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
-    EventsQuery.new.downloads(dois).sum {|h| h[:count] }
+    EventsQuery.new.downloads(dois).sum { |h| h[:count] }
   end
 
   def https_to_http(url)
