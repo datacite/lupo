@@ -54,21 +54,21 @@ class PersonType < BaseObject
     dois = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
-    EventsQuery.new.citations(dois).sum { |h| h[:count] }
+    EventsQuery.new.citations(dois.join(",")).sum { |h| h[:count] }
   end
 
   def view_count(**_args)
     dois = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
-    EventsQuery.new.views(dois).sum { |h| h[:count] }
+    EventsQuery.new.views(dois.join(",")).sum { |h| h[:count] }
   end
 
   def download_count(**_args)
     dois = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
-    EventsQuery.new.downloads(dois).sum { |h| h[:count] }
+    EventsQuery.new.downloads(dois.join(",")).sum { |h| h[:count] }
   end
 
   def https_to_http(url)
