@@ -21,29 +21,54 @@ class PersonType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
+  field :view_count, Integer, null: true, description: "The count of DOI views according to the COUNTER code of Practice"
+  field :download_count, Integer, null: true, description: "The count of  DOI dowloands according to the COUNTER code of Practice"
+  field :citation_count, Integer, null: true, description: "The count of DOI events that represents citations"
+
   def type
     "Person"
   end
 
-  def datasets(**args)
+  def datasets(**_args)
     ids = Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Dataset-Person").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
-  def publications(**args)
+  def publications(**_args)
     ids = Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Person-ScholarlyArticle").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
-  def software_source_codes(**args)
+  def software_source_codes(**_args)
     ids = Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Person-SoftwareSourceCode").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
+  end
+
+  def citation_count(**_args)
+    dois = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
+      doi_from_url(e.subj_id)
+    end
+    EventsQuery.new.citations(dois).sum { |h| h[:count] }
+  end
+
+  def view_count(**_args)
+    dois = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
+      doi_from_url(e.subj_id)
+    end
+    EventsQuery.new.views(dois).sum { |h| h[:count] }
+  end
+
+  def download_count(**_args)
+    dois = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
+      doi_from_url(e.subj_id)
+    end
+    EventsQuery.new.downloads(dois).sum { |h| h[:count] }
   end
 
   def https_to_http(url)
