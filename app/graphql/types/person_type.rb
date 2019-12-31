@@ -51,24 +51,24 @@ class PersonType < BaseObject
   end
 
   def citation_count(**args)
-    dois = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.lazy.map do |e|
+    dois = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
-    EventsQuery.new.citations(dois)
+    EventsQuery.new.citations(dois).sum {|h| h[:count] }
   end
 
   def view_count(**args)
-    dois = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.lazy.map do |e|
+    dois = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
-    EventsQuery.new.views(dois)
+    EventsQuery.new.views(dois).sum {|h| h[:count] }
   end
 
   def download_count(**args)
-    dois = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.lazy.map do |e|
+    dois = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
-    EventsQuery.new.downloads(dois)
+    EventsQuery.new.downloads(dois).sum {|h| h[:count] }
   end
 
   def https_to_http(url)
