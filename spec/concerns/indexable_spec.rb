@@ -169,10 +169,10 @@ describe "Indexable class methods", elasticsearch: true do
         aggregations = Event.get_aggregations_hash({aggregations:""})
         expect(aggregations[:sources]).not_to be_nil
         expect(aggregations[:prefixes]).not_to be_nil
-        expect(aggregations[:citation_types]).not_to be_nil
-        expect(aggregations[:relation_types]).not_to be_nil
-        expect(aggregations[:registrants]).not_to be_nil
-        expect(aggregations[:pairings]).not_to be_nil
+        expect(aggregations[:citation_types]).to be_nil
+        expect(aggregations[:relation_types]).to be_nil
+        expect(aggregations[:registrants]).to be_nil
+        expect(aggregations[:pairings]).to be_nil
         # expect(aggregations[:dois_usage]).not_to be_nil
         expect(aggregations[:citations_histogram]).to be_nil
         expect(aggregations[:citations]).to be_nil
@@ -182,10 +182,10 @@ describe "Indexable class methods", elasticsearch: true do
         aggregations = Event.get_aggregations_hash({aggregations:"query_aggregations,citation_count_aggregation"})
         expect(aggregations[:sources]).not_to be_nil
         expect(aggregations[:prefixes]).not_to be_nil
-        expect(aggregations[:citation_types]).not_to be_nil
-        expect(aggregations[:relation_types]).not_to be_nil
-        expect(aggregations[:registrants]).not_to be_nil
-        expect(aggregations[:pairings]).not_to be_nil
+        expect(aggregations[:citation_types]).to be_nil
+        expect(aggregations[:relation_types]).to be_nil
+        expect(aggregations[:registrants]).to be_nil
+        expect(aggregations[:pairings]).to be_nil
         expect(aggregations[:dois]).not_to be_nil
         # expect(aggregations[:dois_usage]).not_to be_nil
         expect(aggregations[:citations]).not_to be_nil
