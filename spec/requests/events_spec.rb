@@ -235,7 +235,7 @@ describe "/events", type: :request, elasticsearch: true do
     end
 
     context "with registrant information" do
-      let(:uri) { "/events?aggregations=advanced_aggregations" }
+      let(:uri) { "/events" }
       let(:params) do
         { "data" => { "type" => "events",
                       "attributes" => {
