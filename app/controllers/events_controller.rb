@@ -137,10 +137,10 @@ class EventsController < ApplicationController
 
       sources = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_source(response.response.aggregations.sources.buckets) : nil
       prefixes = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_source(response.response.aggregations.prefixes.buckets) : nil
-      citation_types = total.positive? && aggregations.include?("advanced_aggregations") ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
-      relation_types = total.positive? && aggregations.include?("advanced_aggregations") ? facet_by_relation_type(response.response.aggregations.relation_types.buckets) : nil
-      registrants = total.positive? && aggregations.include?("advanced_aggregations")  ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
-      pairings = total.positive? && aggregations.include?("advanced_aggregations") ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
+      citation_types = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
+      relation_types = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_relation_type(response.response.aggregations.relation_types.buckets) : nil
+      registrants = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations")  ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
+      pairings = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
       dois = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_dois(response.response.aggregations.dois.buckets) : nil
       dois_usage = total.positive? ? EventsQuery.new.usage(params[:doi]) : nil
       # dois_citations = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_citations_by_year_v1(response.response.aggregations.dois_citations) : nil
