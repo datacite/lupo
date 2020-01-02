@@ -235,7 +235,7 @@ describe "/events", type: :request, elasticsearch: true do
     end
 
     context "with registrant information" do
-      let(:uri) { "/events?aggregations=advanced_aggregations" }
+      let(:uri) { "/events" }
       let(:params) do
         { "data" => { "type" => "events",
                       "attributes" => {
@@ -259,7 +259,7 @@ describe "/events", type: :request, elasticsearch: true do
 
         Event.import
         sleep 1
-        get uri, nil, headers
+        get "#{uri}?aggregations=advanced_aggregations", nil, headers
 
         expect(json.dig("meta", "registrants", 0, "count")).to eq(1)
         expect(json.dig("meta", "registrants", 0, "id")).to eq("datacite.crossref.citations")
