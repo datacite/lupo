@@ -123,7 +123,7 @@ module Authenticable
         "uid" => uid,
         "role_id" => roles.fetch(user.role_name, "user"),
         "name" => user.name,
-        "email" => user.contact_email
+        "email" => user.system_email
       }
 
       # we only need password for clients registering DOIs in the handle system

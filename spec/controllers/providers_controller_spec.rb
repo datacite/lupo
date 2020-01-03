@@ -11,7 +11,7 @@
 #                   "attributes" => {
 #                     "symbol" => "BL",
 #                     "name" => "British Library",
-#                     "contact_email" => "bob@example.com",
+#                     "system_email" => "bob@example.com",
 #                     "country_code" => "GB" } } }
 #   end
 #

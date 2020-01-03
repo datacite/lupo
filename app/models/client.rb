@@ -27,7 +27,6 @@ class Client < ActiveRecord::Base
   alias_attribute :flipper_id, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-  alias_attribute :contact_email, :system_email
   attr_readonly :symbol
   delegate :symbol, to: :provider, prefix: true
   delegate :consortium_id, to: :provider, allow_nil: true
@@ -96,7 +95,6 @@ class Client < ActiveRecord::Base
       indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
       indexes :alternate_name, type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
       indexes :description,   type: :text
-      indexes :contact_email, type: :text, fields: { keyword: { type: "keyword" }}
       indexes :system_email,  type: :text, fields: { keyword: { type: "keyword" }}
       indexes :service_contact, type: :object, properties: {
         email: { type: :text },
@@ -223,7 +221,6 @@ class Client < ActiveRecord::Base
       "language" => Array.wrap(language),
       "repository_type" => Array.wrap(repository_type),
       "service_contact" => service_contact,
-      "contact_email" => contact_email,
       "system_email" => system_email,
       "domains" => domains,
       "url" => url,
@@ -274,8 +271,6 @@ class Client < ActiveRecord::Base
       url: url,
       software: software,
       system_email: system_email,
-      # "service_contact" => service_contact,
-      # "contact_email" => contact_email,
     }.values
 
     CSV.generate { |csv| csv << client }

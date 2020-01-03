@@ -117,12 +117,12 @@ class User
     subject = "#{title}: Password Reset Request"
     text = User.format_message_text(template: "users/reset.text.erb", title: title, contact_name: user.name, name: user.symbol, url: url, reset_url: reset_url)
     html = User.format_message_html(template: "users/reset.html.erb", title: title, contact_name: user.name, name: user.symbol, url: url, reset_url: reset_url)
-    response = self.send_message(name: user.name, email: user.contact_email, subject: subject, text: text, html: html)
+    response = self.send_message(name: user.name, email: user.system_email, subject: subject, text: text, html: html)
 
     fields = [
       { title: "Account ID", value: uid.upcase},
       { title: "Name", value: user.name, short: true },
-      { title: "Contact email", value: user.contact_email, short: true }
+      { title: "Contact email", value: user.system_email, short: true }
     ]
     slack_title = subject + (response[:status] == 200 ? " Sent" : " Failed")
     level = response[:status] == 200 ? "good" : "danger"

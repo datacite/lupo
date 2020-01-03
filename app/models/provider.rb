@@ -28,7 +28,6 @@ class Provider < ActiveRecord::Base
   alias_attribute :flipper_id, :symbol
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
-  alias_attribute :contact_email, :system_email
   attr_readonly :symbol
   attr_accessor :password_input
 
