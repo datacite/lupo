@@ -140,6 +140,7 @@ class DoisController < ApplicationController
       else
         states = total > 0 ? facet_by_key(response.aggregations.states.buckets) : nil
         resource_types = total > 0 ? facet_by_resource_type(response.aggregations.resource_types.buckets) : nil
+        years = total > 0 ? facet_by_year(response.aggregations.years.buckets) : nil
         created = total > 0 ? facet_by_year(response.aggregations.created.buckets) : nil
         registered = total > 0 ? facet_by_year(response.aggregations.registered.buckets) : nil
         providers = total > 0 ? facet_by_provider(response.aggregations.providers.buckets) : nil
@@ -167,6 +168,7 @@ class DoisController < ApplicationController
               states: states,
               "resourceTypes" => resource_types,
               created: created,
+              published: years,
               registered: registered,
               providers: providers,
               clients: clients,

@@ -8,6 +8,9 @@ class PersonType < BaseObject
   field :name, String, null: true, description: "The name of the person."
   field :given_name, String, null: true, hash_key: "given_names", description: "Given name. In the U.S., the first name of a Person."
   field :family_name, String, null: true, description: "Family name. In the U.S., the last name of an Person."
+  field :view_count, Integer, null: true, description: "The count of DOI views according to the COUNTER code of Practice"
+  field :download_count, Integer, null: true, description: "The count of  DOI dowloands according to the COUNTER code of Practice"
+  field :citation_count, Integer, null: true, description: "The count of DOI events that represents citations"
 
   field :datasets, PersonDatasetConnectionWithMetaType, null: true, description: "Authored datasets", connection: true do
     argument :first, Int, required: false, default_value: 25
@@ -20,10 +23,6 @@ class PersonType < BaseObject
   field :software_source_codes, PersonSoftwareConnectionWithMetaType, null: true, description: "Authored software", connection: true do
     argument :first, Int, required: false, default_value: 25
   end
-
-  field :view_count, Integer, null: true, description: "The count of DOI views according to the COUNTER code of Practice"
-  field :download_count, Integer, null: true, description: "The count of  DOI dowloands according to the COUNTER code of Practice"
-  field :citation_count, Integer, null: true, description: "The count of DOI events that represents citations"
 
   def type
     "Person"
