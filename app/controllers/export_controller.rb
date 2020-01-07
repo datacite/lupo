@@ -52,7 +52,7 @@ class ExportController < ApplicationController
                             provider.secondary_technical_contact_email,
                             provider.secondary_technical_contact_given_name,
                             provider.secondary_technical_contact_family_name,
-                            'secondaryTechnicalContact'
+                            'secondaryTechnical'
                         ]
                         csv += CSV.generate_line [
                             provider.symbol,
