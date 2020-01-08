@@ -10,7 +10,7 @@ describe 'Clients', type: :request, elasticsearch: true do
                   "attributes" => {
                     "symbol" => provider.symbol + ".IMPERIAL",
                     "name" => "Imperial College",
-                    "systemEmail" => "bob@example.com",
+                    "contactEmail" => "bob@example.com",
                     "clientType" => "repository"
                   },
                   "relationships": {
