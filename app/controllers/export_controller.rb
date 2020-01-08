@@ -264,7 +264,7 @@ class ExportController < ApplicationController
                     clients.each do |client|
                         client_id = client.symbol.downcase
                         row = {
-                            accountName: client.name,
+                            accountName: client.name.truncate(80),
                             fabricaAccountId: client.symbol,
                             parentFabricaAccountId: client.provider.present? ? client.provider.symbol : nil,
                             salesForceId: client.salesforce_id,
