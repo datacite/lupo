@@ -243,6 +243,9 @@ class ExportController < ApplicationController
                         accountDescription
                         accountWebsite
                         generalContactEmail
+                        serviceContactEmail
+                        serviceContactGivenName
+                        serviceContactFamilyName
                         created
                         deleted
                         doisCountCurrentYear
@@ -264,6 +267,9 @@ class ExportController < ApplicationController
                             accountDescription: client.description,
                             accountWebsite: client.url,
                             generalContactEmail: client.system_email,
+                            serviceContactEmail: client.service_contact_email,
+                            serviceContactGivenName: client.service_contact_given_name,
+                            serviceContactFamilyName: client.service_contact_family_name,
                             created: client.created.present? ? client.created.strftime("%Y-%m-%d") : nil,
                             deleted: client.deleted_at.present? ? client.deleted_at.strftime("%Y-%m-%d") : nil,
                             doisCountCurrentYear: client_totals[client_id] ? client_totals[client_id]["this_year"] : nil,
