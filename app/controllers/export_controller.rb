@@ -131,7 +131,7 @@ class ExportController < ApplicationController
                         accountWebsite
                         region
                         focusArea
-                        organisationType
+                        sector
                         accountType
                         generalContactEmail
                         groupEmail
@@ -162,7 +162,7 @@ class ExportController < ApplicationController
                             accountWebsite: provider.website,
                             region: provider.region_human_name,
                             focusArea: provider.focus_area,
-                            organizationType: provider.organization_type,
+                            sector: provider.organization_type,
                             accountType: provider.member_type_label,
                             generalContactEmail: provider.system_email,
                             groupEmail: provider.group_email,
@@ -175,8 +175,8 @@ class ExportController < ApplicationController
                             billingCountry: provider.billing_country,
                             twitter: provider.twitter_handle,
                             rorId: provider.ror_id,
-                            created: provider.created,
-                            deleted: provider.deleted_at
+                            created: provider.created.present? ? provider.created.strftime("%Y-%m-%d") : nil,
+                            deleted: provider.deleted_at.present? ? provider.deleted_at.strftime("%Y-%m-%d") : nil,
                         }.values
 
                         csv += CSV.generate_line row
@@ -264,8 +264,8 @@ class ExportController < ApplicationController
                             accountDescription: client.description,
                             accountWebsite: client.url,
                             generalContactEmail: client.system_email,
-                            created: client.created,
-                            deleted: client.deleted_at,
+                            created: client.created.present? ? client.created.strftime("%Y-%m-%d") : nil,
+                            deleted: client.deleted_at.present? ? client.deleted_at.strftime("%Y-%m-%d") : nil,
                             doisCountCurrentYear: client_totals[client_id] ? client_totals[client_id]["this_year"] : nil,
                             doisCountPreviousYear: client_totals[client_id] ? client_totals[client_id]["last_year"] : nil,
                             doisCountTotal: client_totals[client_id] ? client_totals[client_id]["count"] : nil
