@@ -38,56 +38,47 @@ class ExportController < ApplicationController
 
                     csv = headers.to_csv
 
+                    # Use a hashmap for the contacts to avoid duplicated
+                    contacts = Hash.new
+
+                    add_contact = Proc.new { |contacts, email, id, firstname, lastname, type|
+                        if email
+                            unless contacts.has_key?(email)
+                                contacts[email] = {
+                                    'fabricaAccountId' => id,
+                                    'firstName' => firstname,
+                                    'lastName' => lastname,
+                                }
+                            end
+
+                            if contacts[email].has_key?('type')
+                                contacts[email]['type'] += ";" + type
+                            else
+                                contacts[email]['type'] = type
+                            end
+                        end
+                    }
+
                     providers.each do |provider|
 
+                        add_contact.call(contacts, provider.technical_contact_email, provider.symbol, provider.technical_contact_given_name, provider.technical_contact_family_name, 'technical')
+                        add_contact.call(contacts, provider.secondary_technical_contact_email, provider.symbol, provider.secondary_technical_contact_given_name, provider.secondary_technical_contact_family_name, 'secondaryTechnical')
+                        add_contact.call(contacts, provider.service_contact_email, provider.symbol, provider.service_contact_given_name, provider.service_contact_family_name, 'service')
+                        add_contact.call(contacts, provider.secondary_service_contact_email, provider.symbol, provider.secondary_service_contact_given_name, provider.secondary_service_contact_family_name, 'secondaryService')
+                        add_contact.call(contacts, provider.voting_contact_email, provider.symbol, provider.voting_contact_given_name, provider.voting_contact_family_name, 'voting')
+                        add_contact.call(contacts, provider.billing_contact_email, provider.symbol, provider.billing_contact_given_name, provider.billing_contact_family_name, 'billing')
+                        add_contact.call(contacts, provider.secondary_billing_contact_email, provider.symbol, provider.secondary_billing_contact_given_name, provider.secondary_billing_contact_family_name, 'secondaryBilling')
+
+                    end
+
+                    contacts.each do |email, contact|
+
                         csv += CSV.generate_line [
-                            provider.symbol,
-                            provider.technical_contact_email,
-                            provider.technical_contact_given_name,
-                            provider.technical_contact_family_name,
-                            'technical'
-                        ]
-                        csv += CSV.generate_line [
-                            provider.symbol,
-                            provider.secondary_technical_contact_email,
-                            provider.secondary_technical_contact_given_name,
-                            provider.secondary_technical_contact_family_name,
-                            'secondaryTechnical'
-                        ]
-                        csv += CSV.generate_line [
-                            provider.symbol,
-                            provider.service_contact_email,
-                            provider.service_contact_given_name,
-                            provider.service_contact_family_name,
-                            'service'
-                        ]
-                        csv += CSV.generate_line [
-                            provider.symbol,
-                            provider.secondary_service_contact_email,
-                            provider.secondary_service_contact_given_name,
-                            provider.secondary_service_contact_family_name,
-                            'secondaryService'
-                        ]
-                        csv += CSV.generate_line [
-                            provider.symbol,
-                            provider.voting_contact_email,
-                            provider.voting_contact_given_name,
-                            provider.voting_contact_family_name,
-                            'voting'
-                        ]
-                        csv += CSV.generate_line [
-                            provider.symbol,
-                            provider.billing_contact_email,
-                            provider.billing_contact_given_name,
-                            provider.billing_contact_family_name,
-                            'billing'
-                        ]
-                        csv += CSV.generate_line [
-                            provider.symbol,
-                            provider.secondary_billing_contact_email,
-                            provider.secondary_billing_contact_given_name,
-                            provider.secondary_billing_contact_family_name,
-                            'secondaryBilling'
+                            contact['fabricaAccountId'],
+                            email,
+                            contact['firstName'],
+                            contact['lastName'],
+                            contact['type'],
                         ]
 
                     end
