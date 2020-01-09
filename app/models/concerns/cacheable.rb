@@ -67,6 +67,66 @@ module Cacheable
         response.body.fetch("data", nil)
       end
     end
+
+    def cached_doi_citations_response(doi)
+      if Rails.application.config.action_controller.perform_caching
+        Rails.cache.fetch("cached_doi_citations_response/#{doi}", expires_in: 24.hours) do
+          EventsQuery.new.doi_citations(doi)
+        end
+      else
+        EventsQuery.new.doi_citations(doi)
+      end
+    end
+
+    def cached_doi_views_response(doi)
+      if Rails.application.config.action_controller.perform_caching
+        Rails.cache.fetch("cached_doi_views_response/#{doi}", expires_in: 24.hours) do
+          EventsQuery.new.doi_views(doi)
+        end
+      else
+        EventsQuery.new.doi_views(doi)
+      end
+    end
+
+    def cached_doi_downloads_response(doi)
+      if Rails.application.config.action_controller.perform_caching
+        Rails.cache.fetch("cached_doi_downloads_response/#{doi}", expires_in: 24.hours) do
+          EventsQuery.new.doi_downloads(doi)
+        end
+      else
+        EventsQuery.new.doi_downloads(doi)
+      end
+    end
+
+    def cached_citations_histogram_response(doi)
+      if Rails.application.config.action_controller.perform_caching
+        Rails.cache.fetch("cached_citations_histogram_response/#{doi}", expires_in: 24.hours) do
+          EventsQuery.new.citations_histogram(doi)
+        end
+      else
+        EventsQuery.new.citations_histogram(doi)
+      end
+    end
+
+    def cached_views_histogram_response(doi)
+      if Rails.application.config.action_controller.perform_caching
+        Rails.cache.fetch("cached_views_histogram_response/#{doi}", expires_in: 24.hours) do
+          EventsQuery.new.views_histogram(doi)
+        end
+      else
+        EventsQuery.new.views_histogram(doi)
+      end
+    end
+
+    def cached_downloads_histogram_response(doi)
+      if Rails.application.config.action_controller.perform_caching
+        Rails.cache.fetch("cached_downloads_histogram_response/#{doi}", expires_in: 24.hours) do
+          EventsQuery.new.downloads_histogram(doi)
+        end
+      else
+        EventsQuery.new.downloads_histogram(doi)
+      end
+    end
   end
 
   module ClassMethods
