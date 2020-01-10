@@ -1,6 +1,8 @@
 class ExportController < ApplicationController
     include ActionController::MimeResponds
 
+    EXPORT_DATE_FORMAT = "%d/%m/%YT%H:%M:%S.%3NUTC%:z"
+
     before_action :authenticate_user_with_basic_auth!
 
     def contacts
@@ -175,8 +177,8 @@ class ExportController < ApplicationController
                             billingCountry: provider.billing_country,
                             twitter: provider.twitter_handle,
                             rorId: provider.ror_id,
-                            created: provider.created.present? ? provider.created.strftime("%Y-%m-%d") : nil,
-                            deleted: provider.deleted_at.present? ? provider.deleted_at.strftime("%Y-%m-%d") : nil,
+                            created: provider.created.present? ? provider.created.strftime(EXPORT_DATE_FORMAT) : nil,
+                            deleted: provider.deleted_at.present? ? provider.deleted_at.strftime(EXPORT_DATE_FORMAT) : nil,
                         }.values
 
                         csv += CSV.generate_line row
@@ -270,8 +272,8 @@ class ExportController < ApplicationController
                             serviceContactEmail: client.service_contact_email,
                             serviceContactGivenName: client.service_contact_given_name,
                             serviceContactFamilyName: client.service_contact_family_name,
-                            created: client.created.present? ? client.created.strftime("%Y-%m-%d") : nil,
-                            deleted: client.deleted_at.present? ? client.deleted_at.strftime("%Y-%m-%d") : nil,
+                            created: client.created.present? ? client.created.strftime(EXPORT_DATE_FORMAT) : nil,
+                            deleted: client.deleted_at.present? ? client.deleted_at.strftime(EXPORT_DATE_FORMAT) : nil,
                             doisCountCurrentYear: client_totals[client_id] ? client_totals[client_id]["this_year"] : nil,
                             doisCountPreviousYear: client_totals[client_id] ? client_totals[client_id]["last_year"] : nil,
                             doisCountTotal: client_totals[client_id] ? client_totals[client_id]["count"] : nil
