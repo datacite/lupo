@@ -145,12 +145,12 @@ class EventsController < ApplicationController
       dois_usage = total.positive? ? EventsQuery.new.usage(params[:doi]) : nil
       # dois_citations = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_citations_by_year_v1(response.response.aggregations.dois_citations) : nil
       citations = total.positive? ? EventsQuery.new.citations(params[:doi]) : nil
-      citations_histogram = total.positive? ? EventsQuery.new.citations_histogram(params[:doi]) : nil
+      citations_histogram = total.positive? ? cached_citations_histogram_response(params[:doi]) : nil
       references = total.positive? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.references.dois.buckets) : nil
       relations = total.positive? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.relations.dois.buckets) : nil
 
-      views_histogram = total.positive? ? EventsQuery.new.views_histogram(params[:doi]) : nil
-      downloads_histogram = total.positive? ? EventsQuery.new.downloads_histogram(params[:doi]) : nil
+      views_histogram = total.positive? ? cached_views_histogram_response(params[:doi]) : nil
+      downloads_histogram = total.positive? ? cached_downloads_histogram_response(params[:doi]) : nil
 
       # views = total.positive? ? EventsQuery.new.views(params[:doi]) : nil
       # downloads = total.positive? ? EventsQuery.new.downloads(params[:doi]) : nil
