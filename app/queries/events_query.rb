@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class EventsQuery
-  include Cacheable
   include Facetable
 
   ACTIVE_RELATION_TYPES = [
@@ -30,7 +29,7 @@ class EventsQuery
   def citations(doi)
     return {} unless doi.present?
     doi.downcase.split(",").map do |item|
-      { id: item, count: cached_doi_citations_response(item) }
+      { id: item, count: EventsQuery.new.doi_citations(item) }
     end
   end
 
@@ -53,7 +52,7 @@ class EventsQuery
   def views(doi)
     return {} unless doi.present?
     doi.downcase.split(",").map do |item|
-      { id: item, count: cached_doi_views_response(item) }
+      { id: item, count: EventsQuery.new.doi_views(item) }
     end
   end
 
@@ -75,7 +74,7 @@ class EventsQuery
   def downloads(doi)
     return {} unless doi.present?
     doi.downcase.split(",").map do |item|
-      { id: item, count: cached_doi_downloads_response(item) }
+      { id: item, count: EventsQuery.new.doi_downloads(item) }
     end
   end
 
@@ -91,8 +90,8 @@ class EventsQuery
     return {} unless doi.present?
     doi.downcase.split(",").map do |item|
       pid = Event.new.normalize_doi(item)
-      requests = cached_doi_downloads_response(item)
-      investigations = cached_doi_views_response(item)
+      requests = EventsQuery.new.doi_downloads(item)
+      investigations = EventsQuery.new.doi_views(item)
       { id: pid, 
         title: pid,
       relationTypes: [
