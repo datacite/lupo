@@ -5,7 +5,7 @@ class ProvidersController < ApplicationController
   prepend_before_action :authenticate_user!
   before_action :set_provider, only: [:show, :update, :destroy]
   before_action :set_include
-  load_and_authorize_resource :except => [:totals, :random]
+  load_and_authorize_resource :except => [:index, :show, :totals, :random]
 
   def index
     sort = case params[:sort]

@@ -40,6 +40,7 @@ Rails.application.routes.draw do
   get '/dois/text/x-bibliography', :to => 'dois#index', defaults: { format: :citation }
   get '/providers/text/csv', :to => 'providers#index', defaults: { format: :csv }
   get 'providers/random', :to => 'providers#random'
+  get 'repositories/random', :to => 'repositories#random'
   get '/organizations/text/csv', :to => 'organizations#index', defaults: { format: :csv }
   get '/repositories/text/csv', :to => 'repositories#index', defaults: { format: :csv }
 

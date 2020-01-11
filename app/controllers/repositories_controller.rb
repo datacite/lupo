@@ -5,7 +5,7 @@ class RepositoriesController < ApplicationController
   before_action :set_repository, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
-  load_and_authorize_resource :client, :parent => false, :except => [:index, :show, :totals]
+  load_and_authorize_resource :client, :parent => false, :except => [:index, :show, :totals, :random]
 
   def index
     sort = case params[:sort]
@@ -175,6 +175,11 @@ class RepositoriesController < ApplicationController
       logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
+  end
+
+  def random
+    symbol = generate_random_repository_symbol
+    render json: { symbol: symbol }.to_json
   end
 
   def totals

@@ -3,9 +3,15 @@ require 'rails_helper'
 describe Doi, vcr: true do
   subject { create(:doi) }
 
-  context "generate_random_symbol" do
+  context "generate_random_provider_symbol" do
     it 'should generate' do
       expect(subject.generate_random_provider_symbol).to match(/\A[A-Z]{4}\Z/) 
+    end
+  end
+
+  context "generate_random_repository_symbol" do
+    it 'should generate' do
+      expect(subject.generate_random_repository_symbol).to match(/\A[A-Z]{6}\Z/) 
     end
   end
 
