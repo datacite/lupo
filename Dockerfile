@@ -3,6 +3,8 @@ LABEL maintainer="kgarza@datacite.org"
 
 # Set correct environment variables.
 ENV HOME /home/app
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
 
 # Allow app user to read /etc/container_environment
 RUN usermod -a -G docker_env app
