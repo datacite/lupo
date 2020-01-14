@@ -126,8 +126,6 @@ class ExportController < ApplicationController
                         "Name",
                         "fabricaAccountId",
                         "Parent Organization",
-                        "Organization ID",
-                        "Parent.Id",
                         "Is Active",
                         "Organization Description",
                         "Website",
@@ -157,8 +155,6 @@ class ExportController < ApplicationController
                             accountName: provider.name,
                             fabricaAccountId: provider.symbol,
                             parentFabricaAccountId: provider.consortium.present? ? provider.consortium.symbol : nil,
-                            salesForceId: provider.salesforce_id,
-                            parentSalesForceId: provider.consortium.present? ? provider.consortium.salesforce_id : nil,
                             isActive: provider.is_active == "\x01",
                             accountDescription: provider.description,
                             accountWebsite: provider.website,
@@ -235,25 +231,23 @@ class ExportController < ApplicationController
 
             respond_to do |format|
                 format.csv do
-                    headers = %W(
-                        accountName
-                        fabricaAccountId
-                        parentFabricaAccountId
-                        salesForceId
-                        parentSalesForceId
-                        isActive
-                        accountDescription
-                        accountWebsite
-                        generalContactEmail
-                        serviceContactEmail
-                        serviceContactGivenName
-                        serviceContactFamilyName
-                        created
-                        deleted
-                        doisCountCurrentYear
-                        doisCountPreviousYear
-                        doisCountTotal
-                    )
+                    headers = [
+                        "Repository Name",
+                        "Repository ID",
+                        "Organization",
+                        "isActive",
+                        "Description",
+                        "Repository URL",
+                        "generalContactEmail",
+                        "serviceContactEmail",
+                        "serviceContactGivenName",
+                        "serviceContactFamilyName",
+                        "Fabrica Creation date",
+                        "Fabrica Deletion date",
+                        "doisCurrentYear",
+                        "doisPreviousYear",
+                        "doisTotal"
+                    ]
 
                     csv = headers.to_csv
 
@@ -263,8 +257,6 @@ class ExportController < ApplicationController
                             accountName: client.name.truncate(80),
                             fabricaAccountId: client.symbol,
                             parentFabricaAccountId: client.provider.present? ? client.provider.symbol : nil,
-                            salesForceId: client.salesforce_id,
-                            parentSalesForceId: client.provider.present? ? client.provider.salesforce_id : nil,
                             isActive: client.is_active == "\x01",
                             accountDescription: client.description,
                             accountWebsite: client.url,
