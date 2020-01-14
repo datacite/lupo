@@ -122,33 +122,33 @@ class ExportController < ApplicationController
 
             respond_to do |format|
                 format.csv do
-                    headers = %W(
-                        accountName
-                        fabricaAccountId
-                        parentFabricaAccountId
-                        salesForceId
-                        parentSalesForceId
-                        isActive
-                        accountDescription
-                        accountWebsite
-                        region
-                        focusArea
-                        sector
-                        accountType
-                        generalContactEmail
-                        groupEmail
-                        billingStreet
-                        billingPostalCode
-                        billingCity
-                        billingDepartment
-                        billingOrganization
-                        billingState
-                        billingCountry
-                        twitter
-                        rorId
-                        created
-                        deleted
-                    )
+                    headers = [
+                        "Name",
+                        "fabricaAccountId",
+                        "Parent Organization",
+                        "Organization ID",
+                        "Parent.Id",
+                        "Is Active",
+                        "Organization Description",
+                        "Website",
+                        "Region",
+                        "Focus Area",
+                        "Sector",
+                        "Member Type",
+                        "Email",
+                        "Group Email",
+                        "billingStreet",
+                        "Billing Zip/Postal Code",
+                        "billingCity",
+                        "Department",
+                        "billingOrganization",
+                        "billingState",
+                        "billingCountry",
+                        "twitter",
+                        "ROR",
+                        "Fabrica Creation Date",
+                        "Fabrica Deletion Date"
+                    ]
 
                     csv = headers.to_csv
 
