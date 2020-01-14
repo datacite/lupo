@@ -251,10 +251,15 @@ class ExportController < ApplicationController
 
                     csv = headers.to_csv
 
+                    # Limit for salesforce default of max 80 chars
+                    name = client.name.truncate(80)
+                    # Clean the name to remove quotes, which can break csv parsers
+                    name.gsub! /["']/, ''
+
                     clients.each do |client|
                         client_id = client.symbol.downcase
                         row = {
-                            accountName: client.name.truncate(80),
+                            accountName: name,
                             fabricaAccountId: client.symbol,
                             parentFabricaAccountId: client.provider.present? ? client.provider.symbol : nil,
                             isActive: client.is_active == "\x01",
