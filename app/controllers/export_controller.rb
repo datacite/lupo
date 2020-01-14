@@ -44,6 +44,7 @@ class ExportController < ApplicationController
                     contacts = Hash.new
 
                     add_contact = Proc.new { |contacts, email, id, firstname, lastname, type|
+                        email.downcase
                         if email
                             unless contacts.has_key?(email)
                                 contacts[email] = {
