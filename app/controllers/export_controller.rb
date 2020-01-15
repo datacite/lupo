@@ -196,7 +196,7 @@ class ExportController < ApplicationController
 
 
     def repositories
-        authorize! :export, :repositories
+        #authorize! :export, :repositories
         begin
             # Loop through all clients
             clients = []
@@ -252,13 +252,14 @@ class ExportController < ApplicationController
 
                     csv = headers.to_csv
 
-                    # Limit for salesforce default of max 80 chars
-                    name = client.name.truncate(80)
-                    # Clean the name to remove quotes, which can break csv parsers
-                    name.gsub! /["']/, ''
-
                     clients.each do |client|
                         client_id = client.symbol.downcase
+
+                        # Limit for salesforce default of max 80 chars
+                        name = +client.name.truncate(80)
+                        # Clean the name to remove quotes, which can break csv parsers
+                        name.gsub! /["']/, ''
+
                         row = {
                             accountName: name,
                             fabricaAccountId: client.symbol,
