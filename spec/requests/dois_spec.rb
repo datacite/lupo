@@ -81,20 +81,8 @@ describe "dois", type: :request do
       it 'returns the Doi' do
         get "/dois/#{doi.doi}"
 
-        expect(last_response.status).to eq(401)
-        expect(json.fetch('errors')).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
-      end
-    end
-
-    context 'invalid password' do
-      let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: "abc") }
-      let(:headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
-
-      it 'returns the Doi' do
-        get "/dois/#{doi.doi}"
-
-        expect(last_response.status).to eq(401)
-        expect(json.fetch('errors')).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
+        expect(last_response.status).to eq(404)
+        expect(json).to eq("errors"=>[{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
       end
     end
 
@@ -2830,11 +2818,11 @@ describe "dois", type: :request do
       let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }
       let(:headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer } }
 
-      it 'returns with landing page results' do
+      it 'returns without landing page results' do
         get "/dois/#{doi.doi}", nil, headers
 
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
-        expect(json.dig('data', 'attributes', 'landingPage')).to eq(landing_page)
+        expect(json.dig('data', 'attributes', 'landingPage')).to be_nil
       end
     end
 
@@ -3001,8 +2989,8 @@ describe "dois", type: :request do
       it 'returns error message' do
         get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.jats+xml", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }
 
-        expect(last_response.status).to eq(403)
-        expect(json["errors"]).to eq([{"status"=>"403", "title"=>"You are not authorized to access this resource."}])
+        expect(last_response.status).to eq(404)
+        expect(json).to eq("errors"=>[{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
       end
     end
 
@@ -3012,8 +3000,8 @@ describe "dois", type: :request do
       it 'returns error message' do
         get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.jats+xml" }
 
-        expect(last_response.status).to eq(401)
-        expect(json["errors"]).to eq([{"status"=>"401", "title"=>"Bad credentials."}])
+        expect(last_response.status).to eq(404)
+        expect(json).to eq("errors"=>[{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
       end
     end
 

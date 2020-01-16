@@ -6,13 +6,10 @@ class DoisController < ApplicationController
   include Crosscitable
 
   prepend_before_action :authenticate_user!
-  before_action :set_doi, only: [:show, :get_url]
   before_action :set_include, only: [:index, :show, :create, :update]
   before_action :set_raven_context, only: [:create, :update, :validate]
 
   def index
-    authorize! :read, Doi
-
     sort = case params[:sort]
           when "name" then { "doi" => { order: 'asc' }}
           when "-name" then { "doi" => { order: 'desc' }}
@@ -234,10 +231,16 @@ class DoisController < ApplicationController
   end
 
   def show
-    authorize! :read, @doi
+    # only show findable DOIs to anonymous users and role user
+    # use current_user role to determine permissions to access draft and registered dois
+    options = filter_doi_by_role(current_user)
+    response = Doi.find_by_id(params[:id], options)
+    fail ActiveRecord::RecordNotFound unless response.results.present?
 
     respond_to do |format|
       format.json do
+        doi = response.results.first
+
         options = {}
         options[:include] = @include
         options[:is_collection] = false
@@ -247,15 +250,19 @@ class DoisController < ApplicationController
           affiliation: params[:affiliation]
         }
 
-        render json: DoiSerializer.new(@doi, options).serialized_json, status: :ok
+        render json: DoiSerializer.new(doi, options).serialized_json, status: :ok
       end
-      format.citation do
+
+      # use active_record for content negotiation
+      doi = response.records.first
+
+      format.citation do  
         # fetch formatted citation
-        render citation: @doi, style: params[:style] || "apa", locale: params[:locale] || "en-US"
+        render citation: doi, style: params[:style] || "apa", locale: params[:locale] || "en-US"
       end
       header = %w(doi url registered state resourceTypeGeneral resourceType title author publisher publicationYear)
-      format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => @doi }
-      format.csv { render request.format.to_sym =>  @doi, header: header }
+      format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => doi }
+      format.csv { render request.format.to_sym =>  doi, header: header }
     end
   end
 
@@ -403,6 +410,9 @@ class DoisController < ApplicationController
   end
 
   def get_url
+    @doi = Doi.where(doi: params[:id]).first
+    fail ActiveRecord::RecordNotFound unless @doi.present?
+    
     authorize! :get_url, @doi
 
     if !@doi.is_registered_or_findable? || %w(europ crossref medra jalc kisti op).include?(@doi.provider_id) || %w(Crossref mEDRA).include?(@doi.agency)
@@ -456,11 +466,6 @@ class DoisController < ApplicationController
   end
 
   protected
-
-  def set_doi
-    @doi = Doi.where(doi: params[:id]).first
-    fail ActiveRecord::RecordNotFound unless @doi.present?
-  end
 
   def set_include
     if params[:include].present?

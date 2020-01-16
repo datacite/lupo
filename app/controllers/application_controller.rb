@@ -68,6 +68,7 @@ class ApplicationController < ActionController::API
     return false if credentials.blank?
 
     @current_user = User.new(credentials, type: type)
+    fail CanCan::AuthorizationNotPerformed if @current_user.errors.present?
   end
 
   def current_ability

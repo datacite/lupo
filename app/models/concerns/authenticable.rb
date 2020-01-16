@@ -152,6 +152,21 @@ module Authenticable
       b.each_byte { |byte| res |= byte ^ l.shift }
       res == 0
     end
+
+    # filter results based on user permissions
+    def filter_doi_by_role(user)
+      return { state: "findable" } if user.blank?
+
+      if %w(staff_admin staff_user).include?(user.role_id)
+        {}
+      elsif %w(provider_admin provider_user).include?(user.role_id) && user.provider_id.present?
+        { provider_id: user.provider_id }
+      elsif %w(client_admin client_user user temporary).include?(user.role_id) && user.client_id.present?
+        { client_id: user.client_id }
+      else
+        { state: "findable" }
+      end
+    end
   end
 
   module ClassMethods

@@ -518,13 +518,18 @@ class Doi < ActiveRecord::Base
     options[:page][:size] ||= 1000
     options[:sort] ||= { created: { order: "asc" }}
 
+    must = [{ terms: { doi: ids.map(&:upcase) }}]
+    must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
+    must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
+    must << { terms: { client_id: options[:client_id].to_s.split(",") }} if options[:client_id].present?
+    
     __elasticsearch__.search({
       from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
       size: options.dig(:page, :size),
       sort: [options[:sort]],
       query: {
-        terms: {
-          doi: ids.map(&:upcase)
+        bool: {
+          must: must
         }
       },
       aggregations: query_aggregations

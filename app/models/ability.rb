@@ -34,9 +34,7 @@ class Ability
       # end
 
       can [:read, :get_url, :transfer, :read_landing_page_results], Doi, :provider_id => user.provider_id
-      can [:read], Doi do |doi|
-        doi.findable?
-      end
+      can [:read], Doi
       can [:read], User
       can [:read], Phrase
       can [:read], Activity do |activity|
@@ -49,9 +47,7 @@ class Ability
       can [:read], Client, :provider_id => user.provider_id
       can [:read], ClientPrefix#, :client_id => user.client_id
       can [:read, :get_url, :read_landing_page_results], Doi, :provider_id => user.provider_id
-      can [:read], Doi do |doi|
-        doi.findable?
-      end
+      can [:read], Doi
       can [:read], User
       can [:read], Phrase
       can [:read], Activity do |activity|
@@ -72,9 +68,7 @@ class Ability
       can [:new, :create], Doi do |doi|
         doi.client.prefixes.where(prefix: doi.prefix).present? || %w(crossref medra kisti jalc op).include?(doi.client.symbol.downcase.split(".").first)
       end
-      can [:read], Doi do |doi|
-        doi.findable?
-      end
+      can [:read], Doi
       can [:read], User
       can [:read], Phrase
       can [:read], Activity do |activity|
@@ -85,9 +79,7 @@ class Ability
       can [:read], Client, :symbol => user.client_id.upcase
       can [:read], ClientPrefix, :client_id => user.client_id
       can [:read, :get_url, :read_landing_page_results], Doi, :client_id => user.client_id
-      can [:read], Doi do
-        |doi| doi.findable?
-      end
+      can [:read], Doi
       can [:read], User
       can [:read], Phrase
       can [:read], Activity do |activity|
@@ -98,9 +90,7 @@ class Ability
       can [:update], Provider, :symbol => user.provider_id.upcase if user.provider_id.present?
       can [:read, :update], Client, :symbol => user.client_id.upcase if user.client_id.present?
       can [:read], Doi, :client_id => user.client_id if user.client_id.present?
-      can [:read, :get_url], Doi do |doi|
-        doi.findable?
-      end
+      can [:read, :get_url], Doi
       can [:read], User, :id => user.id
       can [:read], Phrase
       can [:read], Activity do |activity|
@@ -112,18 +102,14 @@ class Ability
       can [:update], Provider, :symbol => user.provider_id.upcase if user.provider_id.present?
       can [:read, :update], Client, :symbol => user.client_id.upcase if user.client_id.present?
       can [:read], Doi, :client_id => user.client_id if user.client_id.present?
-      can [:read, :get_url], Doi do |doi|
-        doi.findable?
-      end
+      can [:read, :get_url], Doi
       can [:read], User, :id => user.id
       can [:read], Phrase
       can [:read], Activity do |activity|
         activity.doi.findable?
       end
     elsif user.role_id == "anonymous"
-      can [:read, :get_url], Doi do |doi|
-        doi.findable?
-      end
+      can [:read, :get_url], Doi
       can [:read], Provider
       can [:read], Activity do |activity|
         activity.doi.findable?

@@ -54,6 +54,62 @@ describe User, type: :model do
     end
   end
 
+  describe "filter_doi_by_role" do
+    it "staff_admin" do
+      token = User.generate_token(role_id: "staff_admin")
+      subject = User.new(token)
+      expect(subject.filter_doi_by_role(subject)).to eq({})
+    end
+
+    it "staff_user" do
+      token = User.generate_token(role_id: "staff_user")
+      subject = User.new(token)
+      expect(subject.filter_doi_by_role(subject)).to eq({})
+    end
+
+    it "provider_admin" do
+      token = User.generate_token(role_id: "provider_admin", provider_id: "datacite")
+      subject = User.new(token)
+      expect(subject.filter_doi_by_role(subject)).to eq(:provider_id=>"datacite")
+    end
+
+    it "provider_user" do
+      token = User.generate_token(role_id: "provider_user", provider_id: "datacite")
+      subject = User.new(token)
+      expect(subject.filter_doi_by_role(subject)).to eq(:provider_id=>"datacite")
+    end
+
+    it "client_admin" do
+      token = User.generate_token(role_id: "client_admin", client_id: "datacite.rph")
+      subject = User.new(token)
+      expect(subject.filter_doi_by_role(subject)).to eq(client_id: "datacite.rph")
+    end
+
+    it "client_user" do
+      token = User.generate_token(role_id: "client_user", client_id: "datacite.rph")
+      subject = User.new(token)
+      expect(subject.filter_doi_by_role(subject)).to eq(client_id: "datacite.rph")
+    end
+
+    it "user" do
+      token = User.generate_token(role_id: "user")
+      subject = User.new(token)
+      expect(subject.filter_doi_by_role(subject)).to eq(:state=>"findable")
+    end
+
+    it "temporary" do
+      token = User.generate_token(role_id: "temporary")
+      subject = User.new(token)
+      expect(subject.filter_doi_by_role(subject)).to eq(:state=>"findable")
+    end
+
+    it "anonymous" do
+      token = User.generate_token(role_id: "anonymous")
+      subject = User.new(token)
+      expect(subject.filter_doi_by_role(subject)).to eq(:state=>"findable")
+    end
+  end
+
   describe 'encode_token' do
     it "with name" do
       token = subject.encode_token("name" => "Josiah Carberry")

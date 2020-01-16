@@ -1,11 +1,8 @@
 class WorksController < ApplicationController
-  prepend_before_action :authenticate_user!
   before_action :set_doi, only: [:show]
   before_action :set_include, only: [:index, :show]
 
   def index
-    authorize! :read, Doi
-
     sort = case params[:sort]
           when "name" then { "doi" => { order: 'asc' }}
           when "-name" then { "doi" => { order: 'desc' }}
@@ -106,8 +103,6 @@ class WorksController < ApplicationController
   end
 
   def show
-    authorize! :read, @doi
-
     options = {}
     options[:include] = @include
     options[:is_collection] = false
@@ -122,8 +117,9 @@ class WorksController < ApplicationController
   protected
 
   def set_doi
-    response = Doi.find_by_id(params[:id])
-    @doi = response.records.first
+    options = filter_doi_by_role(current_user)
+    response = Doi.find_by_id(params[:id], options)
+    @doi = response.results.first
     fail ActiveRecord::RecordNotFound unless @doi.present?
   end
 

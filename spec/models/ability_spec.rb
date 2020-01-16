@@ -43,7 +43,7 @@ describe User, type: :model do
       it{ is_expected.not_to be_able_to(:update, prefix) }
       it{ is_expected.not_to be_able_to(:destroy, prefix) }
 
-      it{ is_expected.not_to be_able_to(:read, doi) }
+      it{ is_expected.to be_able_to(:read, doi) }
       it{ is_expected.not_to be_able_to(:transfer, doi) }
       it{ is_expected.not_to be_able_to(:create, doi) }
       it{ is_expected.not_to be_able_to(:update, doi) }
@@ -232,7 +232,7 @@ describe User, type: :model do
       it{ is_expected.not_to be_able_to(:update, client) }
       it{ is_expected.not_to be_able_to(:destroy, client) }
 
-      it{ is_expected.not_to be_able_to(:read, doi) }
+      it{ is_expected.to be_able_to(:read, doi) }
       it{ is_expected.not_to be_able_to(:transfer, doi) }
       it{ is_expected.not_to be_able_to(:create, doi) }
       it{ is_expected.not_to be_able_to(:update, doi) }

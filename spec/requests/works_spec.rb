@@ -61,12 +61,34 @@ describe "works", type: :request do
       end
     end
 
+    context 'draft doi' do
+      let!(:doi) { create(:doi, client: client) }
+
+      it 'returns 404 status' do
+        get "/works/#{doi.doi}", nil, headers
+
+        expect(last_response.status).to eq(404)
+        expect(json).to eq("errors"=>[{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
+      end
+    end
+
     context 'anonymous user' do
       it 'returns the Doi' do
         get "/works/#{doi.doi}"
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      end
+    end
+
+    context 'anonymous user draft doi' do
+      let!(:doi) { create(:doi, client: client) }
+
+      it 'returns 404 status' do
+        get "/works/#{doi.doi}"
+
+        expect(last_response.status).to eq(404)
+        expect(json).to eq("errors"=>[{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
       end
     end
   end
