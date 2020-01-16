@@ -24,6 +24,10 @@ class PersonType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
+  field :creative_works, PersonCreativeWorkConnectionWithMetaType, null: true, description: "Authored creative works", connection: true do
+    argument :first, Int, required: false, default_value: 25
+  end
+
   def type
     "Person"
   end
@@ -49,22 +53,29 @@ class PersonType < BaseObject
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
+  def creative_works(**_args)
+    ids = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
+      doi_from_url(e.subj_id)
+    end
+    ElasticsearchLoader.for(Doi).load_many(ids)
+  end
+
   def citation_count(**_args)
-    dois = Event.query(nil, page: { size: 100 }, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
+    dois = Event.query(nil, page: { size: 500 }, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     EventsQuery.new.citations(dois.join(",")).sum { |h| h[:count] }
   end
 
   def view_count(**_args)
-    dois = Event.query(nil, page: { size: 100 }, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
+    dois = Event.query(nil, page: { size: 500 }, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     EventsQuery.new.views(dois.join(",")).sum { |h| h[:count] }
   end
 
   def download_count(**_args)
-    dois = Event.query(nil, page: { size: 100 }, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
+    dois = Event.query(nil, page: { size: 500 }, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     EventsQuery.new.downloads(dois.join(",")).sum { |h| h[:count] }
