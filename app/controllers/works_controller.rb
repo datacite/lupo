@@ -1,3 +1,5 @@
+require 'benchmark'
+
 class WorksController < ApplicationController
   before_action :set_doi, only: [:show]
   before_action :set_include, only: [:index, :show]
@@ -49,14 +51,25 @@ class WorksController < ApplicationController
     end
 
     begin
+      logger.warn "[Benchmark] Elasticsearch request " + response.took.to_s + " ms"
+
       total = response.results.total
       total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
 
-      resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
-      registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
-      providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
-      clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
-      affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
+      resource_types = nil
+      registered = nil
+      providers = nil
+      clients = nil
+      affiliations = nil
+
+      bma = Benchmark.ms {
+        resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
+        registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
+        providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+        clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
+        affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
+      }
+      logger.warn "[Benchmark Warning] aggregations " + bma.to_s + " ms"
 
       @dois = response.results
 
@@ -94,7 +107,11 @@ class WorksController < ApplicationController
       else
         @dois = response.results
       end
-      render json: WorkSerializer.new(@dois, options).serialized_json, status: :ok
+
+      bmr = Benchmark.ms {
+        render json: WorkSerializer.new(@dois, options).serialized_json, status: :ok
+      }
+      logger.warn "[Benchmark] render " + bmr.to_s + " ms"
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
@@ -111,15 +128,23 @@ class WorksController < ApplicationController
       detail: true
     }
 
-    render json: WorkSerializer.new(@doi, options).serialized_json, status: :ok
+    bmj = Benchmark.ms {
+      render json: WorkSerializer.new(@doi, options).serialized_json, status: :ok
+    }
+    logger.warn "[Benchmark] render " + bmj.to_s + " ms"
   end
 
   protected
 
   def set_doi
-    options = filter_doi_by_role(current_user)
-    response = Doi.find_by_id(params[:id], options)
-    @doi = response.results.first
+    @doi = nil
+    bmd = Benchmark.ms {
+      options = filter_doi_by_role(current_user)
+      response = Doi.find_by_id(params[:id], options)
+      @doi = response.results.first
+    }
+    logger.warn "[Benchmark] render " + bmd.to_s + " ms"
+
     fail ActiveRecord::RecordNotFound unless @doi.present?
   end
 
