@@ -51,6 +51,7 @@ class WorksController < ApplicationController
     end
 
     begin
+      logger = Logger.new(STDOUT)
       logger.warn "[Benchmark] Elasticsearch request " + response.took.to_s + " ms"
 
       total = response.results.total
@@ -69,6 +70,7 @@ class WorksController < ApplicationController
         clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
         affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
       }
+      logger = Logger.new(STDOUT)
       logger.warn "[Benchmark Warning] aggregations " + bma.to_s + " ms"
 
       @dois = response.results
@@ -111,6 +113,7 @@ class WorksController < ApplicationController
       bmr = Benchmark.ms {
         render json: WorkSerializer.new(@dois, options).serialized_json, status: :ok
       }
+      logger = Logger.new(STDOUT)
       logger.warn "[Benchmark] render " + bmr.to_s + " ms"
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
@@ -131,7 +134,8 @@ class WorksController < ApplicationController
     bmj = Benchmark.ms {
       render json: WorkSerializer.new(@doi, options).serialized_json, status: :ok
     }
-    logger.warn "[Benchmark] render " + bmj.to_s + " ms"
+    logger = Logger.new(STDOUT)
+    logger.warn "[Benchmark] render single" + bmj.to_s + " ms"
   end
 
   protected
@@ -143,7 +147,8 @@ class WorksController < ApplicationController
       response = Doi.find_by_id(params[:id], options)
       @doi = response.results.first
     }
-    logger.warn "[Benchmark] render " + bmd.to_s + " ms"
+    logger = Logger.new(STDOUT)
+    logger.warn "[Benchmark] request single " + bmd.to_s + " ms"
 
     fail ActiveRecord::RecordNotFound unless @doi.present?
   end
