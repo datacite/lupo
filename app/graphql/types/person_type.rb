@@ -24,6 +24,10 @@ class PersonType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
+  field :creative_works, PersonCreativeWorkConnectionWithMetaType, null: true, description: "Authored creative works", connection: true do
+    argument :first, Int, required: false, default_value: 25
+  end
+
   def type
     "Person"
   end
@@ -44,6 +48,13 @@ class PersonType < BaseObject
 
   def software_source_codes(**_args)
     ids = Event.query(nil, obj_id: https_to_http(object[:id]), citation_type: "Person-SoftwareSourceCode").results.to_a.map do |e|
+      doi_from_url(e.subj_id)
+    end
+    ElasticsearchLoader.for(Doi).load_many(ids)
+  end
+
+  def creative_works(**_args)
+    ids = Event.query(nil, obj_id: https_to_http(object[:id])).results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
     ElasticsearchLoader.for(Doi).load_many(ids)
