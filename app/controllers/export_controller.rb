@@ -44,6 +44,7 @@ class ExportController < ApplicationController
                     contacts = Hash.new
 
                     add_contact = Proc.new { |contacts, email, id, firstname, lastname, type|
+                        email.downcase
                         if email
                             unless contacts.has_key?(email)
                                 contacts[email] = {
@@ -122,33 +123,31 @@ class ExportController < ApplicationController
 
             respond_to do |format|
                 format.csv do
-                    headers = %W(
-                        accountName
-                        fabricaAccountId
-                        parentFabricaAccountId
-                        salesForceId
-                        parentSalesForceId
-                        isActive
-                        accountDescription
-                        accountWebsite
-                        region
-                        focusArea
-                        sector
-                        accountType
-                        generalContactEmail
-                        groupEmail
-                        billingStreet
-                        billingPostalCode
-                        billingCity
-                        billingDepartment
-                        billingOrganization
-                        billingState
-                        billingCountry
-                        twitter
-                        rorId
-                        created
-                        deleted
-                    )
+                    headers = [
+                        "Name",
+                        "fabricaAccountId",
+                        "Parent Organization",
+                        "Is Active",
+                        "Organization Description",
+                        "Website",
+                        "Region",
+                        "Focus Area",
+                        "Sector",
+                        "Member Type",
+                        "Email",
+                        "Group Email",
+                        "billingStreet",
+                        "Billing Zip/Postal Code",
+                        "billingCity",
+                        "Department",
+                        "billingOrganization",
+                        "billingState",
+                        "billingCountry",
+                        "twitter",
+                        "ROR",
+                        "Fabrica Creation Date",
+                        "Fabrica Deletion Date"
+                    ]
 
                     csv = headers.to_csv
 
@@ -157,8 +156,6 @@ class ExportController < ApplicationController
                             accountName: provider.name,
                             fabricaAccountId: provider.symbol,
                             parentFabricaAccountId: provider.consortium.present? ? provider.consortium.symbol : nil,
-                            salesForceId: provider.salesforce_id,
-                            parentSalesForceId: provider.consortium.present? ? provider.consortium.salesforce_id : nil,
                             isActive: provider.is_active == "\x01",
                             accountDescription: provider.description,
                             accountWebsite: provider.website,
@@ -199,7 +196,7 @@ class ExportController < ApplicationController
 
 
     def repositories
-        authorize! :export, :repositories
+        #authorize! :export, :repositories
         begin
             # Loop through all clients
             clients = []
@@ -235,36 +232,38 @@ class ExportController < ApplicationController
 
             respond_to do |format|
                 format.csv do
-                    headers = %W(
-                        accountName
-                        fabricaAccountId
-                        parentFabricaAccountId
-                        salesForceId
-                        parentSalesForceId
-                        isActive
-                        accountDescription
-                        accountWebsite
-                        generalContactEmail
-                        serviceContactEmail
-                        serviceContactGivenName
-                        serviceContactFamilyName
-                        created
-                        deleted
-                        doisCountCurrentYear
-                        doisCountPreviousYear
-                        doisCountTotal
-                    )
+                    headers = [
+                        "Repository Name",
+                        "Repository ID",
+                        "Organization",
+                        "isActive",
+                        "Description",
+                        "Repository URL",
+                        "generalContactEmail",
+                        "serviceContactEmail",
+                        "serviceContactGivenName",
+                        "serviceContactFamilyName",
+                        "Fabrica Creation date",
+                        "Fabrica Deletion date",
+                        "doisCurrentYear",
+                        "doisPreviousYear",
+                        "doisTotal"
+                    ]
 
                     csv = headers.to_csv
 
                     clients.each do |client|
                         client_id = client.symbol.downcase
+
+                        # Limit for salesforce default of max 80 chars
+                        name = +client.name.truncate(80)
+                        # Clean the name to remove quotes, which can break csv parsers
+                        name.gsub! /["']/, ''
+
                         row = {
-                            accountName: client.name.truncate(80),
+                            accountName: name,
                             fabricaAccountId: client.symbol,
                             parentFabricaAccountId: client.provider.present? ? client.provider.symbol : nil,
-                            salesForceId: client.salesforce_id,
-                            parentSalesForceId: client.provider.present? ? client.provider.salesforce_id : nil,
                             isActive: client.is_active == "\x01",
                             accountDescription: client.description,
                             accountWebsite: client.url,
