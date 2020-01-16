@@ -16,7 +16,7 @@ class WorksController < ApplicationController
           else { updated: { order: 'desc' }}
           end
 
-    logger = Logger.new(STDOUT)
+    logger = LogStashLogger.new(type: :stdout)
 
     page = page_from_params(params)
 
@@ -53,7 +53,7 @@ class WorksController < ApplicationController
     end
 
     begin
-      logger.warn "[Benchmark] Elasticsearch request " + response.took.to_s + " ms"
+      logger.warn method: "GET", path: "/works", message: "Request /works", duration: response.took
 
       total = response.results.total
       total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
@@ -64,14 +64,14 @@ class WorksController < ApplicationController
       clients = nil
       affiliations = nil
 
-      bma = Benchmark.ms {
+      bm = Benchmark.ms {
         resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
         registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
         providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
         clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
         affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
       }
-      logger.warn "[Benchmark] aggregations " + bma.to_s + " ms"
+      logger.warn method: "GET", path: "/works", message: "Aggregations /works", duration: bm
 
       @dois = response.results
 
@@ -110,10 +110,10 @@ class WorksController < ApplicationController
         @dois = response.results
       end
 
-      bmr = Benchmark.ms {
+      bm = Benchmark.ms {
         render json: WorkSerializer.new(@dois, options).serialized_json, status: :ok
       }
-      logger.warn "[Benchmark] render " + bmr.to_s + " ms"
+      logger.warn method: "GET", path: "/works", message: "Render /works", duration: bm
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
@@ -130,26 +130,27 @@ class WorksController < ApplicationController
       detail: true
     }
 
-    bmj = Benchmark.ms {
+    bm = Benchmark.ms {
       render json: WorkSerializer.new(@doi, options).serialized_json, status: :ok
     }
-    logger = Logger.new(STDOUT)
-    logger.warn "[Benchmark] render single #{@doi.doi} " + bmj.to_s + " ms"
+    logger = LogStashLogger.new(type: :stdout)
+    logger.warn method: "GET", path: "/works/#{@doi.doi}", message: "Render /works/#{@doi.doi}", duration: bm
   end
 
   protected
 
   def set_doi
     @doi = nil
-    bmd = Benchmark.ms {
+    bm = Benchmark.ms {
       options = filter_doi_by_role(current_user)
       response = Doi.find_by_id(params[:id], options)
       @doi = response.results.first
     }
-    logger = Logger.new(STDOUT)
-    logger.warn "[Benchmark] request single #{@doi.doi} " + bmd.to_s + " ms"
 
     fail ActiveRecord::RecordNotFound unless @doi.present?
+
+    logger = LogStashLogger.new(type: :stdout)
+    logger.warn method: "GET", path: "/works/#{@doi.doi}", message: "Request /works/#{@doi.doi}", duration: bm
   end
 
   def set_include
