@@ -71,7 +71,7 @@ class WorksController < ApplicationController
         clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
         affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
       }
-      logger.warn "[Benchmark Warning] aggregations " + bma.to_s + " ms"
+      logger.warn "[Benchmark] aggregations " + bma.to_s + " ms"
 
       @dois = response.results
 
@@ -134,7 +134,7 @@ class WorksController < ApplicationController
       render json: WorkSerializer.new(@doi, options).serialized_json, status: :ok
     }
     logger = Logger.new(STDOUT)
-    logger.warn "[Benchmark] render single" + bmj.to_s + " ms"
+    logger.warn "[Benchmark] render single #{@doi.doi} " + bmj.to_s + " ms"
   end
 
   protected
@@ -147,7 +147,7 @@ class WorksController < ApplicationController
       @doi = response.results.first
     }
     logger = Logger.new(STDOUT)
-    logger.warn "[Benchmark] request single " + bmd.to_s + " ms"
+    logger.warn "[Benchmark] request single #{@doi.doi} " + bmd.to_s + " ms"
 
     fail ActiveRecord::RecordNotFound unless @doi.present?
   end
