@@ -16,6 +16,8 @@ class WorksController < ApplicationController
           else { updated: { order: 'desc' }}
           end
 
+    logger = Logger.new(STDOUT)
+
     page = page_from_params(params)
 
     sample_group_field = case params[:sample_group]
@@ -51,7 +53,6 @@ class WorksController < ApplicationController
     end
 
     begin
-      logger = Logger.new(STDOUT)
       logger.warn "[Benchmark] Elasticsearch request " + response.took.to_s + " ms"
 
       total = response.results.total
@@ -70,7 +71,6 @@ class WorksController < ApplicationController
         clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
         affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
       }
-      logger = Logger.new(STDOUT)
       logger.warn "[Benchmark Warning] aggregations " + bma.to_s + " ms"
 
       @dois = response.results
@@ -113,7 +113,6 @@ class WorksController < ApplicationController
       bmr = Benchmark.ms {
         render json: WorkSerializer.new(@dois, options).serialized_json, status: :ok
       }
-      logger = Logger.new(STDOUT)
       logger.warn "[Benchmark] render " + bmr.to_s + " ms"
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
