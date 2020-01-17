@@ -104,6 +104,33 @@ describe "dois", type: :request do
     end
   end
 
+  describe 'GET /dois all with metrics', elasticsearch: true, vcr: true do
+    # let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+    let!(:doi) { create(:doi, client: client,  aasm_state: "findable") }
+    let!(:events) { create_list(:event_for_datacite_related, 3, obj_id: doi.doi) }
+    let!(:views) { create_list(:event_for_datacite_usage, 2, obj_id: doi.doi) }
+
+    before do
+      Event.import
+      Doi.import
+      sleep 3
+    end
+
+    context 'when the record exists' do
+      it 'returns the Doi' do
+        get "/dois?mix-in=metrics", nil, headers
+
+    
+        expect(last_response.status).to eq(200)
+        expect(json['data'].size).to eq(1)
+        expect(json.dig('meta', 'total')).to eq(1)
+        expect(json.dig('meta', 'citations').first.dig('count')).to eq(3)
+        expect(json.dig('meta', 'views').first.dig('count')).to be > 0
+        expect(json.dig('meta', 'downloads').first.dig('count')).to eq(0)
+      end
+    end
+  end
+
   describe 'state' do
     let(:doi_id) { "10.14454/4K3M-NYVG" }
     let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }

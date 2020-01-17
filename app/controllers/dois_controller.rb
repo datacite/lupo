@@ -135,6 +135,7 @@ class DoisController < ApplicationController
           render json: DoiSerializer.new(results, options).serialized_json, status: :ok
         end
       else
+
         states = total > 0 ? facet_by_key(response.aggregations.states.buckets) : nil
         resource_types = total > 0 ? facet_by_resource_type(response.aggregations.resource_types.buckets) : nil
         years = total > 0 ? facet_by_year(response.aggregations.years.buckets) : nil
@@ -154,6 +155,13 @@ class DoisController < ApplicationController
         links_checked = total > 0 ? response.aggregations.links_checked.value : nil
         subjects = total > 0 ? facet_by_key(response.aggregations.subjects.buckets) : nil
         certificates = total > 0 ? facet_by_key(response.aggregations.certificates.buckets) : nil
+
+        if params[:mix_in].present? 
+          dois_result = results.map { |result| result.dig(:_source, :doi) }.join(',') if total.positive?
+          citations = total.positive? ? EventsQuery.new.citations(dois_result) : nil
+          views = total.positive? ? EventsQuery.new.views(dois_result) : nil
+          downloads = total.positive? ? EventsQuery.new.downloads(dois_result) : nil
+        end
 
         respond_to do |format|
           format.json do
@@ -180,7 +188,10 @@ class DoisController < ApplicationController
               "linkChecksSchemaOrgId" => link_checks_schema_org_id,
               "linkChecksDcIdentifier" => link_checks_dc_identifier,
               "linkChecksCitationDoi" => link_checks_citation_doi,
-              subjects: subjects
+              subjects: subjects,
+              citations: citations,
+              views: views,
+              downloads: downloads,
             }.compact
 
             options[:links] = {
