@@ -2818,14 +2818,13 @@ describe "dois", type: :request do
       let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }
       let(:headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer } }
 
-      it 'returns without landing page results' do
+      it 'returns with landing page results' do
         get "/dois/#{doi.doi}", nil, headers
 
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
-        expect(json.dig('data', 'attributes', 'landingPage')).to be_nil
+        expect(json.dig('data', 'attributes', 'landingPage')).to eq(landing_page)
       end
     end
-
 
     context 'client authorised try get diff dois landing data' do
       let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }

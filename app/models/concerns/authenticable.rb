@@ -155,16 +155,16 @@ module Authenticable
 
     # filter results based on user permissions
     def filter_doi_by_role(user)
-      return { state: "findable" } if user.blank?
+      return { aasm_state: "findable" } if user.blank?
 
       if %w(staff_admin staff_user).include?(user.role_id)
         {}
       elsif %w(provider_admin provider_user).include?(user.role_id) && user.provider_id.present?
-        { provider_id: user.provider_id }
+        { :provider_symbol => user.provider_id.upcase }
       elsif %w(client_admin client_user user temporary).include?(user.role_id) && user.client_id.present?
-        { client_id: user.client_id }
+        { :client_symbol => user.client_id.upcase }
       else
-        { state: "findable" }
+        { aasm_state: "findable" }
       end
     end
   end

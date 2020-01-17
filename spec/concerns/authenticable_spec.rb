@@ -70,43 +70,43 @@ describe User, type: :model do
     it "provider_admin" do
       token = User.generate_token(role_id: "provider_admin", provider_id: "datacite")
       subject = User.new(token)
-      expect(subject.filter_doi_by_role(subject)).to eq(:provider_id=>"datacite")
+      expect(subject.filter_doi_by_role(subject)).to eq(:provider_symbol=>"DATACITE")
     end
 
     it "provider_user" do
       token = User.generate_token(role_id: "provider_user", provider_id: "datacite")
       subject = User.new(token)
-      expect(subject.filter_doi_by_role(subject)).to eq(:provider_id=>"datacite")
+      expect(subject.filter_doi_by_role(subject)).to eq(:provider_symbol=>"DATACITE")
     end
 
     it "client_admin" do
       token = User.generate_token(role_id: "client_admin", client_id: "datacite.rph")
       subject = User.new(token)
-      expect(subject.filter_doi_by_role(subject)).to eq(client_id: "datacite.rph")
+      expect(subject.filter_doi_by_role(subject)).to eq(:client_symbol=>"DATACITE.RPH")
     end
 
     it "client_user" do
       token = User.generate_token(role_id: "client_user", client_id: "datacite.rph")
       subject = User.new(token)
-      expect(subject.filter_doi_by_role(subject)).to eq(client_id: "datacite.rph")
+      expect(subject.filter_doi_by_role(subject)).to eq(:client_symbol=>"DATACITE.RPH")
     end
 
     it "user" do
       token = User.generate_token(role_id: "user")
       subject = User.new(token)
-      expect(subject.filter_doi_by_role(subject)).to eq(:state=>"findable")
+      expect(subject.filter_doi_by_role(subject)).to eq(:aasm_state=>"findable")
     end
 
     it "temporary" do
       token = User.generate_token(role_id: "temporary")
       subject = User.new(token)
-      expect(subject.filter_doi_by_role(subject)).to eq(:state=>"findable")
+      expect(subject.filter_doi_by_role(subject)).to eq(:aasm_state=>"findable")
     end
 
     it "anonymous" do
       token = User.generate_token(role_id: "anonymous")
       subject = User.new(token)
-      expect(subject.filter_doi_by_role(subject)).to eq(:state=>"findable")
+      expect(subject.filter_doi_by_role(subject)).to eq(:aasm_state=>"findable")
     end
   end
 

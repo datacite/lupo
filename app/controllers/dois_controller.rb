@@ -233,14 +233,20 @@ class DoisController < ApplicationController
   def show
     # only show findable DOIs to anonymous users and role user
     # use current_user role to determine permissions to access draft and registered dois
-    options = filter_doi_by_role(current_user)
-    response = Doi.find_by_id(params[:id], options)
-    fail ActiveRecord::RecordNotFound unless response.results.present?
+    options = filter_doi_by_role(current_user).merge(doi: params[:id])
+    puts options
+    if options[:provider_symbol]
+      doi = Doi.joins(:client, :provider).where(["dataset.doi = :doi and (allocator.symbol = :provider_symbol or dataset.aasm_state = 'findable')", options]).where(options).first
+    elsif options[:client_symbol]
+      doi = Doi.joins(:client).where(["dataset.doi = :doi and (datacentre.symbol = :client_symbol or dataset.aasm_state = 'findable')", options]).first
+    else
+      doi = Doi.where(options).first
+    end
+    
+    fail ActiveRecord::RecordNotFound unless doi.present?
 
     respond_to do |format|
       format.json do
-        doi = response.results.first
-
         options = {}
         options[:include] = @include
         options[:is_collection] = false
@@ -252,9 +258,6 @@ class DoisController < ApplicationController
 
         render json: DoiSerializer.new(doi, options).serialized_json, status: :ok
       end
-
-      # use active_record for content negotiation
-      doi = response.records.first
 
       format.citation do  
         # fetch formatted citation

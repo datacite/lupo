@@ -144,21 +144,11 @@ class WorksController < ApplicationController
 
     @doi = nil
      
-    if rand(2) == 0
-      bm = Benchmark.ms {
-        @doi = Doi.where(doi: params[:id], aasm_state: "findable").first
-      }
-      fail ActiveRecord::RecordNotFound unless @doi.present?
-      logger.warn method: "GET", path: "/works/#{@doi.doi}", message: "Request DB /works/#{@doi.doi}", duration: bm
-    else
-      bm = Benchmark.ms {
-        options = filter_doi_by_role(current_user)
-        response = Doi.find_by_id(params[:id], options)
-        @doi = response.results.first
-      }
-      fail ActiveRecord::RecordNotFound unless @doi.present?
-      logger.warn method: "GET", path: "/works/#{@doi.doi}", message: "Request ES /works/#{@doi.doi}", duration: bm
-    end
+    bm = Benchmark.ms {
+      @doi = Doi.where(doi: params[:id], aasm_state: "findable").first
+    }
+    fail ActiveRecord::RecordNotFound unless @doi.present?
+    logger.warn method: "GET", path: "/works/#{@doi.doi}", message: "Request DB /works/#{@doi.doi}", duration: bm
   end
 
   def set_include
