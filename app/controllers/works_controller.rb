@@ -147,7 +147,7 @@ class WorksController < ApplicationController
     bm = Benchmark.ms {
       @doi = Doi.where(doi: params[:id], aasm_state: "findable").first
     }
-    fail ActiveRecord::RecordNotFound unless @doi.present?
+    fail ActiveRecord::RecordNotFound if @doi.blank?
     logger.warn method: "GET", path: "/works/#{@doi.doi}", message: "Request DB /works/#{@doi.doi}", duration: bm
   end
 

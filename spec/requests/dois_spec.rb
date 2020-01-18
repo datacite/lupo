@@ -77,6 +77,19 @@ describe "dois", type: :request do
       end
     end
 
+    context 'provider_admin' do
+      let(:provider_bearer) { Client.generate_token(role_id: "provider_admin", uid: provider.symbol, provider_id: provider.symbol.downcase, password: provider.password) }
+      let(:provider_headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + provider_bearer }}
+
+
+      it 'returns the Doi' do
+        get "/dois/#{doi.doi}", nil, provider_headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      end
+    end
+
     context 'anonymous user' do
       it 'returns the Doi' do
         get "/dois/#{doi.doi}"

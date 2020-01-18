@@ -153,19 +153,15 @@ module Authenticable
       res == 0
     end
 
-    # filter results based on user permissions
-    def filter_doi_by_role(user)
-      return { aasm_state: "findable" } if user.blank?
-
-      if %w(staff_admin staff_user).include?(user.role_id)
-        {}
-      elsif %w(provider_admin provider_user).include?(user.role_id) && user.provider_id.present?
-        { :provider_symbol => user.provider_id.upcase }
-      elsif %w(client_admin client_user user temporary).include?(user.role_id) && user.client_id.present?
-        { :client_symbol => user.client_id.upcase }
-      else
-        { aasm_state: "findable" }
-      end
+    # check user permissions
+    def not_allowed_by_doi_and_user(doi: nil, user: nil)
+      return true if doi.blank?
+      return false if doi.aasm_state == "findable"
+      return true if user.blank?
+      return false if %w(staff_admin staff_user).include?(user.role_id)
+      return false if %w(provider_admin provider_user).include?(user.role_id) && user.provider_id.present? && user.provider_id == doi.provider_id 
+      return false if %w(client_admin client_user user temporary).include?(user.role_id) && user.client_id.present? && user.client_id == doi.client_id
+      return true
     end
   end
 
