@@ -1,5 +1,6 @@
 require 'uri'
 require 'base64'
+require 'benchmark'
 
 class DoisController < ApplicationController
   include ActionController::MimeResponds
