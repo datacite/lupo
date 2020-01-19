@@ -155,4 +155,26 @@ describe Client, type: :model do
       expect(client.errors.details).to eq(:repository_type=>[{:error=>"Repository type interplanetary is not included in the list of supported repository types."}])
     end
   end
+
+  describe "cumulative_years" do
+    before(:each) do
+      allow(Time).to receive(:now).and_return(Time.mktime(2015, 4, 8))
+      allow(Time.zone).to receive(:now).and_return(Time.mktime(2015, 4, 8))
+    end
+
+    it "should show all cumulative years" do
+      client = create(:client, provider: provider)
+      expect(client.cumulative_years).to eq([2015, 2016, 2017, 2018, 2019, 2020])
+    end
+
+    it "should show years before deleted" do
+      client = create(:client, provider: provider, deleted_at: "2018-06-14")
+      expect(client.cumulative_years).to eq([2015, 2016, 2017])
+    end
+
+    it "empty if deleted in creation year" do
+      client = create(:client, provider: provider, deleted_at: "2015-06-14")
+      expect(client.cumulative_years).to eq([])
+    end
+  end
 end

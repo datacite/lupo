@@ -134,4 +134,26 @@ describe Provider, type: :model do
       expect(subject.password).to be_nil
     end
   end
+
+  describe "cumulative_years" do
+    before(:each) do
+      allow(Time).to receive(:now).and_return(Time.mktime(2015, 4, 8))
+      allow(Time.zone).to receive(:now).and_return(Time.mktime(2015, 4, 8))
+    end
+
+    it "should show all cumulative years" do
+      provider = create(:provider)
+      expect(provider.cumulative_years).to eq([2015, 2016, 2017, 2018, 2019, 2020])
+    end
+
+    it "should show years before deleted" do
+      provider = create(:provider, deleted_at: "2018-06-14")
+      expect(provider.cumulative_years).to eq([2015, 2016, 2017])
+    end
+
+    it "empty if deleted in creation year" do
+      provider = create(:provider, deleted_at: "2015-06-14")
+      expect(provider.cumulative_years).to eq([])
+    end
+  end
 end

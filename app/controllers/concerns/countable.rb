@@ -15,7 +15,7 @@ module Countable
         response = Doi.query(nil, page: { number: 1, size: 0 })
       end
       
-      response.results.total > 0 ? facet_by_year(response.response.aggregations.created.buckets) : []
+      response.results.total.positive? ? facet_by_year(response.response.aggregations.created.buckets) : []
     end
 
     # cumulative count clients by year
@@ -28,9 +28,9 @@ module Countable
         response = Client.query(nil, consortium_id: consortium_id, include_deleted: true, page: { number: 1, size: 0 })
       else
         response = Client.query(nil, include_deleted: true, page: { number: 1, size: 0 })
-      end
+      end 
 
-      response.results.total > 0 ? facet_by_cumulative_year(response.response.aggregations.cumulative_years.buckets) : []
+      response.results.total.positive? ? facet_by_cumulative_year(response.response.aggregations.cumulative_years.buckets) : []
     end
 
     # count active clients by provider. Provider can only be deleted when there are no active clients.
@@ -46,10 +46,10 @@ module Countable
     def provider_count(consortium_id: nil)
       if consortium_id
         response = Provider.query(nil, consortium_id: consortium_id, include_deleted: true, page: { number: 1, size: 0 })
-        response.results.total > 0 ? facet_by_cumulative_year(response.response.aggregations.cumulative_years.buckets) : []
+        response.results.total.positive? ? facet_by_cumulative_year(response.response.aggregations.cumulative_years.buckets) : []
       else
         response = Provider.query(nil, include_deleted: true, page: { number: 1, size: 0 })
-        response.results.total > 0 ? facet_by_cumulative_year(response.response.aggregations.cumulative_years.buckets) : []
+        response.results.total.positive? ? facet_by_cumulative_year(response.response.aggregations.cumulative_years.buckets) : []
       end
     end
 
@@ -66,7 +66,7 @@ module Countable
         response = Doi.query(nil, page: { number: 1, size: 0 })
       end
       
-      response.results.total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : []
+      response.results.total.positive? ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : []
     end
   end
 end
