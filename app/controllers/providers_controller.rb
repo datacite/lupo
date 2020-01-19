@@ -150,20 +150,30 @@ class ProvidersController < ApplicationController
   end
 
   def show
+    logger = LogStashLogger.new(type: :stdout)
+
     if params[:id] == "admin"
       providers = provider_count(consortium_id: nil)
+      logger.warn providers.inspect
       clients = client_count(provider_id: nil)
+      logger.warn clients.inspect
       dois = doi_count(provider_id: nil)
+      logger.warn dois.inspect
       resource_types = resource_type_count(provider_id: nil)
     elsif @provider.member_type == "consortium"
       providers = provider_count(consortium_id: params[:id])
+      logger.warn providers.inspect
       clients = client_count(consortium_id: params[:id])
+      logger.warn clients.inspect
       dois = doi_count(consortium_id: params[:id])
+      logger.warn dois.inspect
       resource_types = resource_type_count(consortium_id: params[:id])
     else
       providers = nil
       clients = client_count(provider_id: params[:id])
+      logger.warn clients.inspect
       dois = doi_count(provider_id: params[:id])
+      logger.warn dois.inspect
       resource_types = resource_type_count(provider_id: params[:id])
     end
 
