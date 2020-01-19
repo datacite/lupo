@@ -18,6 +18,12 @@ module Facetable
     "crossref" => "Crossref to DataCite"
   }
 
+  REGIONS = {
+    "APAC" => "Asia and Pacific",
+    "EMEA" => "Europe, Middle East and Africa",
+    "AMER" => "Americas"
+  }
+
   included do
     def facet_by_year(arr)
       arr.map do |hsh|
