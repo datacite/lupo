@@ -23,6 +23,8 @@ class DoisController < ApplicationController
           else { updated: { order: 'desc' }}
           end
 
+    logger = LogStashLogger.new(type: :stdout)
+
     page = page_from_params(params)
 
     sample_group_field = case params[:sample_group]
@@ -77,6 +79,8 @@ class DoisController < ApplicationController
     end
 
     begin
+      logger.warn method: "GET", path: "/dois", message: "Request /dois", duration: response.took
+
       # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
       if sample_group_field.present?
         sample_dois = []
@@ -135,26 +139,48 @@ class DoisController < ApplicationController
           render json: DoiSerializer.new(results, options).serialized_json, status: :ok
         end
       else
+        states = nil
+        resource_types = nil
+        years = nil
+        created = nil
+        registered = nil
+        providers = nil
+        clients = nil
+        affiliations = nil
+        prefixes = nil
+        schema_versions = nil
+        sources = nil
+        link_checks_status = nil
+        links_with_schema_org = nil
+        link_checks_schema_org_id = nil
+        link_checks_dc_identifier = nil
+        link_checks_citation_doi = nil
+        links_checked = nil
+        subjects = nil
+        certificates = nil
 
-        states = total > 0 ? facet_by_key(response.aggregations.states.buckets) : nil
-        resource_types = total > 0 ? facet_by_resource_type(response.aggregations.resource_types.buckets) : nil
-        years = total > 0 ? facet_by_year(response.aggregations.years.buckets) : nil
-        created = total > 0 ? facet_by_year(response.aggregations.created.buckets) : nil
-        registered = total > 0 ? facet_by_year(response.aggregations.registered.buckets) : nil
-        providers = total > 0 ? facet_by_provider(response.aggregations.providers.buckets) : nil
-        clients = total > 0 ? facet_by_client(response.aggregations.clients.buckets) : nil
-        affiliations = total > 0 ? facet_by_affiliation(response.aggregations.affiliations.buckets) : nil
-        prefixes = total > 0 ? facet_by_key(response.aggregations.prefixes.buckets) : nil
-        schema_versions = total > 0 ? facet_by_schema(response.aggregations.schema_versions.buckets) : nil
-        sources = total > 0 ? facet_by_key(response.aggregations.sources.buckets) : nil
-        link_checks_status = total > 0 ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
-        links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
-        link_checks_schema_org_id = total > 0 ? response.aggregations.link_checks_schema_org_id.value : nil
-        link_checks_dc_identifier = total > 0 ? response.aggregations.link_checks_dc_identifier.value : nil
-        link_checks_citation_doi = total > 0 ? response.aggregations.link_checks_citation_doi.value : nil
-        links_checked = total > 0 ? response.aggregations.links_checked.value : nil
-        subjects = total > 0 ? facet_by_key(response.aggregations.subjects.buckets) : nil
-        certificates = total > 0 ? facet_by_key(response.aggregations.certificates.buckets) : nil
+        bm = Benchmark.ms {
+          states = total > 0 ? facet_by_key(response.aggregations.states.buckets) : nil
+          resource_types = total > 0 ? facet_by_resource_type(response.aggregations.resource_types.buckets) : nil
+          years = total > 0 ? facet_by_year(response.aggregations.years.buckets) : nil
+          created = total > 0 ? facet_by_year(response.aggregations.created.buckets) : nil
+          registered = total > 0 ? facet_by_year(response.aggregations.registered.buckets) : nil
+          providers = total > 0 ? facet_by_provider(response.aggregations.providers.buckets) : nil
+          clients = total > 0 ? facet_by_client(response.aggregations.clients.buckets) : nil
+          affiliations = total > 0 ? facet_by_affiliation(response.aggregations.affiliations.buckets) : nil
+          prefixes = total > 0 ? facet_by_key(response.aggregations.prefixes.buckets) : nil
+          schema_versions = total > 0 ? facet_by_schema(response.aggregations.schema_versions.buckets) : nil
+          sources = total > 0 ? facet_by_key(response.aggregations.sources.buckets) : nil
+          link_checks_status = total > 0 ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
+          links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
+          link_checks_schema_org_id = total > 0 ? response.aggregations.link_checks_schema_org_id.value : nil
+          link_checks_dc_identifier = total > 0 ? response.aggregations.link_checks_dc_identifier.value : nil
+          link_checks_citation_doi = total > 0 ? response.aggregations.link_checks_citation_doi.value : nil
+          links_checked = total > 0 ? response.aggregations.links_checked.value : nil
+          subjects = total > 0 ? facet_by_key(response.aggregations.subjects.buckets) : nil
+          certificates = total > 0 ? facet_by_key(response.aggregations.certificates.buckets) : nil
+        }
+        logger.warn method: "GET", path: "/dois", message: "Aggregations /dois", duration: bm
 
         if params[:mix_in].present? 
           dois_result = results.map { |result| result.dig(:_source, :doi) }.join(',') if total.positive?
@@ -218,11 +244,14 @@ class DoisController < ApplicationController
 
             # sparse fieldsets
             fields = fields_from_params(params)
-            if fields
-              render json: DoiSerializer.new(results, options.merge(fields: fields)).serialized_json, status: :ok
-            else
-              render json: DoiSerializer.new(results, options).serialized_json, status: :ok
-            end
+            bm = Benchmark.ms {
+              if fields
+                render json: DoiSerializer.new(results, options.merge(fields: fields)).serialized_json, status: :ok
+              else
+                render json: DoiSerializer.new(results, options).serialized_json, status: :ok
+              end
+            }
+            logger.warn method: "GET", path: "/dois", message: "Render /dois", duration: bm
           end
 
           format.citation do
