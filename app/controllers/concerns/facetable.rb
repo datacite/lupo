@@ -85,9 +85,7 @@ module Facetable
 
     def facet_by_region(arr)
       arr.map do |hsh|
-        hsh["key"] = hsh["key"].downcase
-
-        { "id" => hsh["key"],
+        { "id" => hsh["key"].downcase,
           "title" => REGIONS[hsh["key"]] || hsh["key"],
           "count" => hsh["doc_count"] }
       end
