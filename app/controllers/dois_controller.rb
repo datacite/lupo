@@ -192,12 +192,13 @@ class DoisController < ApplicationController
         }
         logger.warn method: "GET", path: "/dois", message: "AggregationsLinkChecks /dois", duration: bm
 
-        if params[:mix_in].present? 
-          dois_result = results.map { |result| result.dig(:_source, :doi) }.join(',') if total.positive?
-          citations = total.positive? ? EventsQuery.new.citations(dois_result) : nil
-          views = total.positive? ? EventsQuery.new.views(dois_result) : nil
-          downloads = total.positive? ? EventsQuery.new.downloads(dois_result) : nil
-        end
+        results = results.map do |result|
+          result.merge(
+            citations: EventsQuery.new.doi_citations( result.dig(:_source, :doi) ),
+            views: EventsQuery.new.doi_views( result.dig(:_source, :doi) ),
+            downloads: EventsQuery.new.doi_downloads( result.dig(:_source, :doi) ),
+          )
+        end if total.positive? && params[:mix_in].present?
 
         respond_to do |format|
           format.json do
@@ -225,9 +226,6 @@ class DoisController < ApplicationController
               "linkChecksDcIdentifier" => link_checks_dc_identifier,
               "linkChecksCitationDoi" => link_checks_citation_doi,
               subjects: subjects,
-              citations: citations,
-              views: views,
-              downloads: downloads,
             }.compact
 
             options[:links] = {

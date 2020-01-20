@@ -126,20 +126,21 @@ describe "dois", type: :request do
     before do
       Event.import
       Doi.import
-      sleep 3
+      sleep 4
     end
 
     context 'when the record exists' do
       it 'returns the Doi' do
         get "/dois?mix-in=metrics", nil, headers
+        puts json.dig('data',0)
 
     
         expect(last_response.status).to eq(200)
         expect(json['data'].size).to eq(1)
         expect(json.dig('meta', 'total')).to eq(1)
-        expect(json.dig('meta', 'citations').first.dig('count')).to eq(3)
-        expect(json.dig('meta', 'views').first.dig('count')).to be > 0
-        expect(json.dig('meta', 'downloads').first.dig('count')).to eq(0)
+        expect(json.dig('data',0,'attributes','citations')).to eq(3)
+        expect(json.dig('data',0,'attributes','views')).to be > 0
+        expect(json.dig('data',0,'attributes','downloads')).to eq(0)
       end
     end
   end
