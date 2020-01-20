@@ -28,33 +28,35 @@ class WorksController < ApplicationController
                           else nil
                          end
 
-    if params[:id].present?
-      response = Doi.find_by_id(params[:id])
-    elsif params[:ids].present?
-      response = Doi.find_by_id(params[:ids], page: page, sort: sort)
-    else
-      response = Doi.query(params[:query],
-                          exclude_registration_agencies: true,
-                          state: "findable",
-                          created: params[:created],
-                          registered: params[:registered],
-                          provider_id: params[:member_id],
-                          client_id: params[:data_center_id],
-                          affiliation_id: params[:affiliation_id],
-                          prefix: params[:prefix],
-                          user_id: params[:person_id],
-                          resource_type_id: params[:resource_type_id],
-                          schema_version: params[:schema_version],
-                          sample_group: sample_group_field,
-                          sample_size: params[:sample],
-                          page: page,
-                          sort: sort,
-                          random: params[:sample].present? ? true : false)
-    end
+    response = nil
+    bm = Benchmark.ms {
+      if params[:id].present?
+        response = Doi.find_by_id(params[:id])
+      elsif params[:ids].present?
+        response = Doi.find_by_id(params[:ids], page: page, sort: sort)
+      else
+        response = Doi.query(params[:query],
+                            exclude_registration_agencies: true,
+                            state: "findable",
+                            created: params[:created],
+                            registered: params[:registered],
+                            provider_id: params[:member_id],
+                            client_id: params[:data_center_id],
+                            affiliation_id: params[:affiliation_id],
+                            prefix: params[:prefix],
+                            user_id: params[:person_id],
+                            resource_type_id: params[:resource_type_id],
+                            schema_version: params[:schema_version],
+                            sample_group: sample_group_field,
+                            sample_size: params[:sample],
+                            page: page,
+                            sort: sort,
+                            random: params[:sample].present? ? true : false)
+      end
+    }
+    logger.warn method: "GET", path: "/works", message: "Request /works", duration: bm
 
     begin
-      logger.warn method: "GET", path: "/works", message: "Request /works", duration: response.took
-
       total = response.results.total
       total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
 
@@ -69,9 +71,13 @@ class WorksController < ApplicationController
         registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
         providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
         clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
+      }
+      logger.warn method: "GET", path: "/works", message: "AggregationsBasic /works", duration: bm
+
+      bm = Benchmark.ms {
         affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
       }
-      logger.warn method: "GET", path: "/works", message: "Aggregations /works", duration: bm
+      logger.warn method: "GET", path: "/works", message: "AggregationsAffiliations /works", duration: bm
 
       @dois = response.results
 

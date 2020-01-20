@@ -41,47 +41,48 @@ class DoisController < ApplicationController
     # only show findable DOIs to anonymous users and role user
     params[:state] = "findable" if current_user.nil? || current_user.role_id == "user"
 
-    if params[:id].present?
-      response = Doi.find_by_id(params[:id])
-    elsif params[:ids].present?
-      response = Doi.find_by_id(params[:ids], page: page, sort: sort)
-    else
-      response = Doi.query(params[:query],
-                          state: params[:state],
-                          exclude_registration_agencies: params[:exclude_registration_agencies],
-                          created: params[:created],
-                          registered: params[:registered],
-                          provider_id: params[:provider_id],
-                          consortium_id: params[:consortium_id],
-                          client_id: params[:client_id],
-                          affiliation_id: params[:affiliation_id],
-                          re3data_id: params[:re3data_id],
-                          opendoar_id: params[:opendoar_id],
-                          certificate: params[:certificate],
-                          prefix: params[:prefix],
-                          user_id: params[:user_id],
-                          resource_type_id: params[:resource_type_id],
-                          schema_version: params[:schema_version],
-                          subject: params[:subject],
-                          link_check_status: params[:link_check_status],
-                          link_check_has_schema_org: params[:link_check_has_schema_org],
-                          link_check_body_has_pid: params[:link_check_body_has_pid],
-                          link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
-                          link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
-                          link_check_found_citation_doi: params[:link_check_found_citation_doi],
-                          link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
-                          sample_group: sample_group_field,
-                          sample_size: params[:sample],
-                          source: params[:source],
-                          scroll_id: params[:scroll_id],
-                          page: page,
-                          sort: sort,
-                          random: params[:random])
-    end
+    bm = Benchmark.ms {
+      if params[:id].present?
+        response = Doi.find_by_id(params[:id])
+      elsif params[:ids].present?
+        response = Doi.find_by_id(params[:ids], page: page, sort: sort)
+      else
+        response = Doi.query(params[:query],
+                            state: params[:state],
+                            exclude_registration_agencies: params[:exclude_registration_agencies],
+                            created: params[:created],
+                            registered: params[:registered],
+                            provider_id: params[:provider_id],
+                            consortium_id: params[:consortium_id],
+                            client_id: params[:client_id],
+                            affiliation_id: params[:affiliation_id],
+                            re3data_id: params[:re3data_id],
+                            opendoar_id: params[:opendoar_id],
+                            certificate: params[:certificate],
+                            prefix: params[:prefix],
+                            user_id: params[:user_id],
+                            resource_type_id: params[:resource_type_id],
+                            schema_version: params[:schema_version],
+                            subject: params[:subject],
+                            link_check_status: params[:link_check_status],
+                            link_check_has_schema_org: params[:link_check_has_schema_org],
+                            link_check_body_has_pid: params[:link_check_body_has_pid],
+                            link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
+                            link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
+                            link_check_found_citation_doi: params[:link_check_found_citation_doi],
+                            link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
+                            sample_group: sample_group_field,
+                            sample_size: params[:sample],
+                            source: params[:source],
+                            scroll_id: params[:scroll_id],
+                            page: page,
+                            sort: sort,
+                            random: params[:random])
+      end
+    }
+    logger.warn method: "GET", path: "/dois", message: "Request /dois", duration: bm
 
     begin
-      logger.warn method: "GET", path: "/dois", message: "Request /dois", duration: response.took
-
       # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
       if sample_group_field.present?
         sample_dois = []
@@ -168,20 +169,28 @@ class DoisController < ApplicationController
           registered = total > 0 ? facet_by_year(response.aggregations.registered.buckets) : nil
           providers = total > 0 ? facet_by_provider(response.aggregations.providers.buckets) : nil
           clients = total > 0 ? facet_by_client(response.aggregations.clients.buckets) : nil
-          affiliations = total > 0 ? facet_by_affiliation(response.aggregations.affiliations.buckets) : nil
           prefixes = total > 0 ? facet_by_key(response.aggregations.prefixes.buckets) : nil
           schema_versions = total > 0 ? facet_by_schema(response.aggregations.schema_versions.buckets) : nil
+        }
+        logger.warn method: "GET", path: "/dois", message: "AggregationsBasic /dois", duration: bm
+
+        bm = Benchmark.ms {
+          affiliations = total > 0 ? facet_by_affiliation(response.aggregations.affiliations.buckets) : nil
           sources = total > 0 ? facet_by_key(response.aggregations.sources.buckets) : nil
+          subjects = total > 0 ? facet_by_key(response.aggregations.subjects.buckets) : nil
+          certificates = total > 0 ? facet_by_key(response.aggregations.certificates.buckets) : nil
+        }
+        logger.warn method: "GET", path: "/dois", message: "AggregationsExtended /dois", duration: bm
+
+        bm = Benchmark.ms {
           link_checks_status = total > 0 ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
           links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
           link_checks_schema_org_id = total > 0 ? response.aggregations.link_checks_schema_org_id.value : nil
           link_checks_dc_identifier = total > 0 ? response.aggregations.link_checks_dc_identifier.value : nil
           link_checks_citation_doi = total > 0 ? response.aggregations.link_checks_citation_doi.value : nil
           links_checked = total > 0 ? response.aggregations.links_checked.value : nil
-          subjects = total > 0 ? facet_by_key(response.aggregations.subjects.buckets) : nil
-          certificates = total > 0 ? facet_by_key(response.aggregations.certificates.buckets) : nil
         }
-        logger.warn method: "GET", path: "/dois", message: "Aggregations /dois", duration: bm
+        logger.warn method: "GET", path: "/dois", message: "AggregationsLinkChecks /dois", duration: bm
 
         if params[:mix_in].present? 
           dois_result = results.map { |result| result.dig(:_source, :doi) }.join(',') if total.positive?
