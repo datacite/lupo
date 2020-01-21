@@ -26,6 +26,31 @@ class EventsQuery
     results.any? ? results.first.total.value : 0
   end
 
+  def citations_left_query(dois)
+    return nil unless doi.present?
+    pids = dois.map do |doi|
+      Event.new.normalize_doi(doi)
+    end
+    query = "((subj_id:\"#{pids.join(' OR subj_id:')}\" ) AND (relation_type_id:#{PASSIVE_RELATION_TYPES.join(' OR relation_type_id:')})))"
+    results = Event.query(query, doi: dois, aggregations: "citation_count_aggregation", page: { size: 1, cursor: [] }).response.aggregations.citations.buckets
+    results.map do |item|
+      { id: item, count: item.total.value }
+    end
+  end
+
+  def citations_right_query(dois)
+    return nil unless doi.present?
+    pids = dois.map do |doi|
+      Event.new.normalize_doi(doi)
+    end
+    query = "(obj_id:\"#{pids.join(' OR obj_id:')}\" AND (relation_type_id:#{ACTIVE_RELATION_TYPES.join(' OR relation_type_id:')}))"
+    results = Event.query(query, doi: dois, aggregations: "citation_count_aggregation", page: { size: 1, cursor: [] }).response.aggregations.citations.buckets
+    results.map do |item|
+      { id: item, count: item.total.value }
+    end
+  end
+
+
   def citations(doi)
     return {} unless doi.present?
     doi.downcase.split(",").map do |item|
@@ -49,10 +74,13 @@ class EventsQuery
     results.any? ? results.first.dig("total_by_type", "value") : 0
   end
 
-  def views(doi)
-    return {} unless doi.present?
-    doi.downcase.split(",").map do |item|
-      { id: item, count: EventsQuery.new.doi_views(item) }
+  def views(dois)
+    return {} unless dois.present?
+    query = "(relation_type_id:unique-dataset-investigations-regular AND source_id:datacite-usage)"
+    results = Event.query(query, doi: dois, aggregations: "usage_count_aggregation", page: { size: 1, cursor: [] }).response.aggregations.usage.buckets
+
+    results.map do |item|
+      { id: item, count: item.dig("total_by_type", "value") }
     end
   end
 
@@ -71,10 +99,13 @@ class EventsQuery
     results.any? ? results.first.dig("total_by_type", "value") : 0
   end
 
-  def downloads(doi)
-    return {} unless doi.present?
-    doi.downcase.split(",").map do |item|
-      { id: item, count: EventsQuery.new.doi_downloads(item) }
+  def downloads(dois)
+    return {} unless dois.present?
+    query = "(relation_type_id:unique-dataset-requests-regular AND source_id:datacite-usage)"
+    results = Event.query(query, doi: dois, aggregations: "usage_count_aggregation", page: { size: 1, cursor: [] }).response.aggregations.usage.buckets
+
+    results.map do |item|
+      { id: item, count: item.dig("total_by_type", "value") }
     end
   end
 
