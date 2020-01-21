@@ -287,6 +287,7 @@ class DoisController < ApplicationController
         options[:is_collection] = false
         options[:params] = {
           current_ability: current_ability,
+          events: params[:events],
           detail: true,
           affiliation: params[:affiliation]
         }
