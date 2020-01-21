@@ -246,13 +246,24 @@ class DoisController < ApplicationController
 
             # sparse fieldsets
             fields = fields_from_params(params)
+            dois_serialized = nil
             bm = Benchmark.ms {
               if fields
-                render json: DoiSerializer.new(results, options.merge(fields: fields)).serialized_json, status: :ok
+                dois_serialized = DoiSerializer.new(results, options.merge(fields: fields)).serialized_json
               else
-                render json: DoiSerializer.new(results, options).serialized_json, status: :ok
+                dois_serialized = DoiSerializer.new(results, options).serialized_json
               end
             }
+
+            doi_names = (results.map { |doi| doi.doi}).uniq().join(",")
+            citations = EventsQuery.new.citations(doi_names) ##  will make 2 ES calls 
+            usage     = EventsQuery.new.usage(doi_names) ##  will make 1 ES call  with views and downloads aggregations
+            mix_metrics(citations, usage) 
+
+            dois_serialized[:metrics] = mix_two_array_of_hashes(usage, usage) 
+  
+            render json: dois_serialized, status: :ok
+
             logger.warn method: "GET", path: "/dois", message: "Render /dois", duration: bm
           end
 
