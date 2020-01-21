@@ -239,6 +239,7 @@ class DoisController < ApplicationController
             options[:params] = {
               current_ability: current_ability,
               detail: params[:detail],
+              events: params[:events],
               mix_in: params[:mix_in],
               affiliation: params[:affiliation],
               is_collection: options[:is_collection]

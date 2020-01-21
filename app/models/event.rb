@@ -589,6 +589,9 @@ class Event < ActiveRecord::Base
     self.subj = subj.to_h.merge("id" => self.subj_id)
     self.obj = obj.to_h.merge("id" => self.obj_id)
 
+    # set doi_id for views and downloads
+    self.doi_id = doi_from_url(obj_id) if source_id == "datacite-usage"
+
     self.total = 1 if total.blank?
     self.relation_type_id = "references" if relation_type_id.blank?
     self.occurred_at = Time.zone.now.utc if occurred_at.blank?

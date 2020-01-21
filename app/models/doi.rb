@@ -72,6 +72,8 @@ class Doi < ActiveRecord::Base
   belongs_to :client, foreign_key: :datacentre
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
   has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
+  has_many :views, -> { where relation_type_id: "unique-dataset-investigations-regular" }, class_name: "Event", primary_key: :doi, foreign_key: :doi_id, dependent: :destroy
+  has_many :downloads, -> { where relation_type_id: "unique-dataset-requests-regular" }, class_name: "Event", primary_key: :doi, foreign_key: :doi_id, dependent: :destroy
 
   delegate :provider, to: :client, allow_nil: true
   delegate :consortium_id, to: :provider, allow_nil: true
@@ -400,7 +402,9 @@ class Doi < ActiveRecord::Base
         consortium: { type: :object },
         consortium_organizations: { type: :object }
       }
-      indexes :resource_type,  type: :object
+      indexes :resource_type, type: :object
+      indexes :views, type: :object
+      indexes :downloads, type: :object
     end
   end
 
@@ -456,7 +460,9 @@ class Doi < ActiveRecord::Base
       "client" => client.try(:as_indexed_json),
       "provider" => provider.try(:as_indexed_json),
       "resource_type" => resource_type.try(:as_indexed_json),
-      "media" => media.map { |m| m.try(:as_indexed_json) }
+      "media" => media.map { |m| m.try(:as_indexed_json) },
+      "views" => views.map { |m| m.try(:as_indexed_json) },
+      "downloads" => downloads.map { |m| m.try(:as_indexed_json) }
     }
   end
 

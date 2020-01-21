@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_07_002912) do
+ActiveRecord::Schema.define(version: 2020_01_21_101841) do
 
-  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 2019_08_07_002912) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
     t.string "key", limit: 191, null: false
     t.string "filename", limit: 191, null: false
     t.string "content_type", limit: 191
@@ -85,7 +85,7 @@ ActiveRecord::Schema.define(version: 2019_08_07_002912) do
     t.index ["prefixes"], name: "FKE7FBD674AF86A1C7"
   end
 
-  create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
     t.integer "auditable_id"
     t.string "auditable_type"
     t.integer "associated_id"
@@ -210,7 +210,7 @@ ActiveRecord::Schema.define(version: 2019_08_07_002912) do
     t.index ["url"], name: "index_dataset_on_url", length: 100
   end
 
-  create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
     t.text "uuid", null: false
     t.text "subj_id", null: false
     t.text "obj_id"
@@ -230,7 +230,9 @@ ActiveRecord::Schema.define(version: 2019_08_07_002912) do
     t.text "obj", limit: 16777215
     t.integer "total", default: 1
     t.string "license", limit: 191
+    t.text "doi_id"
     t.index ["created_at", "indexed_at", "updated_at"], name: "index_events_on_created_indexed_updated"
+    t.index ["doi_id", "relation_type_id"], name: "index_events_on_doi_id", length: { doi_id: 100 }
     t.index ["source_id", "created_at"], name: "index_events_on_source_id_created_at"
     t.index ["subj_id", "obj_id", "source_id", "relation_type_id"], name: "index_events_on_multiple_columns", unique: true, length: { subj_id: 191, obj_id: 191 }
     t.index ["updated_at"], name: "index_events_on_updated_at"
