@@ -134,6 +134,7 @@ class Event < ActiveRecord::Base
       cache_key: { type: :keyword }
     }
     indexes :source_id,        type: :keyword
+    indexes :doi_id,           type: :keyword
     indexes :source_token,     type: :keyword
     indexes :message_action,   type: :keyword
     indexes :relation_type_id, type: :keyword
@@ -170,6 +171,7 @@ class Event < ActiveRecord::Base
       "subtype" => subtype,
       "citation_type" => citation_type,
       "source_id" => source_id,
+      "doi_id" => doi_id,
       "source_token" => source_token,
       "message_action" => message_action,
       "relation_type_id" => relation_type_id,
