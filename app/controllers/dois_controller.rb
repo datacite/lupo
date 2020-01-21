@@ -509,9 +509,9 @@ class DoisController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:client, :media]
+      @include = @include & [:client, :media, :views, :downloads]
     else
-      @include = [:client, :media]
+      @include = [:client, :media, :views, :downloads]
     end
   end
 

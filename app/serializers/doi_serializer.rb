@@ -12,8 +12,8 @@ class DoiSerializer
 
   belongs_to :client, record_type: :clients
   has_many :media, record_type: :media, id_method_name: :uid, if: Proc.new { |object, params| params && params[:detail] && !params[:is_collection]}
-  has_many :views, record_type: :event, id_method_name: :uuid, if: Proc.new { |object, params| params && params[:events]}
-  has_many :downloads, record_type: :event, id_method_name: :uuid, if: Proc.new { |object, params| params && params[:events]}
+  has_many :views, record_type: :events, if: Proc.new { |object, params| params && params[:events]}
+  has_many :downloads, record_type: :events, if: Proc.new { |object, params| params && params[:events]}
 
   attribute :xml, if: Proc.new { |object, params| params && params[:detail] } do |object|
     begin

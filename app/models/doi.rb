@@ -403,7 +403,9 @@ class Doi < ActiveRecord::Base
         consortium_organizations: { type: :object }
       }
       indexes :resource_type, type: :object
+      indexes :view_ids, type: :keyword
       indexes :views, type: :object
+      indexes :download_ids, type: :keyword
       indexes :downloads, type: :object
     end
   end
@@ -426,6 +428,8 @@ class Doi < ActiveRecord::Base
       "consortium_id" => consortium_id,
       "resource_type_id" => resource_type_id,
       "media_ids" => media_ids,
+      "view_ids" => view_ids,
+      "download_ids" => download_ids,
       "prefix" => prefix,
       "suffix" => suffix,
       "types" => types,
@@ -843,6 +847,15 @@ class Doi < ActiveRecord::Base
   def media_ids
     media.pluck(:id).map { |m| Base32::URL.encode(m, split: 4, length: 16) }.compact
   end
+
+  def view_ids
+    views.pluck(:doi_id)
+  end
+
+  def download_ids
+    downloads.pluck(:doi_id)
+  end
+
 
   def xml_encoded
     Base64.strict_encode64(xml) if xml.present?
