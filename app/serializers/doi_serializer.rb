@@ -89,15 +89,15 @@ class DoiSerializer
     object.landing_page
   end
 
-  attribute :citations, if: Proc.new { |object, params|  params && params[:mix_in] == "metrics" }  do |object|
-    doi_citations(object.uid)
+  attribute :citations, if: Proc.new { |object, params|  params && params[:mix_in] == "metrics" }  do |object, params|
+    mix_in_metrics(object.uid, params[:metrics])[:citations] || 0
   end
 
-  attribute :views, if: Proc.new { |object, params|  params && params[:mix_in] == "metrics" }  do |object|
-    doi_views(object.uid)
+  attribute :views, if: Proc.new { |object, params|  params && params[:mix_in] == "metrics" }  do |object, params|
+    mix_in_metrics(object.uid, params[:metrics])[:views] || 0
   end
 
-  attribute :downloads, if: Proc.new { |object, params|  params && params[:mix_in] == "metrics" } do |object|
-    doi_downloads(object.uid)
+  attribute :downloads, if: Proc.new { |object, params|  params && params[:mix_in] == "metrics" } do |object, params|
+    mix_in_metrics(object.uid, params[:metrics])[:downloads] || 0
   end
 end

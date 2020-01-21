@@ -623,7 +623,7 @@ describe "/events", type: :request, elasticsearch: true do
         total = response.dig("meta", "total")
 
         expect(total).to eq(6)
-        expect(citations.first["count"]).to eq(5)
+        expect(citations.first["citations"]).to eq(5)
         expect(citations.first["id"]).to start_with("10.5061/dryad.47sd5e/")
       end
     end
@@ -660,7 +660,7 @@ describe "/events", type: :request, elasticsearch: true do
 
         expect(json.dig("meta", "citationsHistogram", "years", 0, "title")).to eq("2015")
         expect(total).to eq(5)
-        expect(citations.first["count"]).to eq(2)
+        expect(citations.first["citations"]).to eq(2)
         expect(citations.first["id"]).to eq(doi)
         # expect(references.first["count"]).to eq(2)
         # expect(references.first["id"]).to eq(doi)
@@ -721,7 +721,7 @@ describe "/events", type: :request, elasticsearch: true do
         total = response.dig("meta", "total")
 
         expect(total).to eq(2)
-        expect(citations.first["count"]).to eq(1)
+        expect(citations.first["citations"]).to eq(1)
         expect(citations.first["id"]).to eq("10.0260/co.2004960.v1")
       end
     end
@@ -753,7 +753,7 @@ describe "/events", type: :request, elasticsearch: true do
         total = response.dig("meta", "total")
 
         expect(total).to eq(51)
-        expect((citations.select { |doi| dois.split(",").include?(doi["id"]) }).length).to eq(20)
+        expect((citations.select { |doi| dois.split(",").include?(doi["id"]) }).length).to eq(1)
       end
     end
 

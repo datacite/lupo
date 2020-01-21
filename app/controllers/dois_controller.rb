@@ -5,6 +5,8 @@ require 'benchmark'
 class DoisController < ApplicationController
   include ActionController::MimeResponds
   include Crosscitable
+  include MetricsHelper # mixes in your helper method as class method
+
 
   prepend_before_action :authenticate_user!
   before_action :set_include, only: [:index, :show, :create, :update]
@@ -192,6 +194,8 @@ class DoisController < ApplicationController
         }
         logger.warn method: "GET", path: "/dois", message: "AggregationsLinkChecks /dois", duration: bm
 
+        dois_names =  results.map { |result| result.dig(:_source, :doi) }.join(',')
+        metrics_array = get_metrics_array(dois_names)
 
         respond_to do |format|
           format.json do
@@ -241,6 +245,7 @@ class DoisController < ApplicationController
               detail: params[:detail],
               events: params[:events],
               mix_in: params[:mix_in],
+              metrics: metrics_array,
               affiliation: params[:affiliation],
               is_collection: options[:is_collection]
             }
