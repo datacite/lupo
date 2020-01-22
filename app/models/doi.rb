@@ -583,6 +583,16 @@ class Doi < ActiveRecord::Base
     options[:page][:number] ||= 1
     options[:page][:size] ||= 25
 
+    if options[:totals_agg] == "provider"
+      aggregations = provider_aggregations
+    elsif options[:totals_agg] == "client"
+      aggregations = client_aggregations
+    elsif options[:totals_agg] == "prefix"
+      aggregations = prefix_aggregations
+    else
+      aggregations = get_aggregations_hash(options)
+    end
+
     # Cursor nav use the search after, this should always be an array of values that match the sort.
     if options.dig(:page, :cursor)
       from = 0
