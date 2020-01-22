@@ -66,6 +66,17 @@ module Helpable
       response
     end
 
+    def merge_array_hashes(first_array, second_array)
+      return first_array if second_array.blank?
+      return second_array if first_array.blank?
+
+      total = first_array | second_array
+      total.group_by {|hash| hash[:id]}.map do |key, value|
+        metrics = value.reduce(&:merge)
+        {id: key}.merge(metrics)
+      end
+    end
+
     def get_url
       url = "#{ENV['HANDLE_URL']}/api/handles/#{doi}?index=1"
       response = Maremma.get(url, ssl_self_signed: true, timeout: 10)
