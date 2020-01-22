@@ -607,7 +607,7 @@ describe "Providers", type: :request, elasticsearch: true  do
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'displayName')).to eq("British Library")
-        expect(json.dig('data', 'attributes', 'globusUuid')).to eq("British Library")
+        expect(json.dig('data', 'attributes', 'globusUuid')).to eq("9908a164-1e4f-4c17-ae1b-cc318839d6c8")
       end
     end
 
