@@ -2,8 +2,8 @@
 
 class EventsQuery
   include Facetable
-  include BatchLoaderHelper
-
+  include Helpable
+  include Modelable
 
   ACTIVE_RELATION_TYPES = [
     "cites",
@@ -27,14 +27,6 @@ class EventsQuery
     results = Event.query(query, doi: doi, aggregations: "citation_count_aggregation", page: { size: 1, cursor: [] }).response.aggregations.citations.buckets
     results.any? ? results.first.total.value : 0
   end
-
-  # def citations(doi)
-  #   return {} unless doi.present?
-  #   array = doi.downcase.split(",").uniq
-  #   array.map do |item|
-  #     { id: item, count: EventsQuery.new.doi_citations(item) }
-  #   end
-  # end
 
   def citations_left_query(dois)
     return nil unless dois.present?
@@ -66,35 +58,6 @@ class EventsQuery
     merge_array_hashes(right, left)
   end
 
-  def merge_array_hashes(first_array, second_array)
-    return first_array if second_array.blank?
-    return second_array if first_array.blank?
-
-    total = first_array | second_array
-    total.group_by {|hash| hash[:id]}.map do |key, value|
-      metrics = value.reduce(&:merge)
-      {id: key}.merge(metrics)
-    end
-  end
-
-  def doi_from_url(url)
-    if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match?(url)
-      uri = Addressable::URI.parse(url)
-      uri.path.gsub(/^\//, "").downcase
-    end
-  end
-
-  def load_citation_events(doi)
-    # results.any? ? results.first.total.value : 0
-    BatchLoader.for(doi).batch do |event_ids, loader|
-      pid = Event.new.normalize_doi(doi)
-      query = "(subj_id:\"#{pid}\" AND (relation_type_id:#{PASSIVE_RELATION_TYPES.join(' OR relation_type_id:')})) OR (obj_id:\"#{pid}\" AND (relation_type_id:#{ACTIVE_RELATION_TYPES.join(' OR relation_type_id:')}))"  
-      Event.query(query, doi: event_ids.join(","), aggregations: "citation_count_aggregation", page: { size: 1, cursor: [] }).response.aggregations.citations.buckets.each do |event| 
-        loader.call(event.uuid, event.total.value)
-      end
-    end
-  end
-
   def citations_histogram(doi)
     return {} unless doi.present?
     pid = Event.new.normalize_doi(doi.downcase.split(",").first)
@@ -120,15 +83,6 @@ class EventsQuery
     end
   end
 
-
-  def load_view_events(doi)
-    query = "(relation_type_id:unique-dataset-investigations-regular AND source_id:datacite-usage)"
-    BatchLoader.for(doi).batch do |event_ids, loader|
-      Event.query(query, doi: event_ids.join(","), aggregations: "monthly_histogram_aggregation", page: { size: 1, cursor: [] }).response.aggregations.each do |event| 
-        loader.call(event.uuid, event.dig("total_by_type", "value"))
-      end
-    end
-  end
 
   def views_histogram(doi)
     return {} unless doi.present?
