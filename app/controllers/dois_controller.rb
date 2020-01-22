@@ -195,7 +195,9 @@ class DoisController < ApplicationController
         logger.warn method: "GET", path: "/dois", message: "AggregationsLinkChecks /dois", duration: bm
 
         dois_names =  results.map { |result| result.dig(:_source, :doi) }.join(',')
-        metrics_array = get_metrics_array(dois_names)
+        metrics_array = get_metrics_array(dois_names) if params[:mix_in] == "metrics"
+
+        person_metrics = get_person_metrics(params[:user_id]) if params[:mix_in] == "metrics"
 
         respond_to do |format|
           format.json do
@@ -223,6 +225,9 @@ class DoisController < ApplicationController
               "linkChecksDcIdentifier" => link_checks_dc_identifier,
               "linkChecksCitationDoi" => link_checks_citation_doi,
               subjects: subjects,
+              citations: person_metrics[:citations],
+              views: person_metrics[:views],
+              downloads: person_metrics[:downloads],
             }.compact
 
             options[:links] = {
