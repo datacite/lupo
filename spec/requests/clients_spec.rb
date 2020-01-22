@@ -152,7 +152,8 @@ describe 'Clients', type: :request, elasticsearch: true do
       let(:params) do
         { "data" => { "type" => "clients",
                       "attributes" => {
-                        "name" => "Imperial College 2"}} }
+                        "name" => "Imperial College 2",
+                        "globusUuid" => "9908a164-1e4f-4c17-ae1b-cc318839d6c8" }} }
       end
 
       it 'updates the record' do
@@ -160,6 +161,7 @@ describe 'Clients', type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
+        expect(json.dig('data', 'attributes', 'globusUuid')).to eq("9908a164-1e4f-4c17-ae1b-cc318839d6c8")
         expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
       end
     end

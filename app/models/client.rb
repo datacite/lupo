@@ -48,6 +48,7 @@ class Client < ActiveRecord::Base
   validate :check_issn, if: :issn?
   validate :check_certificate, if: :certificate?
   validate :check_repository_type, if: :repository_type?
+  validate :uuid_format, if: :globus_uuid?
   strip_attributes
 
   belongs_to :provider, foreign_key: :allocator, touch: true
@@ -88,6 +89,7 @@ class Client < ActiveRecord::Base
       indexes :re3data_id,    type: :keyword
       indexes :opendoar_id,   type: :integer
       indexes :salesforce_id, type: :keyword
+      indexes :globus_uuid,   type: :keyword
       indexes :issn,          type: :object, properties: {
         issnl: { type: :keyword },
         electronic: { type: :keyword },
@@ -123,6 +125,7 @@ class Client < ActiveRecord::Base
         id: { type: :keyword },
         uid: { type: :keyword },
         symbol: { type: :keyword },
+        globus_uuid: { type: :keyword },
         client_ids: { type: :keyword },
         prefix_ids: { type: :keyword },
         name: { type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }} },
@@ -211,6 +214,7 @@ class Client < ActiveRecord::Base
       "re3data_id" => re3data_id,
       "opendoar_id" => opendoar_id,
       "salesforce_id" => salesforce_id,
+      "globus_uuid" => globus_uuid,
       "issn" => issn,
       "prefix_ids" => prefix_ids,
       "name" => name,
@@ -422,6 +426,10 @@ class Client < ActiveRecord::Base
     Array.wrap(repository_type).each do |r|
       errors.add(:repository_type, "Repository type #{r} is not included in the list of supported repository types.") unless %w(disciplinary governmental institutional multidisciplinary project-related other).include?(r)
     end
+  end
+
+  def uuid_format
+    errors.add(:globus_uuid, "#{globus_uuid} is not a valid UUID") unless UUID.validate(globus_uuid)
   end
 
   def freeze_symbol

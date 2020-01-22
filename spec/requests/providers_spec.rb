@@ -594,6 +594,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         { "data" => { "type" => "providers",
                       "attributes" => {
                         "name" => "British Library",
+                        "globusUuid" => "9908a164-1e4f-4c17-ae1b-cc318839d6c8",
                         "displayName" => "British Library",
                         "website" => "https://www.bl.uk",
                         "region" => "Americas",
@@ -606,6 +607,7 @@ describe "Providers", type: :request, elasticsearch: true  do
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'displayName')).to eq("British Library")
+        expect(json.dig('data', 'attributes', 'globusUuid')).to eq("British Library")
       end
     end
 

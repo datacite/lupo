@@ -213,8 +213,8 @@ class RepositoriesController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:symbol, :name, "systemEmail", :domains, :provider, :url, "repositoryType", { "repositoryType" => [] }, :description, :language, { language: [] }, "alternateName", :software, "targetId", "isActive", "passwordInput", "clientType", :re3data, :opendoar, :issn, { issn: [:issnl, :electronic, :print] }, :certificate, { certificate: [] }, "serviceContact", { "serviceContact": [:email, "givenName", "familyName"] }, "salesforceId"],
-              keys: { "systemEmail" => :system_email, "salesforceId" => :salesforce_id, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input, "clientType" => :client_type, "alternateName" => :alternate_name, "repositoryType" => :repository_type, "serviceContact" => :service_contact }
+      params, only: [:symbol, :name, "systemEmail", :domains, :provider, :url, "globusUuid", "repositoryType", { "repositoryType" => [] }, :description, :language, { language: [] }, "alternateName", :software, "targetId", "isActive", "passwordInput", "clientType", :re3data, :opendoar, :issn, { issn: [:issnl, :electronic, :print] }, :certificate, { certificate: [] }, "serviceContact", { "serviceContact": [:email, "givenName", "familyName"] }, "salesforceId"],
+              keys: { "systemEmail" => :system_email, "salesforceId" => :salesforce_id, "globusUuid" => :globus_uuid, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input, "clientType" => :client_type, "alternateName" => :alternate_name, "repositoryType" => :repository_type, "serviceContact" => :service_contact }
     )
   end
 end

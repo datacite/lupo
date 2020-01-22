@@ -303,7 +303,7 @@ class ProvidersController < ApplicationController
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params,
       only: [
-        :name, "displayName", :symbol, :description, :website, :joined, "organizationType", "focusArea", :consortium, "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation", { "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType", "nonProfitStatus", "salesforceId",
+        :name, "displayName", :symbol, :description, :website, :joined, "globusUuid", "organizationType", "focusArea", :consortium, "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation", { "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType", "nonProfitStatus", "salesforceId",
       "technicalContact", { "technicalContact": [:email, "givenName", "familyName"] },
       "secondaryTechnicalContact", { "secondaryTechnicalContact": [:email, "givenName", "familyName"] },
       "secondaryBillingContact", { "secondaryBillingContact": [:email, "givenName", "familyName"] },
@@ -325,7 +325,8 @@ class ProvidersController < ApplicationController
         "groupEmail" => :group_email,
         "systemEmail" => :system_email,
         "nonProfitStatus" => :non_profit_status,
-        "salesforceId" => :salesforce_id
+        "salesforceId" => :salesforce_id,
+        "globusUuid" => :globus_uuid
       }
     )
   end
