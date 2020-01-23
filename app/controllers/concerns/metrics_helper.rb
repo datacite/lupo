@@ -3,9 +3,7 @@ module MetricsHelper
   include Helpable
 
   included do
-
     def get_metrics_array(dois)
-
       citations   = EventsQuery.new.citations(dois)
       views       = EventsQuery.new.views(dois)
       downloads   = EventsQuery.new.downloads(dois)
@@ -19,7 +17,7 @@ module MetricsHelper
       {
         citations: EventsQuery.new.citations(dois.join(",")).sum { |h| h[:citations] },
         views: EventsQuery.new.views(dois.join(",")).sum { |h| h[:views] },
-        downloads: EventsQuery.new.downloads(dois.join(",")).sum { |h| h[:downloads] }
+        downloads: EventsQuery.new.downloads(dois.join(",")).sum { |h| h[:downloads] },
       }
     end
 
@@ -28,17 +26,16 @@ module MetricsHelper
         doi_from_url(e.subj_id)
       end
     end
-  
+
     def https_to_http(url)
       orcid = orcid_from_url(url)
-      return nil unless orcid.present?
-  
+      return nil if orcid.blank?
+
       "https://orcid.org/#{orcid}"
     end
-
   end
 
-  class_methods do 
+  class_methods do
     def mix_in_metrics(doi, metrics_array_hashes)
       metrics_array_hashes.select { |hash| hash[:id] == doi }.first
     end

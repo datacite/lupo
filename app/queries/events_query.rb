@@ -118,24 +118,22 @@ class EventsQuery
   end
 
   def usage(doi)
-    return {} unless doi.present?
+    return {} if doi.blank?
+
     doi.downcase.split(",").map do |item|
       pid = Event.new.normalize_doi(item)
       requests = EventsQuery.new.doi_downloads(item)
       investigations = EventsQuery.new.doi_views(item)
-      { id: pid, 
+      { id: pid,
         title: pid,
-      relationTypes: [
-        { id: "unique-dataset-requests-regular",
-        title: "unique-dataset-requests-regular",
-          sum: requests
-        },
-        { id: "unique-dataset-investigations-regular",
-          title: "unique-dataset-investigations-regular",
-          sum: investigations
-        }
-      ]
-      }
+        relationTypes: [
+          { id: "unique-dataset-requests-regular",
+            title: "unique-dataset-requests-regular",
+            sum: requests },
+          { id: "unique-dataset-investigations-regular",
+            title: "unique-dataset-investigations-regular",
+            sum: investigations },
+        ] }
     end
   end
 end
