@@ -4,7 +4,7 @@ describe User, type: :model do
   let(:token) { User.generate_token }
   subject { User.new(token) }
 
-  describe 'decode_token' do
+  describe "decode_token DataCite" do
     it "has name" do
       payload = subject.decode_token(token)
       expect(payload["name"]).to eq("Josiah Carberry")
@@ -27,6 +27,30 @@ describe User, type: :model do
       expect(payload).to eq(errors: "The token has expired.")
     end
   end
+
+  # describe "decode_token Globus", vcr: true do
+  #   it "has name" do
+  #     payload = subject.decode_token(token)
+  #     expect(payload["name"]).to eq("Josiah Carberry")
+  #   end
+
+  #   it "empty token" do
+  #     payload = subject.decode_token("")
+  #     expect(payload).to eq(errors: "The token could not be decoded.")
+  #   end
+
+  #   it "invalid token" do
+  #     payload = subject.decode_token("abc")
+  #     expect(payload).to eq(errors: "The token could not be decoded.")
+  #   end
+
+  #   it "expired token" do
+  #     token = User.generate_token(exp: 0)
+  #     subject = User.new(token)
+  #     payload = subject.decode_token(token)
+  #     expect(payload).to eq(errors: "The token has expired.")
+  #   end
+  # end
 
   describe 'decode_alb_token' do
     let(:token) { User.generate_alb_token }
@@ -194,6 +218,18 @@ describe User, type: :model do
 
     it "empty string" do
       token = subject.encode_alb_token("")
+      expect(token).to be_nil
+    end
+  end
+
+  describe 'encode_globus_token' do
+    it "with name" do
+      token = subject.encode_globus_token("name" => "Josiah Carberry")
+      expect(token).to start_with("eyJhbG")
+    end
+
+    it "empty string" do
+      token = subject.encode_globus_token("")
       expect(token).to be_nil
     end
   end

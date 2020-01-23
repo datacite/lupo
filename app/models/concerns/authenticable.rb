@@ -31,10 +31,40 @@ module Authenticable
       nil
     end
 
-    # decode JWT token using SHA-256 hash algorithm
+    # use only for testing, as we don't have private key for JWT encoded by Globus
+    def encode_globus_token(payload)
+      return nil if payload.blank? || !Rails.env.test?
+      
+      # replace newline characters with actual newlines
+      private_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec512-private.pem").to_s))
+      JWT.encode(payload, private_key, 'RS512')
+    rescue OpenSSL::PKey::ECError => e
+      Rails.logger.error e.inspect + " for " + payload.inspect
+
+      nil
+    end
+
+    # decode JWT token. Check whether it is a DataCite or Globus JWT via the JWT header
+    # DataCite uses RS256, Globus uses RS512
     def decode_token(token)
-      public_key = OpenSSL::PKey::RSA.new(ENV['JWT_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
-      payload = (JWT.decode token, public_key, true, { :algorithm => 'RS256' }).first
+      # check that JWT has header, payload and secret, separated by dot
+      token_parts = token.to_s.split(".")
+      raise JWT::DecodeError if token_parts.length != 3
+
+      # decode token
+      header = JSON.parse(Base64.urlsafe_decode64(token_parts.first))
+      case header["alg"]
+      when "RS256"
+        # DataCite JWT
+        public_key = OpenSSL::PKey::RSA.new(ENV['JWT_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
+        payload = (JWT.decode token, public_key, true, { :algorithm => 'RS256' }).first
+      when "RS512"
+        # Globus JWT
+        public_key = OpenSSL::PKey::RSA.new(cached_globus_public_key.fetch("n", nil).to_s.gsub('\n', "\n"))
+        payload = (JWT.decode token, public_key, true, { :algorithm => 'RS512' }).first
+      else
+        raise JWT::DecodeError, "Algorithm #{header["alg"]} is not supported."
+      end
 
       # check whether token has expired
       fail JWT::ExpiredSignature, "The token has expired." unless Time.now.to_i < payload["exp"].to_i
@@ -185,6 +215,18 @@ module Authenticable
       return nil if payload.blank? || !Rails.env.test?
       private_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec256-private.pem").to_s))
       JWT.encode(payload, private_key, 'ES256')
+    rescue OpenSSL::PKey::ECError => e
+      Rails.logger.error e.inspect + " for " + payload.inspect
+
+      nil
+    end
+
+    # encode token using RSA and SHA-512
+    # use this only for testing as private key is publicly available from ruby-jwt gem
+    def encode_globus_token(payload)
+      return nil if payload.blank? || !Rails.env.test?
+      private_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec512-private.pem").to_s))
+      JWT.encode(payload, private_key, 'RS512')
     rescue OpenSSL::PKey::ECError => e
       Rails.logger.error e.inspect + " for " + payload.inspect
 
