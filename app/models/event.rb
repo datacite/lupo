@@ -517,7 +517,7 @@ class Event < ActiveRecord::Base
         end
       end
     end
-    logger.warn "Total number of events with Errors: #{total_errors}"
+    logger.warn "[DoubleCheck] Total number of events with Errors: #{total_errors}"
   end
 
   def metric_type
