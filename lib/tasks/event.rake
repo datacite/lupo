@@ -71,6 +71,15 @@ namespace :crossref do
   end
 end
 
+namespace :subj_id_check do
+  desc 'checks datacite-crossref,datacite-related events have a DataCite DOI in the subject node'
+  task :check => :environment do
+    cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id),Event.minimum(:id)]
+
+    Event.subj_id_check(cursor: cursor)
+  end
+end
+
 namespace :datacite_crossref do
   desc 'Import crossref dois for all events'
   task :import_doi => :environment do
