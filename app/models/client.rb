@@ -249,7 +249,7 @@ class Client < ActiveRecord::Base
   def self.query_aggregations
     {
       years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
-      cumulative_years: { terms: { field: 'cumulative_years', min_doc_count: 1, order: { _count: "asc" } } },
+      cumulative_years: { terms: { field: 'cumulative_years', size: 15, min_doc_count: 1, order: { _count: "asc" } } },
       providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } },
       software: { terms: { field: 'software.keyword', size: 15, min_doc_count: 1 } },
       client_types: { terms: { field: 'client_type', size: 15, min_doc_count: 1 } },
