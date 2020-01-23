@@ -80,7 +80,7 @@ class PersonType < BaseObject
 
   def https_to_http(url)
     orcid = orcid_from_url(url)
-    return nil unless orcid.present?
+    return nil if orcid.blank?
 
     "https://orcid.org/#{orcid}"
   end

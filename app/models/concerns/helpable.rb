@@ -71,9 +71,9 @@ module Helpable
       return second_array if first_array.blank?
 
       total = first_array | second_array
-      total.group_by {|hash| hash[:id]}.map do |key, value|
+      total.group_by { |hash| hash[:id] }.map do |key, value|
         metrics = value.reduce(&:merge)
-        {id: key}.merge(metrics)
+        { id: key }.merge(metrics)
       end
     end
 
