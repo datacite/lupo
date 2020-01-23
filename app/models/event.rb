@@ -490,7 +490,6 @@ class Event < ActiveRecord::Base
   end
 
   def self.subj_id_check(options = {})
-    
     size = (options[:size] || 1000).to_i
     cursor = (options[:cursor] || [])
     total_errors = 0
@@ -509,7 +508,6 @@ class Event < ActiveRecord::Base
 
         # dois = response.results.results.map(&:subj_id)
         events = response.results.results
-        
         events.lazy.each do | event|
           subj_prefix = event.subj_id[/(10\.\d{4,5})/,1]
           File.open("evens_with_double_crossref_dois.txt", "a+") do |f|
