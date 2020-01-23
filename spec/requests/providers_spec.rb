@@ -611,6 +611,37 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
     end
 
+    context 'removes globus_uuid' do
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "globusUuid" => nil } } }
+      end
+
+      it 'updates the record' do
+        put "/providers/#{provider.symbol}", params, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'displayName')).to eq("My provider")
+        expect(json.dig('data', 'attributes', 'globusUuid')).to be_nil
+      end
+    end
+
+    context 'invalid globus_uuid' do
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "globusUuid" => "abc" } } }
+      end
+
+      it 'updates the record' do
+        put "/providers/#{provider.symbol}", params, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json["errors"].first).to eq("source"=>"globus_uuid", "title"=>"Abc is not a valid UUID")
+      end
+    end
+
     context 'ror_id in wrong format' do
       let(:params) do
         { "data" => { "type" => "providers",

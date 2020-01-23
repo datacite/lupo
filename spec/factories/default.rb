@@ -44,6 +44,7 @@ FactoryBot.define do
       "given_name": "Martin",
       "family_name": "Fenner"
     }}
+    globus_uuid { "bc7d0274-3472-4a79-b631-e4c7baccc667" }
     sequence(:symbol) { |n| provider.symbol + ".TEST#{n}" }
     name { "My data center" }
     role_name { "ROLE_DATACENTRE" }
@@ -240,6 +241,7 @@ FactoryBot.define do
   factory :provider do
     system_email { "josiah@example.org" }
     sequence(:symbol, 'A') { |n| "TEST#{n}" }
+    globus_uuid { "53d8d984-450d-4b1d-970b-67faff28db1c" }
     name { "My provider" }
     display_name { "My provider" }
     website { Faker::Internet.url }

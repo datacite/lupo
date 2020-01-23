@@ -79,6 +79,7 @@ describe 'Clients', type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
+        expect(json.dig('data', 'attributes', 'globusUuid')).to eq("bc7d0274-3472-4a79-b631-e4c7baccc667")
       end
     end
 
@@ -178,6 +179,37 @@ describe 'Clients', type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'clientType')).to eq("periodical")
+      end
+    end
+
+    context 'removes the globus_uuid' do
+      let(:params) do
+        { "data" => { "type" => "clients",
+                      "attributes" => {
+                        "globusUuid" => nil }} }
+      end
+
+      it 'updates the record' do
+        put "/clients/#{client.symbol}", params, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'name')).to eq("My data center")
+        expect(json.dig('data', 'attributes', 'globusUuid')).to be_nil
+      end
+    end
+
+    context 'invalid globus_uuid' do
+      let(:params) do
+        { "data" => { "type" => "clients",
+                      "attributes" => {
+                        "globusUuid" => "abc" }} }
+      end
+
+      it 'updates the record' do
+        put "/clients/#{client.symbol}", params, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json["errors"].first).to eq("source"=>"globus_uuid", "title"=>"Abc is not a valid UUID")
       end
     end
 
