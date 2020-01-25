@@ -63,7 +63,7 @@ gem "graphql-errors", "~> 0.4.0"
 gem "graphql-batch", "~> 0.4.1"
 gem "batch-loader", "~> 1.4", ">= 1.4.1"
 gem "graphql-cache", "~> 0.6.0", git: "https://github.com/stackshareio/graphql-cache"
-gem "apollo-federation", "~> 0.5.1"
+gem 'apollo-federation', '~> 1.0'
 gem "google-protobuf", "3.10.0.rc.1"
 gem "sprockets", "~> 3.7", ">= 3.7.2"
 gem 'uuid', '~> 2.3', '>= 2.3.9'
