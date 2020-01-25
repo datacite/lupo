@@ -72,8 +72,8 @@ class Doi < ActiveRecord::Base
   belongs_to :client, foreign_key: :datacentre
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
   has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
-  has_many :views, -> { where relation_type_id: "unique-dataset-investigations-regular" }, class_name: "Event", primary_key: :doi, foreign_key: :doi_id, dependent: :destroy
-  has_many :downloads, -> { where relation_type_id: "unique-dataset-requests-regular" }, class_name: "Event", primary_key: :doi, foreign_key: :doi_id, dependent: :destroy
+  # has_many :views, -> { where relation_type_id: "unique-dataset-investigations-regular" }, class_name: "Event", primary_key: :doi, foreign_key: :doi_id, dependent: :destroy
+  # has_many :downloads, -> { where relation_type_id: "unique-dataset-requests-regular" }, class_name: "Event", primary_key: :doi, foreign_key: :doi_id, dependent: :destroy
 
   delegate :provider, to: :client, allow_nil: true
   delegate :consortium_id, to: :provider, allow_nil: true
@@ -403,10 +403,10 @@ class Doi < ActiveRecord::Base
         consortium_organizations: { type: :object }
       }
       indexes :resource_type, type: :object
-      indexes :view_ids, type: :keyword
-      indexes :views, type: :object
-      indexes :download_ids, type: :keyword
-      indexes :downloads, type: :object
+      # indexes :view_ids, type: :keyword
+      # indexes :views, type: :object
+      # indexes :download_ids, type: :keyword
+      # indexes :downloads, type: :object
     end
   end
 
@@ -428,8 +428,8 @@ class Doi < ActiveRecord::Base
       "consortium_id" => consortium_id,
       "resource_type_id" => resource_type_id,
       "media_ids" => media_ids,
-      "view_ids" => view_ids,
-      "download_ids" => download_ids,
+      # "view_ids" => view_ids,
+      # "download_ids" => download_ids,
       "prefix" => prefix,
       "suffix" => suffix,
       "types" => types,
@@ -465,8 +465,8 @@ class Doi < ActiveRecord::Base
       "provider" => provider.try(:as_indexed_json),
       "resource_type" => resource_type.try(:as_indexed_json),
       "media" => media.map { |m| m.try(:as_indexed_json) },
-      "views" => views.map { |m| m.try(:as_indexed_json) },
-      "downloads" => downloads.map { |m| m.try(:as_indexed_json) }
+      # "views" => views.map { |m| m.try(:as_indexed_json) },
+      # "downloads" => downloads.map { |m| m.try(:as_indexed_json) }
     }
   end
 
@@ -858,13 +858,13 @@ class Doi < ActiveRecord::Base
     media.pluck(:id).map { |m| Base32::URL.encode(m, split: 4, length: 16) }.compact
   end
 
-  def view_ids
-    views.pluck(:doi_id)
-  end
+  # def view_ids
+  #   views.pluck(:doi_id)
+  # end
 
-  def download_ids
-    downloads.pluck(:doi_id)
-  end
+  # def download_ids
+  #   downloads.pluck(:doi_id)
+  # end
 
 
   def xml_encoded

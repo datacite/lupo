@@ -7,13 +7,13 @@ class DoiSerializer
   set_id :uid
   # don't cache dois, as works are cached using the doi model
 
-  attributes :doi, :prefix, :suffix, :identifiers, :creators, :titles, :publisher, :container, :publication_year, :subjects, :contributors, :dates, :language, :types, :related_identifiers, :sizes, :formats, :version, :rights_list, :descriptions, :geo_locations, :funding_references, :xml, :url, :content_url, :metadata_version, :schema_version, :source, :is_active, :state, :reason, :landing_page, :created, :registered, :published, :updated, :citations, :views, :downloads
+  attributes :doi, :prefix, :suffix, :identifiers, :creators, :titles, :publisher, :container, :publication_year, :subjects, :contributors, :dates, :language, :types, :related_identifiers, :sizes, :formats, :version, :rights_list, :descriptions, :geo_locations, :funding_references, :xml, :url, :content_url, :metadata_version, :schema_version, :source, :is_active, :state, :reason, :landing_page, :created, :registered, :published, :updated, :citations
   attributes :prefix, :suffix, if: Proc.new { |object, params| params && params[:detail] }
 
   belongs_to :client, record_type: :clients
   has_many :media, record_type: :media, id_method_name: :uid, if: Proc.new { |object, params| params && params[:detail] && !params[:is_collection]}
-  has_many :views, record_type: :events, if: Proc.new { |object, params| params && params[:events]}
-  has_many :downloads, record_type: :events, if: Proc.new { |object, params| params && params[:events]}
+  # has_many :views, record_type: :events, if: Proc.new { |object, params| params && params[:events]}
+  # has_many :downloads, record_type: :events, if: Proc.new { |object, params| params && params[:events]}
 
   attribute :xml, if: Proc.new { |object, params| params && params[:detail] } do |object|
     begin
@@ -89,15 +89,15 @@ class DoiSerializer
     object.landing_page
   end
 
-  attribute :citations, if: Proc.new { |object, params|  params && params[:mix_in] == "metrics" }  do |object|
+  attribute :citations, if: Proc.new { |object, params| params && params[:mix_in] == "metrics" }  do |object|
     doi_citations(object.uid)
   end
 
-  attribute :views, if: Proc.new { |object, params|  params && params[:mix_in] == "metrics" }  do |object|
-    doi_views(object.uid)
-  end
+  # attribute :views, if: Proc.new { |object, params| params && params[:mix_in] == "metrics" }  do |object|
+  #   doi_views(object.uid)
+  # end
 
-  attribute :downloads, if: Proc.new { |object, params|  params && params[:mix_in] == "metrics" } do |object|
-    doi_downloads(object.uid)
-  end
+  # attribute :downloads, if: Proc.new { |object, params| params && params[:mix_in] == "metrics" } do |object|
+  #   doi_downloads(object.uid)
+  # end
 end
