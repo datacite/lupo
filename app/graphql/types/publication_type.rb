@@ -19,7 +19,7 @@ class PublicationType < BaseObject
     ids = Event.query(nil, doi: doi_from_url(object.identifier), citation_type: "Dataset-ScholarlyArticle").results.to_a.map do |e|
       object.identifier == e.subj_id ? doi_from_url(e.obj_id) : doi_from_url(e.subj_id)
     end
-    
+
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
