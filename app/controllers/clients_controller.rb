@@ -173,13 +173,14 @@ class ClientsController < ApplicationController
 
   def set_client
     @client = Client.where(symbol: params[:id]).where(deleted_at: nil).first
-    fail ActiveRecord::RecordNotFound unless @client.present?
+    fail ActiveRecord::RecordNotFound if @client.blank?
   end
 
   private
 
   def safe_params
-    fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
+    fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" if params[:data].blank?
+
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params, only: [:symbol, :name, "systemEmail", "contactEmail", "globusUuid", :domains, :provider, :url, "repositoryType", { "repositoryType" => [] }, :description, :language, { language: [] }, "alternateName", :software, "targetId", "isActive", "passwordInput", "clientType", :re3data, :opendoar, :issn, { issn: [:issnl, :electronic, :print] }, :certificate, { certificate: [] }, "serviceContact", { "serviceContact": [:email, "givenName", "familyName"] }, "salesforceId"],
               keys: { "systemEmail" => :system_email, "contactEmail" => :system_email, "globusUuid" => :globus_uuid, "salesforceId" => :salesforce_id, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input, "clientType" => :client_type, "alternateName" => :alternate_name, "repositoryType" => :repository_type, "serviceContact" => :service_contact }
