@@ -1,0 +1,4959 @@
+"""
+Information about addresses
+"""
+type Address {
+  """
+  The country.
+  """
+  addressCountry: String
+
+  """
+  The locality in which the street address is, and which is in the region.
+  """
+  addressLocality: String
+
+  """
+  The region.
+  """
+  addressRegion: String
+
+  """
+  The postal code.
+  """
+  postalCode: String
+
+  """
+  The street address.
+  """
+  streetAddress: String
+
+  """
+  The type.
+  """
+  type: String
+}
+
+type Audiovisual implements DoiItem {
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+}
+
+"""
+Information about clients
+"""
+type Client {
+  """
+  Datasets managed by the client
+  """
+  datasets(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): ClientDatasetConnectionWithMeta!
+
+  """
+  Description of the client
+  """
+  description: String
+
+  """
+  Unique identifier for each client
+  """
+  id: ID!
+
+  """
+  Client name
+  """
+  name: String!
+
+  """
+  Prefixes managed by the client
+  """
+  prefixes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+    year: String
+  ): PrefixConnectionWithMeta!
+
+  """
+  Publications managed by the client
+  """
+  publications(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): ClientPublicationConnectionWithMeta!
+
+  """
+  The re3data identifier for the client
+  """
+  re3data: String
+
+  """
+  The name of the software that is used to run the repository
+  """
+  software: String
+
+  """
+  Software managed by the client
+  """
+  softwareSourceCodes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): ClientSoftwareConnectionWithMeta!
+
+  """
+  Client system email
+  """
+  systemEmail: String
+
+  """
+  The homepage of the client
+  """
+  url: String
+}
+
+"""
+The connection type for Client.
+"""
+type ClientConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [ClientEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Client]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+The connection type for Dataset.
+"""
+type ClientDatasetConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [DatasetEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Dataset]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type ClientEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Client
+}
+
+"""
+The connection type for Dataset.
+"""
+type ClientPublicationConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [DatasetEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Dataset]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+The connection type for Dataset.
+"""
+type ClientSoftwareConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [DatasetEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Dataset]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type Collection implements DoiItem {
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+}
+
+"""
+Information about countries
+"""
+type Country {
+  """
+  Country ISO 3166-1 code
+  """
+  code: String
+
+  """
+  Country name
+  """
+  name: String
+}
+
+type CreativeWork implements DoiItem & MetricInterface {
+  """
+  The count of DOI events that represents citations
+  """
+  citationCount: Int
+
+  """
+  The citations distribution overtime
+  """
+  citationHistogram: JSON
+
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  The count of  DOI dowloands according to the COUNTER code of Practice
+  """
+  downloadCount: Int
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  The count of DOI events that represents references
+  """
+  referenceCount: Int
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The count of DOI events that represents relations
+  """
+  relationCount: Int
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  The count of DOI views according to the COUNTER code of Practice
+  """
+  viewCount: Int
+}
+
+"""
+The connection type for CreativeWork.
+"""
+type CreativeWorkConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [CreativeWorkEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [CreativeWork]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type CreativeWorkEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: CreativeWork
+}
+
+"""
+A collection of datasets.
+"""
+type DataCatalog {
+  """
+  An alias for the data catalog.
+  """
+  alternateName: [String!]
+
+  """
+  Certificates of the data catalog.
+  """
+  certificates: [DefinedTerm!]
+
+  """
+  Datasets hosted by the repository
+  """
+  datasets(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): DataCatalogDatasetConnectionWithMeta!
+
+  """
+  A description of the data catalog.
+  """
+  description: String
+
+  """
+  The ID of the data catalog.
+  """
+  id: ID!
+
+  """
+  re3data ID
+  """
+  identifier: [Identifier!]
+
+  """
+  The language of the content of the data catalog.
+  """
+  inLanguage: [String!]
+
+  """
+  Keywords or tags used to describe this data catalog. Multiple entries in a
+  keywords list are typically delimited by commas.
+  """
+  keywords: String
+
+  """
+  The name of the data catalog.
+  """
+  name: String
+
+  """
+  Publications hosted by the repository
+  """
+  publications(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): DataCatalogPublicationConnectionWithMeta!
+
+  """
+  Software
+  """
+  softwareApplication: [SoftwareApplication!]
+
+  """
+  Software hosted by the repository
+  """
+  softwareSourceCodes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): DataCatalogSoftwareConnectionWithMeta!
+
+  """
+  Subject areas covered by the data catalog.
+  """
+  subjects: [DefinedTerm!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  URL of the data catalog.
+  """
+  url: String
+}
+
+"""
+The connection type for DataCatalog.
+"""
+type DataCatalogConnectionWithMeta {
+  datasetConnectionCount: Int!
+
+  """
+  A list of edges.
+  """
+  edges: [DataCatalogEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [DataCatalog]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int
+}
+
+"""
+The connection type for Dataset.
+"""
+type DataCatalogDatasetConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [DatasetEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Dataset]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type DataCatalogEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: DataCatalog
+}
+
+"""
+The connection type for Dataset.
+"""
+type DataCatalogPublicationConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [DatasetEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Dataset]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+The connection type for Dataset.
+"""
+type DataCatalogSoftwareConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [DatasetEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Dataset]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type DataPaper implements DoiItem {
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+}
+
+type Dataset implements DoiItem & MetricInterface {
+  """
+  The count of DOI events that represents citations
+  """
+  citationCount: Int
+
+  """
+  The citations distribution overtime
+  """
+  citationHistogram: JSON
+
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Referenced datasets
+  """
+  datasets(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): DatasetDatasetConnectionWithMeta!
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  The count of  DOI dowloands according to the COUNTER code of Practice
+  """
+  downloadCount: Int
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  Referenced publications
+  """
+  publications(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): DatasetPublicationConnectionWithMeta!
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  The count of DOI events that represents references
+  """
+  referenceCount: Int
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The count of DOI events that represents relations
+  """
+  relationCount: Int
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Referenced software
+  """
+  softwareSourceCodes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): DatasetSoftwareConnectionWithMeta!
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  Usage reports for this dataset
+  """
+  usageReports(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): DatasetUsageReportConnectionWithMeta!
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  The count of DOI views according to the COUNTER code of Practice
+  """
+  viewCount: Int
+}
+
+"""
+The connection type for Dataset.
+"""
+type DatasetConnectionWithMeta {
+  datasetConnectionCount: Int!
+
+  """
+  A list of edges.
+  """
+  edges: [DatasetEdge]
+  funderConnectionCount: Int!
+
+  """
+  A list of nodes.
+  """
+  nodes: [Dataset]
+  organizationConnectionCount: Int!
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  personConnectionCount: Int!
+  publicationConnectionCount: Int!
+  softwareConnectionCount: Int!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type DatasetDatasetConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type DatasetEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Dataset
+}
+
+"""
+The connection type for EventData.
+"""
+type DatasetPublicationConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type DatasetSoftwareConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type DatasetUsageReportConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+Information about dates
+"""
+type Date {
+  """
+  Any rights information for this resource
+  """
+  date: String
+
+  """
+  The type of date
+  """
+  dateType: String
+}
+
+"""
+A word, name, acronym, phrase, etc. with a formal definition. Often used in the
+context of category or subject classification, glossaries or dictionaries,
+product or creative work types, etc.
+"""
+type DefinedTerm {
+  """
+  A description of the item.
+  """
+  description: String
+
+  """
+  A DefinedTermSet that contains this term.
+  """
+  inDefinedTermSet: String
+
+  """
+  The name of the item.
+  """
+  name: String
+
+  """
+  A code that identifies this DefinedTerm within a DefinedTermSet.
+  """
+  termCode: String
+}
+
+"""
+Information about descriptions
+"""
+type Description {
+  """
+  Description
+  """
+  description: String
+
+  """
+  Description type
+  """
+  descriptionType: String
+
+  """
+  Language
+  """
+  lang: ID
+}
+
+"""
+Information about DOIs
+"""
+interface DoiItem {
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+}
+
+type Event implements DoiItem {
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+}
+
+type EventData implements DoiItem & MetricInterface {
+  """
+  The count of DOI events that represents citations
+  """
+  citationCount: Int
+
+  """
+  The citations distribution overtime
+  """
+  citationHistogram: JSON
+
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  The count of  DOI dowloands according to the COUNTER code of Practice
+  """
+  downloadCount: Int
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  The count of DOI events that represents references
+  """
+  referenceCount: Int
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The count of DOI events that represents relations
+  """
+  relationCount: Int
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  The count of DOI views according to the COUNTER code of Practice
+  """
+  viewCount: Int
+}
+
+"""
+An edge in a connection.
+"""
+type EventDataEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: EventData
+
+  """
+  Relation type for this event.
+  """
+  relationType: String
+
+  """
+  Source for this event
+  """
+  source: String
+
+  """
+  The source ID of the event.
+  """
+  sourceId: String
+
+  """
+  The target ID of the event.
+  """
+  targetId: String
+
+  """
+  Total count for this event.
+  """
+  total: Int
+}
+
+"""
+Summary information
+"""
+type Facet {
+  """
+  Count
+  """
+  count: Int
+
+  """
+  ID
+  """
+  id: String
+
+  """
+  Title
+  """
+  title: String
+}
+
+"""
+Information about funders
+"""
+type Funder {
+  """
+  Physical address of the funder.
+  """
+  address: Address
+
+  """
+  An alias for the funder.
+  """
+  alternateName: [String!]
+
+  """
+  Funded datasets
+  """
+  datasets(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): FunderDatasetConnectionWithMeta!
+
+  """
+  Crossref Funder ID
+  """
+  id: ID!
+
+  """
+  The name of the funder.
+  """
+  name: String!
+
+  """
+  Funded publications
+  """
+  publications(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): FunderPublicationConnectionWithMeta!
+
+  """
+  Funded software
+  """
+  softwareSourceCodes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): FunderSoftwareConnectionWithMeta!
+
+  """
+  The type of the item.
+  """
+  type: String!
+}
+
+"""
+The connection type for Funder.
+"""
+type FunderConnectionWithMeta {
+  datasetConnectionCount: Int!
+
+  """
+  A list of edges.
+  """
+  edges: [FunderEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Funder]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  publicationConnectionCount: Int!
+  softwareConnectionCount: Int!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type FunderDatasetConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type FunderEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Funder
+}
+
+"""
+The connection type for EventData.
+"""
+type FunderPublicationConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type FunderSoftwareConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+Information about funding
+"""
+type Funding {
+  """
+  Award number
+  """
+  awardNumber: String
+
+  """
+  Award title
+  """
+  awardTitle: String
+
+  """
+  Award URI
+  """
+  awardUri: String
+
+  """
+  Funder identifier
+  """
+  funderIdentifier: String
+
+  """
+  Funder identifier type
+  """
+  funderIdentifierType: String
+
+  """
+  Funder name
+  """
+  funderName: String
+}
+
+"""
+Information about identifiers
+"""
+type Identifier {
+  """
+  The name of the identifier.
+  """
+  name: String
+
+  """
+  The value of the identifier.
+  """
+  value: String
+}
+
+type Image implements DoiItem {
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+}
+
+type InteractiveResource implements DoiItem {
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+}
+
+"""
+Represents untyped JSON
+"""
+scalar JSON
+
+interface MetricInterface {
+  """
+  The count of DOI events that represents citations
+  """
+  citationCount: Int
+
+  """
+  The citations distribution overtime
+  """
+  citationHistogram: JSON
+
+  """
+  The count of  DOI dowloands according to the COUNTER code of Practice
+  """
+  downloadCount: Int
+
+  """
+  The count of DOI events that represents references
+  """
+  referenceCount: Int
+
+  """
+  The count of DOI events that represents relations
+  """
+  relationCount: Int
+
+  """
+  The count of DOI views according to the COUNTER code of Practice
+  """
+  viewCount: Int
+}
+
+type Model implements DoiItem {
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+}
+
+"""
+Information about organizations
+"""
+type Organization {
+  """
+  Physical address of the organization.
+  """
+  address: Address
+
+  """
+  An alias for the organization.
+  """
+  alternateName: [String!]
+
+  """
+  Datasets from this organization
+  """
+  datasets(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): OrganizationDatasetConnectionWithMeta!
+
+  """
+  ROR ID
+  """
+  id: ID!
+
+  """
+  The identifier(s) for the organization.
+  """
+  identifier: [Identifier!]
+
+  """
+  The name of the organization.
+  """
+  name: String!
+
+  """
+  Publications from this organization
+  """
+  publications(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): OrganizationPublicationConnectionWithMeta!
+
+  """
+  Software from this organization
+  """
+  softwareSourceCodes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): OrganizationSoftwareConnectionWithMeta!
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  URL of the organization.
+  """
+  url: [String!]
+}
+
+"""
+The connection type for Organization.
+"""
+type OrganizationConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [OrganizationEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Organization]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  personConnectionCount: Int!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type OrganizationDatasetConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type OrganizationEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Organization
+}
+
+"""
+The connection type for EventData.
+"""
+type OrganizationPublicationConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type OrganizationSoftwareConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type Other implements DoiItem {
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+}
+
+"""
+Information about pagination in a connection.
+"""
+type PageInfo {
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: String
+
+  """
+  When paginating forwards, are there more items?
+  """
+  hasNextPage: Boolean!
+
+  """
+  When paginating backwards, are there more items?
+  """
+  hasPreviousPage: Boolean!
+
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: String
+}
+
+"""
+A person.
+"""
+type Person {
+  """
+  The count of DOI events that represents citations
+  """
+  citationCount: Int
+
+  """
+  Authored creative works
+  """
+  creativeWorks(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): PersonCreativeWorkConnectionWithMeta
+
+  """
+  Authored datasets
+  """
+  datasets(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): PersonDatasetConnectionWithMeta
+
+  """
+  The count of  DOI dowloands according to the COUNTER code of Practice
+  """
+  downloadCount: Int
+
+  """
+  Family name. In the U.S., the last name of an Person.
+  """
+  familyName: String
+
+  """
+  Given name. In the U.S., the first name of a Person.
+  """
+  givenName: String
+
+  """
+  The ORCID ID of the person.
+  """
+  id: ID
+
+  """
+  The name of the person.
+  """
+  name: String
+
+  """
+  Authored publications
+  """
+  publications(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): PersonPublicationConnectionWithMeta
+
+  """
+  Authored software
+  """
+  softwareSourceCodes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): PersonSoftwareConnectionWithMeta
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The count of DOI views according to the COUNTER code of Practice
+  """
+  viewCount: Int
+}
+
+"""
+The connection type for Person.
+"""
+type PersonConnectionWithMeta {
+  datasetConnectionCount: Int!
+
+  """
+  A list of edges.
+  """
+  edges: [PersonEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Person]
+  organizationConnectionCount: Int!
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  publicationConnectionCount: Int!
+  softwareConnectionCount: Int!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type PersonCreativeWorkConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type PersonDatasetConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type PersonEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Person
+}
+
+"""
+The connection type for EventData.
+"""
+type PersonPublicationConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type PersonSoftwareConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type PhysicalObject implements DoiItem {
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+}
+
+"""
+Information about prefixes
+"""
+type Prefix {
+  """
+  Unique identifier for each prefix
+  """
+  id: ID!
+}
+
+"""
+The connection type for Prefix.
+"""
+type PrefixConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [PrefixEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Prefix]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  states: [Facet!]!
+  totalCount: Int!
+  years: [Facet!]!
+}
+
+"""
+An edge in a connection.
+"""
+type PrefixEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Prefix
+}
+
+"""
+Information about providers
+"""
+type Provider {
+  """
+  Clients associated with the provider
+  """
+  clients(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+    software: String
+    year: String
+  ): ClientConnectionWithMeta!
+
+  """
+  Country where the provider is located
+  """
+  country: Country
+
+  """
+  Description of the provider
+  """
+  description: String
+
+  """
+  Field of science covered by provider
+  """
+  focusArea: String
+
+  """
+  Provider contact email
+  """
+  groupEmail: String
+
+  """
+  Unique identifier for each provider
+  """
+  id: ID!
+
+  """
+  Date provider joined DataCite
+  """
+  joined: String
+
+  """
+  URL for the provider logo
+  """
+  logoUrl: String
+
+  """
+  Provider name
+  """
+  name: String!
+
+  """
+  Type of organization
+  """
+  organizationType: String
+
+  """
+  Prefixes managed by the provider
+  """
+  prefixes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+    state: String
+    year: String
+  ): PrefixConnectionWithMeta!
+
+  """
+  Geographic region where the provider is located
+  """
+  region: String
+
+  """
+  Research Organization Registry (ROR) identifier
+  """
+  rorId: String!
+
+  """
+  Website of the provider
+  """
+  website: String
+}
+
+"""
+The connection type for Provider.
+"""
+type ProviderConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [ProviderEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Provider]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type ProviderEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Provider
+}
+
+type Publication implements DoiItem & MetricInterface {
+  """
+  The count of DOI events that represents citations
+  """
+  citationCount: Int
+
+  """
+  The citations distribution overtime
+  """
+  citationHistogram: JSON
+
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Referenced datasets
+  """
+  datasets(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): PublicationDatasetConnectionWithMeta!
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  The count of  DOI dowloands according to the COUNTER code of Practice
+  """
+  downloadCount: Int
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  Referenced publications
+  """
+  publications(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): PublicationPublicationConnectionWithMeta!
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  The count of DOI events that represents references
+  """
+  referenceCount: Int
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The count of DOI events that represents relations
+  """
+  relationCount: Int
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Referenced software
+  """
+  softwareSourceCodes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): PublicationSoftwareConnectionWithMeta!
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  The count of DOI views according to the COUNTER code of Practice
+  """
+  viewCount: Int
+}
+
+"""
+The connection type for Dataset.
+"""
+type PublicationConnectionWithMeta {
+  datasetConnectionCount: Int!
+
+  """
+  A list of edges.
+  """
+  edges: [DatasetEdge]
+  funderConnectionCount: Int!
+
+  """
+  A list of nodes.
+  """
+  nodes: [Dataset]
+  organizationConnectionCount: Int!
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  personConnectionCount: Int!
+  publicationConnectionCount: Int!
+  softwareConnectionCount: Int!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type PublicationDatasetConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type PublicationPublicationConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type PublicationSoftwareConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type Query {
+  _service: _Service!
+  audiovisual(id: ID!): Audiovisual!
+  audiovisuals(first: Int = 25, query: String): [Audiovisual!]!
+  client(id: ID!): Client!
+  clients(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+    software: String
+    year: String
+  ): ClientConnectionWithMeta!
+  collection(id: ID!): Collection!
+  collections(first: Int = 25, query: String): [Collection!]!
+  creativeWork(id: ID!): CreativeWork!
+  creativeWorks(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+  ): CreativeWorkConnectionWithMeta!
+  dataCatalog(id: ID!): DataCatalog!
+  dataCatalogs(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): DataCatalogConnectionWithMeta!
+  dataPaper(id: ID!): DataPaper!
+  dataPapers(first: Int = 25, query: String): [DataPaper!]!
+  dataset(id: ID!): Dataset!
+  datasets(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+  ): DatasetConnectionWithMeta!
+  event(id: ID!): Event!
+  events(first: Int = 25, query: String): [Event!]!
+  funder(id: ID!): Funder!
+  funders(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): FunderConnectionWithMeta!
+  image(id: ID!): Image!
+  images(first: Int = 25, query: String): [Image!]!
+  interactiveResource(id: ID!): InteractiveResource!
+  interactiveResources(first: Int = 25, query: String): [InteractiveResource!]!
+  model(id: ID!): Model!
+  models(first: Int = 25, query: String): [Model!]!
+  organization(id: ID!): Organization!
+  organizations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): OrganizationConnectionWithMeta!
+  other(id: ID!): Other!
+  others(first: Int = 25, query: String): [Other!]!
+  people(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): PersonConnectionWithMeta!
+  person(id: ID!): Person
+  physicalObject(id: ID!): PhysicalObject!
+  physicalObjects(first: Int = 25, query: String): [PhysicalObject!]!
+  prefix(id: ID!): Prefix!
+  prefixes(first: Int = 25, query: String): [Prefix!]!
+  provider(id: ID!): Provider!
+  providers(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): ProviderConnectionWithMeta!
+  publication(id: ID!): Publication!
+  publications(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+  ): PublicationConnectionWithMeta!
+  service(id: ID!): Service!
+  services(first: Int = 25, query: String): [Service!]!
+  softwareSourceCode(id: ID!): Software!
+  softwareSourceCodes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+  ): SoftwareConnectionWithMeta!
+  sound(id: ID!): Sound!
+  sounds(first: Int = 25, query: String): [Sound!]!
+  usageReport(id: ID!): UsageReport!
+  usageReports(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): UsageReportConnectionWithMeta!
+  workflow(id: ID!): Workflow!
+  workflows(first: Int = 25, query: String): [Workflow!]!
+}
+
+"""
+Information about related identifiers
+"""
+type RelatedIdentifier {
+  """
+  Related identifier
+  """
+  relatedIdentifier: String
+
+  """
+  Related identifier type
+  """
+  relatedIdentifierType: String
+
+  """
+  Related metadata scheme
+  """
+  relatedMetadataScheme: String
+
+  """
+  Relation type
+  """
+  relationType: String
+
+  """
+  Resource type general
+  """
+  resourceTypeGeneral: String
+
+  """
+  Scheme type
+  """
+  schemeType: String
+
+  """
+  Scheme URI
+  """
+  schemeUri: String
+}
+
+"""
+Information about reporting periods
+"""
+type ReportingPeriod {
+  """
+  Begin reporting period
+  """
+  beginDate: String
+
+  """
+  End reporting period
+  """
+  endDate: String
+}
+
+"""
+Information about types
+"""
+type ResourceType {
+  """
+  BibTex
+  """
+  bibtex: String
+
+  """
+  Citeproc
+  """
+  citeproc: String
+
+  """
+  Resource type
+  """
+  resourceType: String
+
+  """
+  Resource type general
+  """
+  resourceTypeGeneral: String
+
+  """
+  RIS
+  """
+  ris: String
+
+  """
+  Schema.org
+  """
+  schemaOrg: String
+}
+
+"""
+Information about rights
+"""
+type Rights {
+  """
+  Language
+  """
+  lang: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: String
+
+  """
+  The URI of the license
+  """
+  rightsUri: String
+}
+
+type Service implements DoiItem {
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+}
+
+type Software implements DoiItem & MetricInterface {
+  """
+  The count of DOI events that represents citations
+  """
+  citationCount: Int
+
+  """
+  The citations distribution overtime
+  """
+  citationHistogram: JSON
+
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Referenced datasets
+  """
+  datasets(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): SoftwareDatasetConnectionWithMeta!
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  The count of  DOI dowloands according to the COUNTER code of Practice
+  """
+  downloadCount: Int
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  Referenced publications
+  """
+  publications(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): SoftwarePublicationConnectionWithMeta!
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  The count of DOI events that represents references
+  """
+  referenceCount: Int
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The count of DOI events that represents relations
+  """
+  relationCount: Int
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Referenced software
+  """
+  softwareSourceCodes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): SoftwareSoftwareConnectionWithMeta!
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  The count of DOI views according to the COUNTER code of Practice
+  """
+  viewCount: Int
+}
+
+"""
+A software application.
+"""
+type SoftwareApplication {
+  """
+  A description of the item.
+  """
+  description: String
+
+  """
+  The name of the item.
+  """
+  name: String
+
+  """
+  Version of the software instance.
+  """
+  softwareVersion: String
+
+  """
+  URL of the item.
+  """
+  url: String
+}
+
+"""
+The connection type for Dataset.
+"""
+type SoftwareConnectionWithMeta {
+  datasetConnectionCount: Int!
+
+  """
+  A list of edges.
+  """
+  edges: [DatasetEdge]
+  funderConnectionCount: Int!
+
+  """
+  A list of nodes.
+  """
+  nodes: [Dataset]
+  organizationConnectionCount: Int!
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  personConnectionCount: Int!
+  publicationConnectionCount: Int!
+  softwareConnectionCount: Int!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type SoftwareDatasetConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type SoftwarePublicationConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type SoftwareSoftwareConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type Sound implements DoiItem {
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+}
+
+"""
+Subject information
+"""
+type Subject {
+  """
+  Language
+  """
+  lang: ID
+
+  """
+  The URI of the subject identifier scheme
+  """
+  schemeUri: String
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subject: String
+
+  """
+  The name of the subject scheme or classification code or authority if one is used
+  """
+  subjectScheme: String
+
+  """
+  The URI of the subject term
+  """
+  valueUri: String
+}
+
+"""
+Information about titles
+"""
+type Title {
+  """
+  Language
+  """
+  lang: String
+
+  """
+  Title
+  """
+  title: String
+
+  """
+  Title type
+  """
+  titleType: String
+}
+
+"""
+Information about usage reports
+"""
+type UsageReport {
+  """
+  Client who created the report
+  """
+  clientId: String
+
+  """
+  Datasets included in usage report
+  """
+  datasets(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): UsageReportDatasetConnectionWithMeta!
+
+  """
+  Date information was created
+  """
+  dateCreated: String!
+
+  """
+  Usage report ID
+  """
+  id: ID!
+
+  """
+  Time period covered by the report
+  """
+  reportingPeriod: ReportingPeriod!
+}
+
+"""
+The connection type for UsageReport.
+"""
+type UsageReportConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [UsageReportEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [UsageReport]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+The connection type for EventData.
+"""
+type UsageReportDatasetConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [EventDataEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [EventData]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type UsageReportEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: UsageReport
+}
+
+type Workflow implements DoiItem {
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Person!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+}
+
+"""
+The sdl representing the federated service capabilities. Includes federation
+directives, removes federation types, and includes rest of full schema after
+schema directives have been applied
+"""
+type _Service {
+  sdl: String
+}
