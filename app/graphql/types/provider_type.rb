@@ -4,7 +4,9 @@ class ProviderType < BaseObject
   description "Information about providers"
 
   field :id, ID, null: false, hash_key: "uid", description: "Unique identifier for each provider"
+  field :type, String, null: false, description: "The type of the item."
   field :name, String, null: false, description: "Provider name"
+  field :displayName, String, null: true, description: "Provider display name"
   field :ror_id, String, null: false, description: "Research Organization Registry (ROR) identifier"
   field :description, String, null: true, description: "Description of the provider"
   field :website, String, null: true, description: "Website of the provider"
@@ -22,11 +24,15 @@ class ProviderType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :clients, ClientConnectionWithMetaType, null: false, description: "Clients associated with the provider", connection: true do
+  field :clients, ProviderClientConnectionWithMetaType, null: false, description: "Clients associated with the provider", connection: true do
     argument :query, String, required: false
     argument :year, String, required: false
     argument :software, String, required: false
     argument :first, Int, required: false, default_value: 25
+  end
+
+  def type
+    "Provider"
   end
 
   def country

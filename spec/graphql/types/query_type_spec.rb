@@ -12,7 +12,7 @@ describe QueryType do
     it { is_expected.to have_field(:services).of_type("ServiceConnectionWithMeta!") }
   end
 
-  describe "query", elasticsearch: true do
+  describe "query datasets", elasticsearch: true do
     let!(:datasets) { create_list(:doi, 3, aasm_state: "findable") }
 
     before do

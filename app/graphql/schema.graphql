@@ -155,6 +155,11 @@ Information about clients
 """
 type Client {
   """
+  Client alternate name
+  """
+  alternateName: String
+
+  """
   Datasets managed by the client
   """
   datasets(
@@ -272,6 +277,11 @@ type Client {
   Client system email
   """
   systemEmail: String
+
+  """
+  The type of the item.
+  """
+  type: String!
 
   """
   The homepage of the client
@@ -3334,7 +3344,7 @@ type Provider {
     query: String
     software: String
     year: String
-  ): ClientConnectionWithMeta!
+  ): ProviderClientConnectionWithMeta!
 
   """
   Country where the provider is located
@@ -3345,6 +3355,11 @@ type Provider {
   Description of the provider
   """
   description: String
+
+  """
+  Provider display name
+  """
+  displayName: String
 
   """
   Field of science covered by provider
@@ -3416,9 +3431,35 @@ type Provider {
   rorId: String!
 
   """
+  The type of the item.
+  """
+  type: String!
+
+  """
   Website of the provider
   """
   website: String
+}
+
+"""
+The connection type for Client.
+"""
+type ProviderClientConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [ClientEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Client]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
 }
 
 """

@@ -2,7 +2,7 @@
 
 class FunderType < BaseObject
   description "Information about funders"
-  
+
   field :id, ID, null: false, description: "Crossref Funder ID"
   field :type, String, null: false, description: "The type of the item."
   field :name, String, null: false, description: "The name of the funder."
@@ -34,7 +34,7 @@ class FunderType < BaseObject
     ids = Event.query(nil, obj_id: object[:id], citation_type: "Dataset-Funder").results.to_a.map do |e|
       doi_from_url(e.subj_id)
     end
-    
+
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
