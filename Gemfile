@@ -72,9 +72,10 @@ gem 'strong_migrations', '~> 0.6.0'
 group :development, :test do
   gem "rspec-rails", "~> 3.8", ">= 3.8.2"
   gem "rspec-benchmark", "~> 0.4.0"
-  gem 'rubocop', '~> 0.77.0'
+  gem "rspec-graphql_matchers", "~> 1.1"
+  gem "rubocop", "~> 0.77.0"
   gem 'rubocop-performance', '~> 1.5', '>= 1.5.1'
-  gem 'rubocop-rails', '~> 2.4'
+  gem "rubocop-rails", "~> 2.4"
   gem "better_errors"
   gem "binding_of_caller"
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]

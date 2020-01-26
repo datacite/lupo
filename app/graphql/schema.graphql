@@ -3962,7 +3962,26 @@ type Query {
     query: String
   ): PublicationConnectionWithMeta!
   service(id: ID!): Service!
-  services(first: Int = 25, query: String): [Service!]!
+  services(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+  ): ServiceConnectionWithMeta!
   softwareSourceCode(id: ID!): Software!
   softwareSourceCodes(
     """
@@ -4233,6 +4252,27 @@ type Service implements DoiItem {
   The version number of the resource
   """
   version: String
+}
+
+"""
+The connection type for Dataset.
+"""
+type ServiceConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [DatasetEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Dataset]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
 }
 
 type Software implements DoiItem & MetricInterface {
