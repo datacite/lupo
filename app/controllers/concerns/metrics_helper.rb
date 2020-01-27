@@ -4,20 +4,18 @@ module MetricsHelper
 
   included do
     def get_metrics_array(dois)
-      citations   = EventsQuery.new.citations(dois)
-      views       = EventsQuery.new.views(dois)
-      downloads   = EventsQuery.new.downloads(dois)
-
-      first_merge = merge_array_hashes(citations, views)
-      merge_array_hashes(first_merge, downloads)
+      citations = EventsQuery.new.citations(dois)
+      usage = EventsQuery.new.views_and_downloads(dois)
+      merge_array_hashes(citations, usage)
     end
 
     def get_person_metrics(orcid)
-      dois = get_person_dois(orcid)
+      dois = get_person_dois(orcid).join(",")
+      usage = EventsQuery.new.views_and_downloads(dois)
       {
-        citations: EventsQuery.new.citations(dois.join(",")).sum { |h| h[:citations] },
-        views: EventsQuery.new.views(dois.join(",")).sum { |h| h[:views] },
-        downloads: EventsQuery.new.downloads(dois.join(",")).sum { |h| h[:downloads] },
+        citations: EventsQuery.new.citations(dois).sum { |h| h[:citations] },
+        views: usage.sum { |h| h[:views] },
+        downloads: usage.sum { |h| h[:downloads] },
       }
     end
 
@@ -32,6 +30,14 @@ module MetricsHelper
       return nil if orcid.blank?
 
       "https://orcid.org/#{orcid}"
+    end
+
+    def mix_in_metrics(metadata_array_objects, metrics_array_hashes)
+      metadata_array_objects.map do |metadata|
+        metadata_hash = metadata.to_hash
+        metrics = metrics_array_hashes.select { |hash| hash[:id] == metadata_hash.doi }.first
+        Hashie::Mash.new(metrics).shallow_merge(metadata_hash)
+      end
     end
   end
 
