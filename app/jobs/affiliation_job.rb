@@ -17,7 +17,7 @@ class AffiliationJob < ActiveJob::Base
 
       doi.__elasticsearch__.index_document
     else
-      Rails.logger.error "[Affiliation] Error updaing DOI " + doi_id + ": not found"
+      Rails.logger.error "[Affiliation] Error updating DOI " + doi_id + ": not found"
     end
   end
 end
