@@ -83,6 +83,7 @@ class Client < ActiveRecord::Base
   } do
     mapping dynamic: 'false' do
       indexes :id,            type: :keyword
+      indexes :uid,           type: :keyword, normalizer: "keyword_lowercase"
       indexes :symbol,        type: :keyword
       indexes :provider_id,   type: :keyword
       indexes :consortium_id, type: :keyword

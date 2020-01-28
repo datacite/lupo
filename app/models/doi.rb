@@ -129,7 +129,7 @@ class Doi < ActiveRecord::Base
   } do
     mapping dynamic: 'false' do
       indexes :id,                             type: :keyword
-      indexes :uid,                            type: :keyword
+      indexes :uid,                            type: :keyword, normalizer: "keyword_lowercase"
       indexes :doi,                            type: :keyword
       indexes :identifier,                     type: :keyword
       indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
@@ -150,12 +150,12 @@ class Doi < ActiveRecord::Base
           schemeUri: { type: :keyword }
         }},
       }
-      indexes :contributors,                   type: :object, properties: {
+      indexes :contributors, type: :object, properties: {
         nameType: { type: :keyword },
         nameIdentifiers: { type: :object, properties: {
           nameIdentifier: { type: :keyword },
           nameIdentifierScheme: { type: :keyword },
-          schemeUri: { type: :keyword }
+          schemeUri: { type: :keyword },
         }},
         name: { type: :text },
         givenName: { type: :text },
@@ -198,7 +198,7 @@ class Doi < ActiveRecord::Base
       }
       indexes :identifiers,                    type: :object, properties: {
         identifierType: { type: :keyword },
-        identifier: { type: :keyword }
+        identifier: { type: :keyword },
       }
       indexes :related_identifiers,            type: :object, properties: {
         relatedIdentifierType: { type: :keyword },
@@ -207,7 +207,7 @@ class Doi < ActiveRecord::Base
         relatedMetadataScheme: { type: :keyword },
         schemeUri: { type: :keyword },
         schemeType: { type: :keyword },
-        resourceTypeGeneral: { type: :keyword }
+        resourceTypeGeneral: { type: :keyword },
       }
       indexes :types,                          type: :object, properties: {
         resourceTypeGeneral: { type: :keyword },
@@ -215,7 +215,7 @@ class Doi < ActiveRecord::Base
         schemaOrg: { type: :keyword },
         bibtex: { type: :keyword },
         citeproc: { type: :keyword },
-        ris: { type: :keyword }
+        ris: { type: :keyword },
       }
       indexes :funding_references,             type: :object, properties: {
         funderName: { type: :keyword },
@@ -377,30 +377,30 @@ class Doi < ActiveRecord::Base
         } },
         secondary_billing_contact: { type: :object, properties: {
           email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
+          given_name: { type: :text },
+          family_name: { type: :text },
         } },
         service_contact: { type: :object, properties: {
           email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
+          given_name: { type: :text },
+          family_name: { type: :text },
         } },
         secondary_service_contact: { type: :object, properties: {
           email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
+          given_name: { type: :text },
+          family_name: { type: :text },
         } },
         voting_contact: { type: :object, properties: {
           email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
+          given_name: { type: :text },
+          family_name: { type: :text },
         } },
         created: { type: :date },
         updated: { type: :date },
         deleted_at: { type: :date },
         cumulative_years: { type: :integer, index: "false" },
         consortium: { type: :object },
-        consortium_organizations: { type: :object }
+        consortium_organizations: { type: :object },
       }
       indexes :resource_type, type: :object
       # indexes :view_ids, type: :keyword
@@ -517,7 +517,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['doi^50', 'id^50', 'titles.title^3', 'creator_names^3', 'creators.name^3', 'creators.id^3', 'publisher^3', 'descriptions.description^3', 'types.resourceTypeGeneral^3', 'subjects.subject^3', 'identifiers.identifier^3', 'related_identifiers.relatedIdentifier^3', '_all']
+    ["uid^50", "doi^50", 'titles.title^3', 'creator_names^3', 'creators.name^3', 'creators.id^3', 'publisher^3', 'descriptions.description^3', 'types.resourceTypeGeneral^3', 'subjects.subject^3', 'identifiers.identifier^3', 'related_identifiers.relatedIdentifier^3', '_all']
   end
 
   # return results for one or more ids

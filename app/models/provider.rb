@@ -85,12 +85,15 @@ class Provider < ActiveRecord::Base
       analyzer: {
         string_lowercase: { tokenizer: 'keyword', filter: %w(lowercase ascii_folding) }
       },
+      normalizer: {
+        keyword_lowercase: { type: "custom", filter: %w(lowercase) }
+      },
       filter: { ascii_folding: { type: 'asciifolding', preserve_original: true } }
     }
   } do
     mapping dynamic: 'false' do
       indexes :id,            type: :keyword
-      indexes :uid,           type: :keyword
+      indexes :uid,           type: :keyword, normalizer: "keyword_lowercase"
       indexes :symbol,        type: :keyword
       indexes :globus_uuid,   type: :keyword
       indexes :client_ids,    type: :keyword
