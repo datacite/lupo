@@ -21,13 +21,17 @@ describe EventsQuery, elasticsearch: true do
       expect(EventsQuery.new.doi_citations("10.5061/dryad.dd47sd5/1")).to eq(0)
     end
 
+    it "doi_citations for non found doi" do
+      expect(EventsQuery.new.doi_citations("10.5061/d345435341")).to eq(0)
+    end
+
     it "citations" do
       results = EventsQuery.new.citations("10.5061/dryad.47sd5/1,10.5061/dryad.47sd5/2,10.0260/co.2004960.v1")
       citations = results.select { |item| item[:id] == "10.5061/dryad.47sd5/2" }.first
       no_citations = results.select { |item| item[:id] == "10.5061/dryad.47sd5/1" }.first
 
       expect(citations[:citations]).to eq(3)
-      # expect(no_citations[:count]).to eq(0)
+      expect(no_citations[:citations]).to eq(0)
     end
   end
 

@@ -59,7 +59,15 @@ class EventsQuery
   def citations(dois)
     right = citations_right_query(dois)
     left  = citations_left_query(dois)
-    merge_array_hashes(right, left)
+    hashes = merge_array_hashes(right, left)
+
+    dois_array = dois.split(",").map { |doi| doi }
+
+    dois_array.map do |doi|
+      result = hashes.select { |item| item[:id] == doi }.first
+      count = result.nil? ? 0 : result[:citations]
+      { id: doi, citations: count }
+    end
   end
 
   def citations_histogram(doi)
@@ -85,8 +93,15 @@ class EventsQuery
     query = "(relation_type_id:unique-dataset-investigations-regular AND source_id:datacite-usage)"
     results = Event.query(query, doi: dois, aggregations: "usage_count_aggregation", page: { size: 1, cursor: [] }).response.aggregations.usage.buckets
 
-    results.map do |item|
-      { id: doi_from_url(item[:key]), views: item.dig("total_by_type", "value") }
+    # results.map do |item|
+    #   { id: doi_from_url(item[:key]), views: item.dig("total_by_type", "value") }
+    # end
+
+    dois_array = dois.split(",").map { |doi| doi }
+    dois_array.map do |doi|
+      result = results.select { |item| doi_from_url(item[:key]) == doi }.first
+      count = result.nil? ? 0 : result.dig("total_by_type", "value")
+      { id: doi, views: count }
     end
   end
 
@@ -113,8 +128,15 @@ class EventsQuery
     query = "(relation_type_id:unique-dataset-requests-regular AND source_id:datacite-usage)"
     results = Event.query(query, doi: dois, aggregations: "usage_count_aggregation", page: { size: 1, cursor: [] }).response.aggregations.usage.buckets
 
-    results.map do |item|
-      { id: doi_from_url(item[:key]), downloads: item.dig("total_by_type", "value") }
+    # results.map do |item|
+    #   { id: doi_from_url(item[:key]), downloads: item.dig("total_by_type", "value") }
+    # end
+
+    dois_array = dois.split(",").map { |doi| doi }
+    dois_array.map do |doi|
+      result = results.select { |item| doi_from_url(item[:key]) == doi }.first
+      count = result.nil? ? 0 : result.dig("total_by_type", "value")
+      { id: doi, downloads: count }
     end
   end
 
