@@ -194,8 +194,11 @@ class DoisController < ApplicationController
         }
         logger.warn method: "GET", path: "/dois", message: "AggregationsLinkChecks /dois", duration: bm
 
-        dois_names =  results.map { |result| result.dig(:_source, :doi) }.join(',')
-        metrics_array = params[:mix_in] == "metrics" ?  get_metrics_array(dois_names) : []
+        if params[:mix_in] == "metrics"
+          dois_names =  results.map { |result| result.dig(:_source, :doi) }.join(',')
+          metrics_array = get_metrics_array(dois_names)
+          results = mix_in_metrics_array(results, metrics_array)
+        end
 
         person_metrics = params[:mix_in] == "metrics" ? get_person_metrics(params[:user_id]) : {}
 
@@ -290,6 +293,11 @@ class DoisController < ApplicationController
     doi = Doi.where(doi: params[:id]).first
     fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: doi, user: current_user)
 
+    if params[:mix_in] == "metrics"
+      metrics_array = get_metrics_array(doi.uid) || []
+      doi = mix_in_metrics(doi, metrics_array.first)
+    end
+
     respond_to do |format|
       format.json do
         options = {}
@@ -298,7 +306,8 @@ class DoisController < ApplicationController
         options[:params] = {
           current_ability: current_ability,
           detail: true,
-          affiliation: params[:affiliation]
+          mix_in: params[:mix_in],
+          affiliation: params[:affiliation],
         }
 
         render json: DoiSerializer.new(doi, options).serialized_json, status: :ok

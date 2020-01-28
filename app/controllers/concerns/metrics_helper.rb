@@ -1,3 +1,4 @@
+require "pp"
 module MetricsHelper
   extend ActiveSupport::Concern
   include Helpable
@@ -32,18 +33,29 @@ module MetricsHelper
       "https://orcid.org/#{orcid}"
     end
 
-    def mix_in_metrics(metadata_array_objects, metrics_array_hashes)
+    def mix_in_metrics_array(metadata_array_objects, metrics_array_hashes)
+      return [] if metadata_array_objects.empty?
+
       metadata_array_objects.map do |metadata|
         metadata_hash = metadata.to_hash
-        metrics = metrics_array_hashes.select { |hash| hash[:id] == metadata_hash.doi }.first
-        Hashie::Mash.new(metrics).shallow_merge(metadata_hash)
+        metrics = metrics_array_hashes.select { |hash| hash[:id] == metadata_hash["_source"]["uid"] }.first
+        Hashie::Mash.new(metadata_hash)._source.shallow_update(metrics)
       end
+    end
+
+    def mix_in_metrics(metadata, metrics)
+      metadata_hash = metadata.attributes
+      metrics[:doi] = metrics.delete :id
+      metrics[:uid] = metrics[:doi]
+      metrics[:doi] = metrics[:doi].upcase
+      metadata_hash.merge!(metrics)
+      Hashie::Mash.new(metadata_hash)
     end
   end
 
-  class_methods do
-    def mix_in_metrics(doi, metrics_array_hashes)
-      metrics_array_hashes.select { |hash| hash[:id] == doi }.first
-    end
-  end
+  # class_methods do
+  #   # def mix_in_metrics(doi, metrics_array_hashes)
+  #   #   metrics_array_hashes.select { |hash| hash[:id] == doi }.first
+  #   # end
+  # end
 end

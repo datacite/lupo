@@ -753,7 +753,7 @@ describe "/events", type: :request, elasticsearch: true do
         total = response.dig("meta", "total")
 
         expect(total).to eq(51)
-        expect((citations.select { |doi| dois.split(",").include?(doi["id"]) }).length).to eq(1)
+        expect((citations.select { |doi| dois.split(",").include?(doi["id"]) }).length).to eq(20)
       end
     end
 

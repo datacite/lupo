@@ -57,6 +57,8 @@ class EventsQuery
   end
 
   def citations(dois)
+    return nil if dois.blank?
+    
     right = citations_right_query(dois)
     left  = citations_left_query(dois)
     hashes = merge_array_hashes(right, left)
@@ -64,9 +66,9 @@ class EventsQuery
     dois_array = dois.split(",").map { |doi| doi }
 
     dois_array.map do |doi|
-      result = hashes.select { |item| item[:id] == doi }.first
+      result = hashes.select { |item| item[:id] == doi.downcase }.first
       count = result.nil? ? 0 : result[:citations]
-      { id: doi, citations: count }
+      { id: doi.downcase, citations: count }
     end
   end
 
@@ -154,6 +156,16 @@ class EventsQuery
 
     query = "(relation_type_id:unique-dataset-requests-regular AND source_id:datacite-usage) OR (relation_type_id:unique-dataset-investigations-regular AND source_id:datacite-usage)"
     results = Event.query(query, doi: dois, aggregations: "multiple_usage_count_aggregation", page: { size: 1, cursor: [] }).response.aggregations
+
+    # dois_array = dois.split(",").map { |doi| doi }
+    # dois_array.map do |doi|
+    #   views = bucket.relation_types.buckets.select { |item| item["key"] == "unique-dataset-investigations-regular" }.first
+    #   downloads = bucket.relation_types.buckets.select { |item| item["key"] == "unique-dataset-requests-regular" }.first
+    #   views_counts = views.nil? ? 0 : views.dig("total_by_type", "value")
+    #   downloads_counts = downloads.nil? ? 0 : downloads.dig("total_by_type", "value")
+    #   { id: doi.downcase, downloads: downloads_counts, views: views_counts }
+    # end
+
 
     results.usage.buckets.map do |bucket|
       views = bucket.relation_types.buckets.select { |item| item["key"] == "unique-dataset-investigations-regular" }.first
