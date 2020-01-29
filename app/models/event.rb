@@ -490,9 +490,9 @@ class Event < ActiveRecord::Base
   end
 
   def self.subj_id_check(options = {})
-    file_name = "events_with_double_crossref_dois.txt"
+    file_name = "evens_with_double_crossref_dois.txt"
     size = (options[:size] || 1000).to_i
-    cursor = (options[:cursor] || [])
+    cursor = [options[:from_id], options[:until_id]]
     total_errors = 0
 
     response = Event.query(nil, source_id: "datacite-crossref,datacite-related", page: { size: 1, cursor: [] })
@@ -523,7 +523,7 @@ class Event < ActiveRecord::Base
 
     file = File.open(file_name)
     if file.present?
-      payload = { description: "events_with_errors_from_rake_task", public: true,files: {uids_with_errors: {content: file.read} }}
+      payload = { description: "events_with_errors_from_rake_task #{Time.now.getutc}", public: true,files: {uids_with_errors: {content: file.read} }}
       ### max file size 1MB
       response = Maremma.post("https://api.github.com/gists", data: payload.to_json, username: ENV["GIST_USERNAME"], password:ENV["GIST_PASSWORD"])
       logger.warn "[DoubleCheck] Total number of events with Errors: #{total_errors}"

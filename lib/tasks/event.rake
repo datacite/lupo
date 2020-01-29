@@ -74,9 +74,10 @@ end
 namespace :subj_id_check do
   desc 'checks that events subject node congruency'
   task :check => :environment do
-    cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id),Event.maximum(:id)]
-
-    Event.subj_id_check(cursor: cursor)
+    from_id = (ENV['FROM_ID'] || Event.minimum(:id)).to_i
+    until_id = (ENV['UNTIL_ID'] || Event.maximum(:id)).to_i
+    
+    Event.subj_id_check(from_id: from_id, until_id: until_id)
   end
 end
 
