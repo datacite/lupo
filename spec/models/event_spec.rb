@@ -56,11 +56,8 @@ describe Event, :type => :model, vcr: true do
       end
       
       it "check run" do
-        # puts prefix.inspect
-        expect(Event.subj_id_check(cursor: [Event.minimum(:id),Event.maximum(:id)])).to eq("2006-06-13T16:14:19Z")
-        # expect(subject.obj["datePublished"]).to be_nil
+        expect(Event.subj_id_check(cursor: [Event.minimum(:id),Event.maximum(:id)])).to eq(true)
       end
-
     end
   end
 end

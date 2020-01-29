@@ -490,6 +490,7 @@ class Event < ActiveRecord::Base
   end
 
   def self.subj_id_check(options = {})
+    file_name = "events_with_double_crossref_dois.txt"
     size = (options[:size] || 1000).to_i
     cursor = (options[:cursor] || [])
     total_errors = 0
@@ -511,7 +512,7 @@ class Event < ActiveRecord::Base
         events.lazy.each do | event|
           subj_prefix = event.subj_id[/(10\.\d{4,5})/, 1]
           if Prefix.where(prefix: subj_prefix).empty?
-            File.open("evens_with_double_crossref_dois.txt", "a+") do |f|
+            File.open(file_name, "a+") do |f|
               f.write(event.uuid, "\n")
               total_errors = total_errors + 1
             end
@@ -519,7 +520,15 @@ class Event < ActiveRecord::Base
         end
       end
     end
-    logger.warn "[DoubleCheck] Total number of events with Errors: #{total_errors}"
+
+    file = File.open(file_name)
+    if file.present?
+      payload = { description: "events_with_errors_from_rake_task", public: true,files: {uids_with_errors: {content: file.read} }}
+      ### max file size 1MB
+      response = Maremma.post("https://api.github.com/gists", data: payload.to_json, username: ENV["GIST_USERNAME"], password:ENV["GIST_PASSWORD"])
+      logger.warn "[DoubleCheck] Total number of events with Errors: #{total_errors}"
+      logger.warn "[DoubleCheck] IDs saved: #{response.body.dig('data','url')}" if [200,201].include?(response.status)
+    end
   end
 
   def metric_type
