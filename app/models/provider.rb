@@ -85,12 +85,15 @@ class Provider < ActiveRecord::Base
       analyzer: {
         string_lowercase: { tokenizer: 'keyword', filter: %w(lowercase ascii_folding) }
       },
+      normalizer: {
+        keyword_lowercase: { type: "custom", filter: %w(lowercase) }
+      },
       filter: { ascii_folding: { type: 'asciifolding', preserve_original: true } }
     }
   } do
     mapping dynamic: 'false' do
       indexes :id,            type: :keyword
-      indexes :uid,           type: :keyword
+      indexes :uid,           type: :keyword, normalizer: "keyword_lowercase"
       indexes :symbol,        type: :keyword
       indexes :globus_uuid,   type: :keyword
       indexes :client_ids,    type: :keyword
@@ -236,7 +239,7 @@ class Provider < ActiveRecord::Base
   def self.query_aggregations
     {
       years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
-      cumulative_years: { terms: { field: 'cumulative_years', min_doc_count: 1, order: { _count: "asc" } } },
+      cumulative_years: { terms: { field: 'cumulative_years', size: 15, min_doc_count: 1, order: { _count: "asc" } } },
       regions: { terms: { field: 'region', size: 10, min_doc_count: 1 } },
       member_types: { terms: { field: 'member_type', size: 10, min_doc_count: 1 } },
       organization_types: { terms: { field: 'organization_type', size: 10, min_doc_count: 1 } },

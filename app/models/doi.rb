@@ -72,8 +72,8 @@ class Doi < ActiveRecord::Base
   belongs_to :client, foreign_key: :datacentre
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
   has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
-  has_many :views, -> { where relation_type_id: "unique-dataset-investigations-regular" }, class_name: "Event", primary_key: :doi, foreign_key: :doi_id, dependent: :destroy
-  has_many :downloads, -> { where relation_type_id: "unique-dataset-requests-regular" }, class_name: "Event", primary_key: :doi, foreign_key: :doi_id, dependent: :destroy
+  # has_many :views, -> { where relation_type_id: "unique-dataset-investigations-regular" }, class_name: "Event", primary_key: :doi, foreign_key: :doi_id, dependent: :destroy
+  # has_many :downloads, -> { where relation_type_id: "unique-dataset-requests-regular" }, class_name: "Event", primary_key: :doi, foreign_key: :doi_id, dependent: :destroy
 
   delegate :provider, to: :client, allow_nil: true
   delegate :consortium_id, to: :provider, allow_nil: true
@@ -129,7 +129,7 @@ class Doi < ActiveRecord::Base
   } do
     mapping dynamic: 'false' do
       indexes :id,                             type: :keyword
-      indexes :uid,                            type: :keyword
+      indexes :uid,                            type: :keyword, normalizer: "keyword_lowercase"
       indexes :doi,                            type: :keyword
       indexes :identifier,                     type: :keyword
       indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
@@ -150,12 +150,12 @@ class Doi < ActiveRecord::Base
           schemeUri: { type: :keyword }
         }},
       }
-      indexes :contributors,                   type: :object, properties: {
+      indexes :contributors, type: :object, properties: {
         nameType: { type: :keyword },
         nameIdentifiers: { type: :object, properties: {
           nameIdentifier: { type: :keyword },
           nameIdentifierScheme: { type: :keyword },
-          schemeUri: { type: :keyword }
+          schemeUri: { type: :keyword },
         }},
         name: { type: :text },
         givenName: { type: :text },
@@ -198,16 +198,16 @@ class Doi < ActiveRecord::Base
       }
       indexes :identifiers,                    type: :object, properties: {
         identifierType: { type: :keyword },
-        identifier: { type: :keyword }
+        identifier: { type: :keyword, normalizer: "keyword_lowercase" },
       }
       indexes :related_identifiers,            type: :object, properties: {
         relatedIdentifierType: { type: :keyword },
-        relatedIdentifier: { type: :keyword },
+        relatedIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
         relationType: { type: :keyword },
         relatedMetadataScheme: { type: :keyword },
         schemeUri: { type: :keyword },
         schemeType: { type: :keyword },
-        resourceTypeGeneral: { type: :keyword }
+        resourceTypeGeneral: { type: :keyword },
       }
       indexes :types,                          type: :object, properties: {
         resourceTypeGeneral: { type: :keyword },
@@ -215,11 +215,11 @@ class Doi < ActiveRecord::Base
         schemaOrg: { type: :keyword },
         bibtex: { type: :keyword },
         citeproc: { type: :keyword },
-        ris: { type: :keyword }
+        ris: { type: :keyword },
       }
       indexes :funding_references,             type: :object, properties: {
         funderName: { type: :keyword },
-        funderIdentifier: { type: :keyword },
+        funderIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
         funderIdentifierType: { type: :keyword },
         awardNumber: { type: :keyword },
         awardUri: { type: :keyword },
@@ -248,7 +248,7 @@ class Doi < ActiveRecord::Base
       }
       indexes :container,                     type: :object, properties: {
         type: { type: :keyword },
-        identifier: { type: :keyword },
+        identifier: { type: :keyword, normalizer: "keyword_lowercase" },
         identifierType: { type: :keyword },
         title: { type: :keyword },
         volume: { type: :keyword },
@@ -296,6 +296,7 @@ class Doi < ActiveRecord::Base
       # include parent objects
       indexes :client,                         type: :object, properties: {
         id: { type: :keyword },
+        uid: { type: :keyword, normalizer: "keyword_lowercase" },
         symbol: { type: :keyword },
         provider_id: { type: :keyword },
         re3data_id: { type: :keyword },
@@ -324,7 +325,7 @@ class Doi < ActiveRecord::Base
       }
       indexes :provider,                       type: :object, properties: {
         id: { type: :keyword },
-        uid: { type: :keyword },
+        uid: { type: :keyword, normalizer: "keyword_lowercase" },
         symbol: { type: :keyword },
         client_ids: { type: :keyword },
         prefix_ids: { type: :keyword },
@@ -377,36 +378,36 @@ class Doi < ActiveRecord::Base
         } },
         secondary_billing_contact: { type: :object, properties: {
           email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
+          given_name: { type: :text },
+          family_name: { type: :text },
         } },
         service_contact: { type: :object, properties: {
           email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
+          given_name: { type: :text },
+          family_name: { type: :text },
         } },
         secondary_service_contact: { type: :object, properties: {
           email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
+          given_name: { type: :text },
+          family_name: { type: :text },
         } },
         voting_contact: { type: :object, properties: {
           email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
+          given_name: { type: :text },
+          family_name: { type: :text },
         } },
         created: { type: :date },
         updated: { type: :date },
         deleted_at: { type: :date },
         cumulative_years: { type: :integer, index: "false" },
         consortium: { type: :object },
-        consortium_organizations: { type: :object }
+        consortium_organizations: { type: :object },
       }
       indexes :resource_type, type: :object
-      indexes :view_ids, type: :keyword
-      indexes :views, type: :object
-      indexes :download_ids, type: :keyword
-      indexes :downloads, type: :object
+      # indexes :view_ids, type: :keyword
+      # indexes :views, type: :object
+      # indexes :download_ids, type: :keyword
+      # indexes :downloads, type: :object
     end
   end
 
@@ -428,8 +429,8 @@ class Doi < ActiveRecord::Base
       "consortium_id" => consortium_id,
       "resource_type_id" => resource_type_id,
       "media_ids" => media_ids,
-      "view_ids" => view_ids,
-      "download_ids" => download_ids,
+      # "view_ids" => view_ids,
+      # "download_ids" => download_ids,
       "prefix" => prefix,
       "suffix" => suffix,
       "types" => types,
@@ -465,15 +466,15 @@ class Doi < ActiveRecord::Base
       "provider" => provider.try(:as_indexed_json),
       "resource_type" => resource_type.try(:as_indexed_json),
       "media" => media.map { |m| m.try(:as_indexed_json) },
-      "views" => views.map { |m| m.try(:as_indexed_json) },
-      "downloads" => downloads.map { |m| m.try(:as_indexed_json) }
+      # "views" => views.map { |m| m.try(:as_indexed_json) },
+      # "downloads" => downloads.map { |m| m.try(:as_indexed_json) }
     }
   end
 
   def self.query_aggregations
     {
-      resource_types: { terms: { field: 'types.resourceTypeGeneral', size: 15, min_doc_count: 1 } },
-      states: { terms: { field: 'aasm_state', size: 15, min_doc_count: 1 } },
+      resource_types: { terms: { field: 'types.resourceTypeGeneral', size: 20, min_doc_count: 1 } },
+      states: { terms: { field: 'aasm_state', size: 3, min_doc_count: 1 } },
       years: { date_histogram: { field: 'publication_year', interval: 'year', min_doc_count: 1 } },
       created: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
       registered: { date_histogram: { field: 'registered', interval: 'year', min_doc_count: 1 } },
@@ -517,7 +518,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['doi^50', 'id^50', 'titles.title^3', 'creator_names^3', 'creators.name^3', 'creators.id^3', 'publisher^3', 'descriptions.description^3', 'types.resourceTypeGeneral^3', 'subjects.subject^3', 'identifiers.identifier^3', 'related_identifiers.relatedIdentifier^3', '_all']
+    ["uid^50", "doi^50", "related_identifiers.relatedIdentifier^10", "funding_references.relatedIdentifier^10", "container.identifier^10", 'titles.title^3', 'creator_names^3', 'creators.name^3', 'creators.id^3', 'publisher^3', 'descriptions.description^3', 'types.resourceTypeGeneral^3', 'subjects.subject^3', 'client.uid^3', 'provider.uid^3', '_all']
   end
 
   # return results for one or more ids
@@ -858,13 +859,13 @@ class Doi < ActiveRecord::Base
     media.pluck(:id).map { |m| Base32::URL.encode(m, split: 4, length: 16) }.compact
   end
 
-  def view_ids
-    views.pluck(:doi_id)
-  end
+  # def view_ids
+  #   views.pluck(:doi_id)
+  # end
 
-  def download_ids
-    downloads.pluck(:doi_id)
-  end
+  # def download_ids
+  #   downloads.pluck(:doi_id)
+  # end
 
 
   def xml_encoded

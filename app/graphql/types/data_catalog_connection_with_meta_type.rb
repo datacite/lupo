@@ -3,7 +3,7 @@
 class DataCatalogConnectionWithMetaType < BaseConnection
   edge_type(DataCatalogEdgeType)
   field_class GraphQL::Cache::Field
-  
+
   field :total_count, Integer, null: true, cache: true
   field :dataset_connection_count, Integer, null: false, cache: true
 
