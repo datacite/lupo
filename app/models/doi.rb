@@ -198,11 +198,11 @@ class Doi < ActiveRecord::Base
       }
       indexes :identifiers,                    type: :object, properties: {
         identifierType: { type: :keyword },
-        identifier: { type: :keyword },
+        identifier: { type: :keyword, normalizer: "keyword_lowercase" },
       }
       indexes :related_identifiers,            type: :object, properties: {
         relatedIdentifierType: { type: :keyword },
-        relatedIdentifier: { type: :keyword },
+        relatedIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
         relationType: { type: :keyword },
         relatedMetadataScheme: { type: :keyword },
         schemeUri: { type: :keyword },
@@ -219,7 +219,7 @@ class Doi < ActiveRecord::Base
       }
       indexes :funding_references,             type: :object, properties: {
         funderName: { type: :keyword },
-        funderIdentifier: { type: :keyword },
+        funderIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
         funderIdentifierType: { type: :keyword },
         awardNumber: { type: :keyword },
         awardUri: { type: :keyword },
@@ -248,7 +248,7 @@ class Doi < ActiveRecord::Base
       }
       indexes :container,                     type: :object, properties: {
         type: { type: :keyword },
-        identifier: { type: :keyword },
+        identifier: { type: :keyword, normalizer: "keyword_lowercase" },
         identifierType: { type: :keyword },
         title: { type: :keyword },
         volume: { type: :keyword },
@@ -296,6 +296,7 @@ class Doi < ActiveRecord::Base
       # include parent objects
       indexes :client,                         type: :object, properties: {
         id: { type: :keyword },
+        uid: { type: :keyword, normalizer: "keyword_lowercase" },
         symbol: { type: :keyword },
         provider_id: { type: :keyword },
         re3data_id: { type: :keyword },
@@ -324,7 +325,7 @@ class Doi < ActiveRecord::Base
       }
       indexes :provider,                       type: :object, properties: {
         id: { type: :keyword },
-        uid: { type: :keyword },
+        uid: { type: :keyword, normalizer: "keyword_lowercase" },
         symbol: { type: :keyword },
         client_ids: { type: :keyword },
         prefix_ids: { type: :keyword },
@@ -517,7 +518,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_fields
-    ["uid^50", "doi^50", 'titles.title^3', 'creator_names^3', 'creators.name^3', 'creators.id^3', 'publisher^3', 'descriptions.description^3', 'types.resourceTypeGeneral^3', 'subjects.subject^3', 'identifiers.identifier^3', 'related_identifiers.relatedIdentifier^3', '_all']
+    ["uid^50", "doi^50", "related_identifiers.relatedIdentifier^10", "funding_references.relatedIdentifier^10", "container.identifier^10", 'titles.title^3', 'creator_names^3', 'creators.name^3', 'creators.id^3', 'publisher^3', 'descriptions.description^3', 'types.resourceTypeGeneral^3', 'subjects.subject^3', 'client.uid^3', 'provider.uid^3', '_all']
   end
 
   # return results for one or more ids
