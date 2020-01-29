@@ -49,7 +49,6 @@ describe Event, :type => :model, vcr: true do
  
       before do
         Provider.import
-        # Prefix.import
         Client.import
         Doi.import
         Event.import
@@ -58,8 +57,7 @@ describe Event, :type => :model, vcr: true do
       
       it "check run" do
         # puts prefix.inspect
-        puts [Event.minimum(:id),Event.maximum(:id)]
-        expect(Event.crossref_double_check( cursor: [Event.minimum(:id),Event.maximum(:id)])).to eq("2006-06-13T16:14:19Z")
+        expect(Event.subj_id_check(cursor: [Event.minimum(:id),Event.maximum(:id)])).to eq("2006-06-13T16:14:19Z")
         # expect(subject.obj["datePublished"]).to be_nil
       end
 

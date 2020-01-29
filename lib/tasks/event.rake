@@ -72,9 +72,9 @@ namespace :crossref do
 end
 
 namespace :subj_id_check do
-  desc 'checks datacite-crossref,datacite-related events have a DataCite DOI in the subject node'
+  desc 'checks that events subject node congruency'
   task :check => :environment do
-    cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id),Event.minimum(:id)]
+    cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id),Event.maximum(:id)]
 
     Event.subj_id_check(cursor: cursor)
   end
