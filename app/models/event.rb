@@ -498,10 +498,10 @@ class Event < ActiveRecord::Base
     logger.info "[DoubleCheck] #{response.results.total} events for source datacite-crossref,datacite-related."
 
     # walk through results using cursor
-    if response.results.total > 0
-      while response.results.results.length > 0 do
+    if response.results.total.positive?
+      while response.results.results.length.positive?
         response = Event.query(nil, source_id: "datacite-crossref,datacite-related", page: { size: size, cursor: cursor })
-        break unless response.results.results.length > 0
+        break unless response.results.results.length.positive?
 
         logger.info "[DoubleCheck] DoubleCheck #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
@@ -509,11 +509,13 @@ class Event < ActiveRecord::Base
         # dois = response.results.results.map(&:subj_id)
         events = response.results.results
         events.lazy.each do | event|
-          subj_prefix = event.subj_id[/(10\.\d{4,5})/,1]
-          File.open("evens_with_double_crossref_dois.txt", "a+") do |f|
-            f.write(event.uuid, "\n")
-            total_errors= total_errors+1
-          end if Prefix.where(prefix: subj_prefix).empty?
+          subj_prefix = event.subj_id[/(10\.\d{4,5})/, 1]
+          if Prefix.where(prefix: subj_prefix).empty?
+            File.open("evens_with_double_crossref_dois.txt", "a+") do |f|
+              f.write(event.uuid, "\n")
+              total_errors = total_errors + 1
+            end
+          end
         end
       end
     end
