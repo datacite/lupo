@@ -141,7 +141,7 @@ class RepositoriesController < ApplicationController
 
       render json: RepositorySerializer.new(@client, options).serialized_json, status: :created
     else
-      logger.error @client.errors.inspect
+      Rails.logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
@@ -155,7 +155,7 @@ class RepositoriesController < ApplicationController
 
       render json: RepositorySerializer.new(@client, options).serialized_json, status: :ok
     else
-      logger.error @client.errors.inspect
+      Rails.logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
@@ -166,13 +166,13 @@ class RepositoriesController < ApplicationController
     if @client.dois.present?
       message = "Can't delete repository that has DOIs."
       status = 400
-      logger.warn message
+      Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @client.update_attributes(is_active: nil, deleted_at: Time.zone.now)
       @client.send_delete_email unless Rails.env.test?
       head :no_content
     else
-      logger.error @client.errors.inspect
+      Rails.logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
