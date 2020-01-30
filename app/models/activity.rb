@@ -220,21 +220,21 @@ class Activity < Audited::Audit
       # log errors
       errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
       response['items'].select { |k, v| k.values.first['error'].present? }.each do |err|
-        logger.error "[Elasticsearch] " + err.inspect
+        Rails.logger.error "[Elasticsearch] " + err.inspect
       end
 
       count += activities.length
     end
 
     if errors > 1
-      logger.error "[Elasticsearch] #{errors} errors importing #{count} activities with IDs #{id} - #{(id + 499)}."
+      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} activities with IDs #{id} - #{(id + 499)}."
     elsif count > 0
-      logger.info "[Elasticsearch] Imported #{count} activities with IDs #{id} - #{(id + 499)}."
+      Rails.logger.info "[Elasticsearch] Imported #{count} activities with IDs #{id} - #{(id + 499)}."
     end
 
     count
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    logger.error "[Elasticsearch] Error #{error.message} importing activities with IDs #{id} - #{(id + 499)}."
+    Rails.logger.error "[Elasticsearch] Error #{error.message} importing activities with IDs #{id} - #{(id + 499)}."
 
     count = 0
 
@@ -243,7 +243,7 @@ class Activity < Audited::Audit
       count += 1
     end
 
-    logger.info "[Elasticsearch] Imported #{count} activities with IDs #{id} - #{(id + 499)}."
+    Rails.logger.info "[Elasticsearch] Imported #{count} activities with IDs #{id} - #{(id + 499)}."
 
     count
   end
@@ -315,11 +315,11 @@ class Activity < Audited::Audit
       end
     end
         
-    logger.info "[Elasticsearch] Converted affiliations for #{count} activities with IDs #{id} - #{(id + 499)}." if count > 0
+    Rails.logger.info "[Elasticsearch] Converted affiliations for #{count} activities with IDs #{id} - #{(id + 499)}." if count > 0
 
     count
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    logger.info "[Elasticsearch] Error #{error.message} converting affiliations for DOIs with IDs #{id} - #{(id + 499)}."
+    Rails.logger.info "[Elasticsearch] Error #{error.message} converting affiliations for DOIs with IDs #{id} - #{(id + 499)}."
   end
 
   def uid
