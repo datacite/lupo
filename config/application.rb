@@ -95,7 +95,7 @@ module Lupo
   
     config.lograge.ignore_actions = ["HeartbeatController#index", "IndexController#index"]
     config.lograge.ignore_custom = lambda do |event|
-      event.payload.inspect.length > 100000
+      event.payload.inspect.length > 50000
     end
     config.lograge.base_controller_class = "ActionController::API"
   
