@@ -14,12 +14,12 @@ module Helpable
 
     def register_url
       unless url.present?
-        logger.error "[Handle] Error updating DOI " + doi + ": url missing."
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": url missing."
         return OpenStruct.new(body: { "errors" => [{ "title" => "URL missing." }] })
       end
 
       unless client_id.present?
-        logger.error "[Handle] Error updating DOI " + doi + ": client ID missing."
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": client ID missing."
         return OpenStruct.new(body: { "errors" => [{ "title" => "Client ID missing." }] })
       end
 
@@ -56,11 +56,11 @@ module Helpable
       if [200, 201].include?(response.status)
         # update minted column after first successful registration in handle system
         self.update_attributes(minted: Time.zone.now, updated: Time.zone.now) if minted.blank?
-        logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "." unless Rails.env.test?
+        Rails.logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "." unless Rails.env.test?
 
         self.__elasticsearch__.index_document
       else
-        logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect unless Rails.env.test?
+        Rails.logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect unless Rails.env.test?
       end
 
       response
@@ -71,7 +71,7 @@ module Helpable
       response = Maremma.get(url, ssl_self_signed: true, timeout: 10)
 
       if response.status != 200
-        logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect unless Rails.env.test?
+        Rails.logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect unless Rails.env.test?
       end
 
       response
@@ -142,13 +142,13 @@ module Helpable
           else
             text = "Error " + response.body["errors"].inspect
 
-            logger.error "[Handle] " + text
+            Rails.logger.error "[Handle] " + text
             User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
           end
         end
       end
 
-      logger.info "#{total} DOIs found."
+      Rails.logger.info "#{total} DOIs found."
 
       dois
     end
@@ -163,7 +163,7 @@ module Helpable
       if response.status != 200
         text = "Error " + response.body["errors"].inspect
 
-        logger.error "[Handle] " + text
+        Rails.logger.error "[Handle] " + text
         User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
       end
 
@@ -182,7 +182,7 @@ module Helpable
       else
         text = "Error " + response.body["errors"].inspect
 
-        logger.error "[Handle] " + text
+        Rails.logger.error "[Handle] " + text
         User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
         response
       end
