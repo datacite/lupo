@@ -85,10 +85,7 @@ module Lupo
 
     config.lograge.enabled = true
     config.lograge.formatter = Lograge::Formatters::Logstash.new
-    config.lograge.logger = ::LogStashLogger.new(
-      type: :stdout,
-      io: STDOUT,
-    )
+    config.lograge.logger = ActiveSupport::TaggedLogging.new(ActiveSupport::Logger.new(STDOUT))
     config.lograge.log_level = ENV["LOG_LEVEL"].to_sym
   
     config.active_job.logger = config.lograge.logger
