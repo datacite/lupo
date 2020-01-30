@@ -358,5 +358,14 @@ FactoryBot.define do
       relation_type_id { "unique-dataset-investigations-regular" }
       occurred_at { "2015-06-13T16:14:19Z" }
     end
+
+    factory :event_for_datacite_orcid_auto_update do
+      source_id { "datacite-orcid-auto-updatee" }
+      source_token { "5348967fhdjksr3wyui325" }
+      sequence(:obj_id) { |n| "https://orcid.org/0000-0003-1419-211{n}" }
+      sequence(:subj_id) { |n| "http://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
+      relation_type_id { "is-authored-by" }
+      occurred_at { "2015-06-13T16:14:19Z" }
+    end
   end
 end
