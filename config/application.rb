@@ -82,10 +82,12 @@ module Lupo
     # secret_key_base is not used by Rails API, as there are no sessions
     config.secret_key_base = "blipblapblup"
 
+
     config.lograge.enabled = true
     config.lograge.formatter = Lograge::Formatters::Logstash.new
     config.lograge.logger = ::LogStashLogger.new(
-      type: :stdout
+      type: :stdout,
+      io: STDOUT,
     )
     config.lograge.log_level = ENV["LOG_LEVEL"].to_sym
   
@@ -93,7 +95,7 @@ module Lupo
   
     config.lograge.ignore_actions = ["HeartbeatController#index", "IndexController#index"]
     config.lograge.ignore_custom = lambda do |event|
-      event.payload.inspect.length > 100000
+      event.payload.inspect.length > 50000
     end
     config.lograge.base_controller_class = "ActionController::API"
   
@@ -105,7 +107,6 @@ module Lupo
       }
     end
     config.logger = config.lograge.logger
-    config.active_record.logger = nil
 
     # configure caching
     config.cache_store = :dalli_store, nil, { :namespace => ENV['APPLICATION'] }
