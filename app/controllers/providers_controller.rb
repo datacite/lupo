@@ -211,7 +211,7 @@ class ProvidersController < ApplicationController
 
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
-      logger.error @provider.errors.inspect
+      Rails.logger.error @provider.errors.inspect
       render json: serialize_errors(@provider.errors), status: :unprocessable_entity
     end
   end
@@ -243,7 +243,7 @@ class ProvidersController < ApplicationController
 
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
-      logger.error @provider.errors.inspect
+      Rails.logger.error @provider.errors.inspect
       render json: serialize_errors(@provider.errors), status: :unprocessable_entity
     end
   end
@@ -254,13 +254,13 @@ class ProvidersController < ApplicationController
     if active_client_count(provider_id: @provider.symbol).positive?
       message = "Can't delete provider that has active clients."
       status = 400
-      logger.warn message
+      Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @provider.update_attributes(is_active: nil, deleted_at: Time.zone.now)
       @provider.send_delete_email unless Rails.env.test?
       head :no_content
     else
-      logger.error @provider.errors.inspect
+      Rails.logger.error @provider.errors.inspect
       render json: serialize_errors(@provider.errors), status: :unprocessable_entity
     end
   end

@@ -756,13 +756,13 @@ class Doi < ActiveRecord::Base
   def self.import_one(doi_id: nil)
     doi = Doi.where(doi: doi_id).first
     unless doi.present?
-      logger.error "[MySQL] DOI " + doi_id + " not found."
+      Rails.logger.error "[MySQL] DOI " + doi_id + " not found."
       return nil
     end
 
     string = doi.current_metadata.present? ? doi.clean_xml(doi.current_metadata.xml) : nil
     unless string.present?
-      logger.error "[MySQL] No metadata for DOI " + doi.doi + " found: " + doi.current_metadata.inspect
+      Rails.logger.error "[MySQL] No metadata for DOI " + doi.doi + " found: " + doi.current_metadata.inspect
       return nil
     end
 
@@ -773,10 +773,10 @@ class Doi < ActiveRecord::Base
 
     # update_attributes will trigger validations and Elasticsearch indexing
     doi.update_attributes(attrs)
-    logger.info "[MySQL] Imported metadata for DOI " + doi.doi + "."
+    Rails.logger.info "[MySQL] Imported metadata for DOI " + doi.doi + "."
     doi
   rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
-    logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
+    Rails.logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
     Raven.capture_exception(error)
     doi
   end
@@ -788,7 +788,7 @@ class Doi < ActiveRecord::Base
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
       DoiImportByIdJob.perform_later(options.merge(id: id))
-      logger.info "Queued importing for DOIs with IDs starting with #{id}." unless Rails.env.test?
+      Rails.logger.info "Queued importing for DOIs with IDs starting with #{id}." unless Rails.env.test?
     end
 
     (from_id..until_id).to_a.length
@@ -817,21 +817,21 @@ class Doi < ActiveRecord::Base
       # log errors
       errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
       response['items'].select { |k, v| k.values.first['error'].present? }.each do |err|
-        logger.error "[Elasticsearch] " + err.inspect
+        Rails.logger.error "[Elasticsearch] " + err.inspect
       end
 
       count += dois.length
     end
 
     if errors > 1
-      logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs with IDs #{id} - #{(id + 499)}."
+      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs with IDs #{id} - #{(id + 499)}."
     elsif count > 0
-      logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
+      Rails.logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
     end
 
     count
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    logger.info "[Elasticsearch] Error #{error.message} importing DOIs with IDs #{id} - #{(id + 499)}."
+    Rails.logger.info "[Elasticsearch] Error #{error.message} importing DOIs with IDs #{id} - #{(id + 499)}."
 
     count = 0
 
@@ -840,7 +840,7 @@ class Doi < ActiveRecord::Base
       count += 1
     end
 
-    logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
+    Rails.logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
 
     count
   end
@@ -894,7 +894,7 @@ class Doi < ActiveRecord::Base
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
       DoiConvertAffiliationByIdJob.perform_later(options.merge(id: id))
-      logger.info "Queued converting affiliations for DOIs with IDs starting with #{id}." unless Rails.env.test?
+      Rails.logger.info "Queued converting affiliations for DOIs with IDs starting with #{id}." unless Rails.env.test?
     end
 
     (from_id..until_id).to_a.length
@@ -910,7 +910,7 @@ class Doi < ActiveRecord::Base
       should_update = false
       creators = Array.wrap(doi.creators).map do |c|
         if !(c.is_a?(Hash))
-          logger.error "[MySQL] creators for DOI #{doi.doi} should be a hash."
+          Rails.logger.error "[MySQL] creators for DOI #{doi.doi} should be a hash."
         elsif c["affiliation"].nil?
           c["affiliation"] = []
           should_update = true
@@ -940,7 +940,7 @@ class Doi < ActiveRecord::Base
       end
       contributors = Array.wrap(doi.contributors).map do |c|
         if !(c.is_a?(Hash))
-          logger.error "[MySQL] creators for DOI #{doi.doi} should be a hash."
+          Rails.logger.error "[MySQL] creators for DOI #{doi.doi} should be a hash."
         elsif c["affiliation"].nil?
           c["affiliation"] = []
           should_update = true
@@ -978,16 +978,16 @@ class Doi < ActiveRecord::Base
       end
  
       unless (Array.wrap(doi.creators).all? { |c| c.is_a?(Hash) && c["affiliation"].is_a?(Array) && c["affiliation"].all? { |a| a.is_a?(Hash) } } && Array.wrap(doi.contributors).all? { |c| c.is_a?(Hash) && c["affiliation"].is_a?(Array) && c["affiliation"].all? { |a| a.is_a?(Hash) } }) 
-        logger.error "[MySQL] Error converting affiliations for doi #{doi.doi}: creators #{doi.creators.inspect} contributors #{doi.contributors.inspect}."
+        Rails.logger.error "[MySQL] Error converting affiliations for doi #{doi.doi}: creators #{doi.creators.inspect} contributors #{doi.contributors.inspect}."
         fail TypeError, "Affiliation for doi #{doi.doi} is of wrong type" if Rails.env.test?
       end    
     end
         
-    logger.info "[MySQL] Converted affiliations for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
+    Rails.logger.info "[MySQL] Converted affiliations for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
 
     count
   rescue TypeError, ActiveRecord::ActiveRecordError, ActiveRecord::LockWaitTimeout => error
-    logger.error "[MySQL] Error converting affiliations for DOIs with IDs #{id} - #{(id + 499)}."
+    Rails.logger.error "[MySQL] Error converting affiliations for DOIs with IDs #{id} - #{(id + 499)}."
     count
   end
 
@@ -998,7 +998,7 @@ class Doi < ActiveRecord::Base
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
       DoiConvertContainerByIdJob.perform_later(options.merge(id: id))
-      logger.info "Queued converting containers for DOIs with IDs starting with #{id}." unless Rails.env.test?
+      Rails.logger.info "Queued converting containers for DOIs with IDs starting with #{id}." unless Rails.env.test?
     end
 
     (from_id..until_id).to_a.length
@@ -1017,7 +1017,7 @@ class Doi < ActiveRecord::Base
         should_update = true
         container = {}
       elsif !(doi.container.is_a?(Hash))
-        logger.error "[MySQL] container for DOI #{doi.doi} should be a hash."
+        Rails.logger.error "[MySQL] container for DOI #{doi.doi} should be a hash."
       elsif [doi.container["title"], doi.container["volume"], doi.container["issue"], doi.container["identifier"]].any? { |c| c.is_a?(Hash) }
         should_update = true
         container = { 
@@ -1037,11 +1037,11 @@ class Doi < ActiveRecord::Base
       end   
     end
         
-    logger.info "[MySQL] Converted containers for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
+    Rails.logger.info "[MySQL] Converted containers for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
 
     count
   rescue TypeError, ActiveRecord::ActiveRecordError, ActiveRecord::LockWaitTimeout => error
-    logger.error "[MySQL] Error converting containers for DOIs with IDs #{id} - #{(id + 499)}."
+    Rails.logger.error "[MySQL] Error converting containers for DOIs with IDs #{id} - #{(id + 499)}."
     count
   end
 
@@ -1268,7 +1268,7 @@ class Doi < ActiveRecord::Base
   # to be used after DOIs were transferred to another DOI RA
   def self.delete_dois_by_prefix(prefix, options={})
     if prefix.blank?
-      logger.error "[Error] No prefix provided."
+      Rails.logger.error "[Error] No prefix provided."
       return nil
     end
 
@@ -1276,7 +1276,7 @@ class Doi < ActiveRecord::Base
     size = (options[:size] || 1000).to_i
 
     response = Doi.query(nil, prefix: prefix, page: { size: 1, cursor: [] })
-    logger.info "#{response.results.total} DOIs found for prefix #{prefix}."
+    Rails.logger.info "#{response.results.total} DOIs found for prefix #{prefix}."
 
     if prefix && response.results.total > 0
       # walk through results using cursor
@@ -1286,7 +1286,7 @@ class Doi < ActiveRecord::Base
         response = Doi.query(nil, prefix: prefix, page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
 
-        logger.info "Deleting #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "Deleting #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         response.results.results.each do |d|
@@ -1302,7 +1302,7 @@ class Doi < ActiveRecord::Base
   # provider europ registers their DOIs in the handle system themselves and are ignored
   def self.set_handle
     response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:Crossref", page: { size: 1, cursor: [] })
-    logger.info "#{response.results.total} DOIs found that are not registered in the Handle system."
+    Rails.logger.info "#{response.results.total} DOIs found that are not registered in the Handle system."
 
     if response.results.total > 0
       # walk through results using cursor
@@ -1312,7 +1312,7 @@ class Doi < ActiveRecord::Base
         response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:Crossref", page: { size: 1000, cursor: cursor })
         break unless response.results.results.length > 0
 
-        logger.info "[Handle] Register #{response.results.results.length} DOIs in the handle system starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Handle] Register #{response.results.results.length} DOIs in the handle system starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         response.results.results.each do |d|
@@ -1324,7 +1324,7 @@ class Doi < ActiveRecord::Base
 
   def self.set_url
     response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 1, cursor: [] })
-    logger.info "#{response.results.total} DOIs with no URL found in the database."
+    Rails.logger.info "#{response.results.total} DOIs with no URL found in the database."
 
     if response.results.total > 0
       # walk through results using cursor
@@ -1334,7 +1334,7 @@ class Doi < ActiveRecord::Base
         response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 1000, cursor: cursor })
         break unless response.results.results.length.positive?
 
-        logger.info "[Handle] Update URL for #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Handle] Update URL for #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         response.results.results.each do |d|
@@ -1346,7 +1346,7 @@ class Doi < ActiveRecord::Base
 
   def self.set_minted
     response = Doi.query("provider_id:ethz AND +aasm_state:draft +url:*", page: { size: 1, cursor: [] })
-    logger.info "#{response.results.total} draft DOIs from provider ETHZ found in the database."
+    Rails.logger.info "#{response.results.total} draft DOIs from provider ETHZ found in the database."
 
     if response.results.total > 0
       # walk through results using cursor
@@ -1356,7 +1356,7 @@ class Doi < ActiveRecord::Base
         response = Doi.query("provider_id:ethz AND +aasm_state:draft +url:*", page: { size: 1000, cursor: cursor })
         break unless response.results.results.length.positive?
 
-        logger.info "[MySQL] Set minted for #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[MySQL] Set minted for #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         response.results.results.each do |d|
@@ -1368,12 +1368,12 @@ class Doi < ActiveRecord::Base
 
   def self.transfer(options={})
     if options[:client_id].blank?
-      logger.error "[Transfer] No client provided."
+      Rails.logger.error "[Transfer] No client provided."
       return nil
     end
 
     if options[:target_id].blank?
-      logger.error "[Transfer] No target client provided."
+      Rails.logger.error "[Transfer] No target client provided."
       return nil
     end
 
@@ -1381,7 +1381,7 @@ class Doi < ActiveRecord::Base
     size = (options[:size] || 1000).to_i
 
     response = Doi.query(nil, client_id: options[:client_id], page: { size: 1, cursor: [] })
-    logger.info "[Transfer] #{response.results.total} DOIs found for client #{options[:client_id]}."
+    Rails.logger.info "[Transfer] #{response.results.total} DOIs found for client #{options[:client_id]}."
 
     if options[:client_id] && options[:target_id] && response.results.total > 0
       # walk through results using cursor
@@ -1391,7 +1391,7 @@ class Doi < ActiveRecord::Base
         response = Doi.query(nil, client_id: options[:client_id], page: { size: size, cursor: cursor })
         break unless response.results.results.length.positive?
 
-        logger.info "[Transfer] Transferring #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Transfer] Transferring #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         response.results.results.each do |d|
@@ -1415,7 +1415,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.migrate_landing_page(options={})
-    logger.info "Starting migration"
+    Rails.logger.info "Starting migration"
 
     # Handle camel casing first.
     Doi.where.not('last_landing_page_status_result' => nil).find_each do |doi|
@@ -1465,10 +1465,10 @@ class Doi < ActiveRecord::Base
 
         doi.update_columns("landing_page": landing_page)
 
-        logger.info "Updated " + doi.doi
+        Rails.logger.info "Updated " + doi.doi
 
       rescue TypeError, NoMethodError => error
-        logger.error "Error updating landing page " + doi.doi + ": " + error.message
+        Rails.logger.error "Error updating landing page " + doi.doi + ": " + error.message
       end
     end
   end
