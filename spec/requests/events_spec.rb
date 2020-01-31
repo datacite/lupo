@@ -923,6 +923,20 @@ describe "/events", type: :request, elasticsearch: true do
     #     expect(attributes["subj-id"]).to eq(event.subj_id)
     #   end
     # end
+    context "query by source-id by Crawler" do
+      let(:uri) { "/events?query=datacite" }
+
+      # Exclude the token header.
+      let(:headers) do
+        { "HTTP_ACCEPT" => "application/json",
+          "HTTP_USER_AGENT" => "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.96 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" }
+      end
+
+      it "json" do
+        get uri, nil, headers
+        expect(last_response.status).to eq(404)
+      end
+    end
   end
 
   context "destroy" do

@@ -8,6 +8,7 @@ class EventsController < ApplicationController
   include BatchLoaderHelper
 
   prepend_before_action :authenticate_user!, except: [:index, :show]
+  before_action :detect_crawler
   before_action :load_event, only: [:show, :destroy]
   before_action :set_include, only: [:index, :show, :create, :update]
   authorize_resource only: [:destroy]
