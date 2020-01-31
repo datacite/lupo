@@ -51,8 +51,8 @@ module Crosscitable
     rescue NoMethodError, ArgumentError => exception
       Raven.capture_exception(exception)
 
-      logger.error "Error " + exception.message + " for doi " + @doi + "."
-      logger.error exception
+      Rails.logger.error "Error " + exception.message + " for doi " + @doi + "."
+      Rails.logger.error exception
 
       {}
     end
@@ -117,8 +117,8 @@ module Crosscitable
       doc = Nokogiri::XML(string) { |config| config.strict.noblanks }
       doc.to_xml
     rescue ArgumentError, Encoding::CompatibilityError => exception
-      logger.error "Error " + exception.message + "."
-      logger.error exception
+      Rails.logger.error "Error " + exception.message + "."
+      Rails.logger.error exception
 
       nil
     end

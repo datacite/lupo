@@ -296,7 +296,7 @@ class Event < ActiveRecord::Base
     # get every id between from_id and until_id
     (from_id..until_id).step(500).each do |id|
       EventImportByIdJob.perform_later(id: id)
-      logger.info "Queued importing for events with IDs starting with #{id}." unless Rails.env.test?
+      Rails.logger.info "Queued importing for events with IDs starting with #{id}." unless Rails.env.test?
     end
   end
 
@@ -317,19 +317,19 @@ class Event < ActiveRecord::Base
       # log errors
       errors += response["items"].map { |k, v| k.values.first["error"] }.compact.length
       response["items"].select { |k, v| k.values.first["error"].present? }.each do |err|
-        logger.error "[Elasticsearch] " + err.inspect
+        Rails.logger.error "[Elasticsearch] " + err.inspect
       end
 
       count += events.length
     end
 
     if errors > 1
-      logger.error "[Elasticsearch] #{errors} errors importing #{count} events with IDs #{id} - #{(id + 499)}."
+      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} events with IDs #{id} - #{(id + 499)}."
     elsif count > 0
-      logger.info "[Elasticsearch] Imported #{count} events with IDs #{id} - #{(id + 499)}."
+      Rails.logger.info "[Elasticsearch] Imported #{count} events with IDs #{id} - #{(id + 499)}."
     end
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    logger.info "[Elasticsearch] Error #{error.message} importing events with IDs #{id} - #{(id + 499)}."
+    Rails.logger.info "[Elasticsearch] Error #{error.message} importing events with IDs #{id} - #{(id + 499)}."
 
     count = 0
 
@@ -338,7 +338,7 @@ class Event < ActiveRecord::Base
       count += 1
     end
 
-    logger.info "[Elasticsearch] Imported #{count} events with IDs #{id} - #{(id + 499)}."
+    Rails.logger.info "[Elasticsearch] Imported #{count} events with IDs #{id} - #{(id + 499)}."
   end
 
   def self.update_crossref(options = {})
@@ -346,7 +346,7 @@ class Event < ActiveRecord::Base
     cursor = (options[:cursor] || [])
 
     response = Event.query(nil, source_id: "crossref", page: { size: 1, cursor: [] })
-    logger.info "[Update] #{response.results.total} events for source crossref."
+    Rails.logger.info "[Update] #{response.results.total} events for source crossref."
 
     # walk through results using cursor
     if response.results.total > 0
@@ -354,7 +354,7 @@ class Event < ActiveRecord::Base
         response = Event.query(nil, source_id: "crossref", page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
 
-        logger.info "[Update] Updating #{response.results.results.length} crossref events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Update] Updating #{response.results.results.length} crossref events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         dois = response.results.results.map(&:subj_id).uniq
@@ -392,7 +392,7 @@ class Event < ActiveRecord::Base
     source_id = "datacite-#{ra}"
 
     response = Event.query(nil, source_id: source_id, page: { size: 1, cursor: cursor })
-    logger.info "[Update] #{response.results.total} events for source #{source_id}."
+    Rails.logger.info "[Update] #{response.results.total} events for source #{source_id}."
 
     # walk through results using cursor
     if response.results.total > 0
@@ -400,7 +400,7 @@ class Event < ActiveRecord::Base
         response = Event.query(nil, source_id: source_id, page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
 
-        logger.info "[Update] Updating #{response.results.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Update] Updating #{response.results.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         dois = response.results.results.map(&:obj_id).uniq
@@ -422,7 +422,7 @@ class Event < ActiveRecord::Base
     query = options[:query] || "registrant_id:*crossref.citations"
 
     response = Event.query(query, source_id: source_id, citation_type: citation_type, page: { size: 1, cursor: cursor })
-    logger.info "[Update] #{response.results.total} events for sources #{source_id}."
+    Rails.logger.info "[Update] #{response.results.total} events for sources #{source_id}."
 
     # walk through results using cursor
     if response.results.total > 0
@@ -430,7 +430,7 @@ class Event < ActiveRecord::Base
         response = Event.query(query, source_id: source_id, citation_type: citation_type, page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
 
-        logger.info "[Update] Updating #{response.results.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Update] Updating #{response.results.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         ids = response.results.results.map(&:uuid).uniq
@@ -447,7 +447,7 @@ class Event < ActiveRecord::Base
     cursor = (options[:cursor] || []).to_i
 
     response = Event.query(nil, source_id: "datacite-orcid-auto-update", page: { size: 1, cursor: cursor })
-    logger.info "[Update] #{response.results.total} events for source datacite-orcid-auto-update."
+    Rails.logger.info "[Update] #{response.results.total} events for source datacite-orcid-auto-update."
 
     # walk through results using cursor
     if response.results.total > 0
@@ -455,7 +455,7 @@ class Event < ActiveRecord::Base
         response = Event.query(nil, source_id: "datacite-orcid-auto-update", page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
 
-        logger.info "[Update] Updating #{response.results.results.length} datacite-orcid-auto-update events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Update] Updating #{response.results.results.length} datacite-orcid-auto-update events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         ids = response.results.results.map(&:obj_id).uniq

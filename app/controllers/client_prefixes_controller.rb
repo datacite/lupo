@@ -89,7 +89,7 @@ class ClientPrefixesController < ApplicationController
   
       render json: ClientPrefixSerializer.new(@client_prefix, options).serialized_json, status: :created
     else
-      logger.error @client_prefix.errors.inspect
+      Rails.logger.error @client_prefix.errors.inspect
       render json: serialize_errors(@client_prefix.errors), status: :unprocessable_entity
     end
   end
