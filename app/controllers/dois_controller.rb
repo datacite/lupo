@@ -20,6 +20,12 @@ class DoisController < ApplicationController
           when "-updated" then { updated: { order: 'desc' }}
           when "published" then { published: { order: 'asc' }}
           when "-published" then { published: { order: 'desc' }}
+          when "view-count" then { view_count: { order: 'asc' }}
+          when "-view-count" then { view_count: { order: 'desc' }}
+          when "download-count" then { download_count: { order: 'asc' }}
+          when "-download-count" then { download_count: { order: 'desc' }}
+          when "citation-count" then { citation_count: { order: 'asc' }}
+          when "-citation-count" then { citation_count: { order: 'desc' }}
           when "relevance" then { "_score": { "order": "desc" }}
           else { updated: { order: 'desc' }}
           end

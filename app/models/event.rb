@@ -19,6 +19,7 @@ class Event < ActiveRecord::Base
   include Elasticsearch::Model
 
   before_validation :set_defaults
+  before_create :set_source_and_target_doi
 
   validates :uuid, format: { with: /\A[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/i }
 
@@ -80,7 +81,6 @@ class Event < ActiveRecord::Base
      "is-referenced-by"
   ]
 
-
   RELATIONS_RELATION_TYPES = [
     "compiles", "is-compiled-by",
     "documents", "is-documented-by",
@@ -122,7 +122,7 @@ class Event < ActiveRecord::Base
       proxyIdentifiers: { type: :keyword },
       datePublished: { type: :date, format: "date_optional_time||yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true },
       registrantId: { type: :keyword },
-      cache_key: { type: :keyword }
+      cache_key: { type: :keyword },
     }
     indexes :obj,               type: :object, properties: {
       type: { type: :keyword },
@@ -131,10 +131,13 @@ class Event < ActiveRecord::Base
       proxyIdentifiers: { type: :keyword },
       datePublished: { type: :date, format: "date_optional_time||yyyy-MM-dd||yyyy-MM||yyyy", ignore_malformed: true },
       registrantId: { type: :keyword },
-      cache_key: { type: :keyword }
+      cache_key: { type: :keyword },
     }
+    indexes :source_doi,       type: :keyword
+    indexes :target_doi,       type: :keyword
+    indexes :source_relation_type_id, type: :keyword
+    indexes :target_relation_type_id, type: :keyword
     indexes :source_id,        type: :keyword
-    # indexes :doi_id,           type: :keyword
     indexes :source_token,     type: :keyword
     indexes :message_action,   type: :keyword
     indexes :relation_type_id, type: :keyword
@@ -164,6 +167,10 @@ class Event < ActiveRecord::Base
       "obj_id" => obj_id,
       "subj" => subj.merge(cache_key: subj_cache_key),
       "obj" => obj.merge(cache_key: obj_cache_key),
+      "source_doi" => source_doi,
+      "target_doi" => target_doi,
+      "source_relation_type_id" => source_relation_type_id,
+      "target_relation_type_id" => target_relation_type_id,
       "doi" => doi,
       "orcid" => orcid,
       "issn" => issn,
@@ -171,7 +178,6 @@ class Event < ActiveRecord::Base
       "subtype" => subtype,
       "citation_type" => citation_type,
       "source_id" => source_id,
-      # "doi_id" => doi_id,
       "source_token" => source_token,
       "message_action" => message_action,
       "relation_type_id" => relation_type_id,
@@ -359,6 +365,31 @@ class Event < ActiveRecord::Base
 
         dois = response.results.results.map(&:subj_id).uniq
         CrossrefDoiJob.perform_later(dois)
+      end
+    end
+
+    response.results.total
+  end
+
+  def self.update_target_doi(options = {})
+    size = (options[:size] || 1000).to_i
+    cursor = (options[:cursor] || [])
+
+    response = Event.query(nil, target_doi: nil, page: { size: 1, cursor: [] })
+    Rails.logger.info "[Update] #{response.results.total} events with no target_doi."
+
+    # walk through results using cursor
+    if response.results.total > 0
+      while response.results.results.length > 0 do
+        response = Event.query(nil, target_doi: nil, page: { size: size, cursor: cursor })
+        break unless response.results.results.positive?
+
+        Rails.logger.info "[Update] Updating #{response.results.results.length} events with no target_doi starting with _id #{response.results.to_a.first[:_id]}."
+        cursor = response.results.to_a.last[:sort]
+
+        ids = response.results.results.map(&:uuid).uniq
+
+        TargetDoiJob.perform_later(ids, options)
       end
     end
 
@@ -582,6 +613,47 @@ class Event < ActiveRecord::Base
     item[:publication_year].to_s if item.present?
   end
 
+  def set_source_and_target_doi
+    case relation_type_id
+    when *ACTIVE_RELATION_TYPES
+      self.source_doi = doi_from_url(subj_id)
+      self.target_doi = doi_from_url(obj_id)
+      self.source_relation_type_id = "references"
+      self.target_relation_type_id = "citations"
+    when *PASSIVE_RELATION_TYPES
+      self.source_doi = doi_from_url(subj_id)
+      self.target_doi = doi_from_url(obj_id)
+      self.source_relation_type_id = "citations"
+      self.target_relation_type_id = "references"
+    when "unique-dataset-investigations-regular"
+      self.target_doi = doi_from_url(obj_id)
+      self.target_relation_type_id = "views"
+    when "unique-dataset-requests-regular"
+      self.target_doi = doi_from_url(obj_id)
+      self.target_relation_type_id = "downloads"
+    when "has-version"
+      self.source_doi = doi_from_url(subj_id)
+      self.target_doi = doi_from_url(obj_id)
+      self.source_relation_type_id = "versions"
+      self.target_relation_type_id = "version_of"
+    when "is-version-of"
+      self.source_doi = doi_from_url(obj_id)
+      self.target_doi = doi_from_url(subj_id)
+      self.source_relation_type_id = "versions"
+      self.target_relation_type_id = "version_of"
+    when "has-part"
+      self.source_doi = doi_from_url(subj_id)
+      self.target_doi = doi_from_url(obj_id)
+      self.source_relation_type_id = "parts"
+      self.target_relation_type_id = "part_of"
+    when "is-part-of"
+      self.source_doi = doi_from_url(obj_id)
+      self.target_doi = doi_from_url(subj_id)
+      self.source_relation_type_id = "parts"
+      self.target_relation_type_id = "part_of"
+    end
+  end
+
   def set_defaults
     self.uuid = SecureRandom.uuid if uuid.blank?
     self.subj_id = normalize_doi(subj_id) || subj_id
@@ -590,9 +662,6 @@ class Event < ActiveRecord::Base
     # make sure subj and obj have correct id
     self.subj = subj.to_h.merge("id" => self.subj_id)
     self.obj = obj.to_h.merge("id" => self.obj_id)
-
-    # set doi_id for views and downloads
-    # self.doi_id = doi_from_url(obj_id) if source_id == "datacite-usage"
 
     self.total = 1 if total.blank?
     self.relation_type_id = "references" if relation_type_id.blank?

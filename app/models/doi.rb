@@ -72,8 +72,10 @@ class Doi < ActiveRecord::Base
   belongs_to :client, foreign_key: :datacentre
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
   has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
-  # has_many :views, -> { where relation_type_id: "unique-dataset-investigations-regular" }, class_name: "Event", primary_key: :doi, foreign_key: :doi_id, dependent: :destroy
-  # has_many :downloads, -> { where relation_type_id: "unique-dataset-requests-regular" }, class_name: "Event", primary_key: :doi, foreign_key: :doi_id, dependent: :destroy
+  has_many :views, -> { where target_relation_type_id: "views" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  has_many :downloads, -> { where target_relation_type_id: "downloads" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  has_many :references, -> { where source_relation_type_id: "references" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
+  has_many :citations, -> { where target_relation_type_id: "references" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
 
   delegate :provider, to: :client, allow_nil: true
   delegate :consortium_id, to: :provider, allow_nil: true
@@ -404,10 +406,12 @@ class Doi < ActiveRecord::Base
         consortium_organizations: { type: :object },
       }
       indexes :resource_type, type: :object
-      # indexes :view_ids, type: :keyword
-      # indexes :views, type: :object
-      # indexes :download_ids, type: :keyword
-      # indexes :downloads, type: :object
+      indexes :view_count, type: :integer
+      indexes :download_count, type: :integer
+      indexes :reference_count, type: :integer
+      indexes :citation_count, type: :integer
+      indexes :views_over_time, type: :object
+      indexes :downloads_over_time, type: :object
     end
   end
 
@@ -429,8 +433,16 @@ class Doi < ActiveRecord::Base
       "consortium_id" => consortium_id,
       "resource_type_id" => resource_type_id,
       "media_ids" => media_ids,
-      # "view_ids" => view_ids,
-      # "download_ids" => download_ids,
+      "view_ids" => view_ids,
+      "view_count" => view_count,
+      "views_over_time" => views_over_time,
+      "download_ids" => download_ids,
+      "download_count" => download_count,
+      "downloads_over_time" => downloads_over_time,
+      "reference_ids" => reference_ids,
+      "reference_count" => reference_count,
+      "citation_ids" => citation_ids,
+      "citation_count" => citation_count,
       "prefix" => prefix,
       "suffix" => suffix,
       "types" => types,
@@ -859,18 +871,49 @@ class Doi < ActiveRecord::Base
     media.pluck(:id).map { |m| Base32::URL.encode(m, split: 4, length: 16) }.compact
   end
 
-  # def view_ids
-  #   views.pluck(:doi_id)
-  # end
+  def view_ids
+    views.pluck(:uuid)
+  end
 
-  # def download_ids
-  #   downloads.pluck(:doi_id)
-  # end
+  def view_count
+    views.pluck(:total).inject(:+)
+  end
 
+  def views_over_time
+    views.pluck(:occurred_at, :total).map { |v| { year_month: v[0].present? ? v[0].utc.iso8601[0..6] : nil, total: v[1] } }
+  end
+
+  def download_ids
+    downloads.pluck(:uuid)
+  end
+
+  def download_count
+    downloads.pluck(:total).inject(:+)
+  end
+
+  def downloads_over_time
+    downloads.pluck(:occurred_at, :total).map { |v| { year_month: v[0].present? ? v[0].utc.iso8601[0..6] : nil, total: v[1] } }
+  end
+
+  def reference_ids
+    references.pluck(:uuid)
+  end
+
+  def reference_count
+    references.count
+  end
+
+  def citation_ids
+    citations.pluck(:uuid)
+  end
+
+  def citation_count
+    citations.count
+  end
 
   def xml_encoded
     Base64.strict_encode64(xml) if xml.present?
-  rescue ArgumentError => exception
+  rescue ArgumentError
     nil
   end
 

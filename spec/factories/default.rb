@@ -335,6 +335,23 @@ FactoryBot.define do
       relation_type_id { "references" }
     end
 
+    factory :event_for_datacite_crossref do
+      source_id { "datacite_crossref" }
+      source_token { "datacite_crossref_123" }
+      subj_id { "https://doi.org/10.5061/DRYAD.47SD5e" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      sequence(:obj_id) { |n| "https://doi.org/10.1371/journal.pbio.200141#{n}" }
+      relation_type_id { "is-referenced-by" }
+    end
+
+    factory :event_for_crossref do
+      source_id { "crossref" }
+      source_token { "crossref_123" }
+      subj_id { "https://doi.org/10.1371/journal.pbio.2001414" }
+      sequence(:obj_id) { |n| "https://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
+      relation_type_id { "references" }
+    end
+
     factory :event_for_datacite_usage do
       source_id { "datacite-usage" }
       source_token { "5348967fhdjksr3wyui325" }
