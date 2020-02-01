@@ -106,7 +106,10 @@ module Lupo
     #   }
     # end
     # config.logger = config.lograge.logger
-    # config.active_record.logger = nil
+    
+    # Disable loggers that log to file
+    config.active_record.logger = nil
+    config.active_job.logger = nil
 
     # configure caching
     config.cache_store = :dalli_store, nil, { :namespace => ENV['APPLICATION'] }
