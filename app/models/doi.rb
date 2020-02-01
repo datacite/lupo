@@ -876,7 +876,7 @@ class Doi < ActiveRecord::Base
   end
 
   def view_count
-    views.pluck(:total).inject(:+)
+    views.pluck(:total).inject(:+).to_i
   end
 
   def views_over_time
@@ -888,7 +888,7 @@ class Doi < ActiveRecord::Base
   end
 
   def download_count
-    downloads.pluck(:total).inject(:+)
+    downloads.pluck(:total).inject(:+).to_i
   end
 
   def downloads_over_time
