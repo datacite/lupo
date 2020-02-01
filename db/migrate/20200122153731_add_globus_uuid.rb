@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddGlobusUuid < ActiveRecord::Migration[5.2]
   def change
     add_column :datacentre, :globus_uuid, :string, limit: 191

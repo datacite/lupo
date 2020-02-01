@@ -245,16 +245,16 @@ ActiveRecord::Schema.define(version: 2020_01_31_180609) do
     t.integer "total", default: 1
     t.string "license", limit: 191
     t.text "doi_id"
-    t.text "source_id"
-    t.text "target_id"
+    t.text "source_doi"
+    t.text "target_doi"
     t.string "source_relation_type_id", limit: 191
     t.string "target_relation_type_id", limit: 191
     t.index ["created_at", "indexed_at", "updated_at"], name: "index_events_on_created_indexed_updated"
     t.index ["created_at"], name: "index_events_on_source_id_created_at"
     t.index ["relation_type_id"], name: "index_events_on_doi_id"
-    t.index ["source_id", "source_relation_type_id"], name: "index_events_on_source_id", length: { source_id: 100 }
+    t.index ["source_doi", "source_relation_type_id"], name: "index_events_on_source_doi", length: { source_doi: 100 }
     t.index ["subj_id", "obj_id", "relation_type_id"], name: "index_events_on_multiple_columns", unique: true, length: { subj_id: 191, obj_id: 191 }
-    t.index ["target_id", "target_relation_type_id"], name: "index_events_on_target_id", length: { target_id: 100 }
+    t.index ["target_doi", "target_relation_type_id"], name: "index_events_on_target_doi", length: { target_doi: 100 }
     t.index ["updated_at"], name: "index_events_on_updated_at"
     t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
   end
