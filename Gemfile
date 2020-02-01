@@ -69,8 +69,7 @@ gem "sprockets", "~> 3.7", ">= 3.7.2"
 gem 'uuid', '~> 2.3', '>= 2.3.9'
 gem 'strong_migrations', '~> 0.6.0'
 gem 'crawler_detect'
-
-
+gem 'lhm', '~> 2.2'
 
 group :development, :test do
   gem "rspec-rails", "~> 3.8", ">= 3.8.2"
