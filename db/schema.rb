@@ -229,6 +229,7 @@ ActiveRecord::Schema.define(version: 2020_01_31_180609) do
     t.text "uuid", null: false
     t.text "subj_id", null: false
     t.text "obj_id"
+    t.string "source_id", limit: 191
     t.string "aasm_state"
     t.string "state_event"
     t.text "callback"
