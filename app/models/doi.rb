@@ -518,7 +518,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_fields
-    ["uid^50", "doi^50", "related_identifiers.relatedIdentifier^10", "funding_references.relatedIdentifier^10", "container.identifier^10", 'titles.title^3', 'creator_names^3', 'creators.name^3', 'creators.id^3', 'publisher^3', 'descriptions.description^3', 'types.resourceTypeGeneral^3', 'subjects.subject^3', 'client.uid^3', 'provider.uid^3', '_all']
+    ["uid^50", "related_identifiers.relatedIdentifier^3", "funding_references.relatedIdentifier^3", "container.identifier^3", 'titles.title^3', 'creator_names^3', 'creators.name^3', 'creators.id^3', 'publisher^3', 'descriptions.description^3', 'types.resourceTypeGeneral^3', 'subjects.subject^3', 'client.uid^3', 'provider.uid^3', '_all']
   end
 
   # return results for one or more ids
