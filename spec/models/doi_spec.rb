@@ -552,7 +552,6 @@ describe Doi, type: :model, vcr: true do
 
     it "has views" do
       expect(doi.views.count).to eq(3)
-      expect(doi.view_ids.count).to eq(3)
       expect(doi.view_count).to eq(75)
       expect(doi.views_over_time.first).to eq(:total=>25, :year_month=>"2015-06")
 
@@ -574,7 +573,6 @@ describe Doi, type: :model, vcr: true do
 
     it "has downloads" do
       expect(doi.downloads.count).to eq(3)
-      expect(doi.download_ids.count).to eq(3)
       expect(doi.download_count).to eq(30)
       expect(doi.downloads_over_time.first).to eq(:total=>10, :year_month=>"2015-06")
 
@@ -608,7 +606,7 @@ describe Doi, type: :model, vcr: true do
   describe "citations", elasticsearch: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:citations) { create_list(:event_for_datacite_crossref, 3, subj_id: "https://doi.org/#{doi.doi}", relation_type_id: "is-referenced-by") }
+    let!(:citations) { create_list(:event_for_datacite_crossref, 1, subj_id: "https://doi.org/#{doi.doi}", relation_type_id: "is-referenced-by") }
 
     before do
       Doi.import
@@ -616,13 +614,97 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "has citations" do
-      expect(doi.citations.count).to eq(3)
-      expect(doi.citation_ids.count).to eq(3)
-      expect(doi.citation_count).to eq(3)
+      expect(doi.citations.count).to eq(1)
+      expect(doi.citation_ids.count).to eq(1)
+      expect(doi.citation_count).to eq(1)
 
       citation = doi.citations.first
-      expect(citation.source_doi).to eq(doi.uid)
+      expect(citation.target_doi).to eq(doi.uid)
       expect(citation.total).to eq(1)
+    end
+  end
+
+  describe "parts", elasticsearch: true do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:parts) { create_list(:event_for_datacite_parts, 3, subj_id: "https://doi.org/#{doi.doi}", relation_type_id: "has-part") }
+
+    before do
+      Doi.import
+      sleep 1
+    end
+
+    it "has parts" do
+      expect(doi.parts.count).to eq(3)
+      expect(doi.part_ids.count).to eq(3)
+      expect(doi.part_count).to eq(3)
+
+      part = doi.parts.first
+      expect(part.source_doi).to eq(doi.uid)
+      expect(part.total).to eq(1)
+    end
+  end
+
+  describe "part of", elasticsearch: true do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:part_of) { create_list(:event_for_datacite_part_of, 1, subj_id: "https://doi.org/#{doi.doi}", relation_type_id: "is-part-of") }
+
+    before do
+      Doi.import
+      sleep 1
+    end
+
+    it "has part of" do
+      expect(doi.part_of.count).to eq(1)
+      expect(doi.part_of_ids.count).to eq(1)
+      expect(doi.part_of_count).to eq(1)
+
+      part_of = doi.part_of.first
+      expect(part_of.target_doi).to eq(doi.uid)
+      expect(part_of.total).to eq(1)
+    end
+  end
+
+  describe "versions", elasticsearch: true do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:versions) { create_list(:event_for_datacite_parts, 3, subj_id: "https://doi.org/#{doi.doi}", relation_type_id: "has-version") }
+
+    before do
+      Doi.import
+      sleep 1
+    end
+
+    it "has versions" do
+      expect(doi.versions.count).to eq(3)
+      expect(doi.version_ids.count).to eq(3)
+      expect(doi.version_count).to eq(3)
+
+      version = doi.versions.first
+      expect(version.source_doi).to eq(doi.uid)
+      expect(version.total).to eq(1)
+    end
+  end
+
+  describe "version of", elasticsearch: true do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:part_of) { create_list(:event_for_datacite_part_of, 1, subj_id: "https://doi.org/#{doi.doi}", relation_type_id: "is-version-of") }
+
+    before do
+      Doi.import
+      sleep 1
+    end
+
+    it "has version of" do
+      expect(doi.version_of.count).to eq(1)
+      expect(doi.version_of_ids.count).to eq(1)
+      expect(doi.version_of_count).to eq(1)
+
+      version_of = doi.version_of.first
+      expect(version_of.target_doi).to eq(doi.uid)
+      expect(version_of.total).to eq(1)
     end
   end
 

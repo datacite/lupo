@@ -21,7 +21,7 @@ class Event < ActiveRecord::Base
   before_validation :set_defaults
   before_create :set_source_and_target_doi
 
-  validates :uuid, format: { with: /\A[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/i }
+  validate :uuid_format
 
   # include state machine
   include AASM
@@ -552,6 +552,10 @@ class Event < ActiveRecord::Base
     nil
   end
 
+  def uuid_format
+    errors.add(:uuid, "#{uuid} is not a valid UUID") unless UUID.validate(uuid)
+  end
+
   def registrant_id
     [subj["registrant_id"], obj["registrant_id"], subj["provider_id"], obj["provider_id"]].compact
   end
@@ -621,10 +625,10 @@ class Event < ActiveRecord::Base
       self.source_relation_type_id = "references"
       self.target_relation_type_id = "citations"
     when *PASSIVE_RELATION_TYPES
-      self.source_doi = doi_from_url(subj_id)
-      self.target_doi = doi_from_url(obj_id)
-      self.source_relation_type_id = "citations"
-      self.target_relation_type_id = "references"
+      self.source_doi = doi_from_url(obj_id)
+      self.target_doi = doi_from_url(subj_id)
+      self.source_relation_type_id = "references"
+      self.target_relation_type_id = "citations"
     when "unique-dataset-investigations-regular"
       self.target_doi = doi_from_url(obj_id)
       self.target_relation_type_id = "views"

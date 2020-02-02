@@ -335,12 +335,30 @@ FactoryBot.define do
       relation_type_id { "references" }
     end
 
+    factory :event_for_datacite_parts do
+      source_id { "datacite_related" }
+      source_token { "datacite_related_123" }
+      subj_id { "http://doi.org/10.5061/DRYAD.47SD5" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      sequence(:obj_id) { |n| "http://doi.org/10.5061/DRYAD.47SD5/#{n}" }
+      relation_type_id { "has-part" }
+    end
+
+    factory :event_for_datacite_part_of do
+      source_id { "datacite_related" }
+      source_token { "datacite_related_123" }
+      subj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      obj_id { "http://doi.org/10.5061/DRYAD.47SD5" }
+      relation_type_id { "is-part-of" }
+    end
+
     factory :event_for_datacite_crossref do
       source_id { "datacite_crossref" }
       source_token { "datacite_crossref_123" }
-      subj_id { "https://doi.org/10.5061/DRYAD.47SD5e" }
+      sequence(:subj_id) { |n| "https://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
       subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
-      sequence(:obj_id) { |n| "https://doi.org/10.1371/journal.pbio.200141#{n}" }
+      obj_id { "https://doi.org/10.1371/journal.pbio.2001414" }
       relation_type_id { "is-referenced-by" }
     end
 
