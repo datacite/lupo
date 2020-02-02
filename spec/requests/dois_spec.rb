@@ -196,6 +196,21 @@ describe "dois", type: :request do
       expect(json.dig('data', 'attributes', 'viewCount')).to eq(75)
       expect(json.dig('data', 'attributes', 'viewsOverTime')).to eq([{"total"=>25, "year_month"=>"2015-06"}, {"total"=>25, "year_month"=>"2015-06"}, {"total"=>25, "year_month"=>"2015-06"}])
     end
+
+    it "has views meta" do
+      get "/dois", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'views')).to eq([{"count"=>75, "id"=>"2011", "title"=>"2011"}])
+    end
+
+    it "repository shows summary count" do
+      get "/repositories/#{client.uid}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
+      expect(json.dig('meta', 'views')).to eq([{"count"=>75, "id"=>"2011", "title"=>"2011"}])
+    end
   end
 
   describe "downloads", elasticsearch: true, vcr: true do
@@ -217,6 +232,21 @@ describe "dois", type: :request do
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
       expect(json.dig('data', 'attributes', 'downloadCount')).to eq(30)
       expect(json.dig('data', 'attributes', 'downloadsOverTime')).to eq([{"total"=>10, "year_month"=>"2015-06"}, {"total"=>10, "year_month"=>"2015-06"}, {"total"=>10, "year_month"=>"2015-06"}])
+    end
+
+    it "has downloads meta" do
+      get "/dois", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'downloads')).to eq([{"count"=>30, "id"=>"2011", "title"=>"2011"}])
+    end
+
+    it "repository shows summary count" do
+      get "/repositories/#{client.uid}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
+      expect(json.dig('meta', 'downloads')).to eq([{"count"=>30, "id"=>"2011", "title"=>"2011"}])
     end
   end
 
@@ -265,6 +295,22 @@ describe "dois", type: :request do
       expect(json.dig('data', 'relationships', 'citations', 'data').length).to eq(1)
       expect(json.dig('included').length).to eq(2)
       expect(json.dig('included', 0, 'attributes', 'relationTypeId')).to eq("is-referenced-by")
+    end
+
+    it "has downloads meta" do
+      get "/dois", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
+    end
+
+    it "repository shows summary count" do
+      get "/repositories/#{client.uid}", nil, headers
+
+      puts last_response.body
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
+      expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
     end
   end
 

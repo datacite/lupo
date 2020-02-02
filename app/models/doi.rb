@@ -534,9 +534,24 @@ class Doi < ActiveRecord::Base
       sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
       subjects: { terms: { field: 'subjects.subject', size: 15, min_doc_count: 1 } },
       certificates: { terms: { field: 'client.certificate', size: 15, min_doc_count: 1 } },
-      views: { value_count: { field: "views_count" } },
-      downloads: { value_count: { field: "download_count" } },
-      citations: { value_count: { field: "citation_count" } },
+      views: {
+        date_histogram: { field: "publication_year", interval: "year", min_doc_count: 1 },
+        aggs: {
+          metric_count: { sum: { field: "view_count" } },
+        }
+      },
+      downloads: {
+        date_histogram: { field: "publication_year", interval: "year", min_doc_count: 1 }, 
+        aggs: {
+          metric_count: { sum: { field: "download_count" } }, 
+        }
+      },
+      citations: {
+        date_histogram: { field: "publication_year", interval: "year", min_doc_count: 1 }, 
+        aggs: {
+          metric_count: { sum: { field: "citation_count" } },
+        }
+      },
     }
   end
 

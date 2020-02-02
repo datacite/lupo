@@ -33,6 +33,14 @@ module Facetable
       end
     end
 
+    def metric_facet_by_year(arr)
+      arr.map do |hsh|
+        { "id" => hsh["key_as_string"][0..3],
+          "title" => hsh["key_as_string"][0..3],
+          "count" => hsh.dig("metric_count", "value").to_i }
+      end
+    end
+
     def facet_annual(arr)
       arr.map do |hsh|
         { "id" => hsh["key"][0..3],

@@ -170,33 +170,33 @@ class DoisController < ApplicationController
         certificates = nil
 
         bm = Benchmark.ms {
-          states = total > 0 ? facet_by_key(response.aggregations.states.buckets) : nil
-          resource_types = total > 0 ? facet_by_resource_type(response.aggregations.resource_types.buckets) : nil
-          years = total > 0 ? facet_by_year(response.aggregations.years.buckets) : nil
-          created = total > 0 ? facet_by_year(response.aggregations.created.buckets) : nil
-          registered = total > 0 ? facet_by_year(response.aggregations.registered.buckets) : nil
-          providers = total > 0 ? facet_by_provider(response.aggregations.providers.buckets) : nil
-          clients = total > 0 ? facet_by_client(response.aggregations.clients.buckets) : nil
-          prefixes = total > 0 ? facet_by_key(response.aggregations.prefixes.buckets) : nil
-          schema_versions = total > 0 ? facet_by_schema(response.aggregations.schema_versions.buckets) : nil
+          states = total.positive? ? facet_by_key(response.aggregations.states.buckets) : nil
+          resource_types = total.positive? ? facet_by_resource_type(response.aggregations.resource_types.buckets) : nil
+          years = total.positive? ? facet_by_year(response.aggregations.years.buckets) : nil
+          created = total.positive? ? facet_by_year(response.aggregations.created.buckets) : nil
+          registered = total.positive? ? facet_by_year(response.aggregations.registered.buckets) : nil
+          providers = total.positive? ? facet_by_provider(response.aggregations.providers.buckets) : nil
+          clients = total.positive? ? facet_by_client(response.aggregations.clients.buckets) : nil
+          prefixes = total.positive? ? facet_by_key(response.aggregations.prefixes.buckets) : nil
+          schema_versions = total.positive? ? facet_by_schema(response.aggregations.schema_versions.buckets) : nil
         }
         logger.warn method: "GET", path: "/dois", message: "AggregationsBasic /dois", duration: bm
 
         bm = Benchmark.ms {
-          affiliations = total > 0 ? facet_by_affiliation(response.aggregations.affiliations.buckets) : nil
-          sources = total > 0 ? facet_by_key(response.aggregations.sources.buckets) : nil
-          subjects = total > 0 ? facet_by_key(response.aggregations.subjects.buckets) : nil
-          certificates = total > 0 ? facet_by_key(response.aggregations.certificates.buckets) : nil
+          affiliations = total.positive? ? facet_by_affiliation(response.aggregations.affiliations.buckets) : nil
+          sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
+          subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
+          certificates = total.positive? ? facet_by_key(response.aggregations.certificates.buckets) : nil
         }
         logger.warn method: "GET", path: "/dois", message: "AggregationsExtended /dois", duration: bm
 
         bm = Benchmark.ms {
-          link_checks_status = total > 0 ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
-          links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
-          link_checks_schema_org_id = total > 0 ? response.aggregations.link_checks_schema_org_id.value : nil
-          link_checks_dc_identifier = total > 0 ? response.aggregations.link_checks_dc_identifier.value : nil
-          link_checks_citation_doi = total > 0 ? response.aggregations.link_checks_citation_doi.value : nil
-          links_checked = total > 0 ? response.aggregations.links_checked.value : nil
+          link_checks_status = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
+          links_with_schema_org = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
+          link_checks_schema_org_id = total.positive? ? response.aggregations.link_checks_schema_org_id.value : nil
+          link_checks_dc_identifier = total.positive? ? response.aggregations.link_checks_dc_identifier.value : nil
+          link_checks_citation_doi = total.positive? ? response.aggregations.link_checks_citation_doi.value : nil
+          links_checked = total.positive? ? response.aggregations.links_checked.value : nil
         }
         logger.warn method: "GET", path: "/dois", message: "AggregationsLinkChecks /dois", duration: bm
 
@@ -204,9 +204,16 @@ class DoisController < ApplicationController
           dois_names =  results.map { |result| result.dig(:_source, :doi) }.join(',')
           metrics_array = get_metrics_array(dois_names)
           results = mix_in_metrics_array(results, metrics_array)
-        end
 
-        person_metrics = params[:mix_in] == "metrics" ? get_person_metrics(params[:user_id]) : {}
+          person_metrics = get_person_metrics(params[:user_id])
+          citations = person_metrics[:citations]
+          views = person_metrics[:views]
+          downloads = person_metrics[:downloads]
+        else
+          citations = total.positive? ? metric_facet_by_year(response.aggregations.citations.buckets) : nil
+          views = total.positive? ? metric_facet_by_year(response.aggregations.views.buckets) : nil
+          downloads = total.positive? ? metric_facet_by_year(response.aggregations.downloads.buckets) : nil
+        end
 
         respond_to do |format|
           format.json do
@@ -234,9 +241,9 @@ class DoisController < ApplicationController
               "linkChecksDcIdentifier" => link_checks_dc_identifier,
               "linkChecksCitationDoi" => link_checks_citation_doi,
               subjects: subjects,
-              citations: person_metrics[:citations],
-              views: person_metrics[:views],
-              downloads: person_metrics[:downloads],
+              citations: citations,
+              views: views,
+              downloads: downloads,
             }.compact
 
             options[:links] = {
@@ -261,7 +268,7 @@ class DoisController < ApplicationController
               mix_in: params[:mix_in],
               metrics: metrics_array,
               affiliation: params[:affiliation],
-              is_collection: options[:is_collection]
+              is_collection: options[:is_collection],
             }
 
             # sparse fieldsets

@@ -14,7 +14,7 @@ module Countable
       else
         response = Doi.query(nil, page: { number: 1, size: 0 })
       end
-      
+
       response.results.total.positive? ? facet_by_year(response.response.aggregations.created.buckets) : []
     end
 
@@ -30,8 +30,8 @@ module Countable
       else
         response = Doi.query(nil, page: { number: 1, size: 0 })
       end
-      
-      response.results.total.positive? ? facet_by_year(response.response.aggregations.views.buckets) : 0
+
+      response.results.total.positive? ? metric_facet_by_year(response.response.aggregations.views.buckets) : []
     end
 
     def download_count(client_id: nil, provider_id: nil, consortium_id: nil, user_id: nil, state: nil)
@@ -46,8 +46,8 @@ module Countable
       else
         response = Doi.query(nil, page: { number: 1, size: 0 })
       end
-      
-      response.results.total.positive? ? facet_by_year(response.response.aggregations.downloads.buckets) : 0
+
+      response.results.total.positive? ? metric_facet_by_year(response.response.aggregations.downloads.buckets) : []
     end
 
     def citation_count(client_id: nil, provider_id: nil, consortium_id: nil, user_id: nil, state: nil)
@@ -62,8 +62,8 @@ module Countable
       else
         response = Doi.query(nil, page: { number: 1, size: 0 })
       end
-      
-      response.results.total.positive? ? facet_by_year(response.response.aggregations.citations.buckets) : 0
+
+      response.results.total.positive? ? metric_facet_by_year(response.response.aggregations.citations.buckets) : []
     end
 
     # cumulative count clients by year

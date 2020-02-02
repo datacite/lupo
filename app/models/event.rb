@@ -196,7 +196,7 @@ class Event < ActiveRecord::Base
       "occurred_at" => occurred_at,
       "citation_id" => citation_id,
       "citation_year" => citation_year,
-      "cache_key" => cache_key
+      "cache_key" => cache_key,
     }
   end
 
