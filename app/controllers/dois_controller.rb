@@ -5,6 +5,8 @@ require 'benchmark'
 class DoisController < ApplicationController
   include ActionController::MimeResponds
   include Crosscitable
+  include MetricsHelper # mixes in your helper method as class method
+
 
   prepend_before_action :authenticate_user!
   before_action :set_include, only: [:index, :show, :create, :update]
@@ -198,6 +200,13 @@ class DoisController < ApplicationController
         }
         logger.warn method: "GET", path: "/dois", message: "AggregationsLinkChecks /dois", duration: bm
 
+        if params[:mix_in] == "metrics"
+          dois_names =  results.map { |result| result.dig(:_source, :doi) }.join(',')
+          metrics_array = get_metrics_array(dois_names)
+          results = mix_in_metrics_array(results, metrics_array)
+        end
+
+        person_metrics = params[:mix_in] == "metrics" ? get_person_metrics(params[:user_id]) : {}
 
         respond_to do |format|
           format.json do
@@ -225,6 +234,9 @@ class DoisController < ApplicationController
               "linkChecksDcIdentifier" => link_checks_dc_identifier,
               "linkChecksCitationDoi" => link_checks_citation_doi,
               subjects: subjects,
+              citations: person_metrics[:citations],
+              views: person_metrics[:views],
+              downloads: person_metrics[:downloads],
             }.compact
 
             options[:links] = {
@@ -247,6 +259,7 @@ class DoisController < ApplicationController
               detail: params[:detail],
               events: params[:events],
               mix_in: params[:mix_in],
+              metrics: metrics_array,
               affiliation: params[:affiliation],
               is_collection: options[:is_collection]
             }
@@ -286,6 +299,11 @@ class DoisController < ApplicationController
     doi = Doi.where(doi: params[:id]).first
     fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: doi, user: current_user)
 
+    if params[:mix_in] == "metrics"
+      metrics_array = get_metrics_array(doi.uid) || []
+      doi = mix_in_metrics(doi, metrics_array.first)
+    end
+
     respond_to do |format|
       format.json do
         options = {}
@@ -295,7 +313,8 @@ class DoisController < ApplicationController
           current_ability: current_ability,
           events: params[:events],
           detail: true,
-          affiliation: params[:affiliation]
+          mix_in: params[:mix_in],
+          affiliation: params[:affiliation],
         }
 
         render json: DoiSerializer.new(doi, options).serialized_json, status: :ok
