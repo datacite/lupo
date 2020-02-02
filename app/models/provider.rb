@@ -45,6 +45,7 @@ class Provider < ActiveRecord::Base
   validates_inclusion_of :focus_area, :in => %w(naturalSciences engineeringAndTechnology medicalAndHealthSciences agriculturalSciences socialSciences humanities general), message: "focus area %s is not included in the list", if: :focus_area?
   validate :freeze_symbol, :on => :update
   validate :can_be_in_consortium
+  validate :uuid_format, if: :globus_uuid?
   validates_format_of :ror_id, :with => /\Ahttps:\/\/ror\.org\/0\w{6}\d{2}\z/, if: :ror_id?, message: "ROR ID should be a url"
   validates_format_of :twitter_handle, :with => /\A@[a-zA-Z0-9_]{1,15}\z/, if: :twitter_handle?
 
@@ -84,13 +85,17 @@ class Provider < ActiveRecord::Base
       analyzer: {
         string_lowercase: { tokenizer: 'keyword', filter: %w(lowercase ascii_folding) }
       },
+      normalizer: {
+        keyword_lowercase: { type: "custom", filter: %w(lowercase) }
+      },
       filter: { ascii_folding: { type: 'asciifolding', preserve_original: true } }
     }
   } do
     mapping dynamic: 'false' do
       indexes :id,            type: :keyword
-      indexes :uid,           type: :keyword
+      indexes :uid,           type: :keyword, normalizer: "keyword_lowercase"
       indexes :symbol,        type: :keyword
+      indexes :globus_uuid,   type: :keyword
       indexes :client_ids,    type: :keyword
       indexes :prefix_ids,    type: :keyword
       indexes :name,          type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }}
@@ -202,6 +207,7 @@ class Provider < ActiveRecord::Base
       "twitter_handle" => twitter_handle,
       "ror_id" => ror_id,
       "salesforce_id" => salesforce_id,
+      "globus_uuid" => globus_uuid,
       "billing_information" => {
         "address" => billing_address,
         "organization" => billing_organization,
@@ -233,7 +239,7 @@ class Provider < ActiveRecord::Base
   def self.query_aggregations
     {
       years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
-      cumulative_years: { terms: { field: 'cumulative_years', min_doc_count: 1, order: { _count: "asc" } } },
+      cumulative_years: { terms: { field: 'cumulative_years', size: 15, min_doc_count: 1, order: { _count: "asc" } } },
       regions: { terms: { field: 'region', size: 10, min_doc_count: 1 } },
       member_types: { terms: { field: 'member_type', size: 10, min_doc_count: 1 } },
       organization_types: { terms: { field: 'organization_type', size: 10, min_doc_count: 1 } },
@@ -526,6 +532,10 @@ class Provider < ActiveRecord::Base
     elsif consortium_id && consortium.member_type != "consortium"
       errors.add(:consortium_id, "The consortium must be of member_type consortium")
     end
+  end
+
+  def uuid_format
+    errors.add(:globus_uuid, "#{globus_uuid} is not a valid UUID") unless UUID.validate(globus_uuid)
   end
 
   def freeze_symbol

@@ -156,6 +156,28 @@ describe Client, type: :model do
     end
   end
 
+  describe "globus_uuid" do
+    let(:client)  { build(:client, provider: provider) }
+
+    it "should support version 1 UUID" do
+      client.globus_uuid = "6d133cee-3d3f-11ea-b77f-2e728ce88125"
+      expect(client.save).to be true
+      expect(client.errors.details).to be_empty
+    end
+
+    it "should support version 4 UUID" do
+      client.globus_uuid = "9908a164-1e4f-4c17-ae1b-cc318839d6c8"
+      expect(client.save).to be true
+      expect(client.errors.details).to be_empty
+    end
+
+    it "should reject string that is not a UUID" do
+      client.globus_uuid = "abc"
+      expect(client.save).to be false
+      expect(client.errors.details).to eq(:globus_uuid=>[{:error=>"abc is not a valid UUID"}])
+    end
+  end
+
   describe "cumulative_years" do
     before(:each) do
       allow(Time).to receive(:now).and_return(Time.mktime(2015, 4, 8))

@@ -4,7 +4,9 @@ class ClientType < BaseObject
   description "Information about clients"
 
   field :id, ID, null: false, hash_key: "uid", description: "Unique identifier for each client"
+  field :type, String, null: false, description: "The type of the item."
   field :name, String, null: false, description: "Client name"
+  field :alternate_name, String, null: true, description: "Client alternate name"
   field :re3data, String, null: true, description: "The re3data identifier for the client"
   field :description, String, null: true, description: "Description of the client"
   field :url, String, null: true, description: "The homepage of the client"
@@ -29,6 +31,10 @@ class ClientType < BaseObject
   field :software_source_codes, ClientSoftwareConnectionWithMetaType, null: false, connection: true, description: "Software managed by the client" do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
+  end
+
+  def type
+    "Client"
   end
 
   def prefixes(**args)

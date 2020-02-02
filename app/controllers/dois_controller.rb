@@ -22,6 +22,12 @@ class DoisController < ApplicationController
           when "-updated" then { updated: { order: 'desc' }}
           when "published" then { published: { order: 'asc' }}
           when "-published" then { published: { order: 'desc' }}
+          when "view-count" then { view_count: { order: 'asc' }}
+          when "-view-count" then { view_count: { order: 'desc' }}
+          when "download-count" then { download_count: { order: 'asc' }}
+          when "-download-count" then { download_count: { order: 'desc' }}
+          when "citation-count" then { citation_count: { order: 'asc' }}
+          when "-citation-count" then { citation_count: { order: 'desc' }}
           when "relevance" then { "_score": { "order": "desc" }}
           else { updated: { order: 'desc' }}
           end
@@ -305,6 +311,7 @@ class DoisController < ApplicationController
         options[:is_collection] = false
         options[:params] = {
           current_ability: current_ability,
+          events: params[:events],
           detail: true,
           mix_in: params[:mix_in],
           affiliation: params[:affiliation],
@@ -527,9 +534,18 @@ class DoisController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:client, :media]
+      
+      if params[:events].present?
+        @include = @include & [:client, :media, :views, :downloads]
+      else
+        @include = @include & [:client, :media]
+      end
     else
-      @include = [:client, :media]
+      if params[:events].present?
+        @include = [:client, :media, :views, :downloads]
+      else
+        @include = [:client, :media]
+      end
     end
   end
 

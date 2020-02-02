@@ -72,9 +72,15 @@ class Doi < ActiveRecord::Base
   belongs_to :client, foreign_key: :datacentre
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
   has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
-  has_many :views, -> { where relation_type_id: "unique-dataset-investigations-regular" }, class_name: "Event", primary_key: :doi, foreign_key: :doi_id, dependent: :destroy
-  has_many :downloads, -> { where relation_type_id: "unique-dataset-requests-regular" }, class_name: "Event", primary_key: :doi, foreign_key: :doi_id, dependent: :destroy
-
+  has_many :views, -> { where target_relation_type_id: "views" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  has_many :downloads, -> { where target_relation_type_id: "downloads" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  has_many :references, -> { where source_relation_type_id: "references" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
+  has_many :citations, -> { where target_relation_type_id: "citations" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  has_many :parts, -> { where source_relation_type_id: "parts" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
+  has_many :part_of, -> { where target_relation_type_id: "part_of" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  has_many :versions, -> { where source_relation_type_id: "versions" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
+  has_many :version_of, -> { where target_relation_type_id: "version_of" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  
   delegate :provider, to: :client, allow_nil: true
   delegate :consortium_id, to: :provider, allow_nil: true
 
@@ -129,7 +135,7 @@ class Doi < ActiveRecord::Base
   } do
     mapping dynamic: 'false' do
       indexes :id,                             type: :keyword
-      indexes :uid,                            type: :keyword
+      indexes :uid,                            type: :keyword, normalizer: "keyword_lowercase"
       indexes :doi,                            type: :keyword
       indexes :identifier,                     type: :keyword
       indexes :url,                            type: :text, fields: { keyword: { type: "keyword" }}
@@ -150,12 +156,12 @@ class Doi < ActiveRecord::Base
           schemeUri: { type: :keyword }
         }},
       }
-      indexes :contributors,                   type: :object, properties: {
+      indexes :contributors, type: :object, properties: {
         nameType: { type: :keyword },
         nameIdentifiers: { type: :object, properties: {
           nameIdentifier: { type: :keyword },
           nameIdentifierScheme: { type: :keyword },
-          schemeUri: { type: :keyword }
+          schemeUri: { type: :keyword },
         }},
         name: { type: :text },
         givenName: { type: :text },
@@ -198,16 +204,16 @@ class Doi < ActiveRecord::Base
       }
       indexes :identifiers,                    type: :object, properties: {
         identifierType: { type: :keyword },
-        identifier: { type: :keyword }
+        identifier: { type: :keyword, normalizer: "keyword_lowercase" },
       }
       indexes :related_identifiers,            type: :object, properties: {
         relatedIdentifierType: { type: :keyword },
-        relatedIdentifier: { type: :keyword },
+        relatedIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
         relationType: { type: :keyword },
         relatedMetadataScheme: { type: :keyword },
         schemeUri: { type: :keyword },
         schemeType: { type: :keyword },
-        resourceTypeGeneral: { type: :keyword }
+        resourceTypeGeneral: { type: :keyword },
       }
       indexes :types,                          type: :object, properties: {
         resourceTypeGeneral: { type: :keyword },
@@ -215,11 +221,11 @@ class Doi < ActiveRecord::Base
         schemaOrg: { type: :keyword },
         bibtex: { type: :keyword },
         citeproc: { type: :keyword },
-        ris: { type: :keyword }
+        ris: { type: :keyword },
       }
       indexes :funding_references,             type: :object, properties: {
         funderName: { type: :keyword },
-        funderIdentifier: { type: :keyword },
+        funderIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
         funderIdentifierType: { type: :keyword },
         awardNumber: { type: :keyword },
         awardUri: { type: :keyword },
@@ -248,7 +254,7 @@ class Doi < ActiveRecord::Base
       }
       indexes :container,                     type: :object, properties: {
         type: { type: :keyword },
-        identifier: { type: :keyword },
+        identifier: { type: :keyword, normalizer: "keyword_lowercase" },
         identifierType: { type: :keyword },
         title: { type: :keyword },
         volume: { type: :keyword },
@@ -296,6 +302,7 @@ class Doi < ActiveRecord::Base
       # include parent objects
       indexes :client,                         type: :object, properties: {
         id: { type: :keyword },
+        uid: { type: :keyword, normalizer: "keyword_lowercase" },
         symbol: { type: :keyword },
         provider_id: { type: :keyword },
         re3data_id: { type: :keyword },
@@ -324,7 +331,7 @@ class Doi < ActiveRecord::Base
       }
       indexes :provider,                       type: :object, properties: {
         id: { type: :keyword },
-        uid: { type: :keyword },
+        uid: { type: :keyword, normalizer: "keyword_lowercase" },
         symbol: { type: :keyword },
         client_ids: { type: :keyword },
         prefix_ids: { type: :keyword },
@@ -363,48 +370,68 @@ class Doi < ActiveRecord::Base
         technical_contact: { type: :object, properties: {
           email: { type: :text },
           given_name: { type: :text},
-          family_name: { type: :text }
+          family_name: { type: :text },
         } },
         secondary_technical_contact: { type: :object, properties: {
           email: { type: :text },
           given_name: { type: :text},
-          family_name: { type: :text }
+          family_name: { type: :text },
         } },
         billing_contact: { type: :object, properties: {
           email: { type: :text },
           given_name: { type: :text},
-          family_name: { type: :text }
+          family_name: { type: :text },
         } },
         secondary_billing_contact: { type: :object, properties: {
           email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
+          given_name: { type: :text },
+          family_name: { type: :text },
         } },
         service_contact: { type: :object, properties: {
           email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
+          given_name: { type: :text },
+          family_name: { type: :text },
         } },
         secondary_service_contact: { type: :object, properties: {
           email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
+          given_name: { type: :text },
+          family_name: { type: :text },
         } },
         voting_contact: { type: :object, properties: {
           email: { type: :text },
-          given_name: { type: :text},
-          family_name: { type: :text }
+          given_name: { type: :text },
+          family_name: { type: :text },
         } },
         created: { type: :date },
         updated: { type: :date },
         deleted_at: { type: :date },
         cumulative_years: { type: :integer, index: "false" },
         consortium: { type: :object },
-        consortium_organizations: { type: :object }
+        consortium_organizations: { type: :object },
       }
       indexes :resource_type, type: :object
-      indexes :views, type: :object
-      indexes :downloads, type: :object
+      indexes :view_count, type: :integer
+      indexes :download_count, type: :integer
+      indexes :reference_count, type: :integer
+      indexes :citation_count, type: :integer
+      indexes :part_count, type: :integer
+      indexes :part_of_count, type: :integer
+      indexes :version_count, type: :integer
+      indexes :version_of_count, type: :integer
+      indexes :views_over_time, type: :object
+      indexes :downloads_over_time, type: :object
+      indexes :reference_ids, type: :keyword
+      indexes :citation_ids, type: :keyword
+      indexes :part_ids, type: :keyword
+      indexes :part_of_ids, type: :keyword
+      indexes :version_ids, type: :keyword
+      indexes :version_of_ids, type: :keyword
+      indexes :references, type: :object
+      indexes :citations, type: :object
+      indexes :parts, type: :object
+      indexes :part_of, type: :object
+      indexes :versions, type: :object
+      indexes :version_of, type: :object
     end
   end
 
@@ -426,6 +453,22 @@ class Doi < ActiveRecord::Base
       "consortium_id" => consortium_id,
       "resource_type_id" => resource_type_id,
       "media_ids" => media_ids,
+      "view_count" => view_count,
+      "views_over_time" => views_over_time,
+      "download_count" => download_count,
+      "downloads_over_time" => downloads_over_time,
+      "reference_ids" => reference_ids,
+      "reference_count" => reference_count,
+      "citation_ids" => citation_ids,
+      "citation_count" => citation_count,
+      "part_ids" => part_ids,
+      "part_count" => part_count,
+      "part_of_ids" => part_of_ids,
+      "part_of_count" => part_of_count,
+      "version_ids" => version_ids,
+      "version_count" => version_count,
+      "version_of_ids" => version_of_ids,
+      "version_of_count" => version_of_count,
       "prefix" => prefix,
       "suffix" => suffix,
       "types" => types,
@@ -461,15 +504,19 @@ class Doi < ActiveRecord::Base
       "provider" => provider.try(:as_indexed_json),
       "resource_type" => resource_type.try(:as_indexed_json),
       "media" => media.map { |m| m.try(:as_indexed_json) },
-      "views" => views.map { |m| m.try(:as_indexed_json) },
-      "downloads" => downloads.map { |m| m.try(:as_indexed_json) }
+      "references" => references.map { |m| m.try(:as_indexed_json) },
+      "citations" => citations.map { |m| m.try(:as_indexed_json) },
+      "parts" => parts.map { |m| m.try(:as_indexed_json) },
+      "part_of" => part_of.map { |m| m.try(:as_indexed_json) },
+      "versions" => versions.map { |m| m.try(:as_indexed_json) },
+      "version_of" => version_of.map { |m| m.try(:as_indexed_json) },
     }
   end
 
   def self.query_aggregations
     {
-      resource_types: { terms: { field: 'types.resourceTypeGeneral', size: 15, min_doc_count: 1 } },
-      states: { terms: { field: 'aasm_state', size: 15, min_doc_count: 1 } },
+      resource_types: { terms: { field: 'types.resourceTypeGeneral', size: 20, min_doc_count: 1 } },
+      states: { terms: { field: 'aasm_state', size: 3, min_doc_count: 1 } },
       years: { date_histogram: { field: 'publication_year', interval: 'year', min_doc_count: 1 } },
       created: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
       registered: { date_histogram: { field: 'registered', interval: 'year', min_doc_count: 1 } },
@@ -513,7 +560,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query_fields
-    ['doi^50', 'id^50', 'titles.title^3', 'creator_names^3', 'creators.name^3', 'creators.id^3', 'publisher^3', 'descriptions.description^3', 'types.resourceTypeGeneral^3', 'subjects.subject^3', 'identifiers.identifier^3', 'related_identifiers.relatedIdentifier^3', '_all']
+    ["uid^50", "related_identifiers.relatedIdentifier^3", "funding_references.relatedIdentifier^3", "container.identifier^3", 'titles.title^3', 'creator_names^3', 'creators.name^3', 'creators.id^3', 'publisher^3', 'descriptions.description^3', 'types.resourceTypeGeneral^3', 'subjects.subject^3', 'client.uid^3', 'provider.uid^3', '_all']
   end
 
   # return results for one or more ids
@@ -578,6 +625,16 @@ class Doi < ActiveRecord::Base
     options[:page] ||= {}
     options[:page][:number] ||= 1
     options[:page][:size] ||= 25
+
+    if options[:totals_agg] == "provider"
+      aggregations = provider_aggregations
+    elsif options[:totals_agg] == "client"
+      aggregations = client_aggregations
+    elsif options[:totals_agg] == "prefix"
+      aggregations = prefix_aggregations
+    else
+      aggregations = get_aggregations_hash(options)
+    end
 
     # Cursor nav use the search after, this should always be an array of values that match the sort.
     if options.dig(:page, :cursor)
@@ -741,13 +798,13 @@ class Doi < ActiveRecord::Base
   def self.import_one(doi_id: nil)
     doi = Doi.where(doi: doi_id).first
     unless doi.present?
-      logger.error "[MySQL] DOI " + doi_id + " not found."
+      Rails.logger.error "[MySQL] DOI " + doi_id + " not found."
       return nil
     end
 
     string = doi.current_metadata.present? ? doi.clean_xml(doi.current_metadata.xml) : nil
     unless string.present?
-      logger.error "[MySQL] No metadata for DOI " + doi.doi + " found: " + doi.current_metadata.inspect
+      Rails.logger.error "[MySQL] No metadata for DOI " + doi.doi + " found: " + doi.current_metadata.inspect
       return nil
     end
 
@@ -758,10 +815,10 @@ class Doi < ActiveRecord::Base
 
     # update_attributes will trigger validations and Elasticsearch indexing
     doi.update_attributes(attrs)
-    logger.info "[MySQL] Imported metadata for DOI " + doi.doi + "."
+    Rails.logger.info "[MySQL] Imported metadata for DOI " + doi.doi + "."
     doi
   rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
-    logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
+    Rails.logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
     Raven.capture_exception(error)
     doi
   end
@@ -773,7 +830,7 @@ class Doi < ActiveRecord::Base
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
       DoiImportByIdJob.perform_later(options.merge(id: id))
-      logger.info "Queued importing for DOIs with IDs starting with #{id}." unless Rails.env.test?
+      Rails.logger.info "Queued importing for DOIs with IDs starting with #{id}." unless Rails.env.test?
     end
 
     (from_id..until_id).to_a.length
@@ -802,21 +859,21 @@ class Doi < ActiveRecord::Base
       # log errors
       errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
       response['items'].select { |k, v| k.values.first['error'].present? }.each do |err|
-        logger.error "[Elasticsearch] " + err.inspect
+        Rails.logger.error "[Elasticsearch] " + err.inspect
       end
 
       count += dois.length
     end
 
     if errors > 1
-      logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs with IDs #{id} - #{(id + 499)}."
+      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs with IDs #{id} - #{(id + 499)}."
     elsif count > 0
-      logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
+      Rails.logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
     end
 
     count
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    logger.info "[Elasticsearch] Error #{error.message} importing DOIs with IDs #{id} - #{(id + 499)}."
+    Rails.logger.info "[Elasticsearch] Error #{error.message} importing DOIs with IDs #{id} - #{(id + 499)}."
 
     count = 0
 
@@ -825,7 +882,7 @@ class Doi < ActiveRecord::Base
       count += 1
     end
 
-    logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
+    Rails.logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
 
     count
   end
@@ -844,9 +901,73 @@ class Doi < ActiveRecord::Base
     media.pluck(:id).map { |m| Base32::URL.encode(m, split: 4, length: 16) }.compact
   end
 
+  def view_count
+    views.pluck(:total).inject(:+).to_i
+  end
+
+  def views_over_time
+    views.pluck(:occurred_at, :total).map { |v| { year_month: v[0].present? ? v[0].utc.iso8601[0..6] : nil, total: v[1] } }
+  end
+
+  def download_count
+    downloads.pluck(:total).inject(:+).to_i
+  end
+
+  def downloads_over_time
+    downloads.pluck(:occurred_at, :total).map { |v| { year_month: v[0].present? ? v[0].utc.iso8601[0..6] : nil, total: v[1] } }
+  end
+
+  def reference_ids
+    references.pluck(:uuid)
+  end
+
+  def reference_count
+    references.count
+  end
+
+  def citation_ids
+    citations.pluck(:uuid)
+  end
+
+  def citation_count
+    citations.count
+  end
+
+  def part_ids
+    parts.pluck(:uuid)
+  end
+
+  def part_count
+    parts.count
+  end
+
+  def part_of_ids
+    part_of.pluck(:uuid)
+  end
+
+  def part_of_count
+    part_of.count
+  end
+
+  def version_ids
+    versions.pluck(:uuid)
+  end
+
+  def version_count
+    versions.count
+  end
+
+  def version_of_ids
+    version_of.pluck(:uuid)
+  end
+
+  def version_of_count
+    version_of.count
+  end
+
   def xml_encoded
     Base64.strict_encode64(xml) if xml.present?
-  rescue ArgumentError => exception
+  rescue ArgumentError
     nil
   end
 
@@ -870,7 +991,7 @@ class Doi < ActiveRecord::Base
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
       DoiConvertAffiliationByIdJob.perform_later(options.merge(id: id))
-      logger.info "Queued converting affiliations for DOIs with IDs starting with #{id}." unless Rails.env.test?
+      Rails.logger.info "Queued converting affiliations for DOIs with IDs starting with #{id}." unless Rails.env.test?
     end
 
     (from_id..until_id).to_a.length
@@ -886,7 +1007,7 @@ class Doi < ActiveRecord::Base
       should_update = false
       creators = Array.wrap(doi.creators).map do |c|
         if !(c.is_a?(Hash))
-          logger.error "[MySQL] creators for DOI #{doi.doi} should be a hash."
+          Rails.logger.error "[MySQL] creators for DOI #{doi.doi} should be a hash."
         elsif c["affiliation"].nil?
           c["affiliation"] = []
           should_update = true
@@ -916,7 +1037,7 @@ class Doi < ActiveRecord::Base
       end
       contributors = Array.wrap(doi.contributors).map do |c|
         if !(c.is_a?(Hash))
-          logger.error "[MySQL] creators for DOI #{doi.doi} should be a hash."
+          Rails.logger.error "[MySQL] creators for DOI #{doi.doi} should be a hash."
         elsif c["affiliation"].nil?
           c["affiliation"] = []
           should_update = true
@@ -954,16 +1075,16 @@ class Doi < ActiveRecord::Base
       end
  
       unless (Array.wrap(doi.creators).all? { |c| c.is_a?(Hash) && c["affiliation"].is_a?(Array) && c["affiliation"].all? { |a| a.is_a?(Hash) } } && Array.wrap(doi.contributors).all? { |c| c.is_a?(Hash) && c["affiliation"].is_a?(Array) && c["affiliation"].all? { |a| a.is_a?(Hash) } }) 
-        logger.error "[MySQL] Error converting affiliations for doi #{doi.doi}: creators #{doi.creators.inspect} contributors #{doi.contributors.inspect}."
+        Rails.logger.error "[MySQL] Error converting affiliations for doi #{doi.doi}: creators #{doi.creators.inspect} contributors #{doi.contributors.inspect}."
         fail TypeError, "Affiliation for doi #{doi.doi} is of wrong type" if Rails.env.test?
       end    
     end
         
-    logger.info "[MySQL] Converted affiliations for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
+    Rails.logger.info "[MySQL] Converted affiliations for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
 
     count
   rescue TypeError, ActiveRecord::ActiveRecordError, ActiveRecord::LockWaitTimeout => error
-    logger.error "[MySQL] Error converting affiliations for DOIs with IDs #{id} - #{(id + 499)}."
+    Rails.logger.error "[MySQL] Error converting affiliations for DOIs with IDs #{id} - #{(id + 499)}."
     count
   end
 
@@ -974,7 +1095,7 @@ class Doi < ActiveRecord::Base
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
       DoiConvertContainerByIdJob.perform_later(options.merge(id: id))
-      logger.info "Queued converting containers for DOIs with IDs starting with #{id}." unless Rails.env.test?
+      Rails.logger.info "Queued converting containers for DOIs with IDs starting with #{id}." unless Rails.env.test?
     end
 
     (from_id..until_id).to_a.length
@@ -993,7 +1114,7 @@ class Doi < ActiveRecord::Base
         should_update = true
         container = {}
       elsif !(doi.container.is_a?(Hash))
-        logger.error "[MySQL] container for DOI #{doi.doi} should be a hash."
+        Rails.logger.error "[MySQL] container for DOI #{doi.doi} should be a hash."
       elsif [doi.container["title"], doi.container["volume"], doi.container["issue"], doi.container["identifier"]].any? { |c| c.is_a?(Hash) }
         should_update = true
         container = { 
@@ -1013,11 +1134,11 @@ class Doi < ActiveRecord::Base
       end   
     end
         
-    logger.info "[MySQL] Converted containers for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
+    Rails.logger.info "[MySQL] Converted containers for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
 
     count
   rescue TypeError, ActiveRecord::ActiveRecordError, ActiveRecord::LockWaitTimeout => error
-    logger.error "[MySQL] Error converting containers for DOIs with IDs #{id} - #{(id + 499)}."
+    Rails.logger.error "[MySQL] Error converting containers for DOIs with IDs #{id} - #{(id + 499)}."
     count
   end
 
@@ -1244,7 +1365,7 @@ class Doi < ActiveRecord::Base
   # to be used after DOIs were transferred to another DOI RA
   def self.delete_dois_by_prefix(prefix, options={})
     if prefix.blank?
-      logger.error "[Error] No prefix provided."
+      Rails.logger.error "[Error] No prefix provided."
       return nil
     end
 
@@ -1252,7 +1373,7 @@ class Doi < ActiveRecord::Base
     size = (options[:size] || 1000).to_i
 
     response = Doi.query(nil, prefix: prefix, page: { size: 1, cursor: [] })
-    logger.info "#{response.results.total} DOIs found for prefix #{prefix}."
+    Rails.logger.info "#{response.results.total} DOIs found for prefix #{prefix}."
 
     if prefix && response.results.total > 0
       # walk through results using cursor
@@ -1262,7 +1383,7 @@ class Doi < ActiveRecord::Base
         response = Doi.query(nil, prefix: prefix, page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
 
-        logger.info "Deleting #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "Deleting #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         response.results.results.each do |d|
@@ -1278,7 +1399,7 @@ class Doi < ActiveRecord::Base
   # provider europ registers their DOIs in the handle system themselves and are ignored
   def self.set_handle
     response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:Crossref", page: { size: 1, cursor: [] })
-    logger.info "#{response.results.total} DOIs found that are not registered in the Handle system."
+    Rails.logger.info "#{response.results.total} DOIs found that are not registered in the Handle system."
 
     if response.results.total > 0
       # walk through results using cursor
@@ -1288,7 +1409,7 @@ class Doi < ActiveRecord::Base
         response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:Crossref", page: { size: 1000, cursor: cursor })
         break unless response.results.results.length > 0
 
-        logger.info "[Handle] Register #{response.results.results.length} DOIs in the handle system starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Handle] Register #{response.results.results.length} DOIs in the handle system starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         response.results.results.each do |d|
@@ -1300,7 +1421,7 @@ class Doi < ActiveRecord::Base
 
   def self.set_url
     response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 1, cursor: [] })
-    logger.info "#{response.results.total} DOIs with no URL found in the database."
+    Rails.logger.info "#{response.results.total} DOIs with no URL found in the database."
 
     if response.results.total > 0
       # walk through results using cursor
@@ -1310,7 +1431,7 @@ class Doi < ActiveRecord::Base
         response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 1000, cursor: cursor })
         break unless response.results.results.length.positive?
 
-        logger.info "[Handle] Update URL for #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Handle] Update URL for #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         response.results.results.each do |d|
@@ -1322,7 +1443,7 @@ class Doi < ActiveRecord::Base
 
   def self.set_minted
     response = Doi.query("provider_id:ethz AND +aasm_state:draft +url:*", page: { size: 1, cursor: [] })
-    logger.info "#{response.results.total} draft DOIs from provider ETHZ found in the database."
+    Rails.logger.info "#{response.results.total} draft DOIs from provider ETHZ found in the database."
 
     if response.results.total > 0
       # walk through results using cursor
@@ -1332,7 +1453,7 @@ class Doi < ActiveRecord::Base
         response = Doi.query("provider_id:ethz AND +aasm_state:draft +url:*", page: { size: 1000, cursor: cursor })
         break unless response.results.results.length.positive?
 
-        logger.info "[MySQL] Set minted for #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[MySQL] Set minted for #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         response.results.results.each do |d|
@@ -1344,12 +1465,12 @@ class Doi < ActiveRecord::Base
 
   def self.transfer(options={})
     if options[:client_id].blank?
-      logger.error "[Transfer] No client provided."
+      Rails.logger.error "[Transfer] No client provided."
       return nil
     end
 
     if options[:target_id].blank?
-      logger.error "[Transfer] No target client provided."
+      Rails.logger.error "[Transfer] No target client provided."
       return nil
     end
 
@@ -1357,7 +1478,7 @@ class Doi < ActiveRecord::Base
     size = (options[:size] || 1000).to_i
 
     response = Doi.query(nil, client_id: options[:client_id], page: { size: 1, cursor: [] })
-    logger.info "[Transfer] #{response.results.total} DOIs found for client #{options[:client_id]}."
+    Rails.logger.info "[Transfer] #{response.results.total} DOIs found for client #{options[:client_id]}."
 
     if options[:client_id] && options[:target_id] && response.results.total > 0
       # walk through results using cursor
@@ -1367,7 +1488,7 @@ class Doi < ActiveRecord::Base
         response = Doi.query(nil, client_id: options[:client_id], page: { size: size, cursor: cursor })
         break unless response.results.results.length.positive?
 
-        logger.info "[Transfer] Transferring #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Transfer] Transferring #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         response.results.results.each do |d|
@@ -1391,7 +1512,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.migrate_landing_page(options={})
-    logger.info "Starting migration"
+    Rails.logger.info "Starting migration"
 
     # Handle camel casing first.
     Doi.where.not('last_landing_page_status_result' => nil).find_each do |doi|
@@ -1441,10 +1562,10 @@ class Doi < ActiveRecord::Base
 
         doi.update_columns("landing_page": landing_page)
 
-        logger.info "Updated " + doi.doi
+        Rails.logger.info "Updated " + doi.doi
 
       rescue TypeError, NoMethodError => error
-        logger.error "Error updating landing page " + doi.doi + ": " + error.message
+        Rails.logger.error "Error updating landing page " + doi.doi + ": " + error.message
       end
     end
   end

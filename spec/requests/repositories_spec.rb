@@ -81,6 +81,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
+        expect(json.dig('data', 'attributes', 'globusUuid')).to eq("bc7d0274-3472-4a79-b631-e4c7baccc667")
       end
     end
 
@@ -143,7 +144,8 @@ describe 'Repositories', type: :request, elasticsearch: true do
         { "data" => { "type" => "repositories",
                       "attributes" => {
                         "name" => "Imperial College 2",
-                        "clientType" => "periodical" }} }
+                        "clientType" => "periodical",
+                        "globusUuid" => "9908a164-1e4f-4c17-ae1b-cc318839d6c8" }} }
       end
 
       it 'updates the record' do
@@ -151,8 +153,40 @@ describe 'Repositories', type: :request, elasticsearch: true do
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
+        expect(json.dig('data', 'attributes', 'globusUuid')).to eq("9908a164-1e4f-4c17-ae1b-cc318839d6c8")
         expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
         expect(json.dig('data', 'attributes', 'clientType')).to eq("periodical")
+      end
+    end
+
+    context 'removes the globus_uuid' do
+      let(:params) do
+        { "data" => { "type" => "repositories",
+                      "attributes" => {
+                        "globusUuid" => nil }} }
+      end
+
+      it 'updates the record' do
+        put "/repositories/#{client.symbol}", params, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'name')).to eq("My data center")
+        expect(json.dig('data', 'attributes', 'globusUuid')).to be_nil
+      end
+    end
+
+    context 'invalid globus_uuid' do
+      let(:params) do
+        { "data" => { "type" => "repositories",
+                      "attributes" => {
+                        "globusUuid" => "abc" }} }
+      end
+
+      it 'updates the record' do
+        put "/repositories/#{client.symbol}", params, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json["errors"].first).to eq("source"=>"globus_uuid", "title"=>"Abc is not a valid UUID")
       end
     end
 

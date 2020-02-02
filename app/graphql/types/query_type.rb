@@ -342,8 +342,10 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :services, [ServiceType], null: false do
+  field :services, ServiceConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 

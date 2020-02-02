@@ -29,7 +29,7 @@ class DatasetType < BaseObject
     ids = Event.query(nil, doi: doi_from_url(object.identifier), citation_type: "Dataset-Dataset").results.to_a.map do |e|
       object.identifier == e.subj_id ? doi_from_url(e.obj_id) : doi_from_url(e.subj_id)
     end
-    
+
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
@@ -40,7 +40,7 @@ class DatasetType < BaseObject
     ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
-  def softwsoftware_source_codesares(**args)
+  def software_source_codes(**args)
     ids = Event.query(nil, doi: doi_from_url(object.identifier), citation_type: "Dataset-SoftwareSourceCode").results.to_a.map do |e|
       object.identifier == e.subj_id ? doi_from_url(e.obj_id) : doi_from_url(e.subj_id)
     end

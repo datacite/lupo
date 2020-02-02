@@ -65,7 +65,7 @@ class MetadataController < ApplicationController
   
       render json: MetadataSerializer.new(@metadata, options).serialized_json, status: :created
     else
-      logger.error @metadata.errors.inspect
+      Rails.logger.error @metadata.errors.inspect
       render json: serialize_errors(@metadata.errors), status: :unprocessable_entity
     end
   end
@@ -77,7 +77,7 @@ class MetadataController < ApplicationController
       if @metadata.destroy
         head :no_content
       else
-        logger.error @metadata.errors.inspect
+        Rails.logger.error @metadata.errors.inspect
         render json: serialize_errors(@metadata.errors), status: :unprocessable_entity
       end
     else

@@ -60,7 +60,7 @@ class MediaController < ApplicationController
   
       render json: MediaSerializer.new(@media, options).serialized_json, status: :created
     else
-      logger.error @media.errors.inspect
+      Rails.logger.error @media.errors.inspect
       render json: serialize_errors(@media.errors), status: :unprocessable_entity
     end
   end
@@ -75,7 +75,7 @@ class MediaController < ApplicationController
   
       render json: MediaSerializer.new(@media, options).serialized_json, status: :ok
     else
-      logger.error @media.errors.inspect
+      Rails.logger.error @media.errors.inspect
       render json: serialize_errors(@media.errors), status: :unprocessable_entity
     end
   end
@@ -86,7 +86,7 @@ class MediaController < ApplicationController
     if @media.destroy
       head :no_content
     else
-      logger.error @media.errors.inspect
+      Rails.logger.error @media.errors.inspect
       render json: serialize_errors(@media.errors), status: :unprocessable_entity
     end
   end

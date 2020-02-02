@@ -44,7 +44,6 @@ Rails.application.routes.draw do
   get '/organizations/text/csv', :to => 'organizations#index', defaults: { format: :csv }
   get '/repositories/text/csv', :to => 'repositories#index', defaults: { format: :csv }
 
-
   # manage DOIs
   post 'dois/validate', :to => 'dois#validate'
   post 'dois/undo', :to => 'dois#undo'
@@ -56,13 +55,13 @@ Rails.application.routes.draw do
   get 'dois/get-dois', :to => 'dois#get_dois'
   get 'providers/totals', :to => 'providers#totals'
   get 'clients/totals', :to => 'clients#totals'
+  get 'repositories/totals', :to => 'repositories#totals'
   get 'prefixes/totals', :to => 'prefixes#totals'
 
   # Reporting
   get 'export/organizations', :to => 'export#organizations',  defaults: { format: :csv }
   get 'export/repositories', :to => 'export#repositories',  defaults: { format: :csv }
   get 'export/contacts', :to => 'export#contacts',  defaults: { format: :csv }
-
 
   resources :heartbeat, only: [:index]
   resources :index, only: [:index]

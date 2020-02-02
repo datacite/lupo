@@ -63,16 +63,21 @@ gem "graphql-errors", "~> 0.4.0"
 gem "graphql-batch", "~> 0.4.1"
 gem "batch-loader", "~> 1.4", ">= 1.4.1"
 gem "graphql-cache", "~> 0.6.0", git: "https://github.com/stackshareio/graphql-cache"
-gem "apollo-federation", "~> 0.5.1"
+gem 'apollo-federation', '~> 1.0'
 gem "google-protobuf", "3.10.0.rc.1"
 gem "sprockets", "~> 3.7", ">= 3.7.2"
+gem 'uuid', '~> 2.3', '>= 2.3.9'
+gem 'strong_migrations', '~> 0.6.0'
+gem 'crawler_detect'
+gem 'lhm', '~> 2.2'
 
 group :development, :test do
   gem "rspec-rails", "~> 3.8", ">= 3.8.2"
   gem "rspec-benchmark", "~> 0.4.0"
-  gem 'rubocop', '~> 0.77.0'
+  gem "rspec-graphql_matchers", "~> 1.1"
+  gem "rubocop", "~> 0.77.0"
   gem 'rubocop-performance', '~> 1.5', '>= 1.5.1'
-  gem 'rubocop-rails', '~> 2.4'
+  gem "rubocop-rails", "~> 2.4"
   gem "better_errors"
   gem "binding_of_caller"
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]

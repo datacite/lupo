@@ -5,7 +5,7 @@ class RepositoriesController < ApplicationController
   before_action :set_repository, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
-  load_and_authorize_resource :client, :parent => false, :except => [:index, :show, :totals, :random]
+  load_and_authorize_resource :client, parent: false, except: [:index, :show, :totals, :random]
 
   def index
     sort = case params[:sort]
@@ -65,7 +65,7 @@ class RepositoriesController < ApplicationController
 
           options[:links] = {
             self: request.original_url,
-            next: response.results.blank? ? nil : request.base_url + "/clients?" + {
+            next: response.results.blank? ? nil : request.base_url + "/repositories?" + {
               query: params[:query],
               "provider-id" => params[:provider_id],
               software: params[:software],
@@ -141,7 +141,7 @@ class RepositoriesController < ApplicationController
 
       render json: RepositorySerializer.new(@client, options).serialized_json, status: :created
     else
-      logger.error @client.errors.inspect
+      Rails.logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
@@ -155,7 +155,7 @@ class RepositoriesController < ApplicationController
 
       render json: RepositorySerializer.new(@client, options).serialized_json, status: :ok
     else
-      logger.error @client.errors.inspect
+      Rails.logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
@@ -166,13 +166,13 @@ class RepositoriesController < ApplicationController
     if @client.dois.present?
       message = "Can't delete repository that has DOIs."
       status = 400
-      logger.warn message
+      Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @client.update_attributes(is_active: nil, deleted_at: Time.zone.now)
       @client.send_delete_email unless Rails.env.test?
       head :no_content
     else
-      logger.error @client.errors.inspect
+      Rails.logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
@@ -188,7 +188,7 @@ class RepositoriesController < ApplicationController
     state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
     response = Doi.query(nil, provider_id: params[:provider_id], state: state, page: page, totals_agg: true)
     registrant = clients_totals(response.response.aggregations.clients_totals.buckets)
-    
+
     render json: registrant, status: :ok
   end
 
@@ -205,16 +205,17 @@ class RepositoriesController < ApplicationController
 
   def set_repository
     @client = Client.where(symbol: params[:id]).where(deleted_at: nil).first
-    fail ActiveRecord::RecordNotFound unless @client.present?
+    fail ActiveRecord::RecordNotFound if @client.blank?
   end
 
   private
 
   def safe_params
-    fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
+    fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" if params[:data].blank?
+    
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:symbol, :name, "systemEmail", :domains, :provider, :url, "repositoryType", { "repositoryType" => [] }, :description, :language, { language: [] }, "alternateName", :software, "targetId", "isActive", "passwordInput", "clientType", :re3data, :opendoar, :issn, { issn: [:issnl, :electronic, :print] }, :certificate, { certificate: [] }, "serviceContact", { "serviceContact": [:email, "givenName", "familyName"] }, "salesforceId"],
-              keys: { "systemEmail" => :system_email, "salesforceId" => :salesforce_id, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input, "clientType" => :client_type, "alternateName" => :alternate_name, "repositoryType" => :repository_type, "serviceContact" => :service_contact }
+      params, only: [:symbol, :name, "systemEmail", :domains, :provider, :url, "globusUuid", "repositoryType", { "repositoryType" => [] }, :description, :language, { language: [] }, "alternateName", :software, "targetId", "isActive", "passwordInput", "clientType", :re3data, :opendoar, :issn, { issn: [:issnl, :electronic, :print] }, :certificate, { certificate: [] }, "serviceContact", { "serviceContact": [:email, "givenName", "familyName"] }, "salesforceId"],
+              keys: { "systemEmail" => :system_email, "salesforceId" => :salesforce_id, "globusUuid" => :globus_uuid, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input, "clientType" => :client_type, "alternateName" => :alternate_name, "repositoryType" => :repository_type, "serviceContact" => :service_contact }
     )
   end
 end

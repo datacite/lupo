@@ -67,6 +67,14 @@ module Cacheable
         response.body.fetch("data", nil)
       end
     end
+
+    def cached_globus_public_key
+      Rails.cache.fetch("globus_public_key", expires_in: 1.month) do
+        url = "https://auth.globus.org/jwk.json"
+        response = Maremma.get(url)
+        response.body.dig("data", "keys", 0)
+      end
+    end
   end
 
   module ClassMethods
