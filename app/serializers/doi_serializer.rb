@@ -12,10 +12,10 @@ class DoiSerializer
 
   belongs_to :client, record_type: :clients
   has_many :media, record_type: :media, id_method_name: :uid, if: Proc.new { |object, params| params && params[:detail] && !params[:is_collection]}
-  has_many :references, record_type: :references, id_method_name: :uid, serializer: EventSerializer, if: Proc.new { |object, params| params && params[:detail] }
-  has_many :citations, record_type: :citations, id_method_name: :uid, serializer: EventSerializer, if: Proc.new { |object, params| params && params[:detail] }
-  has_many :parts, record_type: :parts, id_method_name: :uid, serializer: EventSerializer, if: Proc.new { |object, params| params && params[:detail] }
-  has_many :versions, record_type: :versions, id_method_name: :uid, serializer: EventSerializer, if: Proc.new { |object, params| params && params[:detail] }
+  has_many :references, record_type: :references, serializer: EventSerializer, if: Proc.new { |object, params| params && params[:detail] }
+  has_many :citations, record_type: :citations, serializer: EventSerializer, if: Proc.new { |object, params| params && params[:detail] }
+  has_many :parts, record_type: :parts, serializer: EventSerializer, if: Proc.new { |object, params| params && params[:detail] }
+  has_many :versions, record_type: :versions, serializer: EventSerializer, if: Proc.new { |object, params| params && params[:detail] }
 
   attribute :xml, if: Proc.new { |object, params| params && params[:detail] } do |object|
     begin

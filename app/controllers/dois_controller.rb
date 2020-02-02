@@ -536,13 +536,13 @@ class DoisController < ApplicationController
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
       
       if params[:events].present?
-        @include = @include & [:client, :media, :views, :downloads]
+        @include = @include & [:client, :media, :references, :citations, :parts, :versions]
       else
         @include = @include & [:client, :media]
       end
     else
       if params[:events].present?
-        @include = [:client, :media, :views, :downloads]
+        @include = [:client, :media, :references, :citations, :parts, :versions]
       else
         @include = [:client, :media]
       end
