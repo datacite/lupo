@@ -63,8 +63,22 @@ describe "dois", type: :request do
       it 'returns the Doi' do
         get "/dois/#{doi.doi}", nil, headers
 
-        expect(last_response.status).to eq(200)
+        expect(last_response.status).to eq(200) 
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      end
+    end
+
+    context 'when the record exists request metrics' do
+      it 'returns the Doi' do
+        get "/dois/#{doi.doi}?mix-in=metrics", nil, headers
+
+        expect(last_response.status).to eq(200)
+        result = json.dig('data')
+
+        expect(result.dig('attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(result.dig('attributes', 'titles')).to eq(doi.titles)
+        expect(result.dig('attributes','citations')).to eq(0)
+        # expect(result.dig('attributes','views')).to eq(0)
       end
     end
 
@@ -135,6 +149,7 @@ describe "dois", type: :request do
 
         expect(last_response.status).to eq(200)
         expect(json['data'].size).to eq(1)
+        result = json.dig('data').select { |item| item["id"] == doi.doi.downcase }.first
         expect(json.dig('meta', 'total')).to eq(1)
         expect(json.dig('data', 0, 'attributes', 'url')).to eq(doi.url)
         expect(json.dig('data', 0, 'attributes', 'doi')).to eq(doi.doi.downcase)

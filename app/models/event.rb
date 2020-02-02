@@ -242,6 +242,14 @@ class Event < ActiveRecord::Base
     }
   end
 
+  def self.multiple_usage_count_aggregation
+    {
+      usage: {
+        terms: { field: "obj_id", size: 50, min_doc_count: 1 } , aggs: { relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: "total" } } } } } 
+      }
+    }
+  end
+
   def self.yearly_histogram_aggregation
     sum_year_distribution = {
       sum_bucket: {
