@@ -122,7 +122,11 @@ class RepositoriesController < ApplicationController
     options = {}
     options[:meta] = {
       dois: doi_count(client_id: params[:id]),
-      "resourceTypes" => resource_type_count(client_id: params[:id]) }.compact
+      "resourceTypes" => resource_type_count(client_id: params[:id]),
+      citations: citation_count(client_id: params[:id]),
+      views: view_count(client_id: params[:id]),
+      downloads: download_count(client_id: params[:id]),
+    }.compact
     options[:include] = @include
     options[:is_collection] = false
     options[:params] = { current_ability: current_ability }
