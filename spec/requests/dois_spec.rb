@@ -187,16 +187,14 @@ describe "dois", type: :request do
     end
 
     it "has views" do
-      get "/dois", nil, headers
+      get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json['data'].size).to eq(1)
-      expect(json.dig('meta', 'total')).to eq(1)
-      expect(json.dig('data', 0, 'attributes', 'url')).to eq(doi.url)
-      expect(json.dig('data', 0, 'attributes', 'doi')).to eq(doi.doi.downcase)
-      expect(json.dig('data', 0, 'attributes', 'titles')).to eq(doi.titles)
-      expect(json.dig('data', 0, 'attributes', 'viewCount')).to eq(75)
-      expect(json.dig('data', 0, 'attributes', 'viewsOverTime')).to eq([{"total"=>25, "year_month"=>"2015-06"}, {"total"=>25, "year_month"=>"2015-06"}, {"total"=>25, "year_month"=>"2015-06"}])
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'viewCount')).to eq(75)
+      expect(json.dig('data', 'attributes', 'viewsOverTime')).to eq([{"total"=>25, "year_month"=>"2015-06"}, {"total"=>25, "year_month"=>"2015-06"}, {"total"=>25, "year_month"=>"2015-06"}])
     end
   end
 
@@ -211,16 +209,14 @@ describe "dois", type: :request do
     end
 
     it "has downloads" do
-      get "/dois", nil, headers
+      get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json['data'].size).to eq(1)
-      expect(json.dig('meta', 'total')).to eq(1)
-      expect(json.dig('data', 0, 'attributes', 'url')).to eq(doi.url)
-      expect(json.dig('data', 0, 'attributes', 'doi')).to eq(doi.doi.downcase)
-      expect(json.dig('data', 0, 'attributes', 'titles')).to eq(doi.titles)
-      expect(json.dig('data', 0, 'attributes', 'downloadCount')).to eq(30)
-      expect(json.dig('data', 0, 'attributes', 'downloadsOverTime')).to eq([{"total"=>10, "year_month"=>"2015-06"}, {"total"=>10, "year_month"=>"2015-06"}, {"total"=>10, "year_month"=>"2015-06"}])
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'downloadCount')).to eq(30)
+      expect(json.dig('data', 'attributes', 'downloadsOverTime')).to eq([{"total"=>10, "year_month"=>"2015-06"}, {"total"=>10, "year_month"=>"2015-06"}, {"total"=>10, "year_month"=>"2015-06"}])
     end
   end
 
@@ -235,16 +231,14 @@ describe "dois", type: :request do
     end
 
     it "has references" do
-      get "/dois", nil, headers
+      get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json['data'].size).to eq(1)
-      expect(json.dig('meta', 'total')).to eq(1)
-      expect(json.dig('data', 0, 'attributes', 'url')).to eq(doi.url)
-      expect(json.dig('data', 0, 'attributes', 'doi')).to eq(doi.doi.downcase)
-      expect(json.dig('data', 0, 'attributes', 'titles')).to eq(doi.titles)
-      expect(json.dig('data', 0, 'attributes', 'referenceCount')).to eq(3)
-      expect(json.dig('data', 0, 'relationships', 'references')).to eq("data"=>{"id"=>references.first.source_doi, "type"=>"references"})
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'referenceCount')).to eq(3)
+      expect(json.dig('data', 'relationships', 'references')).to eq("data"=>{"id"=>references.first.source_doi, "type"=>"references"})
     end
   end
 
@@ -259,16 +253,14 @@ describe "dois", type: :request do
     end
 
     it "has citations" do
-      get "/dois", nil, headers
+      get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json['data'].size).to eq(1)
-      expect(json.dig('meta', 'total')).to eq(1)
-      expect(json.dig('data', 0, 'attributes', 'url')).to eq(doi.url)
-      expect(json.dig('data', 0, 'attributes', 'doi')).to eq(doi.doi.downcase)
-      expect(json.dig('data', 0, 'attributes', 'titles')).to eq(doi.titles)
-      expect(json.dig('data', 0, 'attributes', 'citationCount')).to eq(1)
-      expect(json.dig('data', 0, 'relationships', 'citations')).to eq("data"=>{"id"=>citations.first.target_doi, "type"=>"citations"})
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'citationCount')).to eq(1)
+      expect(json.dig('data', 'relationships', 'citations')).to eq("data"=>{"id"=>citations.first.target_doi, "type"=>"citations"})
     end
   end
 
@@ -283,16 +275,14 @@ describe "dois", type: :request do
     end
 
     it "has parts" do
-      get "/dois", nil, headers
+      get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json['data'].size).to eq(1)
-      expect(json.dig('meta', 'total')).to eq(1)
-      expect(json.dig('data', 0, 'attributes', 'url')).to eq(doi.url)
-      expect(json.dig('data', 0, 'attributes', 'doi')).to eq(doi.doi.downcase)
-      expect(json.dig('data', 0, 'attributes', 'titles')).to eq(doi.titles)
-      expect(json.dig('data', 0, 'attributes', 'partCount')).to eq(3)
-      expect(json.dig('data', 0, 'relationships', 'parts')).to eq("data"=>{"id"=>parts.first.source_doi, "type"=>"parts"})
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'partCount')).to eq(3)
+      expect(json.dig('data', 'relationships', 'parts')).to eq("data"=>{"id"=>parts.first.source_doi, "type"=>"parts"})
     end
   end
 
@@ -307,16 +297,14 @@ describe "dois", type: :request do
     end
 
     it "has versions" do
-      get "/dois", nil, headers
+      get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json['data'].size).to eq(1)
-      expect(json.dig('meta', 'total')).to eq(1)
-      expect(json.dig('data', 0, 'attributes', 'url')).to eq(doi.url)
-      expect(json.dig('data', 0, 'attributes', 'doi')).to eq(doi.doi.downcase)
-      expect(json.dig('data', 0, 'attributes', 'titles')).to eq(doi.titles)
-      expect(json.dig('data', 0, 'attributes', 'versionCount')).to eq(3)
-      expect(json.dig('data', 0, 'relationships', 'versions')).to eq("data"=>{"id"=>versions.first.source_doi, "type"=>"versions"})
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'versionCount')).to eq(3)
+      expect(json.dig('data', 'relationships', 'versions')).to eq("data"=>{"id"=>versions.first.source_doi, "type"=>"versions"})
     end
   end
 
