@@ -358,7 +358,7 @@ class Event < ActiveRecord::Base
     if response.results.total > 0
       while response.results.results.length > 0 do
         response = Event.query(nil, source_id: "crossref", page: { size: size, cursor: cursor })
-        break unless response.results.results.length > 0
+        break unless response.results.results.length.positive?
 
         Rails.logger.info "[Update] Updating #{response.results.results.length} crossref events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
@@ -382,7 +382,7 @@ class Event < ActiveRecord::Base
     if response.results.total > 0
       while response.results.results.length > 0 do
         response = Event.query(nil, target_doi: nil, page: { size: size, cursor: cursor })
-        break unless response.results.results.positive?
+        break unless response.results.results.length.positive?
 
         Rails.logger.info "[Update] Updating #{response.results.results.length} events with no target_doi starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
