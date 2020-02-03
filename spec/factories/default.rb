@@ -335,6 +335,41 @@ FactoryBot.define do
       relation_type_id { "references" }
     end
 
+    factory :event_for_datacite_parts do
+      source_id { "datacite_related" }
+      source_token { "datacite_related_123" }
+      subj_id { "http://doi.org/10.5061/DRYAD.47SD5" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      sequence(:obj_id) { |n| "http://doi.org/10.5061/DRYAD.47SD5/#{n}" }
+      relation_type_id { "has-part" }
+    end
+
+    factory :event_for_datacite_part_of do
+      source_id { "datacite_related" }
+      source_token { "datacite_related_123" }
+      subj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      obj_id { "http://doi.org/10.5061/DRYAD.47SD5" }
+      relation_type_id { "is-part-of" }
+    end
+
+    factory :event_for_datacite_crossref do
+      source_id { "datacite_crossref" }
+      source_token { "datacite_crossref_123" }
+      sequence(:subj_id) { |n| "https://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      obj_id { "https://doi.org/10.1371/journal.pbio.2001414" }
+      relation_type_id { "is-referenced-by" }
+    end
+
+    factory :event_for_crossref do
+      source_id { "crossref" }
+      source_token { "crossref_123" }
+      subj_id { "https://doi.org/10.1371/journal.pbio.2001414" }
+      sequence(:obj_id) { |n| "https://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
+      relation_type_id { "references" }
+    end
+
     factory :event_for_datacite_usage do
       source_id { "datacite-usage" }
       source_token { "5348967fhdjksr3wyui325" }
@@ -356,6 +391,15 @@ FactoryBot.define do
       obj {}
       obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
       relation_type_id { "unique-dataset-investigations-regular" }
+      occurred_at { "2015-06-13T16:14:19Z" }
+    end
+
+    factory :event_for_datacite_orcid_auto_update do
+      source_id { "datacite-orcid-auto-update" }
+      source_token { "5348967fhdjksr3wyui325" }
+      sequence(:obj_id) { |n| "https://orcid.org/0000-0003-1419-211#{n}}" }
+      sequence(:subj_id) { |n| "http://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
+      relation_type_id { "is-authored-by" }
       occurred_at { "2015-06-13T16:14:19Z" }
     end
   end

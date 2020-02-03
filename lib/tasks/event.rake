@@ -56,16 +56,23 @@ namespace :event do
 
   desc 'update registrant metadata'
   task :update_registrant => :environment do
-    cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id),Event.minimum(:id)]
+    cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id), Event.minimum(:id)]
 
     Event.update_registrant(cursor: cursor, size: ENV['SIZE'])
+  end
+
+  desc 'update target doi'
+  task :update_target_doi => :environment do
+    cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id), Event.minimum(:id)]
+
+    Event.update_target_doi(cursor: cursor, size: ENV['SIZE'])
   end
 end
 
 namespace :crossref do
   desc 'Import crossref dois for all events'
   task :import_doi => :environment do
-    cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id),Event.minimum(:id)]
+    cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id), Event.minimum(:id)]
 
     Event.update_crossref(cursor: cursor)
   end

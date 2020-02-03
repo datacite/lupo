@@ -96,7 +96,12 @@ class ClientsController < ApplicationController
 
   def show
     options = {}
-    options[:meta] = { dois: doi_count(client_id: params[:id]) }
+    options[:meta] = { 
+      dois: doi_count(client_id: params[:id]),
+      citations: citation_count(client_id: params[:id]),
+      views: view_count(client_id: params[:id]),
+      downloads: download_count(client_id: params[:id]),
+    }.compact
     options[:include] = @include
     options[:is_collection] = false
     options[:params] = { current_ability: current_ability }

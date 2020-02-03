@@ -155,16 +155,25 @@ class ProvidersController < ApplicationController
       clients = client_count(provider_id: nil)
       dois = doi_count(provider_id: nil)
       resource_types = resource_type_count(provider_id: nil)
+      citations = nil # citation_count(provider_id: nil)
+      views = nil # view_count(provider_id: nil)
+      downloads = nil # download_count(provider_id: nil)
     elsif @provider.member_type == "consortium"
       providers = provider_count(consortium_id: params[:id])
       clients = client_count(consortium_id: params[:id])
       dois = doi_count(consortium_id: params[:id])
       resource_types = resource_type_count(consortium_id: params[:id])
+      citations = citation_count(consortium_id: params[:id])
+      views = view_count(consortium_id: params[:id])
+      downloads = download_count(consortium_id: params[:id])
     else
       providers = nil
       clients = client_count(provider_id: params[:id])
       dois = doi_count(provider_id: params[:id])
       resource_types = resource_type_count(provider_id: params[:id])
+      citations = citation_count(provider_id: params[:id])
+      views = view_count(provider_id: params[:id])
+      downloads = download_count(provider_id: params[:id])
     end
 
     options = {}
@@ -172,7 +181,11 @@ class ProvidersController < ApplicationController
       providers: providers,
       clients: clients,
       dois: dois,
-      "resourceTypes" => resource_types }.compact
+      "resourceTypes" => resource_types,
+      citations: citations,
+      views: views,
+      downloads: downloads,
+    }.compact
     options[:include] = @include
     options[:is_collection] = false
     options[:params] = { current_ability: current_ability }

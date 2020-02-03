@@ -623,7 +623,7 @@ describe "/events", type: :request, elasticsearch: true do
         total = response.dig("meta", "total")
 
         expect(total).to eq(6)
-        expect(citations.first["count"]).to eq(5)
+        expect(citations.first["citations"]).to eq(5)
         expect(citations.first["id"]).to start_with("10.5061/dryad.47sd5e/")
       end
     end
@@ -660,7 +660,7 @@ describe "/events", type: :request, elasticsearch: true do
 
         expect(json.dig("meta", "citationsHistogram", "years", 0, "title")).to eq("2015")
         expect(total).to eq(5)
-        expect(citations.first["count"]).to eq(2)
+        expect(citations.first["citations"]).to eq(2)
         expect(citations.first["id"]).to eq(doi)
         # expect(references.first["count"]).to eq(2)
         # expect(references.first["id"]).to eq(doi)
@@ -721,7 +721,7 @@ describe "/events", type: :request, elasticsearch: true do
         total = response.dig("meta", "total")
 
         expect(total).to eq(2)
-        expect(citations.first["count"]).to eq(1)
+        expect(citations.first["citations"]).to eq(1)
         expect(citations.first["id"]).to eq("10.0260/co.2004960.v1")
       end
     end
@@ -923,6 +923,20 @@ describe "/events", type: :request, elasticsearch: true do
     #     expect(attributes["subj-id"]).to eq(event.subj_id)
     #   end
     # end
+    context "query by source-id by Crawler" do
+      let(:uri) { "/events?query=datacite" }
+
+      # Exclude the token header.
+      let(:headers) do
+        { "HTTP_ACCEPT" => "application/json",
+          "HTTP_USER_AGENT" => "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.96 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" }
+      end
+
+      it "json" do
+        get uri, nil, headers
+        expect(last_response.status).to eq(404)
+      end
+    end
   end
 
   context "destroy" do

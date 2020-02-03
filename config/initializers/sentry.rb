@@ -7,4 +7,5 @@ Raven.configure do |config|
 
   # ignore 502, 503 and 504 from Elasticsearch
   config.excluded_exceptions += ['Elasticsearch::Transport::Transport::Errors::BadGateway', 'Elasticsearch::Transport::Transport::Errors::ServiceUnavailable', 'Elasticsearch::Transport::Transport::Errors::GatewayTimeout']
+  config.logger = Rails.application.config.lograge.logger
 end

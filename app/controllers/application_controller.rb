@@ -34,6 +34,14 @@ class ApplicationController < ActionController::API
     end
   end
 
+  def detect_crawler
+    #### Crawlers shound't be making queires
+    if request.is_crawler? && params[:query].present?
+      render json: {}, status: :not_found
+    end
+  end
+
+
   def set_consumer_header
     if current_user
       response.headers['X-Credential-Username'] = current_user.uid
