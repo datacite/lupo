@@ -65,7 +65,7 @@ namespace :event do
   task :update_target_doi => :environment do
     cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id), Event.minimum(:id)]
 
-    Event.update_target_doi(cursor: cursor, size: ENV['SIZE'])
+    Event.update_target_doi(cursor: cursor, target_relation_type_id: ENV['TARGET_RELATION_TYPE_ID'], size: ENV['SIZE'])
   end
 end
 

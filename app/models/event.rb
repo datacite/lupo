@@ -382,17 +382,18 @@ class Event < ActiveRecord::Base
   def self.update_target_doi(options = {})
     size = (options[:size] || 1000).to_i
     cursor = (options[:cursor] || [])
+    target_relation_type_id = options[:target_relation_type_id]
 
-    response = Event.query(nil, target_doi: nil, page: { size: 1, cursor: [] })
-    Rails.logger.info "[Update] #{response.results.total} events with no target_doi."
+    response = Event.query(nil, target_relation_type_id: target_relation_type_id, page: { size: 1, cursor: [] })
+    Rails.logger.info "[Update] #{response.results.total} events with target_relation_type_id #{target_relation_type_id.to_s}."
 
     # walk through results using cursor
     if response.results.total > 0
       while response.results.results.length > 0 do
-        response = Event.query(nil, target_doi: nil, page: { size: size, cursor: cursor })
+        response = Event.query(nil, target_relation_type_id: target_relation_type_id, page: { size: size, cursor: cursor })
         break unless response.results.results.length.positive?
 
-        Rails.logger.info "[Update] Updating #{response.results.results.length} events with no target_doi starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Update] Updating #{response.results.results.length} events with target_relation_type_id #{target_relation_type_id.to_s} starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         ids = response.results.results.map(&:uuid).uniq

@@ -4,7 +4,7 @@ module Indexable
   require 'aws-sdk-sqs'
 
   included do
-    after_commit on: [:create] do
+    after_commit on: [:create, :update] do
       # use index_document instead of update_document to also update virtual attributes
       IndexJob.perform_later(self)
       if self.class.name == "Doi"
@@ -17,15 +17,6 @@ module Indexable
 
         @target_doi = Doi.where(doi: target_doi).first if target_doi
         IndexJob.perform_later(@target_doi) if @target_doi
-      end
-    end
-
-    after_commit on: [:update] do
-      # use index_document instead of update_document to also update virtual attributes
-      IndexJob.perform_later(self)
-      if self.class.name == "Doi"
-        update_column(:indexed, Time.zone.now)
-        send_import_message(self.to_jsonapi) if aasm_state == "findable" && !Rails.env.test? && !%w(crossref medra kisti jalc op).include?(client.symbol.downcase.split(".").first)
       end
     end
 
