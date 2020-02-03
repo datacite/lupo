@@ -11,6 +11,10 @@ module MetricsHelper
     end
 
     def get_person_metrics(orcid)
+      if orcid.blank?
+        return { citations: 0, views: 0, downloads: 0 }
+      end
+
       dois = get_person_dois(orcid).join(",")
       usage = EventsQuery.new.views_and_downloads(dois)
       {
