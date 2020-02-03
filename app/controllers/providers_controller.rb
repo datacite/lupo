@@ -155,9 +155,9 @@ class ProvidersController < ApplicationController
       clients = client_count(provider_id: nil)
       dois = doi_count(provider_id: nil)
       resource_types = resource_type_count(provider_id: nil)
-      citations = citation_count(provider_id: nil)
-      views = view_count(provider_id: nil)
-      downloads = download_count(provider_id: nil)
+      citations = nil # citation_count(provider_id: nil)
+      views = nil # view_count(provider_id: nil)
+      downloads = nil # download_count(provider_id: nil)
     elsif @provider.member_type == "consortium"
       providers = provider_count(consortium_id: params[:id])
       clients = client_count(consortium_id: params[:id])
