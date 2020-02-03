@@ -21,16 +21,9 @@ module MetricsHelper
     end
 
     def get_person_dois(orcid)
-      Event.query(nil, page: { size: 500 }, obj_id: https_to_http(orcid)).results.to_a.map do |e|
+      Event.query(nil, page: { size: 300 }, source_id: "datacite-orcid-auto-update", obj_id: "https://orcid.org/#{orcid}").results.to_a.map do |e|
         doi_from_url(e.subj_id)
       end
-    end
-
-    def https_to_http(url)
-      orcid = orcid_from_url(url)
-      return nil if orcid.blank?
-
-      "https://orcid.org/#{orcid}"
     end
 
     def mix_in_metrics_array(metadata_array_objects, metrics_array_hashes)
