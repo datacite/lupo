@@ -240,11 +240,40 @@ ActiveRecord::Schema.define(version: 2020_01_31_180609) do
     t.string "source_relation_type_id", limit: 191
     t.string "target_relation_type_id", limit: 191
     t.index ["created_at", "indexed_at", "updated_at"], name: "index_events_on_created_indexed_updated"
-    t.index ["created_at"], name: "index_events_on_source_id_created_at"
-    t.index ["relation_type_id"], name: "index_events_on_doi_id"
+    t.index ["doi_id", "relation_type_id"], name: "index_events_on_doi_id", length: { doi_id: 100 }
     t.index ["source_doi", "source_relation_type_id"], name: "index_events_on_source_doi", length: { source_doi: 100 }
-    t.index ["subj_id", "obj_id", "relation_type_id"], name: "index_events_on_multiple_columns", unique: true, length: { subj_id: 191, obj_id: 191 }
+    t.index ["source_id", "created_at"], name: "index_events_on_source_id_created_at"
+    t.index ["subj_id", "obj_id", "source_id", "relation_type_id"], name: "index_events_on_multiple_columns", unique: true, length: { subj_id: 191, obj_id: 191 }
     t.index ["target_doi", "target_relation_type_id"], name: "index_events_on_target_doi", length: { target_doi: 100 }
+    t.index ["updated_at"], name: "index_events_on_updated_at"
+    t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
+  end
+
+  create_table "lhma_2020_02_03_11_33_29_151_events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.text "uuid", null: false
+    t.text "subj_id", null: false
+    t.text "obj_id"
+    t.string "source_id", limit: 191
+    t.string "aasm_state"
+    t.string "state_event"
+    t.text "callback"
+    t.text "error_messages"
+    t.text "source_token"
+    t.datetime "created_at", precision: 3, null: false
+    t.datetime "updated_at", precision: 3, null: false
+    t.datetime "indexed_at", default: "1970-01-01 00:00:00", null: false
+    t.datetime "occurred_at"
+    t.string "message_action", limit: 191, default: "create", null: false
+    t.string "relation_type_id", limit: 191
+    t.text "subj", limit: 16777215
+    t.text "obj", limit: 16777215
+    t.integer "total", default: 1
+    t.string "license", limit: 191
+    t.text "doi_id"
+    t.index ["created_at", "indexed_at", "updated_at"], name: "index_events_on_created_indexed_updated"
+    t.index ["doi_id", "relation_type_id"], name: "index_events_on_doi_id", length: { doi_id: 100 }
+    t.index ["source_id", "created_at"], name: "index_events_on_source_id_created_at"
+    t.index ["subj_id", "obj_id", "source_id", "relation_type_id"], name: "index_events_on_multiple_columns", unique: true, length: { subj_id: 191, obj_id: 191 }
     t.index ["updated_at"], name: "index_events_on_updated_at"
     t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
   end
