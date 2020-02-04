@@ -536,7 +536,7 @@ class Event < ActiveRecord::Base
     total_errors = 0
 
     response = Event.query(nil, source_id: "datacite-crossref,datacite-related", page: { size: 1, cursor: [] })
-    logger.info "[DoubleCheck] #{response.results.total} events for source datacite-crossref,datacite-related."
+    Rails.logger.info "[DoubleCheck] #{response.results.total} events for source datacite-crossref,datacite-related."
 
     # walk through results using cursor
     if response.results.total.positive?
@@ -544,7 +544,7 @@ class Event < ActiveRecord::Base
         response = Event.query(nil, source_id: "datacite-crossref,datacite-related", page: { size: size, cursor: cursor })
         break unless response.results.results.length.positive?
 
-        logger.info "[DoubleCheck] DoubleCheck #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[DoubleCheck] DoubleCheck #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         # dois = response.results.results.map(&:subj_id)
@@ -566,8 +566,8 @@ class Event < ActiveRecord::Base
       payload = { description: "events_with_errors_from_rake_task #{Time.now.getutc}", public: true,files: {uids_with_errors: {content: file.read} }}
       ### max file size 1MB
       response = Maremma.post("https://api.github.com/gists", data: payload.to_json, username: ENV["GIST_USERNAME"], password:ENV["GIST_PASSWORD"])
-      logger.warn "[DoubleCheck] Total number of events with Errors: #{total_errors}"
-      logger.warn "[DoubleCheck] IDs saved: #{response.body.dig('data','url')}" if [200,201].include?(response.status)
+      Rails.logger.warn "[DoubleCheck] Total number of events with Errors: #{total_errors}"
+      Rails.logger.warn "[DoubleCheck] IDs saved: #{response.body.dig('data','url')}" if [200,201].include?(response.status)
     end
   end
 
