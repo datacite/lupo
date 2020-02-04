@@ -37,5 +37,27 @@ describe Event, :type => :model, vcr: true do
       expect(published).to eq("2011")
       expect(published).not_to eq(2011)
     end
+
+    # context "double_crossref_check", elasticsearch: true do
+    #   let(:provider) { create(:provider, symbol: "DATACITE") }
+    #   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
+    #   let!(:prefix) { create(:prefix, prefix: "10.14454") }
+    #   let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
+    #   let!(:doi) { create(:doi, client: client) }
+    #   let!(:dois)  { create_list(:doi, 10) }
+    #   let!(:events) { create_list(:event_for_datacite_related, 30, source_id: "datacite-crossref", obj_id: doi.doi) }
+ 
+    #   before do
+    #     Provider.import
+    #     Client.import
+    #     Doi.import
+    #     Event.import
+    #     sleep 3
+    #   end
+      
+    #   it "check run" do
+    #     expect(Event.subj_id_check(cursor: [Event.minimum(:id),Event.maximum(:id)])).to eq(true)
+    #   end
+    # end
   end
 end

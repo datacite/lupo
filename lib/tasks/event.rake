@@ -65,7 +65,7 @@ namespace :event do
   task :update_target_doi => :environment do
     cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id), Event.minimum(:id)]
 
-    Event.update_target_doi(cursor: cursor, size: ENV['SIZE'])
+    Event.update_target_doi(cursor: cursor, target_relation_type_id: ENV['TARGET_RELATION_TYPE_ID'], size: ENV['SIZE'])
   end
 end
 
@@ -75,6 +75,16 @@ namespace :crossref do
     cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id), Event.minimum(:id)]
 
     Event.update_crossref(cursor: cursor)
+  end
+end
+
+namespace :subj_id_check do
+  desc 'checks that events subject node congruency'
+  task :check => :environment do
+    from_id = (ENV['FROM_ID'] || Event.minimum(:id)).to_i
+    until_id = (ENV['UNTIL_ID'] || Event.maximum(:id)).to_i
+    
+    Event.subj_id_check(from_id: from_id, until_id: until_id)
   end
 end
 

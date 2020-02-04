@@ -382,17 +382,18 @@ class Event < ActiveRecord::Base
   def self.update_target_doi(options = {})
     size = (options[:size] || 1000).to_i
     cursor = (options[:cursor] || [])
+    target_relation_type_id = options[:target_relation_type_id]
 
-    response = Event.query(nil, target_doi: nil, page: { size: 1, cursor: [] })
-    Rails.logger.info "[Update] #{response.results.total} events with no target_doi."
+    response = Event.query(nil, target_relation_type_id: target_relation_type_id, page: { size: 1, cursor: [] })
+    Rails.logger.info "[Update] #{response.results.total} events with target_relation_type_id #{target_relation_type_id.to_s}."
 
     # walk through results using cursor
     if response.results.total > 0
       while response.results.results.length > 0 do
-        response = Event.query(nil, target_doi: nil, page: { size: size, cursor: cursor })
+        response = Event.query(nil, target_relation_type_id: target_relation_type_id, page: { size: size, cursor: cursor })
         break unless response.results.results.length.positive?
 
-        Rails.logger.info "[Update] Updating #{response.results.results.length} events with no target_doi starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Update] Updating #{response.results.results.length} events with target_relation_type_id #{target_relation_type_id.to_s} starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         ids = response.results.results.map(&:uuid).uniq
@@ -525,6 +526,48 @@ class Event < ActiveRecord::Base
   def access_method
     if relation_type_id.to_s =~ /(requests|investigations)/
       relation_type_id.split("-").last if relation_type_id.present?
+    end
+  end
+
+  def self.subj_id_check(options = {})
+    file_name = "evens_with_double_crossref_dois.txt"
+    size = (options[:size] || 1000).to_i
+    cursor = [options[:from_id], options[:until_id]]
+    total_errors = 0
+
+    response = Event.query(nil, source_id: "datacite-crossref,datacite-related", page: { size: 1, cursor: [] })
+    Rails.logger.info "[DoubleCheck] #{response.results.total} events for source datacite-crossref,datacite-related."
+
+    # walk through results using cursor
+    if response.results.total.positive?
+      while response.results.results.length.positive?
+        response = Event.query(nil, source_id: "datacite-crossref,datacite-related", page: { size: size, cursor: cursor })
+        break unless response.results.results.length.positive?
+
+        Rails.logger.info "[DoubleCheck] DoubleCheck #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
+        cursor = response.results.to_a.last[:sort]
+
+        # dois = response.results.results.map(&:subj_id)
+        events = response.results.results
+        events.lazy.each do | event|
+          subj_prefix = event.subj_id[/(10\.\d{4,5})/, 1]
+          if Prefix.where(prefix: subj_prefix).empty?
+            File.open(file_name, "a+") do |f|
+              f.write(event.uuid, "\n")
+              total_errors = total_errors + 1
+            end
+          end
+        end
+      end
+    end
+
+    file = File.open(file_name)
+    if file.present?
+      payload = { description: "events_with_errors_from_rake_task #{Time.now.getutc}", public: true,files: {uids_with_errors: {content: file.read} }}
+      ### max file size 1MB
+      response = Maremma.post("https://api.github.com/gists", data: payload.to_json, username: ENV["GIST_USERNAME"], password:ENV["GIST_PASSWORD"])
+      Rails.logger.warn "[DoubleCheck] Total number of events with Errors: #{total_errors}"
+      Rails.logger.warn "[DoubleCheck] IDs saved: #{response.body.dig('data','url')}" if [200,201].include?(response.status)
     end
   end
 
