@@ -15,9 +15,7 @@ class ActivitySerializer
 
   attribute "prov:wasAttributedTo" do |object|
     url = Rails.env.production? ? "https://api.datacite.org" : "https://api.test.datacite.org"
-    if object.username.present?
-      object.username.to_s.include?(".") ? url + "/clients/" + object.username : url + "/providers/" + object.username
-    end
+    object.username.include?(".") ? url + "/clients/" + object.username : url + "/providers/" + object.username
   end
 
   attribute "prov:wasGeneratedBy" do |object|
