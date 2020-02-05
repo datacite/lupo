@@ -533,21 +533,22 @@ class Event < ActiveRecord::Base
   end
 
   def self.subj_id_check(options = {})
+    logger = LogStashLogger.new(type: :stdout)
     file_name = "evens_with_double_crossref_dois.txt"
     size = (options[:size] || 1000).to_i
     cursor = [options[:from_id], options[:until_id]]
     total_errors = 0
 
-    response = Event.query(nil, source_id: "datacite-crossref,datacite-related", page: { size: 1, cursor: [] })
-    Rails.logger.info "[DoubleCheck] #{response.results.total} events for source datacite-crossref,datacite-related."
+    response = Event.query(nil, source_id: "datacite-crossref", page: { size: 1, cursor: [] })
+    logger.warn "[DoubleCheck] #{response.results.total} events for source datacite-crossref."
 
     # walk through results using cursor
     if response.results.total.positive?
       while response.results.results.length.positive?
-        response = Event.query(nil, source_id: "datacite-crossref,datacite-related", page: { size: size, cursor: cursor })
+        response = Event.query(nil, source_id: "datacite-crossref", page: { size: size, cursor: cursor })
         break unless response.results.results.length.positive?
 
-        Rails.logger.info "[DoubleCheck] DoubleCheck #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
+        logger.warn "[DoubleCheck] DoubleCheck #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         # dois = response.results.results.map(&:subj_id)
@@ -569,8 +570,8 @@ class Event < ActiveRecord::Base
       payload = { description: "events_with_errors_from_rake_task #{Time.now.getutc}", public: true,files: {uids_with_errors: {content: file.read} }}
       ### max file size 1MB
       response = Maremma.post("https://api.github.com/gists", data: payload.to_json, username: ENV["GIST_USERNAME"], password:ENV["GIST_PASSWORD"])
-      Rails.logger.warn "[DoubleCheck] Total number of events with Errors: #{total_errors}"
-      Rails.logger.warn "[DoubleCheck] IDs saved: #{response.body.dig('data','url')}" if [200,201].include?(response.status)
+      logger.warn "[DoubleCheck] Total number of events with Errors: #{total_errors}"
+      logger.warn "[DoubleCheck] IDs saved: #{response.body.dig('data','url')}" if [200,201].include?(response.status)
     end
   end
 
