@@ -1,5 +1,5 @@
-class IndexJob < ActiveJob::Base
-  queue_as :lupo
+class IndexBackgroundJob < ActiveJob::Base
+  queue_as :lupo_background
 
   rescue_from ActiveJob::DeserializationError, Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
     Rails.logger.error error.message

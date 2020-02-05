@@ -18,6 +18,9 @@ class Event < ActiveRecord::Base
 
   include Elasticsearch::Model
 
+  belongs_to :doi_for_source, class_name: "Doi", primary_key: :doi, foreign_key: :source_doi, touch: true, optional: true
+  belongs_to :doi_for_target, class_name: "Doi", primary_key: :doi, foreign_key: :target_doi, touch: true, optional: true
+  
   before_validation :set_defaults
   before_create :set_source_and_target_doi
 

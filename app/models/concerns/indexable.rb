@@ -10,19 +10,12 @@ module Indexable
       if self.class.name == "Doi"
         update_column(:indexed, Time.zone.now)
         send_import_message(self.to_jsonapi) if aasm_state == "findable" && !Rails.env.test? && !%w(crossref medra kisti jalc op).include?(client.symbol.downcase.split(".").first)
-      # elsif self.class.name == "Event"
-      #   # reindex dois associated with Event
-      #   @source_doi = Doi.where(doi: source_doi).first if source_doi
-      #   IndexJob.perform_later(@source_doi) if @source_doi
-
-      #   @target_doi = Doi.where(doi: target_doi).first if target_doi
-      #   IndexJob.perform_later(@target_doi) if @target_doi
       end
     end
 
     after_touch do
       # use index_document instead of update_document to also update virtual attributes
-      IndexJob.perform_later(self)
+      IndexBackgroundJob.perform_later(self)
     end
 
     before_destroy do
