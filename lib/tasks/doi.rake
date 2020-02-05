@@ -99,4 +99,17 @@ namespace :doi do
   task :migrate_landing_page => :environment do
     Doi.migrate_landing_page
   end
+
+  desc 'Delete dois by a prefix'
+  task :delete_by_prefix => :environment do
+    if ENV['PREFIX'].nil?
+      puts "ENV['PREFIX'] is required."
+      exit
+    end
+
+    puts "Note: This does not delete any associated prefix."
+
+    count = Doi.delete_dois_by_prefix(ENV['PREFIX'])
+    puts "#{count} DOIs with prefix #{ENV['PREFIX']} deleted."
+  end
 end
