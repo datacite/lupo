@@ -204,7 +204,7 @@ class Activity < Audited::Audit
   end
 
   def self.import_by_id(options={})
-    return nil unless options[:id].present?
+    return nil if options[:id].blank?
 
     id = options[:id].to_i
     index = Rails.env.test? ? "activities-test" : self.inactive_index
@@ -228,7 +228,7 @@ class Activity < Audited::Audit
 
     if errors > 1
       Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} activities with IDs #{id} - #{(id + 499)}."
-    elsif count > 0
+    elsif count.positive?
       Rails.logger.info "[Elasticsearch] Imported #{count} activities with IDs #{id} - #{(id + 499)}."
     end
 
@@ -291,19 +291,18 @@ class Activity < Audited::Audit
       contributors = Array.wrap(audited_changes["contributors"]).map do |c|
         # c is an array if there are changes
         return [] if c.blank?
+
         c = c.last if c.is_a?(Array)
 
         if c["affiliation"].nil?
           c["affiliation"] = []
-          should_update = true
         elsif c["affiliation"].is_a?(String)
           c["affiliation"] = [{ "name" => c["affiliation"] }] 
-          should_update = true
         else c["affiliation"].is_a?(Hash)
           c["affiliation"] = Array.wrap(c["affiliation"])
-          should_update = true
         end
 
+        should_update = true
         c
       end
 
@@ -314,7 +313,7 @@ class Activity < Audited::Audit
         count += 1
       end
     end
-        
+
     Rails.logger.info "[Elasticsearch] Converted affiliations for #{count} activities with IDs #{id} - #{(id + 499)}." if count > 0
 
     count

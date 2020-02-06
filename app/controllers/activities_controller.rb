@@ -65,7 +65,7 @@ class ActivitiesController < ApplicationController
             "page[cursor]" => page[:cursor] ? make_cursor(results) : nil,
             "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
             "page[size]" => page[:size],
-            sort: params[:sort] }.compact.to_query
+            sort: params[:sort] }.compact.to_query,
           }.compact
         options[:include] = @include
         options[:is_collection] = true
@@ -103,6 +103,6 @@ class ActivitiesController < ApplicationController
   def set_activity
     response = Activity.find_by_id(params[:id])
     @activity = response.results.first
-    fail ActiveRecord::RecordNotFound unless @activity.present?
+    fail ActiveRecord::RecordNotFound if @activity.blank?
   end
 end
