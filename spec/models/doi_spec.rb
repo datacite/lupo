@@ -606,7 +606,8 @@ describe Doi, type: :model, vcr: true do
   describe "citations", elasticsearch: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:citations) { create_list(:event_for_datacite_crossref, 1, subj_id: "https://doi.org/#{doi.doi}", relation_type_id: "is-referenced-by") }
+    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:citations) { create_list(:event_for_datacite_crossref, 1, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by") }
 
     before do
       Doi.import

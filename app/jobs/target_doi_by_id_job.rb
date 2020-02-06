@@ -10,6 +10,7 @@ class TargetDoiByIdJob < ActiveJob::Base
     return false if item.blank?
 
     item.set_source_and_target_doi
+    
     if item.save
       Rails.logger.info "Target doi for #{item.uuid} updated."
     else

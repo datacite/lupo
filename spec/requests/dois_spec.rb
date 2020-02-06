@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe "dois", type: :request do
   let(:admin) { create(:provider, symbol: "ADMIN") }
@@ -14,7 +14,7 @@ describe "dois", type: :request do
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
   let(:headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
 
-  describe 'GET /dois', elasticsearch: true do
+  describe "GET /dois", elasticsearch: true do
     let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
 
     before do
@@ -23,7 +23,7 @@ describe "dois", type: :request do
     end
 
     it 'returns dois', vcr: true do
-      get '/dois', nil, headers
+      get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(3)

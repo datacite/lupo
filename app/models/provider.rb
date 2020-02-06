@@ -1,7 +1,6 @@
 require "countries"
 
 class Provider < ActiveRecord::Base
-
   # include helper module for caching infrequently changing resources
   include Cacheable
 

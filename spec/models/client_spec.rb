@@ -1,8 +1,8 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe Client, type: :model do
-  let(:provider)  { create(:provider) }
-  let(:client)  { create(:client, provider: provider) }
+  let(:provider) { create(:provider) }
+  let(:client) { create(:client, provider: provider) }
 
   describe "Validations" do
     it { should validate_presence_of(:symbol) }

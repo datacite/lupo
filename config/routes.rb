@@ -2,13 +2,13 @@ Rails.application.routes.draw do
   post "/client-api/graphql", to: "graphql#execute"
   get "/client-api/graphql", to: "index#method_not_allowed"
 
-  root :to => 'index#index'
+  root to: "index#index"
 
   # authentication
-  post 'token', :to => 'sessions#create_token'
+  post "token", to: "sessions#create_token"
 
   # authentication via openid connect in load balancer
-  post 'oidc-token', :to => 'sessions#create_oidc_token'
+  post "oidc-token", to: "sessions#create_oidc_token"
 
   # send reset link
   post 'reset', :to => 'sessions#reset'
