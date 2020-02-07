@@ -32,8 +32,6 @@ class DoisController < ApplicationController
           else { updated: { order: 'desc' }}
           end
 
-    logger = LogStashLogger.new(type: :stdout)
-
     page = page_from_params(params)
 
     sample_group_field = case params[:sample_group]
@@ -88,7 +86,7 @@ class DoisController < ApplicationController
                             random: params[:random])
       end
     }
-    logger.warn method: "GET", path: "/dois", message: "Request /dois", duration: bm
+    Rails.logger.warn method: "GET", path: "/dois", message: "Request /dois", duration: bm
 
     begin
       # If we're using sample groups we need to unpack the results from the aggregation bucket hits.

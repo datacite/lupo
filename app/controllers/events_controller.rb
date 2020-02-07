@@ -66,8 +66,6 @@ class EventsController < ApplicationController
   end
 
   def index
-    logger = LogStashLogger.new(type: :stdout)
-
     sort = case params[:sort]
            when "relevance" then { "_score" => { order: 'desc' }}
            when "obj_id" then { "obj_id" => { order: 'asc' }}
@@ -113,7 +111,7 @@ class EventsController < ApplicationController
                               sort: sort)
       end
     }
-    logger.warn method: "GET", path: "/events", message: "Request /events", duration: bm
+    Rails.logger.warn method: "GET", path: "/events", message: "Request /events", duration: bm
 
     if page[:scroll].present?
       results = response.results
@@ -184,7 +182,7 @@ class EventsController < ApplicationController
         unique_obj_count = total.positive? && aggregations.include?("advanced_aggregations") ? response.response.aggregations.unique_obj_count.value : nil
         unique_subj_count = total.positive? && aggregations.include?("advanced_aggregations") ? response.response.aggregations.unique_subj_count.value : nil
       }
-      logger.warn method: "GET", path: "/events", message: "Aggregations /events", duration: bm
+      Rails.logger.warn method: "GET", path: "/events", message: "Aggregations /events", duration: bm
 
       results = response.results
 
@@ -244,8 +242,8 @@ class EventsController < ApplicationController
       bm = Benchmark.ms {
         events_serialized = EventSerializer.new(results, options).serializable_hash
       }
-      logger.warn method: "GET", path: "/events", message: "Serialize /events", duration: bm
-      
+      Rails.logger.warn method: "GET", path: "/events", message: "Serialize /events", duration: bm
+
       if @include.include?(:dois)
         doi_names = ""
         bm = Benchmark.ms {
@@ -253,13 +251,13 @@ class EventsController < ApplicationController
           doi_names = (results.map { |event| event.doi}).uniq().join(",")
           events_serialized[:included] = DoiSerializer.new((Doi.find_by_id(doi_names).results), is_collection: true).serializable_hash.dig(:data) 
         }
-        logger.warn method: "GET", path: "/events", message: "IncludeDois /events", duration: bm
+        Rails.logger.warn method: "GET", path: "/events", message: "IncludeDois /events", duration: bm
       end
 
       bm = Benchmark.ms {
         render json: events_serialized, status: :ok
       }
-      logger.warn method: "GET", path: "/events", message: "Render /events", duration: bm
+      Rails.logger.warn method: "GET", path: "/events", message: "Render /events", duration: bm
     end
   end
 
