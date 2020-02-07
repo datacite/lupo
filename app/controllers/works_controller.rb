@@ -16,8 +16,6 @@ class WorksController < ApplicationController
           else { updated: { order: 'desc' }}
           end
 
-    logger = LogStashLogger.new(type: :stdout)
-
     page = page_from_params(params)
 
     sample_group_field = case params[:sample_group]
@@ -54,7 +52,7 @@ class WorksController < ApplicationController
                             random: params[:sample].present? ? true : false)
       end
     }
-    logger.warn method: "GET", path: "/works", message: "Request /works", duration: bm
+    Rails.logger.warn method: "GET", path: "/works", message: "Request /works", duration: bm
 
     begin
       total = response.results.total
@@ -72,12 +70,12 @@ class WorksController < ApplicationController
         providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
         clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
       }
-      logger.warn method: "GET", path: "/works", message: "AggregationsBasic /works", duration: bm
+      Rails.logger.warn method: "GET", path: "/works", message: "AggregationsBasic /works", duration: bm
 
       bm = Benchmark.ms {
         affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
       }
-      logger.warn method: "GET", path: "/works", message: "AggregationsAffiliations /works", duration: bm
+      Rails.logger.warn method: "GET", path: "/works", message: "AggregationsAffiliations /works", duration: bm
 
       @dois = response.results
 
@@ -119,7 +117,7 @@ class WorksController < ApplicationController
       bm = Benchmark.ms {
         render json: WorkSerializer.new(@dois, options).serialized_json, status: :ok
       }
-      logger.warn method: "GET", path: "/works", message: "Render /works", duration: bm
+      Rails.logger.warn method: "GET", path: "/works", message: "Render /works", duration: bm
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
@@ -139,22 +137,19 @@ class WorksController < ApplicationController
     bm = Benchmark.ms {
       render json: WorkSerializer.new(@doi, options).serialized_json, status: :ok
     }
-    logger = LogStashLogger.new(type: :stdout)
-    logger.warn method: "GET", path: "/works/#{@doi.doi}", message: "Render /works/#{@doi.doi}", duration: bm
+    Rails.logger.warn method: "GET", path: "/works/#{@doi.doi}", message: "Render /works/#{@doi.doi}", duration: bm
   end
 
   protected
 
   def set_doi
-    logger = LogStashLogger.new(type: :stdout)
-
     @doi = nil
-     
+
     bm = Benchmark.ms {
       @doi = Doi.where(doi: params[:id], aasm_state: "findable").first
     }
     fail ActiveRecord::RecordNotFound if @doi.blank?
-    logger.warn method: "GET", path: "/works/#{@doi.doi}", message: "Request DB /works/#{@doi.doi}", duration: bm
+    Rails.logger.warn method: "GET", path: "/works/#{@doi.doi}", message: "Request DB /works/#{@doi.doi}", duration: bm
   end
 
   def set_include

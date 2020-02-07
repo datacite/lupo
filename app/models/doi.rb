@@ -610,8 +610,6 @@ class Doi < ActiveRecord::Base
   end
 
   def self.query(query, options={})
-    logger = LogStashLogger.new(type: :stdout)
-
     # support scroll api
     # map function is small performance hit
     if options[:scroll_id].present? && options.dig(:page, :scroll)
@@ -639,7 +637,7 @@ class Doi < ActiveRecord::Base
     bm = Benchmark.ms {
       aggregations = get_aggregations_hash(options)
     }
-    logger.warn method: "GET", path: "/works", message: "QueryAggregations /works", duration: bm
+    Rails.logger.warn method: "GET", path: "/works", message: "QueryAggregations /works", duration: bm
 
     options[:page] ||= {}
     options[:page][:number] ||= 1
@@ -763,7 +761,7 @@ class Doi < ActiveRecord::Base
         }
       end
     }
-    logger.warn method: "GET", path: "/works", message: "QueryProcessing /works", duration: bm
+    Rails.logger.warn method: "GET", path: "/works", message: "QueryProcessing /works", duration: bm
 
     # three options for going through results are scroll, cursor and pagination
     # the default is pagination
@@ -810,7 +808,7 @@ class Doi < ActiveRecord::Base
         }.compact)
       end
     }
-    logger.warn method: "GET", path: "/works", message: "Query /works #{es_query.inspect}", duration: bm
+    Rails.logger.warn method: "GET", path: "/works", message: "Query /works #{es_query.inspect}", duration: bm
     response
   end
 

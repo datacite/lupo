@@ -83,13 +83,9 @@ module Lupo
     # secret_key_base is not used by Rails API, as there are no sessions
     config.secret_key_base = "blipblapblup"
 
-    # Disable loggers that log to file
-    config.active_record.logger = nil
-    config.active_job.logger = nil
-
     config.lograge.enabled = true
     config.lograge.formatter = Lograge::Formatters::Logstash.new
-    config.lograge.logger =  LogStashLogger.new(type: :stdout)
+    config.lograge.logger = LogStashLogger.new(type: :stdout)
     config.logger = config.lograge.logger        ## LogStashLogger needs to be pass to rails logger, see roidrage/lograge#26
     config.log_level = ENV["LOG_LEVEL"].to_sym   ## Log level in a config level configuration
 
