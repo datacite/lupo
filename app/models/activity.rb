@@ -120,14 +120,14 @@ class Activity < Audited::Audit
       rights_list: { type: :object, properties: {
         rights: { type: :keyword },
         rightsUri: { type: :keyword },
-        lang: { type: :keyword }
+        lang: { type: :keyword },
       }},
       subjects: { type: :object, properties: {
         subject: { type: :keyword },
         subjectScheme: { type: :keyword },
         schemeUri: { type: :keyword },
         valueUri: { type: :keyword },
-        lang: { type: :keyword }
+        lang: { type: :keyword },
       }},
       container: { type: :object, properties: {
         type: { type: :keyword },
@@ -137,7 +137,7 @@ class Activity < Audited::Audit
         volume: { type: :keyword },
         issue: { type: :keyword },
         firstPage: { type: :keyword },
-        lastPage: { type: :keyword }
+        lastPage: { type: :keyword },
       }},
       content_url: { type: :keyword },
       version_info: { type: :keyword },
