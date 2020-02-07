@@ -634,7 +634,22 @@ class DoisController < ApplicationController
       :fundingReferences,
       { fundingReferences: [:funderName, :funderIdentifier, :funderIdentifierType, :awardNumber, :awardUri, :awardTitle] },
       :geoLocations,
-      { geoLocations: [{ geoLocationPoint: [:pointLongitude, :pointLatitude] }, { geoLocationBox: [:westBoundLongitude, :eastBoundLongitude, :southBoundLatitude, :northBoundLatitude] }, :geoLocationPlace] }
+      { geoLocations: [{ geoLocationPoint: [:pointLongitude, :pointLatitude] }, { geoLocationBox: [:westBoundLongitude, :eastBoundLongitude, :southBoundLatitude, :northBoundLatitude] }, :geoLocationPlace] },
+      :container,
+      { container: [:type, :identifier, :identifierType, :title, :volume, :issue, :firstPage, :lastPage] },
+      :published,
+      :downloadsOverTime,
+      { downloadsOverTime: [:yearMonth, :total] },
+      :viewsOverTime,
+      { viewsOverTime: [:yearMonth, :total] },
+      :citationCount,
+      :downloadCount,
+      :partCount,
+      :partOfCount,
+      :referenceCount,
+      :versionCount,
+      :versionOfCount,
+      :viewCount,
     ]
     relationships = [{ client: [data: [:type, :id]] }]
 
@@ -706,13 +721,15 @@ class DoisController < ApplicationController
       :confirmDoi, :prefix, :suffix, :publicationYear,
       :rightsList, :relatedIdentifiers, :fundingReferences, :geoLocations,
       :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage,
-      :created, :registered, :updated, :lastLandingPage, :version,
+      :created, :registered, :updated, :published, :lastLandingPage, :version,
       :lastLandingPageStatus, :lastLandingPageStatusCheck,
-      :lastLandingPageStatusResult, :lastLandingPageContentType, :contentUrl)
+      :lastLandingPageStatusResult, :lastLandingPageContentType, :contentUrl,
+      :viewsOverTime, :downloadsOverTime, :citationCount, :downloadCount,
+      :partCount, :partOfCount, :referenceCount, :versionCount, :versionOfCount, :viewCount)
   end
 
   def set_raven_context
-    return nil unless params.dig(:data, :attributes, :xml).present?
+    return nil if params.dig(:data, :attributes, :xml).blank?
 
     Raven.extra_context metadata: Base64.decode64(params.dig(:data, :attributes, :xml))
   end

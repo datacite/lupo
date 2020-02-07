@@ -3,7 +3,7 @@ require "rails_helper"
 describe "dois", type: :request do
   let(:admin) { create(:provider, symbol: "ADMIN") }
   let(:admin_bearer) { Client.generate_token(role_id: "staff_admin", uid: admin.symbol, password: admin.password) }
-  let(:admin_headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + admin_bearer} }
+  let(:admin_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer} }
 
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
@@ -12,7 +12,7 @@ describe "dois", type: :request do
 
   let(:doi) { create(:doi, client: client) }
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
-  let(:headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
+  let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }}
 
   describe "GET /dois", elasticsearch: true do
     let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
@@ -363,7 +363,7 @@ describe "dois", type: :request do
     end
   end
 
-  describe 'state' do
+  describe "state" do
     let(:doi_id) { "10.14454/4K3M-NYVG" }
     let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
     let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }
@@ -558,6 +558,42 @@ describe "dois", type: :request do
         patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+      end
+    end
+
+    context 'read-only attributes' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "xml" => xml,
+              "container" => {},
+              "published" => nil,
+              "viewsOverTime" => {},
+              "downloadsOverTime" => {},
+              "viewCount" => 0,
+              "downloadCount" => 0,
+              "citationCount" => 0,
+              "partCount" => 0,
+              "partOfCount" => 0,
+              "referenceCount" => 0,
+              "versionCount" => 0,
+              "versionOfCount" => 0
+            }
+          }
+        }
+      end
+
+      it 'updates the record' do
+        patch "/dois/#{doi.doi}", valid_attributes, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
       end
     end
 
