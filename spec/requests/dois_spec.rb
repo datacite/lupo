@@ -855,6 +855,41 @@ describe "dois", type: :request do
       end
     end
 
+    context 'when the date issued is changed to :tba' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "xml" => xml,
+              "dates" => { 
+                "date" => ":tba",
+                "dateType" => "Issued"
+              },
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      it 'updates the record' do
+        patch "/dois/#{doi.doi}", valid_attributes, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'dates')).to eq("date"=>":tba", "dateType"=>"Issued")
+      end
+
+      it 'sets state to findable' do
+        patch "/dois/#{doi.doi}", valid_attributes, headers
+
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+      end
+    end
+
     context 'when the title is changed' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:titles) { [{ "title" => "Submitted chemical data for InChIKey=YAPQBXQYLJRXSA-UHFFFAOYSA-N" }] }

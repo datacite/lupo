@@ -923,7 +923,9 @@ class Doi < ActiveRecord::Base
   end
 
   def views_over_time
-    views.pluck(:occurred_at, :total).map { |v| { year_month: v[0].present? ? v[0].utc.iso8601[0..6] : nil, total: v[1] } }
+    views.pluck(:occurred_at, :total)
+      .map { |v| { year_month: v[0].present? ? v[0].utc.iso8601[0..6] : nil, total: v[1] } }
+      .sort_by { |h| h[:year_month] }
   end
 
   def download_count
@@ -931,7 +933,9 @@ class Doi < ActiveRecord::Base
   end
 
   def downloads_over_time
-    downloads.pluck(:occurred_at, :total).map { |v| { year_month: v[0].present? ? v[0].utc.iso8601[0..6] : nil, total: v[1] } }
+    downloads.pluck(:occurred_at, :total)
+      .map { |v| { year_month: v[0].present? ? v[0].utc.iso8601[0..6] : nil, total: v[1] } }
+      .sort_by { |h| h[:year_month] }
   end
 
   def reference_ids
