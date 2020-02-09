@@ -1235,11 +1235,11 @@ class Doi < ActiveRecord::Base
   end
 
   # update URL in handle system for registered and findable state
-  # providers europ and ethz do their own handle registration, so fetch url from handle system instead
+  # providers europ, and DOI registration agencies do their own handle registration, so fetch url from handle system instead
   def update_url
     return nil if current_user.nil? || !is_registered_or_findable?
 
-    if %w(europ).include?(provider_id)
+    if %w(ethz europ crossref medra kisti jalc op).include?(provider_id)
       UrlJob.perform_later(doi)
     else
       HandleJob.perform_later(doi)
@@ -1247,7 +1247,7 @@ class Doi < ActiveRecord::Base
   end
 
   def update_media
-    return nil unless content_url.present?
+    return nil if content_url.blank?
 
     media.delete_all
 

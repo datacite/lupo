@@ -86,7 +86,7 @@ module Crosscitable
       end.to_h.compact
 
       meta = from.present? ? send("read_" + from, { string: xml, doi: doi, sandbox: sandbox }.merge(read_attrs)) : {}
-      
+
       xml = datacite_xml
 
       write_attribute(:xml, xml)
@@ -125,19 +125,19 @@ module Crosscitable
 
     def well_formed_xml(string)
       return nil unless string.present?
-  
+
       from_xml(string) || from_json(string)
 
       string
     end
-  
+
     def from_xml(string)
       return nil unless string.start_with?('<?xml version=') || string.start_with?('<resource ')
 
       doc = Nokogiri::XML(string) { |config| config.strict.noblanks }
       doc.to_xml
     end
-  
+
     def from_json(string)
       linter = JsonLint::Linter.new
       errors_array = []
@@ -156,7 +156,7 @@ module Crosscitable
 
       begin
         JSON.parse(string)
-        return "json"
+        "json"
       rescue
         "string"
       end
