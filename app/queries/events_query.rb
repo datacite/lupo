@@ -57,7 +57,7 @@ class EventsQuery
   end
 
   def citations(dois)
-    return nil if dois.blank?
+    return [] if dois.blank?
 
     pids = dois.split(",").map do |doi|
       Event.new.normalize_doi(doi)
@@ -156,7 +156,7 @@ class EventsQuery
   end
 
   def views_and_downloads(dois)
-    return {} if dois.blank?
+    return [] if dois.blank?
 
     query = "(relation_type_id:unique-dataset-requests-regular AND source_id:datacite-usage) OR (relation_type_id:unique-dataset-investigations-regular AND source_id:datacite-usage)"
     results = Event.query(query, doi: dois, aggregations: "multiple_usage_count_aggregation", page: { size: 1, cursor: [] }).response.aggregations

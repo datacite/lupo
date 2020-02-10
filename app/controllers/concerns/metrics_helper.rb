@@ -25,6 +25,8 @@ module MetricsHelper
     end
 
     def get_person_dois(orcid)
+      return [] if orcid.blank?
+
       Event.query(nil, page: { size: 300 }, source_id: "datacite-orcid-auto-update", obj_id: "https://orcid.org/#{orcid}").results.to_a.map do |e|
         doi_from_url(e.subj_id)
       end
