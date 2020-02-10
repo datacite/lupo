@@ -64,6 +64,16 @@ namespace :doi do
     Doi.import_one(doi_id: ENV['DOI'])
   end
 
+  desc 'Index one DOI'
+  task :index_one => :environment do
+    if ENV['DOI'].nil?
+      puts "ENV['DOI'] is required"
+      exit
+    end
+
+    Doi.index_one(doi_id: ENV['DOI'])
+  end
+
   desc 'Store handle URL'
   task :set_url => :environment do
     Doi.set_url

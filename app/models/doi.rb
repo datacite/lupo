@@ -81,7 +81,9 @@ class Doi < ActiveRecord::Base
   has_many :versions, -> { where source_relation_type_id: "versions" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
   has_many :version_of, -> { where target_relation_type_id: "version_of" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
   has_many :activities, foreign_key: :auditable_id, dependent: :destroy
-
+  has_many :source_events, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
+  has_many :target_events, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  
   delegate :provider, to: :client, allow_nil: true
   delegate :consortium_id, to: :provider, allow_nil: true
 
@@ -812,15 +814,29 @@ class Doi < ActiveRecord::Base
     response
   end
 
+  self.index_one(doi_id: nil)
+    doi = Doi.where(doi: doi_id).first
+    if doi.nil?
+      Rails.logger.error "[MySQL] DOI " + doi_id + " not found."
+      return nil
+    end
+
+    doi.source_events.each { |event| IndexJob.perform_later(event) }
+    doi.target_events.each { |event| IndexJob.perform_later(event) }
+    sleep 1
+    
+    IndexJob.perform_later(doi)
+  end
+
   def self.import_one(doi_id: nil)
     doi = Doi.where(doi: doi_id).first
-    unless doi.present?
+    if doi.nil?
       Rails.logger.error "[MySQL] DOI " + doi_id + " not found."
       return nil
     end
 
     string = doi.current_metadata.present? ? doi.clean_xml(doi.current_metadata.xml) : nil
-    unless string.present?
+    if string.blank?
       Rails.logger.error "[MySQL] No metadata for DOI " + doi.doi + " found: " + doi.current_metadata.inspect
       return nil
     end
