@@ -814,7 +814,7 @@ class Doi < ActiveRecord::Base
     response
   end
 
-  self.index_one(doi_id: nil)
+  def self.index_one(doi_id: nil)
     doi = Doi.where(doi: doi_id).first
     if doi.nil?
       Rails.logger.error "[MySQL] DOI " + doi_id + " not found."
@@ -824,7 +824,7 @@ class Doi < ActiveRecord::Base
     doi.source_events.each { |event| IndexJob.perform_later(event) }
     doi.target_events.each { |event| IndexJob.perform_later(event) }
     sleep 1
-    
+
     IndexJob.perform_later(doi)
   end
 
