@@ -30,12 +30,12 @@ class EventsQuery
     results.any? ? results.first.total.value : 0
   end
 
-  def citations_left_query(dois)
+  def citations_left_query(dois, pids)
     return nil if dois.blank?
 
-    pids = dois.split(",").map do |doi|
-      Event.new.normalize_doi(doi)
-    end.uniq
+    # pids = dois.split(",").map do |doi|
+    #   Event.new.normalize_doi(doi)
+    # end.uniq
     query = "((subj_id:\"#{pids.join('" OR subj_id:"')}\" ) AND (relation_type_id:#{PASSIVE_RELATION_TYPES.join(' OR relation_type_id:')}))"
     results = Event.query(query, doi: dois, aggregations: "citation_count_aggregation", page: { size: 1, cursor: [] }).response.aggregations.citations.buckets
     results.map do |item|
@@ -43,12 +43,12 @@ class EventsQuery
     end
   end
 
-  def citations_right_query(dois)
+  def citations_right_query(dois, pids)
     return nil if dois.blank?
 
-    pids = dois.split(",").map do |doi|
-      Event.new.normalize_doi(doi)
-    end.uniq
+    # pids = dois.split(",").map do |doi|
+    #   Event.new.normalize_doi(doi)
+    # end.uniq
     query = "((obj_id:\"#{pids.join('" OR obj_id:"')}\") AND (relation_type_id:#{ACTIVE_RELATION_TYPES.join(' OR relation_type_id:')}))"
     results = Event.query(query, doi: dois, aggregations: "citation_count_aggregation", page: { size: 1, cursor: [] }).response.aggregations.citations.buckets
     results.map do |item|
@@ -58,9 +58,13 @@ class EventsQuery
 
   def citations(dois)
     return nil if dois.blank?
+
+    pids = dois.split(",").map do |doi|
+      Event.new.normalize_doi(doi)
+    end
     
-    right = citations_right_query(dois)
-    left  = citations_left_query(dois)
+    right = citations_right_query(dois, pids)
+    left  = citations_left_query(dois, pids)
     hashes = merge_array_hashes(right, left)
 
     dois_array = dois.split(",").map { |doi| doi }
@@ -157,22 +161,18 @@ class EventsQuery
     query = "(relation_type_id:unique-dataset-requests-regular AND source_id:datacite-usage) OR (relation_type_id:unique-dataset-investigations-regular AND source_id:datacite-usage)"
     results = Event.query(query, doi: dois, aggregations: "multiple_usage_count_aggregation", page: { size: 1, cursor: [] }).response.aggregations
 
-    # dois_array = dois.split(",").map { |doi| doi }
-    # dois_array.map do |doi|
-    #   views = bucket.relation_types.buckets.select { |item| item["key"] == "unique-dataset-investigations-regular" }.first
-    #   downloads = bucket.relation_types.buckets.select { |item| item["key"] == "unique-dataset-requests-regular" }.first
-    #   views_counts = views.nil? ? 0 : views.dig("total_by_type", "value")
-    #   downloads_counts = downloads.nil? ? 0 : downloads.dig("total_by_type", "value")
-    #   { id: doi.downcase, downloads: downloads_counts, views: views_counts }
-    # end
-
-
-    results.usage.buckets.map do |bucket|
-      views = bucket.relation_types.buckets.select { |item| item["key"] == "unique-dataset-investigations-regular" }.first
-      downloads = bucket.relation_types.buckets.select { |item| item["key"] == "unique-dataset-requests-regular" }.first
-      views_counts = views.nil? ? 0 : views.dig("total_by_type", "value")
-      downloads_counts = downloads.nil? ? 0 : downloads.dig("total_by_type", "value")
-      { id: doi_from_url(bucket[:key]), downloads: downloads_counts, views: views_counts }
+    dois_array = dois.split(",").map { |doi| doi }
+    dois_array.map do |doi|
+      bucket = results.usage.buckets.select { |item| item[:key] == "https://doi.org/#{doi.downcase}" }.first
+      if bucket.nil?
+        { id: doi.downcase, downloads: 0, views: 0 }
+      else
+        views = bucket.relation_types.buckets.select { |item| item["key"] == "unique-dataset-investigations-regular" }.first
+        downloads = bucket.relation_types.buckets.select { |item| item["key"] == "unique-dataset-requests-regular" }.first
+        views_counts = views.nil? ? 0 : views.dig("total_by_type", "value")
+        downloads_counts = downloads.nil? ? 0 : downloads.dig("total_by_type", "value")
+        { id: doi.downcase, downloads: downloads_counts, views: views_counts }
+      end
     end
   end
 
