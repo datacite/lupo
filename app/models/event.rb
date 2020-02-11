@@ -549,6 +549,7 @@ class Event < ActiveRecord::Base
 
         Rails.logger.warn "[DoubleCheck] DoubleCheck #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
+        Rails.logger.warn "[DoubleCheck] Cursor: #{cursor} "
 
         # dois = response.results.results.map(&:subj_id)
         events = response.results.results
