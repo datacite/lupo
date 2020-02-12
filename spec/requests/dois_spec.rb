@@ -136,6 +136,7 @@ describe "dois", type: :request do
     let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:events) { create_list(:event_for_datacite_related, 3, obj_id: doi.doi) }
     let!(:views) { create_list(:event_for_datacite_usage, 2, obj_id: doi.doi, total: 25) }
+    let!(:orcid_event) { create(:event_for_datacite_orcid_auto_update, subj_id: doi.doi, obj_id:"https://orcid.org/0000-0003-1419-2405") }
 
     before do
       Event.import
@@ -151,6 +152,7 @@ describe "dois", type: :request do
         expect(json['data'].size).to eq(1)
         result = json.dig('data').select { |item| item["id"] == doi.doi.downcase }.first
         expect(json.dig('meta', 'total')).to eq(1)
+        expect(json.dig('meta', 'views')).to be_a(Array)
         expect(json.dig('data', 0, 'attributes', 'url')).to eq(doi.url)
         expect(json.dig('data', 0, 'attributes', 'doi')).to eq(doi.doi.downcase)
         expect(json.dig('data', 0, 'attributes', 'titles')).to eq(doi.titles)
@@ -158,6 +160,16 @@ describe "dois", type: :request do
         expect(json.dig('data', 0, 'attributes', 'citationCount')).to eq(3)
         expect(json.dig('data', 0, 'attributes', 'viewCount')).to eq(50)
         expect(json.dig('data', 0, 'attributes', 'viewsOverTime')).to eq([{"total"=>25, "year_month"=>"2015-06"}, {"total"=>25, "year_month"=>"2015-06"}])
+      end
+
+      it 'includes events with query parameter' do
+        get "/dois?mix-in=metrics&user-stats=true&user-id=0000-0003-1419-2405", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json['data'].size).to eq(1)
+        result = json.dig('data').select { |item| item["id"] == doi.doi.downcase }.first
+        expect(json.dig('meta', 'total')).to eq(1)
+        expect(json.dig('meta', 'views')).to be > 0
       end
 
       it 'includes events without query parameter' do
