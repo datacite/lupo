@@ -59,6 +59,8 @@ module Helpable
         Rails.logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "." unless Rails.env.test?
 
         self.__elasticsearch__.index_document
+      elsif response.status == 404
+        Rails.logger.info "[Handle] Error updating URL for DOI " + doi + ": not found"
       else
         Rails.logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect unless Rails.env.test?
       end
@@ -171,14 +173,16 @@ module Helpable
       url += "/api/handles/#{options[:doi]}"
       response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
 
-      if response.status != 200
+      if response.status == 200
+        response
+      elsif response.status == 404
+        {}
+      else
         text = "Error " + response.body["errors"].inspect
 
         Rails.logger.error "[Handle] " + text
         User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
       end
-
-      response
     end
 
     def delete_doi(options={})
@@ -190,6 +194,8 @@ module Helpable
 
       if response.status == 200
         response
+      elsif response.status == 404
+        {}
       else
         text = "Error " + response.body["errors"].inspect
 

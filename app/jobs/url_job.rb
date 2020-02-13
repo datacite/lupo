@@ -25,10 +25,10 @@ class UrlJob < ActiveJob::Base
 
         Rails.logger.info "[Handle] URL #{url} set for DOI #{doi.doi}." unless Rails.env.test?
       else
-        Rails.logger.error "[Handle] Error updating URL for DOI #{doi.doi}: URL not found." unless Rails.env.test?
+        Rails.logger.info "[Handle] Error updating URL for DOI #{doi.doi}: URL not found." unless Rails.env.test?
       end
     else
-      Rails.logger.error "[Handle] Error updating URL for DOI #{doi_id}: DOI not found" unless Rails.env.test?
+      Rails.logger.info "[Handle] Error updating URL for DOI #{doi_id}: DOI not found" unless Rails.env.test?
     end
   end
 end
