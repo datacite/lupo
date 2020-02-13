@@ -1255,7 +1255,7 @@ class Doi < ActiveRecord::Base
   def update_url
     return nil if current_user.nil? || !is_registered_or_findable?
 
-    if %w(ethz europ crossref medra kisti jalc op).include?(provider_id)
+    if %w(europ crossref medra kisti jalc op).include?(provider_id)
       UrlJob.perform_later(doi)
     else
       HandleJob.perform_later(doi)
