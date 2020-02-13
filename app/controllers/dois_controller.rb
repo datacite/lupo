@@ -202,7 +202,9 @@ class DoisController < ApplicationController
           dois_names =  results.map { |result| result.dig(:_source, :doi) }.join(',')
           metrics_array = get_metrics_array(dois_names)
           results = mix_in_metrics_array(results, metrics_array)
+        end
 
+        if params[:user_stats]
           person_metrics = get_person_metrics(params[:user_id])
           citations = person_metrics[:citations]
           views = person_metrics[:views]
