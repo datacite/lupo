@@ -284,6 +284,11 @@ class Event < ActiveRecord::Base
     }
   end
 
+  def self.state_aggregations
+    { states: { terms: { field: "state_event", size: 50, min_doc_count: 1 } }}
+  end
+
+
   # return results for one or more ids
   def self.find_by_id(ids, options = {})
     ids = ids.split(",") if ids.is_a?(String)
@@ -533,10 +538,8 @@ class Event < ActiveRecord::Base
   end
 
   def self.subj_id_check(options = {})
-    file_name = "evens_with_double_crossref_dois.txt"
     size = (options[:size] || 1000).to_i
     cursor = [options[:from_id], options[:until_id]]
-    total_errors = 0
 
     response = Event.query(nil, source_id: "datacite-crossref", page: { size: 1, cursor: [] })
     Rails.logger.warn "[DoubleCheck] #{response.results.total} events for source datacite-crossref."
@@ -549,29 +552,10 @@ class Event < ActiveRecord::Base
 
         Rails.logger.warn "[DoubleCheck] DoubleCheck #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
-        Rails.logger.warn "[DoubleCheck] Cursor: #{cursor} "
 
-        # dois = response.results.results.map(&:subj_id)
-        events = response.results.results
-        events.lazy.each do | event|
-          subj_prefix = event.subj_id[/(10\.\d{4,5})/, 1]
-          if Prefix.where(prefix: subj_prefix).empty?
-            File.open(file_name, "a+") do |f|
-              f.write(event.uuid, "\n")
-              total_errors = total_errors + 1
-            end
-          end
-        end
+        events = response.results.results.map { |item| { id: item.id, subj_id: item.subj_id } }
+        SubjCheckJob.perform_later(events, options)
       end
-    end
-
-    file = File.open(file_name)
-    if file.present?
-      payload = { description: "events_with_errors_from_rake_task #{Time.now.getutc}", public: true,files: {uids_with_errors: {content: file.read} }}
-      ### max file size 1MB
-      response = Maremma.post("https://api.github.com/gists", data: payload.to_json, username: ENV["GIST_USERNAME"], password:ENV["GIST_PASSWORD"])
-      Rails.logger.warn "[DoubleCheck] Total number of events with Errors: #{total_errors}"
-      Rails.logger.warn "[DoubleCheck] IDs saved: #{response.body.dig('data','url')}" if [200,201].include?(response.status)
     end
   end
 
