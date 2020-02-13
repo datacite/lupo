@@ -106,6 +106,7 @@ class EventsController < ApplicationController
                               year_month: params[:year_month],
                               aggregations: params[:aggregations],
                               unique: params[:unique],
+                              state_event: params[:state],
                               scroll_id: params[:scroll_id],
                               page: page,
                               sort: sort)
@@ -156,6 +157,8 @@ class EventsController < ApplicationController
       downloads_histogram = nil
       unique_obj_count = nil
       unique_subj_count = nil
+      states = nil
+
 
       bm = Benchmark.ms {
         aggregations = params.fetch(:aggregations, "") || ""
@@ -181,6 +184,8 @@ class EventsController < ApplicationController
         # downloads = total.positive? ? EventsQuery.new.downloads(params[:doi]) : nil
         unique_obj_count = total.positive? && aggregations.include?("advanced_aggregations") ? response.response.aggregations.unique_obj_count.value : nil
         unique_subj_count = total.positive? && aggregations.include?("advanced_aggregations") ? response.response.aggregations.unique_subj_count.value : nil
+        states = total.positive? && aggregations.include?("state_aggregations") ? facet_by_source(response.response.aggregations.states.buckets) : nil
+
       }
       Rails.logger.warn method: "GET", path: "/events", message: "Aggregations /events", duration: bm
 
@@ -204,6 +209,7 @@ class EventsController < ApplicationController
         "uniqueCitations": citations,
         "references": references,
         "relations": relations,
+        "states": states,
         "uniqueNodes": {
           "objCount": unique_obj_count,
           "subjCount": unique_subj_count
