@@ -541,21 +541,28 @@ class Event < ActiveRecord::Base
     size = (options[:size] || 1000).to_i
     cursor = [options[:from_id], options[:until_id]]
 
-    response = Event.query(nil, source_id: "datacite-crossref", page: { size: 1, cursor: [] })
+    response = Event.query(nil,  source_id: "datacite-crossref", page: { size: 1, cursor: [] })
     Rails.logger.warn "[DoubleCheck] #{response.results.total} events for source datacite-crossref."
 
     # walk through results using cursor
     if response.results.total.positive?
       while response.results.results.length.positive?
-        response = Event.query(nil, source_id: "datacite-crossref", page: { size: size, cursor: cursor })
+        response = Event.query(nil,  source_id: "datacite-crossref",page: { size: size, cursor: cursor })
         break unless response.results.results.length.positive?
 
         Rails.logger.warn "[DoubleCheck] DoubleCheck #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
-        events = response.results.results.map { |item| { id: item.id, subj_id: item.subj_id } }
+        events = response.results.results.map { |item| { uuid: item.uuid, subj_id: item.subj_id } }
         SubjCheckJob.perform_later(events, options)
       end
+    end
+  end
+
+  def self.label_state_event(event)
+    subj_prefix = event[:subj_id][/(10\.\d{4,5})/, 1]
+    unless Prefix.where(prefix: subj_prefix).exists?
+      Event.find_by(uuid: event[:uuid]).update_attribute(:state_event, "crossref_citations_error")
     end
   end
 
