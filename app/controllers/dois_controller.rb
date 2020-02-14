@@ -7,40 +7,39 @@ class DoisController < ApplicationController
   include Crosscitable
   include MetricsHelper # mixes in your helper method as class method
 
-
   prepend_before_action :authenticate_user!
   before_action :set_include, only: [:index, :show, :create, :update]
   before_action :set_raven_context, only: [:create, :update, :validate]
 
   def index
     sort = case params[:sort]
-          when "name" then { "doi" => { order: 'asc' }}
-          when "-name" then { "doi" => { order: 'desc' }}
-          when "created" then { created: { order: 'asc' }}
-          when "-created" then { created: { order: 'desc' }}
-          when "updated" then { updated: { order: 'asc' }}
-          when "-updated" then { updated: { order: 'desc' }}
-          when "published" then { published: { order: 'asc' }}
-          when "-published" then { published: { order: 'desc' }}
-          when "view-count" then { view_count: { order: 'asc' }}
-          when "-view-count" then { view_count: { order: 'desc' }}
-          when "download-count" then { download_count: { order: 'asc' }}
-          when "-download-count" then { download_count: { order: 'desc' }}
-          when "citation-count" then { citation_count: { order: 'asc' }}
-          when "-citation-count" then { citation_count: { order: 'desc' }}
-          when "relevance" then { "_score": { "order": "desc" }}
-          else { updated: { order: 'desc' }}
-          end
+           when "name" then { "doi" => { order: 'asc' }}
+           when "-name" then { "doi" => { order: 'desc' }}
+           when "created" then { created: { order: 'asc' }}
+           when "-created" then { created: { order: 'desc' }}
+           when "updated" then { updated: { order: 'asc' }}
+           when "-updated" then { updated: { order: 'desc' }}
+           when "published" then { published: { order: 'asc' }}
+           when "-published" then { published: { order: 'desc' }}
+           when "view-count" then { view_count: { order: 'asc' }}
+           when "-view-count" then { view_count: { order: 'desc' }}
+           when "download-count" then { download_count: { order: 'asc' }}
+           when "-download-count" then { download_count: { order: 'desc' }}
+           when "citation-count" then { citation_count: { order: 'asc' }}
+           when "-citation-count" then { citation_count: { order: 'desc' }}
+           when "relevance" then { "_score": { "order": "desc" }}
+           else { updated: { order: 'desc' }}
+           end
 
     page = page_from_params(params)
 
     sample_group_field = case params[:sample_group]
-      when "client" then "client_id"
-      when "data-center" then "client_id"
-      when "provider" then "provider_id"
-      when "resource-type" then "types.resourceTypeGeneral"
-      else nil
-    end
+                         when "client" then "client_id"
+                         when "data-center" then "client_id"
+                         when "provider" then "provider_id"
+                         when "resource-type" then "types.resourceTypeGeneral"
+                         else nil
+                         end
 
     response = nil
 
@@ -419,7 +418,7 @@ class DoisController < ApplicationController
       options[:params] = {
         current_ability: current_ability,
         detail: true,
-        affiliation: params[:affiliation]
+        affiliation: params[:affiliation],
       }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
@@ -431,7 +430,7 @@ class DoisController < ApplicationController
 
   def undo
     @doi = Doi.where(doi: safe_params[:doi]).first
-    fail ActiveRecord::RecordNotFound unless @doi.present?
+    fail ActiveRecord::RecordNotFound if @doi.blank?
 
     authorize! :undo, @doi
 
@@ -482,13 +481,13 @@ class DoisController < ApplicationController
 
   def get_url
     @doi = Doi.where(doi: params[:id]).first
-    fail ActiveRecord::RecordNotFound unless @doi.present?
+    fail ActiveRecord::RecordNotFound if @doi.blank?
     
     authorize! :get_url, @doi
 
     if !@doi.is_registered_or_findable? || %w(europ crossref medra jalc kisti op).include?(@doi.provider_id) || %w(Crossref mEDRA).include?(@doi.agency)
       url = @doi.url
-      head :no_content and return unless url.present?
+      head :no_content && return if url.blank?
     else
       response = @doi.get_url
 
@@ -512,12 +511,12 @@ class DoisController < ApplicationController
   def get_dois
     authorize! :get_urls, Doi
 
-    client = Client.where('datacentre.symbol = ?', current_user.uid.upcase).first
+    client = Client.where("datacentre.symbol = ?", current_user.uid.upcase).first
     client_prefix = client.prefixes.first
-    head :no_content and return unless client_prefix.present?
+    head :no_content && return if client_prefix.blank?
 
     dois = Doi.get_dois(prefix: client_prefix.prefix, username: current_user.uid.upcase, password: current_user.password)
-    if dois.length > 0
+    if dois.length.positive?
       render json: { dois: dois }.to_json, status: :ok
     else
       head :no_content
