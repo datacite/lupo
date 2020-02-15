@@ -479,7 +479,7 @@ module Indexable
     # Needs to run every time we change the mappings
     def upgrade_index
       inactive_index ||= self.inactive_index
-      
+
       self.__elasticsearch__.delete_index!(index: inactive_index) if self.__elasticsearch__.index_exists?(index: inactive_index)
 
       if self.__elasticsearch__.index_exists?(index: inactive_index)
@@ -501,10 +501,9 @@ module Indexable
       inactive_index_count = stats.dig("indices", inactive_index, "primaries", "docs", "count")
       database_count = self.all.count
 
-      message = "Active index #{active_index} has #{active_index_count} documents, " \
+      "Active index #{active_index} has #{active_index_count} documents, " \
         "inactive index #{inactive_index} has #{inactive_index_count} documents, " \
         "database has #{database_count} documents."
-      return message
     end
 
     # switch between the two indexes, i.e. the index that is aliased
@@ -531,7 +530,7 @@ module Indexable
             { add:    { index: index_name, alias: alias_name } }
           ]
         }
-        
+
         "Switched active index to #{index_name}."
       end
     end
