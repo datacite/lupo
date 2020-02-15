@@ -1020,7 +1020,7 @@ class Doi < ActiveRecord::Base
   end
 
   def reference_count
-    references.count
+    references.size
   end
 
   def citation_ids
@@ -1028,7 +1028,7 @@ class Doi < ActiveRecord::Base
   end
 
   def citation_count
-    citations.count
+    citations.size
   end
 
   def part_ids
@@ -1036,7 +1036,7 @@ class Doi < ActiveRecord::Base
   end
 
   def part_count
-    parts.count
+    parts.size
   end
 
   def part_of_ids
@@ -1044,7 +1044,7 @@ class Doi < ActiveRecord::Base
   end
 
   def part_of_count
-    part_of.count
+    part_of.size
   end
 
   def version_ids
@@ -1052,7 +1052,7 @@ class Doi < ActiveRecord::Base
   end
 
   def version_count
-    versions.count
+    versions.size
   end
 
   def version_of_ids
@@ -1060,7 +1060,7 @@ class Doi < ActiveRecord::Base
   end
 
   def version_of_count
-    version_of.count
+    version_of.size
   end
 
   def xml_encoded
