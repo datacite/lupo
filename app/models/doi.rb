@@ -72,18 +72,25 @@ class Doi < ActiveRecord::Base
   belongs_to :client, foreign_key: :datacentre
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
   has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
-  has_many :views, -> { where target_relation_type_id: "views" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
-  has_many :downloads, -> { where target_relation_type_id: "downloads" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
-  has_many :references, -> { where source_relation_type_id: "references" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
-  has_many :citations, -> { where target_relation_type_id: "citations" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
-  has_many :parts, -> { where source_relation_type_id: "parts" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
-  has_many :part_of, -> { where target_relation_type_id: "part_of" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
-  has_many :versions, -> { where source_relation_type_id: "versions" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
-  has_many :version_of, -> { where target_relation_type_id: "version_of" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  has_many :view_events, -> { where target_relation_type_id: "views" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  has_many :download_events, -> { where target_relation_type_id: "downloads" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  has_many :reference_events, -> { where source_relation_type_id: "references" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
+  has_many :citation_events, -> { where target_relation_type_id: "citations" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  has_many :part_events, -> { where source_relation_type_id: "parts" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
+  has_many :part_of_events, -> { where target_relation_type_id: "part_of" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  has_many :version_events, -> { where source_relation_type_id: "versions" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
+  has_many :version_of_events, -> { where target_relation_type_id: "version_of" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
   has_many :activities, foreign_key: :auditable_id, dependent: :destroy
   has_many :source_events, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
   has_many :target_events, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
   
+  has_many :references, class_name: "Doi", through: :reference_events, source: :doi_for_target
+  has_many :citations, class_name: "Doi", through: :citation_events, source: :doi_for_source
+  has_many :parts, class_name: "Doi", through: :part_events, source: :doi_for_target
+  has_many :part_of, class_name: "Doi", through: :part_of_events, source: :doi_for_source
+  has_many :versions, class_name: "Doi", through: :version_events, source: :doi_for_target
+  has_many :version_of, class_name: "Doi", through: :version_of_events, source: :doi_for_source
+
   delegate :provider, to: :client, allow_nil: true
   delegate :consortium_id, to: :provider, allow_nil: true
 
@@ -92,7 +99,7 @@ class Doi < ActiveRecord::Base
 
   # from https://www.crossref.org/blog/dois-and-matching-regular-expressions/ but using uppercase
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, on: :create
-  validates_format_of :url, with: /\A(ftp|http|https):\/\/[\S]+/ , if: :url?, message: "URL is not valid"
+  validates_format_of :url, with: /\A(ftp|http|https):\/\/[\S]+/, if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
   validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
@@ -126,13 +133,13 @@ class Doi < ActiveRecord::Base
   settings index: {
     analysis: {
       analyzer: {
-        string_lowercase: { tokenizer: 'keyword', filter: %w(lowercase ascii_folding) }
+        string_lowercase: { tokenizer: 'keyword', filter: %w(lowercase ascii_folding) },
       },
       normalizer: {
-        keyword_lowercase: { type: "custom", filter: %w(lowercase) }
+        keyword_lowercase: { type: "custom", filter: %w(lowercase) },
       },
       filter: {
-        ascii_folding: { type: 'asciifolding', preserve_original: true }
+        ascii_folding: { type: 'asciifolding', preserve_original: true },
       }
     }
   } do
@@ -507,12 +514,12 @@ class Doi < ActiveRecord::Base
       "provider" => provider.try(:as_indexed_json),
       "resource_type" => resource_type.try(:as_indexed_json),
       "media" => media.map { |m| m.try(:as_indexed_json) },
-      "references" => references.map { |m| m.try(:as_indexed_json) },
-      "citations" => citations.map { |m| m.try(:as_indexed_json) },
-      "parts" => parts.map { |m| m.try(:as_indexed_json) },
-      "part_of" => part_of.map { |m| m.try(:as_indexed_json) },
-      "versions" => versions.map { |m| m.try(:as_indexed_json) },
-      "version_of" => version_of.map { |m| m.try(:as_indexed_json) },
+      "references" => references,
+      "citations" => citations,
+      "parts" => parts,
+      "part_of" => part_of,
+      "versions" => versions,
+      "version_of" => version_of,
     }
   end
 
@@ -541,19 +548,19 @@ class Doi < ActiveRecord::Base
         date_histogram: { field: "publication_year", interval: "year", min_doc_count: 1 },
         aggs: {
           metric_count: { sum: { field: "view_count" } },
-        }
+        },
       },
       downloads: {
         date_histogram: { field: "publication_year", interval: "year", min_doc_count: 1 }, 
         aggs: {
           metric_count: { sum: { field: "download_count" } }, 
-        }
+        },
       },
       citations: {
         date_histogram: { field: "publication_year", interval: "year", min_doc_count: 1 }, 
         aggs: {
           metric_count: { sum: { field: "citation_count" } },
-        }
+        },
       },
     }
   end
@@ -597,17 +604,17 @@ class Doi < ActiveRecord::Base
     must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
     must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
     must << { terms: { client_id: options[:client_id].to_s.split(",") }} if options[:client_id].present?
-    
+
     __elasticsearch__.search({
       from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
       size: options.dig(:page, :size),
       sort: [options[:sort]],
       query: {
         bool: {
-          must: must
+          must: must,
         }
       },
-      aggregations: query_aggregations
+      aggregations: query_aggregations,
     })
   end
 
@@ -935,22 +942,22 @@ class Doi < ActiveRecord::Base
   end
 
   def view_count
-    views.pluck(:total).inject(:+).to_i
+    view_events.pluck(:total).inject(:+).to_i
   end
 
   def views_over_time
-    views.pluck(:occurred_at, :total)
-      .map { |v| { year_month: v[0].present? ? v[0].utc.iso8601[0..6] : nil, total: v[1] } }
+    view_events.pluck(:occurred_at, :total)
+      .map { |v| { "yearMonth" => v[0].present? ? v[0].utc.iso8601[0..6] : nil, "total" => v[1] } }
       .sort_by { |h| h[:year_month] }
   end
 
   def download_count
-    downloads.pluck(:total).inject(:+).to_i
+    download_events.pluck(:total).inject(:+).to_i
   end
 
   def downloads_over_time
-    downloads.pluck(:occurred_at, :total)
-      .map { |v| { year_month: v[0].present? ? v[0].utc.iso8601[0..6] : nil, total: v[1] } }
+    download_events.pluck(:occurred_at, :total)
+      .map { |v| { "yearMonth" => v[0].present? ? v[0].utc.iso8601[0..6] : nil, "total" => v[1] } }
       .sort_by { |h| h[:year_month] }
   end
 

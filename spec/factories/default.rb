@@ -370,15 +370,27 @@ FactoryBot.define do
       relation_type_id { "references" }
     end
 
-    factory :event_for_datacite_usage do
+    factory :event_for_datacite_investigations do
       source_id { "datacite-usage" }
       source_token { "5348967fhdjksr3wyui325" }
-      total { rand(1..100).to_int }
+      total { 25 }
       sequence(:subj_id) { |n| "https://api.test.datacite.org/report/#{SecureRandom.uuid}" }
       subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
       obj { { "date_published" => "2007-06-13T16:14:19Z" } }
       obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
       relation_type_id { "unique-dataset-investigations-regular" }
+      occurred_at { "2015-06-13T16:14:19Z" }
+    end
+
+    factory :event_for_datacite_requests do
+      source_id { "datacite-usage" }
+      source_token { "5348967fhdjksr3wyui325" }
+      total { 10 }
+      sequence(:subj_id) { |n| "https://api.test.datacite.org/report/#{SecureRandom.uuid}" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      obj { { "date_published" => "2007-06-13T16:14:19Z" } }
+      obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
+      relation_type_id { "unique-dataset-requests-regular" }
       occurred_at { "2015-06-13T16:14:19Z" }
     end
 

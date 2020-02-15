@@ -520,17 +520,7 @@ type Country {
   name: String
 }
 
-type CreativeWork implements DoiItem & MetricInterface {
-  """
-  The count of DOI events that represents citations
-  """
-  citationCount: Int
-
-  """
-  The citations distribution overtime
-  """
-  citationHistogram: JSON
-
+type CreativeWork implements DoiItem {
   """
   The client account managing this resource
   """
@@ -550,11 +540,6 @@ type CreativeWork implements DoiItem & MetricInterface {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
-
-  """
-  The count of  DOI dowloands according to the COUNTER code of Practice
-  """
-  downloadCount: Int
 
   """
   Technical format of the resource
@@ -602,19 +587,9 @@ type CreativeWork implements DoiItem & MetricInterface {
   publisher: String
 
   """
-  The count of DOI events that represents references
-  """
-  referenceCount: Int
-
-  """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The count of DOI events that represents relations
-  """
-  relationCount: Int
 
   """
   The general type of a resource
@@ -660,11 +635,6 @@ type CreativeWork implements DoiItem & MetricInterface {
   The version number of the resource
   """
   version: String
-
-  """
-  The count of DOI views according to the COUNTER code of Practice
-  """
-  viewCount: Int
 }
 
 """
@@ -1053,17 +1023,7 @@ type DataPaper implements DoiItem {
   version: String
 }
 
-type Dataset implements DoiItem & MetricInterface {
-  """
-  The count of DOI events that represents citations
-  """
-  citationCount: Int
-
-  """
-  The citations distribution overtime
-  """
-  citationHistogram: JSON
-
+type Dataset implements DoiItem {
   """
   The client account managing this resource
   """
@@ -1104,11 +1064,6 @@ type Dataset implements DoiItem & MetricInterface {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
-
-  """
-  The count of  DOI dowloands according to the COUNTER code of Practice
-  """
-  downloadCount: Int
 
   """
   Technical format of the resource
@@ -1178,19 +1133,9 @@ type Dataset implements DoiItem & MetricInterface {
   publisher: String
 
   """
-  The count of DOI events that represents references
-  """
-  referenceCount: Int
-
-  """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The count of DOI events that represents relations
-  """
-  relationCount: Int
 
   """
   The general type of a resource
@@ -1278,11 +1223,6 @@ type Dataset implements DoiItem & MetricInterface {
   The version number of the resource
   """
   version: String
-
-  """
-  The count of DOI views according to the COUNTER code of Practice
-  """
-  viewCount: Int
 }
 
 """
@@ -1711,17 +1651,7 @@ type Event implements DoiItem {
   version: String
 }
 
-type EventData implements DoiItem & MetricInterface {
-  """
-  The count of DOI events that represents citations
-  """
-  citationCount: Int
-
-  """
-  The citations distribution overtime
-  """
-  citationHistogram: JSON
-
+type EventData implements DoiItem {
   """
   The client account managing this resource
   """
@@ -1741,11 +1671,6 @@ type EventData implements DoiItem & MetricInterface {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
-
-  """
-  The count of  DOI dowloands according to the COUNTER code of Practice
-  """
-  downloadCount: Int
 
   """
   Technical format of the resource
@@ -1793,19 +1718,9 @@ type EventData implements DoiItem & MetricInterface {
   publisher: String
 
   """
-  The count of DOI events that represents references
-  """
-  referenceCount: Int
-
-  """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The count of DOI events that represents relations
-  """
-  relationCount: Int
 
   """
   The general type of a resource
@@ -1851,11 +1766,6 @@ type EventData implements DoiItem & MetricInterface {
   The version number of the resource
   """
   version: String
-
-  """
-  The count of DOI views according to the COUNTER code of Practice
-  """
-  viewCount: Int
 }
 
 """
@@ -2397,43 +2307,6 @@ type InteractiveResource implements DoiItem {
   The version number of the resource
   """
   version: String
-}
-
-"""
-Represents untyped JSON
-"""
-scalar JSON
-
-interface MetricInterface {
-  """
-  The count of DOI events that represents citations
-  """
-  citationCount: Int
-
-  """
-  The citations distribution overtime
-  """
-  citationHistogram: JSON
-
-  """
-  The count of  DOI dowloands according to the COUNTER code of Practice
-  """
-  downloadCount: Int
-
-  """
-  The count of DOI events that represents references
-  """
-  referenceCount: Int
-
-  """
-  The count of DOI events that represents relations
-  """
-  relationCount: Int
-
-  """
-  The count of DOI views according to the COUNTER code of Practice
-  """
-  viewCount: Int
 }
 
 type Model implements DoiItem {
@@ -3498,17 +3371,7 @@ type ProviderEdge {
   node: Provider
 }
 
-type Publication implements DoiItem & MetricInterface {
-  """
-  The count of DOI events that represents citations
-  """
-  citationCount: Int
-
-  """
-  The citations distribution overtime
-  """
-  citationHistogram: JSON
-
+type Publication implements DoiItem {
   """
   The client account managing this resource
   """
@@ -3549,11 +3412,6 @@ type Publication implements DoiItem & MetricInterface {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
-
-  """
-  The count of  DOI dowloands according to the COUNTER code of Practice
-  """
-  downloadCount: Int
 
   """
   Technical format of the resource
@@ -3623,19 +3481,9 @@ type Publication implements DoiItem & MetricInterface {
   publisher: String
 
   """
-  The count of DOI events that represents references
-  """
-  referenceCount: Int
-
-  """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The count of DOI events that represents relations
-  """
-  relationCount: Int
 
   """
   The general type of a resource
@@ -3702,11 +3550,6 @@ type Publication implements DoiItem & MetricInterface {
   The version number of the resource
   """
   version: String
-
-  """
-  The count of DOI views according to the COUNTER code of Practice
-  """
-  viewCount: Int
 }
 
 """
@@ -4316,17 +4159,7 @@ type ServiceConnectionWithMeta {
   totalCount: Int!
 }
 
-type Software implements DoiItem & MetricInterface {
-  """
-  The count of DOI events that represents citations
-  """
-  citationCount: Int
-
-  """
-  The citations distribution overtime
-  """
-  citationHistogram: JSON
-
+type Software implements DoiItem {
   """
   The client account managing this resource
   """
@@ -4367,11 +4200,6 @@ type Software implements DoiItem & MetricInterface {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
-
-  """
-  The count of  DOI dowloands according to the COUNTER code of Practice
-  """
-  downloadCount: Int
 
   """
   Technical format of the resource
@@ -4441,19 +4269,9 @@ type Software implements DoiItem & MetricInterface {
   publisher: String
 
   """
-  The count of DOI events that represents references
-  """
-  referenceCount: Int
-
-  """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The count of DOI events that represents relations
-  """
-  relationCount: Int
 
   """
   The general type of a resource
@@ -4520,11 +4338,6 @@ type Software implements DoiItem & MetricInterface {
   The version number of the resource
   """
   version: String
-
-  """
-  The count of DOI views according to the COUNTER code of Practice
-  """
-  viewCount: Int
 }
 
 """
