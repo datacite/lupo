@@ -19,7 +19,7 @@ class OldEventsController < ApplicationController
     exists = @event.present?
 
     # create event if it doesn't exist already
-    @event = Event.new(safe_params.except(:format)) unless @event.present?
+    @event = Event.new(safe_params.except(:format)) if @event.blank?
 
     authorize! :create, @event
 

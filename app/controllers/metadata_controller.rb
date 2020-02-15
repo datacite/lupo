@@ -6,7 +6,7 @@ class MetadataController < ApplicationController
 
   def index
     @doi = Doi.where(doi: params[:doi_id]).first
-    fail ActiveRecord::RecordNotFound unless @doi.present?
+    fail ActiveRecord::RecordNotFound if @doi.blank?
 
     collection = @doi.metadata
     total = @doi.cached_metadata_count.reduce(0) { |sum, d| sum + d[:count].to_i }
@@ -90,15 +90,15 @@ class MetadataController < ApplicationController
 
   def set_doi
     @doi = Doi.where(doi: params[:doi_id]).first
-    fail ActiveRecord::RecordNotFound unless @doi.present?
+    fail ActiveRecord::RecordNotFound if @doi.blank?
   end
 
   def set_metadata
     id = Base32::URL.decode(URI.decode(params[:id]))
-    fail ActiveRecord::RecordNotFound unless id.present?
+    fail ActiveRecord::RecordNotFound if id.blank?
 
     @metadata = Metadata.where(id: id.to_i).first
-    fail ActiveRecord::RecordNotFound unless @metadata.present?
+    fail ActiveRecord::RecordNotFound if @metadata.blank?
   end
 
   def set_include

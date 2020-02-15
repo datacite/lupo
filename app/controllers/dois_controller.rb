@@ -466,7 +466,7 @@ class DoisController < ApplicationController
   def get_url
     @doi = Doi.where(doi: params[:id]).first
     fail ActiveRecord::RecordNotFound if @doi.blank?
-    
+
     authorize! :get_url, @doi
 
     if !@doi.is_registered_or_findable? || %w(europ crossref medra jalc kisti op).include?(@doi.provider_id) || %w(Crossref mEDRA).include?(@doi.agency)
