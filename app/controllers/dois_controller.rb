@@ -288,11 +288,13 @@ class DoisController < ApplicationController
     # only show findable DOIs to anonymous users and role user
     # use current_user role to determine permissions to access draft and registered dois
     # instead of using ability
-    doi = Doi.where(doi: params[:id]).first
-    fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: doi, user: current_user)
-
+    response = Doi.find_by_id(params[:id])
+    
     respond_to do |format|
       format.json do
+        doi = response.results.first
+        fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: doi, user: current_user)
+
         options = {}
         options[:include] = @include
         options[:is_collection] = false
@@ -304,6 +306,9 @@ class DoisController < ApplicationController
 
         render json: DoiSerializer.new(doi, options).serialized_json, status: :ok
       end
+
+      doi = response.records.first
+      fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: doi, user: current_user)
 
       format.citation do  
         # fetch formatted citation

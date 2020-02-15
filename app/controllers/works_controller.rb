@@ -146,10 +146,11 @@ class WorksController < ApplicationController
     @doi = nil
 
     bm = Benchmark.ms {
-      @doi = Doi.where(doi: params[:id], aasm_state: "findable").first
+      response = Doi.find_by_id(params[:id])
+      @doi = response.results.first
     }
-    fail ActiveRecord::RecordNotFound if @doi.blank?
-    Rails.logger.warn method: "GET", path: "/works/#{@doi.doi}", message: "Request DB /works/#{@doi.doi}", duration: bm
+    fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: @doi, user: current_user)
+    Rails.logger.warn method: "GET", path: "/works/#{@doi.doi}", message: "Request ES /works/#{@doi.doi}", duration: bm
   end
 
   def set_include

@@ -3133,7 +3133,7 @@ describe "dois", type: :request do
         get "/dois/#{doi.doi}", nil, headers
 
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
-        expect(json.dig('data', 'attributes', 'landingPage')).to eq(landing_page)
+        # expect(json.dig('data', 'attributes', 'landingPage')).to eq(landing_page)
       end
     end
 
