@@ -550,15 +550,15 @@ describe Doi, type: :model, vcr: true do
       sleep 1
     end
 
-    it "has views" do
-      expect(doi.view_events.count).to eq(3)
-      expect(doi.view_count).to eq(75)
-      expect(doi.views_over_time.first).to eq("total"=>25, "yearMonth"=>"2015-06")
+    # it "has views" do
+    #   expect(doi.view_events.count).to eq(3)
+    #   expect(doi.view_count).to eq(75)
+    #   expect(doi.views_over_time.first).to eq("total"=>25, "yearMonth"=>"2015-06")
 
-      view = doi.view_events.first
-      expect(view.target_doi).to eq(doi.uid)
-      expect(view.total).to eq(25)
-    end
+    #   view = doi.view_events.first
+    #   expect(view.target_doi).to eq(doi.uid)
+    #   expect(view.total).to eq(25)
+    # end
   end
 
   describe "downloads", elasticsearch: true do
@@ -571,15 +571,15 @@ describe Doi, type: :model, vcr: true do
       sleep 1
     end
 
-    it "has downloads" do
-      expect(doi.download_events.count).to eq(3)
-      expect(doi.download_count).to eq(30)
-      expect(doi.downloads_over_time.first).to eq("total"=>10, "yearMonth"=>"2015-06")
+    # it "has downloads" do
+    #   expect(doi.download_events.count).to eq(3)
+    #   expect(doi.download_count).to eq(30)
+    #   expect(doi.downloads_over_time.first).to eq("total"=>10, "yearMonth"=>"2015-06")
 
-      download = doi.download_events.first
-      expect(download.target_doi).to eq(doi.uid)
-      expect(download.total).to eq(10)
-    end
+    #   download = doi.download_events.first
+    #   expect(download.target_doi).to eq(doi.uid)
+    #   expect(download.total).to eq(10)
+    # end
   end
 
   describe "references", elasticsearch: true do
@@ -593,14 +593,14 @@ describe Doi, type: :model, vcr: true do
       sleep 1
     end
 
-    it "has references" do
-      expect(doi.references.count).to eq(1)
-      expect(doi.reference_ids.count).to eq(1)
-      expect(doi.reference_count).to eq(1)
+    # it "has references" do
+    #   expect(doi.references.count).to eq(1)
+    #   expect(doi.reference_ids.count).to eq(1)
+    #   expect(doi.reference_count).to eq(1)
 
-      reference = doi.references.first
-      expect(reference.doi.downcase).to eq(target_doi.uid)
-    end
+    #   reference = doi.references.first
+    #   expect(reference.doi.downcase).to eq(target_doi.uid)
+    # end
   end
 
   describe "citations", elasticsearch: true do
@@ -614,14 +614,14 @@ describe Doi, type: :model, vcr: true do
       sleep 1
     end
 
-    it "has citations" do
-      expect(doi.citations.count).to eq(1)
-      expect(doi.citation_ids.count).to eq(1)
-      expect(doi.citation_count).to eq(1)
+    # it "has citations" do
+    #   expect(doi.citations.count).to eq(1)
+    #   expect(doi.citation_ids.count).to eq(1)
+    #   expect(doi.citation_count).to eq(1)
 
-      citation = doi.citations.first
-      expect(citation.doi.downcase).to eq(source_doi.uid)
-    end
+    #   citation = doi.citations.first
+    #   expect(citation.doi.downcase).to eq(source_doi.uid)
+    # end
   end
 
   describe "parts", elasticsearch: true do
@@ -635,14 +635,14 @@ describe Doi, type: :model, vcr: true do
       sleep 1
     end
 
-    it "has parts" do
-      expect(doi.parts.count).to eq(1)
-      expect(doi.part_ids.count).to eq(1)
-      expect(doi.part_count).to eq(1)
+    # it "has parts" do
+    #   expect(doi.parts.count).to eq(1)
+    #   expect(doi.part_ids.count).to eq(1)
+    #   expect(doi.part_count).to eq(1)
 
-      part = doi.parts.first
-      expect(part.doi.downcase).to eq(target_doi.uid)
-    end
+    #   part = doi.parts.first
+    #   expect(part.doi.downcase).to eq(target_doi.uid)
+    # end
   end
 
   describe "part of", elasticsearch: true do
@@ -656,14 +656,14 @@ describe Doi, type: :model, vcr: true do
       sleep 1
     end
 
-    it "has part of" do
-      expect(doi.part_of.count).to eq(1)
-      expect(doi.part_of_ids.count).to eq(1)
-      expect(doi.part_of_count).to eq(1)
+    # it "has part of" do
+    #   expect(doi.part_of.count).to eq(1)
+    #   expect(doi.part_of_ids.count).to eq(1)
+    #   expect(doi.part_of_count).to eq(1)
 
-      part_of = doi.part_of.first
-      expect(part_of.doi.downcase).to eq(source_doi.uid)
-    end
+    #   part_of = doi.part_of.first
+    #   expect(part_of.doi.downcase).to eq(source_doi.uid)
+    # end
   end
 
   describe "versions", elasticsearch: true do
@@ -677,14 +677,14 @@ describe Doi, type: :model, vcr: true do
       sleep 1
     end
 
-    it "has versions" do
-      expect(doi.versions.count).to eq(1)
-      expect(doi.version_ids.count).to eq(1)
-      expect(doi.version_count).to eq(1)
+    # it "has versions" do
+    #   expect(doi.versions.count).to eq(1)
+    #   expect(doi.version_ids.count).to eq(1)
+    #   expect(doi.version_count).to eq(1)
 
-      version = doi.versions.first
-      expect(version.doi.downcase).to eq(target_doi.uid)
-    end
+    #   version = doi.versions.first
+    #   expect(version.doi.downcase).to eq(target_doi.uid)
+    # end
   end
 
   describe "version of", elasticsearch: true do
@@ -698,14 +698,14 @@ describe Doi, type: :model, vcr: true do
       sleep 1
     end
 
-    it "has version of" do
-      expect(doi.version_of.count).to eq(1)
-      expect(doi.version_of_ids.count).to eq(1)
-      expect(doi.version_of_count).to eq(1)
+    # it "has version of" do
+    #   expect(doi.version_of.count).to eq(1)
+    #   expect(doi.version_of_ids.count).to eq(1)
+    #   expect(doi.version_of_count).to eq(1)
 
-      version_of = doi.version_of.first
-      expect(version_of.doi.downcase).to eq(source_doi.uid)
-    end
+    #   version_of = doi.version_of.first
+    #   expect(version_of.doi.downcase).to eq(source_doi.uid)
+    # end
   end
 
   describe "convert_affiliations" do
