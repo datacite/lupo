@@ -693,20 +693,20 @@ class Doi < ActiveRecord::Base
       must = []
       must_not = []
 
-      must << { query_string: { query: query, fields: query_fields }} if query.present?
+      must << { query_string: { query: query, fields: query_fields } } if query.present?
       must << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
-      must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
-      must << { terms: { client_id: options[:client_id].to_s.split(",") }} if options[:client_id].present?
-      must << { terms: { prefix: options[:prefix].to_s.split(",") }} if options[:prefix].present?
+      must << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
+      must << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
+      must << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
       must << { term: { uid: options[:uid] }} if options[:uid].present?
       must << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
       must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
-      must << { terms: { "subjects.subject": options[:subject].split(",") }} if options[:subject].present?
-      must << { term: { source: options[:source] }} if options[:source].present?
-      must << { term: { citation_count: { "gte": 1 }} if options[:has_citations].present?
-      must << { term: { view_count: { "gte": 1 }} if options[:has_views].present?
-      must << { term: { download_count: { "gte": 1 }} if options[:has_downloads].present?
-      must << { term: { "landing_page.status": options[:link_check_status] }} if options[:link_check_status].present?
+      must << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
+      must << { term: { source: options[:source] } } if options[:source].present?
+      must << { term: { citation_count: { "gte": 1 } } } if options[:has_citations].present?
+      must << { term: { view_count: { "gte": 1 } } } if options[:has_views].present?
+      must << { term: { download_count: { "gte": 1 } } } if options[:has_downloads].present?
+      must << { term: { "landing_page.status": options[:link_check_status] } } if options[:link_check_status].present?
       must << { exists: { field: "landing_page.checked" }} if options[:link_checked].present?
       must << { term: { "landing_page.hasSchemaOrg": options[:link_check_has_schema_org] }} if options[:link_check_has_schema_org].present?
       must << { term: { "landing_page.bodyHasPid": options[:link_check_body_has_pid] }} if options[:link_check_body_has_pid].present?
@@ -880,6 +880,57 @@ class Doi < ActiveRecord::Base
   end
 
   def self.import_by_id(options={})
+    return nil unless options[:id].present?
+
+    id = options[:id].to_i
+    index = if Rails.env.test?
+              "dois-test"
+            elsif options[:index].present?
+              options[:index]
+            else
+              self.inactive_index
+            end
+    errors = 0
+    count = 0
+
+    Doi.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |dois|
+      response = Doi.__elasticsearch__.client.bulk \
+        index:   index,
+        type:    Doi.document_type,
+        body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
+
+      # log errors
+      errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
+      response['items'].select { |k, v| k.values.first['error'].present? }.each do |err|
+        Rails.logger.error "[Elasticsearch] " + err.inspect
+      end
+
+      count += dois.length
+    end
+
+    if errors > 1
+      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs with IDs #{id} - #{(id + 499)}."
+    elsif count > 0
+      Rails.logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
+    end
+
+    count
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
+    Rails.logger.info "[Elasticsearch] Error #{error.message} importing DOIs with IDs #{id} - #{(id + 499)}."
+
+    count = 0
+
+    Doi.where(id: id..(id + 499)).find_each do |doi|
+      IndexJob.perform_later(doi)
+      count += 1
+    end
+
+    Rails.logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
+
+    count
+  end
+
+  def self.index_by_id(options={})
     return nil unless options[:id].present?
 
     id = options[:id].to_i
