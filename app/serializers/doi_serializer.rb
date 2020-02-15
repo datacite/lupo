@@ -11,10 +11,10 @@ class DoiSerializer
 
   belongs_to :client, record_type: :clients
   has_many :media, record_type: :media, id_method_name: :uid, if: Proc.new { |object, params| params && params[:detail] && !params[:is_collection]}
-  has_many :references, serializer: DoiSerializer
-  has_many :citations, serializer: DoiSerializer
-  has_many :parts, serializer: DoiSerializer
-  has_many :versions, serializer: DoiSerializer
+  has_many :references, serializer: DoiSerializer, if: Proc.new { |object, params| params && params[:detail] }
+  has_many :citations, serializer: DoiSerializer, if: Proc.new { |object, params| params && params[:detail] }
+  has_many :parts, serializer: DoiSerializer, if: Proc.new { |object, params| params && params[:detail] }
+  has_many :versions, serializer: DoiSerializer, if: Proc.new { |object, params| params && params[:detail] }
 
   attribute :xml, if: Proc.new { |object, params| params && params[:detail] } do |object|
     begin
