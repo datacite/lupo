@@ -880,7 +880,7 @@ class Doi < ActiveRecord::Base
   end
 
   def self.import_by_id(options={})
-    return nil unless options[:id].present?
+    return nil if options[:id].blank?
 
     id = options[:id].to_i
     index = if Rails.env.test?
