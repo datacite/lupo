@@ -543,7 +543,7 @@ describe Doi, type: :model, vcr: true do
   describe "views", elasticsearch: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:views) { create_list(:event_for_datacite_usage, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-investigations-regular", total: 25) }
+    let!(:views) { create_list(:event_for_datacite_investigations, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-investigations-regular", total: 25) }
 
     before do
       Doi.import
@@ -564,7 +564,7 @@ describe Doi, type: :model, vcr: true do
   describe "downloads", elasticsearch: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:downloads) { create_list(:event_for_datacite_usage, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-requests-regular", total: 10) }
+    let!(:downloads) { create_list(:event_for_datacite_investigations, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-requests-regular", total: 10) }
 
     before do
       Doi.import

@@ -2,7 +2,6 @@ language: ruby
 rvm:
 - 2.6.5
 sudo: required
-dist: xenial
 
 services:
   - mysql
