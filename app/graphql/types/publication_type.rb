@@ -2,7 +2,6 @@
 
 class PublicationType < BaseObject
   implements DoiItem
-  implements MetricInterface
 
   field :datasets, PublicationDatasetConnectionWithMetaType, null: false, description: "Referenced datasets", connection: true do
     argument :first, Int, required: false, default_value: 25

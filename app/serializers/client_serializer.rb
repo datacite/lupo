@@ -3,7 +3,7 @@ class ClientSerializer
   set_key_transform :camel_lower
   set_type :clients
   set_id :uid
-  
+
   attributes :name, :symbol, :year, :contact_email, :globus_uuid, :alternate_name, :description, :language, :client_type, :domains, :re3data, :opendoar, :issn, :url, :salesforce_id, :created, :updated
 
   belongs_to :provider, record_type: :providers

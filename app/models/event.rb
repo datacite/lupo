@@ -212,12 +212,6 @@ class Event < ActiveRecord::Base
   end
 
   def self.query_aggregations
-    sum_distribution = {
-      sum_bucket: {
-        buckets_path: "year_months>total_by_year_month"
-      }
-    }
-
     {
       sources: { terms: { field: "source_id", size: 50, min_doc_count: 1 } },
       prefixes: { terms: { field: "prefix", size: 50, min_doc_count: 1 } },
@@ -225,69 +219,13 @@ class Event < ActiveRecord::Base
       pairings: { terms: { field: "registrant_id", size: 50, min_doc_count: 1 }, aggs: { recipient: { terms: { field: "registrant_id", size: 50, min_doc_count: 1 }, aggs: { "total" => { sum: { field: "total" } } } } } },
       citation_types: { terms: { field: "citation_type", size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: "occurred_at", interval: "month", min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: "total" } } } } } },
       relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: "occurred_at", interval: "month", min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: "total" } } } }, "sum_distribution" => sum_distribution } },
-      dois: { terms: { field: "obj_id", size: 50, min_doc_count: 1 }, aggs: { relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: "total" } } } } } }
-    }
-  end
-
-  def self.citation_count_aggregation
-    {
-      citations: {
-        terms: { field: "doi", size: 100, min_doc_count: 1 }, aggs: { total: { cardinality: { field: "citation_id" } } }
-      }
-    }
-  end
-
-  def self.usage_count_aggregation
-    {
-      usage: {
-        terms: { field: "obj_id", size: 50, min_doc_count: 1 } , aggs: { "total_by_type" => { sum: { field: "total" } } }
-      }
-    }
-  end
-
-  def self.multiple_usage_count_aggregation
-    {
-      usage: {
-        terms: { field: "obj_id", size: 50, min_doc_count: 1 } , aggs: { relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: "total" } } } } } 
-      }
-    }
-  end
-
-  def self.yearly_histogram_aggregation
-    sum_year_distribution = {
-      sum_bucket: {
-        buckets_path: "years>total_by_year"
-      }
-    }
-
-    {
-      years: { histogram: { field: "citation_year", interval: 1 , min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: "total" } } } }, "sum_distribution" => sum_year_distribution 
-    }
-  end
-
-  def self.monthly_histogram_aggregation
-    sum_distribution = {
-      sum_bucket: {
-        buckets_path: "year_months>total_by_year_month"
-      }
-    }
-    {
-      year_months: { date_histogram: { field: "occurred_at", interval: "month", min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: "total" } } } }, "sum_distribution" => sum_distribution
-    }
-  end
-
-
-  def self.advanced_aggregations
-    {
-      unique_obj_count: { cardinality: { field: "obj_id" } },
-      unique_subj_count: { cardinality: { field: "subj_id" } }
+      dois: { terms: { field: "obj_id", size: 50, min_doc_count: 1 }, aggs: { relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: "total" } } } } } },
     }
   end
 
   def self.state_aggregations
     { states: { terms: { field: "state_event", size: 50, min_doc_count: 1 } }}
   end
-
 
   # return results for one or more ids
   def self.find_by_id(ids, options = {})

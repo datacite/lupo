@@ -5,7 +5,6 @@ require 'benchmark'
 class DoisController < ApplicationController
   include ActionController::MimeResponds
   include Crosscitable
-  include MetricsHelper # mixes in your helper method as class method
 
   prepend_before_action :authenticate_user!
   before_action :set_include, only: [:index, :show, :create, :update]
@@ -197,22 +196,9 @@ class DoisController < ApplicationController
         }
         logger.warn method: "GET", path: "/dois", message: "AggregationsLinkChecks /dois", duration: bm
 
-        if params[:mix_in] == "metrics"
-          dois_names =  results.map { |result| result.dig(:_source, :doi) }.join(',')
-          metrics_array = get_metrics_array(dois_names)
-          results = mix_in_metrics_array(results, metrics_array)
-        end
-
-        if params[:user_stats]
-          person_metrics = get_person_metrics(params[:user_id])
-          citations = person_metrics[:citations]
-          views = person_metrics[:views]
-          downloads = person_metrics[:downloads]
-        else
-          citations = total.positive? ? metric_facet_by_year(response.aggregations.citations.buckets) : nil
-          views = total.positive? ? metric_facet_by_year(response.aggregations.views.buckets) : nil
-          downloads = total.positive? ? metric_facet_by_year(response.aggregations.downloads.buckets) : nil
-        end
+        citations = total.positive? ? metric_facet_by_year(response.aggregations.citations.buckets) : nil
+        views = total.positive? ? metric_facet_by_year(response.aggregations.views.buckets) : nil
+        downloads = total.positive? ? metric_facet_by_year(response.aggregations.downloads.buckets) : nil
 
         respond_to do |format|
           format.json do
@@ -263,9 +249,6 @@ class DoisController < ApplicationController
             options[:params] = {
               current_ability: current_ability,
               detail: params[:detail],
-              events: params[:events],
-              mix_in: params[:mix_in],
-              metrics: metrics_array,
               affiliation: params[:affiliation],
               is_collection: options[:is_collection],
             }
@@ -305,11 +288,6 @@ class DoisController < ApplicationController
     doi = Doi.where(doi: params[:id]).first
     fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: doi, user: current_user)
 
-    if params[:mix_in] == "metrics"
-      metrics_array = get_metrics_array(doi.uid) || []
-      doi = mix_in_metrics(doi, metrics_array.first)
-    end
-
     respond_to do |format|
       format.json do
         options = {}
@@ -317,9 +295,7 @@ class DoisController < ApplicationController
         options[:is_collection] = false
         options[:params] = {
           current_ability: current_ability,
-          events: params[:events],
           detail: true,
-          mix_in: params[:mix_in],
           affiliation: params[:affiliation],
         }
 
@@ -540,18 +516,10 @@ class DoisController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      
-      if params[:events].present?
-        @include = @include & [:client, :media, :references, :citations, :parts, :versions]
-      else
-        @include = @include & [:client, :media]
-      end
+
+      @include = @include & [:client, :media]
     else
-      if params[:events].present?
-        @include = [:client, :media, :references, :citations, :parts, :versions]
-      else
-        @include = [:client, :media]
-      end
+      @include = [:client, :media]
     end
   end
 
