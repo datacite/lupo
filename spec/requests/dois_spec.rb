@@ -206,15 +206,15 @@ describe "dois", type: :request do
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-      # expect(json.dig('data', 'attributes', 'downloadCount')).to eq(30)
-      # expect(json.dig('data', 'attributes', 'downloadsOverTime')).to eq([{"total"=>10, "yearMonth"=>"2015-06"}, {"total"=>10, "yearMonth"=>"2015-06"}, {"total"=>10, "yearMonth"=>"2015-06"}])
+      expect(json.dig('data', 'attributes', 'downloadCount')).to eq(30)
+      expect(json.dig('data', 'attributes', 'downloadsOverTime')).to eq([{"total"=>10, "yearMonth"=>"2015-06"}, {"total"=>10, "yearMonth"=>"2015-06"}, {"total"=>10, "yearMonth"=>"2015-06"}])
     end
 
     it "has downloads meta" do
       get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
-      # expect(json.dig('meta', 'downloads')).to eq([{"count"=>30, "id"=>"2011", "title"=>"2011"}])
+      expect(json.dig('meta', 'downloads')).to eq([{"count"=>30, "id"=>"2011", "title"=>"2011"}])
     end
 
     it "repository shows summary count" do
@@ -222,7 +222,7 @@ describe "dois", type: :request do
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
-      # expect(json.dig('meta', 'downloads')).to eq([{"count"=>30, "id"=>"2011", "title"=>"2011"}])
+      expect(json.dig('meta', 'downloads')).to eq([{"count"=>30, "id"=>"2011", "title"=>"2011"}])
     end
   end
 
@@ -269,14 +269,14 @@ describe "dois", type: :request do
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-      # expect(json.dig('data', 'attributes', 'citationCount')).to eq(1)
+      expect(json.dig('data', 'attributes', 'citationCount')).to eq(1)
       # expect(json.dig('data', 'relationships', 'citations', 'data').length).to eq(1)
       # expect(json.dig('included').length).to eq(2)
       # expect(json.dig('included', 0, 'attributes', 'doi')).to eq(source_doi.doi)
     end
 
-    it "has downloads meta" do
-      get "/dois", nil, headers
+    it "has citaions meta" do
+      get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
       # expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
@@ -288,7 +288,7 @@ describe "dois", type: :request do
       puts last_response.body
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
-      # expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
+      expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
     end
   end
 

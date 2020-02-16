@@ -614,14 +614,15 @@ describe Doi, type: :model, vcr: true do
       sleep 1
     end
 
-    # it "has citations" do
-    #   expect(doi.citations.count).to eq(1)
-    #   expect(doi.citation_ids.count).to eq(1)
-    #   expect(doi.citation_count).to eq(1)
+    it "has citations" do
+      expect(doi.citations.count).to eq(1)
+      expect(doi.citation_ids.count).to eq(1)
+      expect(doi.citation_count).to eq(1)
 
-    #   citation = doi.citations.first
-    #   expect(citation.doi.downcase).to eq(source_doi.uid)
-    # end
+      citation = doi.citations.first
+      expect(citation.doi.downcase).to eq(source_doi.uid)
+      expect(citation.publication_year).to eq(2011)
+    end
   end
 
   describe "parts", elasticsearch: true do
