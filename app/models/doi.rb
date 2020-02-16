@@ -72,8 +72,8 @@ class Doi < ActiveRecord::Base
   belongs_to :client, foreign_key: :datacentre
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
   has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
-  # has_many :view_events, -> { where target_relation_type_id: "views" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
-  # has_many :download_events, -> { where target_relation_type_id: "downloads" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  has_many :view_events, -> { where target_relation_type_id: "views" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  has_many :download_events, -> { where target_relation_type_id: "downloads" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
   # has_many :reference_events, -> { where source_relation_type_id: "references" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
   # has_many :citation_events, -> { where target_relation_type_id: "citations" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
   # has_many :part_events, -> { where source_relation_type_id: "parts" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
@@ -420,16 +420,16 @@ class Doi < ActiveRecord::Base
         consortium_organizations: { type: :object },
       }
       indexes :resource_type, type: :object
-      # indexes :view_count, type: :integer
-      # indexes :download_count, type: :integer
+      indexes :view_count, type: :integer
+      indexes :download_count, type: :integer
       # indexes :reference_count, type: :integer
       # indexes :citation_count, type: :integer
       # indexes :part_count, type: :integer
       # indexes :part_of_count, type: :integer
       # indexes :version_count, type: :integer
       # indexes :version_of_count, type: :integer
-      # indexes :views_over_time, type: :object
-      # indexes :downloads_over_time, type: :object
+      indexes :views_over_time, type: :object
+      indexes :downloads_over_time, type: :object
       # indexes :reference_ids, type: :keyword
       # indexes :citation_ids, type: :keyword
       # indexes :part_ids, type: :keyword
@@ -463,10 +463,10 @@ class Doi < ActiveRecord::Base
       "consortium_id" => consortium_id,
       "resource_type_id" => resource_type_id,
       "media_ids" => media_ids,
-      # "view_count" => view_count,
-      # "views_over_time" => views_over_time,
-      # "download_count" => download_count,
-      # "downloads_over_time" => downloads_over_time,
+      "view_count" => view_count,
+      "views_over_time" => views_over_time,
+      "download_count" => download_count,
+      "downloads_over_time" => downloads_over_time,
       # "reference_ids" => reference_ids,
       # "reference_count" => reference_count,
       # "citation_ids" => citation_ids,
@@ -979,25 +979,25 @@ class Doi < ActiveRecord::Base
     media.pluck(:id).map { |m| Base32::URL.encode(m, split: 4, length: 16) }.compact
   end
 
-  # def view_count
-  #   view_events.pluck(:total).inject(:+).to_i
-  # end
+  def view_count
+    view_events.pluck(:total).inject(:+).to_i
+  end
 
-  # def views_over_time
-  #   view_events.pluck(:occurred_at, :total)
-  #     .map { |v| { "yearMonth" => v[0].present? ? v[0].utc.iso8601[0..6] : nil, "total" => v[1] } }
-  #     .sort_by { |h| h[:year_month] }
-  # end
+  def views_over_time
+    view_events.pluck(:occurred_at, :total)
+      .map { |v| { "yearMonth" => v[0].present? ? v[0].utc.iso8601[0..6] : nil, "total" => v[1] } }
+      .sort_by { |h| h[:year_month] }
+  end
 
-  # def download_count
-  #   download_events.pluck(:total).inject(:+).to_i
-  # end
+  def download_count
+    download_events.pluck(:total).inject(:+).to_i
+  end
 
-  # def downloads_over_time
-  #   download_events.pluck(:occurred_at, :total)
-  #     .map { |v| { "yearMonth" => v[0].present? ? v[0].utc.iso8601[0..6] : nil, "total" => v[1] } }
-  #     .sort_by { |h| h[:year_month] }
-  # end
+  def downloads_over_time
+    download_events.pluck(:occurred_at, :total)
+      .map { |v| { "yearMonth" => v[0].present? ? v[0].utc.iso8601[0..6] : nil, "total" => v[1] } }
+      .sort_by { |h| h[:year_month] }
+  end
 
   # def reference_ids
   #   references.pluck(:uuid)

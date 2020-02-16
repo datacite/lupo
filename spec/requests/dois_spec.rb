@@ -140,16 +140,15 @@ describe "dois", type: :request do
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(1)
       expect(json.dig('meta', 'total')).to eq(1)
-      # expect(json.dig('meta', 'views')).to eq([{"count"=>50, "id"=>"2011", "title"=>"2011"}])
-      # expect(json.dig('meta', 'downloads')).to eq([{"count"=>20, "id"=>"2011", "title"=>"2011"}])
+      expect(json.dig('meta', 'views')).to eq([{"count"=>50, "id"=>"2011", "title"=>"2011"}])
+      expect(json.dig('meta', 'downloads')).to eq([{"count"=>20, "id"=>"2011", "title"=>"2011"}])
       expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
       expect(json.dig('data', 0, 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 0, 'attributes', 'titles')).to eq(doi.titles)
-      # expect(json.dig('data', 0, 'attributes', 'viewCount')).to eq(50)
-      # expect(json.dig('data', 0, 'attributes', 'viewsOverTime')).to eq([{"total"=>25, "yearMonth"=>"2015-06"}, {"total"=>25, "yearMonth"=>"2015-06"}])
-      # expect(json.dig('data', 0, 'attributes', 'downloadCount')).to eq(20)
-      # expect(json.dig('data', 0, 'attributes', 'downloadsOverTime')).to eq([{"total"=>10, "yearMonth"=>"2015-06"}, {"total"=>10, "yearMonth"=>"2015-06"}])
-    
+      expect(json.dig('data', 0, 'attributes', 'viewCount')).to eq(50)
+      expect(json.dig('data', 0, 'attributes', 'viewsOverTime')).to eq([{"total"=>25, "yearMonth"=>"2015-06"}, {"total"=>25, "yearMonth"=>"2015-06"}])
+      expect(json.dig('data', 0, 'attributes', 'downloadCount')).to eq(20)
+      expect(json.dig('data', 0, 'attributes', 'downloadsOverTime')).to eq([{"total"=>10, "yearMonth"=>"2015-06"}, {"total"=>10, "yearMonth"=>"2015-06"}])
     end
   end
 
@@ -170,15 +169,15 @@ describe "dois", type: :request do
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-      # expect(json.dig('data', 'attributes', 'viewCount')).to eq(75)
-      # expect(json.dig('data', 'attributes', 'viewsOverTime')).to eq([{"total"=>25, "yearMonth"=>"2015-06"}, {"total"=>25, "yearMonth"=>"2015-06"}, {"total"=>25, "yearMonth"=>"2015-06"}])
+      expect(json.dig('data', 'attributes', 'viewCount')).to eq(75)
+      expect(json.dig('data', 'attributes', 'viewsOverTime')).to eq([{"total"=>25, "yearMonth"=>"2015-06"}, {"total"=>25, "yearMonth"=>"2015-06"}, {"total"=>25, "yearMonth"=>"2015-06"}])
     end
 
     it "has views meta" do
       get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
-      # expect(json.dig('meta', 'views')).to eq([{"count"=>75, "id"=>"2011", "title"=>"2011"}])
+      expect(json.dig('meta', 'views')).to eq([{"count"=>75, "id"=>"2011", "title"=>"2011"}])
     end
 
     it "repository shows summary count" do
@@ -186,7 +185,7 @@ describe "dois", type: :request do
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
-      # expect(json.dig('meta', 'views')).to eq([{"count"=>75, "id"=>"2011", "title"=>"2011"}])
+      expect(json.dig('meta', 'views')).to eq([{"count"=>75, "id"=>"2011", "title"=>"2011"}])
     end
   end
 

@@ -200,8 +200,8 @@ class DoisController < ApplicationController
         logger.warn method: "GET", path: "/dois", message: "AggregationsLinkChecks /dois", duration: bm
 
         # citations = total.positive? ? metric_facet_by_year(response.aggregations.citations.buckets) : nil
-        # views = total.positive? ? metric_facet_by_year(response.aggregations.views.buckets) : nil
-        # downloads = total.positive? ? metric_facet_by_year(response.aggregations.downloads.buckets) : nil
+        views = total.positive? ? metric_facet_by_year(response.aggregations.views.buckets) : nil
+        downloads = total.positive? ? metric_facet_by_year(response.aggregations.downloads.buckets) : nil
 
         respond_to do |format|
           format.json do
@@ -230,8 +230,8 @@ class DoisController < ApplicationController
               "linkChecksCitationDoi" => link_checks_citation_doi,
               subjects: subjects,
               # citations: citations,
-              # views: views,
-              # downloads: downloads,
+              views: views,
+              downloads: downloads,
             }.compact
 
             options[:links] = {
