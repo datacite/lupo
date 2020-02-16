@@ -687,9 +687,9 @@ class Doi < ActiveRecord::Base
       must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
       must << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
       must << { term: { source: options[:source] } } if options[:source].present?
-      must << { term: { citation_count: { "gte": 1 } } } if options[:has_citations].present?
-      must << { term: { view_count: { "gte": 1 } } } if options[:has_views].present?
-      must << { term: { download_count: { "gte": 1 } } } if options[:has_downloads].present?
+      must << { range: { citation_count: { "gte": 1 } } } if options[:has_citations].present?
+      must << { range: { view_count: { "gte": 1 } } } if options[:has_views].present?
+      must << { range: { download_count: { "gte": 1 } } } if options[:has_downloads].present?
       must << { term: { "landing_page.status": options[:link_check_status] } } if options[:link_check_status].present?
       must << { exists: { field: "landing_page.checked" }} if options[:link_checked].present?
       must << { term: { "landing_page.hasSchemaOrg": options[:link_check_has_schema_org] }} if options[:link_check_has_schema_org].present?
