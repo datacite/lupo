@@ -275,7 +275,7 @@ describe "dois", type: :request do
       # expect(json.dig('included', 0, 'attributes', 'doi')).to eq(source_doi.doi)
     end
 
-    it "has citaions meta" do
+    it "has citations meta" do
       get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)

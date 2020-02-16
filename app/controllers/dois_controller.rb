@@ -199,7 +199,7 @@ class DoisController < ApplicationController
         }
         logger.warn method: "GET", path: "/dois", message: "AggregationsLinkChecks /dois", duration: bm
 
-        # citations = total.positive? ? metric_facet_by_year(response.aggregations.citations.buckets) : nil
+        citations = total.positive? ? metric_facet_by_year(response.aggregations.citations.buckets) : nil
         views = total.positive? ? metric_facet_by_year(response.aggregations.views.buckets) : nil
         downloads = total.positive? ? metric_facet_by_year(response.aggregations.downloads.buckets) : nil
 
@@ -229,7 +229,7 @@ class DoisController < ApplicationController
               "linkChecksDcIdentifier" => link_checks_dc_identifier,
               "linkChecksCitationDoi" => link_checks_citation_doi,
               subjects: subjects,
-              # citations: citations,
+              citations: citations,
               views: views,
               downloads: downloads,
             }.compact

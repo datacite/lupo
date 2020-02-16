@@ -1008,7 +1008,7 @@ class Doi < ActiveRecord::Base
   # end
 
   def citation_ids
-    citations.pluck(:uuid)
+    citations.pluck(:doi)
   end
 
   def citation_count

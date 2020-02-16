@@ -134,7 +134,7 @@ class EventsController < ApplicationController
         next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/events?" + {
           "scroll-id" => response.scroll_id,
           "page[scroll]" => page[:scroll],
-          "page[size]" => page[:size] }.compact.to_query
+          "page[size]" => page[:size] }.compact.to_query,
         }.compact
       options[:is_collection] = true
 
@@ -148,17 +148,7 @@ class EventsController < ApplicationController
       registrants = nil
       pairings = nil
       dois = nil
-      dois_usage = nil
-      citations = nil
-      citations_histogram = nil
-      references = nil
-      relations = nil
-      views_histogram = nil
-      downloads_histogram = nil
-      unique_obj_count = nil
-      unique_subj_count = nil
       states = nil
-
 
       bm = Benchmark.ms {
         aggregations = params.fetch(:aggregations, "") || ""
