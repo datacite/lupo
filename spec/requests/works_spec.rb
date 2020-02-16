@@ -49,7 +49,9 @@ describe "works", type: :request do
       expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
       expect(json.dig('data', 'attributes', 'citation-count')).to eq(1)
       expect(json.dig('data', 'attributes', 'view-count')).to eq(0)
+      expect(json.dig('data', 'attributes', 'views-over-time')).to eq([])
       expect(json.dig('data', 'attributes', 'download-count')).to eq(0)
+      expect(json.dig('data', 'attributes', 'downloads-over-time')).to eq([])
     end
 
     it "has citations list" do
@@ -63,7 +65,9 @@ describe "works", type: :request do
       expect(work.dig('attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
       expect(work.dig('attributes', 'citation-count')).to eq(1)
       expect(work.dig('attributes', 'view-count')).to eq(0)
+      expect(work.dig('attributes', 'views-over-time')).to eq([])
       expect(work.dig('attributes', 'download-count')).to eq(0)
+      expect(work.dig('attributes', 'downloads-over-time')).to eq([])
     end
   end
 
