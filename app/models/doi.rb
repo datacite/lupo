@@ -85,7 +85,7 @@ class Doi < ActiveRecord::Base
   # has_many :target_events, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
   
   # has_many :references, class_name: "Doi", through: :reference_events, source: :doi_for_target
-  has_many :citations, class_name: "Doi", through: :citation_events, source: :doi_for_source
+  # has_many :citations, class_name: "Doi", through: :citation_events, source: :doi_for_source
   # has_many :parts, class_name: "Doi", through: :part_events, source: :doi_for_target
   # has_many :part_of, class_name: "Doi", through: :part_of_events, source: :doi_for_source
   # has_many :versions, class_name: "Doi", through: :version_events, source: :doi_for_target
@@ -432,12 +432,13 @@ class Doi < ActiveRecord::Base
       indexes :downloads_over_time, type: :object
       # indexes :reference_ids, type: :keyword
       indexes :citation_ids, type: :keyword
+      indexes :citation_events, type: :object
       # indexes :part_ids, type: :keyword
       # indexes :part_of_ids, type: :keyword
       # indexes :version_ids, type: :keyword
       # indexes :version_of_ids, type: :keyword
       # indexes :references, type: :object
-      indexes :citations, type: :object
+      # indexes :citations, type: :object
       # indexes :parts, type: :object
       # indexes :part_of, type: :object
       # indexes :versions, type: :object
@@ -471,6 +472,7 @@ class Doi < ActiveRecord::Base
       # "reference_count" => reference_count,
       "citation_ids" => citation_ids,
       "citation_count" => citation_count,
+      "citation_events" => citation_events,
       # "part_ids" => part_ids,
       # "part_count" => part_count,
       # "part_of_ids" => part_of_ids,
@@ -515,7 +517,7 @@ class Doi < ActiveRecord::Base
       "resource_type" => resource_type.try(:as_indexed_json),
       "media" => media.map { |m| m.try(:as_indexed_json) },
       # "references" => references,
-      "citations" => citations,
+      # "citations" => citations,
       # "parts" => parts,
       # "part_of" => part_of,
       # "versions" => versions,
@@ -1008,11 +1010,11 @@ class Doi < ActiveRecord::Base
   # end
 
   def citation_ids
-    citations.pluck(:doi)
+    citation_events.pluck(:uuid)
   end
 
   def citation_count
-    citations.size
+    citation_events.size
   end
 
   # def part_ids

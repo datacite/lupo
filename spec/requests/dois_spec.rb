@@ -68,8 +68,7 @@ describe "dois", type: :request do
 
         expect(result.dig('attributes', 'doi')).to eq(doi.doi.downcase)
         expect(result.dig('attributes', 'titles')).to eq(doi.titles)
-        # expect(result.dig('relationships','citations')).to eq("data"=>[])
-        # expect(result.dig('relationships','references')).to eq("data"=>[])
+        expect(result.dig('relationships','citations')).to eq("data"=>[])
       end
     end
 
@@ -238,7 +237,7 @@ describe "dois", type: :request do
     end
 
     it "has references" do
-      get "/dois/#{doi.doi}?include=references", nil, headers
+      get "/dois/#{doi.doi}?include=reference", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
@@ -254,7 +253,7 @@ describe "dois", type: :request do
   describe "citations", elasticsearch: true, vcr: true do
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:citation_events) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by") }
+    let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by") }
 
     before do
       Doi.import
@@ -270,16 +269,16 @@ describe "dois", type: :request do
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
       expect(json.dig('data', 'attributes', 'citationCount')).to eq(1)
-      # expect(json.dig('data', 'relationships', 'citations', 'data').length).to eq(1)
+      expect(json.dig('data', 'relationships', 'citations', 'data')).to eq([{"id" => citation_event.uuid, "type"=>"events"}])
       # expect(json.dig('included').length).to eq(2)
       # expect(json.dig('included', 0, 'attributes', 'doi')).to eq(source_doi.doi)
     end
 
     it "has citations meta" do
-      get "/dois/#{doi.doi}", nil, headers
+      get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
-      # expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
+      expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
     end
 
     it "repository shows summary count" do

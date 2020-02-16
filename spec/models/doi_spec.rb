@@ -615,13 +615,12 @@ describe Doi, type: :model, vcr: true do
     end
 
     it "has citations" do
-      expect(doi.citations.count).to eq(1)
+      expect(doi.citation_events.count).to eq(1)
       expect(doi.citation_ids.count).to eq(1)
       expect(doi.citation_count).to eq(1)
 
-      citation = doi.citations.first
-      expect(citation.doi.downcase).to eq(source_doi.uid)
-      expect(citation.publication_year).to eq(2011)
+      citation_event = doi.citation_events.first
+      expect(citation_event.source_doi.downcase).to eq(source_doi.uid)
     end
   end
 
