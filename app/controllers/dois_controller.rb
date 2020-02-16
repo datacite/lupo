@@ -524,12 +524,9 @@ class DoisController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-
-      @include = @include & [:client, :media]
     else
       @include = [:client, :media]
     end
-    Rails.logger.warn "include: #{@include.inspect}"
   end
 
   private

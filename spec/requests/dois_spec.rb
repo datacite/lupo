@@ -68,7 +68,7 @@ describe "dois", type: :request do
 
         expect(result.dig('attributes', 'doi')).to eq(doi.doi.downcase)
         expect(result.dig('attributes', 'titles')).to eq(doi.titles)
-        expect(result.dig('relationships','citations')).to eq("data"=>[])
+        expect(result.dig('relationships','citationEvents')).to eq("data"=>[])
       end
     end
 
@@ -237,16 +237,16 @@ describe "dois", type: :request do
     end
 
     it "has references" do
-      get "/dois/#{doi.doi}", nil, headers
+      get "/dois/#{doi.doi}?include=reference-events", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
       expect(json.dig('data', 'attributes', 'referenceCount')).to eq(1)
-      expect(json.dig('data', 'relationships', 'references', 'data')).to eq([{"id" => reference_event.uuid, "type" => "events"}])
-      # expect(json.dig('included').length).to eq(2)
-      # expect(json.dig('included', 1, 'attributes', 'relationTypeId')).to eq("references")
+      expect(json.dig('data', 'relationships', 'referenceEvents', 'data')).to eq([{"id" => reference_event.uuid, "type" => "events"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'relationTypeId')).to eq("references")
     end
   end
 
@@ -262,16 +262,16 @@ describe "dois", type: :request do
     end
 
     it "has citations" do
-      get "/dois/#{doi.doi}", nil, headers
+      get "/dois/#{doi.doi}?include=citation-events,client", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
       expect(json.dig('data', 'attributes', 'citationCount')).to eq(1)
-      expect(json.dig('data', 'relationships', 'citations', 'data')).to eq([{"id" => citation_event.uuid, "type"=>"events"}])
-      # expect(json.dig('included').length).to eq(2)
-      # expect(json.dig('included', 0, 'attributes', 'doi')).to eq(source_doi.doi)
+      expect(json.dig('data', 'relationships', 'citationEvents', 'data')).to eq([{"id" => citation_event.uuid, "type"=>"events"}])
+      expect(json.dig('included').length).to eq(2)
+      expect(json.dig('included', 0, 'attributes', 'relationTypeId')).to eq("is-referenced-by")
     end
 
     it "has citations meta" do

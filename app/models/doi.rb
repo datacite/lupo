@@ -430,8 +430,9 @@ class Doi < ActiveRecord::Base
       # indexes :version_of_count, type: :integer
       indexes :views_over_time, type: :object
       indexes :downloads_over_time, type: :object
-      indexes :reference_ids, type: :keyword
-      indexes :citation_ids, type: :keyword
+      indexes :reference_event_ids, type: :keyword
+      indexes :citation_event_ids, type: :keyword
+      indexes :reference_events, type: :object
       indexes :citation_events, type: :object
       # indexes :part_ids, type: :keyword
       # indexes :part_of_ids, type: :keyword
@@ -468,9 +469,10 @@ class Doi < ActiveRecord::Base
       "views_over_time" => views_over_time,
       "download_count" => download_count,
       "downloads_over_time" => downloads_over_time,
-      "reference_ids" => reference_ids,
+      "reference_event_ids" => reference_event_ids,
       "reference_count" => reference_count,
-      "citation_ids" => citation_ids,
+      "reference_events" => reference_events,
+      "citation_event_ids" => citation_event_ids,
       "citation_count" => citation_count,
       "citation_events" => citation_events,
       # "part_ids" => part_ids,
@@ -1001,7 +1003,7 @@ class Doi < ActiveRecord::Base
       .sort_by { |h| h[:year_month] }
   end
 
-  def reference_ids
+  def reference_event_ids
     reference_events.pluck(:uuid)
   end
 
@@ -1009,7 +1011,7 @@ class Doi < ActiveRecord::Base
     reference_events.size
   end
 
-  def citation_ids
+  def citation_event_ids
     citation_events.pluck(:uuid)
   end
 

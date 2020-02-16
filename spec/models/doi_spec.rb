@@ -595,7 +595,7 @@ describe Doi, type: :model, vcr: true do
 
     it "has references" do
       expect(doi.reference_events.count).to eq(1)
-      expect(doi.reference_ids.count).to eq(1)
+      expect(doi.reference_event_ids.count).to eq(1)
       expect(doi.reference_count).to eq(1)
 
       reference_event = doi.reference_events.first
@@ -616,7 +616,7 @@ describe Doi, type: :model, vcr: true do
 
     it "has citations" do
       expect(doi.citation_events.count).to eq(1)
-      expect(doi.citation_ids.count).to eq(1)
+      expect(doi.citation_event_ids.count).to eq(1)
       expect(doi.citation_count).to eq(1)
 
       citation_event = doi.citation_events.first
