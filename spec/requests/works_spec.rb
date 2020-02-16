@@ -20,12 +20,36 @@ describe "works", type: :request do
       sleep 1
     end
 
-    it 'returns dois', vcr: true do
-      get '/works', nil, headers
+    it 'returns works', vcr: true do
+      get '/works'
 
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(3)
       expect(json.dig('meta', 'total')).to eq(3)
+    end
+  end
+
+  describe "citations", elasticsearch: true, vcr: true do
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by") }
+
+    before do
+      Doi.import
+      Event.import
+      sleep 1
+    end
+
+    it "has citations" do
+      get "/works/#{doi.doi}"
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
+      expect(json.dig('data', 'attributes', 'citation-count')).to eq(1)
+      expect(json.dig('data', 'attributes', 'view-count')).to eq(0)
+      expect(json.dig('data', 'attributes', 'download-count')).to eq(0)
     end
   end
 
@@ -38,8 +62,8 @@ describe "works", type: :request do
     end
   
     context 'when the record exists' do
-      it 'returns the Doi' do
-        get "/works/#{doi.doi}", nil, headers
+      it 'returns the work' do
+        get "/works/#{doi.doi}"
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)

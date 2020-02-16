@@ -247,9 +247,9 @@ class EventsController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include &= [:dois]
+      @include = @include & [:dois, :doi_for_source, :doi_for_target]
     else
-      @include = []
+      @include = [:doi_for_source, :doi_for_target]
     end
   end
 
