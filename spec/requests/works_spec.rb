@@ -51,6 +51,20 @@ describe "works", type: :request do
       expect(json.dig('data', 'attributes', 'view-count')).to eq(0)
       expect(json.dig('data', 'attributes', 'download-count')).to eq(0)
     end
+
+    it "has citations list" do
+      get "/works"
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(2)
+      expect(json.dig('meta', 'total')).to eq(2)
+      work = json['data'].first
+      expect(work.dig('attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(work.dig('attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
+      expect(work.dig('attributes', 'citation-count')).to eq(1)
+      expect(work.dig('attributes', 'view-count')).to eq(0)
+      expect(work.dig('attributes', 'download-count')).to eq(0)
+    end
   end
 
   describe 'GET /works/:id', elasticsearch: true do
