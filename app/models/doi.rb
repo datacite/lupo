@@ -74,7 +74,7 @@ class Doi < ActiveRecord::Base
   has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy
   has_many :view_events, -> { where target_relation_type_id: "views" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
   has_many :download_events, -> { where target_relation_type_id: "downloads" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
-  # has_many :reference_events, -> { where source_relation_type_id: "references" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
+  has_many :reference_events, -> { where source_relation_type_id: "references" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
   has_many :citation_events, -> { where target_relation_type_id: "citations" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
   # has_many :part_events, -> { where source_relation_type_id: "parts" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
   # has_many :part_of_events, -> { where target_relation_type_id: "part_of" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
@@ -422,7 +422,7 @@ class Doi < ActiveRecord::Base
       indexes :resource_type, type: :object
       indexes :view_count, type: :integer
       indexes :download_count, type: :integer
-      # indexes :reference_count, type: :integer
+      indexes :reference_count, type: :integer
       indexes :citation_count, type: :integer
       # indexes :part_count, type: :integer
       # indexes :part_of_count, type: :integer
@@ -430,7 +430,7 @@ class Doi < ActiveRecord::Base
       # indexes :version_of_count, type: :integer
       indexes :views_over_time, type: :object
       indexes :downloads_over_time, type: :object
-      # indexes :reference_ids, type: :keyword
+      indexes :reference_ids, type: :keyword
       indexes :citation_ids, type: :keyword
       indexes :citation_events, type: :object
       # indexes :part_ids, type: :keyword
@@ -468,8 +468,8 @@ class Doi < ActiveRecord::Base
       "views_over_time" => views_over_time,
       "download_count" => download_count,
       "downloads_over_time" => downloads_over_time,
-      # "reference_ids" => reference_ids,
-      # "reference_count" => reference_count,
+      "reference_ids" => reference_ids,
+      "reference_count" => reference_count,
       "citation_ids" => citation_ids,
       "citation_count" => citation_count,
       "citation_events" => citation_events,
@@ -1001,13 +1001,13 @@ class Doi < ActiveRecord::Base
       .sort_by { |h| h[:year_month] }
   end
 
-  # def reference_ids
-  #   references.pluck(:uuid)
-  # end
+  def reference_ids
+    reference_events.pluck(:uuid)
+  end
 
-  # def reference_count
-  #   references.size
-  # end
+  def reference_count
+    reference_events.size
+  end
 
   def citation_ids
     citation_events.pluck(:uuid)

@@ -228,7 +228,7 @@ describe "dois", type: :request do
   describe "references", elasticsearch: true, vcr: true do
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:reference_events) { create(:event_for_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "references") }
+    let!(:reference_event) { create(:event_for_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "references") }
 
     before do
       Doi.import
@@ -237,14 +237,14 @@ describe "dois", type: :request do
     end
 
     it "has references" do
-      get "/dois/#{doi.doi}?include=reference", nil, headers
+      get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-      # expect(json.dig('data', 'attributes', 'referenceCount')).to eq(1)
-      # expect(json.dig('data', 'relationships', 'references', 'data')).to eq(1)
+      expect(json.dig('data', 'attributes', 'referenceCount')).to eq(1)
+      expect(json.dig('data', 'relationships', 'references', 'data')).to eq([{"id" => reference_event.uuid, "type" => "events"}])
       # expect(json.dig('included').length).to eq(2)
       # expect(json.dig('included', 1, 'attributes', 'relationTypeId')).to eq("references")
     end
@@ -262,7 +262,7 @@ describe "dois", type: :request do
     end
 
     it "has citations" do
-      get "/dois/#{doi.doi}?include=citations", nil, headers
+      get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
@@ -303,7 +303,7 @@ describe "dois", type: :request do
     end
 
     it "has parts" do
-      get "/dois/#{doi.doi}?include=parts", nil, headers
+      get "/dois/#{doi.doi}", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)

@@ -529,6 +529,7 @@ class DoisController < ApplicationController
     else
       @include = [:client, :media]
     end
+    Rails.logger.warn "include: #{@include.inspect}"
   end
 
   private

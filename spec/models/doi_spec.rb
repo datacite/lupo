@@ -593,14 +593,14 @@ describe Doi, type: :model, vcr: true do
       sleep 1
     end
 
-    # it "has references" do
-    #   expect(doi.references.count).to eq(1)
-    #   expect(doi.reference_ids.count).to eq(1)
-    #   expect(doi.reference_count).to eq(1)
+    it "has references" do
+      expect(doi.reference_events.count).to eq(1)
+      expect(doi.reference_ids.count).to eq(1)
+      expect(doi.reference_count).to eq(1)
 
-    #   reference = doi.references.first
-    #   expect(reference.doi.downcase).to eq(target_doi.uid)
-    # end
+      reference_event = doi.reference_events.first
+      expect(reference_event.target_doi.downcase).to eq(target_doi.uid)
+    end
   end
 
   describe "citations", elasticsearch: true do
