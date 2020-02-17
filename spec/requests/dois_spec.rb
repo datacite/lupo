@@ -145,9 +145,7 @@ describe "dois", type: :request do
       expect(json.dig('data', 0, 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 0, 'attributes', 'titles')).to eq(doi.titles)
       expect(json.dig('data', 0, 'attributes', 'viewCount')).to eq(50)
-      expect(json.dig('data', 0, 'attributes', 'viewsOverTime')).to eq([{"total"=>25, "yearMonth"=>"2015-06"}, {"total"=>25, "yearMonth"=>"2015-06"}])
       expect(json.dig('data', 0, 'attributes', 'downloadCount')).to eq(20)
-      expect(json.dig('data', 0, 'attributes', 'downloadsOverTime')).to eq([{"total"=>10, "yearMonth"=>"2015-06"}, {"total"=>10, "yearMonth"=>"2015-06"}])
     end
   end
 
