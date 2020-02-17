@@ -5,6 +5,7 @@ source "https://rubygems.org"
 gem "rails", "~> 5.2.0"
 gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
 gem "mysql2", "~> 0.4.4"
+gem 'ddtrace', '~> 0.32.0'
 gem "dotenv"
 gem "rake", "~> 12.0"
 gem "oj", ">= 2.8.3"

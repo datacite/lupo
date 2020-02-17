@@ -39,4 +39,39 @@ describe QueryType do
       expect(response.dig("data", "datasets", "nodes", 0, "id")).to eq(datasets.first.identifier)
     end
   end
+
+  describe "query for citationCount", elasticsearch: true do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:source_doi2) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by", occurred_at: "2015-06-13T16:14:19Z") }
+    let!(:citation_event2) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-referenced-by", occurred_at: "2016-06-13T16:14:19Z") }
+
+    before do
+      Doi.import
+      Event.import
+      sleep 1
+    end
+
+    let(:query) do
+      %(query {
+        datasets {
+          totalCount
+          nodes {
+            id
+            citationCount
+          }
+        }
+      })
+    end
+
+    it "returns all datasets" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "datasets", "totalCount")).to eq(3)
+      expect(response.dig("data", "datasets", "nodes").length).to eq(3)
+      expect(response.dig("data", "datasets", "nodes", 0, "citationCount")).to eq(2)
+    end
+  end
 end
