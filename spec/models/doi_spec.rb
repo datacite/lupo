@@ -574,7 +574,7 @@ describe Doi, type: :model, vcr: true do
     it "has downloads" do
       expect(doi.download_events.count).to eq(3)
       expect(doi.download_count).to eq(30)
-      expect(doi.downloads_over_time.first).to eq("total"=>10, "yearMonth"=>"2015-06")
+      expect(doi.downloads_over_time.first).to eq("total" => 10, "yearMonth" => "2015-06")
 
       download = doi.download_events.first
       expect(download.target_doi).to eq(doi.uid)
@@ -607,17 +607,22 @@ describe Doi, type: :model, vcr: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:citation_events) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by") }
+    let(:source_doi2) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by", occurred_at: "2015-06-13T16:14:19Z") }
+    let!(:citation_event2) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-referenced-by", occurred_at: "2016-06-13T16:14:19Z") }
+    let!(:citation_event3) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-cited-by", occurred_at: "2016-06-13T16:14:19Z") }
 
     before do
       Doi.import
       sleep 1
     end
 
+    # removing duplicate dois in citation_count and citations_over_time (different relation_type_id)
     it "has citations" do
-      expect(doi.citation_events.count).to eq(1)
-      expect(doi.citation_event_ids.count).to eq(1)
-      expect(doi.citation_count).to eq(1)
+      expect(doi.citation_events.count).to eq(3)
+      expect(doi.citation_event_ids.count).to eq(3)
+      expect(doi.citation_count).to eq(2)
+      expect(doi.citations_over_time).to eq([{"total"=>1, "year"=>"2015"}, {"total"=>1, "year"=>"2016"}])
 
       citation_event = doi.citation_events.first
       expect(citation_event.source_doi.downcase).to eq(source_doi.uid)

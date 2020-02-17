@@ -430,6 +430,7 @@ class Doi < ActiveRecord::Base
       # indexes :version_of_count, type: :integer
       indexes :views_over_time, type: :object
       indexes :downloads_over_time, type: :object
+      indexes :citations_over_time, type: :object
       indexes :reference_event_ids, type: :keyword
       indexes :citation_event_ids, type: :keyword
       indexes :reference_events, type: :object
@@ -475,6 +476,7 @@ class Doi < ActiveRecord::Base
       "citation_event_ids" => citation_event_ids,
       "citation_count" => citation_count,
       "citation_events" => citation_events,
+      "citations_over_time" => citations_over_time,
       # "part_ids" => part_ids,
       # "part_count" => part_count,
       # "part_of_ids" => part_of_ids,
@@ -1015,8 +1017,18 @@ class Doi < ActiveRecord::Base
     citation_events.pluck(:uuid)
   end
 
+  # remove duplicate citing source dois
   def citation_count
-    citation_events.size
+    citation_events.pluck(:source_doi).uniq.length
+  end
+
+  # remove duplicate citing source dois, 
+  # then show distribution by year
+  def citations_over_time
+    citation_events.pluck(:occurred_at, :source_doi).uniq { |v| v[1] }
+      .group_by { |v| v[0].utc.iso8601[0..3] }
+      .map { |k, v| { "year" => k, "total" => v.length } }
+      .sort_by { |h| h[:year] }
   end
 
   # def part_ids
