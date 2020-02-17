@@ -490,6 +490,7 @@ class Event < ActiveRecord::Base
 
         Rails.logger.warn "[DoubleCheck] DoubleCheck #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
+        Rails.logger.warn "[DoubleCheck] Cursor: #{cursor} "
 
         events = response.results.results.map { |item| { uuid: item.uuid, subj_id: item.subj_id } }
         SubjCheckJob.perform_later(events, options)
