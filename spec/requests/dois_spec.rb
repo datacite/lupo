@@ -269,6 +269,7 @@ describe "dois", type: :request do
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
       expect(json.dig('data', 'attributes', 'citationCount')).to eq(1)
+      expect(json.dig('data', 'attributes', 'citationsOverTime')).to eq([{"total"=>1, "year"=>"2020"}])
       expect(json.dig('data', 'relationships', 'citationEvents', 'data')).to eq([{"id" => citation_event.uuid, "type"=>"events"}])
       expect(json.dig('included').length).to eq(2)
       expect(json.dig('included', 0, 'attributes', 'relationTypeId')).to eq("is-referenced-by")
@@ -284,7 +285,6 @@ describe "dois", type: :request do
     it "repository shows summary count" do
       get "/repositories/#{client.uid}", nil, headers
 
-      puts last_response.body
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
       expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
@@ -553,6 +553,7 @@ describe "dois", type: :request do
               "published" => nil,
               "viewsOverTime" => {},
               "downloadsOverTime" => {},
+              "citationsOverTime" => {},
               "viewCount" => 0,
               "downloadCount" => 0,
               "citationCount" => 0,

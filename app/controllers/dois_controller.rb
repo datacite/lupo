@@ -617,6 +617,8 @@ class DoisController < ApplicationController
       { downloadsOverTime: [:yearMonth, :total] },
       :viewsOverTime,
       { viewsOverTime: [:yearMonth, :total] },
+      :citationsOverTime,
+      { citationsOverTime: [:year, :total] },
       :citationCount,
       :downloadCount,
       :partCount,
@@ -699,7 +701,7 @@ class DoisController < ApplicationController
       :created, :registered, :updated, :published, :lastLandingPage, :version,
       :lastLandingPageStatus, :lastLandingPageStatusCheck,
       :lastLandingPageStatusResult, :lastLandingPageContentType, :contentUrl,
-      :viewsOverTime, :downloadsOverTime, :citationCount, :downloadCount,
+      :viewsOverTime, :downloadsOverTime, :citationsOverTime, :citationCount, :downloadCount,
       :partCount, :partOfCount, :referenceCount, :versionCount, :versionOfCount, :viewCount)
   end
 
