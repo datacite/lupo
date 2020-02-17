@@ -38,7 +38,10 @@ module DoiItem
     argument :style, String, required: false, default_value: "apa"
     argument :locale, String, required: false, default_value: "en-US"
   end
-  
+  field :citation_count, Int, null: true, description: "Total number of citations."
+  field :view_count, Int, null: true, description: "Total number of views."
+  field :download_count, Int, null: true, description: "Total number of downloads."
+
   def type
     object.types["schemaOrg"]
   end

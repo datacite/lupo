@@ -35,6 +35,11 @@ type Address {
 
 type Audiovisual implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -53,6 +58,11 @@ type Audiovisual implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -148,6 +158,11 @@ type Audiovisual implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 """
@@ -390,6 +405,11 @@ type ClientSoftwareConnectionWithMeta {
 
 type Collection implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -408,6 +428,11 @@ type Collection implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -503,6 +528,11 @@ type Collection implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 """
@@ -522,6 +552,11 @@ type Country {
 
 type CreativeWork implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -540,6 +575,11 @@ type CreativeWork implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -635,6 +675,11 @@ type CreativeWork implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 """
@@ -908,6 +953,11 @@ type DataCatalogSoftwareConnectionWithMeta {
 
 type DataPaper implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -926,6 +976,11 @@ type DataPaper implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -1021,9 +1076,19 @@ type DataPaper implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 type Dataset implements DoiItem {
+  """
+  Total number of citations.
+  """
+  citationCount: Int
+
   """
   The client account managing this resource
   """
@@ -1064,6 +1129,11 @@ type Dataset implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -1223,6 +1293,11 @@ type Dataset implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 """
@@ -1419,6 +1494,11 @@ Information about DOIs
 """
 interface DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -1437,6 +1517,11 @@ interface DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -1532,10 +1617,20 @@ interface DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 type Event implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -1554,6 +1649,11 @@ type Event implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -1649,10 +1749,20 @@ type Event implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 type EventData implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -1671,6 +1781,11 @@ type EventData implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -1766,6 +1881,11 @@ type EventData implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 """
@@ -2077,6 +2197,11 @@ type Identifier {
 
 type Image implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -2095,6 +2220,11 @@ type Image implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -2190,10 +2320,20 @@ type Image implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 type InteractiveResource implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -2212,6 +2352,11 @@ type InteractiveResource implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -2307,10 +2452,20 @@ type InteractiveResource implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 type Model implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -2329,6 +2484,11 @@ type Model implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -2424,6 +2584,11 @@ type Model implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 """
@@ -2632,6 +2797,11 @@ type OrganizationSoftwareConnectionWithMeta {
 
 type Other implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -2650,6 +2820,11 @@ type Other implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -2745,6 +2920,11 @@ type Other implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 """
@@ -3028,6 +3208,11 @@ type PersonSoftwareConnectionWithMeta {
 
 type PhysicalObject implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -3046,6 +3231,11 @@ type PhysicalObject implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -3141,6 +3331,11 @@ type PhysicalObject implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 """
@@ -3373,6 +3568,11 @@ type ProviderEdge {
 
 type Publication implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -3412,6 +3612,11 @@ type Publication implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -3550,6 +3755,11 @@ type Publication implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 """
@@ -4023,6 +4233,11 @@ type Rights {
 
 type Service implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -4041,6 +4256,11 @@ type Service implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -4136,6 +4356,11 @@ type Service implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 """
@@ -4160,6 +4385,11 @@ type ServiceConnectionWithMeta {
 }
 
 type Software implements DoiItem {
+  """
+  Total number of citations.
+  """
+  citationCount: Int
+
   """
   The client account managing this resource
   """
@@ -4200,6 +4430,11 @@ type Software implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -4338,6 +4573,11 @@ type Software implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 """
@@ -4458,6 +4698,11 @@ type SoftwareSoftwareConnectionWithMeta {
 
 type Sound implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -4476,6 +4721,11 @@ type Sound implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -4571,6 +4821,11 @@ type Sound implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 """
@@ -4728,6 +4983,11 @@ type UsageReportEdge {
 
 type Workflow implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -4746,6 +5006,11 @@ type Workflow implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
 
   """
   Technical format of the resource
@@ -4841,6 +5106,11 @@ type Workflow implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
 }
 
 """

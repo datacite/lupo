@@ -10,5 +10,6 @@ describe DoiItem do
     it { is_expected.to have_field(:titles).of_type("[Title!]") }
     it { is_expected.to have_field(:publicationYear).of_type("Int") }
     it { is_expected.to have_field(:publisher).of_type("String") }
+    it { is_expected.to have_field(:citationCount).of_type("Int") }
   end
 end
