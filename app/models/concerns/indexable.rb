@@ -253,11 +253,15 @@ module Indexable
         must << { range: { occurred_at: { gte: "#{options[:occurred_at].split("-").min}||/y", lte: "#{options[:occurred_at].split("-").max}||/y", format: "yyyy" }}} if options[:occurred_at].present?
         must << { terms: { prefix: options[:prefix].split(",") }} if options[:prefix].present?
         must << { terms: { doi: options[:doi].downcase.split(",") }} if options[:doi].present?
+        must << { terms: { source_doi: options[:source_doi].downcase.split(",") }} if options[:source_doi].present?
+        must << { terms: { target_doi: options[:target_doi].downcase.split(",") }} if options[:target_doi].present?
         must << { terms: { orcid: options[:orcid].split(",") }} if options[:orcid].present?
         must << { terms: { isni: options[:isni].split(",") }} if options[:isni].present?
         must << { terms: { subtype: options[:subtype].split(",") }} if options[:subtype].present?
         must << { terms: { source_id: options[:source_id].split(",") }} if options[:source_id].present?
         must << { terms: { relation_type_id: options[:relation_type_id].split(",") }} if options[:relation_type_id].present?
+        must << { terms: { source_relation_type_id: options[:source_relation_type_id].split(",") }} if options[:source_relation_type_id].present?
+        must << { terms: { target_relation_type_id: options[:target_relation_type_id].split(",") }} if options[:target_relation_type_id].present?
         must << { terms: { registrant_id: options[:registrant_id].split(",") }} if options[:registrant_id].present?
         must << { terms: { registrant_id: options[:provider_id].split(",") }} if options[:provider_id].present?
         must << { terms: { issn: options[:issn].split(",") }} if options[:issn].present?

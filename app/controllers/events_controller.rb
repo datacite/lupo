@@ -92,6 +92,8 @@ class EventsController < ApplicationController
         response = Event.query(params[:query],
                               subj_id: params[:subj_id],
                               obj_id: params[:obj_id],
+                              source_doi: params[:source_doi],
+                              target_doi: params[:target_doi],
                               doi: params[:doi_id] || params[:doi],
                               orcid: params[:orcid],
                               prefix: params[:prefix],
@@ -100,6 +102,8 @@ class EventsController < ApplicationController
                               source_id: params[:source_id],
                               registrant_id: params[:registrant_id],
                               relation_type_id: params[:relation_type_id],
+                              source_relation_type_id: params[:source_relation_type_id],
+                              target_relation_type_id: params[:target_relation_type_id],
                               issn: params[:issn],
                               publication_year: params[:publication_year],
                               occurred_at: params[:occurred_at],
@@ -120,7 +124,7 @@ class EventsController < ApplicationController
     else
       total = response.results.total
       total_for_pages = page[:cursor].nil? ? [total.to_f, 10000].min : total.to_f
-      total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
+      total_pages = page[:size].positive? ? (total_for_pages / page[:size]).ceil : 0
     end
 
     if page[:scroll].present?
@@ -247,9 +251,9 @@ class EventsController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:dois, :doi_for_source, :doi_for_target]
+      @include = @include & [:doi_for_source, :doi_for_target]
     else
-      @include = [:doi_for_source, :doi_for_target]
+      @include = []
     end
   end
 

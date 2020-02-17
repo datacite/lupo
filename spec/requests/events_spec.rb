@@ -3,6 +3,9 @@
 require "rails_helper"
 
 describe "/events", type: :request, elasticsearch: true do
+  let(:provider) { create(:provider, symbol: "DATACITE") }
+  let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
+
   before(:each) do
     allow(Time).to receive(:now).and_return(Time.mktime(2015, 4, 8))
     allow(Time.zone).to receive(:now).and_return(Time.mktime(2015, 4, 8))
@@ -526,44 +529,49 @@ describe "/events", type: :request, elasticsearch: true do
   end
 
   context "show" do
-    let!(:event) { create(:event) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by") }
+
     let(:uri) { "/events/#{event.uuid}" }
 
-    # context "as admin user" do
-    #   it "JSON" do
-    #     sleep 1
-    #     get uri, nil, headers
-    #     expect(last_response.body).to eq(200)
+    before do
+      Doi.import
+      Event.import
+      sleep 1
+    end
 
-    #     response = JSON.parse(last_response.body)
-    #     attributes = response.dig("data", "attributes")
-    #     expect(response.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
-    #   end
-    # end
+    context "as admin user" do
+      it "JSON" do
+        get uri, nil, headers
 
-    # context "as staff user" do
-    #   let(:token) { User.generate_token(role_id: "staff_user") }
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'relationTypeId')).to eq("is-referenced-by")
+        expect(json.dig('data', 'attributes', 'sourceDoi')).to eq(source_doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'targetDoi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'sourceRelationTypeId')).to eq("references")
+        expect(json.dig('data', 'attributes', 'targetRelationTypeId')).to eq("citations")
+        expect(json.dig('data', 'relationships', 'doiForSource', 'data')).to eq("id"=>source_doi.doi.downcase, "type"=>"doi")
+        expect(json.dig('data', 'relationships', 'doiForTarget', 'data')).to eq("id"=>doi.doi.downcase, "type"=>"doi")
+      end
+    end
 
-    #   it "JSON" do
-    #     get uri, nil, headers
-    #     expect(last_response.status).to eq(200)
+    context "as regular user" do
+      let(:token) { User.generate_token(role_id: "user") }
 
-    #     response = JSON.parse(last_response.body)
-    #     expect(response.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
-    #   end
-    # end
+      it "JSON" do
+        get uri, nil, headers
 
-    # context "as regular user" do
-    #   let(:token) { User.generate_token(role_id: "user") }
-
-    #   it "JSON" do
-    #     get uri, nil, headers
-    #     expect(last_response.status).to eq(200)
-
-    #     response = JSON.parse(last_response.body)
-    #     expect(response.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
-    #   end
-    # end
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'relationTypeId')).to eq("is-referenced-by")
+        expect(json.dig('data', 'attributes', 'sourceDoi')).to eq(source_doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'targetDoi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'sourceRelationTypeId')).to eq("references")
+        expect(json.dig('data', 'attributes', 'targetRelationTypeId')).to eq("citations")
+        expect(json.dig('data', 'relationships', 'doiForSource', 'data')).to eq("id"=>source_doi.doi.downcase, "type"=>"doi")
+        expect(json.dig('data', 'relationships', 'doiForTarget', 'data')).to eq("id"=>doi.doi.downcase, "type"=>"doi")
+      end
+    end
 
     context "event not found" do
       let(:uri) { "/events/#{event.uuid}x" }
