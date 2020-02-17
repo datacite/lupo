@@ -992,7 +992,7 @@ class Doi < ActiveRecord::Base
   def views_over_time
     view_events.pluck(:occurred_at, :total)
       .map { |v| { "yearMonth" => v[0].present? ? v[0].utc.iso8601[0..6] : nil, "total" => v[1] } }
-      .sort_by { |h| h[:year_month] }
+      .sort_by { |h| h["yearMonth"] }
   end
 
   def download_count
@@ -1002,7 +1002,7 @@ class Doi < ActiveRecord::Base
   def downloads_over_time
     download_events.pluck(:occurred_at, :total)
       .map { |v| { "yearMonth" => v[0].present? ? v[0].utc.iso8601[0..6] : nil, "total" => v[1] } }
-      .sort_by { |h| h[:year_month] }
+      .sort_by { |h| h["yearMonth"] }
   end
 
   def reference_event_ids
@@ -1028,7 +1028,7 @@ class Doi < ActiveRecord::Base
     citation_events.pluck(:occurred_at, :source_doi).uniq { |v| v[1] }
       .group_by { |v| v[0].utc.iso8601[0..3] }
       .map { |k, v| { "year" => k, "total" => v.length } }
-      .sort_by { |h| h[:year] }
+      .sort_by { |h| h["year"] }
   end
 
   # def part_ids

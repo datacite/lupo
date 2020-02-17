@@ -5,9 +5,9 @@ class WorkSerializer
   set_id :identifier
   cache_options enabled: true, cache_length: 24.hours
 
-  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :data_center_id, :member_id, :resource_type_id, :version, :license, :schema_version, :results, :related_identifiers, :citation_count, :view_count, :views_over_time, :download_count, :downloads_over_time, :published, :registered, :checked, :updated, :media, :xml
+  attributes :doi, :identifier, :url, :author, :title, :container_title, :description, :resource_type_subtype, :data_center_id, :member_id, :resource_type_id, :version, :license, :schema_version, :results, :related_identifiers, :citation_count, :citations_over_time, :view_count, :views_over_time, :download_count, :downloads_over_time, :published, :registered, :checked, :updated, :media, :xml
 
-  belongs_to :client, key: "data-center", record_type: "data-centers", serializer: :DataCenter
+  belongs_to :client, key: "data-center", record_type: "data-centers", serializer: DataCenter
   belongs_to :provider, key: :member, record_type: :members, serializer: :Member
   belongs_to :resource_type, record_type: "resource-types", serializer: :ResourceType
 
