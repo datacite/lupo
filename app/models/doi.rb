@@ -597,15 +597,31 @@ class Doi < ActiveRecord::Base
     ["uid^50", "related_identifiers.relatedIdentifier^3", "funding_references.relatedIdentifier^3", "container.identifier^3", 'titles.title^3', 'creator_names^3', 'creators.name^3', 'creators.id^3', 'publisher^3', 'descriptions.description^3', 'types.resourceTypeGeneral^3', 'subjects.subject^3', 'client.uid^3', 'provider.uid^3', '_all']
   end
 
-  # return results for one doi
-  def self.find_by_id(id)
-    __elasticsearch__.search(
+  # return results for one or more ids
+  def self.find_by_id(ids, options={})
+    ids = ids.split(",") if ids.is_a?(String)
+
+    options[:page] ||= {}
+    options[:page][:number] ||= 1
+    options[:page][:size] ||= 1000
+    options[:sort] ||= { created: { order: "asc" }}
+
+    must = [{ terms: { doi: ids.map(&:upcase) }}]
+    must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
+    must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
+    must << { terms: { client_id: options[:client_id].to_s.split(",") }} if options[:client_id].present?
+
+    __elasticsearch__.search({
+      from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
+      size: options.dig(:page, :size),
+      sort: [options[:sort]],
       query: {
-        match: {
-          uid: id,
-        },
+        bool: {
+          must: must,
+        }
       },
-    )
+      aggregations: query_aggregations,
+    })
   end
 
   def self.query(query, options={})
