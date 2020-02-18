@@ -598,7 +598,7 @@ class Doi < ActiveRecord::Base
   end
 
   # return results for one or more ids
-  def self.find_by_id(ids, options={})
+  def self.find_by_ids(ids, options={})
     ids = ids.split(",") if ids.is_a?(String)
 
     options[:page] ||= {}
@@ -622,6 +622,17 @@ class Doi < ActiveRecord::Base
       },
       aggregations: query_aggregations,
     })
+  end
+
+  # return results for one doi
+  def self.find_by_id(id)
+    __elasticsearch__.search(
+      query: {
+        match: {
+          uid: id,
+        },
+      },
+    )
   end
 
   def self.query(query, options={})

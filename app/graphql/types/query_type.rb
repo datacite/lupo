@@ -154,7 +154,7 @@ class QueryType < BaseObject
   def creative_works(query: nil, ids: nil, client_id: nil, provider_id: nil, first: nil)
     if ids.present?
       dois = ids.split(",").map { |i| doi_from_url(i) }
-      Doi.find_by_id(dois, page: { number: 1, size: first }).results.to_a
+      Doi.find_by_ids(dois, page: { number: 1, size: first }).results.to_a
     else
       Doi.query(query, client_id: client_id, provider_id: provider_id, state: "findable", page: { number: 1, size: first }).results.to_a
     end
