@@ -1,5 +1,3 @@
-require 'benchmark'
-
 class EventsController < ApplicationController
   include Identifiable
 
@@ -82,41 +80,37 @@ class EventsController < ApplicationController
 
     page = page_from_params(params)
 
-    response = nil
-    bm = Benchmark.ms {
-      if params[:id].present?
-        response = Event.find_by_id(params[:id])
-      elsif params[:ids].present?
-        response = Event.find_by_id(params[:ids], page: page, sort: sort)
-      else
-        response = Event.query(params[:query],
-                              subj_id: params[:subj_id],
-                              obj_id: params[:obj_id],
-                              source_doi: params[:source_doi],
-                              target_doi: params[:target_doi],
-                              doi: params[:doi_id] || params[:doi],
-                              orcid: params[:orcid],
-                              prefix: params[:prefix],
-                              subtype: params[:subtype],
-                              citation_type: params[:citation_type],
-                              source_id: params[:source_id],
-                              registrant_id: params[:registrant_id],
-                              relation_type_id: params[:relation_type_id],
-                              source_relation_type_id: params[:source_relation_type_id],
-                              target_relation_type_id: params[:target_relation_type_id],
-                              issn: params[:issn],
-                              publication_year: params[:publication_year],
-                              occurred_at: params[:occurred_at],
-                              year_month: params[:year_month],
-                              aggregations: params[:aggregations],
-                              unique: params[:unique],
-                              state_event: params[:state],
-                              scroll_id: params[:scroll_id],
-                              page: page,
-                              sort: sort)
-      end
-    }
-    Rails.logger.warn method: "GET", path: "/events", message: "Request /events", duration: bm
+    if params[:id].present?
+      response = Event.find_by_id(params[:id])
+    elsif params[:ids].present?
+      response = Event.find_by_id(params[:ids], page: page, sort: sort)
+    else
+      response = Event.query(params[:query],
+                            subj_id: params[:subj_id],
+                            obj_id: params[:obj_id],
+                            source_doi: params[:source_doi],
+                            target_doi: params[:target_doi],
+                            doi: params[:doi_id] || params[:doi],
+                            orcid: params[:orcid],
+                            prefix: params[:prefix],
+                            subtype: params[:subtype],
+                            citation_type: params[:citation_type],
+                            source_id: params[:source_id],
+                            registrant_id: params[:registrant_id],
+                            relation_type_id: params[:relation_type_id],
+                            source_relation_type_id: params[:source_relation_type_id],
+                            target_relation_type_id: params[:target_relation_type_id],
+                            issn: params[:issn],
+                            publication_year: params[:publication_year],
+                            occurred_at: params[:occurred_at],
+                            year_month: params[:year_month],
+                            aggregations: params[:aggregations],
+                            unique: params[:unique],
+                            state_event: params[:state],
+                            scroll_id: params[:scroll_id],
+                            page: page,
+                            sort: sort)
+    end
 
     if page[:scroll].present?
       results = response.results
@@ -144,29 +138,15 @@ class EventsController < ApplicationController
 
       render json: EventSerializer.new(results, options).serialized_json, status: :ok
     else
-      aggregations = nil
-      sources = nil
-      prefixes = nil
-      citation_types = nil
-      relation_types = nil
-      registrants = nil
-      pairings = nil
-      dois = nil
-      states = nil
+      aggregations = params.fetch(:aggregations, "") || ""
 
-      bm = Benchmark.ms {
-        aggregations = params.fetch(:aggregations, "") || ""
-
-        sources = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_source(response.response.aggregations.sources.buckets) : nil
-        prefixes = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_source(response.response.aggregations.prefixes.buckets) : nil
-        citation_types = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
-        relation_types = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_relation_type(response.response.aggregations.relation_types.buckets) : nil
-        registrants = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations")  ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
-        pairings = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
-        dois = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_dois(response.response.aggregations.dois.buckets) : nil
-        states = total.positive? && aggregations.include?("state_aggregations") ? facet_by_source(response.response.aggregations.states.buckets) : nil
-      }
-      Rails.logger.warn method: "GET", path: "/events", message: "Aggregations /events", duration: bm
+      sources = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_source(response.response.aggregations.sources.buckets) : nil
+      prefixes = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_source(response.response.aggregations.prefixes.buckets) : nil
+      citation_types = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
+      relation_types = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_relation_type(response.response.aggregations.relation_types.buckets) : nil
+      registrants = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations")  ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
+      pairings = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
+      states = total.positive? && aggregations.include?("state_aggregations") ? facet_by_source(response.response.aggregations.states.buckets) : nil
 
       results = response.results
 
@@ -208,26 +188,7 @@ class EventsController < ApplicationController
 
       options[:is_collection] = true
 
-      events_serialized = nil
-      bm = Benchmark.ms {
-        events_serialized = EventSerializer.new(results, options).serializable_hash
-      }
-      Rails.logger.warn method: "GET", path: "/events", message: "Serialize /events", duration: bm
-
-      if @include.include?(:dois)
-        doi_names = ""
-        bm = Benchmark.ms {
-          options[:include] = []
-          doi_names = (results.map { |event| event.doi}).uniq().join(",")
-          events_serialized[:included] = DoiSerializer.new((Doi.find_by_id(doi_names).results), is_collection: true).serializable_hash.dig(:data) 
-        }
-        Rails.logger.warn method: "GET", path: "/events", message: "IncludeDois /events", duration: bm
-      end
-
-      bm = Benchmark.ms {
-        render json: events_serialized, status: :ok
-      }
-      Rails.logger.warn method: "GET", path: "/events", message: "Render /events", duration: bm
+      render json: EventSerializer.new(results, options).serialized_json, status: :ok
     end
   end
 

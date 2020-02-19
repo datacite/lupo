@@ -1,6 +1,5 @@
 require 'uri'
 require 'base64'
-require 'benchmark'
 
 class DoisController < ApplicationController
   include ActionController::MimeResponds
@@ -40,54 +39,49 @@ class DoisController < ApplicationController
                          else nil
                          end
 
-    response = nil
-
     # only show findable DOIs to anonymous users and role user
     params[:state] = "findable" if current_user.nil? || current_user.role_id == "user"
 
-    bm = Benchmark.ms {
-      if params[:id].present?
-        response = Doi.find_by_id(params[:id])
-      elsif params[:ids].present?
-        response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
-      else
-        response = Doi.query(params[:query],
-                            state: params[:state],
-                            exclude_registration_agencies: params[:exclude_registration_agencies],
-                            created: params[:created],
-                            registered: params[:registered],
-                            provider_id: params[:provider_id],
-                            consortium_id: params[:consortium_id],
-                            client_id: params[:client_id],
-                            affiliation_id: params[:affiliation_id],
-                            re3data_id: params[:re3data_id],
-                            opendoar_id: params[:opendoar_id],
-                            certificate: params[:certificate],
-                            prefix: params[:prefix],
-                            user_id: params[:user_id],
-                            resource_type_id: params[:resource_type_id],
-                            schema_version: params[:schema_version],
-                            subject: params[:subject],
-                            has_citations: params[:has_citations],
-                            has_views: params[:has_views],
-                            has_downloads: params[:has_downloads],
-                            link_check_status: params[:link_check_status],
-                            link_check_has_schema_org: params[:link_check_has_schema_org],
-                            link_check_body_has_pid: params[:link_check_body_has_pid],
-                            link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
-                            link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
-                            link_check_found_citation_doi: params[:link_check_found_citation_doi],
-                            link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
-                            sample_group: sample_group_field,
-                            sample_size: params[:sample],
-                            source: params[:source],
-                            scroll_id: params[:scroll_id],
-                            page: page,
-                            sort: sort,
-                            random: params[:random])
-      end
-    }
-    Rails.logger.warn method: "GET", path: "/dois", message: "Request /dois", duration: bm
+    if params[:id].present?
+      response = Doi.find_by_id(params[:id])
+    elsif params[:ids].present?
+      response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
+    else
+      response = Doi.query(params[:query],
+                          state: params[:state],
+                          exclude_registration_agencies: params[:exclude_registration_agencies],
+                          created: params[:created],
+                          registered: params[:registered],
+                          provider_id: params[:provider_id],
+                          consortium_id: params[:consortium_id],
+                          client_id: params[:client_id],
+                          affiliation_id: params[:affiliation_id],
+                          re3data_id: params[:re3data_id],
+                          opendoar_id: params[:opendoar_id],
+                          certificate: params[:certificate],
+                          prefix: params[:prefix],
+                          user_id: params[:user_id],
+                          resource_type_id: params[:resource_type_id],
+                          schema_version: params[:schema_version],
+                          subject: params[:subject],
+                          has_citations: params[:has_citations],
+                          has_views: params[:has_views],
+                          has_downloads: params[:has_downloads],
+                          link_check_status: params[:link_check_status],
+                          link_check_has_schema_org: params[:link_check_has_schema_org],
+                          link_check_body_has_pid: params[:link_check_body_has_pid],
+                          link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
+                          link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
+                          link_check_found_citation_doi: params[:link_check_found_citation_doi],
+                          link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
+                          sample_group: sample_group_field,
+                          sample_size: params[:sample],
+                          source: params[:source],
+                          scroll_id: params[:scroll_id],
+                          page: page,
+                          sort: sort,
+                          random: params[:random])
+    end
 
     begin
       # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
@@ -148,56 +142,27 @@ class DoisController < ApplicationController
           render json: DoiSerializer.new(results, options).serialized_json, status: :ok
         end
       else
-        states = nil
-        resource_types = nil
-        years = nil
-        created = nil
-        registered = nil
-        providers = nil
-        clients = nil
-        affiliations = nil
-        prefixes = nil
-        schema_versions = nil
-        sources = nil
-        link_checks_status = nil
-        links_with_schema_org = nil
-        link_checks_schema_org_id = nil
-        link_checks_dc_identifier = nil
-        link_checks_citation_doi = nil
-        links_checked = nil
-        subjects = nil
-        certificates = nil
+        states = total.positive? ? facet_by_key(response.aggregations.states.buckets) : nil
+        resource_types = total.positive? ? facet_by_resource_type(response.aggregations.resource_types.buckets) : nil
+        years = total.positive? ? facet_by_year(response.aggregations.years.buckets) : nil
+        created = total.positive? ? facet_by_year(response.aggregations.created.buckets) : nil
+        registered = total.positive? ? facet_by_year(response.aggregations.registered.buckets) : nil
+        providers = total.positive? ? facet_by_provider(response.aggregations.providers.buckets) : nil
+        clients = total.positive? ? facet_by_client(response.aggregations.clients.buckets) : nil
+        prefixes = total.positive? ? facet_by_key(response.aggregations.prefixes.buckets) : nil
+        schema_versions = total.positive? ? facet_by_schema(response.aggregations.schema_versions.buckets) : nil
 
-        bm = Benchmark.ms {
-          states = total.positive? ? facet_by_key(response.aggregations.states.buckets) : nil
-          resource_types = total.positive? ? facet_by_resource_type(response.aggregations.resource_types.buckets) : nil
-          years = total.positive? ? facet_by_year(response.aggregations.years.buckets) : nil
-          created = total.positive? ? facet_by_year(response.aggregations.created.buckets) : nil
-          registered = total.positive? ? facet_by_year(response.aggregations.registered.buckets) : nil
-          providers = total.positive? ? facet_by_provider(response.aggregations.providers.buckets) : nil
-          clients = total.positive? ? facet_by_client(response.aggregations.clients.buckets) : nil
-          prefixes = total.positive? ? facet_by_key(response.aggregations.prefixes.buckets) : nil
-          schema_versions = total.positive? ? facet_by_schema(response.aggregations.schema_versions.buckets) : nil
-        }
-        logger.warn method: "GET", path: "/dois", message: "AggregationsBasic /dois", duration: bm
+        affiliations = total.positive? ? facet_by_affiliation(response.aggregations.affiliations.buckets) : nil
+        sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
+        subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
+        certificates = total.positive? ? facet_by_key(response.aggregations.certificates.buckets) : nil
 
-        bm = Benchmark.ms {
-          affiliations = total.positive? ? facet_by_affiliation(response.aggregations.affiliations.buckets) : nil
-          sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
-          subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
-          certificates = total.positive? ? facet_by_key(response.aggregations.certificates.buckets) : nil
-        }
-        logger.warn method: "GET", path: "/dois", message: "AggregationsExtended /dois", duration: bm
-
-        bm = Benchmark.ms {
-          link_checks_status = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
-          links_with_schema_org = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
-          link_checks_schema_org_id = total.positive? ? response.aggregations.link_checks_schema_org_id.value : nil
-          link_checks_dc_identifier = total.positive? ? response.aggregations.link_checks_dc_identifier.value : nil
-          link_checks_citation_doi = total.positive? ? response.aggregations.link_checks_citation_doi.value : nil
-          links_checked = total.positive? ? response.aggregations.links_checked.value : nil
-        }
-        logger.warn method: "GET", path: "/dois", message: "AggregationsLinkChecks /dois", duration: bm
+        link_checks_status = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
+        links_with_schema_org = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
+        link_checks_schema_org_id = total.positive? ? response.aggregations.link_checks_schema_org_id.value : nil
+        link_checks_dc_identifier = total.positive? ? response.aggregations.link_checks_dc_identifier.value : nil
+        link_checks_citation_doi = total.positive? ? response.aggregations.link_checks_citation_doi.value : nil
+        links_checked = total.positive? ? response.aggregations.links_checked.value : nil
 
         citations = total.positive? ? metric_facet_by_year(response.aggregations.citations.buckets) : nil
         views = total.positive? ? metric_facet_by_year(response.aggregations.views.buckets) : nil
@@ -258,14 +223,11 @@ class DoisController < ApplicationController
 
             # sparse fieldsets
             fields = fields_from_params(params)
-            bm = Benchmark.ms {
-              if fields
-                render json: DoiSerializer.new(results, options.merge(fields: fields)).serialized_json, status: :ok
-              else
-                render json: DoiSerializer.new(results, options).serialized_json, status: :ok
-              end
-            }
-            logger.warn method: "GET", path: "/dois", message: "Render /dois", duration: bm
+            if fields
+              render json: DoiSerializer.new(results, options.merge(fields: fields)).serialized_json, status: :ok
+            else
+              render json: DoiSerializer.new(results, options).serialized_json, status: :ok
+            end
           end
 
           format.citation do
@@ -289,7 +251,7 @@ class DoisController < ApplicationController
     # use current_user role to determine permissions to access draft and registered dois
     # instead of using ability
     response = Doi.find_by_id(params[:id])
-    
+
     respond_to do |format|
       format.json do
         doi = response.results.first

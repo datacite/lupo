@@ -1,5 +1,3 @@
-require 'benchmark'
-
 class WorksController < ApplicationController
   before_action :set_doi, only: [:show]
   before_action :set_include, only: [:index, :show]
@@ -26,59 +24,43 @@ class WorksController < ApplicationController
                           else nil
                          end
 
-    response = nil
-    bm = Benchmark.ms {
-      if params[:id].present?
-        response = Doi.find_by_id(params[:id])
-      elsif params[:ids].present?
-        response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
-      else
-        response = Doi.query(params[:query],
-                            exclude_registration_agencies: true,
-                            state: "findable",
-                            created: params[:created],
-                            registered: params[:registered],
-                            provider_id: params[:member_id],
-                            client_id: params[:data_center_id],
-                            affiliation_id: params[:affiliation_id],
-                            prefix: params[:prefix],
-                            user_id: params[:person_id],
-                            resource_type_id: params[:resource_type_id],
-                            has_citations: params[:has_citations],
-                            has_views: params[:has_views],
-                            has_downloads: params[:has_downloads],
-                            schema_version: params[:schema_version],
-                            sample_group: sample_group_field,
-                            sample_size: params[:sample],
-                            page: page,
-                            sort: sort,
-                            random: params[:sample].present? ? true : false)
-      end
-    }
-    Rails.logger.warn method: "GET", path: "/works", message: "Request /works", duration: bm
+    if params[:id].present?
+      response = Doi.find_by_id(params[:id])
+    elsif params[:ids].present?
+      response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
+    else
+      response = Doi.query(params[:query],
+                          exclude_registration_agencies: true,
+                          state: "findable",
+                          created: params[:created],
+                          registered: params[:registered],
+                          provider_id: params[:member_id],
+                          client_id: params[:data_center_id],
+                          affiliation_id: params[:affiliation_id],
+                          prefix: params[:prefix],
+                          user_id: params[:person_id],
+                          resource_type_id: params[:resource_type_id],
+                          has_citations: params[:has_citations],
+                          has_views: params[:has_views],
+                          has_downloads: params[:has_downloads],
+                          schema_version: params[:schema_version],
+                          sample_group: sample_group_field,
+                          sample_size: params[:sample],
+                          page: page,
+                          sort: sort,
+                          random: params[:sample].present? ? true : false)
+    end
 
     begin
       total = response.results.total
-      total_pages = page[:size] > 0 ? ([total.to_f, 10000].min / page[:size]).ceil : 0
+      total_pages = page[:size].positive? ? ([total.to_f, 10000].min / page[:size]).ceil : 0
 
-      resource_types = nil
-      registered = nil
-      providers = nil
-      clients = nil
-      affiliations = nil
+      resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
+      registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
+      providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+      clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
 
-      bm = Benchmark.ms {
-        resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
-        registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
-        providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
-        clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
-      }
-      Rails.logger.warn method: "GET", path: "/works", message: "AggregationsBasic /works", duration: bm
-
-      bm = Benchmark.ms {
-        affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
-      }
-      Rails.logger.warn method: "GET", path: "/works", message: "AggregationsAffiliations /works", duration: bm
+      affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
 
       @dois = response.results
 
@@ -117,10 +99,7 @@ class WorksController < ApplicationController
         @dois = response.results
       end
 
-      bm = Benchmark.ms {
-        render json: WorkSerializer.new(@dois, options).serialized_json, status: :ok
-      }
-      Rails.logger.warn method: "GET", path: "/works", message: "Render /works", duration: bm
+      render json: WorkSerializer.new(@dois, options).serialized_json, status: :ok
     rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
@@ -134,26 +113,19 @@ class WorksController < ApplicationController
     options[:is_collection] = false
     options[:params] = {
       current_ability: current_ability,
-      detail: true
+      detail: true,
     }
 
-    bm = Benchmark.ms {
-      render json: WorkSerializer.new(@doi, options).serialized_json, status: :ok
-    }
-    Rails.logger.warn method: "GET", path: "/works/#{@doi.doi}", message: "Render /works/#{@doi.doi}", duration: bm
+    render json: WorkSerializer.new(@doi, options).serialized_json, status: :ok
   end
 
   protected
 
   def set_doi
-    @doi = nil
+    response = Doi.find_by_id(params[:id])
+    @doi = response.results.first
 
-    bm = Benchmark.ms {
-      response = Doi.find_by_id(params[:id])
-      @doi = response.results.first
-    }
     fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: @doi, user: current_user)
-    Rails.logger.warn method: "GET", path: "/works/#{@doi.doi}", message: "Request ES /works/#{@doi.doi}", duration: bm
   end
 
   def set_include
