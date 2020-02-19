@@ -1,7 +1,11 @@
 # frozen_string_literal: true
 
 Datadog.configure do |c|
+  c.tracer hostname: "datadog.local", enabled: Rails.env.production?, env: Rails.env
   c.use :rails, service_name: "client-api"
   c.use :elasticsearch
-  c.tracer hostname: "datadog.local", enabled: Rails.env.production?, env: Rails.env
+  c.use :active_record, analytics_enabled: false
+  c.use :aws, analytics_enabled: true
+  c.use :shoryuken, analytics_enabled: true
+  c.use :graphql, schemas: [LupoSchema]
 end
