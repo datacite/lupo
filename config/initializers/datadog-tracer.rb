@@ -2,5 +2,6 @@
 
 Datadog.configure do |c|
   c.use :rails, service_name: "client-api"
-  c.tracer hostname: "datadog.local", enabled: Rails.env.production?
+  c.use :elasticsearch
+  c.tracer hostname: "datadog.local", enabled: Rails.env.production?, env: Rails.env
 end
