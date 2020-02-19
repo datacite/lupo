@@ -31,7 +31,7 @@ class WorksController < ApplicationController
       if params[:id].present?
         response = Doi.find_by_id(params[:id])
       elsif params[:ids].present?
-        response = Doi.find_by_id(params[:ids], page: page, sort: sort)
+        response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
       else
         response = Doi.query(params[:query],
                             exclude_registration_agencies: true,
