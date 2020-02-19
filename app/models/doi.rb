@@ -659,12 +659,6 @@ class Doi < ActiveRecord::Base
       end
     end
 
-    aggregations = nil
-    bm = Benchmark.ms {
-      aggregations = get_aggregations_hash(options)
-    }
-    Rails.logger.warn method: "GET", path: "/works", message: "QueryAggregations /works", duration: bm
-
     options[:page] ||= {}
     options[:page][:number] ||= 1
     options[:page][:size] ||= 25
@@ -692,105 +686,101 @@ class Doi < ActiveRecord::Base
       sort = options[:sort]
     end
 
-    es_query = nil
-    bm = Benchmark.ms {
-      # make sure field name uses underscore
-      # escape forward slashes in query
-      if query.present?
-        query = query.gsub(/publicationYear/, "publication_year")
-        query = query.gsub(/relatedIdentifiers/, "related_identifiers")
-        query = query.gsub(/rightsList/, "rights_list")
-        query = query.gsub(/fundingReferences/, "funding_references")
-        query = query.gsub(/geoLocations/, "geo_locations")
-        query = query.gsub(/landingPage/, "landing_page")
-        query = query.gsub(/contentUrl/, "content_url")
-        query = query.gsub("/", '\/')
-      end
+    # make sure field name uses underscore
+    # escape forward slashes in query
+    if query.present?
+      query = query.gsub(/publicationYear/, "publication_year")
+      query = query.gsub(/relatedIdentifiers/, "related_identifiers")
+      query = query.gsub(/rightsList/, "rights_list")
+      query = query.gsub(/fundingReferences/, "funding_references")
+      query = query.gsub(/geoLocations/, "geo_locations")
+      query = query.gsub(/landingPage/, "landing_page")
+      query = query.gsub(/contentUrl/, "content_url")
+      query = query.gsub("/", '\/')
+    end
 
-      must = []
-      must_not = []
+    must = []
+    must_not = []
 
-      must << { query_string: { query: query, fields: query_fields } } if query.present?
-      must << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
-      must << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
-      must << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
-      must << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
-      must << { term: { uid: options[:uid] }} if options[:uid].present?
-      must << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
-      must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
-      must << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
-      must << { term: { source: options[:source] } } if options[:source].present?
-      must << { range: { citation_count: { "gte": options[:has_citations].to_i } } } if options[:has_citations].present?
-      must << { range: { view_count: { "gte": options[:has_views].to_i } } } if options[:has_views].present?
-      must << { range: { download_count: { "gte": options[:has_downloads].to_i } } } if options[:has_downloads].present?
-      must << { term: { "landing_page.status": options[:link_check_status] } } if options[:link_check_status].present?
-      must << { exists: { field: "landing_page.checked" }} if options[:link_checked].present?
-      must << { term: { "landing_page.hasSchemaOrg": options[:link_check_has_schema_org] }} if options[:link_check_has_schema_org].present?
-      must << { term: { "landing_page.bodyHasPid": options[:link_check_body_has_pid] }} if options[:link_check_body_has_pid].present?
-      must << { exists: { field: "landing_page.schemaOrgId" }} if options[:link_check_found_schema_org_id].present?
-      must << { exists: { field: "landing_page.dcIdentifier" }} if options[:link_check_found_dc_identifier].present?
-      must << { exists: { field: "landing_page.citationDoi" }} if options[:link_check_found_citation_doi].present?
-      must << { range: { "landing_page.redirectCount": { "gte": options[:link_check_redirect_count_gte] } } } if options[:link_check_redirect_count_gte].present?
-      must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
-      must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
-      must << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{options[:user_id]}" }} if options[:user_id].present?
-      must << { term: { "creators.affiliation.affiliationIdentifier" => URI.decode(options[:affiliation_id]) }} if options[:affiliation_id].present?
-      must << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
-      must << { term: { "client.re3data_id" => options[:re3data_id].gsub("/", '\/').upcase }} if options[:re3data_id].present?
-      must << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
-      must << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
-      must_not << { terms: { provider_id: ["crossref", "medra", "op"] }} if options[:exclude_registration_agencies]
+    must << { query_string: { query: query, fields: query_fields } } if query.present?
+    must << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
+    must << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
+    must << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
+    must << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
+    must << { term: { uid: options[:uid] }} if options[:uid].present?
+    must << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
+    must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
+    must << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
+    must << { term: { source: options[:source] } } if options[:source].present?
+    must << { range: { citation_count: { "gte": options[:has_citations].to_i } } } if options[:has_citations].present?
+    must << { range: { view_count: { "gte": options[:has_views].to_i } } } if options[:has_views].present?
+    must << { range: { download_count: { "gte": options[:has_downloads].to_i } } } if options[:has_downloads].present?
+    must << { term: { "landing_page.status": options[:link_check_status] } } if options[:link_check_status].present?
+    must << { exists: { field: "landing_page.checked" }} if options[:link_checked].present?
+    must << { term: { "landing_page.hasSchemaOrg": options[:link_check_has_schema_org] }} if options[:link_check_has_schema_org].present?
+    must << { term: { "landing_page.bodyHasPid": options[:link_check_body_has_pid] }} if options[:link_check_body_has_pid].present?
+    must << { exists: { field: "landing_page.schemaOrgId" }} if options[:link_check_found_schema_org_id].present?
+    must << { exists: { field: "landing_page.dcIdentifier" }} if options[:link_check_found_dc_identifier].present?
+    must << { exists: { field: "landing_page.citationDoi" }} if options[:link_check_found_citation_doi].present?
+    must << { range: { "landing_page.redirectCount": { "gte": options[:link_check_redirect_count_gte] } } } if options[:link_check_redirect_count_gte].present?
+    must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
+    must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
+    must << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{options[:user_id]}" }} if options[:user_id].present?
+    must << { term: { "creators.affiliation.affiliationIdentifier" => URI.decode(options[:affiliation_id]) }} if options[:affiliation_id].present?
+    must << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
+    must << { term: { "client.re3data_id" => options[:re3data_id].gsub("/", '\/').upcase }} if options[:re3data_id].present?
+    must << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
+    must << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
+    must_not << { terms: { provider_id: ["crossref", "medra", "op"] }} if options[:exclude_registration_agencies]
 
-      # ES query can be optionally defined in different ways
-      # So here we build it differently based upon options
-      # This is mostly useful when trying to wrap it in a function_score query
-      es_query = {}
+    # ES query can be optionally defined in different ways
+    # So here we build it differently based upon options
+    # This is mostly useful when trying to wrap it in a function_score query
+    es_query = {}
 
-      # The main bool query with filters
-      bool_query = {
-        must: must,
-        must_not: must_not
+    # The main bool query with filters
+    bool_query = {
+      must: must,
+      must_not: must_not
+    }
+
+    # Function score is used to provide varying score to return different values
+    # We use the bool query above as our principle query
+    # Then apply additional function scoring as appropriate
+    # Note this can be performance intensive.
+    function_score = {
+      query: {
+        bool: bool_query
+      },
+      random_score: {
+        "seed": Rails.env.test? ? "random_1234" : "random_#{rand(1...100000)}"
       }
+    }
 
-      # Function score is used to provide varying score to return different values
-      # We use the bool query above as our principle query
-      # Then apply additional function scoring as appropriate
-      # Note this can be performance intensive.
-      function_score = {
-        query: {
-          bool: bool_query
+    if options[:random].present?
+      es_query['function_score'] = function_score
+      # Don't do any sorting for random results
+      sort = nil
+    else
+      es_query['bool'] = bool_query
+    end
+
+    # Sample grouping is optional included aggregation
+    if options[:sample_group].present?
+      aggregations[:samples] = {
+        terms: {
+          field: options[:sample_group],
+          size: 10000
         },
-        random_score: {
-          "seed": Rails.env.test? ? "random_1234" : "random_#{rand(1...100000)}"
-        }
-      }
-
-      if options[:random].present?
-        es_query['function_score'] = function_score
-        # Don't do any sorting for random results
-        sort = nil
-      else
-        es_query['bool'] = bool_query
-      end
-
-      # Sample grouping is optional included aggregation
-      if options[:sample_group].present?
-        aggregations[:samples] = {
-          terms: {
-            field: options[:sample_group],
-            size: 10000
-          },
-          aggs: {
-            "samples_hits": {
-              top_hits: {
-                size: options[:sample_size].present? ? options[:sample_size] : 1
-              }
+        aggs: {
+          "samples_hits": {
+            top_hits: {
+              size: options[:sample_size].present? ? options[:sample_size] : 1
             }
           }
         }
-      end
-    }
-    Rails.logger.warn method: "GET", path: "/works", message: "QueryProcessing /works", duration: bm
+      }
+    end
 
     # three options for going through results are scroll, cursor and pagination
     # the default is pagination
@@ -799,46 +789,41 @@ class Doi < ActiveRecord::Base
 
     # can't use search wrapper function for scroll api
     # map function for scroll is small performance hit
-    response = nil
-    bm = Benchmark.ms {
-      if options.dig(:page, :scroll).present?
-        response = __elasticsearch__.client.search(
-          index: self.index_name,
-          scroll: options.dig(:page, :scroll),
-          body: { 
-            size: options.dig(:page, :size),
-            sort: sort,
-            query: es_query,
-            aggregations: aggregations,
-            track_total_hits: true
-          }.compact)
-        response = Hashie::Mash.new({
-          total: response.dig("hits", "total", "value"),
-          results: response.dig("hits", "hits").map { |r| r["_source"] },
-          scroll_id: response["_scroll_id"]
-        })
-      elsif options.dig(:page, :cursor).present?
-        response = __elasticsearch__.search({
+    if options.dig(:page, :scroll).present?
+      response = __elasticsearch__.client.search(
+        index: self.index_name,
+        scroll: options.dig(:page, :scroll),
+        body: { 
           size: options.dig(:page, :size),
-          search_after: search_after,
           sort: sort,
           query: es_query,
           aggregations: aggregations,
           track_total_hits: true
         }.compact)
-      else
-        response =__elasticsearch__.search({
-          size: options.dig(:page, :size),
-          from: from,
-          sort: sort,
-          query: es_query,
-          aggregations: aggregations,
-          track_total_hits: true
-        }.compact)
-      end
-    }
-    Rails.logger.warn method: "GET", path: "/works", message: "Query /works #{es_query.inspect}", duration: bm
-    response
+      Hashie::Mash.new({
+        total: response.dig("hits", "total", "value"),
+        results: response.dig("hits", "hits").map { |r| r["_source"] },
+        scroll_id: response["_scroll_id"]
+      })
+    elsif options.dig(:page, :cursor).present?
+      __elasticsearch__.search({
+        size: options.dig(:page, :size),
+        search_after: search_after,
+        sort: sort,
+        query: es_query,
+        aggregations: aggregations,
+        track_total_hits: true
+      }.compact)
+    else
+      __elasticsearch__.search({
+        size: options.dig(:page, :size),
+        from: from,
+        sort: sort,
+        query: es_query,
+        aggregations: aggregations,
+        track_total_hits: true
+      }.compact)
+    end
   end
 
   def self.index_one(doi_id: nil)
