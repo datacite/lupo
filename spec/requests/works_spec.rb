@@ -41,7 +41,7 @@ describe "works", type: :request do
     end
 
     it "has citations" do
-      get "/works/#{doi.doi}"
+      get "/works/#{doi.doi}?include=citation-events"
       puts last_response.body
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
@@ -52,6 +52,9 @@ describe "works", type: :request do
       expect(json.dig('data', 'attributes', 'views-over-time')).to eq([])
       expect(json.dig('data', 'attributes', 'download-count')).to eq(0)
       expect(json.dig('data', 'attributes', 'downloads-over-time')).to eq([])
+      expect(json.dig('data', 'relationships', 'citation-events', 'data')).to eq([{"id" => citation_event.uuid, "type"=>"events"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'relationTypeId')).to eq("is-referenced-by")
     end
 
     it "has citations list" do

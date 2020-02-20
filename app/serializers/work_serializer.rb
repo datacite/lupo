@@ -10,7 +10,9 @@ class WorkSerializer
   belongs_to :client, key: "data-center", record_type: "data-centers", serializer: :DataCenter
   belongs_to :provider, key: :member, record_type: :members, serializer: :Member
   belongs_to :resource_type, record_type: "resource-types", serializer: :ResourceType
-
+  has_many :reference_events, record_type: :events, serializer: EventSerializer, if: Proc.new { |object, params| params && params[:detail] }
+  has_many :citation_events, record_type: :events, serializer: EventSerializer, if: Proc.new { |object, params| params && params[:detail] }
+  
   attribute :author do |object|
     Array.wrap(object.creators).map do |c|
       if (c["givenName"].present? || c["familyName"].present?)
