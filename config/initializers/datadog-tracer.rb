@@ -5,7 +5,5 @@ Datadog.configure do |c|
   c.use :rails, service_name: "client-api"
   c.use :elasticsearch
   c.use :active_record, analytics_enabled: false
-  c.use :aws, analytics_enabled: false
-  c.use :shoryuken, analytics_enabled: false
   c.use :graphql, schemas: [LupoSchema]
 end
