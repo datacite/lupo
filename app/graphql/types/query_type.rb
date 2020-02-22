@@ -3,6 +3,14 @@
 class QueryType < BaseObject
   extend_type
 
+  field :heartbeat, String, null: false do
+  end
+
+  def heartbeat
+    heartbeat = Heartbeat.new
+    heartbeat.string
+  end
+
   field :providers, ProviderConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
@@ -345,8 +353,8 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def physical_objects(query: nil, has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, first: nil)
-    Doi.query(query, resource_type_id: "PhysicalObject", state: "findable", has_citations: nil, has_views: nil, has_downloads: nil, page: { number: 1, size: first }).results.to_a
+  def physical_objects(query: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
+    Doi.query(query, resource_type_id: "PhysicalObject", state: "findable", has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, page: { number: 1, size: first }).results.to_a
   end
 
   field :physical_object, PhysicalObjectType, null: false do

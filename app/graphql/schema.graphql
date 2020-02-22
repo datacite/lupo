@@ -4276,7 +4276,7 @@ type PublicationSoftwareConnectionWithMeta {
 type Query {
   _service: _Service!
   audiovisual(id: ID!): Audiovisual!
-  audiovisuals(first: Int = 25, query: String): [Audiovisual!]!
+  audiovisuals(first: Int = 25, hasCitations: Int, hasDownloads: Int, hasViews: Int, query: String): [Audiovisual!]!
   client(id: ID!): Client!
   clients(
     """
@@ -4388,10 +4388,11 @@ type Query {
     last: Int
     query: String
   ): FunderConnectionWithMeta!
+  heartbeat: String!
   image(id: ID!): Image!
   images(first: Int = 25, query: String): [Image!]!
   interactiveResource(id: ID!): InteractiveResource!
-  interactiveResources(first: Int = 25, query: String): [InteractiveResource!]!
+  interactiveResources(first: Int = 25, hasCitations: Int, hasDownloads: Int, hasViews: Int, query: String): [InteractiveResource!]!
   model(id: ID!): Model!
   models(first: Int = 25, query: String): [Model!]!
   organization(id: ID!): Organization!
@@ -4435,7 +4436,7 @@ type Query {
   ): PersonConnectionWithMeta!
   person(id: ID!): Person
   physicalObject(id: ID!): PhysicalObject!
-  physicalObjects(first: Int = 25, query: String): [PhysicalObject!]!
+  physicalObjects(first: Int = 25, hasCitations: Int, hasDownloads: Int, hasViews: Int, query: String): [PhysicalObject!]!
   prefix(id: ID!): Prefix!
   prefixes(first: Int = 25, query: String): [Prefix!]!
   provider(id: ID!): Provider!

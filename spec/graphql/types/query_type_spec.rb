@@ -126,4 +126,18 @@ describe QueryType do
       expect(response.dig("data", "datasets", "nodes", 0, "references").first).to eq("id"=>"https://handle.test.datacite.org/#{target_doi.doi.downcase}", "publicationYear"=>2011)
     end
   end
+
+  describe "heartbeat" do
+    let(:query) do
+      %(query {
+        heartbeat
+      })
+    end
+
+    it "returns the heartbeat" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "heartbeat")).to eq("OK")
+    end
+  end
 end
