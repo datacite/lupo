@@ -172,11 +172,14 @@ class QueryType < BaseObject
     argument :query, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def datasets(query: nil, client_id: nil, provider_id: nil, first: nil)
-    Doi.query(query, client_id: client_id, provider_id: provider_id, resource_type_id: "Dataset", state: "findable", page: { number: 1, size: first }).results.to_a
+  def datasets(query: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
+    Doi.query(query, client_id: client_id, provider_id: provider_id, resource_type_id: "Dataset", state: "findable", has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, page: { number: 1, size: first }).results.to_a
   end
 
   field :dataset, DatasetType, null: false do
@@ -191,11 +194,14 @@ class QueryType < BaseObject
     argument :query, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
   def publications(query: nil, client_id: nil, provider_id: nil, first: nil)
-    Doi.query(query, client_id: client_id, provider_id: provider_id, resource_type_id: "Text", state: "findable", page: { number: 1, size: first }).results.to_a
+    Doi.query(query, client_id: client_id, provider_id: provider_id, has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, resource_type_id: "Text", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :publication, PublicationType, null: false do
@@ -365,11 +371,14 @@ class QueryType < BaseObject
     argument :query, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
   def software_source_codes(query: nil, client_id: nil, provider_id: nil, first: nil)
-    Doi.query(query, client_id: client_id, provider_id: provider_id, resource_type_id: "Software", state: "findable", page: { number: 1, size: first }).results.to_a
+    Doi.query(query, client_id: client_id, provider_id: provider_id, has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, resource_type_id: "Software", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :software_source_code, SoftwareType, null: false do
