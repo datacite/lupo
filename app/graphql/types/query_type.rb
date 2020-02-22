@@ -200,7 +200,7 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def publications(query: nil, client_id: nil, provider_id: nil, first: nil)
+  def publications(query: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
     Doi.query(query, client_id: client_id, provider_id: provider_id, has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, resource_type_id: "Text", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
@@ -214,11 +214,14 @@ class QueryType < BaseObject
 
   field :audiovisuals, [AudiovisualType], null: false do
     argument :query, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def audiovisuals(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Audiovisual", state: "findable", page: { number: 1, size: first }).results.to_a
+  def audiovisuals(query: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
+    Doi.query(query, resource_type_id: "Audiovisual", state: "findable", has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, page: { number: 1, size: first }).results.to_a
   end
 
   field :audiovisual, AudiovisualType, null: false do
@@ -299,11 +302,14 @@ class QueryType < BaseObject
 
   field :interactive_resources, [InteractiveResourceType], null: false do
     argument :query, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def interactive_resources(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "InteractiveResource", state: "findable", page: { number: 1, size: first }).results.to_a
+  def interactive_resources(query: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
+    Doi.query(query, resource_type_id: "InteractiveResource", state: "findable", has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, page: { number: 1, size: first }).results.to_a
   end
 
   field :interactive_resource, InteractiveResourceType, null: false do
@@ -333,11 +339,14 @@ class QueryType < BaseObject
 
   field :physical_objects, [PhysicalObjectType], null: false do
     argument :query, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def physical_objects(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "PhysicalObject", state: "findable", page: { number: 1, size: first }).results.to_a
+  def physical_objects(query: nil, has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, first: nil)
+    Doi.query(query, resource_type_id: "PhysicalObject", state: "findable", has_citations: nil, has_views: nil, has_downloads: nil, page: { number: 1, size: first }).results.to_a
   end
 
   field :physical_object, PhysicalObjectType, null: false do
@@ -377,7 +386,7 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def software_source_codes(query: nil, client_id: nil, provider_id: nil, first: nil)
+  def software_source_codes(query: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
     Doi.query(query, client_id: client_id, provider_id: provider_id, has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, resource_type_id: "Software", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
