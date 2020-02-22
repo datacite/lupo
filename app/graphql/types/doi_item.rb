@@ -38,13 +38,16 @@ module DoiItem
     argument :style, String, required: false, default_value: "apa"
     argument :locale, String, required: false, default_value: "en-US"
   end
+  field :reference_count, Int, null: true, description: "Total number of references."
   field :citation_count, Int, null: true, description: "Total number of citations."
   field :view_count, Int, null: true, description: "Total number of views."
   field :download_count, Int, null: true, description: "Total number of downloads."
   field :citations_over_time, [YearTotalType], null: true, description: "Citations by year."
   field :views_over_time, [YearMonthTotalType], null: true, description: "Views by month."
   field :downloads_over_time, [YearMonthTotalType], null: true, description: "Downloads by month."
-  
+  field :citations, [CreativeWorkType], null: true, description: "Citations."
+  field :references, [CreativeWorkType], null: true, description: "References."
+
   def type
     object.types["schemaOrg"]
   end
@@ -79,6 +82,16 @@ module DoiItem
       url = "https://doi.org/#{object.doi}"
     end
     bibliography.first.gsub(url, doi_link(url))
+  end
+  
+  def citations
+    ids = object.citation_events.map {|e| e.source_doi }
+    ElasticsearchLoader.for(Doi).load_many(ids)
+  end
+
+  def references
+    ids = object.reference_events.map { |e| e.target_doi }
+    ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
   def doi_link(url)
