@@ -11,5 +11,10 @@ describe DoiItem do
     it { is_expected.to have_field(:publicationYear).of_type("Int") }
     it { is_expected.to have_field(:publisher).of_type("String") }
     it { is_expected.to have_field(:citationCount).of_type("Int") }
+    it { is_expected.to have_field(:viewCount).of_type("Int") }
+    it { is_expected.to have_field(:downloadCount).of_type("Int") }
+    it { is_expected.to have_field(:citationsOverTime).of_type("[YearTotal!]") }
+    it { is_expected.to have_field(:viewsOverTime).of_type("[YearMonthTotal!]") }
+    it { is_expected.to have_field(:downloadsOverTime).of_type("[YearMonthTotal!]") }
   end
 end

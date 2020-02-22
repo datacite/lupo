@@ -61,17 +61,22 @@ describe QueryType do
           nodes {
             id
             citationCount
+            citationsOverTime {
+              year
+              total
+            }
           }
         }
       })
     end
 
-    it "returns all datasets" do
+    it "returns all datasets with counts" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "datasets", "totalCount")).to eq(3)
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
       expect(response.dig("data", "datasets", "nodes", 0, "citationCount")).to eq(2)
+      expect(response.dig("data", "datasets", "nodes", 0, "citationsOverTime")).to eq([{"total"=>1, "year"=>2015}, {"total"=>1, "year"=>2016}])
     end
   end
 end

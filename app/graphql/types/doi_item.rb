@@ -41,7 +41,10 @@ module DoiItem
   field :citation_count, Int, null: true, description: "Total number of citations."
   field :view_count, Int, null: true, description: "Total number of views."
   field :download_count, Int, null: true, description: "Total number of downloads."
-
+  field :citations_over_time, [YearTotalType], null: true, description: "Citations by year."
+  field :views_over_time, [YearMonthTotalType], null: true, description: "Views by month."
+  field :downloads_over_time, [YearMonthTotalType], null: true, description: "Downloads by month."
+  
   def type
     object.types["schemaOrg"]
   end

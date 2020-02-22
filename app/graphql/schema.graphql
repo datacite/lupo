@@ -40,6 +40,11 @@ type Audiovisual implements DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -63,6 +68,11 @@ type Audiovisual implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -163,6 +173,11 @@ type Audiovisual implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -410,6 +425,11 @@ type Collection implements DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -433,6 +453,11 @@ type Collection implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -533,6 +558,11 @@ type Collection implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -557,6 +587,11 @@ type CreativeWork implements DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -580,6 +615,11 @@ type CreativeWork implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -680,6 +720,11 @@ type CreativeWork implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -958,6 +1003,11 @@ type DataPaper implements DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -981,6 +1031,11 @@ type DataPaper implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -1081,6 +1136,11 @@ type DataPaper implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 type Dataset implements DoiItem {
@@ -1088,6 +1148,11 @@ type Dataset implements DoiItem {
   Total number of citations.
   """
   citationCount: Int
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
 
   """
   The client account managing this resource
@@ -1134,6 +1199,11 @@ type Dataset implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -1298,6 +1368,11 @@ type Dataset implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -1499,6 +1574,11 @@ interface DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -1522,6 +1602,11 @@ interface DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -1622,6 +1707,11 @@ interface DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 type Event implements DoiItem {
@@ -1631,6 +1721,11 @@ type Event implements DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -1654,6 +1749,11 @@ type Event implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -1754,6 +1854,11 @@ type Event implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 type EventData implements DoiItem {
@@ -1763,6 +1868,11 @@ type EventData implements DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -1786,6 +1896,11 @@ type EventData implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -1886,6 +2001,11 @@ type EventData implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -2202,6 +2322,11 @@ type Image implements DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -2225,6 +2350,11 @@ type Image implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -2325,6 +2455,11 @@ type Image implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 type InteractiveResource implements DoiItem {
@@ -2334,6 +2469,11 @@ type InteractiveResource implements DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -2357,6 +2497,11 @@ type InteractiveResource implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -2457,6 +2602,11 @@ type InteractiveResource implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 type Model implements DoiItem {
@@ -2466,6 +2616,11 @@ type Model implements DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -2489,6 +2644,11 @@ type Model implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -2589,6 +2749,11 @@ type Model implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -2802,6 +2967,11 @@ type Other implements DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -2825,6 +2995,11 @@ type Other implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -2925,6 +3100,11 @@ type Other implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -3213,6 +3393,11 @@ type PhysicalObject implements DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -3236,6 +3421,11 @@ type PhysicalObject implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -3336,6 +3526,11 @@ type PhysicalObject implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -3573,6 +3768,11 @@ type Publication implements DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -3617,6 +3817,11 @@ type Publication implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -3760,6 +3965,11 @@ type Publication implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -4238,6 +4448,11 @@ type Service implements DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -4261,6 +4476,11 @@ type Service implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -4361,6 +4581,11 @@ type Service implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -4389,6 +4614,11 @@ type Software implements DoiItem {
   Total number of citations.
   """
   citationCount: Int
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
 
   """
   The client account managing this resource
@@ -4435,6 +4665,11 @@ type Software implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -4578,6 +4813,11 @@ type Software implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -4703,6 +4943,11 @@ type Sound implements DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -4726,6 +4971,11 @@ type Sound implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -4826,6 +5076,11 @@ type Sound implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -4988,6 +5243,11 @@ type Workflow implements DoiItem {
   citationCount: Int
 
   """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -5011,6 +5271,11 @@ type Workflow implements DoiItem {
   Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -5111,6 +5376,41 @@ type Workflow implements DoiItem {
   Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+Information about totals over time (years)
+"""
+type YearMonthTotal {
+  """
+  Total
+  """
+  total: Int
+
+  """
+  Year-month
+  """
+  yearMonth: Int
+}
+
+"""
+Information about totals over time (years)
+"""
+type YearTotal {
+  """
+  Total
+  """
+  total: Int
+
+  """
+  Year
+  """
+  year: Int
 }
 
 """
