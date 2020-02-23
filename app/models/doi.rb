@@ -860,7 +860,7 @@ class Doi < ActiveRecord::Base
 
     # update_attributes will trigger validations and Elasticsearch indexing
     doi.update_attributes(attrs)
-    Rails.logger.info "[MySQL] Imported metadata for DOI " + doi.doi + "."
+    Rails.logger.warn "[MySQL] Imported metadata for DOI " + doi.doi + "."
     doi
   rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => e
     if doi.present?

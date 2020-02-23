@@ -250,11 +250,13 @@ class DoisController < ApplicationController
     # only show findable DOIs to anonymous users and role user
     # use current_user role to determine permissions to access draft and registered dois
     # instead of using ability
-    response = Doi.find_by_id(params[:id])
+    # response = Doi.find_by_id(params[:id])
+    doi = Doi.where(doi: params[:id]).first
+    fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: doi, user: current_user)
 
     respond_to do |format|
       format.json do
-        doi = response.results.first
+        # doi = response.results.first
         fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: doi, user: current_user)
 
         options = {}
@@ -269,16 +271,16 @@ class DoisController < ApplicationController
         render json: DoiSerializer.new(doi, options).serialized_json, status: :ok
       end
 
-      doi = response.records.first
+      # doi = response.records.first
       fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: doi, user: current_user)
 
-      format.citation do  
+      format.citation do
         # fetch formatted citation
         render citation: doi, style: params[:style] || "apa", locale: params[:locale] || "en-US"
       end
       header = %w(doi url registered state resourceTypeGeneral resourceType title author publisher publicationYear)
       format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => doi }
-      format.csv { render request.format.to_sym =>  doi, header: header }
+      format.csv { render request.format.to_sym => doi, header: header }
     end
   end
 

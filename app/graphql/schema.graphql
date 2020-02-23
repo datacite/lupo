@@ -57,7 +57,7 @@ type Audiovisual implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -457,7 +457,7 @@ type Collection implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -634,7 +634,7 @@ type CreativeWork implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -806,6 +806,41 @@ type CreativeWorkEdge {
   The item at the end of the edge.
   """
   node: CreativeWork
+}
+
+"""
+A creator.
+"""
+type Creator {
+  """
+  The organizational or institutional affiliation of the creator.
+  """
+  affiliation: [Organization!]
+
+  """
+  Family name. In the U.S., the last name of an Person.
+  """
+  familyName: String
+
+  """
+  Given name. In the U.S., the first name of a Person.
+  """
+  givenName: String
+
+  """
+  The ID of the creator.
+  """
+  id: ID
+
+  """
+  The name of the creator.
+  """
+  name: String
+
+  """
+  The type of the item.
+  """
+  type: String!
 }
 
 """
@@ -1065,7 +1100,7 @@ type DataPaper implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -1227,7 +1262,7 @@ type Dataset implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Referenced datasets
@@ -1666,7 +1701,7 @@ interface DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -1828,7 +1863,7 @@ type Event implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -1990,7 +2025,7 @@ type EventData implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -2425,14 +2460,14 @@ Information about identifiers
 """
 type Identifier {
   """
-  The name of the identifier.
-  """
-  name: String
-
-  """
   The value of the identifier.
   """
-  value: String
+  identifier: String
+
+  """
+  The type of identifier.
+  """
+  identifierType: String
 }
 
 type Image implements DoiItem {
@@ -2459,7 +2494,7 @@ type Image implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -2621,7 +2656,7 @@ type InteractiveResource implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -2783,7 +2818,7 @@ type Model implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -2959,12 +2994,12 @@ type Organization {
   """
   ROR ID
   """
-  id: ID!
+  id: ID
 
   """
   The identifier(s) for the organization.
   """
-  identifier: [Identifier!]
+  identifiers: [Identifier!]
 
   """
   The name of the organization.
@@ -3149,7 +3184,7 @@ type Other implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -3590,7 +3625,7 @@ type PhysicalObject implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -3980,7 +4015,7 @@ type Publication implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Referenced datasets
@@ -4685,7 +4720,7 @@ type Service implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -4868,7 +4903,7 @@ type Software implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Referenced datasets
@@ -5210,7 +5245,7 @@ type Sound implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -5525,7 +5560,7 @@ type Workflow implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
