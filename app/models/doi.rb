@@ -901,11 +901,16 @@ class Doi < ActiveRecord::Base
         type:    Doi.document_type,
         body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
 
-      # log errors
-      errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
-      response['items'].select { |k, v| k.values.first['error'].present? }.each do |err|
-        Rails.logger.error "[Elasticsearch] " + err.inspect
+      # try to handle errors
+      response['items'].select { |k, v| k.values.first['error'].present? }.each do |item|
+        import_one(doi_id: item.dig("index", "_id").to_i)
       end
+
+      # log errors
+      # errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
+      # response['items'].select { |k, v| k.values.first['error'].present? }.each do |err|
+      #   Rails.logger.error "[Elasticsearch] " + err.inspect
+      # end
 
       count += dois.length
     end
