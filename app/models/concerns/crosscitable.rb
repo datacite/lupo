@@ -48,11 +48,11 @@ module Crosscitable
 
       meta = from.present? ? send("read_" + from, { string: input, doi: options[:doi], sandbox: sandbox }).compact : {}
       meta.merge("string" => input, "from" => from)
-    rescue NoMethodError, ArgumentError => exception
-      Raven.capture_exception(exception)
+    rescue NoMethodError, ArgumentError => e
+      Raven.capture_exception(e)
 
-      Rails.logger.error "Error " + exception.message + " for doi " + @doi + "."
-      Rails.logger.error exception
+      Rails.logger.error "Error " + e.message + " for doi " + @doi + "." if e.message.present?
+      Rails.logger.error exception.inspect
 
       {}
     end
