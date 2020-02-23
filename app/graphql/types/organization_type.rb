@@ -3,11 +3,11 @@
 class OrganizationType < BaseObject
   description "Information about organizations"
 
-  field :id, ID, null: false, description: "ROR ID"
+  field :id, ID, null: true, description: "ROR ID"
   field :type, String, null: false, description: "The type of the item."
   field :name, String, null: false, description: "The name of the organization."
   field :alternate_name, [String], null: true, description: "An alias for the organization."
-  field :identifier, [IdentifierType], null: true, description: "The identifier(s) for the organization."
+  field :identifiers, [IdentifierType], null: true, description: "The identifier(s) for the organization."
   field :url, [String], null: true, hash_key: "links", description: "URL of the organization."
   field :address, AddressType, null: true, description: "Physical address of the organization."
 
@@ -36,11 +36,12 @@ class OrganizationType < BaseObject
     object.aliases + object.acronyms
   end
 
-  def identifier
-    Array.wrap(object.fund_ref).map { |o| { "name" => "fundRef", "value" => o } } + 
-    Array.wrap(object.wikidata).map { |o| { "name" => "wikidata", "value" => o } } + 
-    Array.wrap(object.grid).map { |o| { "name" => "grid", "value" => o } } + 
-    Array.wrap(object.wikipedia_url).map { |o| { "name" => "wikipedia", "value" => o } }
+  def identifiers
+    Array.wrap(object.id).map { |o| { "identifierType" => "ROR", "identifier" => o } } + 
+    Array.wrap(object.fund_ref).map { |o| { "identifierType" => "fundRef", "identifier" => o } } + 
+    Array.wrap(object.wikidata).map { |o| { "identifierType" => "wikidata", "identifier" => o } } + 
+    Array.wrap(object.grid).map { |o| { "identifierType" => "grid", "identifier" => o } } + 
+    Array.wrap(object.wikipedia_url).map { |o| { "identifierType" => "wikipedia", "identifier" => o } }
   end
 
   def address
