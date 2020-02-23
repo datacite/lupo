@@ -3,14 +3,6 @@
 class QueryType < BaseObject
   extend_type
 
-  field :heartbeat, String, null: false do
-  end
-
-  def heartbeat
-    heartbeat = Heartbeat.new
-    heartbeat.string
-  end
-
   field :providers, ProviderConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25

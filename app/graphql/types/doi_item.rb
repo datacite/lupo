@@ -60,7 +60,10 @@ module DoiItem
         "name" => c.fetch("name", nil),
         "given_name" => c.fetch("givenName", nil),
         "family_name" => c.fetch("familyName", nil),
-        "affiliation" => c.fetch("affiliation", []))
+        "affiliation" => c.fetch("affiliation", []).map do |a|
+          { "id" => a["affiliationIdentifier"],
+            "name" => a["name"] }.compact
+        end)
     end
   end
 

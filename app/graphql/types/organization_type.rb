@@ -37,16 +37,16 @@ class OrganizationType < BaseObject
   end
 
   def identifiers
-    Array.wrap(object.id).map { |o| { "identifierType" => "ROR", "identifier" => o } } + 
-    Array.wrap(object.fund_ref).map { |o| { "identifierType" => "fundRef", "identifier" => o } } + 
-    Array.wrap(object.wikidata).map { |o| { "identifierType" => "wikidata", "identifier" => o } } + 
-    Array.wrap(object.grid).map { |o| { "identifierType" => "grid", "identifier" => o } } + 
-    Array.wrap(object.wikipedia_url).map { |o| { "identifierType" => "wikipedia", "identifier" => o } }
+    Array.wrap(object.id).map { |o| { "identifier_type" => "ROR", "identifier" => o } } + 
+    Array.wrap(object.fund_ref).map { |o| { "identifier_type" => "fundRef", "identifier" => o } } + 
+    Array.wrap(object.wikidata).map { |o| { "identifier_type" => "wikidata", "identifier" => o } } + 
+    Array.wrap(object.grid).map { |o| { "identifier_type" => "grid", "identifier" => o } } + 
+    Array.wrap(object.wikipedia_url).map { |o| { "identifier_type" => "wikipedia", "identifier" => o } }
   end
 
   def address
     { "type" => "postalAddress",
-      "address_country" => object.country.to_h.fetch("name", nil) }
+      "country" => object.country.to_h.fetch("name", nil) }
   end
 
   def datasets(**args)

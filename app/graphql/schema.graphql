@@ -5,22 +5,22 @@ type Address {
   """
   The country.
   """
-  addressCountry: String
+  country: String
 
   """
   The locality in which the street address is, and which is in the region.
   """
-  addressLocality: String
-
-  """
-  The region.
-  """
-  addressRegion: String
+  locality: String
 
   """
   The postal code.
   """
   postalCode: String
+
+  """
+  The region.
+  """
+  region: String
 
   """
   The street address.
@@ -4423,7 +4423,6 @@ type Query {
     last: Int
     query: String
   ): FunderConnectionWithMeta!
-  heartbeat: String!
   image(id: ID!): Image!
   images(first: Int = 25, query: String): [Image!]!
   interactiveResource(id: ID!): InteractiveResource!

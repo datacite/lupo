@@ -335,7 +335,7 @@ describe Doi, type: :model, vcr: true do
 
     it "creators" do
       expect(subject.creators.length).to eq(8)
-      expect(subject.creators.first).to eq("familyName"=>"Ollomo", "givenName"=>"Benjamin", "name"=>"Benjamin Ollomo", "nameType"=>"Personal")
+      expect(subject.creators.first).to eq("familyName"=>"Ollomo", "givenName"=>"Benjamin", "name"=>"Ollomo, Benjamin", "nameType"=>"Personal")
     end
 
     it "dates" do

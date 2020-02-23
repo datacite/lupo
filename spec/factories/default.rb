@@ -76,49 +76,49 @@ FactoryBot.define do
     creators { [
       {
         "nameType": "Personal",
-        "name": "Benjamin Ollomo",
+        "name": "Ollomo, Benjamin",
         "givenName": "Benjamin",
         "familyName": "Ollomo"
       },
       {
         "nameType": "Personal",
-        "name": "Patrick Durand",
+        "name": "Durand, Patrick",
         "givenName": "Patrick",
         "familyName": "Durand"
       },
       {
         "nameType": "Personal",
-        "name": "Franck Prugnolle",
+        "name": "Prugnolle, Franck",
         "givenName": "Franck",
         "familyName": "Prugnolle"
       },
       {
         "nameType": "Personal",
-        "name": "Emmanuel J. P. Douzery",
+        "name": "Douzery, Emmanuel J. P.",
         "givenName": "Emmanuel J. P.",
         "familyName": "Douzery"
       },
       {
         "nameType": "Personal",
-        "name": "Céline Arnathau",
+        "name": "Arnathau, Céline",
         "givenName": "Céline",
         "familyName": "Arnathau"
       },
       {
         "nameType": "Personal",
-        "name": "Dieudonné Nkoghe",
+        "name": "Nkoghe, Dieudonné",
         "givenName": "Dieudonné",
         "familyName": "Nkoghe"
       },
       {
         "nameType": "Personal",
-        "name": "Eric Leroy",
+        "name": "Leroy, Eric",
         "givenName": "Eric",
         "familyName": "Leroy"
       },
       {
         "nameType": "Personal",
-        "name": "François Renaud",
+        "name": "Renaud, François",
         "givenName": "François",
         "familyName": "Renaud",
         "nameIdentifiers": [
@@ -126,7 +126,14 @@ FactoryBot.define do
             "nameIdentifier": "https://orcid.org/0000-0003-1419-2405",
             "nameIdentifierScheme": "ORCID",
             "schemeUri": "https://orcid.org"
-          }
+          },
+        ],
+        "affiliation": [
+          {
+            "name": "DataCite",
+            "affiliationIdentifier": "https://ror.org/04wxnsj81",
+            "affiliationIdentifierScheme": "ROR"
+          },
         ]
       }
     ] }
