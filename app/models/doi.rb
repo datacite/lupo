@@ -903,6 +903,7 @@ class Doi < ActiveRecord::Base
 
       # try to handle errors
       response['items'].select { |k, v| k.values.first['error'].present? }.each do |item|
+        Rails.logger.error "[Elasticsearch] " + item.inspect
         doi_id = item.dig("index", "_id").to_i
         import_one(doi_id: doi_id) if doi_id > 0
       end
