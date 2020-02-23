@@ -862,10 +862,13 @@ class Doi < ActiveRecord::Base
     doi.update_attributes(attrs)
     Rails.logger.info "[MySQL] Imported metadata for DOI " + doi.doi + "."
     doi
-  rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => error
-    Rails.logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + error.message
-    Raven.capture_exception(error)
-    doi
+  rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => e
+    if doi.present?
+      Rails.logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + e.message
+      doi
+    else
+      Raven.capture_exception(e)
+    end
   end
 
   def self.import_by_ids(options={})

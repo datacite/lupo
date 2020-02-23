@@ -58,9 +58,9 @@ module Crosscitable
     end
 
     def replace_doi(input, options={})
-      return input unless options[:doi].present?
-      
-      doc = Nokogiri::XML(input, nil, 'UTF-8', &:noblanks)
+      return input if options[:doi].blank?
+
+      doc = Nokogiri::XML(input, nil, "UTF-8", &:noblanks)
       node = doc.at_css("identifier")
       node.content = options[:doi].to_s.upcase if node.present? && options[:doi].present?
       doc.to_xml.strip
