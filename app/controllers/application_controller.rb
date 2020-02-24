@@ -77,6 +77,7 @@ class ApplicationController < ActionController::API
 
     @current_user = User.new(credentials, type: type)
     fail CanCan::AuthorizationNotPerformed if @current_user.errors.present?
+    @current_user
   end
 
   def current_ability
