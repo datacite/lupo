@@ -26,10 +26,10 @@ class Ability
       end
       can [:read], Provider
       can [:manage], ProviderPrefix do |provider_prefix|
-        provider_prefix.provider.consortium_id == user.consortium_id.upcase
+        provider_prefix.provider && provider_prefix.provider.consortium_id == user.consortium_id.upcase
       end
       can [:manage], Client do |client|
-        client.provider.consortium_id == user.consortium_id.upcase
+        client.provider && client.provider.consortium_id == user.consortium_id.upcase
       end
       can [:manage], ClientPrefix #, :client_id => user.provider_id
 
@@ -46,7 +46,7 @@ class Ability
       can [:read], User
       can [:read], Phrase
       can [:read], Activity do |activity|
-        activity.doi.findable? || activity.doi.provider.consortium_id == user.consortium_id.upcase
+        activity.doi.findable? || activity.doi.provider && activity.doi.provider.consortium_id == user.consortium_id.upcase
       end
     elsif user.role_id == "provider_admin" && user.provider_id.present?
       can [:update, :read, :read_billing_information], Provider, symbol: user.provider_id.upcase
