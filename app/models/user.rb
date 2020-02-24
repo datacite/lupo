@@ -11,7 +11,7 @@ class User
   # include helper module for caching infrequently changing resources
   include Cacheable
 
-  attr_accessor :name, :uid, :email, :role_id, :jwt, :password, :provider_id, :client_id, :beta_tester, :errors
+  attr_accessor :name, :uid, :email, :role_id, :jwt, :password, :consortium_id, :provider_id, :client_id, :beta_tester, :errors
 
   def initialize(credentials, options={})
     if credentials.present? && options.fetch(:type, "").downcase == "basic"
@@ -73,6 +73,10 @@ class User
   # Helper method to check for beta tester
   def is_beta_tester?
     beta_tester
+  end
+
+  def consortium_id
+    provider_id if provider && provider.role_name == "ROLE_CONSORTIUM"
   end
 
   def provider
