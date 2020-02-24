@@ -19,9 +19,37 @@ class Ability
       can :export, :repositories
     elsif user.role_id == "staff_user"
       can :read, :all
+    elsif user.role_id == "provider_admin" && user.provider_id.present? && user.consortium_id.present?
+      can [:update, :read, :read_billing_information], Provider, symbol: user.provider_id.upcase
+      can [:manage], Provider do |provider|
+        provider.consortium_id == user.consortium_id.upcase
+      end
+      can [:read], Provider
+      can [:manage], ProviderPrefix do |provider_prefix|
+        provider_prefix.provider.consortium_id == user.consortium_id.upcase
+      end
+      can [:manage], Client do |client|
+        client.provider.consortium_id == user.consortium_id.upcase
+      end
+      can [:manage], ClientPrefix #, :client_id => user.provider_id
+
+      # if Flipper[:delete_doi].enabled?(user)
+      #   can [:manage], Doi, :provider_id => user.provider_id
+      # else
+      #   can [:read, :update], Doi, :provider_id => user.provider_id
+      # end
+
+      can [:read, :get_url, :transfer, :read_landing_page_results], Doi do |doi|
+        doi.provider.consortium_id == user.provider_id.upcase
+      end
+      can [:read], Doi
+      can [:read], User
+      can [:read], Phrase
+      can [:read], Activity do |activity|
+        activity.doi.findable? || activity.doi.provider.consortium_id == user.consortium_id.upcase
+      end
     elsif user.role_id == "provider_admin" && user.provider_id.present?
       can [:update, :read, :read_billing_information], Provider, symbol: user.provider_id.upcase
-      can [:manage], Provider, consortium_id: user.provider_id
       can [:read], Provider
       can [:manage], ProviderPrefix, provider_id: user.provider_id
       can [:manage], Client, provider_id: user.provider_id
