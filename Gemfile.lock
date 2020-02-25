@@ -109,7 +109,7 @@ GEM
       latex-decode (~> 0.0)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
-    bolognese (1.5.2)
+    bolognese (1.5.3)
       activesupport (>= 4.2.5)
       benchmark_methods (~> 0.7)
       bibtex-ruby (>= 5.1.0)
@@ -571,7 +571,7 @@ DEPENDENCIES
   bergamasco (~> 0.3.10)
   better_errors
   binding_of_caller
-  bolognese (~> 1.0, >= 1.4)
+  bolognese (= 1.5.3)
   bootsnap (~> 1.4, >= 1.4.4)
   byebug
   cancancan (~> 2.0)
