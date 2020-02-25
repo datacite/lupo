@@ -5,7 +5,7 @@ class RepositoriesController < ApplicationController
   before_action :set_repository, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
-  load_and_authorize_resource :client, parent: false, except: [:index, :show, :totals, :random]
+  load_and_authorize_resource :client, parent: false, except: [:index, :show, :create, :totals, :random]
 
   def index
     sort = case params[:sort]
@@ -136,6 +136,7 @@ class RepositoriesController < ApplicationController
 
   def create
     @client = Client.new(safe_params)
+
     authorize! :create, @client
 
     if @client.save
