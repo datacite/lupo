@@ -13,7 +13,7 @@ class ExportController < ApplicationController
             providers = []
 
             page = { size: 1000, number: 1}
-            response = Provider.query(nil, page: page, include_deleted: true)
+            response = Provider.query(nil, page: page, include_deleted: true, exclude_registration_agencies: true)
             providers = providers + response.records.to_a
 
             total = response.results.total
@@ -106,7 +106,7 @@ class ExportController < ApplicationController
             providers = []
 
             page = { size: 1000, number: 1}
-            response = Provider.query(nil, page: page, include_deleted: true)
+            response = Provider.query(nil, page: page, include_deleted: true, exclude_registration_agencies: true)
             providers = providers + response.records.to_a
 
             total = response.results.total
@@ -202,7 +202,7 @@ class ExportController < ApplicationController
             clients = []
 
             page = { size: 1000, number: 1}
-            response = Client.query(nil, page: page, include_deleted: true)
+            response = Client.query(nil, page: page, include_deleted: true, exclude_registration_agencies: true)
             clients = clients + response.records.to_a
 
             total = response.results.total
