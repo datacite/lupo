@@ -57,11 +57,11 @@ module Authenticable
       when "RS256"
         # DataCite JWT
         public_key = OpenSSL::PKey::RSA.new(ENV['JWT_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
-        payload = (JWT.decode token, public_key, true, { :algorithm => 'RS256' }).first
+        payload = (JWT.decode token, public_key, true, algorithm: "RS256").first
       when "RS512"
         # Globus JWT
         public_key = OpenSSL::PKey::RSA.new(cached_globus_public_key.fetch("n", nil).to_s.gsub('\n', "\n"))
-        payload = (JWT.decode token, public_key, true, { :algorithm => 'RS512' }).first
+        payload = (JWT.decode token, public_key, true, algorithm: "RS512").first
       else
         raise JWT::DecodeError, "Algorithm #{header["alg"]} is not supported."
       end
@@ -92,13 +92,13 @@ module Authenticable
         public_key_string = cached_alb_public_key(kid)
         public_key = OpenSSL::PKey::EC.new(public_key_string.gsub('\n', "\n"))
       end
-      
+
       payload = (JWT.decode token, public_key, true, { algorithm: 'ES256' }).first
       fail NoMethodError, "Payload is not a hash" unless payload.is_a?(Hash)
 
       # check whether token has expired
       fail JWT::ExpiredSignature, "The token has expired." unless Time.now.to_i < payload["exp"].to_i
-      
+
       payload
     rescue NoMethodError => error
       Rails.logger.error "NoMethodError: " + error.message + " for " + token

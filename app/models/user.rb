@@ -24,7 +24,7 @@ class User
       # globus auth preferred_username looks like 0000-0003-1419-2405@orcid.org
       # default to role user unless database says otherwise
       uid = payload["preferred_username"].present? ? payload["preferred_username"][0..18] : nil
-      
+
       if uid.present?        
         payload = {
           "uid" => uid,
@@ -48,6 +48,7 @@ class User
       @email = payload.fetch("email", nil)
       @password = payload.fetch("password", nil)
       @role_id = payload.fetch("role_id", nil)
+      @consortium_id = payload.fetch("consortium_id", nil)
       @provider_id = payload.fetch("provider_id", nil)
       @client_id = payload.fetch("client_id", nil)
       @beta_tester = payload.fetch("beta_tester", false)
