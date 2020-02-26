@@ -260,6 +260,11 @@ describe Provider, type: :model do
       subject = create(:provider, symbol: "ADMIN", role_name: "ROLE_ADMIN", password_input: "12345")
       expect(subject.decode_auth_param(username: subject.symbol, password: "12345")).to eq("uid"=>subject.symbol.downcase, "name"=>subject.name, "email"=>subject.system_email, "role_id"=>"staff_admin")
     end
+
+    it "consortium" do
+      subject = create(:provider, role_name: "ROLE_CONSORTIUM", password_input: "12345")
+      expect(subject.decode_auth_param(username: subject.symbol, password: "12345")).to eq("uid"=>subject.symbol.downcase, "name"=>subject.name, "email"=>subject.system_email, "role_id"=>"provider_admin", "provider_id"=>subject.symbol.downcase, "consortium_id"=>subject.symbol.downcase)
+    end
   end
 end
 

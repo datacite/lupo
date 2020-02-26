@@ -163,6 +163,11 @@ module Authenticable
           "client_id" => uid,
           "password" => password
         })
+      elsif user.role_name == "ROLE_CONSORTIUM"
+        payload.merge!({
+          "provider_id" => uid,
+          "consortium_id" => uid
+        })
       elsif uid != "admin"
         payload.merge!({
           "provider_id" => uid

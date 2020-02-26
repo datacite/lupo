@@ -35,12 +35,11 @@ class ApplicationController < ActionController::API
   end
 
   def detect_crawler
-    #### Crawlers shound't be making queires
+    #### Crawlers shouldn't be making queires
     if request.is_crawler? && params[:query].present?
       render json: {}, status: :not_found
     end
   end
-
 
   def set_consumer_header
     if current_user
