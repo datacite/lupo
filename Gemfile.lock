@@ -1,10 +1,3 @@
-GIT
-  remote: https://github.com/stackshareio/graphql-cache
-  revision: 5a6fa5a3316cd267d0829815b122e1e159321e17
-  specs:
-    graphql-cache (0.6.0)
-      graphql (~> 1, > 1.8)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -67,7 +60,7 @@ GEM
     audited (4.9.0)
       activerecord (>= 4.2, < 6.1)
     aws-eventstream (1.0.3)
-    aws-partitions (1.275.0)
+    aws-partitions (1.276.0)
     aws-sdk-core (3.90.1)
       aws-eventstream (~> 1.0, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
@@ -101,7 +94,7 @@ GEM
       oj (>= 2.8.3)
       pandoc-ruby (~> 2.0, >= 2.0.0)
       safe_yaml (~> 1.0, >= 1.0.4)
-    better_errors (2.5.1)
+    better_errors (2.6.0)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
       rack (>= 0.9.0)
@@ -109,7 +102,7 @@ GEM
       latex-decode (~> 0.0)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
-    bolognese (1.5.3)
+    bolognese (1.5.15)
       activesupport (>= 4.2.5)
       benchmark_methods (~> 0.7)
       bibtex-ruby (>= 5.1.0)
@@ -122,7 +115,7 @@ GEM
       faraday (= 0.17.0)
       gender_detector (~> 0.1.2)
       iso8601 (~> 0.9.1)
-      json-ld-preloaded (~> 3.0)
+      json-ld (~> 2.2, >= 2.2.1)
       jsonlint (~> 0.3.0)
       loofah (~> 2.0, >= 2.0.3)
       maremma (>= 4.3, < 5)
@@ -134,7 +127,7 @@ GEM
       rdf-rdfxml (~> 3.1)
       rdf-turtle (~> 3.1)
       thor (~> 0.19)
-    bootsnap (1.4.5)
+    bootsnap (1.4.6)
       msgpack (~> 1.0)
     builder (3.2.4)
     byebug (11.1.1)
@@ -249,6 +242,8 @@ GEM
     graphql-batch (0.4.2)
       graphql (>= 1.3, < 2)
       promise.rb (~> 0.7.2)
+    graphql-cache (0.6.0)
+      graphql (~> 1, > 1.8)
     graphql-errors (0.4.0)
       graphql (>= 1.6.0, < 2)
     haml (5.1.2)
@@ -268,17 +263,9 @@ GEM
     jaro_winkler (1.5.4)
     jmespath (1.4.0)
     json (2.3.0)
-    json-canonicalization (0.2.0)
-    json-ld (3.1.1)
-      htmlentities (~> 4.3)
-      json-canonicalization (~> 0.2)
-      link_header (~> 0.0, >= 0.0.8)
-      multi_json (~> 1.14)
-      rack (~> 2.0)
-      rdf (~> 3.1)
-    json-ld-preloaded (3.1.1)
-      json-ld (~> 3.1)
-      rdf (~> 3.1)
+    json-ld (2.2.1)
+      multi_json (~> 1.12)
+      rdf (>= 2.2.8, < 4.0)
     jsonapi-renderer (0.2.2)
     jsonlint (0.3.0)
       oj (~> 3)
@@ -433,7 +420,7 @@ GEM
       rdf (~> 3.1)
     rdf-xsd (3.1.0)
       rdf (~> 3.1)
-    regexp_parser (1.6.0)
+    regexp_parser (1.7.0)
     request_store (1.5.0)
       rack (>= 1.4)
     rest-client (2.0.2)
@@ -571,7 +558,7 @@ DEPENDENCIES
   bergamasco (~> 0.3.10)
   better_errors
   binding_of_caller
-  bolognese (= 1.5.3)
+  bolognese (~> 1.5)
   bootsnap (~> 1.4, >= 1.4.4)
   byebug
   cancancan (~> 2.0)
@@ -603,7 +590,7 @@ DEPENDENCIES
   google-protobuf (= 3.10.0.rc.1)
   graphql (~> 1.9, >= 1.9.16)
   graphql-batch (~> 0.4.1)
-  graphql-cache (~> 0.6.0)!
+  graphql-cache (~> 0.6.0)
   graphql-errors (~> 0.4.0)
   hashdiff (>= 1.0.0.beta1, < 2.0.0)
   iso8601 (~> 0.9.0)
