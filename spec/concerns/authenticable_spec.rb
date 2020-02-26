@@ -94,6 +94,12 @@ describe User, type: :model do
         expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
       end
 
+      it "provider_admin consortium" do
+        token = User.generate_token(role_id: "provider_admin", consortium_id: "datacite", provider_id: "datacite")
+        subject = User.new(token)
+        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+      end
+
       it "provider_admin" do
         token = User.generate_token(role_id: "provider_admin", provider_id: "datacite")
         subject = User.new(token)
@@ -150,6 +156,12 @@ describe User, type: :model do
 
       it "staff_user" do
         token = User.generate_token(role_id: "staff_user")
+        subject = User.new(token)
+        expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
+      end
+
+      it "provider_admin consortium" do
+        token = User.generate_token(role_id: "provider_admin", consortium_id: "datacite", provider_id: "datacite")
         subject = User.new(token)
         expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
       end

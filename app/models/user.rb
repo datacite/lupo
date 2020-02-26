@@ -25,7 +25,7 @@ class User
       # default to role user unless database says otherwise
       uid = payload["preferred_username"].present? ? payload["preferred_username"][0..18] : nil
 
-      if uid.present?        
+      if uid.present?
         payload = {
           "uid" => uid,
           "name" => payload["name"],

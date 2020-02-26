@@ -6,7 +6,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
   let(:provider) { create(:provider, consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION", password_input: "12345") }
   let!(:client) { create(:client, provider: provider, client_type: "repository") }
   let(:bearer) { User.generate_token(role_id: "provider_admin", provider_id: provider.symbol.downcase) }
-  let(:consortium_bearer){ User.generate_token(role_id: "provider_admin", provider_id: consortium.symbol.downcase) }
+  let(:consortium_bearer) { User.generate_token(role_id: "provider_admin", provider_id: consortium.symbol.downcase, consortium_id: consortium.symbol.downcase) }
   let(:params) do
     { "data" => { "type" => "clients",
                   "attributes" => {
@@ -116,7 +116,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
     end
 
     context "consortium" do
-      it 'creates a repository' do
+      it "creates a repository" do
         post '/repositories', params, consortium_headers
 
         expect(last_response.status).to eq(201)

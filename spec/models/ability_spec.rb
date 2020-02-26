@@ -148,7 +148,7 @@ describe User, type: :model do
     end
 
     context "when is a provider admin for a consortium" do
-      let(:token){ User.generate_token(role_id: "provider_admin", provider_id: consortium.symbol.downcase) }
+      let(:token){ User.generate_token(role_id: "provider_admin", provider_id: consortium.symbol.downcase, consortium_id: consortium.symbol.downcase) }
 
       it{ is_expected.to be_able_to(:read, user) }
 

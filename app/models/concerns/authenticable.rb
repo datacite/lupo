@@ -8,7 +8,7 @@ module Authenticable
     # encode JWT token using SHA-256 hash algorithm
     def encode_token(payload)
       return nil if payload.blank?
-      
+
       # replace newline characters with actual newlines
       private_key = OpenSSL::PKey::RSA.new(ENV['JWT_PRIVATE_KEY'].to_s.gsub('\n', "\n"))
       JWT.encode(payload, private_key, 'RS256')
@@ -21,7 +21,7 @@ module Authenticable
     # use only for testing, as we don't have private key for JWT encoded by AWS ALB
     def encode_alb_token(payload)
       return nil if payload.blank? || !Rails.env.test?
-      
+
       # replace newline characters with actual newlines
       private_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec256-private.pem").to_s))
       JWT.encode(payload, private_key, 'ES256')
@@ -34,7 +34,7 @@ module Authenticable
     # use only for testing, as we don't have private key for JWT encoded by Globus
     def encode_globus_token(payload)
       return nil if payload.blank? || !Rails.env.test?
-      
+
       # replace newline characters with actual newlines
       private_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec512-private.pem").to_s))
       JWT.encode(payload, private_key, 'RS512')
@@ -139,39 +139,39 @@ module Authenticable
     end
 
     def get_payload(uid: nil, user: nil, password: nil)
-      roles = { 
-        "ROLE_ADMIN"                => "staff_admin",
-        "ROLE_DATACENTRE"           => "client_admin",
-        "ROLE_ALLOCATOR"            => "provider_admin",
-        "ROLE_CONSORTIUM"           => "provider_admin",
+      roles = {
+        "ROLE_ADMIN" => "staff_admin",
+        "ROLE_DATACENTRE" => "client_admin",
+        "ROLE_ALLOCATOR" => "provider_admin",
+        "ROLE_CONSORTIUM" => "provider_admin",
         "ROLE_CONSORTIUM_ORGANIZATION" => "provider_admin",
         "ROLE_CONTRACTUAL_PROVIDER" => "provider_admin",
-        "ROLE_FOR_PROFIT_PROVIDER"  => "provider_admin",
-        "ROLE_REGISTRATION_AGENCY"  => "provider_admin"
+        "ROLE_FOR_PROFIT_PROVIDER" => "provider_admin",
+        "ROLE_REGISTRATION_AGENCY" => "provider_admin",
        }
       payload = {
         "uid" => uid,
         "role_id" => roles.fetch(user.role_name, "user"),
         "name" => user.name,
-        "email" => user.system_email
+        "email" => user.system_email,
       }
 
       # we only need password for clients registering DOIs in the handle system
       if uid.include? "."
-        payload.merge!({
+        payload.merge!(
           "provider_id" => uid.split(".", 2).first,
           "client_id" => uid,
-          "password" => password
-        })
+          "password" => password,
+        )
       elsif user.role_name == "ROLE_CONSORTIUM"
-        payload.merge!({
+        payload.merge!(
           "provider_id" => uid,
-          "consortium_id" => uid
-        })
+          "consortium_id" => uid,
+        )
       elsif uid != "admin"
-        payload.merge!({
-          "provider_id" => uid
-        })
+        payload.merge!(
+          "provider_id" => uid,
+        )
       end
 
       payload
@@ -251,6 +251,7 @@ module Authenticable
         uid:  attributes.fetch(:uid, "0000-0001-5489-3594"),
         name: attributes.fetch(:name, "Josiah Carberry"),
         email: attributes.fetch(:email, nil),
+        consortium_id: attributes.fetch(:consortium_id, nil),
         provider_id: attributes.fetch(:provider_id, nil),
         client_id: attributes.fetch(:client_id, nil),
         role_id: attributes.fetch(:role_id, "staff_admin"),
