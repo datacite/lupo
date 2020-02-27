@@ -5,7 +5,7 @@ class ProvidersController < ApplicationController
   prepend_before_action :authenticate_user!
   before_action :set_provider, only: [:show, :update, :destroy]
   before_action :set_include
-  load_and_authorize_resource :except => [:index, :show, :totals, :random]
+  load_and_authorize_resource only: [:update, :destroy]
 
   def index
     sort = case params[:sort]
@@ -306,7 +306,7 @@ class ProvidersController < ApplicationController
 
   def set_provider
     @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: params[:id]).first
-    fail ActiveRecord::RecordNotFound unless @provider.present?
+    fail ActiveRecord::RecordNotFound if @provider.blank?
   end
 
   private

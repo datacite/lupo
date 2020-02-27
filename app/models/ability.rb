@@ -20,7 +20,7 @@ class Ability
     elsif user.role_id == "staff_user"
       can :read, :all
     elsif user.role_id == "consortium_admin" && user.provider_id.present?
-      can [:new, :create, :destroy], Provider do |provider|
+      can [:create, :destroy], Provider do |provider|
         user.provider_id.casecmp(provider.consortium_id)
       end
       can [:update, :read, :read_billing_information], Provider do |provider|
