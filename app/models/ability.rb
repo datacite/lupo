@@ -9,6 +9,8 @@ class Ability
     user ||= User.new(nil) # Guest user
     # @user = user
 
+    Rails.logger.warn user.inspect
+
     if user.role_id == "staff_admin"
       can :manage, :all
       cannot [:new, :create], Doi do |doi|
@@ -22,14 +24,14 @@ class Ability
     elsif user.role_id == "consortium_admin" && user.provider_id.present?
       can [:update, :read, :read_billing_information], Provider, symbol: user.provider_id.upcase
       can [:manage], Provider do |provider|
-        provider.consortium_id == user.provider_id.upcase
+        user.provider_id.casecmp(provider.consortium_id)
       end
       can [:read], Provider
       can [:manage], ProviderPrefix do |provider_prefix|
-        provider_prefix.provider && provider_prefix.provider.consortium_id == user.provider_id.upcase
+        provider_prefix.provider && user.provider_id.casecmp(provider_prefix.provider.consortium_id)
       end
       can [:manage], Client do |client|
-        client.provider && client.provider.consortium_id == user.provider_id.upcase
+        client.provider && user.provider_id.casecmp(client.provider.consortium_id)
       end
       can [:manage], ClientPrefix #, :client_id => user.provider_id
 
@@ -40,13 +42,13 @@ class Ability
       # end
 
       can [:read, :get_url, :transfer, :read_landing_page_results], Doi do |doi|
-        doi.provider.consortium_id == user.provider_id.upcase
+        user.provider_id.casecmp(doi.provider.consortium_id)
       end
       can [:read], Doi
       can [:read], User
       can [:read], Phrase
       can [:read], Activity do |activity|
-        activity.doi.findable? || activity.doi.provider && activity.doi.provider.consortium_id == user.provider_id.upcase
+        activity.doi.findable? || activity.doi.provider && user.provider_id.casecmp(activity.doi.provider.consortium_id)
       end
     elsif user.role_id == "provider_admin" && user.provider_id.present?
       can [:update, :read, :read_billing_information], Provider, symbol: user.provider_id.upcase
