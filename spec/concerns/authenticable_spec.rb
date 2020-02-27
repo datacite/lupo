@@ -145,7 +145,7 @@ describe User, type: :model do
 
     context "draft doi" do
       let(:consortium) { create(:provider, symbol: "DC", role_name: "ROLE_CONSORTIUM") }
-      let(:provider) { create(:provider, symbol: "DATACITE", role_name: "ROLE_CONSORTIUM_ORGANIZATION") }
+      let(:provider) { create(:provider, symbol: "DATACITE", consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION") }
       let(:client) { create(:client, provider: provider, symbol: "DATACITE.RPH") }
       let(:doi) { create(:doi, client: client) }
 

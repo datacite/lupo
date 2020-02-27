@@ -189,7 +189,7 @@ module Authenticable
       return false if doi.aasm_state == "findable"
       return true if user.blank?
       return false if %w(staff_admin staff_user).include?(user.role_id)
-      return false if %w(consortium_admin).include?(user.role_id) && user.provider_id.present? && user.provider_id == doi.client.consortium_id 
+      return false if %w(consortium_admin).include?(user.role_id) && user.provider_id.present? && user.provider_id.upcase == doi.provider.consortium_id 
       return false if %w(provider_admin provider_user).include?(user.role_id) && user.provider_id.present? && user.provider_id == doi.provider_id 
       return false if %w(client_admin client_user user temporary).include?(user.role_id) && user.client_id.present? && user.client_id == doi.client_id
       return true
