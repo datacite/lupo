@@ -20,9 +20,11 @@ class Ability
     elsif user.role_id == "staff_user"
       can :read, :all
     elsif user.role_id == "consortium_admin" && user.provider_id.present?
-      can [:update, :read, :read_billing_information], Provider, symbol: user.provider_id.upcase
-      can [:manage], Provider do |provider|
+      can [:new, :create, :delete], Provider do |provider|
         user.provider_id.casecmp(provider.consortium_id)
+      end
+      can [:update, :read, :read_billing_information], Provider do |provider|
+        user.provider_id.casecmp(provider.id) || user.provider_id.casecmp(provider.consortium_id)
       end
       can [:read], Provider
       can [:manage], ProviderPrefix do |provider_prefix|
