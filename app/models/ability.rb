@@ -9,8 +9,6 @@ class Ability
     user ||= User.new(nil) # Guest user
     # @user = user
 
-    Rails.logger.warn user.inspect
-
     if user.role_id == "staff_admin"
       can :manage, :all
       cannot [:new, :create], Doi do |doi|
