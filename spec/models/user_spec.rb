@@ -26,10 +26,6 @@ describe User, type: :model do
         expect(user.role_id).to eq("staff_admin")
       end
 
-      it "has no consortium_id" do
-        expect(user.consortium_id).to be_nil
-      end
-
       it "has no provider_id" do
         expect(user.provider_id).to be_nil
       end
@@ -50,10 +46,6 @@ describe User, type: :model do
         expect(user.role_id).to eq("provider_admin")
       end
 
-      it "has no consortium_id" do
-        expect(user.consortium_id).to be_nil
-      end
-
       it "has provider" do
         expect(user.provider_id).to eq(provider.symbol.downcase)
         expect(user.provider.name).to eq(provider.name)
@@ -72,11 +64,7 @@ describe User, type: :model do
 
     describe 'User attributes' do
       it "has role_id" do
-        expect(user.role_id).to eq("provider_admin")
-      end
-
-      it "has consortium_id" do
-        expect(user.consortium_id).to eq(provider.symbol.downcase)
+        expect(user.role_id).to eq("consortium_admin")
       end
 
       it "has provider" do
@@ -98,10 +86,6 @@ describe User, type: :model do
     describe 'User attributes' do
       it "has role_id" do
         expect(user.role_id).to eq("client_admin")
-      end
-
-      it "has no consortium_id" do
-        expect(user.consortium_id).to be_nil
       end
 
       it "has provider_id" do

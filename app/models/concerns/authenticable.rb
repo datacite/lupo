@@ -143,7 +143,7 @@ module Authenticable
         "ROLE_ADMIN" => "staff_admin",
         "ROLE_DATACENTRE" => "client_admin",
         "ROLE_ALLOCATOR" => "provider_admin",
-        "ROLE_CONSORTIUM" => "provider_admin",
+        "ROLE_CONSORTIUM" => "consortium_admin",
         "ROLE_CONSORTIUM_ORGANIZATION" => "provider_admin",
         "ROLE_CONTRACTUAL_PROVIDER" => "provider_admin",
         "ROLE_FOR_PROFIT_PROVIDER" => "provider_admin",
@@ -162,11 +162,6 @@ module Authenticable
           "provider_id" => uid.split(".", 2).first,
           "client_id" => uid,
           "password" => password,
-        )
-      elsif user.role_name == "ROLE_CONSORTIUM"
-        payload.merge!(
-          "provider_id" => uid,
-          "consortium_id" => uid,
         )
       elsif uid != "admin"
         payload.merge!(
@@ -194,6 +189,7 @@ module Authenticable
       return false if doi.aasm_state == "findable"
       return true if user.blank?
       return false if %w(staff_admin staff_user).include?(user.role_id)
+      return false if %w(consortium_admin).include?(user.role_id) && user.provider_id.present? && user.provider_id == doi.client.consortium_id 
       return false if %w(provider_admin provider_user).include?(user.role_id) && user.provider_id.present? && user.provider_id == doi.provider_id 
       return false if %w(client_admin client_user user temporary).include?(user.role_id) && user.client_id.present? && user.client_id == doi.client_id
       return true
@@ -251,7 +247,6 @@ module Authenticable
         uid:  attributes.fetch(:uid, "0000-0001-5489-3594"),
         name: attributes.fetch(:name, "Josiah Carberry"),
         email: attributes.fetch(:email, nil),
-        consortium_id: attributes.fetch(:consortium_id, nil),
         provider_id: attributes.fetch(:provider_id, nil),
         client_id: attributes.fetch(:client_id, nil),
         role_id: attributes.fetch(:role_id, "staff_admin"),

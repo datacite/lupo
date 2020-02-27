@@ -438,15 +438,15 @@ class Provider < ActiveRecord::Base
 
   def member_type_labels
     {
-      "ROLE_MEMBER"               => "Member Only",
-      "ROLE_ALLOCATOR"            => "Direct Member",
-      "ROLE_CONSORTIUM"           => "Consortium",
+      "ROLE_MEMBER" => "Member Only",
+      "ROLE_ALLOCATOR" => "Direct Member",
+      "ROLE_CONSORTIUM" => "Consortium",
       "ROLE_CONSORTIUM_ORGANIZATION" => "Consortium Organization",
       "ROLE_CONTRACTUAL_PROVIDER" => "Contractual Member",
-      "ROLE_ADMIN"                => "DataCite admin",
-      "ROLE_DEV"                  => "DataCite admin",
-      "ROLE_FOR_PROFIT_PROVIDER"  => "For-profit Provider",
-      "ROLE_REGISTRATION_AGENCY"  => "DOI Registration Agency"
+      "ROLE_ADMIN" => "DataCite admin",
+      "ROLE_DEV" => "DataCite admin",
+      "ROLE_FOR_PROFIT_PROVIDER" => "For-profit Provider",
+      "ROLE_REGISTRATION_AGENCY" => "DOI Registration Agency",
      }
   end
 
@@ -461,13 +461,13 @@ class Provider < ActiveRecord::Base
 
   def member_types
     {
-      "ROLE_MEMBER"               => "member_only",
-      "ROLE_ALLOCATOR"            => "direct_member",
-      "ROLE_CONSORTIUM"           => "consortium",
+      "ROLE_MEMBER" => "member_only",
+      "ROLE_ALLOCATOR" => "direct_member",
+      "ROLE_CONSORTIUM" => "consortium",
       "ROLE_CONSORTIUM_ORGANIZATION" => "consortium_organization",
       "ROLE_CONTRACTUAL_PROVIDER" => "contractual_member",
-      "ROLE_FOR_PROFIT_PROVIDER"  => "for_profit_provider",
-      "ROLE_REGISTRATION_AGENCY"  => "registration_agency"
+      "ROLE_FOR_PROFIT_PROVIDER" => "for_profit_provider",
+      "ROLE_REGISTRATION_AGENCY" => "registration_agency",
      }
   end
 

@@ -94,8 +94,8 @@ describe User, type: :model do
         expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
       end
 
-      it "provider_admin consortium" do
-        token = User.generate_token(role_id: "provider_admin", consortium_id: "datacite", provider_id: "datacite")
+      it "consortium_admin" do
+        token = User.generate_token(role_id: "consortium_admin", provider_id: "datacite")
         subject = User.new(token)
         expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
       end
@@ -144,7 +144,8 @@ describe User, type: :model do
     end
 
     context "draft doi" do
-      let(:provider) { create(:provider, symbol: "DATACITE") }
+      let(:consortium) { create(:provider, symbol: "DC", role_name: "ROLE_CONSORTIUM") }
+      let(:provider) { create(:provider, symbol: "DATACITE", role_name: "ROLE_CONSORTIUM_ORGANIZATION") }
       let(:client) { create(:client, provider: provider, symbol: "DATACITE.RPH") }
       let(:doi) { create(:doi, client: client) }
 
@@ -160,8 +161,8 @@ describe User, type: :model do
         expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
       end
 
-      it "provider_admin consortium" do
-        token = User.generate_token(role_id: "provider_admin", consortium_id: "datacite", provider_id: "datacite")
+      it "consortium_admin" do
+        token = User.generate_token(role_id: "consortium_admin", provider_id: "dc")
         subject = User.new(token)
         expect(subject.not_allowed_by_doi_and_user(doi: doi, user: subject)).to be false
       end
@@ -275,7 +276,7 @@ describe Provider, type: :model do
 
     it "consortium" do
       subject = create(:provider, role_name: "ROLE_CONSORTIUM", password_input: "12345")
-      expect(subject.decode_auth_param(username: subject.symbol, password: "12345")).to eq("uid"=>subject.symbol.downcase, "name"=>subject.name, "email"=>subject.system_email, "role_id"=>"provider_admin", "provider_id"=>subject.symbol.downcase, "consortium_id"=>subject.symbol.downcase)
+      expect(subject.decode_auth_param(username: subject.symbol, password: "12345")).to eq("uid"=>subject.symbol.downcase, "name"=>subject.name, "email"=>subject.system_email, "role_id"=>"consortium_admin", "provider_id"=>subject.symbol.downcase)
     end
   end
 end

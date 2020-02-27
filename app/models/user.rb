@@ -11,7 +11,7 @@ class User
   # include helper module for caching infrequently changing resources
   include Cacheable
 
-  attr_accessor :name, :uid, :email, :role_id, :jwt, :password, :consortium_id, :provider_id, :client_id, :beta_tester, :errors
+  attr_accessor :name, :uid, :email, :role_id, :jwt, :password, :provider_id, :client_id, :beta_tester, :errors
 
   def initialize(credentials, options={})
     if credentials.present? && options.fetch(:type, "").downcase == "basic"
@@ -29,7 +29,7 @@ class User
         payload = {
           "uid" => uid,
           "name" => payload["name"],
-          "email" => payload["email"]
+          "email" => payload["email"],
         }
 
         @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30))
@@ -48,7 +48,6 @@ class User
       @email = payload.fetch("email", nil)
       @password = payload.fetch("password", nil)
       @role_id = payload.fetch("role_id", nil)
-      @consortium_id = payload.fetch("consortium_id", nil)
       @provider_id = payload.fetch("provider_id", nil)
       @client_id = payload.fetch("client_id", nil)
       @beta_tester = payload.fetch("beta_tester", false)
@@ -74,10 +73,6 @@ class User
   # Helper method to check for beta tester
   def is_beta_tester?
     beta_tester
-  end
-
-  def consortium_id
-    provider_id if provider && provider.role_name == "ROLE_CONSORTIUM"
   end
 
   def provider
@@ -112,7 +107,7 @@ class User
       "role_id" => "temporary",
       "name" => user.name,
       "client_id" => client_id,
-      "provider_id" => provider_id
+      "provider_id" => provider_id,
     }.compact
 
     jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24))
@@ -127,7 +122,7 @@ class User
     fields = [
       { title: "Account ID", value: uid.upcase},
       { title: "Name", value: user.name, short: true },
-      { title: "Contact email", value: user.system_email, short: true }
+      { title: "System email", value: user.system_email, short: true }
     ]
     slack_title = subject + (response[:status] == 200 ? " Sent" : " Failed")
     level = response[:status] == 200 ? "good" : "danger"

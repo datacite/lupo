@@ -14,7 +14,7 @@ describe "works", type: :request do
 
   describe 'GET /works', elasticsearch: true do
     let!(:dois) { create_list(:doi, 3, client: client, event: "publish") }
-  
+
     before do
       Doi.import
       sleep 1
