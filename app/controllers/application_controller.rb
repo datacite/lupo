@@ -3,7 +3,8 @@ class ApplicationController < ActionController::API
   include Authenticable
   include CanCan::ControllerAdditions
   include ErrorSerializable
-  require 'facets/string/snakecase'
+  
+  require "facets/string/snakecase"
 
   # include helper module for caching infrequently changing resources
   include Cacheable
@@ -30,7 +31,7 @@ class ApplicationController < ActionController::API
   def set_jsonp_format
     if params[:callback] && request.get?
       self.response_body = "#{params[:callback]}(#{response.body})"
-      headers["Content-Type"] = 'application/javascript'
+      headers["Content-Type"] = "application/javascript"
     end
   end
 
@@ -43,9 +44,9 @@ class ApplicationController < ActionController::API
 
   def set_consumer_header
     if current_user
-      response.headers['X-Credential-Username'] = current_user.uid
+      response.headers["X-Credential-Username"] = current_user.uid
     else
-      response.headers['X-Anonymous-Consumer'] = true
+      response.headers["X-Anonymous-Consumer"] = true
     end
   end
 
@@ -64,7 +65,7 @@ class ApplicationController < ActionController::API
     @user = authenticate_user!
 
     if !@user
-      request_http_basic_authentication(realm = ENV['REALM'])
+      request_http_basic_authentication(realm = ENV["REALM"])
     end
 
     @user

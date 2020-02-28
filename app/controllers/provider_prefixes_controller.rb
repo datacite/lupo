@@ -10,6 +10,9 @@ class ProviderPrefixesController < ApplicationController
       collection = ProviderPrefix.where(id: params[:id])
     elsif params[:provider_id].present? && params[:prefix_id].present?
       collection = ProviderPrefix.joins(:provider, :prefix).where('allocator.symbol = ?', params[:provider_id]).where('prefix.prefix = ?', params[:prefix_id])
+    elsif params[:consortium_id].present?
+      providers = Provider.where('allocator.consortium_id = ?', params[:consortium_id])
+      collection = providers.present? ? ProviderPrefix.joins(:provider, :prefix).where('allocator.consortium_id = ?', params[:consortium_id]) : ProviderPrefix.none
     elsif params[:provider_id].present?
       provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
       collection = provider.present? ? provider.provider_prefixes.joins(:prefix) : ProviderPrefix.none
