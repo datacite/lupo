@@ -61,6 +61,12 @@ describe Client, type: :model do
       expect(client.errors.details).to be_empty
     end
 
+    it "should support certificate" do
+      client.certificate = ["CLARIN"]
+      expect(client.save).to be true
+      expect(client.errors.details).to be_empty
+    end
+
     it "should support multiple certificates" do
       client.certificate = ["WDS", "DSA"]
       expect(client.save).to be true
