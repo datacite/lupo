@@ -18,7 +18,7 @@ describe "Media", type: :request, :order => :defined, elasticsearch: true do
       expect(json).not_to be_empty
       expect(json['data'].size).to eq(6)
       result = json['data'].first
-      expect(result.dig("attributes", "mediaType")).to eq("text/plain")
+      expect(result.dig("attributes", "mediaType")).to eq("application/json")
     end
 
     it 'returns status code 200' do
