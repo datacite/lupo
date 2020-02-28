@@ -160,6 +160,7 @@ class ExportController < ApplicationController
               accountType: provider.member_type_label,
               generalContactEmail: provider.system_email,
               groupEmail: provider.group_email,
+              billingStreetNumber: provider.billing_street_number,
               billingStreet: provider.billing_address,
               billingPostalCode: provider.billing_post_code,
               billingCity: provider.billing_city,
