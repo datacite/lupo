@@ -58,11 +58,11 @@ class PrefixesController < ApplicationController
       states = [{ id: "unassigned",
                   title: "Unassigned",
                   count: collection.state("unassigned").count },
-                { id: "without-client",
-                  title: "Without client",
+                { id: "without-repository",
+                  title: "Without repository",
                   count: collection.state("without-client").count },
-                { id: "with-client",
-                  title: "With client",
+                { id: "with-repository",
+                  title: "With repository",
                   count: collection.state("with-client").count }]
     end
 

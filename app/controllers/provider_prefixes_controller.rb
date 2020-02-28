@@ -60,11 +60,11 @@ class ProviderPrefixesController < ApplicationController
                   title: params[:state].underscore.humanize,
                   count: collection.count }]
     else
-      states = [{ id: "without-client",
-                  title: "Without client",
+      states = [{ id: "without-repository",
+                  title: "Without repository",
                   count: collection.state("without-client").count },
-                { id: "with-client",
-                  title: "With client",
+                { id: "with-repository",
+                  title: "With repository",
                   count: collection.state("with-client").count }]
     end
 
