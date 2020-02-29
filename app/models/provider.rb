@@ -128,7 +128,6 @@ class Provider < ActiveRecord::Base
         department: { type: :text},
         city: { type: :text },
         country: { type: :keyword },
-        streetNumber: { type: :text },
         address: { type: :text }}
       indexes :technical_contact, type: :object, properties: {
         email: { type: :text },
@@ -209,7 +208,6 @@ class Provider < ActiveRecord::Base
       "salesforce_id" => salesforce_id,
       "globus_uuid" => globus_uuid,
       "billing_information" => {
-        "streetNumber" => billing_street_number,
         "address" => billing_address,
         "organization" => billing_organization,
         "department" => billing_department,
@@ -283,7 +281,6 @@ class Provider < ActiveRecord::Base
       voting_contact_email: voting_contact_email,
       voting_contact_given_name: voting_contact_given_name,
       voting_contact_family_name: voting_contact_family_name,
-      billing_street_number: billing_street_number,
       billing_address: billing_address,
       billing_post_code: billing_post_code,
       billing_city: billing_city,
@@ -389,10 +386,6 @@ class Provider < ActiveRecord::Base
 
   def billing_organization
     billing_information.fetch("organization",nil) if billing_information.present?
-  end
-
-  def billing_street_number
-    billing_information.fetch("street_number",nil) if billing_information.present?
   end
 
   def billing_address
