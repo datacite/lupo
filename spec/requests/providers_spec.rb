@@ -114,6 +114,7 @@ describe "Providers", type: :request, elasticsearch: true  do
 
   describe "POST /providers" do
     context "request is valid" do
+      let(:image) { fixture_file_upload("#{fixture_path}/files/bl.png") }
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {

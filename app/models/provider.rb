@@ -57,6 +57,8 @@ class Provider < ActiveRecord::Base
 
   strip_attributes
 
+  has_one_attached :image
+
   has_many :clients, foreign_key: :allocator
   has_many :dois, through: :clients
   has_many :provider_prefixes, foreign_key: :allocator, dependent: :destroy
