@@ -1,13 +1,19 @@
 class LogoUploader < CarrierWave::Uploader::Base
   include CarrierWave::MiniMagick
 
+  permissions 0777
+
   def store_dir
-    "images/members/#{model.symbol.downcase}"
+    "images/members/"
   end
 
   # fallback URL if no logo stored
   def default_url(*args)
-    "#{ENV['CDN_URL']}/images/members/default.png"
+    if file.extension
+      "/images/members/" + model.symbol.downcase + "." + file.extension
+    else
+      "#{ENV['CDN_URL']}/images/members/default.png"
+    end
   end
 
   process resize_to_fit: [500, 200]

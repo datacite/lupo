@@ -1,7 +1,8 @@
 if Rails.env.test?
   CarrierWave.configure do |config|
     config.storage = :file
-    config.enable_processing = false
+    config.asset_host = nil
+    config.enable_processing = true
     config.ignore_integrity_errors = false
     config.ignore_processing_errors = false
     config.ignore_download_errors = false

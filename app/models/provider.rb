@@ -549,13 +549,16 @@ class Provider < ActiveRecord::Base
         return nil
       end
 
-      path = Rails.root.join("tmp/", filename).to_s
-
+      path = Rails.root.join("tmp/storage/", filename).to_s
       File.open(path, 'wb') { |file| file.write(Base64.strict_decode64(value.split(',', 2).last)) }
+      
       File.open(path, 'rb') do |file|
         uploader = LogoUploader.new(self, :logo)
         uploader.store!(file)
+        Rails.logger.warn "Logo #{filename} uploaded to /tmp/storage."
       end
+
+      super(value)
     end
   end
 
