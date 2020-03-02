@@ -9,11 +9,7 @@ class LogoUploader < CarrierWave::Uploader::Base
 
   # fallback URL if no logo stored
   def default_url(*args)
-    if file.extension
-      "/images/members/" + model.symbol.downcase + "." + file.extension
-    else
-      "#{ENV['CDN_URL']}/images/members/default.png"
-    end
+    "#{ENV['CDN_URL']}/images/members/default.png"
   end
 
   process resize_to_fit: [500, 200]
