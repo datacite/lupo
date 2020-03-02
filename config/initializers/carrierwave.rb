@@ -13,6 +13,11 @@ else
     config.aws_bucket = ENV.fetch('AWS_S3_BUCKET')
     config.asset_host = ENV.fetch('CDN_URL')
 
+    config.enable_processing = true
+    config.ignore_integrity_errors = false
+    config.ignore_processing_errors = false
+    config.ignore_download_errors = false
+
     config.aws_attributes = -> { {
       expires: 1.week.from_now.httpdate,
       cache_control: 'max-age=604800'
