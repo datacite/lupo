@@ -550,9 +550,11 @@ class Provider < ActiveRecord::Base
       end
 
       path = Rails.root.join("tmp/", filename).to_s
-      File.open(path, 'wb') do |file|
-        file.write(Base64.strict_decode64(value.split(',', 2).last))
-        logo = file
+
+      File.open(path, 'wb') { |file| file.write(Base64.strict_decode64(value.split(',', 2).last)) }
+      File.open(path, 'rb') do |file|
+        uploader = LogoUploader.new(self, :logo)
+        uploader.store!(file)
       end
     end
   end
