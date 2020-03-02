@@ -1,7 +1,7 @@
 class LogoUploader < CarrierWave::Uploader::Base
   include CarrierWave::MiniMagick
 
-  permissions 0777
+  permissions 0644
 
   def store_dir
     "images/members/"
