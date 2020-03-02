@@ -80,7 +80,7 @@ describe Provider, type: :model do
       expect(subject.save).to be true
       expect(subject.errors.details).to be_empty
       # TODO
-      expect(subject.logo_url).to eq("https://assets.datacite.org/images/members/default.png")
+      expect(subject.logo_url).to eq("/images/medium/missing.png")
     end
   
     it "without logo" do

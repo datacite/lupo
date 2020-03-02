@@ -21,7 +21,8 @@ class Provider < ActiveRecord::Base
 
   include Elasticsearch::Model
 
-  mount_uploader :logo, LogoUploader
+  has_attached_file :logo, styles: { medium: ["500x200#", :png] }, default_url: "/images/:style/missing.png"
+  validates_attachment_content_type :logo, content_type: /\Aimage\/.*\z/
 
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
@@ -49,6 +50,9 @@ class Provider < ActiveRecord::Base
   validate :uuid_format, if: :globus_uuid?
   validates_format_of :ror_id, :with => /\Ahttps:\/\/ror\.org\/0\w{6}\d{2}\z/, if: :ror_id?, message: "ROR ID should be a url"
   validates_format_of :twitter_handle, :with => /\A@[a-zA-Z0-9_]{1,15}\z/, if: :twitter_handle?
+
+  validates_attachment_content_type :logo, content_type: /\Aimage/
+  validates_attachment_file_name :logo, matches: [/png\z/, /jpe?g\z/]
 
   # validates :technical_contact, contact: true
   # validates :billing_contact, contact: true
@@ -513,7 +517,7 @@ class Provider < ActiveRecord::Base
   end
 
   def logo_url
-    logo.url
+    logo.url(:medium)
     # "#{ENV['CDN_URL']}/images/members/#{logo}" if logo.present?
   end
 
@@ -553,12 +557,12 @@ class Provider < ActiveRecord::Base
       File.open(path, 'wb') { |file| file.write(Base64.strict_decode64(value.split(',', 2).last)) }
       
       File.open(path, 'rb') do |file|
-        uploader = LogoUploader.new(self, :logo)
-        uploader.store!(file)
+        attachment = file
         Rails.logger.warn "Logo #{filename} uploaded to /tmp/storage."
       end
-
-      super(value)
+    else
+      # logo = nil
+      # super(value)
     end
   end
 

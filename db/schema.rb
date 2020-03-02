@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_31_180609) do
+ActiveRecord::Schema.define(version: 2020_03_02_191027) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -72,6 +72,10 @@ ActiveRecord::Schema.define(version: 2020_01_31_180609) do
     t.string "salesforce_id", limit: 191
     t.string "non_profit_status", limit: 191
     t.string "globus_uuid", limit: 191
+    t.string "logo_file_name"
+    t.string "logo_content_type"
+    t.bigint "logo_file_size"
+    t.datetime "logo_updated_at"
     t.index ["globus_uuid"], name: "index_allocator_on_globus_uuid"
     t.index ["organization_type"], name: "index_allocator_organization_type"
     t.index ["symbol"], name: "symbol", unique: true

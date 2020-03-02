@@ -225,7 +225,6 @@ class ProvidersController < ApplicationController
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
       Rails.logger.error @provider.errors.inspect
-      @provider.remove_logo!
       render json: serialize_errors(@provider.errors), status: :unprocessable_entity
     end
   end

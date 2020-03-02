@@ -49,7 +49,6 @@ RSpec.configure do |config|
   config.include RequestHelper, type: :request
 
   config.include JobHelper, type: :job
-  config.include UploaderHelper, type: :uploader
 
   ActiveJob::Base.queue_adapter = :test
 end
