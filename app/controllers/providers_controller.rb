@@ -225,6 +225,7 @@ class ProvidersController < ApplicationController
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
       Rails.logger.error @provider.errors.inspect
+      @provider.remove_logo!
       render json: serialize_errors(@provider.errors), status: :unprocessable_entity
     end
   end
@@ -316,7 +317,7 @@ class ProvidersController < ApplicationController
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params,
       only: [
-        :name, "displayName", :symbol, :description, :website, :joined, "globusUuid", "organizationType", "focusArea", :consortium, "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation", { "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType", "nonProfitStatus", "salesforceId",
+        :name, "displayName", :symbol, :logo, :description, :website, :joined, "globusUuid", "organizationType", "focusArea", :consortium, "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation", { "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType", "nonProfitStatus", "salesforceId",
       "technicalContact", { "technicalContact": [:email, "givenName", "familyName"] },
       "secondaryTechnicalContact", { "secondaryTechnicalContact": [:email, "givenName", "familyName"] },
       "secondaryBillingContact", { "secondaryBillingContact": [:email, "givenName", "familyName"] },

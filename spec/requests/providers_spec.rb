@@ -114,6 +114,7 @@ describe "Providers", type: :request, elasticsearch: true  do
 
   describe "POST /providers" do
     context "request is valid" do
+      let(:logo) { "data:image/png;base64," + Base64.strict_encode64(file_fixture("bl.png").read) }
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
@@ -121,6 +122,7 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "name" => "British Library",
                         "displayName" => "British Library",
                         "memberType" => "consortium_organization",
+                        "logo" => logo,
                         "website" => "https://www.bl.uk",
                         "salesforceId" => "abc012345678901234",
                         "region" => "EMEA",
@@ -139,7 +141,7 @@ describe "Providers", type: :request, elasticsearch: true  do
 
       it 'creates a provider' do
         post '/providers', params, headers
-
+        puts last_response.body
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq("British Library")
         expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")

@@ -71,6 +71,8 @@ gem 'uuid', '~> 2.3', '>= 2.3.9'
 gem 'strong_migrations', '~> 0.6.0'
 gem 'crawler_detect'
 gem 'lhm', '~> 2.2'
+gem 'carrierwave', '~> 2.0', '>= 2.0.2'
+gem 'carrierwave-aws', '~> 1.4'
 
 group :development, :test do
   gem "rspec-rails", "~> 3.8", ">= 3.8.2"

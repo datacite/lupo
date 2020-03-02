@@ -72,6 +72,24 @@ describe Provider, type: :model do
     end
   end
 
+  describe "logo" do
+    subject { build(:provider) }
+    
+    it "with logo" do
+      subject.logo = "data:image/png;base64," + Base64.strict_encode64(file_fixture("bl.png").read)
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+      # TODO
+      expect(subject.logo_url).to eq("https://assets.datacite.org/images/members/default.png")
+    end
+  
+    it "without logo" do
+      subject.logo = nil
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+    end
+  end
+
   describe "salesforce id" do
     subject { build(:provider) }
 
