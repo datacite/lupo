@@ -33,7 +33,7 @@ install:
 before_script:
   - memcached -p 11211 &
   - cp .env.travis .env
-  - mkdir -p tmp/pids
+  - mkdir -p tmp/pids tmp/storage
   - bundle exec rake db:setup RAILS_ENV=test
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
