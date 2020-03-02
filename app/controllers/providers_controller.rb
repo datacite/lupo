@@ -3,7 +3,7 @@ class ProvidersController < ApplicationController
   include Countable
 
   prepend_before_action :authenticate_user!
-  before_action :set_provider, only: [:show, :update, :destroy, :image]
+  before_action :set_provider, only: [:show, :update, :destroy]
   before_action :set_include
   load_and_authorize_resource only: [:update, :destroy]
 
@@ -225,7 +225,7 @@ class ProvidersController < ApplicationController
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
       Rails.logger.error @provider.errors.inspect
-      @provider.image.purge
+      @provider.remove_logo!
       render json: serialize_errors(@provider.errors), status: :unprocessable_entity
     end
   end
@@ -294,14 +294,6 @@ class ProvidersController < ApplicationController
     render json: registrant, status: :ok
   end
 
-  def image
-    if provider&.image&.attached?
-      redirect_to rails_blob_url(@provider.image)
-    else
-      head :not_found
-    end
-  end
-
   protected
 
   def set_include
@@ -325,7 +317,7 @@ class ProvidersController < ApplicationController
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params,
       only: [
-        :name, "displayName", :symbol, :image, :description, :website, :joined, "globusUuid", "organizationType", "focusArea", :consortium, "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation", { "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType", "nonProfitStatus", "salesforceId",
+        :name, "displayName", :symbol, :logo, :description, :website, :joined, "globusUuid", "organizationType", "focusArea", :consortium, "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation", { "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType", "nonProfitStatus", "salesforceId",
       "technicalContact", { "technicalContact": [:email, "givenName", "familyName"] },
       "secondaryTechnicalContact", { "secondaryTechnicalContact": [:email, "givenName", "familyName"] },
       "secondaryBillingContact", { "secondaryBillingContact": [:email, "givenName", "familyName"] },
