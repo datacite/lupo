@@ -21,8 +21,11 @@ class Provider < ActiveRecord::Base
 
   include Elasticsearch::Model
 
-  has_attached_file :logo, styles: { medium: ["500x200#", :png] }, default_url: "/images/:style/missing.png"
-  validates_attachment_content_type :logo, content_type: /\Aimage\/.*\z/
+  has_attached_file :logo, 
+    styles: { medium: ["500x200#", :png] },
+    default_url: "/images/members/default.png"
+
+  validates_attachment :logo, content_type: { content_type: ["image/jpg", "image/jpeg", "image/png"] }
 
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
@@ -52,8 +55,7 @@ class Provider < ActiveRecord::Base
   validates_format_of :twitter_handle, :with => /\A@[a-zA-Z0-9_]{1,15}\z/, if: :twitter_handle?
 
   validates_attachment_content_type :logo, content_type: /\Aimage/
-  validates_attachment_file_name :logo, matches: [/png\z/, /jpe?g\z/]
-
+  
   # validates :technical_contact, contact: true
   # validates :billing_contact, contact: true
   # validates :secondary_billing_contact, contact: true
@@ -517,8 +519,7 @@ class Provider < ActiveRecord::Base
   end
 
   def logo_url
-    logo.url(:medium)
-    # "#{ENV['CDN_URL']}/images/members/#{logo}" if logo.present?
+    logo.url(:medium) if logo.present?
   end
 
   def password_input=(value)
@@ -538,31 +539,6 @@ class Provider < ActiveRecord::Base
       errors.add(:consortium_id, "The provider must be of member_type consortium_organization")
     elsif consortium_id && consortium.member_type != "consortium"
       errors.add(:consortium_id, "The consortium must be of member_type consortium")
-    end
-  end
-
-  def logo=(value)
-    if value.present?
-      # check that this is a base64 encoded png or jpeg image
-      if value.start_with?("data:image/png;base64,")
-        filename = "#{symbol.downcase}.png"
-      elsif value.start_with?("data:image/jpeg;base64,") || value.start_with?("data:image/jpg;base64,")
-        filename = "#{symbol.downcase}.jpg"
-      else
-        errors.add(:logo, "The logo must be a base64 encoded png or jpeg image.")
-        return nil
-      end
-
-      path = Rails.root.join("tmp/storage/", filename).to_s
-      File.open(path, 'wb') { |file| file.write(Base64.strict_decode64(value.split(',', 2).last)) }
-      
-      File.open(path, 'rb') do |file|
-        attachment = file
-        Rails.logger.warn "Logo #{filename} uploaded to /tmp/storage."
-      end
-    else
-      # logo = nil
-      # super(value)
     end
   end
 

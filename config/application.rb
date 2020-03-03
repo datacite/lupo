@@ -134,15 +134,8 @@ module Lupo
     end
 
     config.paperclip_defaults = {
-      storage: :s3,
-      preserve_files: true,
-      s3_host_name: 's3-eu-west-1.amazonaws.com',
-      s3_credentials: {
-        access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-        secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
-        s3_region: ENV['AWS_REGION']
-      },
-      bucket: ENV['AWS_S3_BUCKET']
+      storage: :filesystem,
+      url: "/images/members/:id_partition/:filename",
     }
   end
 end

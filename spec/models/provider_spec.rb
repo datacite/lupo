@@ -79,14 +79,20 @@ describe Provider, type: :model do
       subject.logo = "data:image/png;base64," + Base64.strict_encode64(file_fixture("bl.png").read)
       expect(subject.save).to be true
       expect(subject.errors.details).to be_empty
-      # TODO
-      expect(subject.logo_url).to eq("/images/medium/missing.png")
+      expect(subject.logo.file?).to be true
+      expect(subject.logo.url).to start_with("/images/members/000")
+      expect(subject.logo.url(:medium)).to start_with("/images/members/000")
+      expect(subject.logo_url).to start_with("/images/members/000")
+      expect(subject.logo.content_type).to eq("image/png")
+      expect(subject.logo.size).to be > 10
     end
   
     it "without logo" do
       subject.logo = nil
       expect(subject.save).to be true
       expect(subject.errors.details).to be_empty
+      expect(subject.logo.file?).to be false
+      expect(subject.logo_url).to be_nil
     end
   end
 
