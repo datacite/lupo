@@ -22,7 +22,8 @@ class Provider < ActiveRecord::Base
   include Elasticsearch::Model
 
   has_attached_file :logo, 
-    styles: { medium: ["500x200#", :png] },
+    styles: { medium: ["500x200", :png] },
+    default_style: :medium,
     default_url: "/images/members/default.png"
 
   validates_attachment :logo, content_type: { content_type: ["image/jpg", "image/jpeg", "image/png"] }
