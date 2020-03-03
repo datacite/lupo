@@ -135,7 +135,7 @@ module Lupo
 
     config.paperclip_defaults = {
       storage: :filesystem,
-      url: "/images/members/:id_partition/:filename",
+      url: "/images/members/:filename",
     }
   end
 end

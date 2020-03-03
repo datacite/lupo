@@ -600,5 +600,8 @@ class Provider < ActiveRecord::Base
     self.billing_information = {} unless billing_information.present?
     self.consortium_id = nil unless member_type == "consortium_organization"
     self.non_profit_status = "non-profit" unless non_profit_status.present?
+
+    # custom filename for attachment as data URLs don't support filenames
+    self.logo_file_name = symbol.downcase + "." + logo_content_type.split("/").last if logo_content_type.present?
   end
 end

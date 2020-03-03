@@ -63,7 +63,11 @@ Rails.application.configure do
 
   config.paperclip_defaults = {
     storage: :s3,
-    url: "/images/members/:id_partition/:filename",
+    url: "https://assets.datacite.org/images/members/:filename",
+    s3_protocol: :https,
+    s3_host_alias: "sub.domain.com",
+    url: ":s3_alias_url",
+    path: "/images/members/:filename",
     preserve_files: true,
     s3_host_name: "s3-eu-west-1.amazonaws.com",
     s3_credentials: {
