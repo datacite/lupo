@@ -80,9 +80,9 @@ describe Provider, type: :model do
       expect(subject.save).to be true
       expect(subject.errors.details).to be_empty
       expect(subject.logo.file?).to be true
-      expect(subject.logo.url).to start_with("/images/members/000")
-      expect(subject.logo.url(:medium)).to start_with("/images/members/000")
-      expect(subject.logo_url).to start_with("/images/members/000")
+      expect(subject.logo.url).to start_with("/images/members/" + subject.symbol.downcase+ ".png")
+      expect(subject.logo.url(:medium)).to start_with("/images/members/" + subject.symbol.downcase+ ".png")
+      expect(subject.logo_url).to start_with("/images/members/" + subject.symbol.downcase + ".png")
       expect(subject.logo_file_name).to eq(subject.symbol.downcase + ".png")
       expect(subject.logo.content_type).to eq("image/png")
       expect(subject.logo.size).to be > 10
