@@ -12,7 +12,7 @@ class Ability
     if user.role_id == "staff_admin"
       can :manage, :all
       cannot [:new, :create], Doi do |doi|
-        doi.client.blank? || !(doi.client.prefixes.where(prefix: doi.prefix).first || %w(crossref medra kisti jalc op).include?(doi.client.symbol.downcase.split(".").first))
+        doi.client.blank? || !(doi.client.prefixes.where(prefix: doi.prefix).first || %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations).include?(doi.client.symbol.downcase))
       end
       can :export, :contacts
       can :export, :organizations
@@ -96,7 +96,7 @@ class Ability
 
       can [:read, :destroy, :update, :register_url, :validate, :undo, :get_url, :get_urls, :read_landing_page_results], Doi, :client_id => user.client_id
       can [:new, :create], Doi do |doi|
-        doi.client.prefixes.where(prefix: doi.prefix).present? || %w(crossref medra kisti jalc op).include?(doi.client.symbol.downcase.split(".").first)
+        doi.client.prefixes.where(prefix: doi.prefix).present? || %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations).include?(doi.client.symbol.downcase)
       end
       can [:read], Doi
       can [:read], User

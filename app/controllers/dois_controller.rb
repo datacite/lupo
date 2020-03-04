@@ -433,7 +433,7 @@ class DoisController < ApplicationController
 
     authorize! :get_url, @doi
 
-    if !@doi.is_registered_or_findable? || %w(europ crossref medra jalc kisti op).include?(@doi.provider_id) || %w(Crossref mEDRA).include?(@doi.agency)
+    if !@doi.is_registered_or_findable? || %w(europ).include?(@doi.provider_id) || %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations).include?(@doi.client_id)
       url = @doi.url
       head :no_content && return if url.blank?
     else
