@@ -311,7 +311,7 @@ FactoryBot.define do
   end
 
   factory :activity do  
-    association :doi, factory: :doi, strategy: :create
+    association :auditable, factory: :doi, strategy: :create
   end
 
   factory :event do
