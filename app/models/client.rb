@@ -1,4 +1,5 @@
 class Client < ActiveRecord::Base
+  audited except: [:globus_uuid, :salesforce_id, :password, :updated, :comments, :experiments, :version, :doi_quota_allowed, :doi_quota_used]
 
   # include helper module for caching infrequently changing resources
   include Cacheable
@@ -56,6 +57,7 @@ class Client < ActiveRecord::Base
   has_many :client_prefixes, foreign_key: :datacentre, dependent: :destroy
   has_many :prefixes, through: :client_prefixes
   has_many :provider_prefixes, through: :client_prefixes
+  has_many :activities, as: :auditable, dependent: :destroy
 
   before_validation :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }

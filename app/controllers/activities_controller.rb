@@ -2,7 +2,6 @@ class ActivitiesController < ApplicationController
   include Countable
 
   before_action :set_activity, only: [:show]
-  before_action :set_include
 
   def index
     sort = case params[:sort]
@@ -19,7 +18,11 @@ class ActivitiesController < ApplicationController
     elsif params[:ids].present?
       response = Activity.find_by_id(params[:ids], page: page, sort: sort)
     else
-      response = Activity.query(params[:query], uid: params[:doi_id], page: page, sort: sort, scroll_id: params[:scroll_id])
+      response = Activity.query(params[:query], 
+        uid: params[:doi_id] || params[:provider_id] || params[:client_id] || params[:repository_id], 
+        page: page, 
+        sort: sort, 
+        scroll_id: params[:scroll_id])
     end
 
     begin
@@ -90,15 +93,6 @@ class ActivitiesController < ApplicationController
   end
 
   protected
-
-  def set_include
-    if params[:include].present?
-      @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:doi]
-    else
-      @include = [:doi]
-    end
-  end
 
   def set_activity
     response = Activity.find_by_id(params[:id])
