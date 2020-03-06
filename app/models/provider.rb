@@ -1,6 +1,8 @@
 require "countries"
 
 class Provider < ActiveRecord::Base
+  audited except: [:globus_uuid, :salesforce_id, :password, :updated, :experiments, :comments, :logo, :version, :doi_quota_allowed, :doi_quota_used]
+
   # include helper module for caching infrequently changing resources
   include Cacheable
 
@@ -72,6 +74,7 @@ class Provider < ActiveRecord::Base
   has_many :prefixes, through: :provider_prefixes
   has_many :consortium_organizations, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_id", inverse_of: :consortium
   belongs_to :consortium, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_id", inverse_of: :consortium_organizations, optional: true
+  has_many :activities, as: :auditable, dependent: :destroy
 
   before_validation :set_region, :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }

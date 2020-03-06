@@ -8,7 +8,7 @@ class Activity < Audited::Audit
   alias_attribute :doi_id, :uid
   alias_attribute :changes, :audited_changes
 
-  belongs_to :doi, foreign_key: :auditable_id
+  belongs_to :auditable, polymorphic: true
 
   def after_audit
     IndexJob.perform_later(self)
@@ -20,161 +20,23 @@ class Activity < Audited::Audit
   mapping dynamic: 'false' do
     indexes :id,                             type: :keyword
     indexes :auditable_id,                   type: :keyword
-    indexes :doi_id,                         type: :keyword
     indexes :uid,                            type: :keyword
     indexes :auditable_type,                 type: :keyword
     indexes :username,                       type: :keyword
     indexes :action,                         type: :keyword
     indexes :version,                        type: :keyword
     indexes :request_uuid,                   type: :keyword
-    indexes :changes,                        type: :object, properties: {
-      doi: { type: :keyword },
-      url: { type: :text, fields: { keyword: { type: "keyword" }}},
-      creators: { type: :object, properties: {
-        nameType: { type: :keyword },
-        nameIdentifiers: { type: :object, properties: {
-          nameIdentifier: { type: :keyword },
-          nameIdentifierScheme: { type: :keyword },
-          schemeUri: { type: :keyword }
-        }},
-        name: { type: :text },
-        givenName: { type: :text },
-        familyName: { type: :text },
-        affiliation: { type: :object, properties: {
-          name: { type: :keyword },
-          affiliationIdentifier: { type: :keyword },
-          affiliationIdentifierScheme: { type: :keyword },
-          schemeUri: { type: :keyword }
-        }},
-      }},
-      contributors: { type: :object, properties: {
-        nameType: { type: :keyword },
-        nameIdentifiers: { type: :object, properties: {
-          nameIdentifier: { type: :keyword },
-          nameIdentifierScheme: { type: :keyword },
-          schemeUri: { type: :keyword }
-        }},
-        name: { type: :text },
-        givenName: { type: :text },
-        familyName: { type: :text },
-        affiliation: { type: :object, properties: {
-          name: { type: :keyword },
-          affiliationIdentifier: { type: :keyword },
-          affiliationIdentifierScheme: { type: :keyword },
-          schemeUri: { type: :keyword }
-        }},
-        contributorType: { type: :keyword }
-      }},
-      titles: { type: :object, properties: {
-        title: { type: :text, fields: { keyword: { type: "keyword" }}},
-        titleType: { type: :keyword },
-        lang: { type: :keyword }
-      }},
-      descriptions: { type: :object, properties: {
-        description: { type: :text },
-        descriptionType: { type: :keyword },
-        lang: { type: :keyword }
-      }},
-      publisher: { type: :text, fields: { keyword: { type: "keyword" }}},
-      publication_year: { type: :date, format: "yyyy", ignore_malformed: true },
-      client_id: { type: :keyword },
-      provider_id: { type: :keyword },
-      identifiers: { type: :object, properties: {
-        identifierType: { type: :keyword },
-        identifier: { type: :keyword }
-      }},
-      related_identifiers: { type: :object, properties: {
-        relatedIdentifierType: { type: :keyword },
-        relatedIdentifier: { type: :keyword },
-        relationType: { type: :keyword },
-        relatedMetadataScheme: { type: :keyword },
-        schemeUri: { type: :keyword },
-        schemeType: { type: :keyword },
-        resourceTypeGeneral: { type: :keyword }
-      }},
-      types: { type: :object, properties: {
-        resourceTypeGeneral: { type: :keyword },
-        resourceType: { type: :keyword },
-        schemaOrg: { type: :keyword },
-        bibtex: { type: :keyword },
-        citeproc: { type: :keyword },
-        ris: { type: :keyword }
-      }},
-      funding_references: { type: :object, properties: {
-        funderName: { type: :keyword },
-        funderIdentifier: { type: :keyword },
-        funderIdentifierType: { type: :keyword },
-        awardNumber: { type: :keyword },
-        awardUri: { type: :keyword },
-        awardTitle: { type: :keyword }
-      }},
-      dates: { type: :object, properties: {
-        date: { type: :text },
-        dateType: { type: :keyword }
-      }},
-      geo_locations: { type: :object, properties: {
-        geoLocationPoint: { type: :object },
-        geoLocationBox: { type: :object },
-        geoLocationPlace: { type: :keyword }
-      }},
-      rights_list: { type: :object, properties: {
-        rights: { type: :keyword },
-        rightsUri: { type: :keyword },
-        lang: { type: :keyword },
-      }},
-      subjects: { type: :object, properties: {
-        subject: { type: :keyword },
-        subjectScheme: { type: :keyword },
-        schemeUri: { type: :keyword },
-        valueUri: { type: :keyword },
-        lang: { type: :keyword },
-      }},
-      container: { type: :object, properties: {
-        type: { type: :keyword },
-        identifier: { type: :keyword },
-        identifierType: { type: :keyword },
-        title: { type: :keyword },
-        volume: { type: :keyword },
-        issue: { type: :keyword },
-        firstPage: { type: :keyword },
-        lastPage: { type: :keyword },
-      }},
-      content_url: { type: :keyword },
-      version_info: { type: :keyword },
-      formats: { type: :keyword },
-      sizes: { type: :keyword },
-      language: { type: :keyword },
-      aasm_state: { type: :keyword },
-      schema_version: { type: :keyword },
-      metadata_version: { type: :keyword },
-      source: { type: :keyword },
-      landing_page: { type: :object, properties: {
-        checked: { type: :date, ignore_malformed: true },
-        url: { type: :text, fields: { keyword: { type: "keyword" }}},
-        status: { type: :integer },
-        contentType: { type: :keyword },
-        error: { type: :keyword },
-        redirectCount: { type: :integer },
-        redirectUrls: { type: :keyword },
-        downloadLatency: { type: :scaled_float, scaling_factor: 100 },
-        hasSchemaOrg: { type: :boolean },
-        schemaOrgId: { type: :keyword },
-        dcIdentifier: { type: :keyword },
-        citationDoi: { type: :keyword },
-        bodyHasPid: { type: :boolean }
-      }}
-    }
+    indexes :changes,                        type: :object
     indexes :created,                        type: :date, ignore_malformed: true
 
     # include parent objects
-    indexes :doi,                            type: :object
+    #indexes :doi,                            type: :object
   end
 
   def as_indexed_json(options={})
     {
       "id" => id,
       "auditable_id" => auditable_id,
-      "doi_id" => doi_id,
       "uid" => uid,
       "auditable_type" => auditable_type,
       "username" => username,
@@ -182,8 +44,10 @@ class Activity < Audited::Audit
       "version" => version,
       "request_uuid" => request_uuid,
       "changes" => changes,
-      "created" => created,
-      "doi" => doi.present? ? doi.as_indexed_json : nil
+      "was_derived_from" => was_derived_from,
+      "was_attributed_to" => was_attributed_to,
+      "was_generated_by" => was_generated_by,
+      "created" => created
     }
   end
 
@@ -322,6 +186,31 @@ class Activity < Audited::Audit
   end
 
   def uid
-    doi.present? ? doi.uid : changes.to_h['doi']
+    auditable.uid
+  end
+
+  def url
+    Rails.env.production? ? "https://api.datacite.org" : "https://api.test.datacite.org"
+  end
+
+  def was_derived_from
+    if auditable_type == "Doi"
+      handle_url = Rails.env.production? ? "https://doi.org/" : "https://handle.test.datacite.org/"
+      handle_url + uid
+    elsif auditable_type == "Provider"
+      url + "/providers/" + uid
+    elsif auditable_type == "Client"
+      url + "/repositories/" + uid
+    end
+  end
+
+  def was_attributed_to
+    if username.present?
+      username.include?(".") ? url + "/repositories/" + username : url + "/providers/" + username
+    end
+  end
+
+  def was_generated_by
+    url + "/activities/" + request_uuid
   end
 end

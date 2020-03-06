@@ -72,11 +72,13 @@ Rails.application.routes.draw do
   resources :clients, constraints: { id: /.+/ } do
     resources :prefixes, constraints: { id: /.+/ }
     resources :dois, constraints: { id: /.+/ }
+    resources :activities
   end
 
   resources :repositories, constraints: { id: /.+/ } do
     resources :prefixes, constraints: { id: /.+/ }
     resources :dois, constraints: { id: /.+/ }
+    resources :activities
   end
 
   resources :client_prefixes, path: "client-prefixes"
@@ -104,6 +106,7 @@ Rails.application.routes.draw do
     resources :organizations, constraints: { :id => /.+/ }, shallow: true
     resources :dois, constraints: { :id => /.+/ }
     resources :prefixes, constraints: { :id => /.+/ }
+    resources :activities
   end
   resources :providers, constraints: { :id => /.+/ }
   resources :repository_prefixes, path: "repository-prefixes"

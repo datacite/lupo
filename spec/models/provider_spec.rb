@@ -203,4 +203,16 @@ describe Provider, type: :model do
       expect(provider.cumulative_years).to eq([])
     end
   end
+
+  describe "activities" do
+    subject { build(:provider) }
+
+    it "is valid" do
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+      expect(subject.activities.length).to eq(1)
+      activity = subject.activities.first
+      expect(activity.changes["non_profit_status"]).to eq("non-profit")
+    end
+  end
 end
