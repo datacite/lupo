@@ -57,7 +57,7 @@ describe Activity, type: :model do
       expect(activity.auditable.uid).to eq(provider.uid)
 
       expect(activity.request_uuid).to be_present
-      expect(activity.changes).to eq("non_profit_status"=>["non-profit", "for-profit"])
+      expect(activity.changes).to eq("non_profit_status" => ["non-profit", "for-profit"])
     end
   end
 
@@ -86,7 +86,7 @@ describe Activity, type: :model do
       expect(activity.auditable.uid).to eq(client.uid)
 
       expect(activity.request_uuid).to be_present
-      expect(activity.changes).to eq("client_type"=>["repository", "periodical"])
+      expect(activity.changes).to eq("client_type" => ["repository", "periodical"])
     end
   end
 end

@@ -206,7 +206,7 @@ describe Provider, type: :model do
 
   describe "activities" do
     subject { build(:provider) }
-    
+
     it "is valid" do
       expect(subject.save).to be true
       expect(subject.errors.details).to be_empty
