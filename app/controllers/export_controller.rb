@@ -168,7 +168,7 @@ class ExportController < ApplicationController
               billingCity: provider.billing_city,
               billingDepartment: provider.billing_department,
               billingOrganization: provider.billing_organization,
-              billingStateCode: provider.billing_state,
+              billingStateCode: provider.billing_state.present? ? provider.billing_state.split("-").last : nil,
               billingCountryCode: provider.billing_country,
               twitter: provider.twitter_handle,
               rorId: provider.ror_id,
