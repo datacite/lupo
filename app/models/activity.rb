@@ -61,7 +61,7 @@ class Activity < Audited::Audit
 
     # get every id between from_id and end_id
     (from_id..until_id).step(500).each do |id|
-      ActivityImportByIdJob.perform_later(id: id)
+      ActivityImportByIdJob.perform_later(options.merge(id: id))
     end
 
     (from_id..until_id).to_a.length
@@ -71,7 +71,13 @@ class Activity < Audited::Audit
     return nil if options[:id].blank?
 
     id = options[:id].to_i
-    index = Rails.env.test? ? "activities-test" : self.inactive_index
+    index = if Rails.env.test?
+      "activities-test"
+    elsif options[:index].present?
+      options[:index]
+    else
+      self.inactive_index
+    end
     errors = 0
     count = 0
 

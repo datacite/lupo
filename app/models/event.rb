@@ -255,7 +255,7 @@ class Event < ActiveRecord::Base
 
     # get every id between from_id and until_id
     (from_id..until_id).step(500).each do |id|
-      EventImportByIdJob.perform_later(id: id)
+      EventImportByIdJob.perform_later(options.merge(id: id))
       Rails.logger.info "Queued importing for events with IDs starting with #{id}." unless Rails.env.test?
     end
   end
@@ -264,8 +264,13 @@ class Event < ActiveRecord::Base
     return nil unless options[:id].present?
 
     id = options[:id].to_i
-    index = Rails.env.test? ? "events-test" : self.inactive_index
+    index = if Rails.env.test?
       "events-test"
+    elsif options[:index].present?
+      options[:index]
+    else
+      self.inactive_index
+    end
     errors = 0
     count = 0
 
