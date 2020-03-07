@@ -51,7 +51,7 @@ class ExportController < ApplicationController
                   'fabricaAccountId' => id,
                   'fabricaId' => id + "-" + email,
                   'firstName' => firstname,
-                  'lastName' => lastname,
+                  'lastName' => lastname.present? ? lastname : email,
                 }
               end
 
