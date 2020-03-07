@@ -151,7 +151,7 @@ class ExportController < ApplicationController
               accountName: provider.name,
               fabricaAccountId: provider.symbol,
               parentFabricaAccountId: provider.consortium.present? ? provider.consortium.symbol : nil,
-              isActive: provider.is_active == "\x01",
+              isActive: provider.deleted_at.blank?,
               accountDescription: provider.description,
               accountWebsite: provider.website,
               region: provider.region_human_name,
@@ -257,7 +257,7 @@ class ExportController < ApplicationController
               accountName: name,
               fabricaAccountId: client.symbol,
               parentFabricaAccountId: client.provider.present? ? client.provider.symbol : nil,
-              isActive: client.is_active == "\x01",
+              isActive: client.deleted_at.blank?
               accountDescription: client.description,
               accountWebsite: client.url,
               generalContactEmail: client.system_email,
