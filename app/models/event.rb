@@ -265,6 +265,7 @@ class Event < ActiveRecord::Base
 
     id = options[:id].to_i
     index = Rails.env.test? ? "events-test" : self.inactive_index
+      "events-test"
     errors = 0
     count = 0
 
