@@ -257,7 +257,7 @@ class ExportController < ApplicationController
               accountName: name,
               fabricaAccountId: client.symbol,
               parentFabricaAccountId: client.provider.present? ? client.provider.symbol : nil,
-              isActive: client.deleted_at.blank?
+              isActive: client.deleted_at.blank?,
               accountDescription: client.description,
               accountWebsite: client.url,
               generalContactEmail: client.system_email,

@@ -233,7 +233,7 @@ module Indexable
         must << { term: { opendoar_id: options[:opendoar_id] }} if options[:opendoar_id].present?
         must << { term: { client_type: options[:client_type] }} if options[:client_type].present?
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
-        must_not << { terms: { symbol: !%w(CROSSREF.CITATIONS MEDRA.CITATIONS JALC.CITATIONS KISTI.CITATIONS OP.CITATIONS) }} if options[:exclude_registration_agencies]
+        must_not << { terms: { uid: %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations) }} if options[:exclude_registration_agencies]
       elsif self.name == "Doi"
         must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
         must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
@@ -243,7 +243,7 @@ module Indexable
         must << { term: { "client.re3data_id" => options[:re3data_id].gsub("/", '\/').upcase }} if options[:re3data_id].present?
         must << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
         must << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
-        must_not << { terms: { "client.symbol" => !%w(CROSSREF.CITATIONS MEDRA.CITATIONS JALC.CITATIONS KISTI.CITATIONS OP.CITATIONS) }} if options[:exclude_registration_agencies]
+        must_not << { terms: { "client.uid" => %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations) }} if options[:exclude_registration_agencies]
       elsif self.name == "Event"
         must << { term: { subj_id: URI.decode(options[:subj_id]) }} if options[:subj_id].present?
         must << { term: { obj_id: URI.decode(options[:obj_id]) }} if options[:obj_id].present?

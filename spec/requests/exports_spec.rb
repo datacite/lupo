@@ -15,7 +15,6 @@ describe "exports", type: :request do
   let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
 
   describe "GET /export/organizations", elasticsearch: true do
-
     before do
       Doi.import
       Provider.import
@@ -27,11 +26,9 @@ describe "exports", type: :request do
 
       expect(last_response.status).to eq(200)
     end
-
   end
 
   describe "GET /export/repositories", elasticsearch: true do
-
     before do
       Doi.import
       Client.import
@@ -43,11 +40,9 @@ describe "exports", type: :request do
 
       expect(last_response.status).to eq(200)
     end
-
   end
 
   describe "GET /export/contacts", elasticsearch: true do
-
     before do
       Doi.import
       Client.import
@@ -60,7 +55,5 @@ describe "exports", type: :request do
 
       expect(last_response.status).to eq(200)
     end
-
   end
-
 end
