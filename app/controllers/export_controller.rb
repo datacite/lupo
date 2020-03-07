@@ -32,6 +32,7 @@ class ExportController < ApplicationController
         format.csv do
           headers = %W(
             fabricaAccountId
+            fabricaId
             email
             firstName
             lastName
@@ -44,11 +45,11 @@ class ExportController < ApplicationController
           contacts = Hash.new
 
           add_contact = Proc.new { |contacts, email, id, firstname, lastname, type|
-            email.downcase
             if email
               unless contacts.has_key?(email)
                 contacts[email] = {
                   'fabricaAccountId' => id,
+                  'fabricaId' => id + "-" + email,
                   'firstName' => firstname,
                   'lastName' => lastname,
                 }
@@ -75,6 +76,7 @@ class ExportController < ApplicationController
           contacts.each do |email, contact|
             csv += CSV.generate_line [
               contact['fabricaAccountId'],
+              contact['fabricaId'],
               email,
               contact['firstName'],
               contact['lastName'],
@@ -141,6 +143,7 @@ class ExportController < ApplicationController
             "twitter",
             "ROR",
             "Fabrica Creation Date",
+            "Fabrica Modification Date",
             "Fabrica Deletion Date"
           ]
 
@@ -169,7 +172,8 @@ class ExportController < ApplicationController
               billingCountry: provider.billing_country,
               twitter: provider.twitter_handle,
               rorId: provider.ror_id,
-              created: provider.created.present? ? provider.created.strftime(EXPORT_DATE_FORMAT) : nil,
+              created: provider.created.strftime(EXPORT_DATE_FORMAT),
+              modified: provider.updated.strftime(EXPORT_DATE_FORMAT),
               deleted: provider.deleted_at.present? ? provider.deleted_at.strftime(EXPORT_DATE_FORMAT) : nil,
             }.values
 
@@ -236,8 +240,9 @@ class ExportController < ApplicationController
             "serviceContactEmail",
             "serviceContactGivenName",
             "serviceContactFamilyName",
-            "Fabrica Creation date",
-            "Fabrica Deletion date",
+            "Fabrica Creation Date",
+            "Fabrica Modification Date",
+            "Fabrica Deletion Date",
             "doisCurrentYear",
             "doisPreviousYear",
             "doisTotal"
@@ -264,7 +269,8 @@ class ExportController < ApplicationController
               serviceContactEmail: client.service_contact_email,
               serviceContactGivenName: client.service_contact_given_name,
               serviceContactFamilyName: client.service_contact_family_name,
-              created: client.created.present? ? client.created.strftime(EXPORT_DATE_FORMAT) : nil,
+              created: client.created.strftime(EXPORT_DATE_FORMAT),
+              modified: client.updated.strftime(EXPORT_DATE_FORMAT),
               deleted: client.deleted_at.present? ? client.deleted_at.strftime(EXPORT_DATE_FORMAT) : nil,
               doisCountCurrentYear: client_totals[client_id] ? client_totals[client_id]["this_year"] : nil,
               doisCountPreviousYear: client_totals[client_id] ? client_totals[client_id]["last_year"] : nil,
