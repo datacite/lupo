@@ -87,7 +87,7 @@ class ExportController < ApplicationController
           send_data csv, filename: "contacts-#{Date.today}.csv"
         end
       end
-    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
+    rescue StandardError, Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
 
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
@@ -138,8 +138,8 @@ class ExportController < ApplicationController
             "billingCity",
             "Department",
             "billingOrganization",
-            "billingState",
-            "billingCountry",
+            "billingStateCode",
+            "billingCountryCode",
             "twitter",
             "ROR",
             "Fabrica Creation Date",
@@ -168,8 +168,8 @@ class ExportController < ApplicationController
               billingCity: provider.billing_city,
               billingDepartment: provider.billing_department,
               billingOrganization: provider.billing_organization,
-              billingState: provider.billing_state,
-              billingCountry: provider.billing_country,
+              billingStateCode: provider.billing_state,
+              billingCountryCode: provider.billing_country,
               twitter: provider.twitter_handle,
               rorId: provider.ror_id,
               created: provider.created.strftime(EXPORT_DATE_FORMAT),
@@ -183,7 +183,7 @@ class ExportController < ApplicationController
           send_data csv, filename: "organizations-#{Date.today}.csv"
         end
       end
-    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
+    rescue StandardError, Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
 
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
@@ -214,7 +214,7 @@ class ExportController < ApplicationController
         page_num += 1
       end
 
-      # Get doi counts via DOIS query and combine next to clients.
+      # Get doi counts via DOIs query and combine next to clients.
       response = Doi.query(nil, state: "registered,findable", page: { size: 0, number: 1}, totals_agg: "client")
 
       client_totals = {}
@@ -283,7 +283,7 @@ class ExportController < ApplicationController
           send_data csv, filename: "repositories-#{Date.today}.csv"
         end
       end
-    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
+    rescue StandardError, Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
 
       message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
