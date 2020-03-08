@@ -12,6 +12,12 @@ class ExportController < ApplicationController
     "registration_agency" => "DOI Registration Agency"
   }
 
+  REGIONS = {
+    "APAC" => "Asia and Pacific",
+    "EMEA" => "EMEA",
+    "AMER" => "Americas"
+  }
+
   def contacts
     authorize! :export, :contacts
 
@@ -155,7 +161,7 @@ class ExportController < ApplicationController
           isActive: provider.deleted_at.blank?,
           accountDescription: provider.description,
           accountWebsite: provider.website,
-          region: provider.region,
+          region: provider.region.present? ? export_region(provider.region) : nil,
           focusArea: provider.focus_area,
           sector: provider.organization_type,
           accountType: export_member_type(provider.member_type),
@@ -286,5 +292,9 @@ class ExportController < ApplicationController
 
   def export_member_type(member_type)
     MEMBER_TYPES[member_type]
+  end
+
+  def export_region(region)
+    REGIONS[region]
   end
 end
