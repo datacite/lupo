@@ -276,14 +276,14 @@ FactoryBot.define do
       "family_name": "Garza"
     }}
     billing_contact {{
-      "email": "Trisha@example.com",
+      "email": "trisha@example.com",
       "given_name": "Trisha",
-      "family_name": "cruse"
+      "family_name": "Cruse"
     }}
     secondary_billing_contact {{
-      "email": "Trisha@example.com",
+      "email": "trisha@example.com",
       "given_name": "Trisha",
-      "family_name": "cruse"
+      "family_name": "Cruse"
     }}
     service_contact {{
       "email": "martin@example.com",

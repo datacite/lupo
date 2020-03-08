@@ -134,6 +134,21 @@ describe Provider, type: :model do
       expect(consortium_organization.member_type).to eq("consortium_organization")
     end
   end
+
+  describe "provider with ROLE_CONSORTIUM_ORGANIZATION" do
+    let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM", name: "Virtual Library of Virginia", symbol: "VIVA") }
+
+    subject { create(:provider, name: "University of Virginia", role_name: "ROLE_CONSORTIUM_ORGANIZATION", consortium_id: consortium.symbol) }
+
+    it "works" do
+      expect(subject.role_name).to eq("ROLE_CONSORTIUM_ORGANIZATION")
+      expect(subject.member_type).to eq("consortium_organization")
+      expect(subject.member_type_label).to eq("Consortium Organization")
+      expect(subject.consortium.name).to eq("Virtual Library of Virginia")
+      expect(subject.consortium.symbol).to eq("VIVA")
+      expect(subject.consortium.member_type).to eq("consortium")
+    end
+  end
   
   describe "to_jsonapi" do
     it "works" do
