@@ -1,8 +1,6 @@
 class ExportController < ApplicationController
   include ActionController::MimeResponds
 
-  EXPORT_DATE_FORMAT = "%d/%m/%YT%H:%M:%S.%3NUTC%:z"
-
   before_action :authenticate_user_with_basic_auth!
 
   def contacts
@@ -163,9 +161,9 @@ class ExportController < ApplicationController
           billingCountryCode: provider.billing_information.country,
           twitter: provider.twitter_handle,
           rorId: provider.ror_id,
-          created: provider.created,
-          modified: provider.updated,
-          deleted: provider.deleted_at.present? ? provider.deleted_at : nil,
+          created: export_date(provider.created),
+          modified: export_date(provider.updated),
+          deleted: provider.deleted_at.present? ? export_date(provider.deleted_at) : nil,
         }.values
 
         csv += CSV.generate_line row
@@ -252,9 +250,9 @@ class ExportController < ApplicationController
           serviceContactEmail: client.service_contact.email,
           serviceContactGivenName: client.service_contact.given_name,
           serviceContactFamilyName: client.service_contact.family_name,
-          created: client.created,
-          modified: client.updated,
-          deleted: client.deleted_at.present? ? client.deleted_at : nil,
+          created: export_date(client.created),
+          modified: export_date(client.updated),
+          deleted: client.deleted_at.present? ? export_date(client.deleted_at) : nil,
           doisCountCurrentYear: client_totals[client.uid] ? client_totals[client.uid]["this_year"] : nil,
           doisCountPreviousYear: client_totals[client.uid] ? client_totals[client.uid]["last_year"] : nil,
           doisCountTotal: client_totals[client.uid] ? client_totals[client.uid]["count"] : nil
@@ -271,5 +269,9 @@ class ExportController < ApplicationController
 
       render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
     end
+  end
+
+  def export_date(date)
+    DateTime.strptime(date, "%Y-%m-%dT%H:%M:%S").strftime("%d/%m/%YT%H:%M:%S.%3NUTC%:z")
   end
 end

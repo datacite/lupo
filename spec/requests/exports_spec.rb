@@ -15,7 +15,7 @@ describe "exports", type: :request do
 
     it 'returns organizations', vcr: false do
       get "/export/organizations", nil, admin_headers
-
+      puts last_response.body
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
       expect(csv.length).to eq(3)
