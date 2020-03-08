@@ -13,7 +13,7 @@ class ExportController < ApplicationController
   }
 
   REGIONS = {
-    "APAC" => "Asia and Pacific",
+    "APAC" => "Asia Pacific",
     "EMEA" => "EMEA",
     "AMER" => "Americas"
   }
