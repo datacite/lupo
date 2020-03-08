@@ -3,6 +3,15 @@ class ExportController < ApplicationController
 
   before_action :authenticate_user_with_basic_auth!
 
+  MEMBER_TYPES = {
+    "consortium" => "Consortium",
+    "consortium_organization" => "Consortium Organization",
+    "direct_member" => "Direct Member",
+    "member_only" => "Member Only",
+    "contractual_member" => "Contractual Member",
+    "registration_agency" => "DOI Registration Agency"
+  }
+
   def contacts
     authorize! :export, :contacts
 
@@ -149,7 +158,7 @@ class ExportController < ApplicationController
           region: provider.region,
           focusArea: provider.focus_area,
           sector: provider.organization_type,
-          accountType: provider.member_type,
+          accountType: export_member_type(provider.member_type),
           generalContactEmail: provider.system_email,
           groupEmail: provider.group_email,
           billingStreet: provider.billing_information.address,
@@ -273,5 +282,9 @@ class ExportController < ApplicationController
 
   def export_date(date)
     DateTime.strptime(date, "%Y-%m-%dT%H:%M:%S").strftime("%d/%m/%YT%H:%M:%S.%3NUTC%:z")
+  end
+
+  def export_member_type(member_type)
+    MEMBER_TYPES[member_type]
   end
 end
