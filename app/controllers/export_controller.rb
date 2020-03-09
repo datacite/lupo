@@ -24,7 +24,7 @@ class ExportController < ApplicationController
     begin
       # Loop through all providers
       page = { size: 1000, number: 1}
-      response = Provider.query(nil, page: page, include_deleted: true, exclude_registration_agencies: true)
+      response = Provider.query(nil, page: page, from_date: params[:from_date], include_deleted: true, exclude_registration_agencies: true)
       providers = response.results.to_a
 
       total = response.results.total
@@ -34,7 +34,7 @@ class ExportController < ApplicationController
       page_num = 2
       while page_num <= total_pages
         page = { size: 1000, number: page_num }
-        response = Provider.query(nil, page: page)
+        response = Provider.query(nil, page: page, from_date: params[:from_date], include_deleted: true, exclude_registration_agencies: true)
         providers = providers + response.results.to_a
         page_num += 1
       end
@@ -117,7 +117,7 @@ class ExportController < ApplicationController
     begin
       # Loop through all providers
       page = { size: 1000, number: 1 }
-      response = Provider.query(nil, page: page, include_deleted: true, exclude_registration_agencies: true)
+      response = Provider.query(nil, page: page, from_date: params[:from_date], include_deleted: true, exclude_registration_agencies: true)
       providers = response.results.to_a
 
       total = response.results.total
@@ -127,7 +127,7 @@ class ExportController < ApplicationController
       page_num = 2
       while page_num <= total_pages
         page = { size: 1000, number: page_num }
-        response = Provider.query(nil, page: page, include_deleted: true, exclude_registration_agencies: true)
+        response = Provider.query(nil, page: page, from_date: params[:from_date], include_deleted: true, exclude_registration_agencies: true)
         providers = providers + response.results.to_a
         page_num += 1
       end
@@ -207,7 +207,7 @@ class ExportController < ApplicationController
     begin
       # Loop through all clients
       page = { size: 1000, number: 1 }
-      response = Client.query(nil, page: page, include_deleted: true, exclude_registration_agencies: true)
+      response = Client.query(nil, page: page, from_date: params[:from_date], include_deleted: true, exclude_registration_agencies: true)
       clients = response.results.to_a
 
       total = response.results.total
@@ -217,7 +217,7 @@ class ExportController < ApplicationController
       page_num = 2
       while page_num <= total_pages
         page = { size: 1000, number: page_num }
-        response = Client.query(nil, page: page, include_deleted: true, exclude_registration_agencies: true)
+        response = Client.query(nil, page: page, from_date: params[:from_date], include_deleted: true, exclude_registration_agencies: true)
         clients = clients + response.results.to_a
         page_num += 1
       end

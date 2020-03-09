@@ -24,7 +24,8 @@ class ClientsController < ApplicationController
       response = Client.find_by_id(params[:ids], page: page, sort: sort)
     else
       response = Client.query(params[:query], 
-        year: params[:year], 
+        year: params[:year],
+        from_date: params[:from_date],
         provider_id: params[:provider_id],
         re3data_id: params[:re3data_id],
         opendoar_id: params[:opendoar_id],

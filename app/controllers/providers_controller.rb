@@ -26,7 +26,8 @@ class ProvidersController < ApplicationController
     else
       response = Provider.query(params[:query],
         exclude_registration_agencies: params[:exclude_registration_agencies],
-        year: params[:year], 
+        year: params[:year],
+        from_date: params[:from_date],
         region: params[:region], 
         consortium_id: params[:consortium_id], 
         member_type: params[:member_type], 

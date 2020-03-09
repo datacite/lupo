@@ -210,6 +210,7 @@ module Indexable
       # filters for some classes
       if self.name == "Provider"
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        must << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
         must << { term: { region: options[:region].upcase }} if options[:region].present?
         must << { term: { "consortium_id.raw" => options[:consortium_id] }} if options[:consortium_id].present?
         must << { term: { member_type: options[:member_type] }} if options[:member_type].present?
@@ -225,6 +226,7 @@ module Indexable
         end
       elsif self.name == "Client"
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        must << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
         must << { terms: { "software.raw" => options[:software].split(",") }} if options[:software].present?
         must << { terms: { certificate: options[:certificate].split(",") }} if options[:certificate].present?
         must << { terms: { repository_type: options[:repository_type].split(",") }} if options[:repository_type].present?
