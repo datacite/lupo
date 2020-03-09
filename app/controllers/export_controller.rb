@@ -73,13 +73,21 @@ class ExportController < ApplicationController
       }
 
       providers.each do |provider|
-        add_contact.call(contacts, provider.technical_contact.email, provider.symbol, provider.technical_contact.given_name, provider.technical_contact.family_name, 'technical') if provider.technical_contact.present?
-        add_contact.call(contacts, provider.secondary_technical_contact.email, provider.symbol, provider.secondary_technical_contact.given_name, provider.secondary_technical_contact.family_name, 'secondaryTechnical') if provider.secondary_technical_contact.present?
-        add_contact.call(contacts, provider.service_contact.email, provider.symbol, provider.service_contact.given_name, provider.service_contact.family_name, 'service') if provider.service_contact.present?
-        add_contact.call(contacts, provider.secondary_service_contact.email, provider.symbol, provider.secondary_service_contact.given_name, provider.secondary_service_contact.family_name, 'secondaryService') if provider.secondary_service_contact.present?
-        add_contact.call(contacts, provider.voting_contact.email, provider.symbol, provider.voting_contact.given_name, provider.voting_contact.family_name, 'voting') if provider.voting_contact.present?
-        add_contact.call(contacts, provider.billing_contact.email, provider.symbol, provider.billing_contact.given_name, provider.billing_contact.family_name, 'billing') if provider.billing_contact.present?
-        add_contact.call(contacts, provider.secondary_billing_contact.email, provider.symbol, provider.secondary_billing_contact.given_name, provider.secondary_billing_contact.family_name, 'secondaryBilling') if provider.secondary_billing_contact.present?
+        if params[:type].blank? || params[:type] == "technical"
+          add_contact.call(contacts, provider.technical_contact.email, provider.symbol, provider.technical_contact.given_name, provider.technical_contact.family_name, 'technical') if provider.technical_contact.present?
+          add_contact.call(contacts, provider.secondary_technical_contact.email, provider.symbol, provider.secondary_technical_contact.given_name, provider.secondary_technical_contact.family_name, 'secondaryTechnical') if provider.secondary_technical_contact.present?
+        end
+        if params[:type].blank? || params[:type] == "service"
+          add_contact.call(contacts, provider.service_contact.email, provider.symbol, provider.service_contact.given_name, provider.service_contact.family_name, 'service') if provider.service_contact.present?
+          add_contact.call(contacts, provider.secondary_service_contact.email, provider.symbol, provider.secondary_service_contact.given_name, provider.secondary_service_contact.family_name, 'secondaryService') if provider.secondary_service_contact.present?
+        end
+        if params[:type].blank? || params[:type] == "voting"
+          add_contact.call(contacts, provider.voting_contact.email, provider.symbol, provider.voting_contact.given_name, provider.voting_contact.family_name, 'voting') if provider.voting_contact.present?
+        end
+        if params[:type].blank? || params[:type] == "billing"
+          add_contact.call(contacts, provider.billing_contact.email, provider.symbol, provider.billing_contact.given_name, provider.billing_contact.family_name, 'billing') if provider.billing_contact.present?
+          add_contact.call(contacts, provider.secondary_billing_contact.email, provider.symbol, provider.secondary_billing_contact.given_name, provider.secondary_billing_contact.family_name, 'secondaryBilling') if provider.secondary_billing_contact.present?
+        end
       end
 
       contacts.each do |email, contact|
@@ -93,7 +101,7 @@ class ExportController < ApplicationController
         ]
       end
 
-      send_data csv, filename: "contacts-#{Date.today}.csv"
+      send_data csv, filename: "contacts-#{params.fetch(:type, "all")}-#{Date.today}.csv"
     rescue StandardError, Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
 

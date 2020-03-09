@@ -54,7 +54,7 @@ describe "exports", type: :request do
       sleep 1
     end
 
-    it 'returns contacts', vcr: false do
+    it 'returns all contacts', vcr: false do
       get "/export/contacts", nil, admin_headers
 
       expect(last_response.status).to eq(200)
@@ -65,6 +65,26 @@ describe "exports", type: :request do
       expect(csv[2]).to start_with("VIVA,VIVA-martin@example.com,martin@example.com,Martin,Fenner,service;secondaryService")
       expect(csv[3]).to start_with("VIVA,VIVA-robin@example.com,robin@example.com,Robin,Dasler,voting")
       expect(csv[4]).to start_with("VIVA,VIVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling")
+    end
+
+    it 'returns voting contacts', vcr: false do
+      get "/export/contacts?type=voting", nil, admin_headers
+
+      expect(last_response.status).to eq(200)
+      csv = last_response.body.lines
+      expect(csv.length).to eq(2)
+      expect(csv[0]).to eq("fabricaAccountId,fabricaId,email,firstName,lastName,type\n")
+      expect(csv[1]).to start_with("VIVA,VIVA-robin@example.com,robin@example.com,Robin,Dasler,voting")
+    end
+
+    it 'returns billing contacts', vcr: false do
+      get "/export/contacts?type=billing", nil, admin_headers
+
+      expect(last_response.status).to eq(200)
+      csv = last_response.body.lines
+      expect(csv.length).to eq(2)
+      expect(csv[0]).to eq("fabricaAccountId,fabricaId,email,firstName,lastName,type\n")
+      expect(csv[1]).to start_with("VIVA,VIVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling")
     end
   end
 end
