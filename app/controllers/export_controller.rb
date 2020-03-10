@@ -222,6 +222,8 @@ class ExportController < ApplicationController
         page_num += 1
       end
 
+      logger.warn "Exporting #{clients.length} repositories."
+
       # Get doi counts via DOIs query and combine next to clients.
       response = Doi.query(nil, state: "registered,findable", page: { size: 0, number: 1 }, totals_agg: "client")
 
@@ -270,9 +272,9 @@ class ExportController < ApplicationController
           accountDescription: client.description,
           accountWebsite: client.url,
           generalContactEmail: client.system_email,
-          serviceContactEmail: client.service_contact.email,
-          serviceContactGivenName: client.service_contact.given_name,
-          serviceContactFamilyName: client.service_contact.family_name,
+          serviceContactEmail: client.service_contact.present? ? client.service_contact.email : nil,
+          serviceContactGivenName: client.service_contact.present? ? client.service_contact.given_name : nil,
+          serviceContactFamilyName: client.service_contact.present? ? client.service_contact.family_name : nil,
           created: export_date(client.created),
           modified: export_date(client.updated),
           deleted: client.deleted_at.present? ? export_date(client.deleted_at) : nil,
@@ -288,9 +290,9 @@ class ExportController < ApplicationController
     rescue StandardError, Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
 
-      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+      # message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
-      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+      render json: { "errors" => { "title" => exception.message }}.to_json, status: :bad_request
     end
   end
 
