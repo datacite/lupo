@@ -136,6 +136,8 @@ module Indexable
         aggregations = provider_aggregations
       elsif options[:totals_agg] == "client"
         aggregations = client_aggregations
+      elsif options[:totals_agg] == "client_export"
+        aggregations = client_export_aggregations
       elsif options[:totals_agg] == "prefix"
         aggregations = prefix_aggregations
       else

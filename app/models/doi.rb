@@ -579,6 +579,10 @@ class Doi < ActiveRecord::Base
     { clients_totals: { terms: { field: 'client_id', size: ::Client.__elasticsearch__.count, min_doc_count: 1 }, aggs: sub_aggregations } }
   end
 
+  def self.client_export_aggregations
+    { clients_totals: { terms: { field: 'client_id', size: ::Client.__elasticsearch__.count, min_doc_count: 1 }, aggs: export_sub_aggregations } }
+  end
+
   def self.prefix_aggregations
     { prefixes_totals: { terms: { field: 'prefix', size: ::Prefix.count, min_doc_count: 1 }, aggs: sub_aggregations } }
   end
@@ -587,6 +591,14 @@ class Doi < ActiveRecord::Base
     {
       states: { terms: { field: 'aasm_state', size: 4, min_doc_count: 1 } },
       this_month: { date_range: { field: 'created', ranges: { from: "now/M", to: "now/d" } } },
+      this_year: { date_range: { field: 'created', ranges: { from: "now/y", to: "now/d" } } },
+      last_year: { date_range: { field: 'created', ranges: { from: "now-1y/y", to: "now/y-1d" } } },
+      two_years_ago: { date_range: { field: 'created', ranges: { from: "now-2y/y", to: "now-1y/y-1d" } } }
+    }
+  end
+
+  def self.export_sub_aggregations
+    {
       this_year: { date_range: { field: 'created', ranges: { from: "now/y", to: "now/d" } } },
       last_year: { date_range: { field: 'created', ranges: { from: "now-1y/y", to: "now/y-1d" } } },
       two_years_ago: { date_range: { field: 'created', ranges: { from: "now-2y/y", to: "now-1y/y-1d" } } }
@@ -667,6 +679,8 @@ class Doi < ActiveRecord::Base
       aggregations = provider_aggregations
     elsif options[:totals_agg] == "client"
       aggregations = client_aggregations
+    elsif options[:totals_agg] == "client_export"
+      aggregations = client_export_aggregations
     elsif options[:totals_agg] == "prefix"
       aggregations = prefix_aggregations
     else

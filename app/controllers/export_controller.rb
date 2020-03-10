@@ -233,7 +233,7 @@ class ExportController < ApplicationController
       logger.warn "Exporting #{clients.length} repositories."
 
       # Get doi counts via DOIs query and combine next to clients.
-      response = Doi.query(nil, state: "registered,findable", page: { size: 0, number: 1 }, totals_agg: "client")
+      response = Doi.query(nil, state: "registered,findable", page: { size: 0, number: 1 }, totals_agg: "client_export")
 
       client_totals = {}
       totals_buckets = response.response.aggregations.clients_totals.buckets
@@ -286,9 +286,9 @@ class ExportController < ApplicationController
           created: export_date(client.created),
           modified: export_date(client.updated),
           deleted: client.deleted_at.present? ? export_date(client.deleted_at) : nil,
-          doisCountCurrentYear: client_totals[client.uid] ? client_totals[client.uid]["this_year"] : nil,
-          doisCountPreviousYear: client_totals[client.uid] ? client_totals[client.uid]["last_year"] : nil,
-          doisCountTotal: client_totals[client.uid] ? client_totals[client.uid]["count"] : nil
+          doisCountCurrentYear: client_totals[client.uid] ? client_totals[client.uid]["this_year"] : 0,
+          doisCountPreviousYear: client_totals[client.uid] ? client_totals[client.uid]["last_year"] : 0,
+          doisCountTotal: client_totals[client.uid] ? client_totals[client.uid]["count"] : 0
         }.values
 
         csv += CSV.generate_line row
