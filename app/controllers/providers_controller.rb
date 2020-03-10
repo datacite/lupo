@@ -28,6 +28,7 @@ class ProvidersController < ApplicationController
         exclude_registration_agencies: params[:exclude_registration_agencies],
         year: params[:year],
         from_date: params[:from_date],
+        until_date: params[:until_date],
         region: params[:region], 
         consortium_id: params[:consortium_id], 
         member_type: params[:member_type], 

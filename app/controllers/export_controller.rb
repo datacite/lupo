@@ -24,7 +24,7 @@ class ExportController < ApplicationController
     begin
       # Loop through all providers
       page = { size: 1000, number: 1}
-      response = Provider.query(nil, page: page, from_date: params[:from_date], include_deleted: true, exclude_registration_agencies: true)
+      response = Provider.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true, exclude_registration_agencies: true)
       providers = response.results.to_a
 
       total = response.results.total
@@ -34,7 +34,7 @@ class ExportController < ApplicationController
       page_num = 2
       while page_num <= total_pages
         page = { size: 1000, number: page_num }
-        response = Provider.query(nil, page: page, from_date: params[:from_date], include_deleted: true, exclude_registration_agencies: true)
+        response = Provider.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true, exclude_registration_agencies: true)
         providers = providers + response.results.to_a
         page_num += 1
       end
@@ -101,13 +101,17 @@ class ExportController < ApplicationController
         ]
       end
 
-      send_data csv, filename: "contacts-#{params.fetch(:type, "all")}-#{Date.today}.csv"
+      if params[:until_date]
+        filename = "contacts-#{params.fetch(:type, "all")}-#{params[:until_date]}.csv"
+      else
+        filename = "contacts-#{params.fetch(:type, "all")}-#{Date.today}.csv"
+      end
+
+      send_data csv, filename: filename
     rescue StandardError, Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
 
-      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
-
-      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+      render json: { "errors" => { "title" => exception.message }}.to_json, status: :bad_request
     end
   end
 
@@ -117,7 +121,7 @@ class ExportController < ApplicationController
     begin
       # Loop through all providers
       page = { size: 1000, number: 1 }
-      response = Provider.query(nil, page: page, from_date: params[:from_date], include_deleted: true, exclude_registration_agencies: true)
+      response = Provider.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true, exclude_registration_agencies: true)
       providers = response.results.to_a
 
       total = response.results.total
@@ -127,7 +131,7 @@ class ExportController < ApplicationController
       page_num = 2
       while page_num <= total_pages
         page = { size: 1000, number: page_num }
-        response = Provider.query(nil, page: page, from_date: params[:from_date], include_deleted: true, exclude_registration_agencies: true)
+        response = Provider.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true, exclude_registration_agencies: true)
         providers = providers + response.results.to_a
         page_num += 1
       end
@@ -192,13 +196,17 @@ class ExportController < ApplicationController
         csv += CSV.generate_line row
       end
 
-      send_data csv, filename: "organizations-#{Date.today}.csv"
+      if params[:until_date]
+        filename = "organizations-#{params[:until_date]}.csv"
+      else
+        filename = "organizations-#{Date.today}.csv"
+      end
+
+      send_data csv, filename: filename
     rescue StandardError, Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
 
-      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
-
-      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+      render json: { "errors" => { "title" => exception.message }}.to_json, status: :bad_request
     end
   end
 
@@ -207,7 +215,7 @@ class ExportController < ApplicationController
     begin
       # Loop through all clients
       page = { size: 1000, number: 1 }
-      response = Client.query(nil, page: page, from_date: params[:from_date], include_deleted: true, exclude_registration_agencies: true)
+      response = Client.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true, exclude_registration_agencies: true)
       clients = response.results.to_a
 
       total = response.results.total
@@ -217,7 +225,7 @@ class ExportController < ApplicationController
       page_num = 2
       while page_num <= total_pages
         page = { size: 1000, number: page_num }
-        response = Client.query(nil, page: page, from_date: params[:from_date], include_deleted: true, exclude_registration_agencies: true)
+        response = Client.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true, exclude_registration_agencies: true)
         clients = clients + response.results.to_a
         page_num += 1
       end
@@ -286,11 +294,15 @@ class ExportController < ApplicationController
         csv += CSV.generate_line row
       end
 
-      send_data csv, filename: "repositories-#{Date.today}.csv"
+      if params[:until_date]
+        filename = "repositories-#{params[:until_date]}.csv"
+      else
+        filename = "repositories-#{Date.today}.csv"
+      end
+
+      send_data csv, filename: filename
     rescue StandardError, Elasticsearch::Transport::Transport::Errors::BadRequest => exception
       Raven.capture_exception(exception)
-
-      # message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
 
       render json: { "errors" => { "title" => exception.message }}.to_json, status: :bad_request
     end
