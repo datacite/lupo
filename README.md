@@ -23,6 +23,14 @@ You can now point your browser to `http://localhost:8065` and use the applicatio
 
 ## Development
 
+For basic setup one can use the following:
+
+```bash
+bundle exec rake db:create
+bundle exec rake db:schema:load
+bundle exec rake db:seed:development:base
+```
+
 We use Rspec for testing:
 
 ```bash
