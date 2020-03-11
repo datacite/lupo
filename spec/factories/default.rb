@@ -453,6 +453,18 @@ FactoryBot.define do
       occurred_at { "2015-06-13T16:14:19Z" }
     end
 
+    factory :event_for_datacite_usage do
+      source_id { "datacite-usage" }
+      source_token { "5348967fhdjksr3wyui325" }
+      total { rand(1..100).to_int }
+      sequence(:subj_id) { |_n| "https://api.test.datacite.org/report/#{SecureRandom.uuid}" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      obj { { "date_published" => "2007-06-13T16:14:19Z" } }
+      obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
+      relation_type_id { "unique-dataset-investigations-regular" }
+      occurred_at { "2015-06-13T16:14:19Z" }
+    end
+
     factory :event_for_datacite_orcid_auto_update do
       source_id { "datacite-orcid-auto-update" }
       source_token { "5348967fhdjksr3wyui325" }
