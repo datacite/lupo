@@ -9,13 +9,13 @@ module Indexable
       IndexJob.perform_later(self)
       if self.class.name == "Doi"
         update_column(:indexed, Time.zone.now)
-        send_import_message(self.to_jsonapi) if aasm_state == "findable" unless (Rails.env.test? || %w(crossref medra kisti jalc op).include?(client.symbol.downcase.split(".").first))
+        send_import_message(self.to_jsonapi) if aasm_state == "findable" && !Rails.env.test? && !%w(crossref.citations medra.citations jalc.citations kisti.citations op.citations).include?(client.symbol.downcase)
       end
     end
 
     after_touch do
       # use index_document instead of update_document to also update virtual attributes
-      IndexJob.perform_later(self)
+      IndexBackgroundJob.perform_later(self)
     end
 
     before_destroy do
@@ -136,6 +136,8 @@ module Indexable
         aggregations = provider_aggregations
       elsif options[:totals_agg] == "client"
         aggregations = client_aggregations
+      elsif options[:totals_agg] == "client_export"
+        aggregations = client_export_aggregations
       elsif options[:totals_agg] == "prefix"
         aggregations = prefix_aggregations
       else
@@ -210,6 +212,8 @@ module Indexable
       # filters for some classes
       if self.name == "Provider"
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        must << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
+        must << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
         must << { term: { region: options[:region].upcase }} if options[:region].present?
         must << { term: { "consortium_id.raw" => options[:consortium_id] }} if options[:consortium_id].present?
         must << { term: { member_type: options[:member_type] }} if options[:member_type].present?
@@ -219,12 +223,14 @@ module Indexable
 
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
         if options[:exclude_registration_agencies]
-          must_not << { terms: { role_name: ["ROLE_ADMIN", "ROLE_REGISTRATION_AGENCY", "ROLE_CONSORTIUM_ORGANIZATION"] }}
+          must_not << { terms: { role_name: ["ROLE_ADMIN", "ROLE_REGISTRATION_AGENCY"] }}
         else
           must_not << { term: { role_name: "ROLE_ADMIN" }}
         end
       elsif self.name == "Client"
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        must << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
+        must << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
         must << { terms: { "software.raw" => options[:software].split(",") }} if options[:software].present?
         must << { terms: { certificate: options[:certificate].split(",") }} if options[:certificate].present?
         must << { terms: { repository_type: options[:repository_type].split(",") }} if options[:repository_type].present?
@@ -233,7 +239,7 @@ module Indexable
         must << { term: { opendoar_id: options[:opendoar_id] }} if options[:opendoar_id].present?
         must << { term: { client_type: options[:client_type] }} if options[:client_type].present?
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
-        must_not << { terms: { provider_id: ["crossref", "medra", "op"] }} if options[:exclude_registration_agencies]
+        must_not << { terms: { uid: %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations) }} if options[:exclude_registration_agencies]
       elsif self.name == "Doi"
         must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
         must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
@@ -243,7 +249,7 @@ module Indexable
         must << { term: { "client.re3data_id" => options[:re3data_id].gsub("/", '\/').upcase }} if options[:re3data_id].present?
         must << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
         must << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
-        must_not << { terms: { provider_id: ["crossref", "medra", "op"] }} if options[:exclude_registration_agencies]
+        must_not << { terms: { "client.uid" => %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations) }} if options[:exclude_registration_agencies]
       elsif self.name == "Event"
         must << { term: { subj_id: URI.decode(options[:subj_id]) }} if options[:subj_id].present?
         must << { term: { obj_id: URI.decode(options[:obj_id]) }} if options[:obj_id].present?
@@ -253,11 +259,15 @@ module Indexable
         must << { range: { occurred_at: { gte: "#{options[:occurred_at].split("-").min}||/y", lte: "#{options[:occurred_at].split("-").max}||/y", format: "yyyy" }}} if options[:occurred_at].present?
         must << { terms: { prefix: options[:prefix].split(",") }} if options[:prefix].present?
         must << { terms: { doi: options[:doi].downcase.split(",") }} if options[:doi].present?
+        must << { terms: { source_doi: options[:source_doi].downcase.split(",") }} if options[:source_doi].present?
+        must << { terms: { target_doi: options[:target_doi].downcase.split(",") }} if options[:target_doi].present?
         must << { terms: { orcid: options[:orcid].split(",") }} if options[:orcid].present?
         must << { terms: { isni: options[:isni].split(",") }} if options[:isni].present?
         must << { terms: { subtype: options[:subtype].split(",") }} if options[:subtype].present?
         must << { terms: { source_id: options[:source_id].split(",") }} if options[:source_id].present?
         must << { terms: { relation_type_id: options[:relation_type_id].split(",") }} if options[:relation_type_id].present?
+        must << { terms: { source_relation_type_id: options[:source_relation_type_id].split(",") }} if options[:source_relation_type_id].present?
+        must << { terms: { target_relation_type_id: options[:target_relation_type_id].split(",") }} if options[:target_relation_type_id].present?
         must << { terms: { registrant_id: options[:registrant_id].split(",") }} if options[:registrant_id].present?
         must << { terms: { registrant_id: options[:provider_id].split(",") }} if options[:provider_id].present?
         must << { terms: { issn: options[:issn].split(",") }} if options[:issn].present?
@@ -451,11 +461,11 @@ module Indexable
 
       self.__elasticsearch__.create_index!(index: index_name) unless self.__elasticsearch__.index_exists?(index: index_name)
       self.__elasticsearch__.create_index!(index: alternate_index_name) unless self.__elasticsearch__.index_exists?(index: alternate_index_name)
-      
+
       # index_name is the active index
       client = Elasticsearch::Model.client
       client.indices.put_alias index: index_name, name: alias_name unless client.indices.exists_alias?(name: alias_name)
-      
+
       "Created indexes #{index_name} (active) and #{alternate_index_name}."
     end
 
@@ -479,7 +489,7 @@ module Indexable
     # Needs to run every time we change the mappings
     def upgrade_index
       inactive_index ||= self.inactive_index
-      
+
       self.__elasticsearch__.delete_index!(index: inactive_index) if self.__elasticsearch__.index_exists?(index: inactive_index)
 
       if self.__elasticsearch__.index_exists?(index: inactive_index)
@@ -501,10 +511,9 @@ module Indexable
       inactive_index_count = stats.dig("indices", inactive_index, "primaries", "docs", "count")
       database_count = self.all.count
 
-      message = "Active index #{active_index} has #{active_index_count} documents, " \
+      "Active index #{active_index} has #{active_index_count} documents, " \
         "inactive index #{inactive_index} has #{inactive_index_count} documents, " \
         "database has #{database_count} documents."
-      return message
     end
 
     # switch between the two indexes, i.e. the index that is aliased
@@ -531,7 +540,7 @@ module Indexable
             { add:    { index: index_name, alias: alias_name } }
           ]
         }
-        
+
         "Switched active index to #{index_name}."
       end
     end

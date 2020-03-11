@@ -5,6 +5,7 @@ class OldEventsController < ApplicationController
   include Facetable
 
   prepend_before_action :authenticate_user!, except: [:index, :show]
+  before_action :detect_crawler
   before_action :load_event, only: [:show, :destroy]
   before_action :set_include, only: [:index, :show, :create, :update]
   authorize_resource only: [:destroy]
@@ -18,7 +19,7 @@ class OldEventsController < ApplicationController
     exists = @event.present?
 
     # create event if it doesn't exist already
-    @event = Event.new(safe_params.except(:format)) unless @event.present?
+    @event = Event.new(safe_params.except(:format)) if @event.blank?
 
     authorize! :create, @event
 

@@ -1,6 +1,7 @@
 require "countries"
 
 class Provider < ActiveRecord::Base
+  audited except: [:globus_uuid, :salesforce_id, :password, :updated, :experiments, :comments, :logo, :version, :doi_quota_allowed, :doi_quota_used]
 
   # include helper module for caching infrequently changing resources
   include Cacheable
@@ -21,6 +22,13 @@ class Provider < ActiveRecord::Base
   include Mailable
 
   include Elasticsearch::Model
+
+  has_attached_file :logo, 
+    styles: { medium: ["500x200", :png] },
+    default_style: :medium,
+    default_url: "/images/members/default.png"
+
+  validates_attachment :logo, content_type: { content_type: ["image/jpg", "image/jpeg", "image/png"] }
 
   # define table and attribute names
   # uid is used as unique identifier, mapped to id in serializer
@@ -49,6 +57,8 @@ class Provider < ActiveRecord::Base
   validates_format_of :ror_id, :with => /\Ahttps:\/\/ror\.org\/0\w{6}\d{2}\z/, if: :ror_id?, message: "ROR ID should be a url"
   validates_format_of :twitter_handle, :with => /\A@[a-zA-Z0-9_]{1,15}\z/, if: :twitter_handle?
 
+  validates_attachment_content_type :logo, content_type: /\Aimage/
+  
   # validates :technical_contact, contact: true
   # validates :billing_contact, contact: true
   # validates :secondary_billing_contact, contact: true
@@ -64,6 +74,7 @@ class Provider < ActiveRecord::Base
   has_many :prefixes, through: :provider_prefixes
   has_many :consortium_organizations, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_id", inverse_of: :consortium
   belongs_to :consortium, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_id", inverse_of: :consortium_organizations, optional: true
+  has_many :activities, as: :auditable, dependent: :destroy
 
   before_validation :set_region, :set_defaults
   before_create { self.created = Time.zone.now.utc.iso8601 }
@@ -108,6 +119,7 @@ class Provider < ActiveRecord::Base
       indexes :description,   type: :text
       indexes :website,       type: :text, fields: { keyword: { type: "keyword" }}
       indexes :logo_url,      type: :text
+      indexes :image,         type: :text
       indexes :region,        type: :keyword
       indexes :focus_area,    type: :keyword
       indexes :organization_type, type: :keyword
@@ -128,7 +140,7 @@ class Provider < ActiveRecord::Base
         organization: { type: :text},
         department: { type: :text},
         city: { type: :text },
-        country: { type: :text },
+        country: { type: :keyword },
         address: { type: :text }}
       indexes :technical_contact, type: :object, properties: {
         email: { type: :text },
@@ -439,15 +451,15 @@ class Provider < ActiveRecord::Base
 
   def member_type_labels
     {
-      "ROLE_MEMBER"               => "Member Only",
-      "ROLE_ALLOCATOR"            => "Direct Member",
-      "ROLE_CONSORTIUM"           => "Consortium",
+      "ROLE_MEMBER" => "Member Only",
+      "ROLE_ALLOCATOR" => "Direct Member",
+      "ROLE_CONSORTIUM" => "Consortium",
       "ROLE_CONSORTIUM_ORGANIZATION" => "Consortium Organization",
       "ROLE_CONTRACTUAL_PROVIDER" => "Contractual Member",
-      "ROLE_ADMIN"                => "DataCite admin",
-      "ROLE_DEV"                  => "DataCite admin",
-      "ROLE_FOR_PROFIT_PROVIDER"  => "For-profit Provider",
-      "ROLE_REGISTRATION_AGENCY"  => "DOI Registration Agency"
+      "ROLE_ADMIN" => "DataCite admin",
+      "ROLE_DEV" => "DataCite admin",
+      "ROLE_FOR_PROFIT_PROVIDER" => "For-profit Provider",
+      "ROLE_REGISTRATION_AGENCY" => "DOI Registration Agency",
      }
   end
 
@@ -462,13 +474,13 @@ class Provider < ActiveRecord::Base
 
   def member_types
     {
-      "ROLE_MEMBER"               => "member_only",
-      "ROLE_ALLOCATOR"            => "direct_member",
-      "ROLE_CONSORTIUM"           => "consortium",
+      "ROLE_MEMBER" => "member_only",
+      "ROLE_ALLOCATOR" => "direct_member",
+      "ROLE_CONSORTIUM" => "consortium",
       "ROLE_CONSORTIUM_ORGANIZATION" => "consortium_organization",
       "ROLE_CONTRACTUAL_PROVIDER" => "contractual_member",
-      "ROLE_FOR_PROFIT_PROVIDER"  => "for_profit_provider",
-      "ROLE_REGISTRATION_AGENCY"  => "registration_agency"
+      "ROLE_FOR_PROFIT_PROVIDER" => "for_profit_provider",
+      "ROLE_REGISTRATION_AGENCY" => "registration_agency",
      }
   end
 
@@ -511,7 +523,7 @@ class Provider < ActiveRecord::Base
   end
 
   def logo_url
-    "#{ENV['CDN_URL']}/images/members/#{logo}" if logo.present?
+    logo.url(:medium) if logo.present?
   end
 
   def password_input=(value)
@@ -591,5 +603,8 @@ class Provider < ActiveRecord::Base
     self.billing_information = {} unless billing_information.present?
     self.consortium_id = nil unless member_type == "consortium_organization"
     self.non_profit_status = "non-profit" unless non_profit_status.present?
+
+    # custom filename for attachment as data URLs don't support filenames
+    self.logo_file_name = symbol.downcase + "." + logo_content_type.split("/").last if logo_content_type.present?
   end
 end

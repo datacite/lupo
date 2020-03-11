@@ -6,21 +6,16 @@ class ActivitySerializer
   
   attributes "prov:wasGeneratedBy", "prov:generatedAtTime", "prov:wasDerivedFrom", "prov:wasAttributedTo", :action, :version, :changes
 
-  belongs_to :doi, record_type: :dois
-
   attribute "prov:wasDerivedFrom" do |object|
-    url = Rails.env.production? ? "https://doi.org/" : "https://handle.test.datacite.org/"
-    url + object.uid
+    object.was_derived_from
   end
 
   attribute "prov:wasAttributedTo" do |object|
-    url = Rails.env.production? ? "https://api.datacite.org" : "https://api.test.datacite.org"
-    object.username.include?(".") ? url + "/clients/" + object.username : url + "/providers/" + object.username
+    object.was_attributed_to
   end
 
   attribute "prov:wasGeneratedBy" do |object|
-    url = Rails.env.production? ? "https://api.datacite.org" : "https://api.test.datacite.org"
-    "#{url}/activities/#{object.request_uuid}"
+    object.was_generated_by
   end
 
   attribute "prov:generatedAtTime" do |object|

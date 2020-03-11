@@ -5,7 +5,7 @@ class ProvidersController < ApplicationController
   prepend_before_action :authenticate_user!
   before_action :set_provider, only: [:show, :update, :destroy]
   before_action :set_include
-  load_and_authorize_resource :except => [:index, :show, :totals, :random]
+  load_and_authorize_resource only: [:update, :destroy]
 
   def index
     sort = case params[:sort]
@@ -26,7 +26,9 @@ class ProvidersController < ApplicationController
     else
       response = Provider.query(params[:query],
         exclude_registration_agencies: params[:exclude_registration_agencies],
-        year: params[:year], 
+        year: params[:year],
+        from_date: params[:from_date],
+        until_date: params[:until_date],
         region: params[:region], 
         consortium_id: params[:consortium_id], 
         member_type: params[:member_type], 
@@ -155,16 +157,25 @@ class ProvidersController < ApplicationController
       clients = client_count(provider_id: nil)
       dois = doi_count(provider_id: nil)
       resource_types = resource_type_count(provider_id: nil)
+      citations = nil # citation_count(provider_id: nil)
+      views = nil # view_count(provider_id: nil)
+      downloads = nil # download_count(provider_id: nil)
     elsif @provider.member_type == "consortium"
       providers = provider_count(consortium_id: params[:id])
       clients = client_count(consortium_id: params[:id])
       dois = doi_count(consortium_id: params[:id])
       resource_types = resource_type_count(consortium_id: params[:id])
+      citations = citation_count(consortium_id: params[:id])
+      views = view_count(consortium_id: params[:id])
+      downloads = download_count(consortium_id: params[:id])
     else
       providers = nil
       clients = client_count(provider_id: params[:id])
       dois = doi_count(provider_id: params[:id])
       resource_types = resource_type_count(provider_id: params[:id])
+      citations = citation_count(provider_id: params[:id])
+      views = view_count(provider_id: params[:id])
+      downloads = download_count(provider_id: params[:id])
     end
 
     options = {}
@@ -172,7 +183,11 @@ class ProvidersController < ApplicationController
       providers: providers,
       clients: clients,
       dois: dois,
-      "resourceTypes" => resource_types }.compact
+      "resourceTypes" => resource_types,
+      citations: citations,
+      views: views,
+      downloads: downloads,
+    }.compact
     options[:include] = @include
     options[:is_collection] = false
     options[:params] = { current_ability: current_ability }
@@ -211,7 +226,7 @@ class ProvidersController < ApplicationController
 
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
-      logger.error @provider.errors.inspect
+      Rails.logger.error @provider.errors.inspect
       render json: serialize_errors(@provider.errors), status: :unprocessable_entity
     end
   end
@@ -243,7 +258,7 @@ class ProvidersController < ApplicationController
 
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
     else
-      logger.error @provider.errors.inspect
+      Rails.logger.error @provider.errors.inspect
       render json: serialize_errors(@provider.errors), status: :unprocessable_entity
     end
   end
@@ -254,13 +269,13 @@ class ProvidersController < ApplicationController
     if active_client_count(provider_id: @provider.symbol).positive?
       message = "Can't delete provider that has active clients."
       status = 400
-      logger.warn message
+      Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @provider.update_attributes(is_active: nil, deleted_at: Time.zone.now)
       @provider.send_delete_email unless Rails.env.test?
       head :no_content
     else
-      logger.error @provider.errors.inspect
+      Rails.logger.error @provider.errors.inspect
       render json: serialize_errors(@provider.errors), status: :unprocessable_entity
     end
   end
@@ -293,7 +308,7 @@ class ProvidersController < ApplicationController
 
   def set_provider
     @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: params[:id]).first
-    fail ActiveRecord::RecordNotFound unless @provider.present?
+    fail ActiveRecord::RecordNotFound if @provider.blank?
   end
 
   private
@@ -303,7 +318,7 @@ class ProvidersController < ApplicationController
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params,
       only: [
-        :name, "displayName", :symbol, :description, :website, :joined, "globusUuid", "organizationType", "focusArea", :consortium, "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation", { "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType", "nonProfitStatus", "salesforceId",
+        :name, "displayName", :symbol, :logo, :description, :website, :joined, "globusUuid", "organizationType", "focusArea", :consortium, "systemEmail", "groupEmail", "isActive", "passwordInput", :country, "billingInformation", { "billingInformation": ["postCode", :state, :city, :address, :department, :organization, :country]}, "rorId", "twitterHandle","memberType", "nonProfitStatus", "salesforceId",
       "technicalContact", { "technicalContact": [:email, "givenName", "familyName"] },
       "secondaryTechnicalContact", { "secondaryTechnicalContact": [:email, "givenName", "familyName"] },
       "secondaryBillingContact", { "secondaryBillingContact": [:email, "givenName", "familyName"] },

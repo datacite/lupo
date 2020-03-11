@@ -14,12 +14,12 @@ module Helpable
 
     def register_url
       unless url.present?
-        logger.error "[Handle] Error updating DOI " + doi + ": url missing."
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": url missing."
         return OpenStruct.new(body: { "errors" => [{ "title" => "URL missing." }] })
       end
 
       unless client_id.present?
-        logger.error "[Handle] Error updating DOI " + doi + ": client ID missing."
+        Rails.logger.error "[Handle] Error updating DOI " + doi + ": client ID missing."
         return OpenStruct.new(body: { "errors" => [{ "title" => "Client ID missing." }] })
       end
 
@@ -56,11 +56,15 @@ module Helpable
       if [200, 201].include?(response.status)
         # update minted column after first successful registration in handle system
         self.update_attributes(minted: Time.zone.now, updated: Time.zone.now) if minted.blank?
-        logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "." unless Rails.env.test?
+        Rails.logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "." unless Rails.env.test?
 
         self.__elasticsearch__.index_document
+      elsif response.status == 404
+        Rails.logger.info "[Handle] Error updating URL for DOI " + doi + ": not found"
+      elsif response.status == 408
+        Rails.logger.warn "[Handle] Error updating URL for DOI " + doi + ": timeout"
       else
-        logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect unless Rails.env.test?
+        Rails.logger.error "[Handle] Error updating URL for DOI " + doi + ": " + response.body.inspect unless Rails.env.test?
       end
 
       response
@@ -71,7 +75,7 @@ module Helpable
       response = Maremma.get(url, ssl_self_signed: true, timeout: 10)
 
       if response.status != 200
-        logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect unless Rails.env.test?
+        Rails.logger.error "[Handle] Error fetching URL for DOI " + doi + ": " + response.body.inspect unless Rails.env.test?
       end
 
       response
@@ -122,10 +126,10 @@ module Helpable
 
   module ClassMethods
     def get_dois(options={})
-      return OpenStruct.new(body: { "errors" => [{ "title" => "Prefix missing" }] }) unless options[:prefix].present?
+      return OpenStruct.new(body: { "errors" => [{ "title" => "Prefix missing" }] }) if options[:prefix].blank?
 
-      count_url = ENV['HANDLE_URL'] + "/api/handles?prefix=#{options[:prefix]}&pageSize=0"
-      response = Maremma.get(count_url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 60)
+      count_url = ENV["HANDLE_URL"] + "/api/handles?prefix=#{options[:prefix]}&pageSize=0"
+      response = Maremma.get(count_url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV["HANDLE_PASSWORD"], ssl_self_signed: true, timeout: 60)
 
       total = response.body.dig("data", "totalCount").to_i
       dois = []
@@ -133,45 +137,47 @@ module Helpable
       if total > 0
         # walk through paginated results
         total_pages = (total.to_f / 1000).ceil
-        
+
         (0...total_pages).each do |page|
-          url = ENV['HANDLE_URL'] + "/api/handles?prefix=#{options[:prefix]}&page=#{page}&pageSize=1000"
-          response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 60)
+          url = ENV["HANDLE_URL"] + "/api/handles?prefix=#{options[:prefix]}&page=#{page}&pageSize=1000"
+          response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV["HANDLE_PASSWORD"], ssl_self_signed: true, timeout: 60)
           if response.status == 200
             dois += (response.body.dig("data", "handles") || [])
           else
             text = "Error " + response.body["errors"].inspect
 
-            logger.error "[Handle] " + text
+            Rails.logger.error "[Handle] " + text
             User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
           end
         end
       end
 
-      logger.info "#{total} DOIs found."
+      Rails.logger.info "#{total} DOIs found."
 
       dois
     end
 
     def get_doi(options={})
-      return OpenStruct.new(body: { "errors" => [{ "title" => "DOI missing" }] }) unless options[:doi].present?
+      return OpenStruct.new(body: { "errors" => [{ "title" => "DOI missing" }] }) if options[:doi].blank?
 
       url = Rails.env.production? ? "https://doi.org" : "https://handle.test.datacite.org"
       url += "/api/handles/#{options[:doi]}"
-      response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV['HANDLE_PASSWORD'], ssl_self_signed: true, timeout: 10)
+      response = Maremma.get(url, username: "300%3A#{ENV['HANDLE_USERNAME']}", password: ENV["HANDLE_PASSWORD"], ssl_self_signed: true, timeout: 10)
 
-      if response.status != 200
+      if response.status == 200
+        response
+      elsif response.status == 404
+        OpenStruct.new(status: 404, body: { "errors" => [{ "status" => 404, "title" => "Not found." }] })
+      else
         text = "Error " + response.body["errors"].inspect
 
-        logger.error "[Handle] " + text
+        Rails.logger.error "[Handle] " + text
         User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
       end
-
-      response
     end
 
     def delete_doi(options={})
-      return OpenStruct.new(body: { "errors" => [{ "title" => "DOI missing" }] }) unless options[:doi].present?
+      return OpenStruct.new(body: { "errors" => [{ "title" => "DOI missing" }] }) if options[:doi].blank?
       return OpenStruct.new(body: { "errors" => [{ "title" => "Only DOIs with prefix 10.5072 can be deleted" }] }) unless options[:doi].start_with?("10.5072")
 
       url = "#{ENV['HANDLE_URL']}/api/handles/#{options[:doi]}"
@@ -179,10 +185,12 @@ module Helpable
 
       if response.status == 200
         response
+      elsif response.status == 404
+        OpenStruct.new(status: 404, body: { "errors" => [{ "status" => 404, "title" => "Not found." }] })
       else
         text = "Error " + response.body["errors"].inspect
 
-        logger.error "[Handle] " + text
+        Rails.logger.error "[Handle] " + text
         User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
         response
       end
@@ -197,9 +205,7 @@ module Helpable
         element.fetch( CGI.unescapeHTML(content), nil)
       elsif element.is_a?(Array)
         a = element.map { |e| e.is_a?(Hash) ? e.fetch( CGI.unescapeHTML(content), nil) : e }.uniq
-        a = options[:first] ? a.first : a.unwrap
-      else
-        nil
+        options[:first] ? a.first : a.unwrap
       end
     end
   end

@@ -1,8 +1,10 @@
 require 'rails_helper'
 
 describe "Providers", type: :request, elasticsearch: true  do
-  let!(:provider) { create(:provider) }
-  let(:token) { User.generate_token }
+  let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
+  let(:provider) { create(:provider, consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION") }
+  let(:token) { User.generate_token(role_id: "consortium_admin", provider_id: consortium.symbol.downcase) }
+  let(:admin_token) { User.generate_token }
   let(:params) do
     { "data" => { "type" => "providers",
                   "attributes" => {
@@ -14,21 +16,22 @@ describe "Providers", type: :request, elasticsearch: true  do
                     "country" => "GB" } } }
   end
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + token } }
+  let(:admin_headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + admin_token } }
 
   describe 'GET /providers' do
-    let!(:providers)  { create_list(:provider, 3) }
+    let!(:providers) { create_list(:provider, 3) }
 
     before do
       Provider.import
-      sleep 2
+      sleep 1
     end
 
     it "returns providers" do
       get "/providers", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json['data'].size).to eq(4)
-      expect(json.dig('meta', 'total')).to eq(4)
+      expect(json['data'].size).to eq(3)
+      expect(json.dig('meta', 'total')).to eq(3)
     end
   end
 
@@ -57,32 +60,22 @@ describe "Providers", type: :request, elasticsearch: true  do
     end
 
     context 'get provider type ROLE_CONTRACTUAL_PROVIDER and check it works ' do
-      let(:provider)  { create(:provider, role_name: "ROLE_CONTRACTUAL_PROVIDER", name: "Contractor", symbol: "CONTRCTR") }
+      let(:provider) { create(:provider, role_name: "ROLE_CONTRACTUAL_PROVIDER", name: "Contractor", symbol: "CONTRCTR") }
 
       it 'get provider' do
         get "/providers/#{provider.symbol.downcase}", nil, headers
 
+        expect(last_response.status).to eq(200)
         expect(json).not_to be_empty
         expect(json.dig('data', 'id')).to eq(provider.symbol.downcase)
-      end
-
-      it 'returns status code 200' do
-        get "/providers/#{provider.symbol.downcase}", nil, headers
-
-        expect(last_response.status).to eq(200)
       end
     end
 
     context 'when the record does not exist' do
-      it 'returns status code 404' do
-        get "/providers/xxx", nil, headers
-
-        expect(last_response.status).to eq(404)
-      end
-
       it 'returns a not found message' do
         get "/providers/xxx", nil, headers
 
+        expect(last_response.status).to eq(404)
         expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
       end
     end
@@ -119,33 +112,45 @@ describe "Providers", type: :request, elasticsearch: true  do
     end
   end
 
-  describe 'POST /providers' do
-    context 'request is valid' do
+  describe "POST /providers" do
+    context "request is valid" do
+      let(:logo) { "data:image/png;base64," + Base64.strict_encode64(file_fixture("bl.png").read) }
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
                         "symbol" => "BL",
                         "name" => "British Library",
                         "displayName" => "British Library",
+                        "memberType" => "consortium_organization",
+                        "logo" => logo,
                         "website" => "https://www.bl.uk",
                         "salesforceId" => "abc012345678901234",
                         "region" => "EMEA",
                         "systemEmail" => "doe@joe.joe",
-                        "country" => "GB" } } }
+                        "country" => "GB"
+                      },
+                      "relationships": {
+                        "consortium": {
+                          "data": {
+                            "type": "providers",
+                            "id": consortium.symbol.downcase,
+                          }
+                        }
+                      } } }
       end
 
       it 'creates a provider' do
         post '/providers', params, headers
-
+        puts last_response.body
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq("British Library")
         expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
-        expect(json.dig('data', 'attributes', 'salesforceId')).to eq("abc012345678901234")
+        expect(json.dig('data', 'relationships', 'consortium', 'data', 'id')).to eq(consortium.symbol.downcase)
       end
     end
 
-    context 'request ability check' do
-      let!(:providers)  { create_list(:provider, 2) }
+    context "request ability check" do
+      let!(:providers) { create_list(:provider, 2) }
       let(:last_provider_token) { User.generate_token(provider_id: providers.last.symbol, role_id:"provider_admin") }
       let(:headers_last) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + last_provider_token } }
 
@@ -154,7 +159,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         sleep 1
       end
 
-      it 'has no permission' do
+      it "has no permission" do
         get "/providers/#{providers.first.symbol}", nil, headers_last
 
         expect(json["data"].dig('attributes', 'symbol')).to eq(providers.first.symbol)
@@ -163,7 +168,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
     end
 
-    context 'create provider member_role contractual_member' do
+    context "create provider member_role contractual_member" do
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
@@ -177,8 +182,8 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "country" => "GB" } } }
       end
 
-      it 'creates a provider' do
-        post '/providers', params, headers
+      it "creates a provider" do
+        post "/providers", params, admin_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
@@ -187,8 +192,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
     end
 
-    context 'create provider member_role consortium_organization' do
-      let(:consortium) { create(:provider, member_type: "consortium") }
+    context "create provider member_role consortium_organization" do
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
@@ -241,8 +245,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
     end
 
-    context 'create provider not member_role consortium_organization' do
-      let(:consortium) { create(:provider, member_type: "consortium") }
+    context "create provider not member_role consortium_organization" do
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
@@ -276,7 +279,6 @@ describe "Providers", type: :request, elasticsearch: true  do
     end
 
     context 'create provider not member_role consortium' do
-      let(:consortium) { create(:provider, member_type: "provider") }
       let(:params) do
         { "data" => { "type" => "providers",
                       "attributes" => {
@@ -287,19 +289,20 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "systemEmail" => "doe@joe.joe",
                         "website" => "https://www.bl.uk",
                         "memberType" => "consortium_organization",
-                        "country" => "GB" },
-                        "relationships": {
-                          "consortium": {
-                            "data":{
-                              "type": "providers",
-                              "id": consortium.symbol.downcase
-                            }
+                        "country" => "GB" 
+                      },
+                      "relationships": {
+                        "consortium": {
+                          "data":{
+                            "type": "providers",
+                            "id": provider.symbol.downcase
                           }
-                        }} }
+                        }
+                      }} }
       end
 
       it 'creates a provider' do
-        post '/providers', params, headers
+        post '/providers', params, admin_headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq("source"=>"consortium_id", "title"=>"The consortium must be of member_type consortium")
@@ -347,7 +350,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
 
       it 'creates a provider' do
-        post '/providers', params, headers
+        post '/providers', params, admin_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'systemEmail')).to eq("jkiritha@andrew.cmu.edu")
@@ -414,7 +417,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
 
       it 'creates a provider' do
-        post '/providers', params, headers
+        post '/providers', params, admin_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'technicalContact',"email")).to eq("kristian@example.com")
@@ -468,17 +471,11 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
 
       it 'creates a provider' do
-        post '/providers', params, headers
-
-        expect(json.dig('data', 'attributes', 'systemEmail')).to eq("jkiritha@andrew.cmu.edu")
-      end
-
-      it 'returns status code 200' do
-        post '/providers', params, headers
+        post '/providers', params, admin_headers
 
         expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'systemEmail')).to eq("jkiritha@andrew.cmu.edu")
       end
-
     end
 
     context 'request for admin provider' do
@@ -494,7 +491,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
 
       it 'creates a provider' do
-        post '/providers', params, headers
+        post '/providers', params, admin_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")
@@ -537,7 +534,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
 
       it 'creates a provider' do
-        post '/providers', params, headers
+        post '/providers', params, admin_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'symbol')).to match(/\A[A-Z]{4}\Z/)
@@ -556,7 +553,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
 
       it 'returns a validation failure message' do
-        post '/providers', params, headers
+        post '/providers', params, admin_headers
 
         expect(last_response.status).to eq(422)
         expect(json["errors"].first).to eq("source"=>"system_email", "title"=>"Can't be blank")
@@ -576,7 +573,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
 
       it 'returns status code 400' do
-        post '/providers', params, headers
+        post '/providers', params, admin_headers
 
         expect(last_response.status).to eq(400)
       end
@@ -595,10 +592,20 @@ describe "Providers", type: :request, elasticsearch: true  do
                         "name" => "British Library",
                         "globusUuid" => "9908a164-1e4f-4c17-ae1b-cc318839d6c8",
                         "displayName" => "British Library",
+                        "memberType" => "consortium_organization",
                         "website" => "https://www.bl.uk",
                         "region" => "Americas",
                         "systemEmail" => "Pepe@mdm.cod",
-                        "country" => "GB" } } }
+                        "country" => "GB"
+                      },
+                      "relationships": {
+                        "consortium": {
+                          "data":{
+                            "type": "providers",
+                            "id": consortium.symbol.downcase
+                          }
+                        }
+                      }} }
       end
 
       it 'updates the record' do
@@ -607,6 +614,7 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'displayName')).to eq("British Library")
         expect(json.dig('data', 'attributes', 'globusUuid')).to eq("9908a164-1e4f-4c17-ae1b-cc318839d6c8")
+        expect(json.dig('data', 'relationships', 'consortium', 'data', 'id')).to eq(consortium.symbol.downcase)
       end
     end
 

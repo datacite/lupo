@@ -8,7 +8,7 @@ module DoiItem
 
   field :id, ID, null: false, hash_key: "identifier", description: "The persistent identifier for the resource"
   field :type, String, null: false, description: "The type of the item."
-  field :creators, [PersonType], null: true, description: "The main researchers involved in producing the data, or the authors of the publication, in priority order" do
+  field :creators, [CreatorType], null: true, description: "The main researchers involved in producing the data, or the authors of the publication, in priority order" do
     argument :first, Int, required: false, default_value: 20
   end
   field :titles, [TitleType], null: true, description: "A name or title by which a resource is known" do
@@ -38,7 +38,16 @@ module DoiItem
     argument :style, String, required: false, default_value: "apa"
     argument :locale, String, required: false, default_value: "en-US"
   end
-  
+  field :reference_count, Int, null: true, description: "Total number of references."
+  field :citation_count, Int, null: true, description: "Total number of citations."
+  field :view_count, Int, null: true, description: "Total number of views."
+  field :download_count, Int, null: true, description: "Total number of downloads."
+  field :citations_over_time, [YearTotalType], null: true, description: "Citations by year."
+  field :views_over_time, [YearMonthTotalType], null: true, description: "Views by month."
+  field :downloads_over_time, [YearMonthTotalType], null: true, description: "Downloads by month."
+  field :citations, [CreativeWorkType], null: true, description: "Citations."
+  field :references, [CreativeWorkType], null: true, description: "References."
+
   def type
     object.types["schemaOrg"]
   end
@@ -51,7 +60,10 @@ module DoiItem
         "name" => c.fetch("name", nil),
         "given_name" => c.fetch("givenName", nil),
         "family_name" => c.fetch("familyName", nil),
-        "affiliation" => c.fetch("affiliation", []))
+        "affiliation" => c.fetch("affiliation", []).map do |a|
+          { "id" => a["affiliationIdentifier"],
+            "name" => a["name"] }.compact
+        end)
     end
   end
 
@@ -73,6 +85,16 @@ module DoiItem
       url = "https://doi.org/#{object.doi}"
     end
     bibliography.first.gsub(url, doi_link(url))
+  end
+  
+  def citations
+    ids = object.citation_events.map {|e| e.source_doi }
+    ElasticsearchLoader.for(Doi).load_many(ids)
+  end
+
+  def references
+    ids = object.reference_events.map { |e| e.target_doi }
+    ElasticsearchLoader.for(Doi).load_many(ids)
   end
 
   def doi_link(url)

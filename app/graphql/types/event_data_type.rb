@@ -2,5 +2,4 @@
 
 class EventDataType < BaseObject
   implements DoiItem
-  implements MetricInterface
 end

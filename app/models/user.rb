@@ -24,12 +24,12 @@ class User
       # globus auth preferred_username looks like 0000-0003-1419-2405@orcid.org
       # default to role user unless database says otherwise
       uid = payload["preferred_username"].present? ? payload["preferred_username"][0..18] : nil
-      
-      if uid.present?        
+
+      if uid.present?
         payload = {
           "uid" => uid,
           "name" => payload["name"],
-          "email" => payload["email"]
+          "email" => payload["email"],
         }
 
         @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30))
@@ -107,7 +107,7 @@ class User
       "role_id" => "temporary",
       "name" => user.name,
       "client_id" => client_id,
-      "provider_id" => provider_id
+      "provider_id" => provider_id,
     }.compact
 
     jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24))
@@ -122,7 +122,7 @@ class User
     fields = [
       { title: "Account ID", value: uid.upcase},
       { title: "Name", value: user.name, short: true },
-      { title: "Contact email", value: user.system_email, short: true }
+      { title: "System email", value: user.system_email, short: true }
     ]
     slack_title = subject + (response[:status] == 200 ? " Sent" : " Failed")
     level = response[:status] == 200 ? "good" : "danger"

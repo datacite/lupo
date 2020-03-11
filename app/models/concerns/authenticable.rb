@@ -8,7 +8,7 @@ module Authenticable
     # encode JWT token using SHA-256 hash algorithm
     def encode_token(payload)
       return nil if payload.blank?
-      
+
       # replace newline characters with actual newlines
       private_key = OpenSSL::PKey::RSA.new(ENV['JWT_PRIVATE_KEY'].to_s.gsub('\n', "\n"))
       JWT.encode(payload, private_key, 'RS256')
@@ -21,7 +21,7 @@ module Authenticable
     # use only for testing, as we don't have private key for JWT encoded by AWS ALB
     def encode_alb_token(payload)
       return nil if payload.blank? || !Rails.env.test?
-      
+
       # replace newline characters with actual newlines
       private_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec256-private.pem").to_s))
       JWT.encode(payload, private_key, 'ES256')
@@ -34,7 +34,7 @@ module Authenticable
     # use only for testing, as we don't have private key for JWT encoded by Globus
     def encode_globus_token(payload)
       return nil if payload.blank? || !Rails.env.test?
-      
+
       # replace newline characters with actual newlines
       private_key = OpenSSL::PKey.read(File.read(Rails.root.join("spec", "fixtures", "certs", "ec512-private.pem").to_s))
       JWT.encode(payload, private_key, 'RS512')
@@ -57,11 +57,11 @@ module Authenticable
       when "RS256"
         # DataCite JWT
         public_key = OpenSSL::PKey::RSA.new(ENV['JWT_PUBLIC_KEY'].to_s.gsub('\n', "\n"))
-        payload = (JWT.decode token, public_key, true, { :algorithm => 'RS256' }).first
+        payload = (JWT.decode token, public_key, true, algorithm: "RS256").first
       when "RS512"
         # Globus JWT
         public_key = OpenSSL::PKey::RSA.new(cached_globus_public_key.fetch("n", nil).to_s.gsub('\n', "\n"))
-        payload = (JWT.decode token, public_key, true, { :algorithm => 'RS512' }).first
+        payload = (JWT.decode token, public_key, true, algorithm: "RS512").first
       else
         raise JWT::DecodeError, "Algorithm #{header["alg"]} is not supported."
       end
@@ -92,13 +92,13 @@ module Authenticable
         public_key_string = cached_alb_public_key(kid)
         public_key = OpenSSL::PKey::EC.new(public_key_string.gsub('\n', "\n"))
       end
-      
+
       payload = (JWT.decode token, public_key, true, { algorithm: 'ES256' }).first
       fail NoMethodError, "Payload is not a hash" unless payload.is_a?(Hash)
 
       # check whether token has expired
       fail JWT::ExpiredSignature, "The token has expired." unless Time.now.to_i < payload["exp"].to_i
-      
+
       payload
     rescue NoMethodError => error
       Rails.logger.error "NoMethodError: " + error.message + " for " + token
@@ -139,34 +139,34 @@ module Authenticable
     end
 
     def get_payload(uid: nil, user: nil, password: nil)
-      roles = { 
-        "ROLE_ADMIN"                => "staff_admin",
-        "ROLE_DATACENTRE"           => "client_admin",
-        "ROLE_ALLOCATOR"            => "provider_admin",
-        "ROLE_CONSORTIUM"           => "provider_admin",
+      roles = {
+        "ROLE_ADMIN" => "staff_admin",
+        "ROLE_DATACENTRE" => "client_admin",
+        "ROLE_ALLOCATOR" => "provider_admin",
+        "ROLE_CONSORTIUM" => "consortium_admin",
         "ROLE_CONSORTIUM_ORGANIZATION" => "provider_admin",
         "ROLE_CONTRACTUAL_PROVIDER" => "provider_admin",
-        "ROLE_FOR_PROFIT_PROVIDER"  => "provider_admin",
-        "ROLE_REGISTRATION_AGENCY"  => "provider_admin"
+        "ROLE_FOR_PROFIT_PROVIDER" => "provider_admin",
+        "ROLE_REGISTRATION_AGENCY" => "provider_admin",
        }
       payload = {
         "uid" => uid,
         "role_id" => roles.fetch(user.role_name, "user"),
         "name" => user.name,
-        "email" => user.system_email
+        "email" => user.system_email,
       }
 
       # we only need password for clients registering DOIs in the handle system
       if uid.include? "."
-        payload.merge!({
+        payload.merge!(
           "provider_id" => uid.split(".", 2).first,
           "client_id" => uid,
-          "password" => password
-        })
+          "password" => password,
+        )
       elsif uid != "admin"
-        payload.merge!({
-          "provider_id" => uid
-        })
+        payload.merge!(
+          "provider_id" => uid,
+        )
       end
 
       payload
@@ -189,6 +189,7 @@ module Authenticable
       return false if doi.aasm_state == "findable"
       return true if user.blank?
       return false if %w(staff_admin staff_user).include?(user.role_id)
+      return false if %w(consortium_admin).include?(user.role_id) && user.provider_id.present? && user.provider_id.upcase == doi.provider.consortium_id 
       return false if %w(provider_admin provider_user).include?(user.role_id) && user.provider_id.present? && user.provider_id == doi.provider_id 
       return false if %w(client_admin client_user user temporary).include?(user.role_id) && user.client_id.present? && user.client_id == doi.client_id
       return true

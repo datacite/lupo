@@ -2,13 +2,13 @@ Rails.application.routes.draw do
   post "/client-api/graphql", to: "graphql#execute"
   get "/client-api/graphql", to: "index#method_not_allowed"
 
-  root :to => 'index#index'
+  root to: "index#index"
 
   # authentication
-  post 'token', :to => 'sessions#create_token'
+  post "token", to: "sessions#create_token"
 
   # authentication via openid connect in load balancer
-  post 'oidc-token', :to => 'sessions#create_oidc_token'
+  post "oidc-token", to: "sessions#create_oidc_token"
 
   # send reset link
   post 'reset', :to => 'sessions#reset'
@@ -53,6 +53,7 @@ Rails.application.routes.draw do
   get 'dois/random', :to => 'dois#random'
   get 'dois/:id/get-url', :to => 'dois#get_url', constraints: { :id => /.+/ }
   get 'dois/get-dois', :to => 'dois#get_dois'
+  get 'providers/image/:id', :to => 'providers#image', constraints: { :id => /.+/ }
   get 'providers/totals', :to => 'providers#totals'
   get 'clients/totals', :to => 'clients#totals'
   get 'repositories/totals', :to => 'repositories#totals'
@@ -71,11 +72,13 @@ Rails.application.routes.draw do
   resources :clients, constraints: { id: /.+/ } do
     resources :prefixes, constraints: { id: /.+/ }
     resources :dois, constraints: { id: /.+/ }
+    resources :activities
   end
 
   resources :repositories, constraints: { id: /.+/ } do
     resources :prefixes, constraints: { id: /.+/ }
     resources :dois, constraints: { id: /.+/ }
+    resources :activities
   end
 
   resources :client_prefixes, path: "client-prefixes"
@@ -103,6 +106,7 @@ Rails.application.routes.draw do
     resources :organizations, constraints: { :id => /.+/ }, shallow: true
     resources :dois, constraints: { :id => /.+/ }
     resources :prefixes, constraints: { :id => /.+/ }
+    resources :activities
   end
   resources :providers, constraints: { :id => /.+/ }
   resources :repository_prefixes, path: "repository-prefixes"

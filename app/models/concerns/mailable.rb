@@ -116,6 +116,8 @@ module Mailable
                                      icon_url: SLACK_ICON_URL
       response = notifier.ping attachments: [attachment]
       response.first.body
+    rescue Slack::Notifier::APIError => exception
+      Rails.logger.error exception.message unless exception.message.include?("HTTP Code 429")
     end
   end
 end

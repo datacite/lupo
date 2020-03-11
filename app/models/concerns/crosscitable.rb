@@ -48,19 +48,19 @@ module Crosscitable
 
       meta = from.present? ? send("read_" + from, { string: input, doi: options[:doi], sandbox: sandbox }).compact : {}
       meta.merge("string" => input, "from" => from)
-    rescue NoMethodError, ArgumentError => exception
-      Raven.capture_exception(exception)
+    rescue NoMethodError, ArgumentError => e
+      Raven.capture_exception(e)
 
-      logger.error "Error " + exception.message + " for doi " + @doi + "."
-      logger.error exception
+      Rails.logger.error "Error " + e.message + " for doi " + @doi + "." if e.message.present?
+      Rails.logger.error exception.inspect
 
       {}
     end
 
     def replace_doi(input, options={})
-      return input unless options[:doi].present?
-      
-      doc = Nokogiri::XML(input, nil, 'UTF-8', &:noblanks)
+      return input if options[:doi].blank?
+
+      doc = Nokogiri::XML(input, nil, "UTF-8", &:noblanks)
       node = doc.at_css("identifier")
       node.content = options[:doi].to_s.upcase if node.present? && options[:doi].present?
       doc.to_xml.strip
@@ -86,7 +86,7 @@ module Crosscitable
       end.to_h.compact
 
       meta = from.present? ? send("read_" + from, { string: xml, doi: doi, sandbox: sandbox }.merge(read_attrs)) : {}
-      
+
       xml = datacite_xml
 
       write_attribute(:xml, xml)
@@ -117,27 +117,27 @@ module Crosscitable
       doc = Nokogiri::XML(string) { |config| config.strict.noblanks }
       doc.to_xml
     rescue ArgumentError, Encoding::CompatibilityError => exception
-      logger.error "Error " + exception.message + "."
-      logger.error exception
+      Rails.logger.error "Error " + exception.message + "."
+      Rails.logger.error exception
 
       nil
     end
 
     def well_formed_xml(string)
       return nil unless string.present?
-  
+
       from_xml(string) || from_json(string)
 
       string
     end
-  
+
     def from_xml(string)
       return nil unless string.start_with?('<?xml version=') || string.start_with?('<resource ')
 
       doc = Nokogiri::XML(string) { |config| config.strict.noblanks }
       doc.to_xml
     end
-  
+
     def from_json(string)
       linter = JsonLint::Linter.new
       errors_array = []
@@ -156,7 +156,7 @@ module Crosscitable
 
       begin
         JSON.parse(string)
-        return "json"
+        "json"
       rescue
         "string"
       end

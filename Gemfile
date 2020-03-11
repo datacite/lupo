@@ -5,6 +5,7 @@ source "https://rubygems.org"
 gem "rails", "~> 5.2.0"
 gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
 gem "mysql2", "~> 0.4.4"
+gem 'ddtrace', '~> 0.32.0'
 gem "dotenv"
 gem "rake", "~> 12.0"
 gem "oj", ">= 2.8.3"
@@ -16,7 +17,7 @@ gem "diffy", "~> 3.2", ">= 3.2.1"
 gem "commonmarker", "~> 0.17.9"
 gem "iso8601", "~> 0.9.0"
 gem "maremma", ">= 4.1"
-gem "bolognese", "~> 1.0", ">= 1.4"
+gem "bolognese", "~> 1.5"
 gem "dalli", "~> 2.7", ">= 2.7.6"
 gem "lograge", "~> 0.11.2"
 gem "logstash-event", "~> 1.2", ">= 1.2.02"
@@ -62,12 +63,15 @@ gem "graphql", "~> 1.9", ">= 1.9.16"
 gem "graphql-errors", "~> 0.4.0"
 gem "graphql-batch", "~> 0.4.1"
 gem "batch-loader", "~> 1.4", ">= 1.4.1"
-gem "graphql-cache", "~> 0.6.0", git: "https://github.com/stackshareio/graphql-cache"
+gem 'graphql-cache', '~> 0.6.0'
 gem 'apollo-federation', '~> 1.0'
 gem "google-protobuf", "3.10.0.rc.1"
 gem "sprockets", "~> 3.7", ">= 3.7.2"
 gem 'uuid', '~> 2.3', '>= 2.3.9'
 gem 'strong_migrations', '~> 0.6.0'
+gem 'crawler_detect'
+gem 'lhm', '~> 2.2'
+gem 'kt-paperclip', '~> 6.2', '>= 6.2.2'
 
 group :development, :test do
   gem "rspec-rails", "~> 3.8", ">= 3.8.2"

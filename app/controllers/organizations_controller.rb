@@ -23,6 +23,8 @@ class OrganizationsController < ApplicationController
     else
       response = Provider.query(params[:query],
         year: params[:year],
+        from_date: params[:from_date],
+        until_date: params[:until_date],
         region: params[:region],
         consortium_id: params[:provider_id],
         organization_type: params[:organization_type],

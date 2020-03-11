@@ -27,7 +27,7 @@ class FunderType < BaseObject
 
   def address
     { "type" => "postalAddress",
-      "address_country" => object.country.to_h.fetch("name", nil) }
+      "country" => object.country.to_h.fetch("name", nil) }
   end
 
   def datasets(**args)

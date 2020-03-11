@@ -6,7 +6,7 @@ class ElasticsearchLoader < GraphQL::Batch::Loader
   end
 
   def perform(ids)
-    @model.find_by_id(ids).results.each { |record| fulfill(record.uid, record) }
+    @model.find_by_ids(ids).results.each { |record| fulfill(record.uid, record) }
     ids.each { |id| fulfill(id, nil) unless fulfilled?(id) }
   end
 end

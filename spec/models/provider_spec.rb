@@ -72,6 +72,31 @@ describe Provider, type: :model do
     end
   end
 
+  describe "logo" do
+    subject { build(:provider) }
+    
+    it "with logo" do
+      subject.logo = "data:image/png;base64," + Base64.strict_encode64(file_fixture("bl.png").read)
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+      expect(subject.logo.file?).to be true
+      expect(subject.logo.url).to start_with("/images/members/" + subject.symbol.downcase+ ".png")
+      expect(subject.logo.url(:medium)).to start_with("/images/members/" + subject.symbol.downcase+ ".png")
+      expect(subject.logo_url).to start_with("/images/members/" + subject.symbol.downcase + ".png")
+      expect(subject.logo_file_name).to eq(subject.symbol.downcase + ".png")
+      expect(subject.logo.content_type).to eq("image/png")
+      expect(subject.logo.size).to be > 10
+    end
+  
+    it "without logo" do
+      subject.logo = nil
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+      expect(subject.logo.file?).to be false
+      expect(subject.logo_url).to be_nil
+    end
+  end
+
   describe "salesforce id" do
     subject { build(:provider) }
 
@@ -107,6 +132,21 @@ describe Provider, type: :model do
       consortium_organization = subject.consortium_organizations.last
       expect(consortium_organization.consortium_id).to eq("VIVA")
       expect(consortium_organization.member_type).to eq("consortium_organization")
+    end
+  end
+
+  describe "provider with ROLE_CONSORTIUM_ORGANIZATION" do
+    let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM", name: "Virtual Library of Virginia", symbol: "VIVA") }
+
+    subject { create(:provider, name: "University of Virginia", role_name: "ROLE_CONSORTIUM_ORGANIZATION", consortium_id: consortium.symbol) }
+
+    it "works" do
+      expect(subject.role_name).to eq("ROLE_CONSORTIUM_ORGANIZATION")
+      expect(subject.member_type).to eq("consortium_organization")
+      expect(subject.member_type_label).to eq("Consortium Organization")
+      expect(subject.consortium.name).to eq("Virtual Library of Virginia")
+      expect(subject.consortium.symbol).to eq("VIVA")
+      expect(subject.consortium.member_type).to eq("consortium")
     end
   end
   
@@ -176,6 +216,18 @@ describe Provider, type: :model do
     it "empty if deleted in creation year" do
       provider = create(:provider, deleted_at: "2015-06-14")
       expect(provider.cumulative_years).to eq([])
+    end
+  end
+
+  describe "activities" do
+    subject { build(:provider) }
+
+    it "is valid" do
+      expect(subject.save).to be true
+      expect(subject.errors.details).to be_empty
+      expect(subject.activities.length).to eq(1)
+      activity = subject.activities.first
+      expect(activity.changes["non_profit_status"]).to eq("non-profit")
     end
   end
 end

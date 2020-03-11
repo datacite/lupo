@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "pp"
-
 
 describe "/events", type: :request, elasticsearch: true do
+  let(:provider) { create(:provider, symbol: "DATACITE") }
+  let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
+
   before(:each) do
     allow(Time).to receive(:now).and_return(Time.mktime(2015, 4, 8))
     allow(Time.zone).to receive(:now).and_return(Time.mktime(2015, 4, 8))
@@ -263,19 +264,6 @@ describe "/events", type: :request, elasticsearch: true do
 
         expect(json.dig("meta", "registrants", 0, "count")).to eq(1)
         expect(json.dig("meta", "registrants", 0, "id")).to eq("datacite.crossref.citations")
-      end
-
-      it "has citationsHistogram aggregation with correct citation year" do
-        post uri, params, headers
-
-        expect(last_response.status).to eq(201)
-        expect(json["errors"]).to be_nil
-
-        Event.import
-        sleep 1
-        get uri + "?doi=10.1016/j.jastp.2013.05.001", nil, headers
-
-        expect(json.dig("meta", "citationsHistogram", "years", 0, "title")).to eq("2017")
       end
     end
   end
@@ -541,44 +529,49 @@ describe "/events", type: :request, elasticsearch: true do
   end
 
   context "show" do
-    let!(:event) { create(:event) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by") }
+
     let(:uri) { "/events/#{event.uuid}" }
 
-    # context "as admin user" do
-    #   it "JSON" do
-    #     sleep 1
-    #     get uri, nil, headers
-    #     expect(last_response.body).to eq(200)
+    before do
+      Doi.import
+      Event.import
+      sleep 1
+    end
 
-    #     response = JSON.parse(last_response.body)
-    #     attributes = response.dig("data", "attributes")
-    #     expect(response.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
-    #   end
-    # end
+    context "as admin user" do
+      it "JSON" do
+        get uri, nil, headers
 
-    # context "as staff user" do
-    #   let(:token) { User.generate_token(role_id: "staff_user") }
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'relationTypeId')).to eq("is-referenced-by")
+        expect(json.dig('data', 'attributes', 'sourceDoi')).to eq(source_doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'targetDoi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'sourceRelationTypeId')).to eq("references")
+        expect(json.dig('data', 'attributes', 'targetRelationTypeId')).to eq("citations")
+        expect(json.dig('data', 'relationships', 'doiForSource', 'data')).to eq("id"=>source_doi.doi.downcase, "type"=>"doi")
+        expect(json.dig('data', 'relationships', 'doiForTarget', 'data')).to eq("id"=>doi.doi.downcase, "type"=>"doi")
+      end
+    end
 
-    #   it "JSON" do
-    #     get uri, nil, headers
-    #     expect(last_response.status).to eq(200)
+    context "as regular user" do
+      let(:token) { User.generate_token(role_id: "user") }
 
-    #     response = JSON.parse(last_response.body)
-    #     expect(response.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
-    #   end
-    # end
+      it "JSON" do
+        get uri, nil, headers
 
-    # context "as regular user" do
-    #   let(:token) { User.generate_token(role_id: "user") }
-
-    #   it "JSON" do
-    #     get uri, nil, headers
-    #     expect(last_response.status).to eq(200)
-
-    #     response = JSON.parse(last_response.body)
-    #     expect(response.dig("data", "relationships", "subj", "data")).to eq("id"=>event.subj_id, "type"=>"objects")
-    #   end
-    # end
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'relationTypeId')).to eq("is-referenced-by")
+        expect(json.dig('data', 'attributes', 'sourceDoi')).to eq(source_doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'targetDoi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'sourceRelationTypeId')).to eq("references")
+        expect(json.dig('data', 'attributes', 'targetRelationTypeId')).to eq("citations")
+        expect(json.dig('data', 'relationships', 'doiForSource', 'data')).to eq("id"=>source_doi.doi.downcase, "type"=>"doi")
+        expect(json.dig('data', 'relationships', 'doiForTarget', 'data')).to eq("id"=>doi.doi.downcase, "type"=>"doi")
+      end
+    end
 
     context "event not found" do
       let(:uri) { "/events/#{event.uuid}x" }
@@ -597,332 +590,20 @@ describe "/events", type: :request, elasticsearch: true do
   #   # let!(:event) { create(:event) }
   #   # let(:uri) { "/events" }
 
-    context "check meta unique" do
-      let!(:event) { create(:event_for_datacite_related) }
-      let!(:events) { create_list(:event_for_datacite_related, 5, obj_id: event.subj_id) }
-      let(:doi) { (event.subj_id).gsub("https://doi.org/", "") }
-      let(:uri) { "/events?doi=#{doi}" }
-
-      before do
-        Event.import
-        sleep 1
-      end
+    context "query by source-id by Crawler" do
+      let(:uri) { "/events?query=datacite" }
 
       # Exclude the token header.
       let(:headers) do
-        { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
+        { "HTTP_ACCEPT" => "application/json",
+          "HTTP_USER_AGENT" => "Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.96 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" }
       end
 
       it "json" do
         get uri, nil, headers
-
-        expect(last_response.status).to eq(200)
-        response = JSON.parse(last_response.body)
-        citations = (response.dig("meta", "uniqueCitations")).select { |item| item["id"] == doi }
-
-        total = response.dig("meta", "total")
-
-        expect(total).to eq(6)
-        expect(citations.first["count"]).to eq(5)
-        expect(citations.first["id"]).to start_with("10.5061/dryad.47sd5e/")
+        expect(last_response.status).to eq(404)
       end
     end
-
-    context "has citations, references, relations" do
-      let!(:event) { create(:event_for_datacite_related) }
-      let!(:event1) { create(:event_for_datacite_related, subj_id: event.subj_id, obj_id: "#{event.subj_id}234") }
-      let!(:event2) { create(:event_for_datacite_related, obj_id: event.subj_id) }
-      let!(:event3) { create(:event_for_datacite_related, obj_id: event.subj_id) }
-      let!(:event4) { create(:event_for_datacite_related, obj_id: event.subj_id, relation_type_id:"has-part") }
-      let(:doi) { (event.subj_id).gsub("https://doi.org/", "") }
-      let(:uri) { "/events?doi=#{doi}" }
-
-      before do
-        Event.import
-        sleep 1
-      end
-
-      # Exclude the token header.
-      let(:headers) do
-        { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
-      end
-
-      it "json" do
-        get uri, nil, headers
-
-        expect(last_response.status).to eq(200)
-        response = JSON.parse(last_response.body)
-
-        citations = (response.dig("meta", "uniqueCitations")).select { |item| item["id"] == doi }
-        # references = (response.dig("meta", "references")).select { |item| item["id"] == doi }
-        # relations = (response.dig("meta", "relations")).select { |item| item["id"] == doi }
-        total = response.dig("meta", "total")
-
-        expect(json.dig("meta", "citationsHistogram", "years", 0, "title")).to eq("2015")
-        expect(total).to eq(5)
-        expect(citations.first["count"]).to eq(2)
-        expect(citations.first["id"]).to eq(doi)
-        # expect(references.first["count"]).to eq(2)
-        # expect(references.first["id"]).to eq(doi)
-        # expect(relations.first["count"]).to eq(1)
-        # expect(relations.first["id"]).to eq(doi)
-      end
-    end
-
-    # context "has views and downloads" do
-    #   let!(:event) { create_list(:event_for_datacite_usage, 2) }
-    #   let(:doi) { (event.first.obj_id).gsub("https://doi.org/", "") }
-    #   let(:uri) { "/events?doi=#{doi}" }
-
-    #   before do
-    #     Event.import
-    #     sleep 1
-    #   end
-
-    #   # Exclude the token header.
-    #   let(:headers) do
-    #     { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
-    #   end
-
-    #   it "json" do
-    #     get uri, nil, headers
-
-    #     expect(last_response.status).to eq(200)
-    #     response = JSON.parse(last_response.body)
-
-    #     views = (response.dig("meta", "views")).select { |item| item["id"] == doi }
-    #     expect(views.first["count"]).not_to eq(0)
-    #     expect(views.first["id"]).to eq(doi)
-    #   end
-    # end
-
-    context "check meta duplicated" do
-      let!(:event) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v2", obj_id:"http://doi.org/10.0260/co.2004960.v1") }
-      let!(:copies) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v2", obj_id:"http://doi.org/10.0260/co.2004960.v1", relation_type_id: "cites") }
-      let(:doi) { (event.obj_id).gsub("https://doi.org/", "") }
-      let(:uri) { "/events?doi=#{doi}" }
-
-      before do
-        Event.import
-        sleep 1
-      end
-
-      # Exclude the token header.
-      let(:headers) do
-        { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
-      end
-
-      it "json" do
-        get uri, nil, headers
-
-        expect(last_response.status).to eq(200)
-        response = JSON.parse(last_response.body)
-        citations = (response.dig("meta", "uniqueCitations")).select { |item| item["id"] == doi }
-        total = response.dig("meta", "total")
-
-        expect(total).to eq(2)
-        expect(citations.first["count"]).to eq(1)
-        expect(citations.first["id"]).to eq("10.0260/co.2004960.v1")
-      end
-    end
-
-    # We cannot do this anymore as the aggregation needs to be done per doi
-    context "unique citations for a list of dois" do
-      let!(:event) { create_list(:event_for_datacite_related, 50, relation_type_id: "is-cited-by") }
-      let(:doi) { "https://doi.org/10.5061/dryad.47sd5/1".gsub("https://doi.org/", "") }
-      let!(:copies) { create(:event_for_datacite_related,  subj_id:"http://doi.org/10.0260/co.2004960.v1", relation_type_id: "cites") }
-      let(:dois) { ((event.map{ |e| e["obj_id"].gsub("https://doi.org/", "") })[1, 20]).join(",") }
-      let(:uri) { "/events?doi=#{dois}" }
-
-      before do
-        Event.import
-        sleep 1
-      end
-
-      # Exclude the token header.
-      let(:headers) do
-        { "HTTP_ACCEPT" => "application/vnd.api+json; version=2" }
-      end
-
-      it "json" do
-        get uri, nil, headers
-
-        expect(last_response.status).to eq(200)
-        response = JSON.parse(last_response.body)
-        citations = (response.dig("meta", "uniqueCitations")).select { |item| item["id"] == doi }
-        total = response.dig("meta", "total")
-
-        expect(total).to eq(51)
-        expect((citations.select { |doi| dois.split(",").include?(doi["id"]) }).length).to eq(20)
-      end
-    end
-
-    # Just test that the API can be accessed without a token.
-    # context "with no API key" do
-
-    #   # Exclude the token header.
-    #   let(:headers) do
-    #     { "HTTP_ACCEPT" => "application/json" }
-    #   end
-
-    #   it "JSON" do
-    #     sleep 1
-    #     get uri, nil, headers
-    #     puts last_response.body
-
-    #     response = JSON.parse(last_response.body)
-    #     attributes = response.dig("data", 0, "attributes")
-    #     expect(attributes["subj-id"]).to eq(event.subj_id)
-    #   end
-
-    #   it "No accept header" do
-    #     sleep 1
-    #     get uri
-
-    #     response = JSON.parse(last_response.body)
-    #     attributes = response.dig("data", 0, "attributes")
-    #     expect(attributes["subj-id"]).to eq(event.subj_id)
-    #   end
-    # end
-
-    # context "query by obj-id" do
-    #   let(:uri) { "/events?obj-id=#{event.obj_id}" }
-
-    #   # Exclude the token header.
-    #   let(:headers) do
-    #     { "HTTP_ACCEPT" => "application/json" }
-    #   end
-
-    #   it "json" do
-    #     get uri, nil, headers
-
-    #     expect(last_response.status).to eq(200)
-
-    #     response = JSON.parse(last_response.body)
-    #     attributes = response.dig("data", 0, "attributes")
-    #     expect(attributes["obj-id"]).to eq(event.obj_id)
-    #   end
-    # end
-
-    # context "query by subj-id" do
-    #   let(:uri) { "/events?subj-id=#{event.subj_id}" }
-
-    #   # Exclude the token header.
-    #   let(:headers) do
-    #     { "HTTP_ACCEPT" => "application/json" }
-    #   end
-
-    #   it "json" do
-    #     get uri, nil, headers
-
-    #     expect(last_response.status).to eq(200)
-
-    #     response = JSON.parse(last_response.body)
-    #     attributes = response.dig("data", 0, "attributes")
-    #     expect(attributes["subj-id"]).to eq(event.subj_id)
-    #   end
-    # end
-
-    # context "query by unknown subj-id" do
-    #   let(:uri) { "/events?subj-id=xxx" }
-
-    #   # Exclude the token header.
-    #   let(:headers) do
-    #     { "HTTP_ACCEPT" => "application/json" }
-    #   end
-
-    #   it "json" do
-    #     get uri, nil, headers
-
-    #     expect(last_response.status).to eq(200)
-
-    #     response = JSON.parse(last_response.body)
-
-    #     expect(response["errors"]).to be_nil
-    #     expect(response["data"]).to be_empty
-    #   end
-    # end
-
-    # context "query by obj-id as doi" do
-    #   let(:doi) { "10.1371/journal.pmed.0030186" }
-    #   let(:event) { create(:event, obj_id: doi) }
-    #   let(:uri) { "/events?obj-id=#{doi}" }
-
-    #   # Exclude the token header.
-    #   let(:headers) do
-    #     { "HTTP_ACCEPT" => "application/json" }
-    #   end
-
-    #   it "json" do
-    #     get uri, nil, headers
-
-    #     expect(last_response.status).to eq(200)
-
-    #     response = JSON.parse(last_response.body)
-    #     attributes = response.dig("data", 0, "attributes")
-    #     expect(attributes["obj-id"]).to eq(event.obj_id)
-    #   end
-    # end
-
-    # context "query by doi as doi" do
-    #   let(:doi) { "10.1371/journal.pmed.0030186" }
-    #   let(:event) { create(:event, obj_id: doi) }
-    #   let(:uri) { "/events?doi=#{doi}" }
-
-    #   # Exclude the token header.
-    #   let(:headers) do
-    #     { "HTTP_ACCEPT" => "application/json" }
-    #   end
-
-    #   it "json" do
-    #     get uri, nil, headers
-
-    #     expect(last_response.status).to eq(200)
-
-    #     response = JSON.parse(last_response.body)
-    #     attributes = response.dig("data", 0, "attributes")
-    #     expect(attributes["obj-id"]).to eq(event.obj_id)
-    #   end
-    # end
-
-    # context "query by unknown obj-id" do
-    #   let(:uri) { "/events?obj-id=xxx" }
-
-    #   # Exclude the token header.
-    #   let(:headers) do
-    #     { "HTTP_ACCEPT" => "application/json" }
-    #   end
-
-    #   it "json" do
-    #     get uri, nil, headers
-
-    #     expect(last_response.status).to eq(200)
-
-    #     response = JSON.parse(last_response.body)
-
-    #     expect(response["errors"]).to be_nil
-    #     expect(response["data"]).to be_empty
-    #   end
-    # end
-
-    # context "query by source-id" do
-    #   let(:uri) { "/events?source-id=citeulike" }
-
-    #   # Exclude the token header.
-    #   let(:headers) do
-    #     { "HTTP_ACCEPT" => "application/json" }
-    #   end
-
-    #   it "json" do
-    #     get uri, nil, headers
-
-    #     expect(last_response.status).to eq(200)
-
-    #     response = JSON.parse(last_response.body)
-    #     attributes = response.dig("data", 0, "attributes")
-    #     expect(attributes["subj-id"]).to eq(event.subj_id)
-    #   end
-    # end
   end
 
   context "destroy" do

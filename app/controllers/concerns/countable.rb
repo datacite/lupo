@@ -14,8 +14,56 @@ module Countable
       else
         response = Doi.query(nil, page: { number: 1, size: 0 })
       end
-      
+
       response.results.total.positive? ? facet_by_year(response.response.aggregations.created.buckets) : []
+    end
+
+    def view_count(client_id: nil, provider_id: nil, consortium_id: nil, user_id: nil, state: nil)
+      if client_id
+        response = Doi.query(nil, client_id: client_id, page: { number: 1, size: 0 })
+      elsif provider_id
+        response = Doi.query(nil, provider_id: provider_id, page: { number: 1, size: 0 })
+      elsif consortium_id
+        response = Doi.query(nil, consortium_id: consortium_id, page: { number: 1, size: 0 })
+      elsif user_id
+        response = Doi.query(nil, user_id: user_id, state: state, page: { number: 1, size: 0 })
+      else
+        response = Doi.query(nil, page: { number: 1, size: 0 })
+      end
+
+      response.results.total.positive? ? metric_facet_by_year(response.response.aggregations.views.buckets) : []
+    end
+
+    def download_count(client_id: nil, provider_id: nil, consortium_id: nil, user_id: nil, state: nil)
+      if client_id
+        response = Doi.query(nil, client_id: client_id, page: { number: 1, size: 0 })
+      elsif provider_id
+        response = Doi.query(nil, provider_id: provider_id, page: { number: 1, size: 0 })
+      elsif consortium_id
+        response = Doi.query(nil, consortium_id: consortium_id, page: { number: 1, size: 0 })
+      elsif user_id
+        response = Doi.query(nil, user_id: user_id, state: state, page: { number: 1, size: 0 })
+      else
+        response = Doi.query(nil, page: { number: 1, size: 0 })
+      end
+
+      response.results.total.positive? ? metric_facet_by_year(response.response.aggregations.downloads.buckets) : []
+    end
+
+    def citation_count(client_id: nil, provider_id: nil, consortium_id: nil, user_id: nil, state: nil)
+      if client_id
+        response = Doi.query(nil, client_id: client_id, page: { number: 1, size: 0 })
+      elsif provider_id
+        response = Doi.query(nil, provider_id: provider_id, page: { number: 1, size: 0 })
+      elsif consortium_id
+        response = Doi.query(nil, consortium_id: consortium_id, page: { number: 1, size: 0 })
+      elsif user_id
+        response = Doi.query(nil, user_id: user_id, state: state, page: { number: 1, size: 0 })
+      else
+        response = Doi.query(nil, page: { number: 1, size: 0 })
+      end
+
+      response.results.total.positive? ? metric_facet_by_year(response.response.aggregations.citations.buckets) : []
     end
 
     # cumulative count clients by year

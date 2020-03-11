@@ -5,22 +5,22 @@ type Address {
   """
   The country.
   """
-  addressCountry: String
+  country: String
 
   """
   The locality in which the street address is, and which is in the region.
   """
-  addressLocality: String
-
-  """
-  The region.
-  """
-  addressRegion: String
+  locality: String
 
   """
   The postal code.
   """
   postalCode: String
+
+  """
+  The region.
+  """
+  region: String
 
   """
   The street address.
@@ -35,6 +35,21 @@ type Address {
 
 type Audiovisual implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
+  Citations.
+  """
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -42,7 +57,7 @@ type Audiovisual implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -53,6 +68,16 @@ type Audiovisual implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -98,6 +123,16 @@ type Audiovisual implements DoiItem {
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
   publisher: String
+
+  """
+  Total number of references.
+  """
+  referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -148,6 +183,16 @@ type Audiovisual implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -390,6 +435,21 @@ type ClientSoftwareConnectionWithMeta {
 
 type Collection implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
+  Citations.
+  """
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -397,7 +457,7 @@ type Collection implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -408,6 +468,16 @@ type Collection implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -453,6 +523,16 @@ type Collection implements DoiItem {
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
   publisher: String
+
+  """
+  Total number of references.
+  """
+  referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -503,6 +583,16 @@ type Collection implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -520,16 +610,21 @@ type Country {
   name: String
 }
 
-type CreativeWork implements DoiItem & MetricInterface {
+type CreativeWork implements DoiItem {
   """
-  The count of DOI events that represents citations
+  Total number of citations.
   """
   citationCount: Int
 
   """
-  The citations distribution overtime
+  Citations.
   """
-  citationHistogram: JSON
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
 
   """
   The client account managing this resource
@@ -539,7 +634,7 @@ type CreativeWork implements DoiItem & MetricInterface {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -552,9 +647,14 @@ type CreativeWork implements DoiItem & MetricInterface {
   descriptions(first: Int = 5): [Description!]
 
   """
-  The count of  DOI dowloands according to the COUNTER code of Practice
+  Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -602,19 +702,19 @@ type CreativeWork implements DoiItem & MetricInterface {
   publisher: String
 
   """
-  The count of DOI events that represents references
+  Total number of references.
   """
   referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The count of DOI events that represents relations
-  """
-  relationCount: Int
 
   """
   The general type of a resource
@@ -662,9 +762,14 @@ type CreativeWork implements DoiItem & MetricInterface {
   version: String
 
   """
-  The count of DOI views according to the COUNTER code of Practice
+  Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -701,6 +806,41 @@ type CreativeWorkEdge {
   The item at the end of the edge.
   """
   node: CreativeWork
+}
+
+"""
+A creator.
+"""
+type Creator {
+  """
+  The organizational or institutional affiliation of the creator.
+  """
+  affiliation: [Organization!]
+
+  """
+  Family name. In the U.S., the last name of an Person.
+  """
+  familyName: String
+
+  """
+  Given name. In the U.S., the first name of a Person.
+  """
+  givenName: String
+
+  """
+  The ID of the creator.
+  """
+  id: ID
+
+  """
+  The name of the creator.
+  """
+  name: String
+
+  """
+  The type of the item.
+  """
+  type: String!
 }
 
 """
@@ -938,6 +1078,21 @@ type DataCatalogSoftwareConnectionWithMeta {
 
 type DataPaper implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
+  Citations.
+  """
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -945,7 +1100,7 @@ type DataPaper implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -956,6 +1111,16 @@ type DataPaper implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -1001,6 +1166,16 @@ type DataPaper implements DoiItem {
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
   publisher: String
+
+  """
+  Total number of references.
+  """
+  referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -1051,18 +1226,33 @@ type DataPaper implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
-type Dataset implements DoiItem & MetricInterface {
+type Dataset implements DoiItem {
   """
-  The count of DOI events that represents citations
+  Total number of citations.
   """
   citationCount: Int
 
   """
-  The citations distribution overtime
+  Citations.
   """
-  citationHistogram: JSON
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
 
   """
   The client account managing this resource
@@ -1072,7 +1262,7 @@ type Dataset implements DoiItem & MetricInterface {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Referenced datasets
@@ -1106,9 +1296,14 @@ type Dataset implements DoiItem & MetricInterface {
   descriptions(first: Int = 5): [Description!]
 
   """
-  The count of  DOI dowloands according to the COUNTER code of Practice
+  Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -1178,19 +1373,19 @@ type Dataset implements DoiItem & MetricInterface {
   publisher: String
 
   """
-  The count of DOI events that represents references
+  Total number of references.
   """
   referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The count of DOI events that represents relations
-  """
-  relationCount: Int
 
   """
   The general type of a resource
@@ -1280,9 +1475,14 @@ type Dataset implements DoiItem & MetricInterface {
   version: String
 
   """
-  The count of DOI views according to the COUNTER code of Practice
+  Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -1479,248 +1679,19 @@ Information about DOIs
 """
 interface DoiItem {
   """
-  The client account managing this resource
-  """
-  client: Client
-
-  """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
-  """
-  creators(first: Int = 20): [Person!]
-
-  """
-  Different dates relevant to the work
-  """
-  dates: [Date!]
-
-  """
-  All additional information that does not fit in any of the other categories
-  """
-  descriptions(first: Int = 5): [Description!]
-
-  """
-  Technical format of the resource
-  """
-  formats: [String!]
-
-  """
-  Metadata as formatted citation
-  """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
-
-  """
-  Information about financial support (funding) for the resource being registered
-  """
-  fundingReferences: [Funding!]
-
-  """
-  The persistent identifier for the resource
-  """
-  id: ID!
-
-  """
-  An identifier or identifiers applied to the resource being registered
-  """
-  identifiers: [Identifier!]
-
-  """
-  The primary language of the resource
-  """
-  language: String
-
-  """
-  The provider account managing this resource
-  """
-  provider: Provider
-
-  """
-  The year when the data was or will be made publicly available
-  """
-  publicationYear: Int
-
-  """
-  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
-  """
-  publisher: String
-
-  """
-  Identifiers of related resources. These must be globally unique identifiers
-  """
-  relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
-
-  """
-  Any rights information for this resource
-  """
-  rights: [Rights!]
-
-  """
-  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
-  """
-  sizes: [String!]
-
-  """
-  Subject, keyword, classification code, or key phrase describing the resource
-  """
-  subjects: [Subject!]
-
-  """
-  A name or title by which a resource is known
-  """
-  titles(first: Int = 5): [Title!]
-
-  """
-  The type of the item.
-  """
-  type: String!
-
-  """
-  The resource type
-  """
-  types: ResourceType
-
-  """
-  The URL registered for the resource
-  """
-  url: String
-
-  """
-  The version number of the resource
-  """
-  version: String
-}
-
-type Event implements DoiItem {
-  """
-  The client account managing this resource
-  """
-  client: Client
-
-  """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
-  """
-  creators(first: Int = 20): [Person!]
-
-  """
-  Different dates relevant to the work
-  """
-  dates: [Date!]
-
-  """
-  All additional information that does not fit in any of the other categories
-  """
-  descriptions(first: Int = 5): [Description!]
-
-  """
-  Technical format of the resource
-  """
-  formats: [String!]
-
-  """
-  Metadata as formatted citation
-  """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
-
-  """
-  Information about financial support (funding) for the resource being registered
-  """
-  fundingReferences: [Funding!]
-
-  """
-  The persistent identifier for the resource
-  """
-  id: ID!
-
-  """
-  An identifier or identifiers applied to the resource being registered
-  """
-  identifiers: [Identifier!]
-
-  """
-  The primary language of the resource
-  """
-  language: String
-
-  """
-  The provider account managing this resource
-  """
-  provider: Provider
-
-  """
-  The year when the data was or will be made publicly available
-  """
-  publicationYear: Int
-
-  """
-  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
-  """
-  publisher: String
-
-  """
-  Identifiers of related resources. These must be globally unique identifiers
-  """
-  relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
-
-  """
-  Any rights information for this resource
-  """
-  rights: [Rights!]
-
-  """
-  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
-  """
-  sizes: [String!]
-
-  """
-  Subject, keyword, classification code, or key phrase describing the resource
-  """
-  subjects: [Subject!]
-
-  """
-  A name or title by which a resource is known
-  """
-  titles(first: Int = 5): [Title!]
-
-  """
-  The type of the item.
-  """
-  type: String!
-
-  """
-  The resource type
-  """
-  types: ResourceType
-
-  """
-  The URL registered for the resource
-  """
-  url: String
-
-  """
-  The version number of the resource
-  """
-  version: String
-}
-
-type EventData implements DoiItem & MetricInterface {
-  """
-  The count of DOI events that represents citations
+  Total number of citations.
   """
   citationCount: Int
 
   """
-  The citations distribution overtime
+  Citations.
   """
-  citationHistogram: JSON
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
 
   """
   The client account managing this resource
@@ -1730,7 +1701,7 @@ type EventData implements DoiItem & MetricInterface {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -1743,9 +1714,14 @@ type EventData implements DoiItem & MetricInterface {
   descriptions(first: Int = 5): [Description!]
 
   """
-  The count of  DOI dowloands according to the COUNTER code of Practice
+  Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -1793,19 +1769,19 @@ type EventData implements DoiItem & MetricInterface {
   publisher: String
 
   """
-  The count of DOI events that represents references
+  Total number of references.
   """
   referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The count of DOI events that represents relations
-  """
-  relationCount: Int
 
   """
   The general type of a resource
@@ -1853,9 +1829,338 @@ type EventData implements DoiItem & MetricInterface {
   version: String
 
   """
-  The count of DOI views according to the COUNTER code of Practice
+  Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
+}
+
+type Event implements DoiItem {
+  """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
+  Citations.
+  """
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Creator!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Total number of references.
+  """
+  referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
+}
+
+type EventData implements DoiItem {
+  """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
+  Citations.
+  """
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Creator!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Total number of references.
+  """
+  referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -2155,288 +2460,32 @@ Information about identifiers
 """
 type Identifier {
   """
-  The name of the identifier.
-  """
-  name: String
-
-  """
   The value of the identifier.
   """
-  value: String
+  identifier: String
+
+  """
+  The type of identifier.
+  """
+  identifierType: String
 }
 
 type Image implements DoiItem {
   """
-  The client account managing this resource
-  """
-  client: Client
-
-  """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
-  """
-  creators(first: Int = 20): [Person!]
-
-  """
-  Different dates relevant to the work
-  """
-  dates: [Date!]
-
-  """
-  All additional information that does not fit in any of the other categories
-  """
-  descriptions(first: Int = 5): [Description!]
-
-  """
-  Technical format of the resource
-  """
-  formats: [String!]
-
-  """
-  Metadata as formatted citation
-  """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
-
-  """
-  Information about financial support (funding) for the resource being registered
-  """
-  fundingReferences: [Funding!]
-
-  """
-  The persistent identifier for the resource
-  """
-  id: ID!
-
-  """
-  An identifier or identifiers applied to the resource being registered
-  """
-  identifiers: [Identifier!]
-
-  """
-  The primary language of the resource
-  """
-  language: String
-
-  """
-  The provider account managing this resource
-  """
-  provider: Provider
-
-  """
-  The year when the data was or will be made publicly available
-  """
-  publicationYear: Int
-
-  """
-  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
-  """
-  publisher: String
-
-  """
-  Identifiers of related resources. These must be globally unique identifiers
-  """
-  relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
-
-  """
-  Any rights information for this resource
-  """
-  rights: [Rights!]
-
-  """
-  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
-  """
-  sizes: [String!]
-
-  """
-  Subject, keyword, classification code, or key phrase describing the resource
-  """
-  subjects: [Subject!]
-
-  """
-  A name or title by which a resource is known
-  """
-  titles(first: Int = 5): [Title!]
-
-  """
-  The type of the item.
-  """
-  type: String!
-
-  """
-  The resource type
-  """
-  types: ResourceType
-
-  """
-  The URL registered for the resource
-  """
-  url: String
-
-  """
-  The version number of the resource
-  """
-  version: String
-}
-
-type InteractiveResource implements DoiItem {
-  """
-  The client account managing this resource
-  """
-  client: Client
-
-  """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
-  """
-  creators(first: Int = 20): [Person!]
-
-  """
-  Different dates relevant to the work
-  """
-  dates: [Date!]
-
-  """
-  All additional information that does not fit in any of the other categories
-  """
-  descriptions(first: Int = 5): [Description!]
-
-  """
-  Technical format of the resource
-  """
-  formats: [String!]
-
-  """
-  Metadata as formatted citation
-  """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
-
-  """
-  Information about financial support (funding) for the resource being registered
-  """
-  fundingReferences: [Funding!]
-
-  """
-  The persistent identifier for the resource
-  """
-  id: ID!
-
-  """
-  An identifier or identifiers applied to the resource being registered
-  """
-  identifiers: [Identifier!]
-
-  """
-  The primary language of the resource
-  """
-  language: String
-
-  """
-  The provider account managing this resource
-  """
-  provider: Provider
-
-  """
-  The year when the data was or will be made publicly available
-  """
-  publicationYear: Int
-
-  """
-  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
-  """
-  publisher: String
-
-  """
-  Identifiers of related resources. These must be globally unique identifiers
-  """
-  relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
-
-  """
-  Any rights information for this resource
-  """
-  rights: [Rights!]
-
-  """
-  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
-  """
-  sizes: [String!]
-
-  """
-  Subject, keyword, classification code, or key phrase describing the resource
-  """
-  subjects: [Subject!]
-
-  """
-  A name or title by which a resource is known
-  """
-  titles(first: Int = 5): [Title!]
-
-  """
-  The type of the item.
-  """
-  type: String!
-
-  """
-  The resource type
-  """
-  types: ResourceType
-
-  """
-  The URL registered for the resource
-  """
-  url: String
-
-  """
-  The version number of the resource
-  """
-  version: String
-}
-
-"""
-Represents untyped JSON
-"""
-scalar JSON
-
-interface MetricInterface {
-  """
-  The count of DOI events that represents citations
+  Total number of citations.
   """
   citationCount: Int
 
   """
-  The citations distribution overtime
+  Citations.
   """
-  citationHistogram: JSON
+  citations: [CreativeWork!]
 
   """
-  The count of  DOI dowloands according to the COUNTER code of Practice
+  Citations by year.
   """
-  downloadCount: Int
+  citationsOverTime: [YearTotal!]
 
-  """
-  The count of DOI events that represents references
-  """
-  referenceCount: Int
-
-  """
-  The count of DOI events that represents relations
-  """
-  relationCount: Int
-
-  """
-  The count of DOI views according to the COUNTER code of Practice
-  """
-  viewCount: Int
-}
-
-type Model implements DoiItem {
   """
   The client account managing this resource
   """
@@ -2445,7 +2494,7 @@ type Model implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -2456,6 +2505,16 @@ type Model implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -2501,6 +2560,16 @@ type Model implements DoiItem {
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
   publisher: String
+
+  """
+  Total number of references.
+  """
+  referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -2551,6 +2620,340 @@ type Model implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
+}
+
+type InteractiveResource implements DoiItem {
+  """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
+  Citations.
+  """
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Creator!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Total number of references.
+  """
+  referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
+}
+
+type Model implements DoiItem {
+  """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
+  Citations.
+  """
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Creator!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Total number of references.
+  """
+  referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -2591,12 +2994,12 @@ type Organization {
   """
   ROR ID
   """
-  id: ID!
+  id: ID
 
   """
   The identifier(s) for the organization.
   """
-  identifier: [Identifier!]
+  identifiers: [Identifier!]
 
   """
   The name of the organization.
@@ -2759,6 +3162,21 @@ type OrganizationSoftwareConnectionWithMeta {
 
 type Other implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
+  Citations.
+  """
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -2766,7 +3184,7 @@ type Other implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -2777,6 +3195,16 @@ type Other implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -2822,6 +3250,16 @@ type Other implements DoiItem {
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
   publisher: String
+
+  """
+  Total number of references.
+  """
+  referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -2872,6 +3310,16 @@ type Other implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -3155,6 +3603,21 @@ type PersonSoftwareConnectionWithMeta {
 
 type PhysicalObject implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
+  Citations.
+  """
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -3162,7 +3625,7 @@ type PhysicalObject implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -3173,6 +3636,16 @@ type PhysicalObject implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -3218,6 +3691,16 @@ type PhysicalObject implements DoiItem {
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
   publisher: String
+
+  """
+  Total number of references.
+  """
+  referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -3268,6 +3751,16 @@ type PhysicalObject implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -3498,16 +3991,21 @@ type ProviderEdge {
   node: Provider
 }
 
-type Publication implements DoiItem & MetricInterface {
+type Publication implements DoiItem {
   """
-  The count of DOI events that represents citations
+  Total number of citations.
   """
   citationCount: Int
 
   """
-  The citations distribution overtime
+  Citations.
   """
-  citationHistogram: JSON
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
 
   """
   The client account managing this resource
@@ -3517,7 +4015,7 @@ type Publication implements DoiItem & MetricInterface {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Referenced datasets
@@ -3551,9 +4049,14 @@ type Publication implements DoiItem & MetricInterface {
   descriptions(first: Int = 5): [Description!]
 
   """
-  The count of  DOI dowloands according to the COUNTER code of Practice
+  Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -3623,19 +4126,19 @@ type Publication implements DoiItem & MetricInterface {
   publisher: String
 
   """
-  The count of DOI events that represents references
+  Total number of references.
   """
   referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The count of DOI events that represents relations
-  """
-  relationCount: Int
 
   """
   The general type of a resource
@@ -3704,9 +4207,14 @@ type Publication implements DoiItem & MetricInterface {
   version: String
 
   """
-  The count of DOI views according to the COUNTER code of Practice
+  Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -3803,7 +4311,7 @@ type PublicationSoftwareConnectionWithMeta {
 type Query {
   _service: _Service!
   audiovisual(id: ID!): Audiovisual!
-  audiovisuals(first: Int = 25, query: String): [Audiovisual!]!
+  audiovisuals(first: Int = 25, hasCitations: Int, hasDownloads: Int, hasViews: Int, query: String): [Audiovisual!]!
   client(id: ID!): Client!
   clients(
     """
@@ -3883,6 +4391,9 @@ type Query {
     before: String
     clientId: String
     first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
 
     """
     Returns the last _n_ elements from the list.
@@ -3915,7 +4426,7 @@ type Query {
   image(id: ID!): Image!
   images(first: Int = 25, query: String): [Image!]!
   interactiveResource(id: ID!): InteractiveResource!
-  interactiveResources(first: Int = 25, query: String): [InteractiveResource!]!
+  interactiveResources(first: Int = 25, hasCitations: Int, hasDownloads: Int, hasViews: Int, query: String): [InteractiveResource!]!
   model(id: ID!): Model!
   models(first: Int = 25, query: String): [Model!]!
   organization(id: ID!): Organization!
@@ -3959,7 +4470,7 @@ type Query {
   ): PersonConnectionWithMeta!
   person(id: ID!): Person
   physicalObject(id: ID!): PhysicalObject!
-  physicalObjects(first: Int = 25, query: String): [PhysicalObject!]!
+  physicalObjects(first: Int = 25, hasCitations: Int, hasDownloads: Int, hasViews: Int, query: String): [PhysicalObject!]!
   prefix(id: ID!): Prefix!
   prefixes(first: Int = 25, query: String): [Prefix!]!
   provider(id: ID!): Provider!
@@ -3994,6 +4505,9 @@ type Query {
     before: String
     clientId: String
     first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
 
     """
     Returns the last _n_ elements from the list.
@@ -4036,6 +4550,9 @@ type Query {
     before: String
     clientId: String
     first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
 
     """
     Returns the last _n_ elements from the list.
@@ -4180,6 +4697,21 @@ type Rights {
 
 type Service implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
+  Citations.
+  """
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -4187,7 +4719,7 @@ type Service implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -4198,6 +4730,16 @@ type Service implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -4243,6 +4785,16 @@ type Service implements DoiItem {
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
   publisher: String
+
+  """
+  Total number of references.
+  """
+  referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -4293,6 +4845,16 @@ type Service implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -4316,16 +4878,21 @@ type ServiceConnectionWithMeta {
   totalCount: Int!
 }
 
-type Software implements DoiItem & MetricInterface {
+type Software implements DoiItem {
   """
-  The count of DOI events that represents citations
+  Total number of citations.
   """
   citationCount: Int
 
   """
-  The citations distribution overtime
+  Citations.
   """
-  citationHistogram: JSON
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
 
   """
   The client account managing this resource
@@ -4335,7 +4902,7 @@ type Software implements DoiItem & MetricInterface {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Referenced datasets
@@ -4369,9 +4936,14 @@ type Software implements DoiItem & MetricInterface {
   descriptions(first: Int = 5): [Description!]
 
   """
-  The count of  DOI dowloands according to the COUNTER code of Practice
+  Total number of downloads.
   """
   downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -4441,19 +5013,19 @@ type Software implements DoiItem & MetricInterface {
   publisher: String
 
   """
-  The count of DOI events that represents references
+  Total number of references.
   """
   referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The count of DOI events that represents relations
-  """
-  relationCount: Int
 
   """
   The general type of a resource
@@ -4522,9 +5094,14 @@ type Software implements DoiItem & MetricInterface {
   version: String
 
   """
-  The count of DOI views according to the COUNTER code of Practice
+  Total number of views.
   """
   viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -4645,6 +5222,21 @@ type SoftwareSoftwareConnectionWithMeta {
 
 type Sound implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
+  Citations.
+  """
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -4652,7 +5244,7 @@ type Sound implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -4663,6 +5255,16 @@ type Sound implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -4708,6 +5310,16 @@ type Sound implements DoiItem {
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
   publisher: String
+
+  """
+  Total number of references.
+  """
+  referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -4758,6 +5370,16 @@ type Sound implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
 }
 
 """
@@ -4915,6 +5537,21 @@ type UsageReportEdge {
 
 type Workflow implements DoiItem {
   """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
+  Citations.
+  """
+  citations: [CreativeWork!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
   The client account managing this resource
   """
   client: Client
@@ -4922,7 +5559,7 @@ type Workflow implements DoiItem {
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
-  creators(first: Int = 20): [Person!]
+  creators(first: Int = 20): [Creator!]
 
   """
   Different dates relevant to the work
@@ -4933,6 +5570,16 @@ type Workflow implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
 
   """
   Technical format of the resource
@@ -4978,6 +5625,16 @@ type Workflow implements DoiItem {
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
   """
   publisher: String
+
+  """
+  Total number of references.
+  """
+  referenceCount: Int
+
+  """
+  References.
+  """
+  references: [CreativeWork!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -5028,6 +5685,46 @@ type Workflow implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+Information about totals over time (years)
+"""
+type YearMonthTotal {
+  """
+  Total
+  """
+  total: Int
+
+  """
+  Year-month
+  """
+  yearMonth: Int
+}
+
+"""
+Information about totals over time (years)
+"""
+type YearTotal {
+  """
+  Total
+  """
+  total: Int
+
+  """
+  Year
+  """
+  year: Int
 }
 
 """

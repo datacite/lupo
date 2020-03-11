@@ -2,9 +2,11 @@ require 'rails_helper'
 
 describe 'Repositories', type: :request, elasticsearch: true do
   let(:ids) { clients.map { |c| c.uid }.join(",") }
-  let(:bearer) { User.generate_token }
-  let(:provider) { create(:provider, password_input: "12345") }
+  let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
+  let(:provider) { create(:provider, consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION", password_input: "12345") }
   let!(:client) { create(:client, provider: provider, client_type: "repository") }
+  let(:bearer) { User.generate_token(role_id: "provider_admin", provider_id: provider.symbol.downcase) }
+  let(:consortium_bearer) { User.generate_token(role_id: "consortium_admin", provider_id: consortium.symbol.downcase) }
   let(:params) do
     { "data" => { "type" => "clients",
                   "attributes" => {
@@ -25,6 +27,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
               		}} }
   end
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer}}
+  let(:consortium_headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + consortium_bearer}}
   let(:query) { "jamon"}
 
   describe 'GET /repositories', elasticsearch: true do
@@ -112,6 +115,22 @@ describe 'Repositories', type: :request, elasticsearch: true do
       end
     end
 
+    context "consortium" do
+      it "creates a repository" do
+        post '/repositories', params, consortium_headers
+
+        expect(last_response.status).to eq(201)
+        attributes = json.dig('data', 'attributes')
+        expect(attributes["name"]).to eq("Imperial College")
+        expect(attributes["systemEmail"]).to eq("bob@example.com")
+        expect(attributes["certificate"]).to eq(["CoreTrustSeal"])
+        expect(attributes["salesforceId"]).to eq("abc012345678901234")
+
+        relationships = json.dig('data', 'relationships')
+        expect(relationships.dig("provider", "data", "id")).to eq(provider.symbol.downcase)
+      end
+    end
+
     context 'when the request is invalid' do
       let(:params) do
         { "data" => { "type" => "repositories",
@@ -150,6 +169,26 @@ describe 'Repositories', type: :request, elasticsearch: true do
 
       it 'updates the record' do
         put "/repositories/#{client.symbol}", params, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
+        expect(json.dig('data', 'attributes', 'globusUuid')).to eq("9908a164-1e4f-4c17-ae1b-cc318839d6c8")
+        expect(json.dig('data', 'attributes', 'name')).not_to eq(client.name)
+        expect(json.dig('data', 'attributes', 'clientType')).to eq("periodical")
+      end
+    end
+
+    context "consortium" do
+      let(:params) do
+        { "data" => { "type" => "repositories",
+                      "attributes" => {
+                        "name" => "Imperial College 2",
+                        "clientType" => "periodical",
+                        "globusUuid" => "9908a164-1e4f-4c17-ae1b-cc318839d6c8" }} }
+      end
+
+      it "updates the record" do
+        put "/repositories/#{client.symbol}", params, consortium_headers
 
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq("Imperial College 2")
@@ -247,9 +286,15 @@ describe 'Repositories', type: :request, elasticsearch: true do
     end
   end
 
-  describe 'DELETE /clients/:id' do
+  describe 'DELETE /repositories/:id' do
     it 'returns status code 204' do
       delete "/repositories/#{client.uid}", nil, headers
+
+      expect(last_response.status).to eq(204)
+    end
+
+    it 'returns status code 204 with consortium' do
+      delete "/repositories/#{client.uid}", nil, consortium_headers
 
       expect(last_response.status).to eq(204)
     end
@@ -283,16 +328,22 @@ describe 'Repositories', type: :request, elasticsearch: true do
       sleep 1
     end
 
-    it 'returns status code 200' do
+    it "transfered all DOIs" do
       put "/repositories/#{client.symbol}", params, headers
       sleep 1
 
       expect(last_response.status).to eq(200)
+      # expect(Doi.query(nil, client_id: client.symbol.downcase).results.total).to eq(0)
+      # expect(Doi.query(nil, client_id: target.symbol.downcase).results.total).to eq(3)
     end
 
-    # it "transfered all DOIs" do
-    #   expect(Doi.query(nil, client_id: client.symbol.downcase).results.total).to eq(0)
-    #   expect(Doi.query(nil, client_id: target.symbol.downcase).results.total).to eq(3)
-    # end
+    it "transfered all DOIs consortium" do
+      put "/repositories/#{client.symbol}", params, consortium_headers
+      sleep 1
+
+      expect(last_response.status).to eq(200)
+      # expect(Doi.query(nil, client_id: client.symbol.downcase).results.total).to eq(0)
+      # expect(Doi.query(nil, client_id: target.symbol.downcase).results.total).to eq(3)
+    end
   end
 end

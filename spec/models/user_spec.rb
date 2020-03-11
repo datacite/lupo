@@ -57,6 +57,27 @@ describe User, type: :model do
     end
   end
 
+  describe "from basic_auth consortium" do
+    let(:provider) { create(:provider, password_input: "12345", role_name: "ROLE_CONSORTIUM") }
+    let(:credentials) { provider.encode_auth_param(username: provider.symbol, password: 12345) }
+    let(:user) { User.new(credentials, type: "basic") }
+
+    describe 'User attributes' do
+      it "has role_id" do
+        expect(user.role_id).to eq("consortium_admin")
+      end
+
+      it "has provider" do
+        expect(user.provider_id).to eq(provider.symbol.downcase)
+        expect(user.provider.name).to eq(provider.name)
+      end
+
+      it "has name" do
+        expect(user.name).to eq("My provider")
+      end
+    end
+  end
+
   describe "from basic_auth client" do
     let(:client) { create(:client, password_input: "12345") }
     let(:credentials) { client.encode_auth_param(username: client.symbol, password: 12345) }

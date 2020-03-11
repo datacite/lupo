@@ -10,6 +10,9 @@ class ProviderPrefixesController < ApplicationController
       collection = ProviderPrefix.where(id: params[:id])
     elsif params[:provider_id].present? && params[:prefix_id].present?
       collection = ProviderPrefix.joins(:provider, :prefix).where('allocator.symbol = ?', params[:provider_id]).where('prefix.prefix = ?', params[:prefix_id])
+    elsif params[:consortium_id].present?
+      providers = Provider.where('allocator.consortium_id = ?', params[:consortium_id])
+      collection = providers.present? ? ProviderPrefix.joins(:provider, :prefix).where('allocator.consortium_id = ?', params[:consortium_id]) : ProviderPrefix.none
     elsif params[:provider_id].present?
       provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
       collection = provider.present? ? provider.provider_prefixes.joins(:prefix) : ProviderPrefix.none
@@ -57,11 +60,11 @@ class ProviderPrefixesController < ApplicationController
                   title: params[:state].underscore.humanize,
                   count: collection.count }]
     else
-      states = [{ id: "without-client",
-                  title: "Without client",
+      states = [{ id: "without-repository",
+                  title: "Without repository",
                   count: collection.state("without-client").count },
-                { id: "with-client",
-                  title: "With client",
+                { id: "with-repository",
+                  title: "With repository",
                   count: collection.state("with-client").count }]
     end
 
@@ -123,7 +126,7 @@ class ProviderPrefixesController < ApplicationController
   
       render json: ProviderPrefixSerializer.new(@provider_prefix, options).serialized_json, status: :created
     else
-      logger.error @provider_prefix.errors.inspect
+      Rails.logger.error @provider_prefix.errors.inspect
       render json: serialize_errors(@provider_prefix.errors), status: :unprocessable_entity
     end
   end

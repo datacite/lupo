@@ -1,9 +1,9 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe "dois", type: :request do
   let(:admin) { create(:provider, symbol: "ADMIN") }
   let(:admin_bearer) { Client.generate_token(role_id: "staff_admin", uid: admin.symbol, password: admin.password) }
-  let(:admin_headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + admin_bearer} }
+  let(:admin_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer} }
 
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
@@ -12,9 +12,9 @@ describe "dois", type: :request do
 
   let(:doi) { create(:doi, client: client) }
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
-  let(:headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
+  let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }}
 
-  describe 'GET /dois', elasticsearch: true do
+  describe "GET /dois", elasticsearch: true do
     let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
 
     before do
@@ -23,7 +23,7 @@ describe "dois", type: :request do
     end
 
     it 'returns dois', vcr: true do
-      get '/dois', nil, headers
+      get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(3)
@@ -64,7 +64,11 @@ describe "dois", type: :request do
         get "/dois/#{doi.doi}", nil, headers
 
         expect(last_response.status).to eq(200)
-        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        result = json.dig('data')
+
+        expect(result.dig('attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(result.dig('attributes', 'titles')).to eq(doi.titles)
+        expect(result.dig('relationships','citationEvents')).to eq("data"=>[])
       end
     end
 
@@ -117,37 +121,226 @@ describe "dois", type: :request do
     end
   end
 
-  describe 'GET /dois all with metrics', elasticsearch: true, vcr: true do
-    # let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
-    let!(:doi) { create(:doi, client: client,  aasm_state: "findable") }
-    let!(:events) { create_list(:event_for_datacite_related, 3, obj_id: doi.doi) }
-    let!(:views) { create_list(:event_for_datacite_usage, 2, obj_id: doi.doi) }
+  describe 'GET /dois with views and downloads', elasticsearch: true, vcr: true do
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:views) { create_list(:event_for_datacite_investigations, 2, obj_id: doi.doi) }
+    let!(:downloads) { create_list(:event_for_datacite_requests, 2, obj_id: doi.doi) }
 
     before do
       Event.import
       Doi.import
-      sleep 3
+      sleep 1
     end
 
-    context 'when the record exists' do
-      it 'returns the Doi' do
-        get "/dois?mix-in=metrics", nil, headers
-        puts json.dig('data',0)
+    # TODO aggregations in meta should not be by publication year
+    it 'includes events' do
+      get "/dois", nil, headers
 
-        expect(last_response.status).to eq(200)
-        expect(json['data'].size).to eq(1)
-        expect(json.dig('meta', 'total')).to eq(1)
-        expect(json.dig('data', 0, 'attributes', 'url')).to eq(doi.url)
-        expect(json.dig('data', 0, 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 0, 'attributes', 'titles')).to eq(doi.titles)
-        expect(json.dig('data',0,'attributes','citations')).to eq(3)
-        # expect(json.dig('data',0,'attributes','views')).to be > 0
-        # expect(json.dig('data',0,'attributes','downloads')).to eq(0)
-      end
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(1)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('meta', 'views')).to eq([{"count"=>50, "id"=>"2011", "title"=>"2011"}])
+      expect(json.dig('meta', 'downloads')).to eq([{"count"=>20, "id"=>"2011", "title"=>"2011"}])
+      expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
+      expect(json.dig('data', 0, 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 0, 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 0, 'attributes', 'viewCount')).to eq(50)
+      expect(json.dig('data', 0, 'attributes', 'downloadCount')).to eq(20)
     end
   end
 
-  describe 'state' do
+  describe "views", elasticsearch: true, vcr: true do
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:views) { create_list(:event_for_datacite_investigations, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-investigations-regular", total: 25) }
+
+    before do
+      Doi.import
+      Event.import
+      sleep 1
+    end
+
+    it "has views" do
+      get "/dois/#{doi.doi}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'viewCount')).to eq(75)
+      expect(json.dig('data', 'attributes', 'viewsOverTime')).to eq([{"total"=>25, "yearMonth"=>"2015-06"}, {"total"=>25, "yearMonth"=>"2015-06"}, {"total"=>25, "yearMonth"=>"2015-06"}])
+    end
+
+    it "has views meta" do
+      get "/dois", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'views')).to eq([{"count"=>75, "id"=>"2011", "title"=>"2011"}])
+    end
+
+    it "repository shows summary count" do
+      get "/repositories/#{client.uid}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
+      expect(json.dig('meta', 'views')).to eq([{"count"=>75, "id"=>"2011", "title"=>"2011"}])
+    end
+  end
+
+  describe "downloads", elasticsearch: true, vcr: true do
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:downloads) { create_list(:event_for_datacite_investigations, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-requests-regular", total: 10) }
+
+    before do
+      Doi.import
+      Event.import
+      sleep 1
+    end
+
+    it "has downloads" do
+      get "/dois/#{doi.doi}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'downloadCount')).to eq(30)
+      expect(json.dig('data', 'attributes', 'downloadsOverTime')).to eq([{"total"=>10, "yearMonth"=>"2015-06"}, {"total"=>10, "yearMonth"=>"2015-06"}, {"total"=>10, "yearMonth"=>"2015-06"}])
+    end
+
+    it "has downloads meta" do
+      get "/dois", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'downloads')).to eq([{"count"=>30, "id"=>"2011", "title"=>"2011"}])
+    end
+
+    it "repository shows summary count" do
+      get "/repositories/#{client.uid}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
+      expect(json.dig('meta', 'downloads')).to eq([{"count"=>30, "id"=>"2011", "title"=>"2011"}])
+    end
+  end
+
+  describe "references", elasticsearch: true, vcr: true do
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:reference_event) { create(:event_for_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "references") }
+
+    before do
+      Doi.import
+      Event.import
+      sleep 1
+    end
+
+    it "has references" do
+      get "/dois/#{doi.doi}?include=reference-events", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'referenceCount')).to eq(1)
+      expect(json.dig('data', 'relationships', 'referenceEvents', 'data')).to eq([{"id" => reference_event.uuid, "type" => "events"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'relationTypeId')).to eq("references")
+    end
+  end
+
+  describe "citations", elasticsearch: true, vcr: true do
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by") }
+
+    before do
+      Doi.import
+      Event.import
+      sleep 1
+    end
+
+    it "has citations" do
+      get "/dois/#{doi.doi}?include=citation-events,client", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'citationCount')).to eq(1)
+      expect(json.dig('data', 'attributes', 'citationsOverTime')).to eq([{"total"=>1, "year"=>"2020"}])
+      expect(json.dig('data', 'relationships', 'citationEvents', 'data')).to eq([{"id" => citation_event.uuid, "type"=>"events"}])
+      expect(json.dig('included').length).to eq(2)
+      expect(json.dig('included', 0, 'attributes', 'relationTypeId')).to eq("is-referenced-by")
+    end
+
+    it "has citations meta" do
+      get "/dois", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
+    end
+
+    it "repository shows summary count" do
+      get "/repositories/#{client.uid}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
+      expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
+    end
+  end
+
+  describe "parts", elasticsearch: true, vcr: true do
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:part_events) { create(:event_for_datacite_parts, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "has-part") }
+
+    before do
+      Doi.import
+      Event.import
+      sleep 1
+    end
+
+    it "has parts" do
+      get "/dois/#{doi.doi}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      # expect(json.dig('data', 'attributes', 'partCount')).to eq(1)
+      # expect(json.dig('data', 'relationships', 'parts', 'data')).to eq(1)
+      # expect(json.dig('included').length).to eq(2)
+      # expect(json.dig('included', 1, 'attributes', 'doi')).to eq(target_doi.doi)
+    end
+  end
+
+  describe "versions", elasticsearch: true, vcr: true do
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:version_events) { create(:event_for_datacite_parts, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "has-version") }
+
+    before do
+      Doi.import
+      Event.import
+      sleep 1
+    end
+
+    it "has versions" do
+      get "/dois/#{doi.doi}", nil, headers
+
+      puts last_response.body
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      # expect(json.dig('data', 'attributes', 'versionCount')).to eq(1)
+      # expect(json.dig('data', 'relationships', 'versions', 'data')).to eq(1)
+      # expect(json.dig('included').length).to eq(2)
+      # expect(json.dig('included', 1, 'attributes', 'doi')).to eq(target_doi.doi)
+    end
+  end
+
+  describe "state" do
     let(:doi_id) { "10.14454/4K3M-NYVG" }
     let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
     let(:bearer) { User.generate_token(role_id: "client_admin", client_id: client.symbol.downcase) }
@@ -342,6 +535,43 @@ describe "dois", type: :request do
         patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+      end
+    end
+
+    context 'read-only attributes' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "xml" => xml,
+              "container" => {},
+              "published" => nil,
+              "viewsOverTime" => {},
+              "downloadsOverTime" => {},
+              "citationsOverTime" => {},
+              "viewCount" => 0,
+              "downloadCount" => 0,
+              "citationCount" => 0,
+              "partCount" => 0,
+              "partOfCount" => 0,
+              "referenceCount" => 0,
+              "versionCount" => 0,
+              "versionOfCount" => 0
+            }
+          }
+        }
+      end
+
+      it 'updates the record' do
+        patch "/dois/#{doi.doi}", valid_attributes, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
       end
     end
 
@@ -600,6 +830,41 @@ describe "dois", type: :request do
         patch "/dois/#{doi.doi}", valid_attributes, headers
 
         expect(json.dig('data', 'attributes', 'state')).to eq("draft")
+      end
+    end
+
+    context 'when the date issued is changed to :tba' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/pat.pdf",
+              "xml" => xml,
+              "dates" => { 
+                "date" => ":tba",
+                "dateType" => "Issued"
+              },
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      it 'updates the record' do
+        patch "/dois/#{doi.doi}", valid_attributes, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'dates')).to eq("date"=>":tba", "dateType"=>"Issued")
+      end
+
+      it 'sets state to findable' do
+        patch "/dois/#{doi.doi}", valid_attributes, headers
+
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
       end
     end
 
@@ -2865,7 +3130,7 @@ describe "dois", type: :request do
         get "/dois/#{doi.doi}", nil, headers
 
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi)
-        expect(json.dig('data', 'attributes', 'landingPage')).to eq(landing_page)
+        # expect(json.dig('data', 'attributes', 'landingPage')).to eq(landing_page)
       end
     end
 

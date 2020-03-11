@@ -5,7 +5,7 @@ class RepositoriesController < ApplicationController
   before_action :set_repository, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
-  load_and_authorize_resource :client, parent: false, except: [:index, :show, :totals, :random]
+  load_and_authorize_resource :client, parent: false, except: [:index, :show, :create, :totals, :random]
 
   def index
     sort = case params[:sort]
@@ -26,6 +26,8 @@ class RepositoriesController < ApplicationController
     else
       response = Client.query(params[:query],
         year: params[:year],
+        from_date: params[:from_date],
+        until_date: params[:until_date],
         provider_id: params[:provider_id],
         consortium_id: params[:consortium_id],
         re3data_id: params[:re3data_id],
@@ -122,7 +124,11 @@ class RepositoriesController < ApplicationController
     options = {}
     options[:meta] = {
       dois: doi_count(client_id: params[:id]),
-      "resourceTypes" => resource_type_count(client_id: params[:id]) }.compact
+      "resourceTypes" => resource_type_count(client_id: params[:id]),
+      citations: citation_count(client_id: params[:id]),
+      views: view_count(client_id: params[:id]),
+      downloads: download_count(client_id: params[:id]),
+    }.compact
     options[:include] = @include
     options[:is_collection] = false
     options[:params] = { current_ability: current_ability }
@@ -132,6 +138,7 @@ class RepositoriesController < ApplicationController
 
   def create
     @client = Client.new(safe_params)
+
     authorize! :create, @client
 
     if @client.save
@@ -141,7 +148,7 @@ class RepositoriesController < ApplicationController
 
       render json: RepositorySerializer.new(@client, options).serialized_json, status: :created
     else
-      logger.error @client.errors.inspect
+      Rails.logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
@@ -155,7 +162,7 @@ class RepositoriesController < ApplicationController
 
       render json: RepositorySerializer.new(@client, options).serialized_json, status: :ok
     else
-      logger.error @client.errors.inspect
+      Rails.logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
@@ -166,13 +173,13 @@ class RepositoriesController < ApplicationController
     if @client.dois.present?
       message = "Can't delete repository that has DOIs."
       status = 400
-      logger.warn message
+      Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @client.update_attributes(is_active: nil, deleted_at: Time.zone.now)
       @client.send_delete_email unless Rails.env.test?
       head :no_content
     else
-      logger.error @client.errors.inspect
+      Rails.logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
@@ -212,7 +219,7 @@ class RepositoriesController < ApplicationController
 
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" if params[:data].blank?
-    
+
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params, only: [:symbol, :name, "systemEmail", :domains, :provider, :url, "globusUuid", "repositoryType", { "repositoryType" => [] }, :description, :language, { language: [] }, "alternateName", :software, "targetId", "isActive", "passwordInput", "clientType", :re3data, :opendoar, :issn, { issn: [:issnl, :electronic, :print] }, :certificate, { certificate: [] }, "serviceContact", { "serviceContact": [:email, "givenName", "familyName"] }, "salesforceId"],
               keys: { "systemEmail" => :system_email, "salesforceId" => :salesforce_id, "globusUuid" => :globus_uuid, "targetId" => :target_id, "isActive" => :is_active, "passwordInput" => :password_input, "clientType" => :client_type, "alternateName" => :alternate_name, "repositoryType" => :repository_type, "serviceContact" => :service_contact }

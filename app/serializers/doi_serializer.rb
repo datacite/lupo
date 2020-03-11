@@ -1,19 +1,20 @@
 class DoiSerializer
   include FastJsonapi::ObjectSerializer
-  include MetricsHelper # mixes in your helper method as class method
 
   set_key_transform :camel_lower
   set_type :dois
   set_id :uid
   # don't cache dois, as works are cached using the doi model
 
-  attributes :doi, :prefix, :suffix, :identifiers, :creators, :titles, :publisher, :container, :publication_year, :subjects, :contributors, :dates, :language, :types, :related_identifiers, :sizes, :formats, :version, :rights_list, :descriptions, :geo_locations, :funding_references, :xml, :url, :content_url, :metadata_version, :schema_version, :source, :is_active, :state, :reason, :landing_page, :created, :registered, :published, :updated, :citations
-  attributes :prefix, :suffix, if: Proc.new { |object, params| params && params[:detail] }
+  attributes :doi, :prefix, :suffix, :identifiers, :creators, :titles, :publisher, :container, :publication_year, :subjects, :contributors, :dates, :language, :types, :related_identifiers, :sizes, :formats, :version, :rights_list, :descriptions, :geo_locations, :funding_references, :xml, :url, :content_url, :metadata_version, :schema_version, :source, :is_active, :state, :reason, :landing_page, :view_count, :views_over_time, :download_count, :downloads_over_time, :reference_count, :citation_count, :citations_over_time, :created, :registered, :published, :updated
+  attributes :prefix, :suffix, :views_over_time, :downloads_over_time, :citations_over_time, if: Proc.new { |object, params| params && params[:detail] }
 
   belongs_to :client, record_type: :clients
   has_many :media, record_type: :media, id_method_name: :uid, if: Proc.new { |object, params| params && params[:detail] && !params[:is_collection]}
-  # has_many :views, record_type: :events, if: Proc.new { |object, params| params && params[:events]}
-  # has_many :downloads, record_type: :events, if: Proc.new { |object, params| params && params[:events]}
+  has_many :reference_events, record_type: :events, serializer: EventSerializer, if: Proc.new { |object, params| params && params[:detail] }
+  has_many :citation_events, record_type: :events, serializer: EventSerializer, if: Proc.new { |object, params| params && params[:detail] }
+  # has_many :parts, serializer: DoiSerializer, if: Proc.new { |object, params| params && params[:detail] }
+  # has_many :versions, serializer: DoiSerializer, if: Proc.new { |object, params| params && params[:detail] }
 
   attribute :xml, if: Proc.new { |object, params| params && params[:detail] } do |object|
     begin
@@ -88,16 +89,4 @@ class DoiSerializer
   attribute :landing_page, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_landing_page_results, object) == true } do |object|
     object.landing_page
   end
-
-  attribute :citations, if: Proc.new { |object, params| params && params[:mix_in] == "metrics" }  do |object|
-    doi_citations(object.uid)
-  end
-
-  # attribute :views, if: Proc.new { |object, params| params && params[:mix_in] == "metrics" }  do |object|
-  #   doi_views(object.uid)
-  # end
-
-  # attribute :downloads, if: Proc.new { |object, params| params && params[:mix_in] == "metrics" } do |object|
-  #   doi_downloads(object.uid)
-  # end
 end

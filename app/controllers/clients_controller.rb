@@ -24,7 +24,9 @@ class ClientsController < ApplicationController
       response = Client.find_by_id(params[:ids], page: page, sort: sort)
     else
       response = Client.query(params[:query], 
-        year: params[:year], 
+        year: params[:year],
+        from_date: params[:from_date],
+        until_date: params[:until_date],
         provider_id: params[:provider_id],
         re3data_id: params[:re3data_id],
         opendoar_id: params[:opendoar_id],
@@ -96,7 +98,12 @@ class ClientsController < ApplicationController
 
   def show
     options = {}
-    options[:meta] = { dois: doi_count(client_id: params[:id]) }
+    options[:meta] = { 
+      dois: doi_count(client_id: params[:id]),
+      citations: citation_count(client_id: params[:id]),
+      views: view_count(client_id: params[:id]),
+      downloads: download_count(client_id: params[:id]),
+    }.compact
     options[:include] = @include
     options[:is_collection] = false
     options[:params] = { current_ability: current_ability }
@@ -115,7 +122,7 @@ class ClientsController < ApplicationController
   
       render json: ClientSerializer.new(@client, options).serialized_json, status: :created
     else
-      logger.error @client.errors.inspect
+      Rails.logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
@@ -129,7 +136,7 @@ class ClientsController < ApplicationController
   
       render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
     else
-      logger.error @client.errors.inspect
+      Rails.logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
@@ -140,13 +147,13 @@ class ClientsController < ApplicationController
     if @client.dois.present?
       message = "Can't delete client that has DOIs."
       status = 400
-      logger.warn message
+      Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @client.update(is_active: nil, deleted_at: Time.zone.now)
       @client.send_delete_email unless Rails.env.test?
       head :no_content
     else
-      logger.error @client.errors.inspect
+      Rails.logger.error @client.errors.inspect
       render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end

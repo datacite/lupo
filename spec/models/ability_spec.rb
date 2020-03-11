@@ -4,7 +4,8 @@ require "cancan/matchers"
 describe User, type: :model do
   let(:token) { User.generate_token }
   let(:user) { User.new(token) }
-  let(:provider) { create(:provider) }
+  let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
+  let(:provider) { create(:provider, consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION") }
   let(:client) { create(:client, provider: provider) }
   let(:prefix) { create(:prefix, prefix: "10.14454") }
   let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
@@ -123,6 +124,38 @@ describe User, type: :model do
       it{ is_expected.not_to be_able_to(:create, provider) }
       it{ is_expected.to be_able_to(:update, provider) }
       it{ is_expected.not_to be_able_to(:destroy, provider) }
+
+      it{ is_expected.to be_able_to(:read, client) }
+      it{ is_expected.to be_able_to(:create, client) }
+      it{ is_expected.to be_able_to(:update, client) }
+      it{ is_expected.to be_able_to(:destroy, client) }
+
+      it{ is_expected.not_to be_able_to(:read, prefix) }
+      it{ is_expected.not_to be_able_to(:create, prefix) }
+      it{ is_expected.not_to be_able_to(:update, prefix) }
+      it{ is_expected.not_to be_able_to(:destroy, prefix) }
+
+      it{ is_expected.to be_able_to(:read, provider_prefix) }
+      it{ is_expected.to be_able_to(:create, provider_prefix) }
+      it{ is_expected.to be_able_to(:update, provider_prefix) }
+      it{ is_expected.to be_able_to(:destroy, provider_prefix) }
+
+      it{ is_expected.to be_able_to(:read, doi) }
+      it{ is_expected.to be_able_to(:transfer, doi) }
+      it{ is_expected.not_to be_able_to(:create, doi) }
+      it{ is_expected.not_to be_able_to(:update, doi) }
+      it{ is_expected.not_to be_able_to(:destroy, doi) }
+    end
+
+    context "when is a consortium admin" do
+      let(:token){ User.generate_token(role_id: "consortium_admin", provider_id: consortium.symbol.downcase) }
+
+      it{ is_expected.to be_able_to(:read, user) }
+
+      it{ is_expected.to be_able_to(:read, provider) }
+      it{ is_expected.to be_able_to(:create, provider) }
+      it{ is_expected.to be_able_to(:update, provider) }
+      it{ is_expected.to be_able_to(:destroy, provider) }
 
       it{ is_expected.to be_able_to(:read, client) }
       it{ is_expected.to be_able_to(:create, client) }

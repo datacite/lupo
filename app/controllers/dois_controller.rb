@@ -1,6 +1,5 @@
 require 'uri'
 require 'base64'
-require 'benchmark'
 
 class DoisController < ApplicationController
   include ActionController::MimeResponds
@@ -12,75 +11,77 @@ class DoisController < ApplicationController
 
   def index
     sort = case params[:sort]
-          when "name" then { "doi" => { order: 'asc' }}
-          when "-name" then { "doi" => { order: 'desc' }}
-          when "created" then { created: { order: 'asc' }}
-          when "-created" then { created: { order: 'desc' }}
-          when "updated" then { updated: { order: 'asc' }}
-          when "-updated" then { updated: { order: 'desc' }}
-          when "published" then { published: { order: 'asc' }}
-          when "-published" then { published: { order: 'desc' }}
-          when "relevance" then { "_score": { "order": "desc" }}
-          else { updated: { order: 'desc' }}
-          end
-
-    logger = LogStashLogger.new(type: :stdout)
+           when "name" then { "doi" => { order: 'asc' }}
+           when "-name" then { "doi" => { order: 'desc' }}
+           when "created" then { created: { order: 'asc' }}
+           when "-created" then { created: { order: 'desc' }}
+           when "updated" then { updated: { order: 'asc' }}
+           when "-updated" then { updated: { order: 'desc' }}
+           when "published" then { published: { order: 'asc' }}
+           when "-published" then { published: { order: 'desc' }}
+           when "view-count" then { view_count: { order: 'asc' }}
+           when "-view-count" then { view_count: { order: 'desc' }}
+           when "download-count" then { download_count: { order: 'asc' }}
+           when "-download-count" then { download_count: { order: 'desc' }}
+           when "citation-count" then { citation_count: { order: 'asc' }}
+           when "-citation-count" then { citation_count: { order: 'desc' }}
+           when "relevance" then { "_score": { "order": "desc" }}
+           else { updated: { order: 'desc' }}
+           end
 
     page = page_from_params(params)
 
     sample_group_field = case params[:sample_group]
-      when "client" then "client_id"
-      when "data-center" then "client_id"
-      when "provider" then "provider_id"
-      when "resource-type" then "types.resourceTypeGeneral"
-      else nil
-    end
-
-    response = nil
+                         when "client" then "client_id"
+                         when "data-center" then "client_id"
+                         when "provider" then "provider_id"
+                         when "resource-type" then "types.resourceTypeGeneral"
+                         else nil
+                         end
 
     # only show findable DOIs to anonymous users and role user
     params[:state] = "findable" if current_user.nil? || current_user.role_id == "user"
 
-    bm = Benchmark.ms {
-      if params[:id].present?
-        response = Doi.find_by_id(params[:id])
-      elsif params[:ids].present?
-        response = Doi.find_by_id(params[:ids], page: page, sort: sort)
-      else
-        response = Doi.query(params[:query],
-                            state: params[:state],
-                            exclude_registration_agencies: params[:exclude_registration_agencies],
-                            created: params[:created],
-                            registered: params[:registered],
-                            provider_id: params[:provider_id],
-                            consortium_id: params[:consortium_id],
-                            client_id: params[:client_id],
-                            affiliation_id: params[:affiliation_id],
-                            re3data_id: params[:re3data_id],
-                            opendoar_id: params[:opendoar_id],
-                            certificate: params[:certificate],
-                            prefix: params[:prefix],
-                            user_id: params[:user_id],
-                            resource_type_id: params[:resource_type_id],
-                            schema_version: params[:schema_version],
-                            subject: params[:subject],
-                            link_check_status: params[:link_check_status],
-                            link_check_has_schema_org: params[:link_check_has_schema_org],
-                            link_check_body_has_pid: params[:link_check_body_has_pid],
-                            link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
-                            link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
-                            link_check_found_citation_doi: params[:link_check_found_citation_doi],
-                            link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
-                            sample_group: sample_group_field,
-                            sample_size: params[:sample],
-                            source: params[:source],
-                            scroll_id: params[:scroll_id],
-                            page: page,
-                            sort: sort,
-                            random: params[:random])
-      end
-    }
-    logger.warn method: "GET", path: "/dois", message: "Request /dois", duration: bm
+    if params[:id].present?
+      response = Doi.find_by_id(params[:id])
+    elsif params[:ids].present?
+      response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
+    else
+      response = Doi.query(params[:query],
+                          state: params[:state],
+                          exclude_registration_agencies: params[:exclude_registration_agencies],
+                          created: params[:created],
+                          registered: params[:registered],
+                          provider_id: params[:provider_id],
+                          consortium_id: params[:consortium_id],
+                          client_id: params[:client_id],
+                          affiliation_id: params[:affiliation_id],
+                          re3data_id: params[:re3data_id],
+                          opendoar_id: params[:opendoar_id],
+                          certificate: params[:certificate],
+                          prefix: params[:prefix],
+                          user_id: params[:user_id],
+                          resource_type_id: params[:resource_type_id],
+                          schema_version: params[:schema_version],
+                          subject: params[:subject],
+                          has_citations: params[:has_citations],
+                          has_views: params[:has_views],
+                          has_downloads: params[:has_downloads],
+                          link_check_status: params[:link_check_status],
+                          link_check_has_schema_org: params[:link_check_has_schema_org],
+                          link_check_body_has_pid: params[:link_check_body_has_pid],
+                          link_check_found_schema_org_id: params[:link_check_found_schema_org_id],
+                          link_check_found_dc_identifier: params[:link_check_found_dc_identifier],
+                          link_check_found_citation_doi: params[:link_check_found_citation_doi],
+                          link_check_redirect_count_gte: params[:link_check_redirect_count_gte],
+                          sample_group: sample_group_field,
+                          sample_size: params[:sample],
+                          source: params[:source],
+                          scroll_id: params[:scroll_id],
+                          page: page,
+                          sort: sort,
+                          random: params[:random])
+    end
 
     begin
       # If we're using sample groups we need to unpack the results from the aggregation bucket hits.
@@ -141,57 +142,31 @@ class DoisController < ApplicationController
           render json: DoiSerializer.new(results, options).serialized_json, status: :ok
         end
       else
-        states = nil
-        resource_types = nil
-        years = nil
-        created = nil
-        registered = nil
-        providers = nil
-        clients = nil
-        affiliations = nil
-        prefixes = nil
-        schema_versions = nil
-        sources = nil
-        link_checks_status = nil
-        links_with_schema_org = nil
-        link_checks_schema_org_id = nil
-        link_checks_dc_identifier = nil
-        link_checks_citation_doi = nil
-        links_checked = nil
-        subjects = nil
-        certificates = nil
+        states = total.positive? ? facet_by_key(response.aggregations.states.buckets) : nil
+        resource_types = total.positive? ? facet_by_resource_type(response.aggregations.resource_types.buckets) : nil
+        years = total.positive? ? facet_by_year(response.aggregations.years.buckets) : nil
+        created = total.positive? ? facet_by_year(response.aggregations.created.buckets) : nil
+        registered = total.positive? ? facet_by_year(response.aggregations.registered.buckets) : nil
+        providers = total.positive? ? facet_by_provider(response.aggregations.providers.buckets) : nil
+        clients = total.positive? ? facet_by_client(response.aggregations.clients.buckets) : nil
+        prefixes = total.positive? ? facet_by_key(response.aggregations.prefixes.buckets) : nil
+        schema_versions = total.positive? ? facet_by_schema(response.aggregations.schema_versions.buckets) : nil
 
-        bm = Benchmark.ms {
-          states = total > 0 ? facet_by_key(response.aggregations.states.buckets) : nil
-          resource_types = total > 0 ? facet_by_resource_type(response.aggregations.resource_types.buckets) : nil
-          years = total > 0 ? facet_by_year(response.aggregations.years.buckets) : nil
-          created = total > 0 ? facet_by_year(response.aggregations.created.buckets) : nil
-          registered = total > 0 ? facet_by_year(response.aggregations.registered.buckets) : nil
-          providers = total > 0 ? facet_by_provider(response.aggregations.providers.buckets) : nil
-          clients = total > 0 ? facet_by_client(response.aggregations.clients.buckets) : nil
-          prefixes = total > 0 ? facet_by_key(response.aggregations.prefixes.buckets) : nil
-          schema_versions = total > 0 ? facet_by_schema(response.aggregations.schema_versions.buckets) : nil
-        }
-        logger.warn method: "GET", path: "/dois", message: "AggregationsBasic /dois", duration: bm
+        affiliations = total.positive? ? facet_by_affiliation(response.aggregations.affiliations.buckets) : nil
+        sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
+        subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
+        certificates = total.positive? ? facet_by_key(response.aggregations.certificates.buckets) : nil
 
-        bm = Benchmark.ms {
-          affiliations = total > 0 ? facet_by_affiliation(response.aggregations.affiliations.buckets) : nil
-          sources = total > 0 ? facet_by_key(response.aggregations.sources.buckets) : nil
-          subjects = total > 0 ? facet_by_key(response.aggregations.subjects.buckets) : nil
-          certificates = total > 0 ? facet_by_key(response.aggregations.certificates.buckets) : nil
-        }
-        logger.warn method: "GET", path: "/dois", message: "AggregationsExtended /dois", duration: bm
+        link_checks_status = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
+        links_with_schema_org = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
+        link_checks_schema_org_id = total.positive? ? response.aggregations.link_checks_schema_org_id.value : nil
+        link_checks_dc_identifier = total.positive? ? response.aggregations.link_checks_dc_identifier.value : nil
+        link_checks_citation_doi = total.positive? ? response.aggregations.link_checks_citation_doi.value : nil
+        links_checked = total.positive? ? response.aggregations.links_checked.value : nil
 
-        bm = Benchmark.ms {
-          link_checks_status = total > 0 ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
-          links_with_schema_org = total > 0 ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
-          link_checks_schema_org_id = total > 0 ? response.aggregations.link_checks_schema_org_id.value : nil
-          link_checks_dc_identifier = total > 0 ? response.aggregations.link_checks_dc_identifier.value : nil
-          link_checks_citation_doi = total > 0 ? response.aggregations.link_checks_citation_doi.value : nil
-          links_checked = total > 0 ? response.aggregations.links_checked.value : nil
-        }
-        logger.warn method: "GET", path: "/dois", message: "AggregationsLinkChecks /dois", duration: bm
-
+        citations = total.positive? ? metric_facet_by_year(response.aggregations.citations.buckets) : nil
+        views = total.positive? ? metric_facet_by_year(response.aggregations.views.buckets) : nil
+        downloads = total.positive? ? metric_facet_by_year(response.aggregations.downloads.buckets) : nil
 
         respond_to do |format|
           format.json do
@@ -219,6 +194,9 @@ class DoisController < ApplicationController
               "linkChecksDcIdentifier" => link_checks_dc_identifier,
               "linkChecksCitationDoi" => link_checks_citation_doi,
               subjects: subjects,
+              citations: citations,
+              views: views,
+              downloads: downloads,
             }.compact
 
             options[:links] = {
@@ -239,22 +217,17 @@ class DoisController < ApplicationController
             options[:params] = {
               current_ability: current_ability,
               detail: params[:detail],
-              events: params[:events],
-              mix_in: params[:mix_in],
               affiliation: params[:affiliation],
-              is_collection: options[:is_collection]
+              is_collection: options[:is_collection],
             }
 
             # sparse fieldsets
             fields = fields_from_params(params)
-            bm = Benchmark.ms {
-              if fields
-                render json: DoiSerializer.new(results, options.merge(fields: fields)).serialized_json, status: :ok
-              else
-                render json: DoiSerializer.new(results, options).serialized_json, status: :ok
-              end
-            }
-            logger.warn method: "GET", path: "/dois", message: "Render /dois", duration: bm
+            if fields
+              render json: DoiSerializer.new(results, options.merge(fields: fields)).serialized_json, status: :ok
+            else
+              render json: DoiSerializer.new(results, options).serialized_json, status: :ok
+            end
           end
 
           format.citation do
@@ -277,31 +250,37 @@ class DoisController < ApplicationController
     # only show findable DOIs to anonymous users and role user
     # use current_user role to determine permissions to access draft and registered dois
     # instead of using ability
+    # response = Doi.find_by_id(params[:id])
     doi = Doi.where(doi: params[:id]).first
     fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: doi, user: current_user)
 
     respond_to do |format|
       format.json do
+        # doi = response.results.first
+        fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: doi, user: current_user)
+
         options = {}
         options[:include] = @include
         options[:is_collection] = false
         options[:params] = {
           current_ability: current_ability,
-          events: params[:events],
           detail: true,
-          affiliation: params[:affiliation]
+          affiliation: params[:affiliation],
         }
 
         render json: DoiSerializer.new(doi, options).serialized_json, status: :ok
       end
 
-      format.citation do  
+      # doi = response.records.first
+      fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: doi, user: current_user)
+
+      format.citation do
         # fetch formatted citation
         render citation: doi, style: params[:style] || "apa", locale: params[:locale] || "en-US"
       end
       header = %w(doi url registered state resourceTypeGeneral resourceType title author publisher publicationYear)
       format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => doi }
-      format.csv { render request.format.to_sym =>  doi, header: header }
+      format.csv { render request.format.to_sym => doi, header: header }
     end
   end
 
@@ -387,7 +366,7 @@ class DoisController < ApplicationController
       options[:params] = {
         current_ability: current_ability,
         detail: true,
-        affiliation: params[:affiliation]
+        affiliation: params[:affiliation],
       }
 
       render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
@@ -399,7 +378,7 @@ class DoisController < ApplicationController
 
   def undo
     @doi = Doi.where(doi: safe_params[:doi]).first
-    fail ActiveRecord::RecordNotFound unless @doi.present?
+    fail ActiveRecord::RecordNotFound if @doi.blank?
 
     authorize! :undo, @doi
 
@@ -450,13 +429,13 @@ class DoisController < ApplicationController
 
   def get_url
     @doi = Doi.where(doi: params[:id]).first
-    fail ActiveRecord::RecordNotFound unless @doi.present?
-    
+    fail ActiveRecord::RecordNotFound if @doi.blank?
+
     authorize! :get_url, @doi
 
-    if !@doi.is_registered_or_findable? || %w(europ crossref medra jalc kisti op).include?(@doi.provider_id) || %w(Crossref mEDRA).include?(@doi.agency)
+    if !@doi.is_registered_or_findable? || %w(europ).include?(@doi.provider_id) || %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations).include?(@doi.client_id)
       url = @doi.url
-      head :no_content and return unless url.present?
+      head :no_content && return if url.blank?
     else
       response = @doi.get_url
 
@@ -480,12 +459,12 @@ class DoisController < ApplicationController
   def get_dois
     authorize! :get_urls, Doi
 
-    client = Client.where('datacentre.symbol = ?', current_user.uid.upcase).first
+    client = Client.where("datacentre.symbol = ?", current_user.uid.upcase).first
     client_prefix = client.prefixes.first
-    head :no_content and return unless client_prefix.present?
+    head :no_content && return if client_prefix.blank?
 
     dois = Doi.get_dois(prefix: client_prefix.prefix, username: current_user.uid.upcase, password: current_user.password)
-    if dois.length > 0
+    if dois.length.positive?
       render json: { dois: dois }.to_json, status: :ok
     else
       head :no_content
@@ -509,18 +488,10 @@ class DoisController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      
-      if params[:events].present?
-        @include = @include & [:client, :media, :views, :downloads]
-      else
-        @include = @include & [:client, :media]
-      end
+
+      @include = @include & [:client, :media, :reference_events, :citation_events]
     else
-      if params[:events].present?
-        @include = [:client, :media, :views, :downloads]
-      else
-        @include = [:client, :media]
-      end
+      @include = [:client, :media]
     end
   end
 
@@ -602,7 +573,24 @@ class DoisController < ApplicationController
       :fundingReferences,
       { fundingReferences: [:funderName, :funderIdentifier, :funderIdentifierType, :awardNumber, :awardUri, :awardTitle] },
       :geoLocations,
-      { geoLocations: [{ geoLocationPoint: [:pointLongitude, :pointLatitude] }, { geoLocationBox: [:westBoundLongitude, :eastBoundLongitude, :southBoundLatitude, :northBoundLatitude] }, :geoLocationPlace] }
+      { geoLocations: [{ geoLocationPoint: [:pointLongitude, :pointLatitude] }, { geoLocationBox: [:westBoundLongitude, :eastBoundLongitude, :southBoundLatitude, :northBoundLatitude] }, :geoLocationPlace] },
+      :container,
+      { container: [:type, :identifier, :identifierType, :title, :volume, :issue, :firstPage, :lastPage] },
+      :published,
+      :downloadsOverTime,
+      { downloadsOverTime: [:yearMonth, :total] },
+      :viewsOverTime,
+      { viewsOverTime: [:yearMonth, :total] },
+      :citationsOverTime,
+      { citationsOverTime: [:year, :total] },
+      :citationCount,
+      :downloadCount,
+      :partCount,
+      :partOfCount,
+      :referenceCount,
+      :versionCount,
+      :versionOfCount,
+      :viewCount,
     ]
     relationships = [{ client: [data: [:type, :id]] }]
 
@@ -674,13 +662,15 @@ class DoisController < ApplicationController
       :confirmDoi, :prefix, :suffix, :publicationYear,
       :rightsList, :relatedIdentifiers, :fundingReferences, :geoLocations,
       :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage,
-      :created, :registered, :updated, :lastLandingPage, :version,
+      :created, :registered, :updated, :published, :lastLandingPage, :version,
       :lastLandingPageStatus, :lastLandingPageStatusCheck,
-      :lastLandingPageStatusResult, :lastLandingPageContentType, :contentUrl)
+      :lastLandingPageStatusResult, :lastLandingPageContentType, :contentUrl,
+      :viewsOverTime, :downloadsOverTime, :citationsOverTime, :citationCount, :downloadCount,
+      :partCount, :partOfCount, :referenceCount, :versionCount, :versionOfCount, :viewCount)
   end
 
   def set_raven_context
-    return nil unless params.dig(:data, :attributes, :xml).present?
+    return nil if params.dig(:data, :attributes, :xml).blank?
 
     Raven.extra_context metadata: Base64.decode64(params.dig(:data, :attributes, :xml))
   end

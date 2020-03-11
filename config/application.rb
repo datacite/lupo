@@ -9,7 +9,6 @@ require "active_storage/engine"
 require "action_controller/railtie"
 require "rails/test_unit/railtie"
 require "active_job/logging"
-require "elasticsearch/rails/lograge"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -66,6 +65,8 @@ module Lupo
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
 
+    config.middleware.use Rack::CrawlerDetect
+
     # include graphql
     config.paths.add Rails.root.join('app', 'graphql', 'types').to_s, eager_load: true
     config.paths.add Rails.root.join('app', 'graphql', 'mutations').to_s, eager_load: true
@@ -84,19 +85,16 @@ module Lupo
 
     config.lograge.enabled = true
     config.lograge.formatter = Lograge::Formatters::Logstash.new
-    config.lograge.logger = ::LogStashLogger.new(
-      type: :stdout
-    )
-    config.lograge.log_level = ENV["LOG_LEVEL"].to_sym
-  
-    config.active_job.logger = config.lograge.logger
-  
+    config.lograge.logger = LogStashLogger.new(type: :stdout)
+    config.logger = config.lograge.logger        ## LogStashLogger needs to be pass to rails logger, see roidrage/lograge#26
+    config.log_level = ENV["LOG_LEVEL"].to_sym   ## Log level in a config level configuration
+
     config.lograge.ignore_actions = ["HeartbeatController#index", "IndexController#index"]
     config.lograge.ignore_custom = lambda do |event|
       event.payload.inspect.length > 100000
     end
     config.lograge.base_controller_class = "ActionController::API"
-  
+
     config.lograge.custom_options = lambda do |event|
       exceptions = %w(controller action format id)
       {
@@ -104,8 +102,6 @@ module Lupo
         uid: event.payload[:uid],
       }
     end
-    config.logger = config.lograge.logger
-    config.active_record.logger = nil
 
     # configure caching
     config.cache_store = :dalli_store, nil, { :namespace => ENV['APPLICATION'] }
@@ -136,5 +132,10 @@ module Lupo
     config.generators do |g|
       g.fixture_replacement :factory_bot
     end
+
+    config.paperclip_defaults = {
+      storage: :filesystem,
+      url: "/images/members/:filename",
+    }
   end
 end

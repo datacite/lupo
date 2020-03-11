@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_22_153731) do
+ActiveRecord::Schema.define(version: 2020_03_02_191027) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -72,6 +72,10 @@ ActiveRecord::Schema.define(version: 2020_01_22_153731) do
     t.string "salesforce_id", limit: 191
     t.string "non_profit_status", limit: 191
     t.string "globus_uuid", limit: 191
+    t.string "logo_file_name"
+    t.string "logo_content_type"
+    t.bigint "logo_file_size"
+    t.datetime "logo_updated_at"
     t.index ["globus_uuid"], name: "index_allocator_on_globus_uuid"
     t.index ["organization_type"], name: "index_allocator_organization_type"
     t.index ["symbol"], name: "symbol", unique: true
@@ -246,10 +250,16 @@ ActiveRecord::Schema.define(version: 2020_01_22_153731) do
     t.integer "total", default: 1
     t.string "license", limit: 191
     t.text "doi_id"
+    t.text "source_doi"
+    t.text "target_doi"
+    t.string "source_relation_type_id", limit: 191
+    t.string "target_relation_type_id", limit: 191
     t.index ["created_at", "indexed_at", "updated_at"], name: "index_events_on_created_indexed_updated"
+    t.index ["created_at"], name: "index_events_on_source_id_created_at"
     t.index ["relation_type_id"], name: "index_events_on_doi_id"
-    t.index ["source_id", "created_at"], name: "index_events_on_source_id_created_at"
-    t.index ["subj_id", "obj_id", "source_id", "relation_type_id"], name: "index_events_on_multiple_columns", unique: true, length: { subj_id: 191, obj_id: 191 }
+    t.index ["source_doi", "source_relation_type_id"], name: "index_events_on_source_doi", length: { source_doi: 100 }
+    t.index ["subj_id", "obj_id", "relation_type_id"], name: "index_events_on_multiple_columns", unique: true, length: { subj_id: 191, obj_id: 191 }
+    t.index ["target_doi", "target_relation_type_id"], name: "index_events_on_target_doi", length: { target_doi: 100 }
     t.index ["updated_at"], name: "index_events_on_updated_at"
     t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
   end

@@ -26,11 +26,11 @@ class PrefixConnectionWithMetaType < BaseConnection
            title: args[:state].underscore.humanize,
            count: collection.state(args[:state].underscore.dasherize).count }]
       else
-        [{ id: "withoutClient",
-           title: "Without client",
+        [{ id: "withoutRepository",
+           title: "Without repository",
            count: collection.state("without-client").count },
-         { id: "withClient",
-           title: "With client",
+         { id: "withRepository",
+           title: "With repository",
            count: collection.state("with-client").count }]
       end
     else

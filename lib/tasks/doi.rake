@@ -64,6 +64,16 @@ namespace :doi do
     Doi.import_one(doi_id: ENV['DOI'])
   end
 
+  desc 'Index one DOI'
+  task :index_one => :environment do
+    if ENV['DOI'].nil?
+      puts "ENV['DOI'] is required"
+      exit
+    end
+
+    Doi.index_one(doi_id: ENV['DOI'])
+  end
+
   desc 'Store handle URL'
   task :set_url => :environment do
     Doi.set_url
@@ -98,5 +108,18 @@ namespace :doi do
   desc 'Migrates landing page data handling camelCase changes at same time'
   task :migrate_landing_page => :environment do
     Doi.migrate_landing_page
+  end
+
+  desc 'Delete dois by a prefix'
+  task :delete_by_prefix => :environment do
+    if ENV['PREFIX'].nil?
+      puts "ENV['PREFIX'] is required."
+      exit
+    end
+
+    puts "Note: This does not delete any associated prefix."
+
+    count = Doi.delete_dois_by_prefix(ENV['PREFIX'])
+    puts "#{count} DOIs with prefix #{ENV['PREFIX']} deleted."
   end
 end

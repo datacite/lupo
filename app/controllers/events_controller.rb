@@ -1,5 +1,3 @@
-require 'benchmark'
-
 class EventsController < ApplicationController
   include Identifiable
 
@@ -8,6 +6,7 @@ class EventsController < ApplicationController
   include BatchLoaderHelper
 
   prepend_before_action :authenticate_user!, except: [:index, :show]
+  before_action :detect_crawler
   before_action :load_event, only: [:show, :destroy]
   before_action :set_include, only: [:index, :show, :create, :update]
   authorize_resource only: [:destroy]
@@ -65,8 +64,6 @@ class EventsController < ApplicationController
   end
 
   def index
-    logger = LogStashLogger.new(type: :stdout)
-
     sort = case params[:sort]
            when "relevance" then { "_score" => { order: 'desc' }}
            when "obj_id" then { "obj_id" => { order: 'asc' }}
@@ -83,36 +80,37 @@ class EventsController < ApplicationController
 
     page = page_from_params(params)
 
-    response = nil
-    bm = Benchmark.ms {
-      if params[:id].present?
-        response = Event.find_by_id(params[:id])
-      elsif params[:ids].present?
-        response = Event.find_by_id(params[:ids], page: page, sort: sort)
-      else
-        response = Event.query(params[:query],
-                              subj_id: params[:subj_id],
-                              obj_id: params[:obj_id],
-                              doi: params[:doi_id] || params[:doi],
-                              orcid: params[:orcid],
-                              prefix: params[:prefix],
-                              subtype: params[:subtype],
-                              citation_type: params[:citation_type],
-                              source_id: params[:source_id],
-                              registrant_id: params[:registrant_id],
-                              relation_type_id: params[:relation_type_id],
-                              issn: params[:issn],
-                              publication_year: params[:publication_year],
-                              occurred_at: params[:occurred_at],
-                              year_month: params[:year_month],
-                              aggregations: params[:aggregations],
-                              unique: params[:unique],
-                              scroll_id: params[:scroll_id],
-                              page: page,
-                              sort: sort)
-      end
-    }
-    logger.warn method: "GET", path: "/events", message: "Request /events", duration: bm
+    if params[:id].present?
+      response = Event.find_by_id(params[:id])
+    elsif params[:ids].present?
+      response = Event.find_by_id(params[:ids], page: page, sort: sort)
+    else
+      response = Event.query(params[:query],
+                            subj_id: params[:subj_id],
+                            obj_id: params[:obj_id],
+                            source_doi: params[:source_doi],
+                            target_doi: params[:target_doi],
+                            doi: params[:doi_id] || params[:doi],
+                            orcid: params[:orcid],
+                            prefix: params[:prefix],
+                            subtype: params[:subtype],
+                            citation_type: params[:citation_type],
+                            source_id: params[:source_id],
+                            registrant_id: params[:registrant_id],
+                            relation_type_id: params[:relation_type_id],
+                            source_relation_type_id: params[:source_relation_type_id],
+                            target_relation_type_id: params[:target_relation_type_id],
+                            issn: params[:issn],
+                            publication_year: params[:publication_year],
+                            occurred_at: params[:occurred_at],
+                            year_month: params[:year_month],
+                            aggregations: params[:aggregations],
+                            unique: params[:unique],
+                            state_event: params[:state],
+                            scroll_id: params[:scroll_id],
+                            page: page,
+                            sort: sort)
+    end
 
     if page[:scroll].present?
       results = response.results
@@ -120,7 +118,7 @@ class EventsController < ApplicationController
     else
       total = response.results.total
       total_for_pages = page[:cursor].nil? ? [total.to_f, 10000].min : total.to_f
-      total_pages = page[:size] > 0 ? (total_for_pages / page[:size]).ceil : 0
+      total_pages = page[:size].positive? ? (total_for_pages / page[:size]).ceil : 0
     end
 
     if page[:scroll].present?
@@ -134,56 +132,21 @@ class EventsController < ApplicationController
         next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/events?" + {
           "scroll-id" => response.scroll_id,
           "page[scroll]" => page[:scroll],
-          "page[size]" => page[:size] }.compact.to_query
+          "page[size]" => page[:size] }.compact.to_query,
         }.compact
       options[:is_collection] = true
 
       render json: EventSerializer.new(results, options).serialized_json, status: :ok
     else
-      aggregations = nil
-      sources = nil
-      prefixes = nil
-      citation_types = nil
-      relation_types = nil
-      registrants = nil
-      pairings = nil
-      dois = nil
-      dois_usage = nil
-      citations = nil
-      citations_histogram = nil
-      references = nil
-      relations = nil
-      views_histogram = nil
-      downloads_histogram = nil
-      unique_obj_count = nil
-      unique_subj_count = nil
+      aggregations = params.fetch(:aggregations, "") || ""
 
-      bm = Benchmark.ms {
-        aggregations = params.fetch(:aggregations, "") || ""
-
-        sources = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_source(response.response.aggregations.sources.buckets) : nil
-        prefixes = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_source(response.response.aggregations.prefixes.buckets) : nil
-        citation_types = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
-        relation_types = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_relation_type(response.response.aggregations.relation_types.buckets) : nil
-        registrants = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations")  ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
-        pairings = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
-        dois = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_dois(response.response.aggregations.dois.buckets) : nil
-        dois_usage = total.positive? ? EventsQuery.new.usage(params[:doi]) : nil
-        # dois_citations = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_citations_by_year_v1(response.response.aggregations.dois_citations) : nil
-        citations = total.positive? ? EventsQuery.new.citations(params[:doi]) : nil
-        citations_histogram = total.positive? ? EventsQuery.new.citations_histogram(params[:doi]) : nil
-        references = total.positive? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.references.dois.buckets) : nil
-        relations = total.positive? &&  aggregations.include?("citations_aggregations") ? facet_citations_by_dois(response.response.aggregations.relations.dois.buckets) : nil
-
-        views_histogram = total.positive? ? EventsQuery.new.views_histogram(params[:doi]) : nil
-        downloads_histogram = total.positive? ? EventsQuery.new.downloads_histogram(params[:doi]) : nil
-
-        # views = total.positive? ? EventsQuery.new.views(params[:doi]) : nil
-        # downloads = total.positive? ? EventsQuery.new.downloads(params[:doi]) : nil
-        unique_obj_count = total.positive? && aggregations.include?("advanced_aggregations") ? response.response.aggregations.unique_obj_count.value : nil
-        unique_subj_count = total.positive? && aggregations.include?("advanced_aggregations") ? response.response.aggregations.unique_subj_count.value : nil
-      }
-      logger.warn method: "GET", path: "/events", message: "Aggregations /events", duration: bm
+      sources = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_source(response.response.aggregations.sources.buckets) : nil
+      prefixes = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_source(response.response.aggregations.prefixes.buckets) : nil
+      citation_types = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
+      relation_types = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_relation_type(response.response.aggregations.relation_types.buckets) : nil
+      registrants = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations")  ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
+      pairings = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
+      states = total.positive? && aggregations.include?("state_aggregations") ? facet_by_source(response.response.aggregations.states.buckets) : nil
 
       results = response.results
 
@@ -198,21 +161,7 @@ class EventsController < ApplicationController
         "relationTypes" => relation_types,
         pairings: pairings,
         registrants: registrants,
-        "doisRelationTypes": dois,
-        "doisUsageTypes": dois_usage,
-        # "doisCitations": dois_citations,
-        "citationsHistogram": citations_histogram,
-        "uniqueCitations": citations,
-        "references": references,
-        "relations": relations,
-        "uniqueNodes": {
-          "objCount": unique_obj_count,
-          "subjCount": unique_subj_count
-        },
-        "viewsHistogram": views_histogram,
-        # "views": views,
-        "downloadsHistogram": downloads_histogram
-        # "downloads": downloads
+        "states": states,
       }.compact
 
       options[:links] = {
@@ -239,26 +188,7 @@ class EventsController < ApplicationController
 
       options[:is_collection] = true
 
-      events_serialized = nil
-      bm = Benchmark.ms {
-        events_serialized = EventSerializer.new(results, options).serializable_hash
-      }
-      logger.warn method: "GET", path: "/events", message: "Serialize /events", duration: bm
-      
-      if @include.include?(:dois)
-        doi_names = ""
-        bm = Benchmark.ms {
-          options[:include] = []
-          doi_names = (results.map { |event| event.doi}).uniq().join(",")
-          events_serialized[:included] = DoiSerializer.new((Doi.find_by_id(doi_names).results), is_collection: true).serializable_hash.dig(:data) 
-        }
-        logger.warn method: "GET", path: "/events", message: "IncludeDois /events", duration: bm
-      end
-
-      bm = Benchmark.ms {
-        render json: events_serialized, status: :ok
-      }
-      logger.warn method: "GET", path: "/events", message: "Render /events", duration: bm
+      render json: EventSerializer.new(results, options).serialized_json, status: :ok
     end
   end
 
@@ -282,7 +212,7 @@ class EventsController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include &= [:dois]
+      @include = @include & [:doi_for_source, :doi_for_target]
     else
       @include = []
     end
