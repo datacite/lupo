@@ -20,13 +20,10 @@ class Ability
     elsif user.role_id == "staff_user"
       can :read, :all
     elsif user.role_id == "consortium_admin" && user.provider_id.present?
-      can [:create, :destroy], Provider do |provider|
+      can [:manage, :read_billing_information], Provider do |provider|
         user.provider_id.casecmp(provider.consortium_id)
       end
-      can [:update, :read, :read_billing_information], Provider do |provider|
-        user.provider_id.casecmp(provider.id) || user.provider_id.casecmp(provider.consortium_id)
-      end
-      can [:read], Provider
+      can [:update, :read, :read_billing_information], Provider, symbol: user.provider_id.upcase
       can [:manage], ProviderPrefix do |provider_prefix|
         provider_prefix.provider && user.provider_id.casecmp(provider_prefix.provider.consortium_id)
       end
@@ -52,7 +49,6 @@ class Ability
       end
     elsif user.role_id == "provider_admin" && user.provider_id.present?
       can [:update, :read, :read_billing_information], Provider, symbol: user.provider_id.upcase
-      can [:read], Provider
       can [:manage], ProviderPrefix, provider_id: user.provider_id
       can [:manage], Client, provider_id: user.provider_id
       can [:manage], ClientPrefix #, :client_id => user.provider_id
