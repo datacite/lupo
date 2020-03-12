@@ -133,6 +133,14 @@ class ApplicationController < ActionController::API
     end
   end
 
+  def skip_bullet
+    previous_value = Bullet.enable?
+    Bullet.enable = false
+    yield
+  ensure
+    Bullet.enable = previous_value
+  end
+
   protected
 
   def is_admin_or_staff?

@@ -42,7 +42,7 @@ describe "works", type: :request do
 
     it "has citations" do
       get "/works/#{doi.doi}?include=citation-events"
-      puts last_response.body
+
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)

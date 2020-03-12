@@ -70,7 +70,7 @@ class Provider < ActiveRecord::Base
 
   has_many :clients, foreign_key: :allocator
   has_many :dois, through: :clients
-  has_many :provider_prefixes, foreign_key: :allocator, dependent: :destroy
+  has_many :provider_prefixes, foreign_key: :allocator, dependent: :destroy, inverse_of: :provider
   has_many :prefixes, through: :provider_prefixes
   has_many :consortium_organizations, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_id", inverse_of: :consortium
   belongs_to :consortium, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_id", inverse_of: :consortium_organizations, optional: true

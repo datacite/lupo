@@ -3,7 +3,8 @@ class PrefixesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show, :totals]
-
+  around_action :skip_bullet, only: [:index], if: -> { defined?(Bullet) }
+  
   def index
     # support nested routes
     if params[:id].present?

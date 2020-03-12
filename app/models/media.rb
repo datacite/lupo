@@ -11,7 +11,7 @@ class Media < ActiveRecord::Base
   validates_format_of :media_type, :with => /[\S]+\/[\S]+/, if: :media_type?
   validates_associated :doi
 
-  belongs_to :doi, foreign_key: :dataset
+  belongs_to :doi, foreign_key: :dataset, inverse_of: :media
 
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save :set_defaults

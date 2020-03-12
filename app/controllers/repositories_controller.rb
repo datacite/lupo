@@ -6,7 +6,8 @@ class RepositoriesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_include
   load_and_authorize_resource :client, parent: false, except: [:index, :show, :create, :totals, :random]
-
+  around_action :skip_bullet, only: [:index], if: -> { defined?(Bullet) }
+  
   def index
     sort = case params[:sort]
            when "relevance" then { "_score" => { order: 'desc' }}

@@ -83,6 +83,7 @@ group :development, :test do
   gem "better_errors"
   gem "binding_of_caller"
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
+  gem 'bullet', '~> 6.1'
 end
 
 group :development do

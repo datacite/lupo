@@ -6,11 +6,9 @@ class ClientPrefix < ActiveRecord::Base
 
   self.table_name = "datacentre_prefixes"
 
-  belongs_to :client, foreign_key: :datacentre #, touch: true
-  belongs_to :prefix, foreign_key: :prefixes
-  belongs_to :provider_prefix, foreign_key: :allocator_prefixes
-
-  delegate :symbol, to: :client, prefix: true
+  belongs_to :client, foreign_key: :datacentre, inverse_of: :client_prefixes
+  belongs_to :prefix, foreign_key: :prefixes, inverse_of: :client_prefixes
+  belongs_to :provider_prefix, foreign_key: :allocator_prefixes, inverse_of: :client_prefixes
 
   before_create :set_id
   before_create { self.created_at = Time.zone.now.utc.iso8601 }
@@ -29,7 +27,7 @@ class ClientPrefix < ActiveRecord::Base
 
   # workaround for non-standard database column names and association
   def client_id
-    client_symbol.downcase
+    client.symbol.downcase if client.present?
   end
 
   # workaround for non-standard database column names and association
@@ -41,7 +39,7 @@ class ClientPrefix < ActiveRecord::Base
   end
 
   def repository_id
-    client_symbol.downcase
+    client.symbol.downcase if client.present?
   end
 
   # workaround for non-standard database column names and association

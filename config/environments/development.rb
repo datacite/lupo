@@ -39,6 +39,11 @@ Rails.application.configure do
 
   require 'flipper/middleware/memoizer'
   config.middleware.use Flipper::Middleware::Memoizer
+
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.rails_logger = true
+  end
 end
 
 BetterErrors::Middleware.allow_ip! ENV['TRUSTED_IP']

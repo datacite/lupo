@@ -328,7 +328,6 @@ describe "dois", type: :request do
     it "has versions" do
       get "/dois/#{doi.doi}", nil, headers
 
-      puts last_response.body
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
@@ -2210,7 +2209,7 @@ describe "dois", type: :request do
         post '/dois', valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json.dig('errors')).to eq([{"source"=>"metadata", "title"=>"Is invalid"}])
+        expect(json.dig('errors')).to eq([{"source"=>"metadata", "title"=>"Is invalid"}, {"source"=>"metadata", "title"=>"Is invalid"}])
       end
     end
 

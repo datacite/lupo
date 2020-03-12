@@ -12,7 +12,7 @@ describe "Provider Prefixes", type: :request   do
   describe "GET /provider-prefixes by consortium" do
     it "returns provider-prefixes" do
       get "/provider-prefixes?consortium-id=#{consortium.symbol.downcase}", nil, headers
-      puts last_response.body
+
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(3)
     end

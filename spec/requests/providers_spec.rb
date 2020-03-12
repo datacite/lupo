@@ -141,7 +141,7 @@ describe "Providers", type: :request, elasticsearch: true  do
 
       it 'creates a provider' do
         post '/providers', params, headers
-        puts last_response.body
+
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq("British Library")
         expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")

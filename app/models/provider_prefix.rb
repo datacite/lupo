@@ -6,15 +6,13 @@ class ProviderPrefix < ActiveRecord::Base
 
   self.table_name = "allocator_prefixes"
 
-  belongs_to :provider, foreign_key: :allocator #, touch: true
-  belongs_to :prefix, foreign_key: :prefixes
-  has_many :client_prefixes, foreign_key: :allocator_prefixes, dependent: :destroy
+  belongs_to :provider, foreign_key: :allocator, inverse_of: :provider_prefixes
+  belongs_to :prefix, foreign_key: :prefixes, inverse_of: :provider_prefixes
+  has_many :client_prefixes, foreign_key: :allocator_prefixes, dependent: :destroy, inverse_of: :provider_prefix
   has_many :clients, through: :client_prefixes
 
   alias_attribute :created, :created_at
   alias_attribute :updated, :updated_at 
-
-  delegate :symbol, to: :provider, prefix: true
 
   before_create :set_id
   before_create { self.created_at = Time.zone.now.utc.iso8601 }
@@ -29,7 +27,7 @@ class ProviderPrefix < ActiveRecord::Base
 
   # workaround for non-standard database column names and association
   def provider_id
-    provider_symbol.downcase
+    provider.symbol.downcase if provider.present?
   end
 
   # workaround for non-standard database column names and association

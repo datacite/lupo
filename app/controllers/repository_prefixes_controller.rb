@@ -5,7 +5,8 @@ class RepositoryPrefixesController < ApplicationController
   before_action :set_client_prefix, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
-
+  around_action :skip_bullet, only: [:index], if: -> { defined?(Bullet) }
+  
   def index
     # support nested routes
     if params[:id].present?
