@@ -38,14 +38,14 @@ describe "Providers", type: :request, elasticsearch: true  do
   describe 'GET /providers/:id' do
     context 'when the record exists' do
       it 'returns the provider' do
-        get "/providers/#{provider.symbol}", nil, headers
+        get "/providers/#{provider.symbol.downcase}", nil, headers
 
         expect(json).not_to be_empty
         expect(json['data']['id']).to eq(provider.symbol.downcase)
       end
 
       it 'returns the provider info for member page' do
-        get "/providers/#{provider.symbol}", nil, headers
+        get "/providers/#{provider.symbol.downcase}", nil, headers
 
         expect(json['data']['attributes']['twitterHandle']).to eq(provider.twitter_handle)
         expect(json['data']['attributes']['billingInformation']).to eq(provider.billing_information)
@@ -53,7 +53,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       end
 
       it 'returns status code 200' do
-        get "/providers/#{provider.symbol}", nil, headers
+        get "/providers/#{provider.symbol.downcase}", nil, headers
 
         expect(last_response.status).to eq(200)
       end
@@ -99,7 +99,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       Provider.import
       Client.import
       Doi.import
-      sleep 3
+      sleep 2
     end
 
     it "returns providers" do
@@ -109,6 +109,28 @@ describe "Providers", type: :request, elasticsearch: true  do
       # expect(json['data'].size).to eq(4)
       expect(json.first.dig('count')).to eq(3)
       expect(json.first.dig('temporal')).not_to be_nil
+    end
+  end
+
+  describe 'GET /providers/:id/stats' do
+    let(:provider)  { create(:provider) }
+    let(:client)  { create(:client, provider: provider) }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+
+    before do
+      Provider.import
+      Client.import
+      Doi.import
+      sleep 2
+    end
+
+    it "returns provider" do
+      get "/providers/#{provider.symbol.downcase}/stats", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["clients"]).to eq([{"count"=>1, "id"=>"2020", "title"=>"2020"}])
+      expect(json["resourceTypes"]).to eq([{"count"=>3, "id"=>"dataset", "title"=>"Dataset"}])
+      expect(json["dois"]).to eq([{"count"=>3, "id"=>"2020", "title"=>"2020"}])
     end
   end
 
@@ -784,18 +806,6 @@ describe "Providers", type: :request, elasticsearch: true  do
   #     it 'returns a validation failure message' do
   #       expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
   #     end
-  #   end
-  # end
-
-  # describe 'POST /providers/set-test-prefix' do
-  #   before { post '/providers/set-test-prefix', headers: headers }
-
-  #   it 'returns success' do
-  #     expect(json['message']).to eq("Test prefix added.")
-  #   end
-
-  #   it 'returns status code 200' do
-  #     expect(response).to have_http_status(200)
   #   end
   # end
 end
