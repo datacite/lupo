@@ -3,7 +3,7 @@ class ProvidersController < ApplicationController
   include Countable
 
   prepend_before_action :authenticate_user!
-  before_action :set_provider, only: [:show, :update, :destroy]
+  before_action :set_provider, only: [:show, :update, :destroy, :stats]
   before_action :set_include
   load_and_authorize_resource only: [:update, :destroy]
 
@@ -152,42 +152,7 @@ class ProvidersController < ApplicationController
   end
 
   def show
-    if params[:id] == "admin"
-      providers = provider_count(consortium_id: nil)
-      clients = client_count(provider_id: nil)
-      dois = doi_count(provider_id: nil)
-      resource_types = resource_type_count(provider_id: nil)
-      citations = nil # citation_count(provider_id: nil)
-      views = nil # view_count(provider_id: nil)
-      downloads = nil # download_count(provider_id: nil)
-    elsif @provider.member_type == "consortium"
-      providers = provider_count(consortium_id: params[:id])
-      clients = client_count(consortium_id: params[:id])
-      dois = doi_count(consortium_id: params[:id])
-      resource_types = resource_type_count(consortium_id: params[:id])
-      citations = citation_count(consortium_id: params[:id])
-      views = view_count(consortium_id: params[:id])
-      downloads = download_count(consortium_id: params[:id])
-    else
-      providers = nil
-      clients = client_count(provider_id: params[:id])
-      dois = doi_count(provider_id: params[:id])
-      resource_types = resource_type_count(provider_id: params[:id])
-      citations = citation_count(provider_id: params[:id])
-      views = view_count(provider_id: params[:id])
-      downloads = download_count(provider_id: params[:id])
-    end
-
     options = {}
-    options[:meta] = {
-      providers: providers,
-      clients: clients,
-      dois: dois,
-      "resourceTypes" => resource_types,
-      citations: citations,
-      views: views,
-      downloads: downloads,
-    }.compact
     options[:include] = @include
     options[:is_collection] = false
     options[:params] = { current_ability: current_ability }
@@ -201,27 +166,9 @@ class ProvidersController < ApplicationController
     authorize! :create, @provider
 
     if @provider.save
-      if @provider.symbol == "ADMIN"
-        providers = provider_count(consortium_id: nil)
-        clients = client_count(provider_id: nil)
-        dois = doi_count(provider_id: nil)
-      elsif @provider.member_type == "consortium"
-        providers = provider_count(consortium_id: params[:id])
-        clients = client_count(consortium_id: params[:id])
-        dois = doi_count(consortium_id: params[:id])
-      else
-        providers = nil
-        clients = client_count(provider_id: params[:id])
-        dois = doi_count(provider_id: params[:id])
-      end
-
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-      options[:meta] = {
-        providers: providers,
-        clients: clients,
-        dois: dois }.compact
       options[:params] = { current_ability: current_ability }
 
       render json: ProviderSerializer.new(@provider, options).serialized_json, status: :ok
@@ -233,25 +180,7 @@ class ProvidersController < ApplicationController
 
   def update
     if @provider.update_attributes(safe_params)
-      if params[:id] == "admin"
-        providers = provider_count(consortium_id: nil)
-        clients = client_count(provider_id: nil)
-        dois = doi_count(provider_id: nil)
-      elsif @provider.member_type == "consortium"
-        providers = provider_count(consortium_id: params[:id])
-        clients = client_count(consortium_id: params[:id])
-        dois = doi_count(consortium_id: params[:id])
-      else
-        providers = nil
-        clients = client_count(provider_id: params[:id])
-        dois = doi_count(provider_id: params[:id])
-      end
-
       options = {}
-      options[:meta] = {
-        providers: providers,
-        clients: clients,
-        dois: dois }.compact
       options[:include] = @include
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability }
@@ -293,6 +222,46 @@ class ProvidersController < ApplicationController
     registrant = providers_totals(response.response.aggregations.providers_totals.buckets)
 
     render json: registrant, status: :ok
+  end
+
+  def stats
+    if params[:id] == "admin"
+      providers = provider_count(consortium_id: nil)
+      clients = client_count(provider_id: nil)
+      dois = doi_count(provider_id: nil)
+      resource_types = resource_type_count(provider_id: nil)
+      # citations = nil # citation_count(provider_id: nil)
+      # views = nil # view_count(provider_id: nil)
+      # downloads = nil # download_count(provider_id: nil)
+    elsif @provider.member_type == "consortium"
+      providers = provider_count(consortium_id: params[:id])
+      clients = client_count(consortium_id: params[:id])
+      dois = doi_count(consortium_id: params[:id])
+      resource_types = resource_type_count(consortium_id: params[:id])
+      # citations = citation_count(consortium_id: params[:id])
+      # views = view_count(consortium_id: params[:id])
+      # downloads = download_count(consortium_id: params[:id])
+    else
+      providers = nil
+      clients = client_count(provider_id: params[:id])
+      dois = doi_count(provider_id: params[:id])
+      resource_types = resource_type_count(provider_id: params[:id])
+      # citations = citation_count(provider_id: params[:id])
+      # views = view_count(provider_id: params[:id])
+      # downloads = download_count(provider_id: params[:id])
+    end
+
+    meta = {
+      providers: providers,
+      clients: clients,
+      dois: dois,
+      "resourceTypes" => resource_types,
+      # citations: citations,
+      # views: views,
+      # downloads: downloads,
+    }.compact
+
+    render json: meta, status: :ok
   end
 
   protected

@@ -98,6 +98,47 @@ describe 'Repositories', type: :request, elasticsearch: true do
     end
   end
 
+  describe 'GET /repositories/totals' do
+    let(:client) { create(:client) }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+
+    before do
+      Client.import
+      Doi.import
+      sleep 1
+    end
+
+    it "returns repositories" do
+      get "/repositories/totals", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.first.dig('count')).to eq(3)
+      expect(json.first.dig('states')).to eq([{"count"=>3, "id"=>"findable", "title"=>"Findable"}])
+      expect(json.first.dig('temporal')).not_to be_nil
+    end
+  end
+
+  describe 'GET /repositories/:id/stats' do
+    let(:provider)  { create(:provider) }
+    let(:client)  { create(:client) }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+
+    before do
+      Provider.import
+      Client.import
+      Doi.import
+      sleep 2
+    end
+
+    it "returns repository" do
+      get "/repositories/#{client.uid}/stats"
+
+      expect(last_response.status).to eq(200)
+      expect(json["resourceTypes"]).to eq([{"count"=>3, "id"=>"dataset", "title"=>"Dataset"}])
+      expect(json["dois"]).to eq([{"count"=>3, "id"=>"2020", "title"=>"2020"}])
+    end
+  end
+
   describe 'POST /repositories' do
     context 'when the request is valid' do    
       it 'creates a repository' do

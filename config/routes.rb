@@ -53,11 +53,16 @@ Rails.application.routes.draw do
   get 'dois/random', :to => 'dois#random'
   get 'dois/:id/get-url', :to => 'dois#get_url', constraints: { :id => /.+/ }
   get 'dois/get-dois', :to => 'dois#get_dois'
+
   get 'providers/image/:id', :to => 'providers#image', constraints: { :id => /.+/ }
+
   get 'providers/totals', :to => 'providers#totals'
   get 'clients/totals', :to => 'clients#totals'
   get 'repositories/totals', :to => 'repositories#totals'
   get 'prefixes/totals', :to => 'prefixes#totals'
+  get '/providers/:id/stats', :to => 'providers#stats'
+  get '/clients/:id/stats', :to => 'clients#stats', constraints: { :id => /.+/ }
+  get '/repositories/:id/stats', :to => 'repositories#stats', constraints: { :id => /.+/ }
 
   # Reporting
   get 'export/organizations', :to => 'export#organizations',  defaults: { format: :csv }
