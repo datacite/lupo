@@ -122,6 +122,12 @@ class RepositoriesController < ApplicationController
     fail ActiveRecord::RecordNotFound unless repository.present?
 
     options = {}
+    options[:meta] = {
+      "doiCount" => doi_count(client_id: params[:id]).reduce(0) do |sum, item|
+        sum += item["count"]
+        sum
+      end
+    }.compact
     options[:include] = @include
     options[:is_collection] = false
     options[:params] = { current_ability: current_ability }

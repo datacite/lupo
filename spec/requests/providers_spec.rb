@@ -39,9 +39,11 @@ describe "Providers", type: :request, elasticsearch: true  do
     context 'when the record exists' do
       it 'returns the provider' do
         get "/providers/#{provider.symbol.downcase}", nil, headers
-
+        puts last_response.body
+        expect(last_response.status).to eq(200)
         expect(json).not_to be_empty
         expect(json['data']['id']).to eq(provider.symbol.downcase)
+        expect(json["meta"]).to eq("consortiumOrganizationCount"=>0, "repositoryCount"=>0)
       end
 
       it 'returns the provider info for member page' do
@@ -50,12 +52,6 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(json['data']['attributes']['twitterHandle']).to eq(provider.twitter_handle)
         expect(json['data']['attributes']['billingInformation']).to eq(provider.billing_information)
         expect(json['data']['attributes']['rorId']).to eq(provider.ror_id)
-      end
-
-      it 'returns status code 200' do
-        get "/providers/#{provider.symbol.downcase}", nil, headers
-
-        expect(last_response.status).to eq(200)
       end
     end
 
@@ -66,7 +62,6 @@ describe "Providers", type: :request, elasticsearch: true  do
         get "/providers/#{provider.symbol.downcase}", nil, headers
 
         expect(last_response.status).to eq(200)
-        expect(json).not_to be_empty
         expect(json.dig('data', 'id')).to eq(provider.symbol.downcase)
       end
     end
@@ -86,6 +81,27 @@ describe "Providers", type: :request, elasticsearch: true  do
 
         expect(last_response.status).to eq(200)
       end
+    end
+  end
+
+  describe 'GET /providers/:id meta' do
+    let(:provider)  { create(:provider) }
+    let(:client)  { create(:client, provider: provider) }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+
+    before do
+      Provider.import
+      Client.import
+      Doi.import
+      sleep 2
+    end
+
+    it "returns provider" do
+      get "/providers/#{provider.symbol.downcase}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'id')).to eq(provider.symbol.downcase)
+      expect(json["meta"]).to eq("consortiumOrganizationCount"=>0, "repositoryCount"=>1)
     end
   end
 

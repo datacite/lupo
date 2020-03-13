@@ -85,6 +85,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
         expect(json.dig('data', 'attributes', 'globusUuid')).to eq("bc7d0274-3472-4a79-b631-e4c7baccc667")
+        expect(json["meta"]).to eq("doiCount"=>0)
       end
     end
 
@@ -115,6 +116,27 @@ describe 'Repositories', type: :request, elasticsearch: true do
       expect(json.first.dig('count')).to eq(3)
       expect(json.first.dig('states')).to eq([{"count"=>3, "id"=>"findable", "title"=>"Findable"}])
       expect(json.first.dig('temporal')).not_to be_nil
+    end
+  end
+
+  describe 'GET /repositories/:id meta' do
+    let(:provider)  { create(:provider) }
+    let(:client)  { create(:client) }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+
+    before do
+      Provider.import
+      Client.import
+      Doi.import
+      sleep 2
+    end
+
+    it "returns repository" do
+      get "/repositories/#{client.uid}"
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
+      expect(json["meta"]).to eq("doiCount"=>3)
     end
   end
 
