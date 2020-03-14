@@ -9,7 +9,7 @@ describe "Repository Prefixes", type: :request do
   describe 'GET /repository-prefixes' do
     it 'returns repository-prefixes' do
       get '/repository-prefixes', nil, headers
-      puts last_response.body
+      
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(5)
     end
@@ -19,7 +19,7 @@ describe "Repository Prefixes", type: :request do
     context 'when the record exists' do
       it 'returns the repository-prefix' do
         get "/repository-prefixes/#{client_prefix.uid}", nil, headers
-        
+        puts last_response.body
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "id")).to eq(client_prefix.uid)
       end

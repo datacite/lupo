@@ -8,19 +8,17 @@ class ClientPrefix < ActiveRecord::Base
   belongs_to :prefix
   belongs_to :provider_prefix
 
-  delegate :symbol, to: :client, prefix: true
-
   before_create :set_uid
   before_validation :set_provider_prefix_id
 
   scope :query, ->(query) { includes(:prefix).where("prefix.uid like ?", "%#{query}%") }
 
-  # workaround for non-standard database column names and association
+  # convert external id / internal id
   def client_id
-    client_symbol.downcase
+    client.symbol.downcase
   end
 
-  # workaround for non-standard database column names and association
+  # convert external id / internal id
   def client_id=(value)
     r = ::Client.where(symbol: value).first
     fail ActiveRecord::RecordNotFound unless r.present?
@@ -28,11 +26,12 @@ class ClientPrefix < ActiveRecord::Base
     self.client_id = r.id
   end
 
+  # convert external id / internal id
   def repository_id
-    client_symbol.downcase
+    client.symbol.downcase
   end
 
-  # workaround for non-standard database column names and association
+  # convert external id / internal id
   def repository_id=(value)
     r = ::Client.where(symbol: value).first
     fail ActiveRecord::RecordNotFound unless r.present?
@@ -40,11 +39,12 @@ class ClientPrefix < ActiveRecord::Base
     self.client_id = r.id
   end
 
+  # convert external id / internal id
   def prefix_id
     prefix.uid
   end
 
-  # workaround for non-standard database column names and association
+  # convert external id / internal id
   def prefix_id=(value)
     r = cached_prefix_response(value)
     fail ActiveRecord::RecordNotFound unless r.present?

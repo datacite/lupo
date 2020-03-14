@@ -9,18 +9,16 @@ class ProviderPrefix < ActiveRecord::Base
   has_many :client_prefixes, dependent: :destroy
   has_many :clients, through: :client_prefixes
 
-  delegate :symbol, to: :provider, prefix: true
-
   before_create :set_uid
 
   scope :query, ->(query) { where("prefix.uid like ?", "%#{query}%") }
 
-  # workaround for non-standard database column names and association
+  # convert external id / internal id
   def provider_id
-    provider.symbol.downcase if provider.present?
+    provider.symbol.downcase
   end
 
-  # workaround for non-standard database column names and association
+  # convert external id / internal id
   def provider_id=(value)
     r = Provider.where(symbol: value).first
     fail ActiveRecord::RecordNotFound unless r.present?
@@ -28,11 +26,12 @@ class ProviderPrefix < ActiveRecord::Base
     self.provider_id = r.id
   end
 
+  # convert external id / internal id
   def prefix_id
-    prefix.uid if prefix.present?
+    prefix.uid
   end
 
-  # workaround for non-standard database column names and association
+  # convert external id / internal id
   def prefix_id=(value)
     r = cached_prefix_response(value)
     fail ActiveRecord::RecordNotFound unless r.present?
