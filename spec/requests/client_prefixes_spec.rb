@@ -19,7 +19,7 @@ describe "Client Prefixes", type: :request do
     context 'when the record exists' do
       it 'returns the client-prefix' do
         get "/client-prefixes/#{client_prefix.uid}", nil, headers
-        
+
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "id")).to eq(client_prefix.uid)
       end
@@ -64,13 +64,13 @@ describe "Client Prefixes", type: :request do
               "provider-prefix": {
                 "data":{
                   "type": "provider-prefixes",
-                  "id": provider_prefix.prefix
+                  "id": provider_prefix.uid
                 }
               },
               "prefix": {
                 "data":{
                   "type": "prefixes",
-                  "id": prefix.prefix
+                  "id": prefix.uid
                 }
               }
             }
@@ -80,7 +80,7 @@ describe "Client Prefixes", type: :request do
 
       it 'creates a client-prefix' do
         post '/client-prefixes', valid_attributes, headers
-
+        puts last_response.body
         expect(last_response.status).to eq(201)
         expect(json.dig('data', 'id')).not_to be_nil
       end

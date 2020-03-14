@@ -54,7 +54,7 @@ class Client < ActiveRecord::Base
 
   belongs_to :provider, foreign_key: :allocator, touch: true
   has_many :dois, foreign_key: :datacentre
-  has_many :client_prefixes, foreign_key: :datacentre, dependent: :destroy
+  has_many :client_prefixes, dependent: :destroy
   has_many :prefixes, through: :client_prefixes
   has_many :provider_prefixes, through: :client_prefixes
   has_many :activities, as: :auditable, dependent: :destroy
@@ -261,7 +261,6 @@ class Client < ActiveRecord::Base
     }
   end
 
-
   def csv
     client = {
       name: name,
@@ -311,7 +310,7 @@ class Client < ActiveRecord::Base
   end
 
   def prefix_ids
-    prefixes.pluck(:prefix)
+    prefixes.pluck(:uid)
   end
 
   def target_id=(value)

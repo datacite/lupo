@@ -7,24 +7,16 @@ class Prefix < ActiveRecord::Base
 
   # include Elasticsearch::Model
 
-  self.table_name = "prefix"
-  alias_attribute :created_at, :created
-  alias_attribute :updated_at, :updated
+  validates_presence_of :uid
+  validates_uniqueness_of :uid
+  validates_format_of :uid, :with => /\A10\.\d{4,9}\z/
 
-  validates_presence_of :prefix
-  validates_uniqueness_of :prefix
-  validates_format_of :prefix, :with => /\A10\.\d{4,9}\z/
-
-  has_many :client_prefixes, foreign_key: :prefixes
+  has_many :client_prefixes
   has_many :clients, through: :client_prefixes
-  has_many :provider_prefixes, foreign_key: :prefixes
+  has_many :provider_prefixes
   has_many :providers, through: :provider_prefixes
 
-  before_validation :set_defaults
-  before_create { self.created = Time.zone.now.utc.iso8601 }
-  before_save { self.updated = Time.zone.now.utc.iso8601 }
-
-  scope :query, ->(query) { where("prefix like ?", "%#{query}%") }
+  scope :query, ->(query) { where("uid like ?", "%#{query}%") }
 
   # use different index for testing
   # index_name Rails.env.test? ? "prefixes-test" : "prefixes"
@@ -71,26 +63,10 @@ class Prefix < ActiveRecord::Base
     providers.pluck(:symbol).map(&:downcase)
   end
 
-  # # workaround for non-standard database column names and association
-  # def client_ids=(values)
-  #   ids = Client.where(symbol: values).pluck(:id)
-  #   association(:clients).ids_writer ids
-  # end
-  #
-  # # workaround for non-standard database column names and association
-  # def provider_ids=(values)
-  #   ids = Provider.where(symbol: values).pluck(:id)
-  #   association(:providers).ids_writer ids
-  # end
-
-  def set_defaults
-    self.version = 0
-  end
-
   def self.state(state)
     case state
-    when "unassigned" then where.not(id: ProviderPrefix.pluck(:prefixes))
-    when "without-client" then joins(:providers).where.not(id: ClientPrefix.pluck(:prefixes)).distinct
+    when "unassigned" then where.not(id: ProviderPrefix.pluck(:prefix_id))
+    when "without-client" then joins(:providers).where.not(id: ClientPrefix.pluck(:prefix_id)).distinct
     when "with-client" then joins(:clients).distinct
     end
   end

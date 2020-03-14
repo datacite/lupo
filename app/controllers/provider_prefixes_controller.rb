@@ -9,7 +9,7 @@ class ProviderPrefixesController < ApplicationController
     if params[:id].present?
       collection = ProviderPrefix.where(id: params[:id])
     elsif params[:provider_id].present? && params[:prefix_id].present?
-      collection = ProviderPrefix.joins(:provider, :prefix).where('allocator.symbol = ?', params[:provider_id]).where('prefix.prefix = ?', params[:prefix_id])
+      collection = ProviderPrefix.joins(:provider, :prefix).where('allocator.symbol = ?', params[:provider_id]).where('prefix.uid = ?', params[:prefix_id])
     elsif params[:consortium_id].present?
       providers = Provider.where('allocator.consortium_id = ?', params[:consortium_id])
       collection = providers.present? ? ProviderPrefix.joins(:provider, :prefix).where('allocator.consortium_id = ?', params[:consortium_id]) : ProviderPrefix.none
@@ -17,7 +17,7 @@ class ProviderPrefixesController < ApplicationController
       provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
       collection = provider.present? ? provider.provider_prefixes.joins(:prefix) : ProviderPrefix.none
     elsif params[:prefix_id].present?
-      prefix = Prefix.where('prefix.prefix = ?', params[:prefix_id]).first
+      prefix = Prefix.where('prefix.uid = ?', params[:prefix_id]).first
       collection = prefix.present? ? prefix.provider_prefixes.joins(:provider) : ProviderPrefix.none
     else
       collection = ProviderPrefix.joins(:provider, :prefix)
@@ -25,14 +25,14 @@ class ProviderPrefixesController < ApplicationController
 
     collection = collection.state(params[:state]) if params[:state].present?
     collection = collection.query(params[:query]) if params[:query].present?
-    collection = collection.where('YEAR(allocator_prefixes.created_at) = ?', params[:year]) if params[:year].present?
+    collection = collection.where('YEAR(provider_prefixes.created_at) = ?', params[:year]) if params[:year].present?
 
     if params[:year].present?
       years = [{ id: params[:year],
                  title: params[:year],
-                 count: collection.where('YEAR(allocator_prefixes.created_at) = ?', params[:year]).count }]
+                 count: collection.where('YEAR(provider_prefixes.created_at) = ?', params[:year]).count }]
     else
-      years = collection.where.not(prefixes: nil).order("YEAR(allocator_prefixes.created_at) DESC").group("YEAR(allocator_prefixes.created_at)").count
+      years = collection.where.not(prefix_id: nil).order("YEAR(provider_prefixes.created_at) DESC").group("YEAR(provider_prefixes.created_at)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 
@@ -41,9 +41,9 @@ class ProviderPrefixesController < ApplicationController
     if provider.present?
       providers = [{ id: params[:provider_id],
                      title: provider.name,
-                     count: collection.where('allocator_prefixes.allocator' => provider.id).count }]
+                     count: collection.where('provider_prefixes.provider_id' => provider.id).count }]
     else
-      providers = collection.where.not('allocator_prefixes.allocator' => nil).group('allocator_prefixes.allocator').count
+      providers = collection.where.not('provider_prefixes.provider_id' => nil).group('provider_prefixes.provider_id').count
       providers = providers
                   .sort { |a, b| b[1] <=> a[1] }
                   .reduce([]) do |sum, i|
@@ -72,10 +72,10 @@ class ProviderPrefixesController < ApplicationController
     total = collection.count
 
     order = case params[:sort]
-            when "name" then "prefix.prefix"
-            when "-name" then "prefix.prefix DESC"
-            when "created" then "allocator_prefixes.created_at"
-            else "allocator_prefixes.created_at DESC"
+            when "name" then "prefix.uid"
+            when "-name" then "prefix.uid DESC"
+            when "created" then "provider_prefixes.created_at"
+            else "provider_prefixes.created_at DESC"
             end
 
     @provider_prefixes = collection.order(order).page(page[:number]).per(page[:size])
@@ -156,10 +156,7 @@ class ProviderPrefixesController < ApplicationController
   private
 
   def set_provider_prefix
-    id = Base32::URL.decode(URI.decode(params[:id]))
-    fail ActiveRecord::RecordNotFound unless id.present?
-
-    @provider_prefix = ProviderPrefix.where(id: id.to_i).first
+    @provider_prefix = ProviderPrefix.where(uid: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @provider_prefix.present?
   end
 

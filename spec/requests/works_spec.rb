@@ -7,7 +7,7 @@ describe "works", type: :request do
 
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
-  let!(:prefix) { create(:prefix, prefix: "10.14454") }
+  let!(:prefix) { create(:prefix, uid: "10.14454") }
   let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
   let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
   let(:headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}

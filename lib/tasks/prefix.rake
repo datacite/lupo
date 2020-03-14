@@ -35,4 +35,18 @@ namespace :prefix do
     count = Doi.delete_dois_by_prefix(ENV['PREFIX'])
     puts "#{count} DOIs with prefix #{ENV['PREFIX']} deleted."
   end
+
+  desc 'Generate uid for client_prefix'
+  task :uid_for_client_prefix => :environment do
+    ClientPrefix.where(uid: nil).each do |cp|
+      cp.update_columns(uid: SecureRandom.uuid)
+    end
+  end
+
+  desc 'Generate uid for provider_prefix'
+  task :uid_for_provider_prefix => :environment do
+    ProviderPrefix.where(uid: nil).each do |pp|
+      pp.update_columns(uid: SecureRandom.uuid)
+    end
+  end
 end

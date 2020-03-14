@@ -12,26 +12,26 @@ class ClientPrefixesController < ApplicationController
     if params[:id].present?
       collection = ClientPrefix.where(id: params[:id])
     elsif params[:client_id].present? && params[:prefix_id].present?
-      collection = ClientPrefix.joins(:client, :prefix).where('datacentre.symbol = ?', params[:client_id]).where('prefix.prefix = ?', params[:prefix_id])
+      collection = ClientPrefix.joins(:client, :prefix).where('datacentre.symbol = ?', params[:client_id]).where('prefix.uid = ?', params[:prefix_id])
     elsif params[:client_id].present?
       client = Client.where('datacentre.symbol = ?', params[:client_id]).first
       collection = client.present? ? client.client_prefixes.joins(:prefix) : ClientPrefix.none
     elsif params[:prefix_id].present?
-      prefix = Prefix.where('prefix.prefix = ?', params[:prefix_id]).first
+      prefix = Prefix.where('prefix.uid = ?', params[:prefix_id]).first
       collection = prefix.present? ? prefix.client_prefixes.joins(:client) : ClientPrefix.none
     else
       collection = ClientPrefix.joins(:client, :prefix)
     end
 
     collection = collection.query(params[:query]) if params[:query].present?
-    collection = collection.where('YEAR(datacentre_prefixes.created_at) = ?', params[:year]) if params[:year].present?
+    collection = collection.where('YEAR(client_prefixes.created_at) = ?', params[:year]) if params[:year].present?
 
     if params[:year].present?
       years = [{ id: params[:year],
                  title: params[:year],
-                 count: collection.where('YEAR(datacentre_prefixes.created_at) = ?', params[:year]).count }]
+                 count: collection.where('YEAR(client_prefixes.created_at) = ?', params[:year]).count }]
     else
-      years = collection.where.not(prefixes: nil).order("YEAR(datacentre_prefixes.created_at) DESC").group("YEAR(datacentre_prefixes.created_at)").count
+      years = collection.where.not(prefix_id: nil).order("YEAR(client_prefixes.created_at) DESC").group("YEAR(client_prefixes.created_at)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 
@@ -39,10 +39,10 @@ class ClientPrefixesController < ApplicationController
     total = collection.count
 
     order = case params[:sort]
-            when "name" then "prefix.prefix"
-            when "-name" then "prefix.prefix DESC"
-            when "created" then "datacentre_prefixes.created_at"
-            else "datacentre_prefixes.created_at DESC"
+            when "name" then "prefix.uid"
+            when "-name" then "prefix.uid DESC"
+            when "created" then "client_prefixes.created_at"
+            else "client_prefixes.created_at DESC"
             end
 
     @client_prefixes = collection.order(order).page(page[:number]).per(page[:size])
@@ -118,13 +118,8 @@ class ClientPrefixesController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_client_prefix
-    id = Base32::URL.decode(URI.decode(params[:id]))
-    fail ActiveRecord::RecordNotFound unless id.present?
-
-    @client_prefix = ClientPrefix.where(id: id.to_i).first
-
+    @client_prefix = ClientPrefix.where(uid: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @client_prefix.present?
   end
 

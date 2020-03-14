@@ -506,7 +506,7 @@ class Event < ActiveRecord::Base
 
   def self.label_state_event(event)
     subj_prefix = event[:subj_id][/(10\.\d{4,5})/, 1]
-    unless Prefix.where(prefix: subj_prefix).exists?
+    unless Prefix.where(uid: subj_prefix).exists?
       Event.find_by(uuid: event[:uuid]).update_attribute(:state_event, "crossref_citations_error")
     end
   end

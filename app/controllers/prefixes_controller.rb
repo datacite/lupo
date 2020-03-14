@@ -20,14 +20,14 @@ class PrefixesController < ApplicationController
 
     collection = collection.state(params[:state]) if params[:state].present?
     collection = collection.query(params[:query]) if params[:query].present?
-    collection = collection.where('YEAR(prefix.created) = ?', params[:year]) if params[:year].present?
+    collection = collection.where('YEAR(prefixes.created_at) = ?', params[:year]) if params[:year].present?
 
     if params[:year].present?
       years = [{ id: params[:year],
                  title: params[:year],
-                 count: collection.where('YEAR(prefix.created) = ?', params[:year]).count }]
+                 count: collection.where('YEAR(prefixes.created_at) = ?', params[:year]).count }]
     else
-      years = collection.where.not(prefix: nil).order("YEAR(prefix.created) DESC").group("YEAR(prefix.created)").count
+      years = collection.where.not(uid: nil).order("YEAR(prefixes.created_at) DESC").group("YEAR(prefixes.created_at)").count
       years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
     end
 
@@ -70,10 +70,10 @@ class PrefixesController < ApplicationController
     total = collection.count
 
     order = case params[:sort]
-            when "name" then "prefix.prefix"
-            when "-name" then "prefix.prefix DESC"
-            when "created" then "prefix.created"
-            else "prefix.created DESC"
+            when "name" then "prefixes.prefix"
+            when "-name" then "prefixes.prefix DESC"
+            when "created" then "prefixes.created_at"
+            else "prefixes.created_at DESC"
             end
 
     @prefixes = collection.order(order).page(page[:number]).per(page[:size])
@@ -163,7 +163,7 @@ class PrefixesController < ApplicationController
   private
 
   def set_prefix
-    @prefix = Prefix.where(prefix: params[:id]).first
+    @prefix = Prefix.where(uid: params[:id]).first
 
     # fallback to call handle server, i.e. for prefixes not from DataCite
     @prefix = Handle.where(id: params[:id]) unless @prefix.present? ||  Rails.env.test?
@@ -172,8 +172,8 @@ class PrefixesController < ApplicationController
 
   def safe_params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:id, :created],
-              keys: { id: :prefix }
+      params, only: [:id, :created_at],
+              keys: { id: :uid }
     )
   end
 end

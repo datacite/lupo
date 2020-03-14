@@ -9,7 +9,7 @@ describe "Repository Prefixes", type: :request do
   describe 'GET /repository-prefixes' do
     it 'returns repository-prefixes' do
       get '/repository-prefixes', nil, headers
-
+      puts last_response.body
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(5)
     end
@@ -64,13 +64,13 @@ describe "Repository Prefixes", type: :request do
               "provider-prefix": {
                 "data":{
                   "type": "provider-prefixes",
-                  "id": provider_prefix.prefix
+                  "id": provider_prefix.uid
                 }
               },
               "prefix": {
                 "data":{
                   "type": "prefixes",
-                  "id": prefix.prefix
+                  "id": prefix.uid
                 }
               }
             }

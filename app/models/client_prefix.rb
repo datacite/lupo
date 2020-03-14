@@ -4,28 +4,16 @@ class ClientPrefix < ActiveRecord::Base
   # include helper module for caching infrequently changing resources
   include Cacheable
 
-  self.table_name = "datacentre_prefixes"
-
-  belongs_to :client, foreign_key: :datacentre #, touch: true
-  belongs_to :prefix, foreign_key: :prefixes
-  belongs_to :provider_prefix, foreign_key: :allocator_prefixes
+  belongs_to :client
+  belongs_to :prefix
+  belongs_to :provider_prefix
 
   delegate :symbol, to: :client, prefix: true
 
-  before_create :set_id
-  before_create { self.created_at = Time.zone.now.utc.iso8601 }
-  before_save { self.updated_at = Time.zone.now.utc.iso8601 }
-  before_validation :set_allocator_prefixes
+  before_create :set_uid
+  before_validation :set_provider_prefix_id
 
-  alias_attribute :created, :created_at
-  alias_attribute :updated, :updated_at
-
-  scope :query, ->(query) { includes(:prefix).where("prefix.prefix like ?", "%#{query}%") }
-
-  # use base32-encode id as uid, with pretty formatting and checksum
-  def uid
-    Base32::URL.encode(id, split: 4, length: 16)
-  end
+  scope :query, ->(query) { includes(:prefix).where("prefix.uid like ?", "%#{query}%") }
 
   # workaround for non-standard database column names and association
   def client_id
@@ -37,7 +25,7 @@ class ClientPrefix < ActiveRecord::Base
     r = ::Client.where(symbol: value).first
     fail ActiveRecord::RecordNotFound unless r.present?
 
-    self.datacentre = r.id
+    self.client_id = r.id
   end
 
   def repository_id
@@ -49,11 +37,11 @@ class ClientPrefix < ActiveRecord::Base
     r = ::Client.where(symbol: value).first
     fail ActiveRecord::RecordNotFound unless r.present?
 
-    self.datacentre = r.id
+    self.client_id = r.id
   end
 
   def prefix_id
-    prefix.prefix
+    prefix.uid
   end
 
   # workaround for non-standard database column names and association
@@ -61,7 +49,7 @@ class ClientPrefix < ActiveRecord::Base
     r = cached_prefix_response(value)
     fail ActiveRecord::RecordNotFound unless r.present?
 
-    self.prefixes = r.id
+    self.prefix_id = r.id
   end
 
   def provider_id
@@ -78,16 +66,16 @@ class ClientPrefix < ActiveRecord::Base
 
   private
 
-  # random number that fits into MySQL bigint field (8 bytes)
-  def set_id
-    self.id = SecureRandom.random_number(9223372036854775807)
+  # uuid for public id
+  def set_uid
+    self.uid = SecureRandom.uuid
   end
 
-  def set_allocator_prefixes
+  def set_provider_prefix_id
     return nil unless client.present?
     
     provider_symbol = client.symbol.split('.').first
-    r = ProviderPrefix.joins(:provider).where('allocator.symbol = ?', provider_symbol).where(prefixes: prefixes).first
-    self.allocator_prefixes = r.id if r.present?
+    r = ProviderPrefix.joins(:provider).where('allocator.symbol = ?', provider_symbol).where(prefix_id: prefix_id).first
+    self.provider_prefix_id = r.id if r.present?
   end
 end

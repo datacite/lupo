@@ -3,7 +3,7 @@ require 'rails_helper'
 describe "Prefixes", type: :request do
   let!(:prefixes)  { create_list(:prefix, 10) }
   let(:bearer) { User.generate_token }
-  let(:prefix_id) { prefixes.first.prefix }
+  let(:prefix_id) { prefixes.first.uid }
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
 
   describe 'GET /prefixes' do
@@ -17,15 +17,11 @@ describe "Prefixes", type: :request do
 
   describe 'GET /prefixes/:id' do
     context 'when the record exists' do
-      # it 'returns the prefix' do
-      #   expect(json).not_to be_empty
-      #   expect(json['data']['id']).to eq(prefix_id)
-      # end
-
       it 'returns status code 200' do
         get "/prefixes/#{prefix_id}", nil, headers
 
         expect(last_response.status).to eq(200)
+        expect(json.dig("data", "id")).to eq(prefix_id)
       end
     end
 
@@ -86,7 +82,7 @@ describe "Prefixes", type: :request do
           "data" => {
             "type" => "prefixes",
             "attributes" => {
-              "prefix" => "dsds10.33342"
+              "uid" => "dsds10.33342"
             }
           }
         }
@@ -96,41 +92,11 @@ describe "Prefixes", type: :request do
         post '/prefixes', not_valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"].first).to eq("source"=>"prefix", "title"=>"Can't be blank")
+        expect(json["errors"].first).to eq("source"=>"uid", "title"=>"Can't be blank")
       end
     end
   end
 
-  # # Test suite for PUT /prefixes/:id
-  # Prefixes have no updates
-  # describe 'PUT /prefixes/:id' do
-  #   let!(:provider)  { create(:provider) }
-  #   let(:valid_attributes) do
-  #     {
-  #       "data" => {
-  #                 "id": "10.17177",
-  #                 "type": "prefixes",
-  #                 "attributes": {
-  #                   "prefix": "10.17177"
-  #                 }
-  #         }
-  #     }
-  #   end
-  #
-  #   context 'when the record exists' do
-  #     before { put "/prefixes/#{prefix_id}", params: valid_attributes.to_json , headers: headers}
-  #
-  #     it 'updates the record' do
-  #       expect(response.body).not_to be_empty
-  #     end
-  #
-  #     it 'returns status code 204' do
-  #       expect(response).to have_http_status(200)
-  #     end
-  #   end
-  # end
-
-  # Test suite for DELETE /prefixes/:id
   describe 'DELETE /prefixes/:id' do
     it 'returns status code 204' do
       delete "/prefixes/#{prefix_id}", nil, headers

@@ -3,7 +3,7 @@ class ProviderPrefixSerializer
   set_key_transform :camel_lower
   set_type "provider-prefixes"
   set_id :uid
-  attributes :created, :updated
+  attributes :created_at, :updated_at
   cache_options enabled: true, cache_length: 24.hours
 
   belongs_to :provider, record_type: :providers

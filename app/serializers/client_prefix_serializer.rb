@@ -3,9 +3,8 @@ class ClientPrefixSerializer
   set_key_transform :camel_lower
   set_type "client-prefixes"
   set_id :uid
-  cache_options enabled: true, cache_length: 24.hours
 
-  attributes :created, :updated
+  attributes :created_at, :updated_at
 
   belongs_to :client, record_type: :clients
   belongs_to :provider, record_type: :providers

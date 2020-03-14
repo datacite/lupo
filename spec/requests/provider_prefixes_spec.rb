@@ -83,7 +83,7 @@ describe "Provider Prefixes", type: :request   do
               "prefix": {
                 "data":{
                   "type": "prefixes",
-                  "id": prefix.prefix
+                  "id": prefix.uid
                 }
               }
             }
