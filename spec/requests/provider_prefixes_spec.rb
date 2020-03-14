@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "Provider Prefixes", type: :request   do
+describe "Provider Prefixes", type: :request, elasticsearch: true do
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
   let(:provider) { create(:provider, consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION", password_input: "12345") }
   let!(:provider_prefixes) { create_list(:provider_prefix, 3, provider: provider) }
@@ -8,6 +8,13 @@ describe "Provider Prefixes", type: :request   do
   let(:provider_prefix) { create(:provider_prefix) }
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
+
+  before do
+    Prefix.import
+    Provider.import
+    ProviderPrefix.import
+    sleep 2
+  end
 
   describe "GET /provider-prefixes by consortium" do
     it "returns provider-prefixes" do

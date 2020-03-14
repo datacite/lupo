@@ -84,10 +84,6 @@ class Provider < ActiveRecord::Base
 
   accepts_nested_attributes_for :prefixes
 
-  #default_scope { where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')").where(deleted_at: nil) }
-
-  #scope :query, ->(query) { where("allocator.symbol like ? OR allocator.name like ?", "%#{query}%", "%#{query}%") }
-
   # use different index for testing
   index_name Rails.env.test? ? "providers-test" : "providers"
 

@@ -1,21 +1,31 @@
 require 'rails_helper'
 
-describe "Prefixes", type: :request do
+describe "Prefixes", type: :request, elasticsearch: true do
   let!(:prefixes)  { create_list(:prefix, 10) }
   let(:bearer) { User.generate_token }
   let(:prefix_id) { prefixes.first.uid }
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
 
   describe 'GET /prefixes' do
+    before do
+      Prefix.import
+      sleep 1
+    end
+
     it 'returns prefixes' do
       get '/prefixes', nil, headers
-
+      puts last_response.body
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(10)
     end
   end
 
   describe 'GET /prefixes/:id' do
+    before do
+      Prefix.import
+      sleep 1
+    end
+
     context 'when the record exists' do
       it 'returns status code 200' do
         get "/prefixes/#{prefix_id}", nil, headers
@@ -54,16 +64,18 @@ describe "Prefixes", type: :request do
   end
 
   describe 'POST /prefixes' do
+    before do
+      Prefix.import
+      sleep 1
+    end
+
     context 'when the request is valid' do
       let!(:provider)  { create(:provider) }
       let(:valid_attributes) do
         {
           "data" => {
             "type" => "prefixes",
-            "attributes" => {
-              "prefix" => "10.17177",
-              "id" => "10.17177"
-            }
+            "id" => "10.17177"
           }
         }
       end

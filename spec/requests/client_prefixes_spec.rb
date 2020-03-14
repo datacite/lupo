@@ -1,21 +1,33 @@
 require 'rails_helper'
 
-describe "Client Prefixes", type: :request do
+describe "Client Prefixes", type: :request, elasticsearch: true do
   let!(:client_prefixes)  { create_list(:client_prefix, 5) }
   let(:client_prefix) { create(:client_prefix) }
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
 
   describe 'GET /client-prefixes' do
+    before do
+      Prefix.import
+      ClientPrefix.import
+      sleep 1
+    end
+
     it 'returns client-prefixes' do
       get '/client-prefixes', nil, headers
-
+      puts last_response.body
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(5)
     end
   end
 
   describe 'GET /client-prefixes/:uid' do
+    before do
+      Prefix.import
+      ClientPrefix.import
+      sleep 1
+    end
+
     context 'when the record exists' do
       it 'returns the client-prefix' do
         get "/client-prefixes/#{client_prefix.uid}", nil, headers

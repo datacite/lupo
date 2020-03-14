@@ -1,8 +1,11 @@
-require 'base32/url'
-
 class ProviderPrefix < ActiveRecord::Base
   # include helper module for caching infrequently changing resources
   include Cacheable
+
+  # include helper module for Elasticsearch
+  include Indexable
+
+  include Elasticsearch::Model
 
   belongs_to :provider
   belongs_to :prefix
@@ -11,7 +14,52 @@ class ProviderPrefix < ActiveRecord::Base
 
   before_create :set_uid
 
-  scope :query, ->(query) { where("prefix.uid like ?", "%#{query}%") }
+  # use different index for testing
+  index_name Rails.env.test? ? "provider-prefixes-test" : "provider-prefixes"
+
+  mapping dynamic: 'false' do
+    indexes :id,            type: :keyword
+    indexes :uid,           type: :keyword
+    indexes :state,         type: :keyword
+    indexes :provider_id,   type: :keyword
+    indexes :prefix_id,     type: :keyword
+    indexes :client_ids,    type: :keyword
+    indexes :created_at,    type: :date
+    indexes :updated_at,    type: :date
+
+    # index associations
+    indexes :provider,           type: :object
+    indexes :prefix,             type: :object
+    indexes :clients,            type: :object
+  end
+
+  def as_indexed_json(options={})
+    {
+      "id" => uid,
+      "uid" => uid,
+      "provider_id" => provider_id,
+      "prefix_id" => prefix_id,
+      "client_ids" => client_ids,
+      "state" => state,
+      "created_at" => created_at,
+      "updated_at" => updated_at,
+      "provider" => provider.try(:as_indexed_json),
+      "prefix" => prefix.try(:as_indexed_json),
+      "clients" => clients.map { |m| m.try(:as_indexed_json) },
+    }
+  end
+
+  def self.query_aggregations
+    {
+      states: { terms: { field: 'state', size: 2, min_doc_count: 1 } },
+      years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
+      providers: { terms: { field: 'provider_ids', size: 15, min_doc_count: 1 } },
+    }
+  end
+
+  def self.query_fields
+    ["uid^10", "provider_id", "prefix_id", "_all"]
+  end
 
   # convert external id / internal id
   def provider_id
@@ -43,10 +91,11 @@ class ProviderPrefix < ActiveRecord::Base
     clients.pluck(:symbol).map(&:downcase)
   end
 
-  def self.state(state)
-    case state
-    when "without-client" then where.not(prefix_id: ClientPrefix.pluck(:prefix_id)).distinct
-    when "with-client" then joins(:client_prefixes).distinct
+  def state
+    if client_ids.present?
+      "with-repository"
+    else
+      "without-repository"
     end
   end
 
