@@ -53,7 +53,7 @@ namespace :client_prefix do
   
   desc 'Generate uid'
   task :generate_uid => :environment do
-    ClientPrefixPrefix.where(uid: nil).each do |cp|
+    ClientPrefix.where(uid: [nil, ""]).each do |cp|
       cp.update_columns(uid: SecureRandom.uuid)
     end
   end
