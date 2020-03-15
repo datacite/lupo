@@ -12,12 +12,13 @@ class ClientPrefix < ActiveRecord::Base
   belongs_to :provider_prefix
 
   before_create :set_uid
-  before_validation :set_provider_prefix_id
+
+  validates_presence_of :client, :prefix, :provider_prefix
 
   # use different index for testing
   index_name Rails.env.test? ? "client-prefixes-test" : "client-prefixes"
 
-  mapping dynamic: 'false' do
+  mapping dynamic: "false" do
     indexes :id,                 type: :keyword
     indexes :uid,                type: :keyword
     indexes :provider_id,        type: :keyword
@@ -53,7 +54,6 @@ class ClientPrefix < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      # states: { terms: { field: 'aasm_state', size: 15, min_doc_count: 1 } },
       years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
       providers: { terms: { field: 'provider_ids', size: 15, min_doc_count: 1 } },
       clients: { terms: { field: 'client_ids', size: 15, min_doc_count: 1 } },
@@ -71,10 +71,11 @@ class ClientPrefix < ActiveRecord::Base
 
   # convert external id / internal id
   def client_id=(value)
+    logger.warn value.inspect
     r = ::Client.where(symbol: value).first
-    fail ActiveRecord::RecordNotFound unless r.present?
+    fail ActiveRecord::RecordNotFound if r.blank?
 
-    self.client_id = r.id
+    write_attribute(:client_id, r.id)
   end
 
   # convert external id / internal id
@@ -85,21 +86,29 @@ class ClientPrefix < ActiveRecord::Base
   # convert external id / internal id
   def prefix_id=(value)
     r = cached_prefix_response(value)
-    fail ActiveRecord::RecordNotFound unless r.present?
+    fail ActiveRecord::RecordNotFound if r.blank?
 
-    self.prefix_id = r.id
+    write_attribute(:prefix_id, r.id)
   end
 
   def provider_id
-    client.provider_id
+    client.provider_id if client.present?
   end
 
   def provider
-    client.provider
+    client.provider if client.present?
   end
 
   def provider_prefix_id
     provider_prefix.uid
+  end
+
+  # convert external id / internal id
+  def provider_prefix_id=(value)
+    r = ProviderPrefix.where(uid: value).first
+    fail ActiveRecord::RecordNotFound if r.blank?
+
+    write_attribute(:provider_prefix_id, r.id)
   end
 
   private
@@ -107,12 +116,5 @@ class ClientPrefix < ActiveRecord::Base
   # uuid for public id
   def set_uid
     self.uid = SecureRandom.uuid
-  end
-
-  def set_provider_prefix_id
-    return nil unless provider_id.present?
-    
-    r = ProviderPrefix.joins(:provider).where('allocator.symbol = ?', provider_id).where(prefix_id: prefix_id).first
-    self.provider_prefix_id = r.id if r.present?
   end
 end

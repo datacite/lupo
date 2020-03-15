@@ -165,6 +165,8 @@ module Indexable
           sort = [{ created: "asc", uid: "asc" }]
         elsif self.name == "Researcher"
           sort = [{ created_at: "asc", uid: "asc" }]
+        elsif ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(self.name)
+          sort = [{ created_at: "asc" }]
         else
           sort = [{ created: "asc" }]
         end
@@ -276,6 +278,12 @@ module Indexable
         must << { terms: { provider_ids: options[:provider_id].split(",") }} if options[:provider_id].present?
         must << { terms: { client_ids: options[:client_id].to_s.split(",") }} if options[:client_id].present?
         must << { terms: { uid: options[:prefix].to_s.split(",") }} if options[:prefix].present?
+        must << { terms: { state: options[:state].to_s.split(",") }} if options[:state].present?
+      elsif self.name == "ProviderPrefix"
+        must << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
+        must << { term: { consortium_id: options[:consortium_id].upcase }} if options[:consortium_id].present?
+        must << { terms: { uid: options[:uid].to_s.split(",") }} if options[:uid].present?
         must << { terms: { state: options[:state].to_s.split(",") }} if options[:state].present?
       end
       

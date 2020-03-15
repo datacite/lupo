@@ -16,12 +16,14 @@ class ProviderPrefixesController < ApplicationController
     page = page_from_params(params)
 
     if params[:id].present?
-      response = ClientPrefix.find_by_id(params[:id]) 
+      response = ProviderPrefix.find_by_id(params[:id]) 
     else
-      response = ClientPrefix.query(params[:query], 
-                                    prefix: params[:prefix],
-                                    page: page, 
-                                    sort: sort)
+      response = ProviderPrefix.query(params[:query], 
+                                      prefix: params[:prefix],
+                                      consortium_id: params[:consortium_id],
+                                      provider_id: params[:provider_id],
+                                      page: page, 
+                                      sort: sort)
     end
 
     begin
@@ -114,7 +116,7 @@ class ProviderPrefixesController < ApplicationController
 
   def set_provider_prefix
     @provider_prefix = ProviderPrefix.where(uid: params[:id]).first
-    fail ActiveRecord::RecordNotFound unless @provider_prefix.present?
+    fail ActiveRecord::RecordNotFound if @provider_prefix.blank?
   end
 
   def safe_params

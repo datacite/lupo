@@ -37,7 +37,6 @@ class Provider < ActiveRecord::Base
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   attr_readonly :symbol
-  attr_accessor :password_input
 
   validates_presence_of :symbol, :name, :display_name, :system_email
   validates_uniqueness_of :symbol, message: "This name has already been taken"
@@ -477,7 +476,7 @@ class Provider < ActiveRecord::Base
       "ROLE_CONTRACTUAL_PROVIDER" => "contractual_member",
       "ROLE_FOR_PROFIT_PROVIDER" => "for_profit_provider",
       "ROLE_REGISTRATION_AGENCY" => "registration_agency",
-     }
+    }
   end
 
   # count years account has been active. Ignore if deleted the same year as created

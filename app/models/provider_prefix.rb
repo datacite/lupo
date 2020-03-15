@@ -14,14 +14,17 @@ class ProviderPrefix < ActiveRecord::Base
 
   before_create :set_uid
 
+  validates_presence_of :provider, :prefix
+
   # use different index for testing
   index_name Rails.env.test? ? "provider-prefixes-test" : "provider-prefixes"
 
-  mapping dynamic: 'false' do
+  mapping dynamic: "false" do
     indexes :id,            type: :keyword
     indexes :uid,           type: :keyword
     indexes :state,         type: :keyword
     indexes :provider_id,   type: :keyword
+    indexes :consortium_id, type: :keyword
     indexes :prefix_id,     type: :keyword
     indexes :client_ids,    type: :keyword
     indexes :created_at,    type: :date
@@ -38,6 +41,7 @@ class ProviderPrefix < ActiveRecord::Base
       "id" => uid,
       "uid" => uid,
       "provider_id" => provider_id,
+      "consortium_id" => consortium_id,
       "prefix_id" => prefix_id,
       "client_ids" => client_ids,
       "state" => state,
@@ -52,13 +56,17 @@ class ProviderPrefix < ActiveRecord::Base
   def self.query_aggregations
     {
       states: { terms: { field: 'state', size: 2, min_doc_count: 1 } },
-      years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
-      providers: { terms: { field: 'provider_ids', size: 15, min_doc_count: 1 } },
+      years: { date_histogram: { field: 'created_at', interval: 'year', min_doc_count: 1 } },
+      providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } },
     }
   end
 
   def self.query_fields
     ["uid^10", "provider_id", "prefix_id", "_all"]
+  end
+
+  def consortium_id
+    provider.consortium_id
   end
 
   # convert external id / internal id
@@ -69,9 +77,9 @@ class ProviderPrefix < ActiveRecord::Base
   # convert external id / internal id
   def provider_id=(value)
     r = Provider.where(symbol: value).first
-    fail ActiveRecord::RecordNotFound unless r.present?
+    fail ActiveRecord::RecordNotFound if r.blank?
 
-    self.provider_id = r.id
+    write_attribute(:provider_id, r.id)
   end
 
   # convert external id / internal id
@@ -82,9 +90,9 @@ class ProviderPrefix < ActiveRecord::Base
   # convert external id / internal id
   def prefix_id=(value)
     r = cached_prefix_response(value)
-    fail ActiveRecord::RecordNotFound unless r.present?
+    fail ActiveRecord::RecordNotFound if r.blank?
 
-    self.prefix_id = r.id
+    write_attribute(:prefix_id, r.id)
   end
 
   def client_ids

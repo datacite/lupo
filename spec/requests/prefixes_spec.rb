@@ -14,7 +14,7 @@ describe "Prefixes", type: :request, elasticsearch: true do
 
     it 'returns prefixes' do
       get '/prefixes', nil, headers
-      puts last_response.body
+
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(10)
     end
