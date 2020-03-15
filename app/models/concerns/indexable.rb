@@ -285,6 +285,10 @@ module Indexable
         must << { term: { consortium_id: options[:consortium_id].upcase }} if options[:consortium_id].present?
         must << { terms: { uid: options[:uid].to_s.split(",") }} if options[:uid].present?
         must << { terms: { state: options[:state].to_s.split(",") }} if options[:state].present?
+      elsif self.name == "ClientPrefix"
+        must << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        must << { terms: { client_id: options[:client_id].split(",") }} if options[:client_id].present?
+        must << { term: { prefix_id: options[:prefix_id] }} if options[:prefix_id].present?
       end
       
       # ES query can be optionally defined in different ways

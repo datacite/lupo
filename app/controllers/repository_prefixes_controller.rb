@@ -21,9 +21,11 @@ class RepositoryPrefixesController < ApplicationController
     if params[:id].present?
       response = ClientPrefix.find_by_id(params[:id]) 
     else
-      response = ClientPrefix.query(params[:query], 
-                                    prefix: params[:prefix],
-                                    page: page, 
+      response = ClientPrefix.query(params[:query],
+                                    client_id: params[:repository_id],
+                                    prefix_id: params[:prefix_id],
+                                    year: params[:year],
+                                    page: page,
                                     sort: sort)
     end
 

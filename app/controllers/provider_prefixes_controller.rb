@@ -23,6 +23,7 @@ class ProviderPrefixesController < ApplicationController
                                       prefix: params[:prefix],
                                       consortium_id: params[:consortium_id],
                                       provider_id: params[:provider_id],
+                                      year: params[:year],
                                       page: page, 
                                       sort: sort)
     end
