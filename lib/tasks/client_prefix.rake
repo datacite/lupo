@@ -48,9 +48,11 @@ namespace :client_prefix do
 
   desc 'Import all client_prefixes'
   task :import => :environment do
-    ClientPrefix.import(index: ClientPrefix.inactive_index)
+    ClientPrefix.all.each do |cp|
+      IndexJob.perform_later(cp)
+    end
   end
-  
+
   desc 'Generate uid'
   task :generate_uid => :environment do
     ClientPrefix.where(uid: [nil, ""]).each do |cp|

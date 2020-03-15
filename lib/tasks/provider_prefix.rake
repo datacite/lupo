@@ -48,7 +48,9 @@ namespace :provider_prefix do
 
   desc 'Import all provider_prefixes'
   task :import => :environment do
-    ProviderPrefix.import(index: ProviderPrefix.inactive_index)
+    ProviderPrefix.all.each do |pp|
+      IndexJob.perform_later(pp)
+    end
   end
 
   desc 'Generate uid'
@@ -58,3 +60,5 @@ namespace :provider_prefix do
     end
   end
 end
+
+
