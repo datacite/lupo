@@ -51,6 +51,17 @@ RSpec.configure do |config|
   config.include JobHelper, type: :job
 
   ActiveJob::Base.queue_adapter = :test
+
+  if Bullet.enable?
+    config.before(:each) do
+      Bullet.start_request
+    end
+  
+    config.after(:each) do
+      Bullet.perform_out_of_channel_notifications if Bullet.notification?
+      Bullet.end_request
+    end
+  end
 end
 
 VCR.configure do |c|

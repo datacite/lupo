@@ -3,6 +3,7 @@ class ProviderPrefixesController < ApplicationController
   before_action :set_provider_prefix, only: [:show, :update, :destroy]
   before_action :set_include
   authorize_resource :except => [:index, :show]
+  around_action :skip_bullet, only: [:index], if: -> { defined?(Bullet) }
 
   def index
     sort = case params[:sort]

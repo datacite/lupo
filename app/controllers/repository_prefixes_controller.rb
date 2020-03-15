@@ -5,7 +5,8 @@ class RepositoryPrefixesController < ApplicationController
   before_action :set_client_prefix, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
-
+  around_action :skip_bullet, only: [:index], if: -> { defined?(Bullet) }
+  
   def index
     sort = case params[:sort]
            when "name" then { "prefix.uid" => { order: 'asc' }}

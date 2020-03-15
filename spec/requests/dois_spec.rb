@@ -2207,7 +2207,7 @@ describe "dois", type: :request do
         post '/dois', valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json.dig('errors')).to eq([{"source"=>"metadata", "title"=>"Is invalid"}])
+        expect(json.dig('errors')).to eq([{"source"=>"metadata", "title"=>"Is invalid"}, {"source"=>"metadata", "title"=>"Is invalid"}])
       end
     end
 
