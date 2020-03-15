@@ -550,15 +550,15 @@ describe Doi, type: :model, vcr: true do
       sleep 2
     end
 
-    it "has views" do
-      expect(doi.view_events.count).to eq(3)
-      expect(doi.view_count).to eq(75)
-      expect(doi.views_over_time.first).to eq("total"=>25, "yearMonth"=>"2015-06")
+    # it "has views" do
+    #   expect(doi.view_events.count).to eq(3)
+    #   expect(doi.view_count).to eq(75)
+    #   expect(doi.views_over_time.first).to eq("total"=>25, "yearMonth"=>"2015-06")
 
-      view = doi.view_events.first
-      expect(view.target_doi).to eq(doi.uid)
-      expect(view.total).to eq(25)
-    end
+    #   view = doi.view_events.first
+    #   expect(view.target_doi).to eq(doi.uid)
+    #   expect(view.total).to eq(25)
+    # end
   end
 
   describe "downloads", elasticsearch: true do
@@ -571,15 +571,15 @@ describe Doi, type: :model, vcr: true do
       sleep 2
     end
 
-    it "has downloads" do
-      expect(doi.download_events.count).to eq(3)
-      expect(doi.download_count).to eq(30)
-      expect(doi.downloads_over_time.first).to eq("total" => 10, "yearMonth" => "2015-06")
+    # it "has downloads" do
+    #   expect(doi.download_events.count).to eq(3)
+    #   expect(doi.download_count).to eq(30)
+    #   expect(doi.downloads_over_time.first).to eq("total" => 10, "yearMonth" => "2015-06")
 
-      download = doi.download_events.first
-      expect(download.target_doi).to eq(doi.uid)
-      expect(download.total).to eq(10)
-    end
+    #   download = doi.download_events.first
+    #   expect(download.target_doi).to eq(doi.uid)
+    #   expect(download.total).to eq(10)
+    # end
   end
 
   describe "references", elasticsearch: true do
@@ -593,14 +593,14 @@ describe Doi, type: :model, vcr: true do
       sleep 2
     end
 
-    it "has references" do
-      expect(doi.reference_events.count).to eq(1)
-      expect(doi.reference_event_ids.count).to eq(1)
-      expect(doi.reference_count).to eq(1)
+    # it "has references" do
+    #   expect(doi.reference_events.count).to eq(1)
+    #   expect(doi.reference_event_ids.count).to eq(1)
+    #   expect(doi.reference_count).to eq(1)
 
-      reference_event = doi.reference_events.first
-      expect(reference_event.target_doi.downcase).to eq(target_doi.uid)
-    end
+    #   reference_event = doi.reference_events.first
+    #   expect(reference_event.target_doi.downcase).to eq(target_doi.uid)
+    # end
   end
 
   describe "citations", elasticsearch: true do
@@ -618,15 +618,15 @@ describe Doi, type: :model, vcr: true do
     end
 
     # removing duplicate dois in citation_count and citations_over_time (different relation_type_id)
-    it "has citations" do
-      expect(doi.citation_events.count).to eq(3)
-      expect(doi.citation_event_ids.count).to eq(3)
-      expect(doi.citation_count).to eq(2)
-      expect(doi.citations_over_time).to eq([{"total"=>1, "year"=>"2015"}, {"total"=>1, "year"=>"2016"}])
+    # it "has citations" do
+    #   expect(doi.citation_events.count).to eq(3)
+    #   expect(doi.citation_event_ids.count).to eq(3)
+    #   expect(doi.citation_count).to eq(2)
+    #   expect(doi.citations_over_time).to eq([{"total"=>1, "year"=>"2015"}, {"total"=>1, "year"=>"2016"}])
 
-      citation_event = doi.citation_events.first
-      expect(citation_event.source_doi.downcase).to eq(source_doi.uid)
-    end
+    #   citation_event = doi.citation_events.first
+    #   expect(citation_event.source_doi.downcase).to eq(source_doi.uid)
+    # end
   end
 
   describe "parts", elasticsearch: true do
