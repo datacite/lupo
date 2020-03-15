@@ -39,7 +39,7 @@ describe "Providers", type: :request, elasticsearch: true  do
     context 'when the record exists' do
       it 'returns the provider' do
         get "/providers/#{provider.symbol.downcase}", nil, headers
-        puts last_response.body
+
         expect(last_response.status).to eq(200)
         expect(json).not_to be_empty
         expect(json['data']['id']).to eq(provider.symbol.downcase)
@@ -179,7 +179,7 @@ describe "Providers", type: :request, elasticsearch: true  do
 
       it 'creates a provider' do
         post '/providers', params, headers
-        puts last_response.body
+
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq("British Library")
         expect(json.dig('data', 'attributes', 'systemEmail')).to eq("doe@joe.joe")

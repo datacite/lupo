@@ -3,17 +3,17 @@ require 'rails_helper'
 RSpec.describe Prefix, type: :model do
   let!(:prefixes)  { create_list(:prefix, 10) }
   let!(:prefix) { prefixes.first }
+  
   describe "Validations" do
-    it { should validate_presence_of(:prefix) }
+    it { should validate_presence_of(:uid) }
   end
 
   describe "methods" do
-
     it "prefixes all" do
       collection = Prefix.all
       expect(collection.length).to eq(prefixes.length)
       single = collection.first
-      expect(single.prefix).to eq(prefix.prefix)
+      expect(single.uid).to eq(prefix.uid)
       # meta = providers[:meta]
       # expect(meta["resource-types"]).not_to be_empty
       # expect(meta["years"]).not_to be_empty
@@ -21,10 +21,10 @@ RSpec.describe Prefix, type: :model do
     end
 
     it "prefixes with where year" do
-      collection = Prefix.where("YEAR(prefix.created) = ?", prefix.created)
+      collection = Prefix.where("YEAR(prefixes.created_at) = ?", prefix.created_at)
       single = collection.first
-      expect(single.created.year).to eq(prefix.created.year)
-      expect(single.prefix).to eq(prefix.prefix)
+      expect(single.created_at.year).to eq(prefix.created_at.year)
+      expect(single.uid).to eq(prefix.uid)
     end
 
     # it "providers with where sort by role_name" do
@@ -52,11 +52,9 @@ RSpec.describe Prefix, type: :model do
     # end
 
     it "prefixe" do
-      single = Prefix.where(prefix: prefix.prefix).first
-      expect(single.prefix).to eq(prefix.prefix)
-      expect(single.created).to be_truthy
-      expect(single.updated).to be_truthy
+      single = Prefix.where(uid: prefix.uid).first
+      expect(single.uid).to eq(prefix.uid)
+      expect(single.created_at).to be_truthy
     end
-
   end
 end

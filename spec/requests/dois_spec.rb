@@ -7,7 +7,7 @@ describe "dois", type: :request do
 
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
-  let!(:prefix) { create(:prefix, prefix: "10.14454") }
+  let!(:prefix) { create(:prefix, uid: "10.14454") }
   let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
 
   let(:doi) { create(:doi, client: client) }
@@ -326,7 +326,6 @@ describe "dois", type: :request do
     it "has versions" do
       get "/dois/#{doi.doi}", nil, headers
 
-      puts last_response.body
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
@@ -2213,7 +2212,7 @@ describe "dois", type: :request do
     end
 
     context 'draft doi no url' do
-      let(:prefix) { create(:prefix, prefix: "10.14454") }
+      let(:prefix) { create(:prefix, uid: "10.14454") }
       let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
 
       let(:valid_attributes) do
@@ -3160,7 +3159,7 @@ describe "dois", type: :request do
 
   describe 'GET /dois/random?prefix' do
     it 'returns random doi with prefix' do
-      get "/dois/random?prefix=#{prefix.prefix}", nil, headers
+      get "/dois/random?prefix=#{prefix.uid}", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json['dois'].first).to start_with("10.14454")
@@ -3256,7 +3255,7 @@ describe "dois", type: :request do
   end
 
   describe 'GET /dois/get-dois', vcr: true do
-    let(:prefix) { create(:prefix, prefix: "10.5438") }
+    let(:prefix) { create(:prefix, uid: "10.5438") }
     let!(:client_prefix) { create(:client_prefix, prefix: prefix, client: client) }
 
     it 'returns all dois' do

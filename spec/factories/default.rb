@@ -55,9 +55,9 @@ FactoryBot.define do
   end
 
   factory :client_prefix do
-    prefix
-    provider_prefix
-    client
+    association :prefix, factory: :prefix, strategy: :create
+    association :provider_prefix, factory: :provider_prefix, strategy: :create
+    association :client, factory: :client, strategy: :create
   end
 
   factory :doi do
@@ -192,32 +192,32 @@ FactoryBot.define do
       {
         "relatedIdentifier": "10.5061/dryad.8515/1",
         "relatedIdentifierType": "DOI",
-        "relationType": "HasPart"
+        "relationType": "HasPart",
       },
       {
         "relatedIdentifier": "10.5061/dryad.8515/2",
         "relatedIdentifierType": "DOI",
-        "relationType": "HasPart"
+        "relationType": "HasPart",
       },
       {
         "relatedIdentifier": "10.1371/journal.ppat.1000446",
         "relatedIdentifierType": "DOI",
-        "relationType": "IsReferencedBy"
+        "relationType": "IsReferencedBy",
       },
       {
         "relatedIdentifier": "10.1371/journal.ppat.1000446",
         "relatedIdentifierType": "DOI",
-        "relationType": "IsSupplementTo"
+        "relationType": "IsSupplementTo",
       },
       {
         "relatedIdentifier": "19478877",
         "relatedIdentifierType": "PMID",
-        "relationType": "IsReferencedBy"
+        "relationType": "IsReferencedBy",
       },
       {
         "relatedIdentifier": "19478877",
         "relatedIdentifierType": "PMID",
-        "relationType": "IsSupplementTo"
+        "relationType": "IsSupplementTo",
       }
     ]}
     schema_version { "http://datacite.org/schema/kernel-4" }
@@ -242,7 +242,7 @@ FactoryBot.define do
   end
 
   factory :prefix do
-    sequence(:prefix) { |n| "10.508#{n}" }
+    sequence(:uid) { |n| "10.508#{n}" }
   end
 
   factory :provider do

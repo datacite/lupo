@@ -7,7 +7,7 @@ describe User, type: :model do
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
   let(:provider) { create(:provider, consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION") }
   let(:client) { create(:client, provider: provider) }
-  let(:prefix) { create(:prefix, prefix: "10.14454") }
+  let(:prefix) { create(:prefix, uid: "10.14454") }
   let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
   let(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
   let(:doi) { create(:doi, client: client) }

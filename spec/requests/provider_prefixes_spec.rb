@@ -1,18 +1,26 @@
 require 'rails_helper'
 
-describe "Provider Prefixes", type: :request   do
+describe "Provider Prefixes", type: :request, elasticsearch: true do
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
   let(:provider) { create(:provider, consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION", password_input: "12345") }
+  let(:prefix) { create(:prefix) }
   let!(:provider_prefixes) { create_list(:provider_prefix, 3, provider: provider) }
   let!(:provider_prefixes2) { create_list(:provider_prefix, 2) }
   let(:provider_prefix) { create(:provider_prefix) }
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
 
+  before do
+    ProviderPrefix.import
+    Prefix.import
+    Provider.import
+    sleep 1
+  end
+
   describe "GET /provider-prefixes by consortium" do
     it "returns provider-prefixes" do
       get "/provider-prefixes?consortium-id=#{consortium.symbol.downcase}", nil, headers
-      puts last_response.body
+
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(3)
     end
@@ -59,7 +67,7 @@ describe "Provider Prefixes", type: :request   do
   describe 'PATCH /provider-prefixes/:uid' do
     it 'returns method not supported error' do
       patch "/provider-prefixes/#{provider_prefix.uid}", nil, headers
-      
+
       expect(last_response.status).to eq(405)
       expect(json.dig("errors")).to eq([{"status"=>"405", "title"=>"Method not allowed"}])
     end
@@ -67,23 +75,21 @@ describe "Provider Prefixes", type: :request   do
 
   describe 'POST /provider-prefixes' do
     context 'when the request is valid' do
-      let(:provider) { create(:provider) }
-      let(:prefix) { create(:prefix) }
       let(:valid_attributes) do
         {
           "data" => {
             "type" => "provider-prefixes",
             "relationships": {
               "provider": {
-                "data":{
-                  "type": "providers",
-                  "id": provider.symbol.downcase
+                "data": {
+                  "type": "provider",
+                  "id": provider.symbol.downcase,
                 }
               },
               "prefix": {
-                "data":{
-                  "type": "prefixes",
-                  "id": prefix.prefix
+                "data": {
+                  "type": "prefix",
+                  "id": prefix.uid,
                 }
               }
             }

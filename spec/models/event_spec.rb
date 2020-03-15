@@ -45,7 +45,7 @@ describe Event, type: :model, vcr: true do
     end
 
     context "prefix exists, then dont to change" do
-      let!(:prefix) { create(:prefix, prefix: "10.5061") }
+      let!(:prefix) { create(:prefix, uid: "10.5061") }
       it "label_state_event with  existent prefix" do
         expect(Event.find_by(uuid: subject.uuid ).state_event).to be_nil
         Event.label_state_event({uuid:subject.uuid , subj_id:subject.subj_id})

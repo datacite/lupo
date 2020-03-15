@@ -1,93 +1,120 @@
-require 'base32/url'
-
 class ClientPrefix < ActiveRecord::Base
   # include helper module for caching infrequently changing resources
   include Cacheable
 
-  self.table_name = "datacentre_prefixes"
+  # include helper module for Elasticsearch
+  include Indexable
 
-  belongs_to :client, foreign_key: :datacentre #, touch: true
-  belongs_to :prefix, foreign_key: :prefixes
-  belongs_to :provider_prefix, foreign_key: :allocator_prefixes
+  include Elasticsearch::Model
 
-  delegate :symbol, to: :client, prefix: true
+  belongs_to :client
+  belongs_to :prefix
+  belongs_to :provider_prefix
 
-  before_create :set_id
-  before_create { self.created_at = Time.zone.now.utc.iso8601 }
-  before_save { self.updated_at = Time.zone.now.utc.iso8601 }
-  before_validation :set_allocator_prefixes
+  before_create :set_uid
 
-  alias_attribute :created, :created_at
-  alias_attribute :updated, :updated_at
+  validates_presence_of :client, :prefix, :provider_prefix
 
-  scope :query, ->(query) { includes(:prefix).where("prefix.prefix like ?", "%#{query}%") }
+  # use different index for testing
+  index_name Rails.env.test? ? "client-prefixes-test" : "client-prefixes"
 
-  # use base32-encode id as uid, with pretty formatting and checksum
-  def uid
-    Base32::URL.encode(id, split: 4, length: 16)
+  mapping dynamic: "false" do
+    indexes :id,                 type: :keyword
+    indexes :uid,                type: :keyword
+    indexes :provider_id,        type: :keyword
+    indexes :client_id,          type: :keyword
+    indexes :prefix_id,          type: :keyword
+    indexes :provider_prefix_id, type: :keyword
+    indexes :created_at,         type: :date
+    indexes :updated_at,         type: :date
+
+    # index associations
+    indexes :client,             type: :object
+    indexes :provider,           type: :object
+    indexes :prefix,             type: :object
+    indexes :provider_prefix,    type: :object
   end
 
-  # workaround for non-standard database column names and association
+  def as_indexed_json(options={})
+    {
+      "id" => uid,
+      "uid" => uid,
+      "provider_id" => provider_id,
+      "client_id" => client_id,
+      "prefix_id" => prefix_id,
+      "provider_prefix_id" => provider_prefix_id,
+      "created_at" => created_at,
+      "updated_at" => updated_at,
+      "client" => client.try(:as_indexed_json),
+      "provider" => provider.try(:as_indexed_json),
+      "prefix" => prefix.try(:as_indexed_json),
+      "provider_prefix" => provider_prefix.try(:as_indexed_json),
+    }
+  end
+
+  def self.query_aggregations
+    {
+      years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
+      providers: { terms: { field: 'provider_ids', size: 15, min_doc_count: 1 } },
+      clients: { terms: { field: 'client_ids', size: 15, min_doc_count: 1 } },
+    }
+  end
+
+  def self.query_fields
+    ['uid^10', '_all']
+  end
+
+  # convert external id / internal id
   def client_id
-    client_symbol.downcase
+    client.symbol.downcase
   end
 
-  # workaround for non-standard database column names and association
+  # convert external id / internal id
   def client_id=(value)
+    logger.warn value.inspect
     r = ::Client.where(symbol: value).first
-    fail ActiveRecord::RecordNotFound unless r.present?
+    fail ActiveRecord::RecordNotFound if r.blank?
 
-    self.datacentre = r.id
+    write_attribute(:client_id, r.id)
   end
 
-  def repository_id
-    client_symbol.downcase
-  end
-
-  # workaround for non-standard database column names and association
-  def repository_id=(value)
-    r = ::Client.where(symbol: value).first
-    fail ActiveRecord::RecordNotFound unless r.present?
-
-    self.datacentre = r.id
-  end
-
+  # convert external id / internal id
   def prefix_id
-    prefix.prefix
+    prefix.uid
   end
 
-  # workaround for non-standard database column names and association
+  # convert external id / internal id
   def prefix_id=(value)
     r = cached_prefix_response(value)
-    fail ActiveRecord::RecordNotFound unless r.present?
+    fail ActiveRecord::RecordNotFound if r.blank?
 
-    self.prefixes = r.id
+    write_attribute(:prefix_id, r.id)
   end
 
   def provider_id
-    client.provider_id
+    client.provider_id if client.present?
   end
 
   def provider
-    client.provider
+    client.provider if client.present?
   end
 
   def provider_prefix_id
     provider_prefix.uid
   end
 
-  private
+  # convert external id / internal id
+  def provider_prefix_id=(value)
+    r = ProviderPrefix.where(uid: value).first
+    fail ActiveRecord::RecordNotFound if r.blank?
 
-  # random number that fits into MySQL bigint field (8 bytes)
-  def set_id
-    self.id = SecureRandom.random_number(9223372036854775807)
+    write_attribute(:provider_prefix_id, r.id)
   end
 
-  def set_allocator_prefixes
-    return nil unless client.present?
-    
-    provider_symbol = client.symbol.split('.').first
-    r = ProviderPrefix.joins(:provider).where('allocator.symbol = ?', provider_symbol).where(prefixes: prefixes).first
-    self.allocator_prefixes = r.id if r.present?
+  private
+
+  # uuid for public id
+  def set_uid
+    self.uid = SecureRandom.uuid
   end
 end

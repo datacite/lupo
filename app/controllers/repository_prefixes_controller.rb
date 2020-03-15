@@ -7,70 +7,68 @@ class RepositoryPrefixesController < ApplicationController
   before_action :set_include
 
   def index
-    # support nested routes
-    if params[:id].present?
-      collection = ClientPrefix.where(id: params[:id])
-    elsif params[:client_id].present? && params[:prefix_id].present?
-      collection = ClientPrefix.joins(:client, :prefix).where('datacentre.symbol = ?', params[:client_id]).where('prefix.prefix = ?', params[:prefix_id])
-    elsif params[:client_id].present?
-      client = Client.where('datacentre.symbol = ?', params[:client_id]).first
-      collection = client.present? ? client.client_prefixes.joins(:prefix) : ClientPrefix.none
-    elsif params[:prefix_id].present?
-      prefix = Prefix.where('prefix.prefix = ?', params[:prefix_id]).first
-      collection = prefix.present? ? prefix.client_prefixes.joins(:client) : ClientPrefix.none
-    else
-      collection = ClientPrefix.joins(:client, :prefix)
-    end
-
-    collection = collection.query(params[:query]) if params[:query].present?
-    collection = collection.where('YEAR(datacentre_prefixes.created_at) = ?', params[:year]) if params[:year].present?
-
-    if params[:year].present?
-      years = [{ id: params[:year],
-                 title: params[:year],
-                 count: collection.where('YEAR(datacentre_prefixes.created_at) = ?', params[:year]).count }]
-    else
-      years = collection.where.not(prefixes: nil).order("YEAR(datacentre_prefixes.created_at) DESC").group("YEAR(datacentre_prefixes.created_at)").count
-      years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
-    end
+    sort = case params[:sort]
+           when "name" then { "prefix.uid" => { order: 'asc' }}
+           when "-name" then { "prefix.uid" => { order: 'desc' }}
+           when "created" then { created_at: { order: 'asc' }}
+           when "-created" then { created_at: { order: 'desc' }}
+           else { created_at: { order: 'desc' }}
+           end
 
     page = page_from_params(params)
-    total = collection.count
 
-    order = case params[:sort]
-            when "name" then "prefix.prefix"
-            when "-name" then "prefix.prefix DESC"
-            when "created" then "datacentre_prefixes.created_at"
-            else "datacentre_prefixes.created_at DESC"
-            end
+    if params[:id].present?
+      response = ClientPrefix.find_by_id(params[:id]) 
+    else
+      response = ClientPrefix.query(params[:query], 
+                                    prefix: params[:prefix],
+                                    page: page, 
+                                    sort: sort)
+    end
 
-    @client_prefixes = collection.order(order).page(page[:number]).per(page[:size])
+    begin
+      total = response.results.total
+      total_pages = page[:size].positive? ? (total.to_f / page[:size]).ceil : 0
+      years = total.positive? ? facet_by_year(response.response.aggregations.years.buckets) : nil
+      providers = total.positive? ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+      repositories = total.positive? ? facet_by_client(response.response.aggregations.clients.buckets) : nil
 
-    options = {}
-    options[:meta] = {
-      total: total,
-      "totalPages" => @client_prefixes.total_pages,
-      page: page[:number].to_i,
-      years: years
-    }.compact
+      repository_prefixes = response.results
 
-    options[:links] = {
-      self: request.original_url,
-      next: @client_prefixes.blank? ? nil : request.base_url + "/client-prefixes?" + {
+      options = {}
+      options[:meta] = {
+        total: total,
+        "totalPages" => total_pages,
+        page: page[:number],
+        years: years,
+        providers: providers,
+        repositories: repositories
+      }.compact
+
+      options[:links] = {
+        self: request.original_url,
+        next: repository_prefixes.blank? ? nil : request.base_url + "/repository-prefixes?" + {
         query: params[:query],
+        prefix: params[:prefix],
         year: params[:year],
-        "page[number]" => params.dig(:page, :number).to_i + 1,
-        "page[size]" => params.dig(:page, :size),
+        "page[number]" => page[:number] + 1,
+        "page[size]" => page[:size],
         sort: params[:sort] }.compact.to_query
       }.compact
-    options[:include] = @include
-    options[:is_collection] = true
+      options[:include] = @include
+      options[:is_collection] = true
 
-    render json: RepositoryPrefixSerializer.new(@client_prefixes, options).serialized_json, status: :ok
+      render json: RepositoryPrefixSerializer.new(repository_prefixes, options).serialized_json, status: :ok
+    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
+      Raven.capture_exception(exception)
+
+      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+
+      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+    end
   end
 
   def show
-    authorize! :show, @client_prefix
     options = {}
     options[:include] = @include
     options[:is_collection] = false
@@ -120,20 +118,15 @@ class RepositoryPrefixesController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_client_prefix
-    id = Base32::URL.decode(URI.decode(params[:id]))
-    fail ActiveRecord::RecordNotFound unless id.present?
-
-    @client_prefix = ClientPrefix.where(id: id.to_i).first
-
+    @client_prefix = ClientPrefix.where(uid: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @client_prefix.present?
   end
 
   def safe_params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
       params, only: [:id, :repository, :prefix, :providerPrefix],
-      keys: { repository: :client, "providerPrefix" => :provider_prefix }
+              keys: { repository: :client, "providerPrefix" => :provider_prefix }
     )
   end
 end
