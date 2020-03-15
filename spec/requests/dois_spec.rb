@@ -19,7 +19,7 @@ describe "dois", type: :request do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     it 'returns dois', vcr: true do
@@ -56,7 +56,7 @@ describe "dois", type: :request do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     context 'when the record exists' do
@@ -129,7 +129,7 @@ describe "dois", type: :request do
     before do
       Event.import
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     # TODO aggregations in meta should not be by publication year
@@ -156,7 +156,7 @@ describe "dois", type: :request do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     it "has views" do
@@ -176,14 +176,6 @@ describe "dois", type: :request do
       expect(last_response.status).to eq(200)
       expect(json.dig('meta', 'views')).to eq([{"count"=>75, "id"=>"2011", "title"=>"2011"}])
     end
-
-    # it "repository shows summary count" do
-    #   get "/repositories/stats/#{client.uid}", nil, headers
-
-    #   expect(last_response.status).to eq(200)
-    #   expect(json).to eq(client.name)
-    #   expect(json.dig('meta', 'views')).to eq([{"count"=>75, "id"=>"2011", "title"=>"2011"}])
-    # end
   end
 
   describe "downloads", elasticsearch: true, vcr: true do
@@ -193,7 +185,7 @@ describe "dois", type: :request do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     it "has downloads" do
@@ -213,13 +205,6 @@ describe "dois", type: :request do
       expect(last_response.status).to eq(200)
       expect(json.dig('meta', 'downloads')).to eq([{"count"=>30, "id"=>"2011", "title"=>"2011"}])
     end
-
-    # it "repository shows summary count" do
-    #   get "/repositories/stats/#{client.uid}", nil, headers
-
-    #   expect(last_response.status).to eq(200)
-    #   expect(json.dig('meta', 'downloads')).to eq([{"count"=>30, "id"=>"2011", "title"=>"2011"}])
-    # end
   end
 
   describe "references", elasticsearch: true, vcr: true do
@@ -230,7 +215,7 @@ describe "dois", type: :request do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     it "has references" do
@@ -255,7 +240,7 @@ describe "dois", type: :request do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     it "has citations" do
@@ -278,13 +263,6 @@ describe "dois", type: :request do
       expect(last_response.status).to eq(200)
       expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
     end
-
-    # it "repository shows summary count" do
-    #   get "/repositories/stats/#{client.uid}", nil, headers
-
-    #   expect(last_response.status).to eq(200)
-    #   expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
-    # end
   end
 
   describe "parts", elasticsearch: true, vcr: true do
@@ -295,7 +273,7 @@ describe "dois", type: :request do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     it "has parts" do
@@ -320,7 +298,7 @@ describe "dois", type: :request do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     it "has versions" do
@@ -348,7 +326,7 @@ describe "dois", type: :request do
 
       before do
         Doi.import
-        sleep 1
+        sleep 2
       end
 
       it 'fetches the record' do
@@ -2861,7 +2839,7 @@ describe "dois", type: :request do
 
       before do
         Doi.import
-        sleep 1
+        sleep 2
       end
 
       it 'updates the Doi' do
@@ -3105,7 +3083,7 @@ describe "dois", type: :request do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     context 'anonymous get' do
@@ -3183,7 +3161,7 @@ describe "dois", type: :request do
 
       before do
         Doi.import
-        sleep 1
+        sleep 2
       end
 
       it 'returns url' do
@@ -3199,7 +3177,7 @@ describe "dois", type: :request do
 
       before do
         Doi.import
-        sleep 1
+        sleep 2
       end
 
       it 'returns url' do
@@ -3215,7 +3193,7 @@ describe "dois", type: :request do
 
       before do
         Doi.import
-        sleep 1
+        sleep 2
       end
 
       it 'returns not found' do
@@ -3231,7 +3209,7 @@ describe "dois", type: :request do
 
       before do
         Doi.import
-        sleep 1
+        sleep 2
       end
 
       it 'returns not found' do
@@ -3284,7 +3262,7 @@ describe "dois", type: :request do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     context "no permission" do

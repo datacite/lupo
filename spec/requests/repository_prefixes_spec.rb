@@ -14,7 +14,7 @@ describe "Repository Prefixes", type: :request, elasticsearch: true do
     before do
       Prefix.import
       ClientPrefix.import
-      sleep 1
+      sleep 2
     end
 
     it 'returns repository-prefixes' do
@@ -29,7 +29,7 @@ describe "Repository Prefixes", type: :request, elasticsearch: true do
     before do
       Prefix.import
       ClientPrefix.import
-      sleep 1
+      sleep 2
     end
 
     context 'when the record exists' do

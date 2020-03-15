@@ -259,7 +259,7 @@ describe "/events", type: :request, elasticsearch: true do
         expect(json.dig("data", "attributes", "objId")).to eq("https://doi.org/10.1016/j.jastp.2013.05.001")
 
         Event.import
-        sleep 1
+        sleep 2
         get uri, nil, headers
 
         expect(json.dig("meta", "registrants", 0, "count")).to eq(1)
@@ -538,7 +538,7 @@ describe "/events", type: :request, elasticsearch: true do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     context "as admin user" do

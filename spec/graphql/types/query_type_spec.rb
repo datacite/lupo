@@ -17,7 +17,7 @@ describe QueryType do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     let(:query) do
@@ -51,7 +51,7 @@ describe QueryType do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     let(:query) do
@@ -106,7 +106,7 @@ describe QueryType do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     let(:query) do

@@ -128,7 +128,7 @@ describe 'Clients', type: :request, elasticsearch: true do
         expect(relationships.dig("provider", "data", "id")).to eq(provider.symbol.downcase)
 
         Client.import
-        sleep 1
+        sleep 2
         
         get '/clients', nil, headers
 
@@ -302,7 +302,7 @@ describe 'Clients', type: :request, elasticsearch: true do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     it 'returns status code 200' do

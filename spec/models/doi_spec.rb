@@ -531,7 +531,7 @@ describe Doi, type: :model, vcr: true do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     it "transfer all dois" do
@@ -547,7 +547,7 @@ describe Doi, type: :model, vcr: true do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     it "has views" do
@@ -568,7 +568,7 @@ describe Doi, type: :model, vcr: true do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     it "has downloads" do
@@ -590,7 +590,7 @@ describe Doi, type: :model, vcr: true do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     it "has references" do
@@ -614,7 +614,7 @@ describe Doi, type: :model, vcr: true do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     # removing duplicate dois in citation_count and citations_over_time (different relation_type_id)
@@ -637,7 +637,7 @@ describe Doi, type: :model, vcr: true do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     # it "has parts" do
@@ -658,7 +658,7 @@ describe Doi, type: :model, vcr: true do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     # it "has part of" do
@@ -679,7 +679,7 @@ describe Doi, type: :model, vcr: true do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     # it "has versions" do
@@ -700,7 +700,7 @@ describe Doi, type: :model, vcr: true do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     # it "has version of" do

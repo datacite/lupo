@@ -13,7 +13,7 @@ describe "activities", type: :request do
     before do
       Doi.import
       Activity.import
-      sleep 1
+      sleep 2
     end
 
     context "without username" do

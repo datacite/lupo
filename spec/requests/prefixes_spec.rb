@@ -9,7 +9,7 @@ describe "Prefixes", type: :request, elasticsearch: true do
   describe 'GET /prefixes' do
     before do
       Prefix.import
-      sleep 1
+      sleep 2
     end
 
     it 'returns prefixes' do
@@ -23,7 +23,7 @@ describe "Prefixes", type: :request, elasticsearch: true do
   describe 'GET /prefixes/:id' do
     before do
       Prefix.import
-      sleep 1
+      sleep 2
     end
 
     context 'when the record exists' do
@@ -66,7 +66,7 @@ describe "Prefixes", type: :request, elasticsearch: true do
   describe 'POST /prefixes' do
     before do
       Prefix.import
-      sleep 1
+      sleep 2
     end
 
     context 'when the request is valid' do

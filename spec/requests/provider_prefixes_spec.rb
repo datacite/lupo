@@ -14,7 +14,7 @@ describe "Provider Prefixes", type: :request, elasticsearch: true do
     ProviderPrefix.import
     Prefix.import
     Provider.import
-    sleep 1
+    sleep 2
   end
 
   describe "GET /provider-prefixes by consortium" do

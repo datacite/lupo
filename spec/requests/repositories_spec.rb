@@ -106,7 +106,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
     before do
       Client.import
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     it "returns repositories" do
@@ -388,7 +388,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     it "transfered all DOIs" do

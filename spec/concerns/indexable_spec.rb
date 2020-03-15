@@ -25,7 +25,7 @@ describe "Indexable class methods", elasticsearch: true do
 
     before do
       Client.import
-      sleep 1
+      sleep 2
     end
 
     it 'find_by_id' do
@@ -49,7 +49,7 @@ describe "Indexable class methods", elasticsearch: true do
 
     before do
       Provider.import
-      sleep 1
+      sleep 2
     end
 
     it 'find_by_id' do
@@ -74,7 +74,7 @@ describe "Indexable class methods", elasticsearch: true do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     # it 'find_by_id' do
@@ -161,7 +161,7 @@ describe "Indexable class methods", elasticsearch: true do
 
     before do
       Event.import
-      sleep 1
+      sleep 2
     end
   end
 end
