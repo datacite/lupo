@@ -15,7 +15,7 @@ class PrefixType < BaseObject
   # end
 
   def id
-    object.class.name == "Prefix" ? object.prefix : object.prefix.prefix
+    object.class.name == "Prefix" ? object.prefix : object.prefix.uid
   end
 
   def providers(**args)

@@ -14,7 +14,7 @@ module Countable
       else
         response = Doi.query(nil, page: { number: 1, size: 0 })
       end
-
+      
       response.results.total.positive? ? facet_by_year(response.response.aggregations.created.buckets) : []
     end
 

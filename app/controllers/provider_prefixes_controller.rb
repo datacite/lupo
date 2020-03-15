@@ -6,106 +6,65 @@ class ProviderPrefixesController < ApplicationController
   around_action :skip_bullet, only: [:index], if: -> { defined?(Bullet) }
 
   def index
-    # support nested routes
-    if params[:id].present?
-      collection = ProviderPrefix.where(id: params[:id])
-    elsif params[:provider_id].present? && params[:prefix_id].present?
-      collection = ProviderPrefix.joins(:provider, :prefix).where('allocator.symbol = ?', params[:provider_id]).where('prefix.prefix = ?', params[:prefix_id])
-    elsif params[:consortium_id].present?
-      providers = Provider.where('allocator.consortium_id = ?', params[:consortium_id])
-      collection = providers.present? ? ProviderPrefix.joins(:provider, :prefix).where('allocator.consortium_id = ?', params[:consortium_id]) : ProviderPrefix.none
-    elsif params[:provider_id].present?
-      provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
-      collection = provider.present? ? provider.provider_prefixes.joins(:prefix) : ProviderPrefix.none
-    elsif params[:prefix_id].present?
-      prefix = Prefix.where('prefix.prefix = ?', params[:prefix_id]).first
-      collection = prefix.present? ? prefix.provider_prefixes.joins(:provider) : ProviderPrefix.none
-    else
-      collection = ProviderPrefix.joins(:provider, :prefix)
-    end
-
-    collection = collection.state(params[:state]) if params[:state].present?
-    collection = collection.query(params[:query]) if params[:query].present?
-    collection = collection.where('YEAR(allocator_prefixes.created_at) = ?', params[:year]) if params[:year].present?
-
-    if params[:year].present?
-      years = [{ id: params[:year],
-                 title: params[:year],
-                 count: collection.where('YEAR(allocator_prefixes.created_at) = ?', params[:year]).count }]
-    else
-      years = collection.where.not(prefixes: nil).order("YEAR(allocator_prefixes.created_at) DESC").group("YEAR(allocator_prefixes.created_at)").count
-      years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
-    end
-
-    # calculate facet counts after filtering
-    # no faceting by client
-    if provider.present?
-      providers = [{ id: params[:provider_id],
-                     title: provider.name,
-                     count: collection.where('allocator_prefixes.allocator' => provider.id).count }]
-    else
-      providers = collection.where.not('allocator_prefixes.allocator' => nil).group('allocator_prefixes.allocator').count
-      providers = providers
-                  .sort { |a, b| b[1] <=> a[1] }
-                  .reduce([]) do |sum, i|
-                                if provider = Provider.where(symbol: i[0]).first
-                                  sum << { id: provider.symbol.downcase, title: provider.name, count: i[1] }
-                                end
-
-                                sum
-                              end
-    end
-
-    if params[:state].present?
-      states = [{ id: params[:state],
-                  title: params[:state].underscore.humanize,
-                  count: collection.count }]
-    else
-      states = [{ id: "without-repository",
-                  title: "Without repository",
-                  count: collection.state("without-client").count },
-                { id: "with-repository",
-                  title: "With repository",
-                  count: collection.state("with-client").count }]
-    end
+    sort = case params[:sort]
+           when "name" then { "prefix.uid" => { order: 'asc' }}
+           when "-name" then { "prefix.uid" => { order: 'desc' }}
+           when "created" then { created_at: { order: 'asc' }}
+           when "-created" then { created_at: { order: 'desc' }}
+           else { created_at: { order: 'desc' }}
+           end
 
     page = page_from_params(params)
-    total = collection.count
 
-    order = case params[:sort]
-            when "name" then "prefix.prefix"
-            when "-name" then "prefix.prefix DESC"
-            when "created" then "allocator_prefixes.created_at"
-            else "allocator_prefixes.created_at DESC"
-            end
+    if params[:id].present?
+      response = ProviderPrefix.find_by_id(params[:id]) 
+    else
+      response = ProviderPrefix.query(params[:query], 
+                                      prefix: params[:prefix],
+                                      consortium_id: params[:consortium_id],
+                                      provider_id: params[:provider_id],
+                                      page: page, 
+                                      sort: sort)
+    end
 
-    @provider_prefixes = collection.order(order).page(page[:number]).per(page[:size])
+    begin
+      total = response.results.total
+      total_pages = page[:size].positive? ? (total.to_f / page[:size]).ceil : 0
+      years = total.positive? ? facet_by_year(response.response.aggregations.years.buckets) : nil
+      providers = total.positive? ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+      
+      provider_prefixes = response.results
 
-    options = {}
-    options[:meta] = {
-      total: total,
-      "totalPages" => @provider_prefixes.total_pages,
-      page: page[:number],
-      states: states,
-      providers: providers,
-      years: years
-    }.compact
+      options = {}
+      options[:meta] = {
+        total: total,
+        "totalPages" => total_pages,
+        page: page[:number],
+        years: years,
+        providers: providers,
+      }.compact
 
-    options[:links] = {
-      self: request.original_url,
-      next: @provider_prefixes.blank? ? nil : request.base_url + "/provider-prefixes?" + {
+      options[:links] = {
+        self: request.original_url,
+        next: provider_prefixes.blank? ? nil : request.base_url + "/provider_prefixes?" + {
         query: params[:query],
-        "provider-id" => params[:provider_id],
-        "prefix-id" => params[:prefix_id],
+        prefix: params[:prefix],
         year: params[:year],
         "page[number]" => page[:number] + 1,
         "page[size]" => page[:size],
         sort: params[:sort] }.compact.to_query
       }.compact
-    options[:include] = @include
-    options[:is_collection] = true
+      options[:include] = @include
+      options[:is_collection] = true
 
-    render json: ProviderPrefixSerializer.new(@provider_prefixes, options).serialized_json, status: :ok
+      render json: ProviderPrefixSerializer.new(provider_prefixes, options).serialized_json, status: :ok
+    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
+      Raven.capture_exception(exception)
+
+      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+
+      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+    end
   end
 
   def show
@@ -157,11 +116,8 @@ class ProviderPrefixesController < ApplicationController
   private
 
   def set_provider_prefix
-    id = Base32::URL.decode(URI.decode(params[:id]))
-    fail ActiveRecord::RecordNotFound unless id.present?
-
-    @provider_prefix = ProviderPrefix.where(id: id.to_i).first
-    fail ActiveRecord::RecordNotFound unless @provider_prefix.present?
+    @provider_prefix = ProviderPrefix.where(uid: params[:id]).first
+    fail ActiveRecord::RecordNotFound if @provider_prefix.blank?
   end
 
   def safe_params

@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_02_191027) do
+ActiveRecord::Schema.define(version: 2020_03_13_163242) do
 
-  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
+  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 2020_03_02_191027) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
+  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "key", limit: 191, null: false
     t.string "filename", limit: 191, null: false
     t.string "content_type", limit: 191
@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 2020_03_02_191027) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "allocator", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
+  create_table "allocator", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "system_email", null: false
     t.datetime "created"
     t.integer "doi_quota_allowed", null: false
@@ -76,22 +76,14 @@ ActiveRecord::Schema.define(version: 2020_03_02_191027) do
     t.string "logo_content_type"
     t.bigint "logo_file_size"
     t.datetime "logo_updated_at"
+    t.string "uid", limit: 32
     t.index ["globus_uuid"], name: "index_allocator_on_globus_uuid"
     t.index ["organization_type"], name: "index_allocator_organization_type"
     t.index ["symbol"], name: "symbol", unique: true
+    t.index ["uid"], name: "index_allocator_on_uid"
   end
 
-  create_table "allocator_prefixes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
-    t.bigint "allocator", null: false
-    t.bigint "prefixes", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["allocator", "prefixes"], name: "index_allocator_prefixes_on_allocator_and_prefixes", unique: true
-    t.index ["allocator"], name: "FKE7FBD67446EBD781"
-    t.index ["prefixes"], name: "FKE7FBD674AF86A1C7"
-  end
-
-  create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
+  create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.integer "auditable_id"
     t.string "auditable_type"
     t.integer "associated_id"
@@ -113,18 +105,21 @@ ActiveRecord::Schema.define(version: 2020_03_02_191027) do
     t.index ["user_id", "user_type"], name: "user_index"
   end
 
-  create_table "contacts", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.bigint "allocator"
-    t.string "email"
-    t.string "given_name"
-    t.string "family_name"
-    t.string "role"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["allocator"], name: "fk_rails_5c598567a8"
+  create_table "client_prefixes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "client_id", null: false
+    t.bigint "prefix_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.bigint "provider_prefix_id"
+    t.string "uid"
+    t.index ["client_id", "prefix_id"], name: "index_client_prefixes_on_client_id_and_prefix_id", unique: true
+    t.index ["client_id"], name: "FK13A1B3BA47B5F5FF"
+    t.index ["prefix_id"], name: "FK13A1B3BAAF86A1C7"
+    t.index ["provider_prefix_id"], name: "index_client_prefixes_on_provider_prefix_id"
+    t.index ["uid"], name: "index_client_prefixes_on_uid", length: 128
   end
 
-  create_table "datacentre", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
+  create_table "datacentre", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.text "comments", limit: 4294967295
     t.string "system_email", null: false
     t.datetime "created"
@@ -155,26 +150,16 @@ ActiveRecord::Schema.define(version: 2020_03_02_191027) do
     t.string "salesforce_id", limit: 191
     t.json "service_contact"
     t.string "globus_uuid", limit: 191
+    t.string "uid", limit: 32
     t.index ["allocator"], name: "FK6695D60546EBD781"
     t.index ["globus_uuid"], name: "index_datacentre_on_globus_uuid"
     t.index ["re3data_id"], name: "index_datacentre_on_re3data_id"
     t.index ["symbol"], name: "symbol", unique: true
+    t.index ["uid"], name: "index_datacentre_on_uid"
     t.index ["url"], name: "index_datacentre_on_url", length: 100
   end
 
-  create_table "datacentre_prefixes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
-    t.bigint "datacentre", null: false
-    t.bigint "prefixes", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.bigint "allocator_prefixes"
-    t.index ["allocator_prefixes"], name: "index_datacentre_prefixes_on_allocator_prefixes"
-    t.index ["datacentre", "prefixes"], name: "index_datacentre_prefixes_on_datacentre_and_prefixes", unique: true
-    t.index ["datacentre"], name: "FK13A1B3BA47B5F5FF"
-    t.index ["prefixes"], name: "FK13A1B3BAAF86A1C7"
-  end
-
-  create_table "dataset", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
+  create_table "dataset", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created"
     t.string "doi", null: false
     t.binary "is_active", limit: 1, null: false
@@ -229,7 +214,7 @@ ActiveRecord::Schema.define(version: 2020_03_02_191027) do
     t.index ["url"], name: "index_dataset_on_url", length: 100
   end
 
-  create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+  create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
     t.text "uuid", null: false
     t.text "subj_id", null: false
     t.text "obj_id"
@@ -249,22 +234,47 @@ ActiveRecord::Schema.define(version: 2020_03_02_191027) do
     t.text "obj", limit: 16777215
     t.integer "total", default: 1
     t.string "license", limit: 191
-    t.text "doi_id"
     t.text "source_doi"
     t.text "target_doi"
     t.string "source_relation_type_id", limit: 191
     t.string "target_relation_type_id", limit: 191
     t.index ["created_at", "indexed_at", "updated_at"], name: "index_events_on_created_indexed_updated"
-    t.index ["created_at"], name: "index_events_on_source_id_created_at"
-    t.index ["relation_type_id"], name: "index_events_on_doi_id"
     t.index ["source_doi", "source_relation_type_id"], name: "index_events_on_source_doi", length: { source_doi: 100 }
-    t.index ["subj_id", "obj_id", "relation_type_id"], name: "index_events_on_multiple_columns", unique: true, length: { subj_id: 191, obj_id: 191 }
+    t.index ["source_id", "created_at"], name: "index_events_on_source_id_created_at"
+    t.index ["subj_id", "obj_id", "source_id", "relation_type_id"], name: "index_events_on_multiple_columns", unique: true, length: { subj_id: 191, obj_id: 191 }
     t.index ["target_doi", "target_relation_type_id"], name: "index_events_on_target_doi", length: { target_doi: 100 }
     t.index ["updated_at"], name: "index_events_on_updated_at"
     t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
   end
 
-  create_table "media", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
+  create_table "lhmn_events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
+    t.text "uuid", null: false
+    t.text "subj_id", null: false
+    t.text "obj_id"
+    t.string "source_id", limit: 191
+    t.string "aasm_state"
+    t.string "state_event"
+    t.text "callback"
+    t.text "error_messages"
+    t.text "source_token"
+    t.datetime "created_at", precision: 3, null: false
+    t.datetime "updated_at", precision: 3, null: false
+    t.datetime "indexed_at", default: "1970-01-01 00:00:00", null: false
+    t.datetime "occurred_at"
+    t.string "message_action", limit: 191, default: "create", null: false
+    t.string "relation_type_id", limit: 191
+    t.text "subj", limit: 16777215
+    t.text "obj", limit: 16777215
+    t.integer "total", default: 1
+    t.string "license", limit: 191
+    t.index ["created_at", "indexed_at", "updated_at"], name: "index_events_on_created_indexed_updated"
+    t.index ["source_id", "created_at"], name: "index_events_on_source_id_created_at"
+    t.index ["subj_id", "obj_id", "source_id", "relation_type_id"], name: "index_events_on_multiple_columns", unique: true, length: { subj_id: 191, obj_id: 191 }
+    t.index ["updated_at"], name: "index_events_on_updated_at"
+    t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
+  end
+
+  create_table "media", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created"
     t.string "media_type", limit: 80
     t.datetime "updated"
@@ -276,7 +286,7 @@ ActiveRecord::Schema.define(version: 2020_03_02_191027) do
     t.index ["url"], name: "index_media_on_url", length: 100
   end
 
-  create_table "metadata", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
+  create_table "metadata", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created"
     t.integer "metadata_version"
     t.integer "version"
@@ -288,50 +298,32 @@ ActiveRecord::Schema.define(version: 2020_03_02_191027) do
     t.index ["dataset"], name: "FKE52D7B2F4D3D6B1B"
   end
 
-  create_table "prefix", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT", force: :cascade do |t|
-    t.datetime "created"
-    t.string "prefix", limit: 80, null: false
-    t.integer "version"
-    t.datetime "updated"
-    t.index ["prefix"], name: "prefix", unique: true
+  create_table "prefixes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.datetime "created_at"
+    t.string "uid", limit: 80, null: false
+    t.string "ra", default: "DataCite"
+    t.index ["uid"], name: "prefix", unique: true
   end
 
-  create_table "researchers", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
-    t.string "name", limit: 191
-    t.string "family_name", limit: 191
-    t.string "given_names", limit: 191
-    t.string "email", limit: 191
-    t.string "provider", default: "orcid"
-    t.string "uid", limit: 191
-    t.string "authentication_token", limit: 191
-    t.string "role_id", default: "user"
-    t.boolean "auto_update", default: true
-    t.datetime "expires_at", default: "1970-01-01 00:00:00", null: false
-    t.datetime "created_at", precision: 3
-    t.datetime "updated_at", precision: 3
-    t.text "other_names"
-    t.string "confirmation_token", limit: 191
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
-    t.string "unconfirmed_email"
-    t.string "github", limit: 191
-    t.string "github_uid", limit: 191
-    t.string "github_token", limit: 191
-    t.string "google_uid", limit: 191
-    t.string "google_token", limit: 191
-    t.integer "github_put_code"
-    t.boolean "is_public", default: true
-    t.boolean "beta_tester", default: false
-    t.index ["uid"], name: "index_researchers_on_uid", unique: true
+  create_table "provider_prefixes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "provider_id", null: false
+    t.bigint "prefix_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string "uuid"
+    t.string "uid"
+    t.index ["prefix_id"], name: "FKE7FBD674AF86A1C7"
+    t.index ["provider_id", "prefix_id"], name: "index_provider_prefixes_on_provider_id_and_prefix_id", unique: true
+    t.index ["provider_id"], name: "FKE7FBD67446EBD781"
+    t.index ["uid"], name: "index_provider_prefixes_on_uid", length: 128
   end
 
-  add_foreign_key "allocator_prefixes", "allocator", column: "allocator", name: "FKE7FBD67446EBD781"
-  add_foreign_key "allocator_prefixes", "prefix", column: "prefixes", name: "FKE7FBD674AF86A1C7"
-  add_foreign_key "contacts", "allocator", column: "allocator"
+  add_foreign_key "client_prefixes", "datacentre", column: "client_id", name: "FK13A1B3BA47B5F5FF"
+  add_foreign_key "client_prefixes", "prefixes", name: "FK13A1B3BAAF86A1C7"
   add_foreign_key "datacentre", "allocator", column: "allocator", name: "FK6695D60546EBD781"
-  add_foreign_key "datacentre_prefixes", "datacentre", column: "datacentre", name: "FK13A1B3BA47B5F5FF"
-  add_foreign_key "datacentre_prefixes", "prefix", column: "prefixes", name: "FK13A1B3BAAF86A1C7"
   add_foreign_key "dataset", "datacentre", column: "datacentre", name: "FK5605B47847B5F5FF"
   add_foreign_key "media", "dataset", column: "dataset", name: "FK62F6FE44D3D6B1B"
   add_foreign_key "metadata", "dataset", column: "dataset", name: "FKE52D7B2F4D3D6B1B"
+  add_foreign_key "provider_prefixes", "allocator", column: "provider_id", name: "FKE7FBD67446EBD781"
+  add_foreign_key "provider_prefixes", "prefixes", name: "FKE7FBD674AF86A1C7"
 end

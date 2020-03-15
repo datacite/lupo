@@ -5,7 +5,7 @@ class RepositoriesController < ApplicationController
   before_action :set_repository, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
-  load_and_authorize_resource :client, parent: false, except: [:index, :show, :create, :totals, :random]
+  load_and_authorize_resource :client, parent: false, except: [:index, :show, :create, :totals, :random, :stats]
   around_action :skip_bullet, only: [:index], if: -> { defined?(Bullet) }
   
   def index
@@ -124,11 +124,10 @@ class RepositoriesController < ApplicationController
 
     options = {}
     options[:meta] = {
-      dois: doi_count(client_id: params[:id]),
-      "resourceTypes" => resource_type_count(client_id: params[:id]),
-      citations: citation_count(client_id: params[:id]),
-      views: view_count(client_id: params[:id]),
-      downloads: download_count(client_id: params[:id]),
+      "doiCount" => doi_count(client_id: params[:id]).reduce(0) do |sum, item|
+        sum += item["count"]
+        sum
+      end
     }.compact
     options[:include] = @include
     options[:is_collection] = false
@@ -157,7 +156,6 @@ class RepositoriesController < ApplicationController
   def update
     if @client.update_attributes(safe_params)
       options = {}
-      options[:meta] = { dois: doi_count(client_id: params[:id]) }
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability }
 
@@ -191,13 +189,25 @@ class RepositoriesController < ApplicationController
   end
 
   def totals
-    page = { size: 0, number: 1}
+    page = { size: 0, number: 1 }
 
     state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
-    response = Doi.query(nil, provider_id: params[:provider_id], state: state, page: page, totals_agg: true)
-    registrant = clients_totals(response.response.aggregations.clients_totals.buckets)
+    response = Doi.query(nil, provider_id: params[:provider_id], state: state, page: page, totals_agg: "client")
+    registrant = response.results.total.positive? ? clients_totals(response.response.aggregations.clients_totals.buckets) : []
 
     render json: registrant, status: :ok
+  end
+
+  def stats
+    meta = {
+      dois: doi_count(client_id: params[:id]),
+      "resourceTypes" => resource_type_count(client_id: params[:id]),
+      # citations: citation_count(client_id: params[:id]),
+      # views: view_count(client_id: params[:id]),
+      # downloads: download_count(client_id: params[:id]),
+    }.compact
+
+    render json: meta, status: :ok
   end
 
   protected

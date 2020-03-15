@@ -463,7 +463,7 @@ class DoisController < ApplicationController
     client_prefix = client.prefixes.first
     head :no_content && return if client_prefix.blank?
 
-    dois = Doi.get_dois(prefix: client_prefix.prefix, username: current_user.uid.upcase, password: current_user.password)
+    dois = Doi.get_dois(prefix: client_prefix.uid, username: current_user.uid.upcase, password: current_user.password)
     if dois.length.positive?
       render json: { dois: dois }.to_json, status: :ok
     else

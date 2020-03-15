@@ -400,21 +400,5 @@ module Facetable
           "count" => hsh["doc_count"] }
       end
     end
-
-
-    # def get_all_providers_aggs
-    #   page = { size: 25, number: 1}
-    #   response = Doi.query("", page: page)
-    #   after = response.response.aggregations.providers_x.after_key.doi ||=""
-    #   aggs  = response.response.aggregations.providers_x.buckets
-    #   loop do
-    #     resp = Doi.query("", {after_key: after })
-    #     aggs = aggs.concat resp.response.aggregations.providers_x.buckets
-    #     after = response.response.aggregations.providers_x.after_key.doi
-    #     break if after.nil?
-    #   end
-    #   aggs
-    # end
   end
 end
-

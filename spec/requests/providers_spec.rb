@@ -38,24 +38,20 @@ describe "Providers", type: :request, elasticsearch: true  do
   describe 'GET /providers/:id' do
     context 'when the record exists' do
       it 'returns the provider' do
-        get "/providers/#{provider.symbol}", nil, headers
+        get "/providers/#{provider.symbol.downcase}", nil, headers
 
+        expect(last_response.status).to eq(200)
         expect(json).not_to be_empty
         expect(json['data']['id']).to eq(provider.symbol.downcase)
+        expect(json["meta"]).to eq("consortiumOrganizationCount"=>0, "repositoryCount"=>0)
       end
 
       it 'returns the provider info for member page' do
-        get "/providers/#{provider.symbol}", nil, headers
+        get "/providers/#{provider.symbol.downcase}", nil, headers
 
         expect(json['data']['attributes']['twitterHandle']).to eq(provider.twitter_handle)
         expect(json['data']['attributes']['billingInformation']).to eq(provider.billing_information)
         expect(json['data']['attributes']['rorId']).to eq(provider.ror_id)
-      end
-
-      it 'returns status code 200' do
-        get "/providers/#{provider.symbol}", nil, headers
-
-        expect(last_response.status).to eq(200)
       end
     end
 
@@ -66,7 +62,6 @@ describe "Providers", type: :request, elasticsearch: true  do
         get "/providers/#{provider.symbol.downcase}", nil, headers
 
         expect(last_response.status).to eq(200)
-        expect(json).not_to be_empty
         expect(json.dig('data', 'id')).to eq(provider.symbol.downcase)
       end
     end
@@ -89,6 +84,27 @@ describe "Providers", type: :request, elasticsearch: true  do
     end
   end
 
+  describe 'GET /providers/:id meta' do
+    let(:provider)  { create(:provider) }
+    let(:client)  { create(:client, provider: provider) }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+
+    before do
+      Provider.import
+      Client.import
+      Doi.import
+      sleep 2
+    end
+
+    it "returns provider" do
+      get "/providers/#{provider.symbol.downcase}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'id')).to eq(provider.symbol.downcase)
+      expect(json["meta"]).to eq("consortiumOrganizationCount"=>0, "repositoryCount"=>1)
+    end
+  end
+
   describe 'GET /providers/totals' do
     let(:provider)  { create(:provider) }
     let(:client)  { create(:client, provider: provider) }
@@ -99,7 +115,7 @@ describe "Providers", type: :request, elasticsearch: true  do
       Provider.import
       Client.import
       Doi.import
-      sleep 3
+      sleep 2
     end
 
     it "returns providers" do
@@ -109,6 +125,28 @@ describe "Providers", type: :request, elasticsearch: true  do
       # expect(json['data'].size).to eq(4)
       expect(json.first.dig('count')).to eq(3)
       expect(json.first.dig('temporal')).not_to be_nil
+    end
+  end
+
+  describe 'GET /providers/:id/stats' do
+    let(:provider)  { create(:provider) }
+    let(:client)  { create(:client, provider: provider) }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+
+    before do
+      Provider.import
+      Client.import
+      Doi.import
+      sleep 2
+    end
+
+    it "returns provider" do
+      get "/providers/#{provider.symbol.downcase}/stats", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["clients"]).to eq([{"count"=>1, "id"=>"2020", "title"=>"2020"}])
+      expect(json["resourceTypes"]).to eq([{"count"=>3, "id"=>"dataset", "title"=>"Dataset"}])
+      expect(json["dois"]).to eq([{"count"=>3, "id"=>"2020", "title"=>"2020"}])
     end
   end
 
@@ -617,6 +655,66 @@ describe "Providers", type: :request, elasticsearch: true  do
         expect(json.dig('data', 'relationships', 'consortium', 'data', 'id')).to eq(consortium.symbol.downcase)
       end
     end
+    
+    context 'when updating as consortium' do
+      let(:consortium_credentials) { User.encode_auth_param(username: consortium.symbol, password: "12345") }
+      let(:consortium_headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Basic ' + consortium_credentials } }
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "name" => "British Library",
+                        "globusUuid" => "9908a164-1e4f-4c17-ae1b-cc318839d6c8",
+                        "displayName" => "British Library",
+                        "memberType" => "consortium_organization",
+                        "website" => "https://www.bl.uk",
+                        "region" => "Americas",
+                        "systemEmail" => "Pepe@mdm.cod",
+                        "country" => "GB"
+                      },
+                      "relationships": {
+                        "consortium": {
+                          "data":{
+                            "type": "providers",
+                            "id": consortium.symbol.downcase
+                          }
+                        }
+                      }} }
+      end
+
+      it 'updates the record' do
+        put "/providers/#{provider.symbol}", params, consortium_headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'displayName')).to eq("British Library")
+        expect(json.dig('data', 'attributes', 'globusUuid')).to eq("9908a164-1e4f-4c17-ae1b-cc318839d6c8")
+        expect(json.dig('data', 'relationships', 'consortium', 'data', 'id')).to eq(consortium.symbol.downcase)
+      end
+    end
+
+    context 'when updating as consortium_organization' do
+      let(:consortium_organization_credentials) { User.encode_auth_param(username: provider.symbol, password: "12345") }
+      let(:consortium_organization_headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Basic ' + consortium_organization_credentials } }
+      let(:params) do
+        { "data" => { "type" => "providers",
+                      "attributes" => {
+                        "name" => "British Library",
+                        "globusUuid" => "9908a164-1e4f-4c17-ae1b-cc318839d6c8",
+                        "displayName" => "British Library",
+                        "website" => "https://www.bl.uk",
+                        "region" => "Americas",
+                        "systemEmail" => "Pepe@mdm.cod",
+                        "country" => "GB"
+                      }} }
+      end
+      
+      it 'updates the record' do
+        put "/providers/#{provider.symbol}", params, consortium_organization_headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig('data', 'attributes', 'displayName')).to eq("British Library")
+        expect(json.dig('data', 'attributes', 'globusUuid')).to eq("9908a164-1e4f-4c17-ae1b-cc318839d6c8")
+      end
+    end
 
     context 'removes globus_uuid' do
       let(:params) do
@@ -724,18 +822,6 @@ describe "Providers", type: :request, elasticsearch: true  do
   #     it 'returns a validation failure message' do
   #       expect(json["errors"].first).to eq("status"=>"404", "title"=>"The resource you are looking for doesn't exist.")
   #     end
-  #   end
-  # end
-
-  # describe 'POST /providers/set-test-prefix' do
-  #   before { post '/providers/set-test-prefix', headers: headers }
-
-  #   it 'returns success' do
-  #     expect(json['message']).to eq("Test prefix added.")
-  #   end
-
-  #   it 'returns status code 200' do
-  #     expect(response).to have_http_status(200)
   #   end
   # end
 end

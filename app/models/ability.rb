@@ -12,7 +12,7 @@ class Ability
     if user.role_id == "staff_admin"
       can :manage, :all
       cannot [:new, :create], Doi do |doi|
-        doi.client.blank? || !(doi.client.prefixes.where(prefix: doi.prefix).first || %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations).include?(doi.client.symbol.downcase))
+        doi.client.blank? || !(doi.client.prefixes.where(uid: doi.prefix).first || %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations).include?(doi.client.symbol.downcase))
       end
       can :export, :contacts
       can :export, :organizations
@@ -20,13 +20,10 @@ class Ability
     elsif user.role_id == "staff_user"
       can :read, :all
     elsif user.role_id == "consortium_admin" && user.provider_id.present?
-      can [:create, :destroy], Provider do |provider|
+      can [:manage, :read_billing_information], Provider do |provider|
         user.provider_id.casecmp(provider.consortium_id)
       end
-      can [:update, :read, :read_billing_information], Provider do |provider|
-        user.provider_id.casecmp(provider.id) || user.provider_id.casecmp(provider.consortium_id)
-      end
-      can [:read], Provider
+      can [:update, :read, :read_billing_information], Provider, symbol: user.provider_id.upcase
       can [:manage], ProviderPrefix do |provider_prefix|
         provider_prefix.provider && user.provider_id.casecmp(provider_prefix.provider.consortium_id)
       end
@@ -52,7 +49,6 @@ class Ability
       end
     elsif user.role_id == "provider_admin" && user.provider_id.present?
       can [:update, :read, :read_billing_information], Provider, symbol: user.provider_id.upcase
-      can [:read], Provider
       can [:manage], ProviderPrefix, provider_id: user.provider_id
       can [:manage], Client, provider_id: user.provider_id
       can [:manage], ClientPrefix #, :client_id => user.provider_id
@@ -96,7 +92,7 @@ class Ability
 
       can [:read, :destroy, :update, :register_url, :validate, :undo, :get_url, :get_urls, :read_landing_page_results], Doi, :client_id => user.client_id
       can [:new, :create], Doi do |doi|
-        doi.client.prefixes.where(prefix: doi.prefix).present? || %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations).include?(doi.client.symbol.downcase)
+        doi.client.prefixes.where(uid: doi.prefix).present? || %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations).include?(doi.client.symbol.downcase)
       end
       can [:read], Doi
       can [:read], User
