@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe "works", type: :request do
   let(:admin) { create(:provider, symbol: "ADMIN") }
@@ -17,7 +17,7 @@ describe "works", type: :request do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     it 'returns works', vcr: true do
@@ -37,7 +37,7 @@ describe "works", type: :request do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     it "has citations" do
@@ -102,7 +102,7 @@ describe "works", type: :request do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
   
     context 'when the record exists' do
