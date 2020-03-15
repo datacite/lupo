@@ -66,7 +66,7 @@ class ProviderPrefix < ActiveRecord::Base
   end
 
   def consortium_id
-    provider.consortium_id
+    provider.consortium_id.downcase if provider.consortium_id.present?
   end
 
   # convert external id / internal id
