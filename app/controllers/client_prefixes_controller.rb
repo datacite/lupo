@@ -7,7 +7,7 @@ class ClientPrefixesController < ApplicationController
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show, :set_created, :set_provider]
   around_action :skip_bullet, only: [:index], if: -> { defined?(Bullet) }
-  
+
   def index
     sort = case params[:sort]
            when "name" then { "prefix.uid" => { order: 'asc' }}
@@ -88,7 +88,7 @@ class ClientPrefixesController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-  
+
       render json: ClientPrefixSerializer.new(@client_prefix, options).serialized_json, status: :created
     else
       Rails.logger.error @client_prefix.errors.inspect
@@ -102,8 +102,14 @@ class ClientPrefixesController < ApplicationController
   end
 
   def destroy
-    @client_prefix.destroy
-    head :no_content
+    message = "Client prefix #{@client_prefix.uid} deleted."
+    if @client_prefix.destroy
+      Rails.logger.warn message
+      head :no_content
+    else
+      Rails.logger.error @client_prefix.errors.inspect
+      render json: serialize_errors(@client_prefix.errors), status: :unprocessable_entity
+    end
   end
 
   protected
@@ -122,7 +128,7 @@ class ClientPrefixesController < ApplicationController
 
   def set_client_prefix
     @client_prefix = ClientPrefix.where(uid: params[:id]).first
-    fail ActiveRecord::RecordNotFound unless @client_prefix.present?
+    fail ActiveRecord::RecordNotFound if @client_prefix.blank?
   end
 
   def safe_params

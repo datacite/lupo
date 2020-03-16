@@ -531,7 +531,7 @@ class Doi < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      resource_types: { terms: { field: 'types.resourceTypeGeneral', size: 20, min_doc_count: 1 } },
+      resource_types: { terms: { field: 'types.resourceTypeGeneral', size: 16, min_doc_count: 1 } },
       states: { terms: { field: 'aasm_state', size: 3, min_doc_count: 1 } },
       years: { date_histogram: { field: 'publication_year', interval: 'year', min_doc_count: 1 } },
       created: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },

@@ -33,7 +33,7 @@ class ProviderPrefixesController < ApplicationController
       total_pages = page[:size].positive? ? (total.to_f / page[:size]).ceil : 0
       years = total.positive? ? facet_by_year(response.response.aggregations.years.buckets) : nil
       providers = total.positive? ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
-      
+
       provider_prefixes = response.results
 
       options = {}
@@ -84,7 +84,7 @@ class ProviderPrefixesController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-  
+
       render json: ProviderPrefixSerializer.new(@provider_prefix, options).serialized_json, status: :created
     else
       Rails.logger.error @provider_prefix.errors.inspect
@@ -98,8 +98,14 @@ class ProviderPrefixesController < ApplicationController
   end
 
   def destroy
-    @provider_prefix.destroy
-    head :no_content
+    message = "Provider prefix #{@provider_prefix.uid} deleted."
+    if @provider_prefix.destroy
+      Rails.logger.warn message
+      head :no_content
+    else
+      Rails.logger.error @provider_prefix.errors.inspect
+      render json: serialize_errors(@provider_prefix.errors), status: :unprocessable_entity
+    end
   end
 
   protected

@@ -99,8 +99,19 @@ class PrefixesController < ApplicationController
   end
 
   def update
-    response.headers["Allow"] = "HEAD, GET, POST, DELETE, OPTIONS"
+    response.headers["Allow"] = "HEAD, GET, POST, OPTIONS"
     render json: { errors: [{ status: "405", title: "Method not allowed" }] }.to_json, status: :method_not_allowed
+  end
+
+  def destroy
+    message = "Prefix #{@prefix.uid} deleted."
+    if @prefix.destroy
+      Rails.logger.warn message
+      head :no_content
+    else
+      Rails.logger.error @prefix.errors.inspect
+      render json: serialize_errors(@prefix.errors), status: :unprocessable_entity
+    end
   end
 
   def totals
@@ -109,12 +120,8 @@ class PrefixesController < ApplicationController
     page = { size: 0, number: 1}
     response = Doi.query(nil, client_id: params[:client_id], state: "findable,registered", page: page, totals_agg: "prefix")
     registrant = prefixes_totals(response.response.aggregations.prefixes_totals.buckets)
-    
-    render json: registrant, status: :ok
-  end
 
-  def destroy
-    @prefix.destroy
+    render json: registrant, status: :ok
   end
 
   protected

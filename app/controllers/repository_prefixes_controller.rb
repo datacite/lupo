@@ -1,4 +1,3 @@
-require 'base32/url'
 require 'uri'
 
 class RepositoryPrefixesController < ApplicationController
@@ -88,7 +87,7 @@ class RepositoryPrefixesController < ApplicationController
       options = {}
       options[:include] = @include
       options[:is_collection] = false
-  
+
       render json: RepositoryPrefixSerializer.new(@client_prefix, options).serialized_json, status: :created
     else
       Rails.logger.error @client_prefix.errors.inspect
@@ -104,8 +103,14 @@ class RepositoryPrefixesController < ApplicationController
 
   def destroy
     authorize! :destroy, @client_prefix
-    @client_prefix.destroy
-    head :no_content
+    message = "Client prefix #{@client_prefix.uid} deleted."
+    if @client_prefix.destroy
+      Rails.logger.warn message
+      head :no_content
+    else
+      Rails.logger.error @client_prefix.errors.inspect
+      render json: serialize_errors(@client_prefix.errors), status: :unprocessable_entity
+    end
   end
 
   protected
