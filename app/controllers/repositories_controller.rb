@@ -26,19 +26,19 @@ class RepositoriesController < ApplicationController
       response = Client.find_by_id(params[:ids], page: page, sort: sort)
     else
       response = Client.query(params[:query],
-        year: params[:year],
-        from_date: params[:from_date],
-        until_date: params[:until_date],
-        provider_id: params[:provider_id],
-        consortium_id: params[:consortium_id],
-        re3data_id: params[:re3data_id],
-        opendoar_id: params[:opendoar_id],
-        software: params[:software],
-        certificate: params[:certificate],
-        repository_type: params[:repository_type],
-        client_type: params[:client_type],
-        page: page,
-        sort: sort)
+                              year: params[:year],
+                              from_date: params[:from_date],
+                              until_date: params[:until_date],
+                              provider_id: params[:provider_id],
+                              consortium_id: params[:consortium_id],
+                              re3data_id: params[:re3data_id],
+                              opendoar_id: params[:opendoar_id],
+                              software: params[:software],
+                              certificate: params[:certificate],
+                              repository_type: params[:repository_type],
+                              client_type: params[:client_type],
+                              page: page,
+                              sort: sort)
     end
 
     begin

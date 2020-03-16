@@ -216,6 +216,7 @@ module Indexable
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
         must << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
+        must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
         must << { terms: { "software.raw" => options[:software].split(",") }} if options[:software].present?
         must << { terms: { certificate: options[:certificate].split(",") }} if options[:certificate].present?
         must << { terms: { repository_type: options[:repository_type].split(",") }} if options[:repository_type].present?
