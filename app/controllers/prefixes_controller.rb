@@ -57,6 +57,8 @@ class PrefixesController < ApplicationController
           query: params[:query],
           prefix: params[:prefix],
           year: params[:year],
+          provider_id: params[:provider_id],
+          client_id: params[:client_id],
           "page[number]" => page[:number] + 1,
           "page[size]" => page[:size],
           sort: params[:sort] }.compact.to_query

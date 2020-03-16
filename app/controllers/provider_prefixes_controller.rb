@@ -32,6 +32,7 @@ class ProviderPrefixesController < ApplicationController
       total = response.results.total
       total_pages = page[:size].positive? ? (total.to_f / page[:size]).ceil : 0
       years = total.positive? ? facet_by_year(response.response.aggregations.years.buckets) : nil
+      states = total.positive? ? facet_by_key(response.response.aggregations.states.buckets) : nil
       providers = total.positive? ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
 
       provider_prefixes = response.results
@@ -42,6 +43,7 @@ class ProviderPrefixesController < ApplicationController
         "totalPages" => total_pages,
         page: page[:number],
         years: years,
+        states: states,
         providers: providers,
       }.compact
 
