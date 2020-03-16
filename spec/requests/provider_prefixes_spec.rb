@@ -31,7 +31,7 @@ describe "Provider Prefixes", type: :request, elasticsearch: true do
       get "/provider-prefixes?provider-id=#{provider.symbol.downcase}", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json["data"].size).to eq(5)
+      expect(json["data"].size).to eq(3)
     end
   end
 
