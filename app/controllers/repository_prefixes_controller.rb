@@ -45,14 +45,15 @@ class RepositoryPrefixesController < ApplicationController
         page: page[:number],
         years: years,
         providers: providers,
-        repositories: repositories
+        repositories: repositories,
       }.compact
 
       options[:links] = {
         self: request.original_url,
         next: repository_prefixes.blank? ? nil : request.base_url + "/repository-prefixes?" + {
         query: params[:query],
-        prefix: params[:prefix],
+        prefix_id: params[:prefix_id],
+        repository_id: params[:repository_id],
         year: params[:year],
         "page[number]" => page[:number] + 1,
         "page[size]" => page[:size],

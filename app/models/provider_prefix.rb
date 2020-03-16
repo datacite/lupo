@@ -62,7 +62,7 @@ class ProviderPrefix < ActiveRecord::Base
   end
 
   def self.query_fields
-    ["uid^10", "provider_id", "prefix_id", "_all"]
+    ["uid^10", "provider_id", "consortium_id", "prefix_id", "_all"]
   end
 
   def consortium_id

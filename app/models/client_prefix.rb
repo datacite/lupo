@@ -54,14 +54,14 @@ class ClientPrefix < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
-      providers: { terms: { field: 'provider_ids', size: 15, min_doc_count: 1 } },
-      clients: { terms: { field: 'client_ids', size: 15, min_doc_count: 1 } },
+      years: { date_histogram: { field: "created_at", interval: "year", min_doc_count: 1 } },
+      providers: { terms: { field: "provider_id", size: 15, min_doc_count: 1 } },
+      clients: { terms: { field: "client_id", size: 15, min_doc_count: 1 } },
     }
   end
 
   def self.query_fields
-    ['uid^10', '_all']
+    ["client_id^10", "prefix_id^10", "provider_id^10", "_all"]
   end
 
   # convert external id / internal id
