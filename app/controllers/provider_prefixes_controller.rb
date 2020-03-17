@@ -19,8 +19,8 @@ class ProviderPrefixesController < ApplicationController
     if params[:id].present?
       response = ProviderPrefix.find_by_id(params[:id]) 
     else
-      response = ProviderPrefix.query(params[:query], 
-                                      prefix: params[:prefix],
+      response = ProviderPrefix.query(params[:query],
+                                      prefix_id: params[:prefix_id],
                                       consortium_id: params[:consortium_id],
                                       provider_id: params[:provider_id],
                                       consortium_organization_id: params[:consortium_organization_id],

@@ -23,6 +23,13 @@ describe "Repository Prefixes", type: :request, elasticsearch: true do
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(5)
     end
+
+    it 'returns repository-prefixes by repository_id and prefix-id' do
+      get "/repository-prefixes?repository-id=#{client_prefixes.first.client_id}&#{client_prefixes.first.prefix_id}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(1)
+    end
   end
 
   describe 'GET /repository-prefixes/:uid' do

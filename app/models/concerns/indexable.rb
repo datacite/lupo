@@ -285,6 +285,7 @@ module Indexable
         must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
         must << { terms: { provider_id: options[:consortium_organization_id].split(",") }} if options[:consortium_organization_id].present?
         must << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
+        must << { term: { prefix_id: options[:prefix_id] }} if options[:prefix_id].present?
         must << { terms: { uid: options[:uid].to_s.split(",") }} if options[:uid].present?
         must << { terms: { state: options[:state].to_s.split(",") }} if options[:state].present?
       elsif self.name == "ClientPrefix"
