@@ -266,6 +266,34 @@ describe "/events", type: :request, elasticsearch: true do
         expect(json.dig("meta", "registrants", 0, "id")).to eq("datacite.crossref.citations")
       end
     end
+
+    context "with nested attrtibutes" do
+      let(:uri) { "/events" }
+      let(:params) do
+        { "data" => { "type" => "events",
+                      "attributes" => {
+                        "subjId" => "https://doi.org/10.18713/jimis-170117-1-2",
+                        "subj" => { "@id":"https://doi.org/10.18713/jimis-170117-1-2", "@type":"ScholarlyArticle", "datePublished":"2017", "proxyIdentifiers":[], "registrantId":"datacite.inist.umr7300" },
+                        "obj" => { "@id":"https://doi.org/10.1016/j.jastp.2013.05.001", "@type":"ScholarlyArticle", "datePublished":"2013-09", "proxyIdentifiers":["13646826"], "registrantId":"datacite.crossref.citations" },
+                        "objId" => "https://doi.org/10.1016/j.jastp.2013.05.001",
+                        "relationTypeId" => "references",
+                        "sourceId" => "datacite-crossref",
+                        "sourceToken" => "sourceToken" } } }
+      end
+
+      it "are correctly stored" do
+        post uri, params, headers
+
+
+        expect(last_response.status).to eq(201)
+        puts json.dig("data", "id")
+        event = Event.where(uuid: json.dig("data", "id")).first
+        puts event.inspect
+        expect(event[:obj].has_key?('datePublished')).to be_truthy
+        expect(event[:obj].has_key?('registrantId')).to be_truthy
+        expect(event[:obj].has_key?('proxyIdentifiers')).to be_truthy
+      end
+    end
   end
 
   context "upsert" do

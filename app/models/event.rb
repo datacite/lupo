@@ -504,6 +504,37 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def self.modify_nested_objects(options = {})
+    size = (options[:size] || 1000).to_i
+    cursor = [options[:from_id], options[:until_id]]
+
+    response = Event.query(nil,  page: { size: 1, cursor: [] })
+    Rails.logger.warn "[modify_nested_objects] #{response.results.total} events for source datacite-crossref."
+
+    # walk through results using cursor
+    if response.results.total.positive?
+      while response.results.results.length.positive?
+        response = Event.query(nil, page: { size: size, cursor: cursor })
+        break unless response.results.results.length.positive?
+
+        Rails.logger.warn "[modify_nested_objects] modify_nested_objects #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
+        cursor = response.results.to_a.last[:sort]
+        Rails.logger.warn "[modify_nested_objects] Cursor: #{cursor} "
+
+        ids = response.results.results.map(&:obj_id).uniq
+        CamelcaseNestedObjectsJob.perform_later(ids, options)
+      end
+    end
+  end
+
+
+  def self.camelcace_nested_objects(uuid)
+      event = Event.find_by(uuid: uuid)
+      subj = event.subj.transform_keys { |key| key.to_s.underscore.camelcase(:lower) } 
+      obj = event.obj.transform_keys { |key| key.to_s.underscore.camelcase(:lower) }
+      event.update_attributes(subj: subj, obj: obj)
+  end
+
   def self.label_state_event(event)
     subj_prefix = event[:subj_id][/(10\.\d{4,5})/, 1]
     unless Prefix.where(uid: subj_prefix).exists?
@@ -657,6 +688,10 @@ class Event < ActiveRecord::Base
     # make sure subj and obj have correct id
     self.subj = subj.to_h.merge("id" => self.subj_id)
     self.obj = obj.to_h.merge("id" => self.obj_id)
+
+    ### makes keys camel case to match JSONAPI
+    self.subj.transform_keys! { |key| key.to_s.underscore.camelcase(:lower) } 
+    self.obj.transform_keys! { |key| key.to_s.underscore.camelcase(:lower) }
 
     self.total = 1 if total.blank?
     self.relation_type_id = "references" if relation_type_id.blank?

@@ -88,6 +88,16 @@ namespace :subj_id_check do
   end
 end
 
+namespace :modify_nested_objects do
+  desc 'changes casing of nested objects in the database'
+  task :check => :environment do
+    from_id = (ENV['FROM_ID'] || Event.minimum(:id)).to_i
+    until_id = (ENV['UNTIL_ID'] || Event.maximum(:id)).to_i
+    
+    Event.modify_nested_objects(from_id: from_id, until_id: until_id)
+  end
+end
+
 namespace :datacite_crossref do
   desc 'Import crossref dois for all events'
   task :import_doi => :environment do
