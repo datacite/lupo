@@ -101,7 +101,7 @@ describe "Repository Prefixes", type: :request, elasticsearch: true do
                   "id": client.symbol.downcase,
                 }
               },
-              "providerPrefix": {
+              "provider-prefix": {
                 "data": {
                   "type": "provider-prefix",
                   "id": provider_prefix.uid,

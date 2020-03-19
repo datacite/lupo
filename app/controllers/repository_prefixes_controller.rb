@@ -135,8 +135,8 @@ class RepositoryPrefixesController < ApplicationController
 
   def safe_params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:id, :repository, :prefix, :providerPrefix],
-              keys: { repository: :client, "providerPrefix" => :provider_prefix }
+      params, only: [:id, :repository, :prefix, "provider-prefix"],
+              keys: { repository: :client, "provider-prefix" => :provider_prefix }
     )
   end
 end
