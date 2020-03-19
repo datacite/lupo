@@ -7,8 +7,8 @@ class ProviderPrefixesController < ApplicationController
 
   def index
     sort = case params[:sort]
-           when "name" then { "prefix_id" => { order: 'asc' }}
-           when "-name" then { "prefix_id" => { order: 'desc' }}
+           when "name" then { "prefix_id" => { order: 'asc', unmapped_type: "keyword" }}
+           when "-name" then { "prefix_id" => { order: 'desc', unmapped_type: "keyword" }}
            when "created" then { created_at: { order: 'asc' }}
            when "-created" then { created_at: { order: 'desc' }}
            else { created_at: { order: 'desc' }}

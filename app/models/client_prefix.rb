@@ -31,7 +31,15 @@ class ClientPrefix < ActiveRecord::Base
     # index associations
     indexes :client,             type: :object
     indexes :provider,           type: :object
-    indexes :prefix,             type: :object
+    indexes :prefix,             type: :object, properties: {
+      id: { type: :keyword },
+      uid: { type: :keyword },
+      provider_ids: { type: :keyword },
+      client_ids: { type: :keyword },
+      state: { type: :keyword },
+      prefix: { type: :text },
+      created_at: { type: :date },
+    }
     indexes :provider_prefix,    type: :object
   end
 
@@ -58,10 +66,6 @@ class ClientPrefix < ActiveRecord::Base
       providers: { terms: { field: "provider_id", size: 15, min_doc_count: 1 } },
       clients: { terms: { field: "client_id", size: 15, min_doc_count: 1 } },
     }
-  end
-
-  def self.query_fields
-    ["client_id^10", "prefix_id^10", "provider_id^10", "_all"]
   end
 
   # convert external id / internal id

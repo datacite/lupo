@@ -23,6 +23,7 @@ class RepositoryPrefixesController < ApplicationController
       response = ClientPrefix.query(params[:query],
                                     client_id: params[:repository_id],
                                     prefix_id: params[:prefix_id],
+                                    prefix: params[:prefix],
                                     year: params[:year],
                                     page: page,
                                     sort: sort)

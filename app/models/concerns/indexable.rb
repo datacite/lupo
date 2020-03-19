@@ -64,7 +64,12 @@ module Indexable
       options[:page] ||= {}
       options[:page][:number] ||= 1
       options[:page][:size] ||= 2000
-      options[:sort] ||= { created: { order: "asc" }}
+    
+      if ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(self.name)
+        options[:sort] ||= { created_at: { order: "asc" }}
+      else
+        options[:sort] ||= { created: { order: "asc" }}
+      end
 
       __elasticsearch__.search({
         from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
@@ -189,13 +194,12 @@ module Indexable
         query = query.gsub("/", '\/')
       end
 
-      must = []      
+      must = []
       must_not = []
-
-      must << { query_string: { query: query, fields: query_fields }} if query.present?
 
       # filters for some classes
       if self.name == "Provider"
+        must << { query_string: { query: query, fields: query_fields }} if query.present?
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
         must << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
@@ -213,6 +217,7 @@ module Indexable
           must_not << { term: { role_name: "ROLE_ADMIN" }}
         end
       elsif self.name == "Client"
+        must << { query_string: { query: query, fields: query_fields }} if query.present?
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
         must << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
@@ -227,6 +232,7 @@ module Indexable
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
         must_not << { terms: { uid: %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations) }} if options[:exclude_registration_agencies]
       elsif self.name == "Doi"
+        must << { query_string: { query: query, fields: query_fields }} if query.present?
         must << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
         must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
         must << { terms: { client_id: options[:client_id].to_s.split(",") }} if options[:client_id].present?
@@ -254,6 +260,7 @@ module Indexable
         must << { range: { "landing_page.redirectCount": { "gte": options[:link_check_redirect_count_gte] } } } if options[:link_check_redirect_count_gte].present?
         must_not << { terms: { "client.uid" => %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations) }} if options[:exclude_registration_agencies]
       elsif self.name == "Event"
+        must << { query_string: { query: query, fields: query_fields }} if query.present?
         must << { term: { subj_id: URI.decode(options[:subj_id]) }} if options[:subj_id].present?
         must << { term: { obj_id: URI.decode(options[:obj_id]) }} if options[:obj_id].present?
         must << { term: { citation_type: options[:citation_type] }} if options[:citation_type].present?
@@ -275,12 +282,13 @@ module Indexable
         must << { terms: { registrant_id: options[:provider_id].split(",") }} if options[:provider_id].present?
         must << { terms: { issn: options[:issn].split(",") }} if options[:issn].present?
       elsif self.name == "Prefix"
+        must << { prefix: { prefix: query }} if query.present?
         must << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { terms: { provider_ids: options[:provider_id].split(",") }} if options[:provider_id].present?
         must << { terms: { client_ids: options[:client_id].to_s.split(",") }} if options[:client_id].present?
-        must << { terms: { uid: options[:prefix].to_s.split(",") }} if options[:prefix].present?
         must << { terms: { state: options[:state].to_s.split(",") }} if options[:state].present?
       elsif self.name == "ProviderPrefix"
+        must << { prefix: { "prefix.prefix" => query }} if query.present?
         must << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
         must << { terms: { provider_id: options[:consortium_organization_id].split(",") }} if options[:consortium_organization_id].present?
@@ -289,6 +297,7 @@ module Indexable
         must << { terms: { uid: options[:uid].to_s.split(",") }} if options[:uid].present?
         must << { terms: { state: options[:state].to_s.split(",") }} if options[:state].present?
       elsif self.name == "ClientPrefix"
+        must << { prefix: { "prefix.prefix" => query }} if query.present?
         must << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { terms: { client_id: options[:client_id].split(",") }} if options[:client_id].present?
         must << { term: { prefix_id: options[:prefix_id] }} if options[:prefix_id].present?

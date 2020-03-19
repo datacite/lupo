@@ -32,7 +32,15 @@ class ProviderPrefix < ActiveRecord::Base
 
     # index associations
     indexes :provider,           type: :object
-    indexes :prefix,             type: :object
+    indexes :prefix,             type: :object, properties: {
+      id: { type: :keyword },
+      uid: { type: :keyword },
+      provider_ids: { type: :keyword },
+      client_ids: { type: :keyword },
+      state: { type: :keyword },
+      prefix: { type: :text },
+      created_at: { type: :date },
+    }
     indexes :clients,            type: :object
   end
 
@@ -59,10 +67,6 @@ class ProviderPrefix < ActiveRecord::Base
       years: { date_histogram: { field: 'created_at', interval: 'year', min_doc_count: 1 } },
       providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } },
     }
-  end
-
-  def self.query_fields
-    ["uid^10", "provider_id", "consortium_id", "prefix_id", "_all"]
   end
 
   def consortium_id

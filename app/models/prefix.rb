@@ -19,12 +19,13 @@ class Prefix < ActiveRecord::Base
   # use different index for testing
   index_name Rails.env.test? ? "prefixes-test" : "prefixes"
 
-  mapping dynamic: 'false' do
+  mapping dynamic: "false" do
     indexes :id,            type: :keyword
     indexes :uid,           type: :keyword
     indexes :provider_ids,  type: :keyword
     indexes :client_ids,    type: :keyword
     indexes :state,         type: :keyword
+    indexes :prefix,        type: :text
     indexes :created_at,    type: :date
 
     # index associations
@@ -39,6 +40,7 @@ class Prefix < ActiveRecord::Base
       "provider_ids" => provider_ids,
       "client_ids" => client_ids,
       "state" => state,
+      "prefix" => prefix,
       "created_at" => created_at,
       "clients" => clients.map { |m| m.try(:as_indexed_json) },
       "providers" => providers.map { |m| m.try(:as_indexed_json) },
@@ -54,8 +56,16 @@ class Prefix < ActiveRecord::Base
     }
   end
 
-  def self.query_fields
-    ['uid^10', '_all']
+  # return results for one prefix
+  def self.find_by_id(id)
+    __elasticsearch__.search(
+      query: {
+        term: {
+          uid: id,
+        },
+      },
+      aggregations: query_aggregations
+    )
   end
 
   def client_ids
@@ -64,6 +74,10 @@ class Prefix < ActiveRecord::Base
 
   def provider_ids
     providers.pluck(:symbol).map(&:downcase)
+  end
+
+  def prefix
+    uid
   end
 
   def state

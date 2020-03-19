@@ -35,12 +35,30 @@ describe "Provider Prefixes", type: :request, elasticsearch: true do
     end
   end
 
+  describe "GET /provider-prefixes by prefix" do
+    it "returns provider-prefixes" do
+      get "/provider-prefixes?prefix-id=#{provider_prefixes.first.prefix_id}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(1)
+    end
+  end
+
   describe "GET /provider-prefixes by provider and prefix" do
     it "returns provider-prefixes" do
       get "/provider-prefixes?provider-id=#{provider.symbol.downcase}&prefix-id=#{provider_prefixes.first.prefix_id}", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(1)
+    end
+  end
+
+  describe "GET /provider-prefixes by partial prefix" do
+    it "returns provider-prefixes" do
+      get "/provider-prefixes?query=10.508", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json["data"].size).to eq(5)
     end
   end
 
