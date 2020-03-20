@@ -85,7 +85,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
         expect(json.dig('data', 'attributes', 'globusUuid')).to eq("bc7d0274-3472-4a79-b631-e4c7baccc667")
-        expect(json["meta"]).to eq("doiCount"=>0)
+        expect(json["meta"]).to eq("doiCount"=>0, "prefixCount"=>0)
       end
     end
 
