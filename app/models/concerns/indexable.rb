@@ -10,6 +10,8 @@ module Indexable
       if self.class.name == "Doi"
         update_column(:indexed, Time.zone.now)
         send_import_message(self.to_jsonapi) if aasm_state == "findable" && !Rails.env.test? && !%w(crossref.citations medra.citations jalc.citations kisti.citations op.citations).include?(client.symbol.downcase)
+      elsif ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(self.class.name)
+        Rails.logger.info "#{self.class.name} #{uid} created or updated."
       end
     end
 
@@ -21,9 +23,10 @@ module Indexable
     before_destroy do
       begin
         __elasticsearch__.delete_document
+        Rails.logger.warn "#{self.class.name} #{uid} deleted from Elasticsearch index."
         # send_delete_message(self.to_jsonapi) if self.class.name == "Doi" && !Rails.env.test?
-      rescue Elasticsearch::Transport::Transport::Errors::NotFound
-        nil
+      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+        Rails.logger.error e.message
       end
     end
 

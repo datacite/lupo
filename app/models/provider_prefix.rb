@@ -7,8 +7,8 @@ class ProviderPrefix < ActiveRecord::Base
 
   include Elasticsearch::Model
 
-  belongs_to :provider
-  belongs_to :prefix
+  belongs_to :provider, touch: true
+  belongs_to :prefix, touch: true
   has_many :client_prefixes, dependent: :destroy
   has_many :clients, through: :client_prefixes
 

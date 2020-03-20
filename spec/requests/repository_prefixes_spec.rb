@@ -51,6 +51,13 @@ describe "Repository Prefixes", type: :request, elasticsearch: true do
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(1)
     end
+
+    it 'returns prefixes by client-id' do
+      get "/prefixes?client-id=#{client_prefixes.first.client_id}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(1)
+    end
   end
 
   describe 'GET /repository-prefixes/:uid' do
@@ -85,6 +92,23 @@ describe "Repository Prefixes", type: :request, elasticsearch: true do
 
       expect(last_response.status).to eq(405)
       expect(json.dig("errors")).to eq([{"status"=>"405", "title"=>"Method not allowed"}])
+    end
+  end
+
+  describe 'DELETE /repository-prefixes/:uid' do
+    let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix, provider_prefix: provider_prefix) }
+
+    before do
+      ProviderPrefix.import
+      Prefix.import
+      ClientPrefix.import
+      sleep 2
+    end
+
+    it 'deletes a repository-prefix' do
+      delete "/repository-prefixes/#{client_prefix.uid}", nil, headers
+
+      expect(last_response.status).to eq(204)
     end
   end
 

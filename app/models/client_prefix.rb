@@ -7,9 +7,9 @@ class ClientPrefix < ActiveRecord::Base
 
   include Elasticsearch::Model
 
-  belongs_to :client
-  belongs_to :prefix
-  belongs_to :provider_prefix
+  belongs_to :client, touch: true
+  belongs_to :prefix, touch: true
+  belongs_to :provider_prefix, touch: true
 
   before_create :set_uid
 
