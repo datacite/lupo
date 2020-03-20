@@ -122,11 +122,13 @@ describe 'Repositories', type: :request, elasticsearch: true do
   describe 'GET /repositories/:id meta' do
     let(:provider)  { create(:provider) }
     let(:client)  { create(:client) }
+    let!(:client_prefix) { create(:client_prefix, client: client) }
     let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
 
     before do
       Provider.import
       Client.import
+      ClientPrefix.import
       Doi.import
       sleep 2
     end
@@ -136,7 +138,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
-      expect(json["meta"]).to eq("doiCount"=>3)
+      expect(json["meta"]).to eq("doiCount"=>3, "prefixCount"=>1)
     end
   end
 

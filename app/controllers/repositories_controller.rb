@@ -127,7 +127,8 @@ class RepositoriesController < ApplicationController
       "doiCount" => doi_count(client_id: params[:id]).reduce(0) do |sum, item|
         sum += item["count"]
         sum
-      end
+      end,
+      "prefixCount" => Array.wrap(repository.prefix_ids).length,
     }.compact
     options[:include] = @include
     options[:is_collection] = false
