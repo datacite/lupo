@@ -49,7 +49,7 @@ namespace :client_prefix do
   desc 'Import all client_prefixes'
   task :import => :environment do
     ClientPrefix.all.each do |cp|
-      IndexJob.perform_later(cp)
+      cp.__elasticsearch__.index_document
     end
   end
 
