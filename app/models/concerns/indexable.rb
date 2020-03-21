@@ -17,7 +17,12 @@ module Indexable
 
     after_touch do
       # use index_document instead of update_document to also update virtual attributes
-      IndexBackgroundJob.perform_later(self)
+      # prefixes need to be reindexed immediately
+      if ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(self.class.name)
+        IndexJob.perform_later(self)
+      else
+        IndexBackgroundJob.perform_later(self)
+      end
     end
 
     before_destroy do
