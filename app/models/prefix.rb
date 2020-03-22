@@ -11,9 +11,9 @@ class Prefix < ActiveRecord::Base
   validates_uniqueness_of :uid
   validates_format_of :uid, :with => /\A10\.\d{4,9}\z/
 
-  has_many :client_prefixes
+  has_many :client_prefixes, dependent: :destroy
   has_many :clients, through: :client_prefixes
-  has_many :provider_prefixes
+  has_many :provider_prefixes, dependent: :destroy
   has_many :providers, through: :provider_prefixes
 
   # use different index for testing
