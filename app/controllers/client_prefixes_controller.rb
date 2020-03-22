@@ -119,7 +119,7 @@ class ClientPrefixesController < ApplicationController
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
       @include = @include & [:client, :prefix, :provider_prefix, :provider]
     else
-      @include = [:client, :prefix, :provider_prefix, :provider]
+      @include = []
     end
   end
 

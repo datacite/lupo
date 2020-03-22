@@ -53,10 +53,10 @@ class ClientPrefix < ActiveRecord::Base
       "provider_prefix_id" => provider_prefix_id,
       "created_at" => created_at,
       "updated_at" => updated_at,
-      "client" => client.try(:as_indexed_json),
-      "provider" => provider.try(:as_indexed_json),
-      "prefix" => options[:exclude_prefix] ? nil : prefix.try(:as_indexed_json),
-      "provider_prefix" => options[:exclude_provider_prefix] ? nil : provider_prefix.try(:as_indexed_json, exclude_prefix: true),
+      "client" => options[:exclude_associations] ? nil : client.try(:as_indexed_json),
+      "provider" => options[:exclude_associations] ? nil : provider.try(:as_indexed_json),
+      "prefix" => options[:exclude_associations] ? nil : prefix.try(:as_indexed_json),
+      "provider_prefix" => options[:exclude_associations] ? nil : provider_prefix.try(:as_indexed_json, exclude_prefix: true),
     }
   end
 

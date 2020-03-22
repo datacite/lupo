@@ -143,7 +143,7 @@ class WorksController < ApplicationController
         sum
       end
     else
-      @include = nil
+      @include = []
     end
   end
 end

@@ -50,8 +50,8 @@ class Prefix < ActiveRecord::Base
       "created_at" => created_at,
       "clients" => clients.map { |m| m.try(:as_indexed_json) },
       "providers" => providers.map { |m| m.try(:as_indexed_json) },
-      "client_prefixes" => client_prefixes.map { |m| m.try(:as_indexed_json, exclude_prefix: true) },
-      "provider_prefixes" => provider_prefixes.map { |m| m.try(:as_indexed_json, exclude_prefix: true) },
+      "client_prefixes" => client_prefixes.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
+      "provider_prefixes" => provider_prefixes.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
     }
   end
 

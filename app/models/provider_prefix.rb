@@ -59,9 +59,9 @@ class ProviderPrefix < ActiveRecord::Base
       "created_at" => created_at,
       "updated_at" => updated_at,
       "provider" => provider.try(:as_indexed_json),
-      "prefix" => options[:exclude_prefix] ? nil : prefix.try(:as_indexed_json),
-      "clients" => clients.map { |m| m.try(:as_indexed_json) },
-      "client_prefixes" => client_prefixes.map { |m| m.try(:as_indexed_json, exclude_prefix: true, exclude_provider_prefix: true) },
+      "prefix" => options[:exclude_associations] ? nil : prefix.try(:as_indexed_json, exclude_associations: true),
+      "clients" => options[:exclude_associations] ? nil : clients.map { |m| m.try(:as_indexed_json) },
+      "client_prefixes" => options[:exclude_associations] ? nil : client_prefixes.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
     }
   end
 

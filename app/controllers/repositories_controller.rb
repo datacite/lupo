@@ -218,7 +218,7 @@ class RepositoriesController < ApplicationController
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
       @include = @include & [:provider]
     else
-      @include = [:provider]
+      @include = []
     end
   end
 

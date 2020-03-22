@@ -121,8 +121,7 @@ class RepositoryPrefixesController < ApplicationController
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
       @include = @include & [:repository, :prefix, :provider_prefix, :provider]
     else
-      # always include because Ember pagination doesn't (yet) understand include parameter
-      @include = [:repository, :prefix, :provider_prefix, :provider]
+      @include = []
     end
   end
 

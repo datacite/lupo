@@ -491,7 +491,7 @@ class DoisController < ApplicationController
 
       @include = @include & [:client, :media, :reference_events, :citation_events]
     else
-      @include = [:client, :media]
+      @include = []
     end
   end
 
