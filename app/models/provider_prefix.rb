@@ -20,15 +20,16 @@ class ProviderPrefix < ActiveRecord::Base
   index_name Rails.env.test? ? "provider-prefixes-test" : "provider-prefixes"
 
   mapping dynamic: "false" do
-    indexes :id,            type: :keyword
-    indexes :uid,           type: :keyword
-    indexes :state,         type: :keyword
-    indexes :provider_id,   type: :keyword
-    indexes :consortium_id, type: :keyword
-    indexes :prefix_id,     type: :keyword
-    indexes :client_ids,    type: :keyword
-    indexes :created_at,    type: :date
-    indexes :updated_at,    type: :date
+    indexes :id,                type: :keyword
+    indexes :uid,               type: :keyword
+    indexes :state,             type: :keyword
+    indexes :provider_id,       type: :keyword
+    indexes :consortium_id,     type: :keyword
+    indexes :prefix_id,         type: :keyword
+    indexes :client_ids,        type: :keyword
+    indexes :client_prefix_ids, type: :keyword
+    indexes :created_at,        type: :date
+    indexes :updated_at,        type: :date
 
     # index associations
     indexes :provider,           type: :object
@@ -42,6 +43,7 @@ class ProviderPrefix < ActiveRecord::Base
       created_at: { type: :date },
     }
     indexes :clients,            type: :object
+    indexes :client_prefixes,    type: :object
   end
 
   def as_indexed_json(options={})
@@ -52,12 +54,14 @@ class ProviderPrefix < ActiveRecord::Base
       "consortium_id" => consortium_id,
       "prefix_id" => prefix_id,
       "client_ids" => client_ids,
+      "client_prefix_ids" => client_prefix_ids,
       "state" => state,
       "created_at" => created_at,
       "updated_at" => updated_at,
       "provider" => provider.try(:as_indexed_json),
-      "prefix" => prefix.try(:as_indexed_json),
+      "prefix" => options[:exclude_prefix] ? nil : prefix.try(:as_indexed_json),
       "clients" => clients.map { |m| m.try(:as_indexed_json) },
+      "client_prefixes" => client_prefixes.map { |m| m.try(:as_indexed_json, exclude_prefix: true, exclude_provider_prefix: true) },
     }
   end
 
@@ -103,8 +107,12 @@ class ProviderPrefix < ActiveRecord::Base
     clients.pluck(:symbol).map(&:downcase)
   end
 
+  def client_prefix_ids
+    client_prefixes.pluck(:uid)
+  end
+
   def state
-    if client_ids.present?
+    if client_prefix_ids.present?
       "with-repository"
     else
       "without-repository"

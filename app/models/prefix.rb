@@ -20,17 +20,21 @@ class Prefix < ActiveRecord::Base
   index_name Rails.env.test? ? "prefixes-test" : "prefixes"
 
   mapping dynamic: "false" do
-    indexes :id,            type: :keyword
-    indexes :uid,           type: :keyword
-    indexes :provider_ids,  type: :keyword
-    indexes :client_ids,    type: :keyword
-    indexes :state,         type: :keyword
-    indexes :prefix,        type: :text
-    indexes :created_at,    type: :date
+    indexes :id,                  type: :keyword
+    indexes :uid,                 type: :keyword
+    indexes :provider_ids,        type: :keyword
+    indexes :client_ids,          type: :keyword
+    indexes :provider_prefix_ids, type: :keyword
+    indexes :client_prefix_ids,   type: :keyword
+    indexes :state,               type: :keyword
+    indexes :prefix,              type: :text
+    indexes :created_at,          type: :date
 
     # index associations
     indexes :clients,             type: :object
     indexes :providers,           type: :object
+    indexes :client_prefixes,     type: :object
+    indexes :provider_prefixes,   type: :object
   end
 
   def as_indexed_json(options={})
@@ -39,11 +43,15 @@ class Prefix < ActiveRecord::Base
       "uid" => uid,
       "provider_ids" => provider_ids,
       "client_ids" => client_ids,
+      "provider_prefix_ids" => provider_prefix_ids,
+      "client_prefix_ids" => client_prefix_ids,
       "state" => state,
       "prefix" => prefix,
       "created_at" => created_at,
       "clients" => clients.map { |m| m.try(:as_indexed_json) },
       "providers" => providers.map { |m| m.try(:as_indexed_json) },
+      "client_prefixes" => client_prefixes.map { |m| m.try(:as_indexed_json, exclude_prefix: true) },
+      "provider_prefixes" => provider_prefixes.map { |m| m.try(:as_indexed_json, exclude_prefix: true) },
     }
   end
 
@@ -76,14 +84,22 @@ class Prefix < ActiveRecord::Base
     providers.pluck(:symbol).map(&:downcase)
   end
 
+  def client_prefix_ids
+    client_prefixes.pluck(:uid)
+  end
+
+  def provider_prefix_ids
+    provider_prefixes.pluck(:uid)
+  end
+
   def prefix
     uid
   end
 
   def state
-    if client_ids.present?
+    if client_prefix_ids.present?
       "with-repository"
-    elsif provider_ids.present?
+    elsif provider_prefix_ids.present?
       "without-repository"
     else
       "unassigned"

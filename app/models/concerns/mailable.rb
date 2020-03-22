@@ -23,7 +23,7 @@ module Mailable
         "provider_id" => provider_id
       }.compact
 
-      jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24))
+      jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24, aud: Rails.env))
       url = ENV['BRACCO_URL'] + "?jwt=" + jwt
       reset_url = ENV['BRACCO_URL'] + "/reset"
       title = Rails.env.stage? ? "DataCite Fabrica Test" : "DataCite Fabrica"

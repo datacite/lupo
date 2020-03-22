@@ -55,8 +55,8 @@ class ClientPrefix < ActiveRecord::Base
       "updated_at" => updated_at,
       "client" => client.try(:as_indexed_json),
       "provider" => provider.try(:as_indexed_json),
-      "prefix" => prefix.try(:as_indexed_json),
-      "provider_prefix" => provider_prefix.try(:as_indexed_json),
+      "prefix" => options[:exclude_prefix] ? nil : prefix.try(:as_indexed_json),
+      "provider_prefix" => options[:exclude_provider_prefix] ? nil : provider_prefix.try(:as_indexed_json, exclude_prefix: true),
     }
   end
 
