@@ -48,7 +48,7 @@ namespace :provider_prefix do
 
   desc 'Import all provider_prefixes'
   task :import => :environment do
-    ProviderPrefix.import(index: ProviderPrefix.inactive_index)
+    ProviderPrefix.import(index: ENV["INDEX"] || ProviderPrefix.inactive_index, batch_size: (ENV["BATCH_SIZE"] || 100).to_i)
   end
 
   desc 'Generate uid'

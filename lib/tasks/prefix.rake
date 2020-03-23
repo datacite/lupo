@@ -48,7 +48,7 @@ namespace :prefix do
 
   desc 'Import all prefixes'
   task :import => :environment do
-    Prefix.import(index: Prefix.inactive_index)
+    Prefix.import(index: ENV["INDEX"] || Prefix.inactive_index, batch_size: (ENV["BATCH_SIZE"] || 100).to_i)
   end
 
   desc 'Delete prefix and associated DOIs'

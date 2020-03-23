@@ -48,7 +48,7 @@ namespace :client_prefix do
 
   desc 'Import all client_prefixes'
   task :import => :environment do
-    ClientPrefix.import(index: ClientPrefix.inactive_index)
+    ClientPrefix.import(index: ENV["INDEX"] || ClientPrefix.inactive_index, batch_size: (ENV["BATCH_SIZE"] || 100).to_i)
   end
 
   desc 'Generate uid'
