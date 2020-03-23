@@ -60,7 +60,7 @@ class ProviderPrefix < ActiveRecord::Base
       "updated_at" => updated_at,
       "provider" => provider.try(:as_indexed_json),
       "prefix" => options[:exclude_associations] ? nil : prefix.try(:as_indexed_json, exclude_associations: true),
-      "clients" => options[:exclude_associations] ? nil : clients.map { |m| m.try(:as_indexed_json) },
+      "clients" => options[:exclude_associations] ? nil : clients.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
       "client_prefixes" => options[:exclude_associations] ? nil : client_prefixes.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
     }
   end

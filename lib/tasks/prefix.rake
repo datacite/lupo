@@ -48,9 +48,7 @@ namespace :prefix do
 
   desc 'Import all prefixes'
   task :import => :environment do
-    Prefix.all.each do |p|
-      p.__elasticsearch__.index_document
-    end
+    Prefix.import(index: Prefix.inactive_index)
   end
 
   desc 'Delete prefix and associated DOIs'

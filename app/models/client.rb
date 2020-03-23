@@ -219,7 +219,7 @@ class Client < ActiveRecord::Base
       "salesforce_id" => salesforce_id,
       "globus_uuid" => globus_uuid,
       "issn" => issn,
-      "prefix_ids" => prefix_ids,
+      "prefix_ids" => options[:exclude_associations] ? nil : prefix_ids,
       "name" => name,
       "alternate_name" => alternate_name,
       "description" => description,

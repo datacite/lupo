@@ -48,9 +48,7 @@ namespace :client_prefix do
 
   desc 'Import all client_prefixes'
   task :import => :environment do
-    ClientPrefix.all.each do |cp|
-      cp.__elasticsearch__.index_document
-    end
+    ClientPrefix.import(index: ClientPrefix.inactive_index)
   end
 
   desc 'Generate uid'

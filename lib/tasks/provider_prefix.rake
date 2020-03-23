@@ -48,9 +48,7 @@ namespace :provider_prefix do
 
   desc 'Import all provider_prefixes'
   task :import => :environment do
-    ProviderPrefix.all.each do |pp|
-      pp.__elasticsearch__.index_document
-    end
+    ProviderPrefix.import(index: ProviderPrefix.inactive_index)
   end
 
   desc 'Generate uid'
