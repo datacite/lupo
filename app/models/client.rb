@@ -241,7 +241,7 @@ class Client < ActiveRecord::Base
       "updated" => updated,
       "deleted_at" => deleted_at,
       "cumulative_years" => cumulative_years,
-      "provider" => provider.as_indexed_json
+      "provider" => provider.as_indexed_json(exclude_associations: true)
     }
   end
 
