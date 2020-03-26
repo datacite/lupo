@@ -3425,6 +3425,24 @@ describe "dois", type: :request do
       end
     end
 
+    context "application/ld+json" do
+      it 'returns the Doi' do
+        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/ld+json", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+
+        expect(last_response.status).to eq(200)
+        expect(json["@type"]).to eq("Dataset")
+      end
+    end
+
+    context "application/ld+json link" do
+      it 'returns the Doi' do
+        get "/dois/application/ld+json/#{doi.doi}"
+
+        expect(last_response.status).to eq(200)
+        expect(json["@type"]).to eq("Dataset")
+      end
+    end
+
     context "application/vnd.citationstyles.csl+json" do
       it 'returns the Doi' do
         get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.citationstyles.csl+json", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
