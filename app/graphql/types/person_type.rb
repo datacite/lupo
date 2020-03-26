@@ -40,7 +40,7 @@ class PersonType < BaseObject
     Doi.query(nil, user_id: orcid_from_url(object[:id]), relation_type_id: "text", state: "findable", page: { size: args[:first], number: 1 }).results.to_a
   end
 
-  def softwares(**_args)
+  def softwares(**args)
     Doi.query(nil, user_id: orcid_from_url(object[:id]), relation_type_id: "software", state: "findable", page: { size: args[:first], number: 1 }).results.to_a
   end
 

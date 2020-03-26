@@ -9,7 +9,7 @@ describe Person, type: :model, vcr: true do
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0003-1519-3661")
       expect(person.name).to eq("Peter Godfrey-Smith")
-      expect(person.given_names).to eq("Peter")
+      expect(person.given_name).to eq("Peter")
       expect(person.family_name).to eq("Godfrey-Smith")
     end
 
@@ -30,7 +30,7 @@ describe Person, type: :model, vcr: true do
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0003-0796-7209")
       expect(person.name).to eq("Peter  St George-Hyslop")
-      expect(person.given_names).to eq("Peter")
+      expect(person.given_name).to eq("Peter")
       expect(person.family_name).to eq(" St George-Hyslop")
     end
 
@@ -42,7 +42,7 @@ describe Person, type: :model, vcr: true do
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0003-0175-443X")
       expect(person.name).to eq("Hajira Dambha-Miller")
-      expect(person.given_names).to eq("Hajira")
+      expect(person.given_name).to eq("Hajira")
       expect(person.family_name).to eq("Dambha-Miller")
     end
 
