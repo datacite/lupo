@@ -32,11 +32,11 @@ class PersonType < BaseObject
     "Person"
   end
 
-  def datasets(**_args)
+  def datasets(**args)
     Doi.query(nil, user_id: orcid_from_url(object[:id]), relation_type_id: "dataset", state: "findable", page: { size: args[:first], number: 1 }).results.to_a
   end
 
-  def publications(**_args)
+  def publications(**args)
     Doi.query(nil, user_id: orcid_from_url(object[:id]), relation_type_id: "text", state: "findable", page: { size: args[:first], number: 1 }).results.to_a
   end
 
@@ -44,7 +44,7 @@ class PersonType < BaseObject
     Doi.query(nil, user_id: orcid_from_url(object[:id]), relation_type_id: "software", state: "findable", page: { size: args[:first], number: 1 }).results.to_a
   end
 
-  def works(**_args)
+  def works(**args)
     Doi.query(nil, user_id: orcid_from_url(object[:id]), state: "findable", page: { size: args[:first], number: 1 }).results.to_a
   end
 
