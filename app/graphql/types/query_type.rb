@@ -143,7 +143,7 @@ class QueryType < BaseObject
     Person.query(query, limit: first).fetch(:data, [])
   end
 
-  field :creative_works, CreativeWorkConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
+  field :works, CreativeWorkConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :client_id, String, required: false
@@ -151,7 +151,7 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def creative_works(query: nil, ids: nil, client_id: nil, provider_id: nil, first: nil)
+  def works(query: nil, ids: nil, client_id: nil, provider_id: nil, first: nil)
     if ids.present?
       dois = ids.split(",").map { |i| doi_from_url(i) }
       ElasticsearchLoader.for(Doi).load_many(dois)
@@ -160,11 +160,11 @@ class QueryType < BaseObject
     end
   end
 
-  field :creative_work, CreativeWorkType, null: false do
+  field :work, WorkType, null: false do
     argument :id, ID, required: true
   end
 
-  def creative_work(id:)
+  def work(id:)
     set_doi(id)
   end
 

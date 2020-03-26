@@ -45,8 +45,8 @@ module DoiItem
   field :citations_over_time, [YearTotalType], null: true, description: "Citations by year."
   field :views_over_time, [YearMonthTotalType], null: true, description: "Views by month."
   field :downloads_over_time, [YearMonthTotalType], null: true, description: "Downloads by month."
-  field :citations, [CreativeWorkType], null: true, description: "Citations."
-  field :references, [CreativeWorkType], null: true, description: "References."
+  field :citations, [WorkType], null: true, description: "Citations."
+  field :references, [WorkType], null: true, description: "References."
 
   def type
     object.types["schemaOrg"]

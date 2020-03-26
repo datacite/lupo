@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class CreativeWorkType < BaseObject
+class WorkType < BaseObject
   implements DoiItem
 end

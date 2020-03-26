@@ -42,7 +42,7 @@ type Audiovisual implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -132,7 +132,7 @@ type Audiovisual implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -442,7 +442,7 @@ type Collection implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -532,7 +532,7 @@ type Collection implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -610,170 +610,8 @@ type Country {
   name: String
 }
 
-type CreativeWork implements DoiItem {
-  """
-  Total number of citations.
-  """
-  citationCount: Int
-
-  """
-  Citations.
-  """
-  citations: [CreativeWork!]
-
-  """
-  Citations by year.
-  """
-  citationsOverTime: [YearTotal!]
-
-  """
-  The client account managing this resource
-  """
-  client: Client
-
-  """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
-  """
-  creators(first: Int = 20): [Creator!]
-
-  """
-  Different dates relevant to the work
-  """
-  dates: [Date!]
-
-  """
-  All additional information that does not fit in any of the other categories
-  """
-  descriptions(first: Int = 5): [Description!]
-
-  """
-  Total number of downloads.
-  """
-  downloadCount: Int
-
-  """
-  Downloads by month.
-  """
-  downloadsOverTime: [YearMonthTotal!]
-
-  """
-  Technical format of the resource
-  """
-  formats: [String!]
-
-  """
-  Metadata as formatted citation
-  """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
-
-  """
-  Information about financial support (funding) for the resource being registered
-  """
-  fundingReferences: [Funding!]
-
-  """
-  The persistent identifier for the resource
-  """
-  id: ID!
-
-  """
-  An identifier or identifiers applied to the resource being registered
-  """
-  identifiers: [Identifier!]
-
-  """
-  The primary language of the resource
-  """
-  language: String
-
-  """
-  The provider account managing this resource
-  """
-  provider: Provider
-
-  """
-  The year when the data was or will be made publicly available
-  """
-  publicationYear: Int
-
-  """
-  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
-  """
-  publisher: String
-
-  """
-  Total number of references.
-  """
-  referenceCount: Int
-
-  """
-  References.
-  """
-  references: [CreativeWork!]
-
-  """
-  Identifiers of related resources. These must be globally unique identifiers
-  """
-  relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
-
-  """
-  Any rights information for this resource
-  """
-  rights: [Rights!]
-
-  """
-  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
-  """
-  sizes: [String!]
-
-  """
-  Subject, keyword, classification code, or key phrase describing the resource
-  """
-  subjects: [Subject!]
-
-  """
-  A name or title by which a resource is known
-  """
-  titles(first: Int = 5): [Title!]
-
-  """
-  The type of the item.
-  """
-  type: String!
-
-  """
-  The resource type
-  """
-  types: ResourceType
-
-  """
-  The URL registered for the resource
-  """
-  url: String
-
-  """
-  The version number of the resource
-  """
-  version: String
-
-  """
-  Total number of views.
-  """
-  viewCount: Int
-
-  """
-  Views by month.
-  """
-  viewsOverTime: [YearMonthTotal!]
-}
-
 """
-The connection type for CreativeWork.
+The connection type for Work.
 """
 type CreativeWorkConnectionWithMeta {
   """
@@ -784,7 +622,7 @@ type CreativeWorkConnectionWithMeta {
   """
   A list of nodes.
   """
-  nodes: [CreativeWork]
+  nodes: [Work]
 
   """
   Information to aid in pagination.
@@ -805,7 +643,7 @@ type CreativeWorkEdge {
   """
   The item at the end of the edge.
   """
-  node: CreativeWork
+  node: Work
 }
 
 """
@@ -1085,7 +923,7 @@ type DataPaper implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -1175,7 +1013,7 @@ type DataPaper implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -1247,7 +1085,7 @@ type Dataset implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -1380,7 +1218,7 @@ type Dataset implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -1686,7 +1524,7 @@ interface DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -1776,7 +1614,7 @@ interface DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -1848,7 +1686,7 @@ type Event implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -1938,7 +1776,7 @@ type Event implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -2010,7 +1848,7 @@ type EventData implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -2100,7 +1938,7 @@ type EventData implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -2479,7 +2317,7 @@ type Image implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -2569,7 +2407,7 @@ type Image implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -2641,7 +2479,7 @@ type InteractiveResource implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -2731,7 +2569,7 @@ type InteractiveResource implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -2803,7 +2641,7 @@ type Model implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -2893,7 +2731,7 @@ type Model implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -3169,7 +3007,7 @@ type Other implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -3259,7 +3097,7 @@ type Other implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -3352,54 +3190,17 @@ A person.
 """
 type Person {
   """
-  The count of DOI events that represents citations
+  The number of citations
   """
   citationCount: Int
 
   """
-  Authored creative works
-  """
-  creativeWorks(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-  ): PersonCreativeWorkConnectionWithMeta
-
-  """
   Authored datasets
   """
-  datasets(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-  ): PersonDatasetConnectionWithMeta
+  datasets(first: Int = 25): [Dataset!]
 
   """
-  The count of  DOI dowloands according to the COUNTER code of Practice
+  The number of downloads according to the Counter Code of Practice
   """
   downloadCount: Int
 
@@ -3426,44 +3227,12 @@ type Person {
   """
   Authored publications
   """
-  publications(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-  ): PersonPublicationConnectionWithMeta
+  publications(first: Int = 25): [Publication!]
 
   """
   Authored software
   """
-  softwareSourceCodes(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-  ): PersonSoftwareConnectionWithMeta
+  softwares(first: Int = 25): [Software!]
 
   """
   The type of the item.
@@ -3471,9 +3240,14 @@ type Person {
   type: String!
 
   """
-  The count of DOI views according to the COUNTER code of Practice
+  The number of views according to the Counter Code of Practice
   """
   viewCount: Int
+
+  """
+  Authored works
+  """
+  works(first: Int = 25): [Work!]
 }
 
 """
@@ -3503,48 +3277,6 @@ type PersonConnectionWithMeta {
 }
 
 """
-The connection type for EventData.
-"""
-type PersonCreativeWorkConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
-The connection type for EventData.
-"""
-type PersonDatasetConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
 An edge in a connection.
 """
 type PersonEdge {
@@ -3559,48 +3291,6 @@ type PersonEdge {
   node: Person
 }
 
-"""
-The connection type for EventData.
-"""
-type PersonPublicationConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
-The connection type for EventData.
-"""
-type PersonSoftwareConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
 type PhysicalObject implements DoiItem {
   """
   Total number of citations.
@@ -3610,7 +3300,7 @@ type PhysicalObject implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -3700,7 +3390,7 @@ type PhysicalObject implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -4000,7 +3690,7 @@ type Publication implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -4133,7 +3823,7 @@ type Publication implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -4335,28 +4025,6 @@ type Query {
   ): ClientConnectionWithMeta!
   collection(id: ID!): Collection!
   collections(first: Int = 25, query: String): [Collection!]!
-  creativeWork(id: ID!): CreativeWork!
-  creativeWorks(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    clientId: String
-    first: Int = 25
-    ids: String
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    providerId: String
-    query: String
-  ): CreativeWorkConnectionWithMeta!
   dataCatalog(id: ID!): DataCatalog!
   dataCatalogs(
     """
@@ -4581,8 +4249,30 @@ type Query {
     """
     last: Int
   ): UsageReportConnectionWithMeta!
+  work(id: ID!): Work!
   workflow(id: ID!): Workflow!
   workflows(first: Int = 25, query: String): [Workflow!]!
+  works(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+  ): CreativeWorkConnectionWithMeta!
 }
 
 """
@@ -4704,7 +4394,7 @@ type Service implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -4794,7 +4484,7 @@ type Service implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -4887,7 +4577,7 @@ type Software implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -5020,7 +4710,7 @@ type Software implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -5229,7 +4919,7 @@ type Sound implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -5319,7 +5009,7 @@ type Sound implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -5535,7 +5225,7 @@ type UsageReportEdge {
   node: UsageReport
 }
 
-type Workflow implements DoiItem {
+type Work implements DoiItem {
   """
   Total number of citations.
   """
@@ -5544,7 +5234,7 @@ type Workflow implements DoiItem {
   """
   Citations.
   """
-  citations: [CreativeWork!]
+  citations: [Work!]
 
   """
   Citations by year.
@@ -5634,7 +5324,169 @@ type Workflow implements DoiItem {
   """
   References.
   """
-  references: [CreativeWork!]
+  references: [Work!]
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The general type of a resource
+  """
+  resourceTypeGeneral: String
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType
+
+  """
+  The URL registered for the resource
+  """
+  url: String
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  Total number of views.
+  """
+  viewCount: Int
+
+  """
+  Views by month.
+  """
+  viewsOverTime: [YearMonthTotal!]
+}
+
+type Workflow implements DoiItem {
+  """
+  Total number of citations.
+  """
+  citationCount: Int
+
+  """
+  Citations.
+  """
+  citations: [Work!]
+
+  """
+  Citations by year.
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
+  The client account managing this resource
+  """
+  client: Client
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Creator!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads.
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month.
+  """
+  downloadsOverTime: [YearMonthTotal!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Total number of references.
+  """
+  referenceCount: Int
+
+  """
+  References.
+  """
+  references: [Work!]
 
   """
   Identifiers of related resources. These must be globally unique identifiers

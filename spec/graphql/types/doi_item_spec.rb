@@ -17,7 +17,7 @@ describe DoiItem do
     it { is_expected.to have_field(:citationsOverTime).of_type("[YearTotal!]") }
     it { is_expected.to have_field(:viewsOverTime).of_type("[YearMonthTotal!]") }
     it { is_expected.to have_field(:downloadsOverTime).of_type("[YearMonthTotal!]") }
-    it { is_expected.to have_field(:citations).of_type("[CreativeWork!]") }
-    it { is_expected.to have_field(:references).of_type("[CreativeWork!]") }
+    it { is_expected.to have_field(:citations).of_type("[Work!]") }
+    it { is_expected.to have_field(:references).of_type("[Work!]") }
   end
 end

@@ -40,6 +40,33 @@ describe QueryType do
     end
   end
 
+  # describe "query person", elasticsearch: true, vcr: true do
+  #   before do
+  #     Doi.import
+  #     sleep 2
+  #   end
+
+  #   let(:query) do
+  #     %(query {
+  #       person(id: 'https://orcid.org/0000-0003-1419-2405') {
+  #         id
+  #         name
+  #         givenName
+  #         familyName
+  #       }
+  #     })
+  #   end
+
+  #   it "returns person information" do
+  #     response = LupoSchema.execute(query).as_json
+
+  #     expect(response.dig("data", "person", "id")).to eq(3)
+  #     expect(response.dig("data", "person", "name")).to eq(3)
+  #     expect(response.dig("data", "person", "givenName")).to eq(3)
+  #     expect(response.dig("data", "person", "familyName")).to eq(3)
+  #   end
+  # end
+
   describe "query with citations", elasticsearch: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
