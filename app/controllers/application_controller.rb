@@ -3,7 +3,6 @@ class ApplicationController < ActionController::API
   include Authenticable
   include CanCan::ControllerAdditions
   include ErrorSerializable
-  
   require "facets/string/snakecase"
 
   # include helper module for caching infrequently changing resources
@@ -74,6 +73,7 @@ class ApplicationController < ActionController::API
   def authenticate_user!
     type, credentials = type_and_credentials_from_request_headers
     return false if credentials.blank?
+    raise JWT::VerificationError if (ENV['JWT_BLACKLISTED'] == credentials)
 
     @current_user = User.new(credentials, type: type)
     fail CanCan::AuthorizationNotPerformed if @current_user.errors.present?
@@ -98,7 +98,7 @@ class ApplicationController < ActionController::API
   unless Rails.env.development?
     rescue_from *RESCUABLE_EXCEPTIONS do |exception|
       status = case exception.class.to_s
-               when "CanCan::AuthorizationNotPerformed", "JWT::DecodeError" then 401
+               when "CanCan::AuthorizationNotPerformed", "JWT::DecodeError","JWT::VerificationError" then 401
                when "CanCan::AccessDenied" then 403
                when "ActiveRecord::RecordNotFound", "AbstractController::ActionNotFound", "ActionController::RoutingError" then 404
                when "ActionController::UnknownFormat" then 406

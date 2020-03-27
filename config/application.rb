@@ -59,6 +59,8 @@ ENV['MG_FROM'] ||= "support@datacite.org"
 ENV['MG_DOMAIN'] ||= "mg.datacite.org"
 ENV['HANDLES_MINTED'] ||= "10132"
 ENV['REALM'] ||= ENV['API_URL']
+ENV['JWT_BLACKLISTED'] ||= ENV['JWT_BLACKLISTED']
+
 
 module Lupo
   class Application < Rails::Application
