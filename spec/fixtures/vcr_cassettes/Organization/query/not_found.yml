@@ -2,60 +2,55 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.ror.org/organizations?qp=true&query=xxx
+    uri: https://api.ror.org/organizations?query=xxx
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.2.1; +https://github.com/datacite/maremma)
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
       code: 200
       message: OK
     headers:
       Content-Type:
-      - application/json;charset=utf-8
+      - application/json
       Content-Length:
-      - '124'
+      - '84'
       Connection:
       - keep-alive
       Date:
-      - Sun, 05 May 2019 11:14:01 GMT
+      - Fri, 27 Mar 2020 20:33:54 GMT
       Status:
       - 200 OK
-      Access-Control-Allow-Origin:
-      - "*"
-      X-Content-Type-Options:
-      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      Allow:
+      - GET, HEAD, OPTIONS
       X-Powered-By:
-      - Phusion Passenger 6.0.2
+      - Phusion Passenger 6.0.4
       Server:
-      - nginx/1.15.8 + Phusion Passenger 6.0.2
-      Age:
-      - '299'
+      - nginx/1.17.3 + Phusion Passenger 6.0.4
+      Vary:
+      - Cookie,Origin
       X-Cache:
       - Hit from cloudfront
       Via:
-      - 1.1 ef13dd533b8dc9dcfdc35449cf88f808.cloudfront.net (CloudFront)
+      - 1.1 9ed795ea7207c9add01c8c2ab17d8299.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - DUS51-C1
       X-Amz-Cf-Id:
-      - vxeDUr1-R9Y4LrizGmMNmSNUhvqeCgWD5Pqkl-eVzkDYR9rWk4zLxQ==
+      - 2Dt9nGtN1sC5Peh7nop4v3g4FA1Fxgg1xUG5o1QwMbjmquYgq0qYWg==
+      Age:
+      - '30463'
     body:
       encoding: ASCII-8BIT
-      string: |-
-        {
-          "number_of_results": 0,
-          "time_taken": 3,
-          "items": [
-
-          ],
-          "meta": {
-            "types": null,
-            "countries": null
-          }
-        }
-    http_version: 
-  recorded_at: Sun, 05 May 2019 11:19:00 GMT
-recorded_with: VCR 3.0.3
+      string: '{"number_of_results":0,"time_taken":9,"items":[],"meta":{"types":[],"countries":[]}}'
+    http_version: null
+  recorded_at: Sat, 28 Mar 2020 05:01:37 GMT
+recorded_with: VCR 5.1.0

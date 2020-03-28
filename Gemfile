@@ -16,7 +16,7 @@ gem "nokogiri", ">= 1.10.4"
 gem "diffy", "~> 3.2", ">= 3.2.1"
 gem "commonmarker", "~> 0.17.9"
 gem "iso8601", "~> 0.9.0"
-gem "maremma", ">= 4.1"
+gem "maremma", "~> 4.6.1"
 gem "bolognese", "~> 1.5"
 gem "dalli", "~> 2.7", ">= 2.7.6"
 gem "lograge", "~> 0.11.2"
@@ -98,7 +98,7 @@ group :test do
   gem "capybara"
   gem "webmock", "~> 3.1"
   gem "hashdiff", [">= 1.0.0.beta1", "< 2.0.0"]
-  gem "vcr", "~> 3.0.3"
+  gem 'vcr', '~> 5.1'
   gem "factory_bot_rails", "~> 4.8", ">= 4.8.2"
   gem "shoulda-matchers", "~> 4.1", ">= 4.1.2"
   gem "faker", "~> 1.9"

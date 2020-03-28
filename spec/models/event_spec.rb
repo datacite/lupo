@@ -15,10 +15,10 @@ describe Event, type: :model, vcr: true do
   end
 
   context "citation" do
-    subject { create(:event_for_datacite_related) }
+    subject { create(:event_for_datacite_related, subj_id: "https://doi.org/10.5061/dryad.47sd5e/2") }
 
     it "has citation_id" do
-      expect(subject.citation_id).to eq("https://doi.org/10.5061/dryad.47sd5/1-https://doi.org/10.5061/dryad.47sd5e/1")
+      expect(subject.citation_id).to eq("https://doi.org/10.5061/dryad.47sd5/1-https://doi.org/10.5061/dryad.47sd5e/2")
     end
 
     it "has citation_year" do

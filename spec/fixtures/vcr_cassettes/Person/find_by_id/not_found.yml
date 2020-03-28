@@ -8,16 +8,18 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.4; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
       code: 404
       message: Not Found
     headers:
       Date:
-      - Fri, 11 Oct 2019 11:25:19 GMT
+      - Sat, 28 Mar 2020 05:12:23 GMT
       Content-Type:
       - application/json; charset=utf-8
       Connection:
@@ -28,6 +30,8 @@ http_interactions:
       - no-cache
       Vary:
       - Accept-Encoding, Origin
+      Content-Encoding:
+      - gzip
       Referrer-Policy:
       - strict-origin-when-cross-origin
       X-Permitted-Cross-Domain-Policies:
@@ -35,11 +39,11 @@ http_interactions:
       X-Xss-Protection:
       - 1; mode=block
       X-Request-Id:
-      - c151baeb-efad-4962-8326-a86bd79e75ff
+      - d615d90f-a83e-443b-a229-7e6b431076af
       X-Download-Options:
       - noopen
       X-Runtime:
-      - '0.004433'
+      - '0.054006'
       X-Frame-Options:
       - SAMEORIGIN
       X-Content-Type-Options:
@@ -47,11 +51,11 @@ http_interactions:
       X-Powered-By:
       - Phusion Passenger 6.0.4
       Server:
-      - nginx/1.17.3 + Phusion Passenger 6.0.4
+      - nginx/1.14.0 + Phusion Passenger 6.0.4
     body:
       encoding: ASCII-8BIT
-      string: '{"errors":[{"status":"404","title":"The resource you are looking for
-        doesn''t exist."}]}'
-    http_version: 
-  recorded_at: Fri, 11 Oct 2019 11:25:19 GMT
-recorded_with: VCR 3.0.3
+      string: !binary |-
+        H4sIALfcfl4AAwzHMQqAMAwF0KuELC4iDp08h5s4FP1qsTSQpKCId9ftvYehKmo8TA+bR68/OfSBW/bkGf/GA6QwqbqAbqkUFZRFzlR22kRpFVhpnHAl847f+f0AAAD//wMArpOW4VcAAAA=
+    http_version: null
+  recorded_at: Sat, 28 Mar 2020 05:12:23 GMT
+recorded_with: VCR 5.1.0

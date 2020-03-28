@@ -94,7 +94,7 @@ describe Doi, vcr: true do
       response = subject.get_url
 
       expect(response.body.dig("data", "responseCode")).to eq(1)
-      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/"}, "ttl"=>86400, "timestamp"=>"2019-05-10T12:45:27Z"}])
+      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/"}, "ttl"=>86400, "timestamp"=>"2020-03-28T05:08:49Z"}])
     end
 
     context "https to http" do
@@ -131,7 +131,7 @@ describe Doi, vcr: true do
       response = subject.get_url
 
       expect(response.body.dig("data", "responseCode")).to eq(1)
-      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-science-europe/"}, "ttl"=>86400, "timestamp"=>"2019-07-20T08:59:55Z"}])
+      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-science-europe/"}, "ttl"=>86400, "timestamp"=>"2020-03-28T05:08:50Z"}])
     end
 
     it 'draft doi' do
@@ -145,7 +145,7 @@ describe Doi, vcr: true do
     end
 
     it 'server not responsible' do
-      subject = build(:doi, doi: "10.1371/journal.pbio.2001414", client: client, aasm_state: "findable")
+      subject = build(:doi, doi: "10.1371/journal.pbio.2001414", url: "https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.2001414", client: client, aasm_state: "findable")
       expect(subject.register_url.body).to eq("errors"=>[{"status"=>400, "title"=>{"responseCode"=>301, "message"=>"That prefix doesn't live here", "handle"=>"10.1371/JOURNAL.PBIO.2001414"}}])
     end
   end

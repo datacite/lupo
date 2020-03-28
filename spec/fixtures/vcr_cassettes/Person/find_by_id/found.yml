@@ -8,16 +8,18 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.4; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Fri, 11 Oct 2019 11:25:19 GMT
+      - Sat, 28 Mar 2020 05:12:23 GMT
       Content-Type:
       - application/json; charset=utf-8
       Connection:
@@ -30,6 +32,8 @@ http_interactions:
       - max-age=0, private, must-revalidate
       Vary:
       - Accept-Encoding, Origin
+      Content-Encoding:
+      - gzip
       Referrer-Policy:
       - strict-origin-when-cross-origin
       X-Permitted-Cross-Domain-Policies:
@@ -37,25 +41,25 @@ http_interactions:
       X-Xss-Protection:
       - 1; mode=block
       X-Request-Id:
-      - 9f93a16e-94f7-4a98-9c11-51b3653c3bc2
+      - 24361814-692c-4f89-8b86-56def189ef65
       X-Download-Options:
       - noopen
       Etag:
-      - W/"e3944200402255344af4d6f93eb13365"
+      - W/"f53377f17fa2a03e3dc42f01085ac448"
       X-Frame-Options:
       - SAMEORIGIN
       X-Runtime:
-      - '0.005520'
+      - '1.022590'
       X-Content-Type-Options:
       - nosniff
       X-Powered-By:
       - Phusion Passenger 6.0.4
       Server:
-      - nginx/1.17.3 + Phusion Passenger 6.0.4
+      - nginx/1.14.0 + Phusion Passenger 6.0.4
     body:
       encoding: ASCII-8BIT
-      string: '{"data":{"id":"0000-0003-1519-3661","type":"users","attributes":{"givenNames":"Peter","familyName":"Godfrey-Smith","name":"Peter
-        Godfrey-Smith","orcid":"https://orcid.org/0000-0003-1519-3661","github":null,"roleId":"user","isActive":false,"created":"2017-12-15T12:30:56.000Z","updated":"2017-12-15T12:30:56.000Z"},"relationships":{}}}'
-    http_version: 
-  recorded_at: Fri, 11 Oct 2019 11:25:19 GMT
-recorded_with: VCR 3.0.3
+      string: !binary |-
+        H4sIALfcfl4AA4RRQWrDMBD8StHZTiybOKluPZVeSqE5tfSgWOtYIFtGWiU1wX/vKjHYKYUKBJqdmdVodWFKomTiwrRigmW0UtpFyjf8MS3KkrOE4dADkcGD8wQlotOHgOCj76hP0L3KNireAMGRopatNsNUfLaqdjCk763GhshuoX34TVpXXYM0iL0X6/UVr6w7rv+OdiRbODDRBWMS5qyBFzVFJVb7pwopHxO1NB4SVjmQCFGRZ3yb8pya7XkuikxsyhV1/yBX6NV/opHuAiNR2843uo+DGKnWwm2WymoqfU5DzbM8i1PUaGCGlQ0dMlGMXwnrw8Fo38Q7ZxPf3pmucDLlYzLLdvey3SzjsbcDb4OrYE+fuAiF8I0L4/4Gl6FOGs7RQEdlz52xUk2w0nh7eoTj+AMAAP//AwABjzEcRAIAAA==
+    http_version: null
+  recorded_at: Sat, 28 Mar 2020 05:12:23 GMT
+recorded_with: VCR 5.1.0
