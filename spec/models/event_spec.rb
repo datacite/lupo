@@ -2,6 +2,7 @@ require "rails_helper"
 
 describe Event, type: :model, vcr: true do
   before(:each) { allow(Time.zone).to receive(:now).and_return(Time.mktime(2015, 4, 8)) }
+  
   context "event" do
     subject { create(:event) }
 
@@ -23,11 +24,6 @@ describe Event, type: :model, vcr: true do
 
     it "has citation_year" do
       expect(subject.citation_year).to eq(2015)
-    end
-
-    it "has published_dates" do
-      expect(subject.subj["datePublished"]).to eq("2006-06-13T16:14:19Z")
-      expect(subject.obj["datePublished"]).to be_nil
     end
 
     let(:doi) { create(:doi) }
