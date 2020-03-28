@@ -51,19 +51,19 @@ class OrcidAutoUpdateByIdJob < ActiveJob::Base
   end
 
   def parse_message(message: nil)
-    given_names = message.dig("name", "given-names", "value")
+    given_name = message.dig("name", "given-names", "value")
     family_name = message.dig("name", "family-name", "value")
     if message.dig("name", "credit-name", "value").present?
       name = message.dig("name", "credit-name", "value")
-    elsif given_names.present? || family_name.present?
-      name = [given_names, family_name].join(" ")
+    elsif given_name.present? || family_name.present?
+      name = [given_name, family_name].join(" ")
     else
       name = nil
     end
 
     {
       "name" => name,
-      "givenNames" => given_names,
+      "givenName" => given_names,
       "familyName" => family_name }.compact
   end
 
