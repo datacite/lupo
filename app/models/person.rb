@@ -49,7 +49,7 @@ class Person
       id: id,
       orcid: message["orcid"],
       name: message["name"],
-      given_name: message["givenNames"],
+      given_name: message["givenName"],
       family_name: message["familyName"] })
   end
 

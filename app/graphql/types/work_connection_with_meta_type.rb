@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class CreativeWorkConnectionWithMetaType < BaseConnection
-  edge_type(CreativeWorkEdgeType)
+class WorkConnectionWithMetaType < BaseConnection
+  edge_type(WorkEdgeType)
   field_class GraphQL::Cache::Field
 
   field :total_count, Integer, null: false, cache: true

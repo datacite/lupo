@@ -9,8 +9,13 @@ describe PersonType do
     it { is_expected.to have_field(:name).of_type("String") }
     it { is_expected.to have_field(:givenName).of_type("String") }
     it { is_expected.to have_field(:familyName).of_type("String") }
-    it { is_expected.to have_field(:datasets).of_type("[Dataset!]") }
-    it { is_expected.to have_field(:publications).of_type("[Publication!]") }
-    it { is_expected.to have_field(:softwares).of_type("[Software!]") }
+    it { is_expected.to have_field(:doiCount).of_type("[Facet!]") }
+    it { is_expected.to have_field(:resourceTypeCount).of_type("[Facet!]") }
+    it { is_expected.to have_field(:citationCount).of_type("Int") }
+    it { is_expected.to have_field(:viewCount).of_type("Int") }
+    it { is_expected.to have_field(:downloadCount).of_type("Int") }
+    it { is_expected.to have_field(:datasets).of_type("DatasetConnectionWithMeta") }
+    it { is_expected.to have_field(:publications).of_type("PublicationConnectionWithMeta") }
+    it { is_expected.to have_field(:softwares).of_type("SoftwareConnectionWithMeta") }
   end
 end

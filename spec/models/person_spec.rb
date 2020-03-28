@@ -25,25 +25,25 @@ describe Person, type: :model, vcr: true do
     it "all" do
       query = nil
       people = Person.query(query)
-      expect(people.dig(:meta, "total")).to eq(96748)
+      expect(people.dig(:meta, "total")).to eq(648608)
       expect(people[:data].size).to eq(25)
       person = people[:data].first
-      expect(person.id).to eq("https://orcid.org/0000-0003-0796-7209")
-      expect(person.name).to eq("Peter  St George-Hyslop")
-      expect(person.given_name).to eq("Peter")
-      expect(person.family_name).to eq(" St George-Hyslop")
+      expect(person.id).to eq("https://orcid.org/0000-0002-8362-4294")
+      expect(person.name).to eq("swoyam prakash    pandit ")
+      expect(person.given_name).to eq("swoyam prakash ")
+      expect(person.family_name).to eq("  pandit ")
     end
 
     it "found" do
       query = "miller"
       people = Person.query(query)
-      expect(people.dig(:meta, "total")).to eq(85)
+      expect(people.dig(:meta, "total")).to eq(428)
       expect(people[:data].size).to eq(25)
       person = people[:data].first
-      expect(person.id).to eq("https://orcid.org/0000-0003-0175-443X")
-      expect(person.name).to eq("Hajira Dambha-Miller")
-      expect(person.given_name).to eq("Hajira")
-      expect(person.family_name).to eq("Dambha-Miller")
+      expect(person.id).to eq("https://orcid.org/0000-0002-6219-6358")
+      expect(person.name).to eq("Elizabeth A. (Miller) McGuier")
+      expect(person.given_name).to eq("Elizabeth A.")
+      expect(person.family_name).to eq("(Miller) McGuier")
     end
 
     it "not found" do

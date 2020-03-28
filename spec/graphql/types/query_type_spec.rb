@@ -40,32 +40,97 @@ describe QueryType do
     end
   end
 
-  # describe "query person", elasticsearch: true, vcr: true do
-  #   before do
-  #     Doi.import
-  #     sleep 2
-  #   end
+  describe "query person", elasticsearch: true, vcr: true do
+    let!(:datasets) { create_list(:doi, 3, aasm_state: "findable", creators:
+      [{
+        "familyName" => "Fenner",
+        "givenName" => "Martin",
+        "name" => "Fenner, Martin",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameType" => "Personal",
+      }])
+    }
 
-  #   let(:query) do
-  #     %(query {
-  #       person(id: 'https://orcid.org/0000-0003-1419-2405') {
-  #         id
-  #         name
-  #         givenName
-  #         familyName
-  #       }
-  #     })
-  #   end
+    before do
+      Doi.import
+      sleep 2
+    end
 
-  #   it "returns person information" do
-  #     response = LupoSchema.execute(query).as_json
+    let(:query) do
+      %(query {
+        person(id: "https://orcid.org/0000-0003-1419-2405") {
+          id
+          name
+          givenName
+          familyName
+          doiCount {
+            title
+            count
+          }
+          resourceTypeCount {
+            title
+            count
+          }
+          citationCount
+          viewCount
+          downloadCount
+          works {
+            totalCount
+            nodes {
+              id
+              titles {
+                title
+              }
+            }
+          }
+        }
+      })
+    end
 
-  #     expect(response.dig("data", "person", "id")).to eq(3)
-  #     expect(response.dig("data", "person", "name")).to eq(3)
-  #     expect(response.dig("data", "person", "givenName")).to eq(3)
-  #     expect(response.dig("data", "person", "familyName")).to eq(3)
-  #   end
-  # end
+    it "returns person information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "person", "id")).to eq("https://orcid.org/0000-0003-1419-2405")
+      expect(response.dig("data", "person", "name")).to eq("Martin Fenner")
+      expect(response.dig("data", "person", "givenName")).to eq("Martin")
+      expect(response.dig("data", "person", "doiCount")).to eq([{"count"=>3, "title"=>"2011"}])
+      expect(response.dig("data", "person", "resourceTypeCount")).to eq([{"count"=>3, "title"=>"Dataset"}])
+      expect(response.dig("data", "person", "works", "totalCount")).to eq(3)
+
+      work = response.dig("data", "person", "works", "nodes", 0)
+      expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
+    end
+  end
+
+  describe "query people", elasticsearch: true, vcr: true do
+    let(:query) do
+      %(query {
+        people(query: "Fenner") {
+          totalCount
+          nodes {
+            id
+            name
+            givenName
+            familyName
+            doiCount {
+              title
+              count
+            }
+          }
+        }
+      })
+    end
+
+    it "returns people information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "people", "totalCount")).to eq(8)
+
+      person = response.dig("data", "people", "nodes", 0)
+      expect(person.fetch("id")).to eq("https://orcid.org/0000-0001-5508-9039")
+      expect(person.fetch("name")).to eq("Andriel Evandro Fenner")
+    end
+  end
 
   describe "query with citations", elasticsearch: true do
     let(:client) { create(:client) }

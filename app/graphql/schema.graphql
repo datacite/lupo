@@ -611,42 +611,6 @@ type Country {
 }
 
 """
-The connection type for Work.
-"""
-type CreativeWorkConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [CreativeWorkEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [Work]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
-An edge in a connection.
-"""
-type CreativeWorkEdge {
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-
-  """
-  The item at the end of the edge.
-  """
-  node: Work
-}
-
-"""
 A creator.
 """
 type Creator {
@@ -3190,17 +3154,44 @@ A person.
 """
 type Person {
   """
-  The number of citations
+  The number of citations.
   """
   citationCount: Int
 
   """
   Authored datasets
   """
-  datasets(first: Int = 25): [Dataset!]
+  datasets(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+  ): DatasetConnectionWithMeta
 
   """
-  The number of downloads according to the Counter Code of Practice
+  The number of works per year.
+  """
+  doiCount: [Facet!]
+
+  """
+  The number of downloads according to the Counter Code of Practice.
   """
   downloadCount: Int
 
@@ -3227,12 +3218,61 @@ type Person {
   """
   Authored publications
   """
-  publications(first: Int = 25): [Publication!]
+  publications(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+  ): PublicationConnectionWithMeta
+
+  """
+  The work types.
+  """
+  resourceTypeCount: [Facet!]
 
   """
   Authored software
   """
-  softwares(first: Int = 25): [Software!]
+  softwares(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+  ): SoftwareConnectionWithMeta
 
   """
   The type of the item.
@@ -3240,14 +3280,37 @@ type Person {
   type: String!
 
   """
-  The number of views according to the Counter Code of Practice
+  The number of views according to the Counter Code of Practice.
   """
   viewCount: Int
 
   """
   Authored works
   """
-  works(first: Int = 25): [Work!]
+  works(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+  ): WorkConnectionWithMeta!
 }
 
 """
@@ -4205,8 +4268,8 @@ type Query {
     providerId: String
     query: String
   ): ServiceConnectionWithMeta!
-  softwareSourceCode(id: ID!): Software!
-  softwareSourceCodes(
+  software(id: ID!): Software!
+  softwares(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4272,7 +4335,7 @@ type Query {
     last: Int
     providerId: String
     query: String
-  ): CreativeWorkConnectionWithMeta!
+  ): WorkConnectionWithMeta!
 }
 
 """
@@ -5385,6 +5448,42 @@ type Work implements DoiItem {
   Views by month.
   """
   viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+The connection type for Work.
+"""
+type WorkConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [WorkEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Work]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type WorkEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Work
 }
 
 type Workflow implements DoiItem {

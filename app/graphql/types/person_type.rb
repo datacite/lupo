@@ -8,23 +8,50 @@ class PersonType < BaseObject
   field :name, String, null: true, description: "The name of the person."
   field :given_name, String, null: true, description: "Given name. In the U.S., the first name of a Person."
   field :family_name, String, null: true, description: "Family name. In the U.S., the last name of an Person."
-  field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice"
-  field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice"
-  field :citation_count, Integer, null: true, description: "The number of citations"
+  field :doi_count, [FacetType], null: true, description: "The number of works per year."
+  field :resource_type_count, [FacetType], null: true, description: "The work types."
+  field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
+  field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
+  field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :datasets, [DatasetType], null: true, description: "Authored datasets" do
+  field :datasets, DatasetConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Authored datasets" do
+    argument :query, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, [PublicationType], null: true, description: "Authored publications" do
+  field :publications, PublicationConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Authored publications"  do
+    argument :query, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, [SoftwareType], null: true, description: "Authored software" do
+  field :softwares, SoftwareConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Authored software"  do
+    argument :query, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :works, [WorkType], null: true, description: "Authored works" do
+  field :works, WorkConnectionWithMetaType, null: false, connection: true, max_page_size: 1000, description: "Authored works" do
+    argument :query, String, required: false
+    argument :ids, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
@@ -32,24 +59,33 @@ class PersonType < BaseObject
     "Person"
   end
 
-  def datasets(**args)
-    Doi.query(nil, user_id: orcid_from_url(object[:id]), relation_type_id: "dataset", state: "findable", page: { size: args[:first], number: 1 }).results.to_a
+  def publications(query: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
+    Doi.query(query, client_id: client_id, provider_id: provider_id, has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, resource_type_id: "Text", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
-  def publications(**args)
-    Doi.query(nil, user_id: orcid_from_url(object[:id]), relation_type_id: "text", state: "findable", page: { size: args[:first], number: 1 }).results.to_a
+  def datasets(query: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
+    Doi.query(query, client_id: client_id, provider_id: provider_id, resource_type_id: "Dataset", state: "findable", has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, page: { number: 1, size: first }).results.to_a
   end
 
-  def softwares(**args)
-    Doi.query(nil, user_id: orcid_from_url(object[:id]), relation_type_id: "software", state: "findable", page: { size: args[:first], number: 1 }).results.to_a
+  def softwares(query: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
+    Doi.query(query, client_id: client_id, provider_id: provider_id, has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, resource_type_id: "Software", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
-  def works(**args)
-    Doi.query(nil, user_id: orcid_from_url(object[:id]), state: "findable", page: { size: args[:first], number: 1 }).results.to_a
+  def works(query: nil, ids: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
+    if ids.present?
+      dois = ids.split(",").map { |i| doi_from_url(i) }
+      ElasticsearchLoader.for(Doi).load_many(dois)
+    else
+      Doi.query(query, client_id: client_id, provider_id: provider_id, resource_type_id: "Dataset", state: "findable", has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, page: { number: 1, size: first }).results.to_a
+    end
   end
 
   def doi_count
     response.results.total.positive? ? facet_by_year(response.aggregations.years.buckets) : []
+  end
+
+  def resource_type_count
+    response.results.total.positive? ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : []
   end
 
   def view_count
@@ -72,6 +108,14 @@ class PersonType < BaseObject
     arr.map do |hsh|
       { "id" => hsh["key_as_string"][0..3],
         "title" => hsh["key_as_string"][0..3],
+        "count" => hsh["doc_count"] }
+    end
+  end
+
+  def facet_by_resource_type(arr)
+    arr.map do |hsh|
+      { "id" => hsh["key"].underscore.dasherize,
+        "title" => hsh["key"],
         "count" => hsh["doc_count"] }
     end
   end

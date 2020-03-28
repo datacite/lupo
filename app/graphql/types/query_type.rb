@@ -143,7 +143,7 @@ class QueryType < BaseObject
     Person.query(query, limit: first).fetch(:data, [])
   end
 
-  field :works, CreativeWorkConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
+  field :works, WorkConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :client_id, String, required: false
@@ -364,8 +364,8 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def services(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Service", state: "findable", page: { number: 1, size: first }).results.to_a
+  def services(query: nil, first: nil, client_id: nil, provider_id: nil)
+    Doi.query(query, resource_type_id: "Service", client_id: client_id, provider_id: provider_id, state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :service, ServiceType, null: false do
@@ -376,7 +376,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :software_source_codes, SoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
+  field :softwares, SoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
@@ -386,15 +386,15 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def software_source_codes(query: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
+  def softwares(query: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
     Doi.query(query, client_id: client_id, provider_id: provider_id, has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, resource_type_id: "Software", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
-  field :software_source_code, SoftwareType, null: false do
+  field :software, SoftwareType, null: false do
     argument :id, ID, required: true
   end
 
-  def software_source_code(id:)
+  def software(id:)
     set_doi(id)
   end
 
