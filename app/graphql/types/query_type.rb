@@ -17,7 +17,7 @@ class QueryType < BaseObject
   end
 
   def provider(id:)
-    ElasticsearchLoader.for(Provider).load(id)
+    Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: id).first
   end
 
   field :clients, ClientConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
@@ -36,7 +36,7 @@ class QueryType < BaseObject
   end
 
   def client(id:)
-    ElasticsearchLoader.for(Client).load(id)
+    Client.where(symbol: id).where(deleted_at: nil).first
   end
 
   field :prefixes, [PrefixType], null: false do
@@ -146,17 +146,18 @@ class QueryType < BaseObject
   field :works, WorkConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :ids, String, required: false
+    argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def works(query: nil, ids: nil, client_id: nil, provider_id: nil, first: nil)
+  def works(query: nil, ids: nil, user_id: nil, client_id: nil, provider_id: nil, first: nil)
     if ids.present?
       dois = ids.split(",").map { |i| doi_from_url(i) }
       ElasticsearchLoader.for(Doi).load_many(dois)
     else
-      Doi.query(query, client_id: client_id, provider_id: provider_id, state: "findable", page: { number: 1, size: first }).results.to_a
+      Doi.query(query, user_id: user_id, client_id: client_id, provider_id: provider_id, state: "findable", page: { number: 1, size: first }).results.to_a
     end
   end
 
@@ -170,6 +171,7 @@ class QueryType < BaseObject
 
   field :datasets, DatasetConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
+    argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
     argument :has_citations, Int, required: false
@@ -178,8 +180,8 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def datasets(query: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
-    Doi.query(query, client_id: client_id, provider_id: provider_id, resource_type_id: "Dataset", state: "findable", has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, page: { number: 1, size: first }).results.to_a
+  def datasets(query: nil, user_id: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
+    Doi.query(query, user_id: user_id.present? ? orcid_from_url(user_id) : nil, client_id: client_id, provider_id: provider_id, resource_type_id: "Dataset", state: "findable", has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, page: { number: 1, size: first }).results.to_a
   end
 
   field :dataset, DatasetType, null: false do
@@ -192,6 +194,7 @@ class QueryType < BaseObject
 
   field :publications, PublicationConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
+    argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
     argument :has_citations, Int, required: false
@@ -200,8 +203,8 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def publications(query: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
-    Doi.query(query, client_id: client_id, provider_id: provider_id, has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, resource_type_id: "Text", state: "findable", page: { number: 1, size: first }).results.to_a
+  def publications(query: nil, user_id: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
+    Doi.query(query, user_id: user_id.present? ? orcid_from_url(user_id) : nil, client_id: client_id, provider_id: provider_id, has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, resource_type_id: "Text", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :publication, PublicationType, null: false do
@@ -339,14 +342,17 @@ class QueryType < BaseObject
 
   field :physical_objects, [PhysicalObjectType], null: false do
     argument :query, String, required: false
+    argument :user_id, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def physical_objects(query: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
-    Doi.query(query, resource_type_id: "PhysicalObject", state: "findable", has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, page: { number: 1, size: first }).results.to_a
+  def physical_objects(query: nil, user_id: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
+    Doi.query(query, user_id: user_id.present? ? orcid_from_url(user_id) : nil, client_id: client_id, provider_id: provider_id, resource_type_id: "PhysicalObject", state: "findable", has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, page: { number: 1, size: first }).results.to_a
   end
 
   field :physical_object, PhysicalObjectType, null: false do
@@ -378,6 +384,7 @@ class QueryType < BaseObject
 
   field :softwares, SoftwareConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
+    argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
     argument :has_citations, Int, required: false
@@ -386,8 +393,8 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def softwares(query: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
-    Doi.query(query, client_id: client_id, provider_id: provider_id, has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, resource_type_id: "Software", state: "findable", page: { number: 1, size: first }).results.to_a
+  def softwares(query: nil, user_id: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
+    Doi.query(query, user_id: user_id.present? ? orcid_from_url(user_id) : nil, client_id: client_id, provider_id: provider_id, has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, resource_type_id: "Software", state: "findable", page: { number: 1, size: first }).results.to_a
   end
 
   field :software, SoftwareType, null: false do

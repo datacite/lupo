@@ -9,6 +9,9 @@ describe ClientType do
     it { is_expected.to have_field(:name).of_type("String!") }
     it { is_expected.to have_field(:alternateName).of_type("String") }
     it { is_expected.to have_field(:description).of_type("String") }
-    it { is_expected.to have_field(:datasets).of_type("ClientDatasetConnectionWithMeta!") }
+    it { is_expected.to have_field(:datasets).of_type("DatasetConnectionWithMeta") }
+    it { is_expected.to have_field(:publications).of_type("PublicationConnectionWithMeta") }
+    it { is_expected.to have_field(:softwares).of_type("SoftwareConnectionWithMeta") }
+    it { is_expected.to have_field(:works).of_type("WorkConnectionWithMeta") }
   end
 end

@@ -17,18 +17,18 @@ class PersonConnectionWithMetaType < BaseConnection
   end
 
   def publication_connection_count
-    Event.query(nil, citation_type: "Person-ScholarlyArticle").results.total
+    Event.query(nil, citation_type: "Person-ScholarlyArticle", page: { number: 1, size: 0 }).results.total
   end
 
   def dataset_connection_count
-    Event.query(nil, citation_type: "Dataset-Person").results.total
+    Event.query(nil, citation_type: "Dataset-Person", page: { number: 1, size: 0 }).results.total
   end
 
   def software_connection_count
-    Event.query(nil, citation_type: "Person-SoftwareSourceCode").results.total
+    Event.query(nil, citation_type: "Person-SoftwareSourceCode", page: { number: 1, size: 0 }).results.total
   end
 
   def organization_connection_count
-    Event.query(nil, citation_type: "Organization-Person").results.total
+    Event.query(nil, citation_type: "Organization-Person", page: { number: 1, size: 0 }).results.total
   end
 end

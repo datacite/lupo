@@ -12,24 +12,56 @@ class ClientType < BaseObject
   field :url, String, null: true, description: "The homepage of the client"
   field :system_email, String, null: true, description: "Client system email"
   field :software, String, null: true, description: "The name of the software that is used to run the repository"
-  field :prefixes, PrefixConnectionWithMetaType, null: false, description: "Prefixes managed by the client", connection: true do
+  field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
+  field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
+  field :citation_count, Integer, null: true, description: "The number of citations."
+  
+  field :prefixes, PrefixConnectionWithMetaType, null: true, description: "Prefixes managed by the client", connection: true do
     argument :query, String, required: false
     argument :year, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :datasets, ClientDatasetConnectionWithMetaType, null: false, connection: true, description: "Datasets managed by the client" do
+  field :datasets, DatasetConnectionWithMetaType, null: true, connection: true, description: "Datasets managed by the client" do
     argument :query, String, required: false
+    argument :user_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, ClientPublicationConnectionWithMetaType, null: false, connection: true, description: "Publications managed by the client" do
+  field :publications, PublicationConnectionWithMetaType, null: true, connection: true, description: "Publications managed by the client" do
     argument :query, String, required: false
+    argument :user_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :software_source_codes, ClientSoftwareConnectionWithMetaType, null: false, connection: true, description: "Software managed by the client" do
+  field :softwares, SoftwareConnectionWithMetaType, null: true, connection: true, description: "Software managed by the client" do
     argument :query, String, required: false
+    argument :user_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+
+  field :works, WorkConnectionWithMetaType, null: true, connection: true, description: "Works managed by the client" do
+    argument :query, String, required: false
+    argument :user_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+
+  field :prefixes, ClientPrefixConnectionWithMetaType, null: true, description: "Prefixes managed by the client", connection: true do
+    argument :query, String, required: false
+    argument :state, String, required: false
+    argument :year, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
@@ -37,22 +69,39 @@ class ClientType < BaseObject
     "Client"
   end
 
-  def prefixes(**args)
-    collection = ClientPrefix.joins(:client, :prefix).where('datacentre.symbol = ?', object.uid)
-    collection = collection.query(args[:query]) if args[:query].present?
-    collection = collection.where('YEAR(datacentre_prefixes.created_at) = ?', args[:year]) if args[:year].present?
-    collection
-  end
-
   def datasets(**args)
-    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Dataset", page: { number: 1, size: args[:first] }).results.to_a
+    Doi.query(args[:query], user_id: args[:user_id].present? ? orcid_from_url(args[:user_id]) : nil, client_id: object.uid, resource_type_id: "Dataset", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   def publications(**args)
-    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Text", page: { number: 1, size: args[:first] }).results.to_a
+    Doi.query(args[:query], user_id: args[:user_id].present? ? orcid_from_url(args[:user_id]) : nil, client_id: object.uid, resource_type_id: "Text", page: { number: 1, size: args[:first] }).results.to_a
   end
 
-  def software_source_codes(**args)
-    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Software", page: { number: 1, size: args[:first] }).results.to_a
+  def softwares(**args)
+    Doi.query(args[:query], user_id: args[:user_id].present? ? orcid_from_url(args[:user_id]) : nil, client_id: object.uid, resource_type_id: "Software", page: { number: 1, size: args[:first] }).results.to_a
+  end
+
+  def works(**args)
+    Doi.query(args[:query], user_id: args[:user_id].present? ? orcid_from_url(args[:user_id]) : nil, client_id: object.uid, page: { number: 1, size: args[:first] }).results.to_a
+  end
+
+  def prefixes(**args)
+    ClientPrefix.query(args[:query], client_id: object.uid, state: args[:state], year: args[:year], page: { number: 1, size: args[:first] }).results.to_a
+  end
+
+  def view_count
+    response.results.total.positive? ? aggregate_count(response.response.aggregations.views.buckets) : []
+  end
+
+  def download_count
+    response.results.total.positive? ? aggregate_count(response.response.aggregations.downloads.buckets) : []
+  end
+
+  def citation_count
+    response.results.total.positive? ? aggregate_count(response.response.aggregations.citations.buckets) : []
+  end
+
+  def response
+    @response ||= Doi.query(nil, client_id: object.uid, state: "findable", page: { number: 1, size: 0 })
   end
 end

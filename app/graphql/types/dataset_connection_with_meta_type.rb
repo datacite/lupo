@@ -5,6 +5,7 @@ class DatasetConnectionWithMetaType < BaseConnection
   field_class GraphQL::Cache::Field
 
   field :total_count, Integer, null: false, cache: true
+  field :years, [FacetType], null: true, cache: true
   field :dataset_connection_count, Integer, null: false, cache: true
   field :publication_connection_count, Integer, null: false, cache: true
   field :software_connection_count, Integer, null: false, cache: true
@@ -13,32 +14,43 @@ class DatasetConnectionWithMetaType < BaseConnection
   field :organization_connection_count, Integer, null: false, cache: true
 
   def total_count
-    args = object.arguments
+    args = prepare_args(object.arguments)
 
-    Doi.query(args[:query], client_id: args[:client_id], provider_id: args[:provider_id], resource_type_id: "Dataset", state: "findable", page: { number: 1, size: 0 }).results.total
+    response(**args).results.total  
+  end
+
+  def years
+    args = prepare_args(object.arguments)
+
+    res = response(**args)
+    res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : nil
+  end
+
+  def response(**args)
+    @response ||= Doi.query(args[:query], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], year: args[:year], resource_type_id: "Dataset", has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], page: { number: 1, size: 0 })
   end
 
   def dataset_connection_count
-    Event.query(nil, citation_type: "Dataset-Dataset").results.total
+    @dataset_connection_count ||= Event.query(nil, citation_type: "Dataset-Dataset", page: { number: 1, size: 0 }).results.total
   end
 
   def publication_connection_count
-    Event.query(nil, citation_type: "Dataset-ScholarlyArticle").results.total
+    @publication_connection_count ||= Event.query(nil, citation_type: "Dataset-ScholarlyArticle", page: { number: 1, size: 0 }).results.total
   end
 
   def software_connection_count
-    Event.query(nil, citation_type: "Dataset-SoftwareSourceCode").results.total
+    @software_connection_count ||= Event.query(nil, citation_type: "Dataset-SoftwareSourceCode", page: { number: 1, size: 0 }).results.total
   end
 
   def person_connection_count
-    Event.query(nil, citation_type: "Dataset-Person").results.total
+    @person_connection_count ||= Event.query(nil, citation_type: "Dataset-Person", page: { number: 1, size: 0 }).results.total
   end
 
   def funder_connection_count
-    Event.query(nil, citation_type: "Dataset-Funder").results.total
+    @funder_connection_count ||= Event.query(nil, citation_type: "Dataset-Funder", page: { number: 1, size: 0 }).results.total
   end
 
   def organization_connection_count
-    Event.query(nil, citation_type: "Dataset-Organization").results.total
+    Event.query(nil, citation_type: "Dataset-Organization", page: { number: 1, size: 0 }).results.total
   end
 end

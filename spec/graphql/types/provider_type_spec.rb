@@ -9,6 +9,11 @@ describe ProviderType do
     it { is_expected.to have_field(:name).of_type("String!") }
     it { is_expected.to have_field(:displayName).of_type("String") }
     it { is_expected.to have_field(:description).of_type("String") }
-    it { is_expected.to have_field(:clients).of_type("ProviderClientConnectionWithMeta!") }
+    it { is_expected.to have_field(:clients).of_type("ClientConnectionWithMeta") }
+    it { is_expected.to have_field(:prefixes).of_type("ProviderPrefixConnectionWithMeta") }
+    it { is_expected.to have_field(:datasets).of_type("DatasetConnectionWithMeta") }
+    it { is_expected.to have_field(:publications).of_type("PublicationConnectionWithMeta") }
+    it { is_expected.to have_field(:softwares).of_type("SoftwareConnectionWithMeta") }
+    it { is_expected.to have_field(:works).of_type("WorkConnectionWithMeta") }
   end
 end

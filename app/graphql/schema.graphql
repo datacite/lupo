@@ -205,6 +205,11 @@ type Client {
   alternateName: String
 
   """
+  The number of citations.
+  """
+  citationCount: Int
+
+  """
   Datasets managed by the client
   """
   datasets(
@@ -218,18 +223,27 @@ type Client {
     """
     before: String
     first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
     query: String
-  ): ClientDatasetConnectionWithMeta!
+    userId: String
+  ): DatasetConnectionWithMeta
 
   """
   Description of the client
   """
   description: String
+
+  """
+  The number of downloads according to the Counter Code of Practice.
+  """
+  downloadCount: Int
 
   """
   Unique identifier for each client
@@ -261,8 +275,9 @@ type Client {
     """
     last: Int
     query: String
+    state: String
     year: String
-  ): PrefixConnectionWithMeta!
+  ): ClientPrefixConnectionWithMeta
 
   """
   Publications managed by the client
@@ -278,13 +293,17 @@ type Client {
     """
     before: String
     first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
     query: String
-  ): ClientPublicationConnectionWithMeta!
+    userId: String
+  ): PublicationConnectionWithMeta
 
   """
   The re3data identifier for the client
@@ -299,7 +318,7 @@ type Client {
   """
   Software managed by the client
   """
-  softwareSourceCodes(
+  softwares(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -310,13 +329,17 @@ type Client {
     """
     before: String
     first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
     query: String
-  ): ClientSoftwareConnectionWithMeta!
+    userId: String
+  ): SoftwareConnectionWithMeta
 
   """
   Client system email
@@ -332,6 +355,37 @@ type Client {
   The homepage of the client
   """
   url: String
+
+  """
+  The number of views according to the Counter Code of Practice.
+  """
+  viewCount: Int
+
+  """
+  Works managed by the client
+  """
+  works(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 }
 
 """
@@ -352,28 +406,9 @@ type ClientConnectionWithMeta {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
-The connection type for Dataset.
-"""
-type ClientDatasetConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [DatasetEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [Dataset]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
+  software: [Facet!]
+  totalCount: Int
+  years: [Facet!]
 }
 
 """
@@ -392,45 +427,60 @@ type ClientEdge {
 }
 
 """
-The connection type for Dataset.
+Information about client prefixes
 """
-type ClientPublicationConnectionWithMeta {
+type ClientPrefix {
   """
-  A list of edges.
+  Unique identifier for each client prefix
   """
-  edges: [DatasetEdge]
+  id: ID!
 
   """
-  A list of nodes.
+  Client prefix name
   """
-  nodes: [Dataset]
+  name: String!
 
   """
-  Information to aid in pagination.
+  The type of the item.
   """
-  pageInfo: PageInfo!
-  totalCount: Int!
+  type: String!
 }
 
 """
-The connection type for Dataset.
+The connection type for ClientPrefix.
 """
-type ClientSoftwareConnectionWithMeta {
+type ClientPrefixConnectionWithMeta {
   """
   A list of edges.
   """
-  edges: [DatasetEdge]
+  edges: [ClientPrefixEdge]
 
   """
   A list of nodes.
   """
-  nodes: [Dataset]
+  nodes: [ClientPrefix]
 
   """
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
   totalCount: Int!
+  years: [Facet!]!
+}
+
+"""
+An edge in a connection.
+"""
+type ClientPrefixEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: ClientPrefix
 }
 
 type Collection implements DoiItem {
@@ -1313,6 +1363,7 @@ type DatasetConnectionWithMeta {
   publicationConnectionCount: Int!
   softwareConnectionCount: Int!
   totalCount: Int!
+  years: [Facet!]
 }
 
 """
@@ -3186,11 +3237,6 @@ type Person {
   ): DatasetConnectionWithMeta
 
   """
-  The number of works per year.
-  """
-  doiCount: [Facet!]
-
-  """
   The number of downloads according to the Counter Code of Practice.
   """
   downloadCount: Int
@@ -3241,11 +3287,6 @@ type Person {
     providerId: String
     query: String
   ): PublicationConnectionWithMeta
-
-  """
-  The work types.
-  """
-  resourceTypeCount: [Facet!]
 
   """
   Authored software
@@ -3302,7 +3343,6 @@ type Person {
     hasCitations: Int
     hasDownloads: Int
     hasViews: Int
-    ids: String
 
     """
     Returns the last _n_ elements from the list.
@@ -3310,7 +3350,7 @@ type Person {
     last: Int
     providerId: String
     query: String
-  ): WorkConnectionWithMeta!
+  ): WorkConnectionWithMeta
 }
 
 """
@@ -3527,44 +3567,6 @@ type Prefix {
 }
 
 """
-The connection type for Prefix.
-"""
-type PrefixConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [PrefixEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [Prefix]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  states: [Facet!]!
-  totalCount: Int!
-  years: [Facet!]!
-}
-
-"""
-An edge in a connection.
-"""
-type PrefixEdge {
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-
-  """
-  The item at the end of the edge.
-  """
-  node: Prefix
-}
-
-"""
 Information about providers
 """
 type Provider {
@@ -3590,12 +3592,39 @@ type Provider {
     query: String
     software: String
     year: String
-  ): ProviderClientConnectionWithMeta!
+  ): ClientConnectionWithMeta
 
   """
   Country where the provider is located
   """
   country: Country
+
+  """
+  Authored datasets
+  """
+  datasets(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+    userId: String
+  ): DatasetConnectionWithMeta
 
   """
   Description of the provider
@@ -3664,7 +3693,34 @@ type Provider {
     query: String
     state: String
     year: String
-  ): PrefixConnectionWithMeta!
+  ): ProviderPrefixConnectionWithMeta
+
+  """
+  Authored publications
+  """
+  publications(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+    userId: String
+  ): PublicationConnectionWithMeta
 
   """
   Geographic region where the provider is located
@@ -3677,6 +3733,33 @@ type Provider {
   rorId: String!
 
   """
+  Authored software
+  """
+  softwares(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+    userId: String
+  ): SoftwareConnectionWithMeta
+
+  """
   The type of the item.
   """
   type: String!
@@ -3685,27 +3768,33 @@ type Provider {
   Website of the provider
   """
   website: String
-}
-
-"""
-The connection type for Client.
-"""
-type ProviderClientConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [ClientEdge]
 
   """
-  A list of nodes.
+  Authored works
   """
-  nodes: [Client]
+  works(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
 
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 }
 
 """
@@ -3742,6 +3831,64 @@ type ProviderEdge {
   The item at the end of the edge.
   """
   node: Provider
+}
+
+"""
+Information about provider prefixes
+"""
+type ProviderPrefix {
+  """
+  Unique identifier for each provider prefix
+  """
+  id: ID!
+
+  """
+  Provider prefix name
+  """
+  name: String!
+
+  """
+  The type of the item.
+  """
+  type: String!
+}
+
+"""
+The connection type for ProviderPrefix.
+"""
+type ProviderPrefixConnectionWithMeta {
+  """
+  A list of edges.
+  """
+  edges: [ProviderPrefixEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [ProviderPrefix]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  states: [Facet!]!
+  totalCount: Int!
+  years: [Facet!]!
+}
+
+"""
+An edge in a connection.
+"""
+type ProviderPrefixEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: ProviderPrefix
 }
 
 type Publication implements DoiItem {
@@ -3971,7 +4118,7 @@ type Publication implements DoiItem {
 }
 
 """
-The connection type for Dataset.
+The connection type for Publication.
 """
 type PublicationConnectionWithMeta {
   datasetConnectionCount: Int!
@@ -3979,13 +4126,13 @@ type PublicationConnectionWithMeta {
   """
   A list of edges.
   """
-  edges: [DatasetEdge]
+  edges: [PublicationEdge]
   funderConnectionCount: Int!
 
   """
   A list of nodes.
   """
-  nodes: [Dataset]
+  nodes: [Publication]
   organizationConnectionCount: Int!
 
   """
@@ -3996,6 +4143,7 @@ type PublicationConnectionWithMeta {
   publicationConnectionCount: Int!
   softwareConnectionCount: Int!
   totalCount: Int!
+  years: [Facet!]
 }
 
 """
@@ -4017,6 +4165,21 @@ type PublicationDatasetConnectionWithMeta {
   """
   pageInfo: PageInfo!
   totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type PublicationEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Publication
 }
 
 """
@@ -4132,6 +4295,7 @@ type Query {
     last: Int
     providerId: String
     query: String
+    userId: String
   ): DatasetConnectionWithMeta!
   event(id: ID!): Event!
   events(first: Int = 25, query: String): [Event!]!
@@ -4201,7 +4365,7 @@ type Query {
   ): PersonConnectionWithMeta!
   person(id: ID!): Person
   physicalObject(id: ID!): PhysicalObject!
-  physicalObjects(first: Int = 25, hasCitations: Int, hasDownloads: Int, hasViews: Int, query: String): [PhysicalObject!]!
+  physicalObjects(clientId: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasViews: Int, providerId: String, query: String, userId: String): [PhysicalObject!]!
   prefix(id: ID!): Prefix!
   prefixes(first: Int = 25, query: String): [Prefix!]!
   provider(id: ID!): Provider!
@@ -4246,6 +4410,7 @@ type Query {
     last: Int
     providerId: String
     query: String
+    userId: String
   ): PublicationConnectionWithMeta!
   service(id: ID!): Service!
   services(
@@ -4291,6 +4456,7 @@ type Query {
     last: Int
     providerId: String
     query: String
+    userId: String
   ): SoftwareConnectionWithMeta!
   sound(id: ID!): Sound!
   sounds(first: Int = 25, query: String): [Sound!]!
@@ -4335,6 +4501,7 @@ type Query {
     last: Int
     providerId: String
     query: String
+    userId: String
   ): WorkConnectionWithMeta!
 }
 
@@ -4611,24 +4778,39 @@ type Service implements DoiItem {
 }
 
 """
-The connection type for Dataset.
+The connection type for Service.
 """
 type ServiceConnectionWithMeta {
   """
   A list of edges.
   """
-  edges: [DatasetEdge]
+  edges: [ServiceEdge]
 
   """
   A list of nodes.
   """
-  nodes: [Dataset]
+  nodes: [Service]
 
   """
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
   totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type ServiceEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Service
 }
 
 type Software implements DoiItem {
@@ -4883,7 +5065,7 @@ type SoftwareApplication {
 }
 
 """
-The connection type for Dataset.
+The connection type for Software.
 """
 type SoftwareConnectionWithMeta {
   datasetConnectionCount: Int!
@@ -4891,13 +5073,13 @@ type SoftwareConnectionWithMeta {
   """
   A list of edges.
   """
-  edges: [DatasetEdge]
+  edges: [SoftwareEdge]
   funderConnectionCount: Int!
 
   """
   A list of nodes.
   """
-  nodes: [Dataset]
+  nodes: [Software]
   organizationConnectionCount: Int!
 
   """
@@ -4908,6 +5090,7 @@ type SoftwareConnectionWithMeta {
   publicationConnectionCount: Int!
   softwareConnectionCount: Int!
   totalCount: Int!
+  years: [Facet!]
 }
 
 """
@@ -4929,6 +5112,21 @@ type SoftwareDatasetConnectionWithMeta {
   """
   pageInfo: PageInfo!
   totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type SoftwareEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Software
 }
 
 """
@@ -5468,7 +5666,9 @@ type WorkConnectionWithMeta {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  resourceTypes: [Facet!]
   totalCount: Int!
+  years: [Facet!]
 }
 
 """

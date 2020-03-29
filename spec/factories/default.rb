@@ -248,6 +248,7 @@ FactoryBot.define do
   factory :provider do
     system_email { "josiah@example.org" }
     sequence(:symbol, 'A') { |n| "TEST#{n}" }
+    role_name { "ROLE_ALLOCATOR" }
     globus_uuid { "53d8d984-450d-4b1d-970b-67faff28db1c" }
     name { "My provider" }
     display_name { "My provider" }

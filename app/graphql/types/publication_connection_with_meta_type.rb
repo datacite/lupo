@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
 class PublicationConnectionWithMetaType < BaseConnection
-  edge_type(DatasetEdgeType)
+  edge_type(PublicationEdgeType)
   field_class GraphQL::Cache::Field
 
   field :total_count, Integer, null: false, cache: true
+  field :years, [FacetType], null: true, cache: true
   field :publication_connection_count, Integer, null: false, cache: true
   field :dataset_connection_count, Integer, null: false, cache: true
   field :software_connection_count, Integer, null: false, cache: true
@@ -13,32 +14,43 @@ class PublicationConnectionWithMetaType < BaseConnection
   field :organization_connection_count, Integer, null: false, cache: true
 
   def total_count
-    args = object.arguments
+    args = prepare_args(object.arguments)
+    
+    response(**args).results.total  
+  end
 
-    Doi.query(args[:query], client_id: args[:client_id], provider_id: args[:provider_id], resource_type_id: "Text", state: "findable", page: { number: 1, size: 0 }).results.total
+  def years
+    args = prepare_args(object.arguments)
+
+    res = response(**args)
+    res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : nil
+  end
+
+  def response(**args)
+    @response ||= Doi.query(args[:query], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], year: args[:year], resource_type_id: "Text", has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], page: { number: 1, size: 0 })
   end
 
   def publication_connection_count
-    Event.query(nil, citation_type: "ScholarlyArticle-ScholarlyArticle").results.total
+    @publication_connection_count ||= Event.query(nil, citation_type: "ScholarlyArticle-ScholarlyArticle", page: { number: 1, size: 0 }).results.total
   end
 
   def dataset_connection_count
-    Event.query(nil, citation_type: "Dataset-ScholarlyArticle").results.total
+    @dataset_connection_count ||= Event.query(nil, citation_type: "Dataset-ScholarlyArticle", page: { number: 1, size: 0 }).results.total
   end
 
   def software_connection_count
-    Event.query(nil, citation_type: "ScholarlyArticle-SoftwareSourceCode").results.total
+    @software_connection_count ||= Event.query(nil, citation_type: "ScholarlyArticle-SoftwareSourceCode", page: { number: 1, size: 0 }).results.total
   end
 
   def person_connection_count
-    Event.query(nil, citation_type: "Person-ScholarlyArticle").results.total
+    @person_connection_count ||= Event.query(nil, citation_type: "Person-ScholarlyArticle", page: { number: 1, size: 0 }).results.total
   end
 
   def funder_connection_count
-    Event.query(nil, citation_type: "Funder-ScholarlyArticle").results.total
+    @funder_connection_count ||= Event.query(nil, citation_type: "Funder-ScholarlyArticle", page: { number: 1, size: 0 }).results.total
   end
 
   def organization_connection_count
-    Event.query(nil, citation_type: "Organization-ScholarlyArticle").results.total
+    @organization_connection_count ||= Event.query(nil, citation_type: "Organization-ScholarlyArticle", page: { number: 1, size: 0 }).results.total
   end
 end

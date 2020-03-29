@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ServiceConnectionWithMetaType < BaseConnection
-  edge_type(DatasetEdgeType)
+  edge_type(ServiceEdgeType)
   field_class GraphQL::Cache::Field
 
   field :total_count, Integer, null: false, cache: true
