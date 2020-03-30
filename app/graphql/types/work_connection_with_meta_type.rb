@@ -10,7 +10,6 @@ class WorkConnectionWithMetaType < BaseConnection
 
   def total_count
     args = prepare_args(object.arguments)
-    Rails.logger.warn object.parent.inspect
 
     response(**args).results.total  
   end
