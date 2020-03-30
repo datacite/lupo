@@ -17,6 +17,10 @@ class ProviderType < BaseObject
   field :organization_type, String, null: true, description: "Type of organization"
   field :focus_area, String, null: true, description: "Field of science covered by provider"
   field :joined, String, null: true, description: "Date provider joined DataCite"
+  field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
+  field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
+  field :citation_count, Integer, null: true, description: "The number of citations."
+  
   field :datasets, DatasetConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Authored datasets" do
     argument :query, String, required: false
     argument :client_id, String, required: false
@@ -105,5 +109,21 @@ class ProviderType < BaseObject
 
   def clients(**args)
     Client.query(args[:query], provider_id: object.uid, year: args[:year], software: args[:software], page: { number: 1, size: args[:first] }).results.to_a
+  end
+
+  def view_count
+    response.results.total.positive? ? aggregate_count(response.response.aggregations.views.buckets) : []
+  end
+
+  def download_count
+    response.results.total.positive? ? aggregate_count(response.response.aggregations.downloads.buckets) : []
+  end
+
+  def citation_count
+    response.results.total.positive? ? aggregate_count(response.response.aggregations.citations.buckets) : []
+  end
+
+  def response
+    @response ||= Doi.query(nil, provider_id: object.uid, state: "findable", page: { number: 1, size: 0 })
   end
 end

@@ -73,7 +73,7 @@ describe "dois", type: :request do
         "funderName" => "The Wellcome Trust DBT India Alliance"
       }])
     }
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+    let!(:dois) { create_list(:doi, 3, aasm_state: "findable") }
 
     before do
       Doi.import
@@ -144,21 +144,21 @@ describe "dois", type: :request do
       expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian", "nameType"=>"Personal", "givenName"=>"Kristian", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
     end
 
-    # it 'returns dois with re3data id', vcr: true do
-    #   get "/dois?re3data-id=10.17616/R3XS37&include=client", nil, headers
+    it 'returns dois with re3data id', vcr: true do
+      get "/dois?re3data-id=10.17616/R3XS37&include=client", nil, headers
 
-    #   expect(last_response.status).to eq(200)
-    #   expect(json.dig('meta', 'total')).to eq(4)
-    #   expect(json.dig('included', 0, 'attributes', "re3data")).to eq("https://doi.org/10.17616/r3xs37")
-    # end
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('included', 0, 'attributes', "re3data")).to eq("https://doi.org/10.17616/r3xs37")
+    end
 
-    # it 'returns dois with re3data id as url', vcr: true do
-    #   get "/dois?re3data-id=https://doi.org/10.17616/R3XS37&include=client", nil, headers
+    it 'returns dois with re3data id as url', vcr: true do
+      get "/dois?re3data-id=https://doi.org/10.17616/R3XS37&include=client", nil, headers
 
-    #   expect(last_response.status).to eq(200)
-    #   expect(json.dig('meta', 'total')).to eq(1)
-    #   expect(json.dig('included', 0, 'attributes')).to eq([{"name"=>"Garza, Kristian", "nameType"=>"Personal", "givenName"=>"Kristian", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
-    # end
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('included', 0, 'attributes', "re3data")).to eq("https://doi.org/10.17616/r3xs37")
+    end
   end
 
   describe 'GET /dois/:id', elasticsearch: true do

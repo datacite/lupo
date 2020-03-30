@@ -62,10 +62,6 @@ class OrganizationType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def type
-    "Organization"
-  end
-
   def alternate_name
     object.aliases + object.acronyms
   end

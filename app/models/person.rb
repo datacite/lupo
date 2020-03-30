@@ -47,6 +47,7 @@ class Person
   def self.parse_message(id: nil, message: nil)
     Hashie::Mash.new({
       id: id,
+      type: "Person",
       orcid: message["orcid"],
       name: message["name"],
       given_name: message["givenName"],

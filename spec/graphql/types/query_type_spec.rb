@@ -344,7 +344,7 @@ describe QueryType do
 
     it "returns datasets" do
       response = LupoSchema.execute(query).as_json
-
+      puts response
       expect(response.dig("data", "datasets", "totalCount")).to eq(3)
       expect(response.dig("data", "datasets", "years")).to eq([{"count"=>3, "id"=>"2011"}])
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
@@ -672,11 +672,11 @@ describe QueryType do
       expect(response.dig("data", "funder", "id")).to eq("https://doi.org/10.13039/501100009053")
       expect(response.dig("data", "funder", "name")).to eq("The Wellcome Trust DBT India Alliance")
       expect(response.dig("data", "funder", "citationCount")).to eq(0)
-      # TODO should be 1
-      expect(response.dig("data", "funder", "works", "totalCount")).to eq(3)
-      # expect(response.dig("data", "funder", "works", "years")).to eq([{"count"=>1, "title"=>"2011"}])
-      # expect(response.dig("data", "funder", "works", "resourceTypes")).to eq([{"count"=>1, "title"=>"Dataset"}])
-      # expect(response.dig("data", "funder", "works", "nodes").length).to eq(1)
+
+      expect(response.dig("data", "funder", "works", "totalCount")).to eq(1)
+      expect(response.dig("data", "funder", "works", "years")).to eq([{"count"=>1, "title"=>"2011"}])
+      expect(response.dig("data", "funder", "works", "resourceTypes")).to eq([{"count"=>1, "title"=>"Dataset"}])
+      expect(response.dig("data", "funder", "works", "nodes").length).to eq(1)
 
       work = response.dig("data", "funder", "works", "nodes", 0)
       expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
@@ -719,7 +719,7 @@ describe QueryType do
 
     it "returns funder information" do
       response = LupoSchema.execute(query).as_json
-
+      puts response
       expect(response.dig("data", "funders", "totalCount")).to eq(4)
       expect(response.dig("data", "funders", "nodes").length).to eq(4)
       funder = response.dig("data", "funders", "nodes", 0)
@@ -799,11 +799,10 @@ describe QueryType do
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
-      # TODO should be 1
-      expect(response.dig("data", "organization", "works", "totalCount")).to eq(3)
-      # expect(response.dig("data", "organization", "works", "years")).to eq([{"count"=>1, "title"=>"2011"}])
-      # expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{"count"=>1, "title"=>"Dataset"}])
-      # expect(response.dig("data", "organization", "works", "nodes").length).to eq(1)
+      expect(response.dig("data", "organization", "works", "totalCount")).to eq(1)
+      expect(response.dig("data", "organization", "works", "years")).to eq([{"count"=>1, "title"=>"2011"}])
+      expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{"count"=>1, "title"=>"Dataset"}])
+      expect(response.dig("data", "organization", "works", "nodes").length).to eq(1)
 
       work = response.dig("data", "organization", "works", "nodes", 0)
       expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
@@ -870,9 +869,9 @@ describe QueryType do
       expect(organization.fetch("alternateName")).to eq(["Cambridge University"])
       expect(organization.fetch("identifiers").length).to eq(39)
       expect(organization.fetch("identifiers").last).to eq("identifier"=>"http://en.wikipedia.org/wiki/University_of_Cambridge", "identifierType"=>"wikipedia")
-      # TODO should be 1
-      expect(organization.dig("works", "totalCount")).to eq(4)
-      expect(organization.dig("works", "years")).to eq([{"count"=>4, "title"=>"2011"}])
+
+      expect(organization.dig("works", "totalCount")).to eq(1)
+      expect(organization.dig("works", "years")).to eq([{"count"=>1, "title"=>"2011"}])
     end
   end
 
@@ -939,7 +938,7 @@ describe QueryType do
       expect(response.dig("data", "dataCatalog", "softwareApplication")).to eq([{"name"=>"other", "url"=>nil, "softwareVersion"=>nil}])
       expect(response.dig("data", "dataCatalog", "citationCount")).to eq(0)
       # TODO should be 1
-      expect(response.dig("data", "dataCatalog", "datasets", "totalCount")).to eq(3)
+      expect(response.dig("data", "dataCatalog", "datasets", "totalCount")).to eq(1)
       # expect(response.dig("data", "funder", "works", "years")).to eq([{"count"=>1, "title"=>"2011"}])
       # expect(response.dig("data", "funder", "works", "resourceTypes")).to eq([{"count"=>1, "title"=>"Dataset"}])
       # expect(response.dig("data", "funder", "works", "nodes").length).to eq(1)

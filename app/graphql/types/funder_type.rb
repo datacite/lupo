@@ -56,10 +56,6 @@ class FunderType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def type
-    "Funder"
-  end
-
   def address
     { "type" => "postalAddress",
       "country" => object.country.to_h.fetch("name", nil) }

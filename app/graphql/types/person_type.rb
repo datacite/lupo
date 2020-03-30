@@ -52,10 +52,6 @@ class PersonType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def type
-    "Person"
-  end
-
   def publications(**args)
     Doi.query(args[:query], user_id: orcid_from_url(object[:id]), client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Text", state: "findable", page: { number: 1, size: args[:first] }).results.to_a
   end

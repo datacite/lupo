@@ -38,10 +38,6 @@ class DataCatalogType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def type
-    "DataCatalog"
-  end
-
   def identifier
     Array.wrap(object.re3data_id).map { |o| { "name" => "re3data", "value" => "r3d#{o}" } }
   end
