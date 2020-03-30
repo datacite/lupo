@@ -3514,6 +3514,11 @@ Information about providers
 """
 type Provider {
   """
+  The number of citations.
+  """
+  citationCount: Int
+
+  """
   Clients associated with the provider
   """
   clients(
@@ -3578,6 +3583,11 @@ type Provider {
   Provider display name
   """
   displayName: String
+
+  """
+  The number of downloads according to the Counter Code of Practice.
+  """
+  downloadCount: Int
 
   """
   Field of science covered by provider
@@ -3706,6 +3716,11 @@ type Provider {
   The type of the item.
   """
   type: String!
+
+  """
+  The number of views according to the Counter Code of Practice.
+  """
+  viewCount: Int
 
   """
   Website of the provider

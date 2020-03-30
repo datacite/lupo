@@ -136,14 +136,6 @@ describe "Indexable class methods", elasticsearch: true do
       expect(response.results.to_a.length).to eq(2)
     end
 
-    # def ror_from_url(url)
-    #   if /\A(?:(http|https):\/\/)?(ror\.org\/)?(.+)/.match?(url)
-    #     uri = Addressable::URI.parse(url)
-    #     puts uri
-    #     uri.path.gsub(/^\//, "").downcase
-    #   end
-    # end
-
     context "doi_from_url" do
       subject { Doi }
 

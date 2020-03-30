@@ -78,15 +78,15 @@ class DataCatalogType < BaseObject
   end
 
   def view_count
-    response.results.total.positive? ? aggregate_count(response.response.aggregations.views.buckets) : []
+    response.results.total.positive? ? aggregate_count(response.response.aggregations.views.buckets) : 0
   end
 
   def download_count
-    response.results.total.positive? ? aggregate_count(response.response.aggregations.downloads.buckets) : []
+    response.results.total.positive? ? aggregate_count(response.response.aggregations.downloads.buckets) : 0
   end
 
   def citation_count
-    response.results.total.positive? ? aggregate_count(response.response.aggregations.citations.buckets) : []
+    response.results.total.positive? ? aggregate_count(response.response.aggregations.citations.buckets) : 0
   end
 
   def response
