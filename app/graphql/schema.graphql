@@ -4278,7 +4278,11 @@ type Query {
     Returns the elements in the list that come before the specified cursor.
     """
     before: String
-    first: Int = 25
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
 
     """
     Returns the last _n_ elements from the list.
@@ -4739,6 +4743,7 @@ type ServiceConnectionWithMeta {
   """
   pageInfo: PageInfo!
   totalCount: Int!
+  years: [Facet!]
 }
 
 """
