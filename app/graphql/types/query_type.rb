@@ -105,11 +105,10 @@ class QueryType < BaseObject
 
   field :organizations, OrganizationConnectionWithMetaType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
-    argument :first, Int, required: false, default_value: 25
   end
 
-  def organizations(query: nil, first: nil)
-    Organization.query(query, limit: first).fetch(:data, [])
+  def organizations(query: nil)
+    Organization.query(query).fetch(:data, [])
   end
 
   field :organization, OrganizationType, null: false do
@@ -370,8 +369,8 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def services(query: nil, first: nil, client_id: nil, provider_id: nil)
-    Doi.query(query, resource_type_id: "Service", client_id: client_id, provider_id: provider_id, state: "findable", page: { number: 1, size: first }).results.to_a
+  def services(**args)
+    Doi.query(args[:query], resource_type_id: "Service", client_id: args[:client_id], provider_id: args[:provider_id], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   field :service, ServiceType, null: false do
@@ -483,16 +482,5 @@ class QueryType < BaseObject
     fail ActiveRecord::RecordNotFound if result.nil?
 
     result
-  end
-
-  def doi_from_url(url)
-    if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match?(url)
-      uri = Addressable::URI.parse(url)
-      uri.path.gsub(/^\//, "").downcase
-    end
-  end
-
-  def orcid_from_url(url)
-    Array(/\A(http|https):\/\/orcid\.org\/(.+)/.match(url)).last
   end
 end

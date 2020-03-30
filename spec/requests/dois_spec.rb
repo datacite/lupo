@@ -6,7 +6,7 @@ describe "dois", type: :request do
   let(:admin_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer} }
 
   let(:provider) { create(:provider, symbol: "DATACITE") }
-  let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
+  let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], re3data_id: "10.17616/r3xs37") }
   let!(:prefix) { create(:prefix, uid: "10.14454") }
   let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
 
@@ -49,6 +49,116 @@ describe "dois", type: :request do
         expect(doi.dig('attributes')).to include('xml')
       end
     end
+  end
+  
+  describe "GET /dois with query", elasticsearch: true do
+    let!(:doi) { create(:doi, client: client, aasm_state: "findable", creators:
+      [{
+        "familyName" => "Garza",
+        "givenName" => "Kristian",
+        "name" => "Garza, Kristian",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameType" => "Personal",
+        "affiliation": [
+          {
+            "name": "Freie Universität Berlin",
+            "affiliationIdentifier": "https://ror.org/046ak2485",
+            "affiliationIdentifierScheme": "ROR"
+          },
+        ]
+      }], funding_references:
+      [{
+        "funderIdentifier" => "https://doi.org/10.13039/501100009053",
+        "funderIdentifierType" => "Crossref Funder ID",
+        "funderName" => "The Wellcome Trust DBT India Alliance"
+      }])
+    }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    it 'returns dois with short orcid id', vcr: true do
+      get "/dois?user-id=0000-0003-3484-6875", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian", "nameType"=>"Personal", "givenName"=>"Kristian", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with orcid id', vcr: true do
+      get "/dois?user-id=orcid.org/0000-0003-3484-6875", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian", "nameType"=>"Personal", "givenName"=>"Kristian", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with orcid id as url', vcr: true do
+      get "/dois?user-id=https://orcid.org/0000-0003-3484-6875", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian", "nameType"=>"Personal", "givenName"=>"Kristian", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with crossref funder id', vcr: true do
+      get "/dois?funder-id=10.13039/501100009053", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'fundingReferences')).to eq([{"funderIdentifier"=>"https://doi.org/10.13039/501100009053", "funderIdentifierType"=>"Crossref Funder ID", "funderName"=>"The Wellcome Trust DBT India Alliance"}])
+    end
+
+    it 'returns dois with crossref funder id as url', vcr: true do
+      get "/dois?funder-id=https://doi.org/10.13039/501100009053", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'fundingReferences')).to eq([{"funderIdentifier"=>"https://doi.org/10.13039/501100009053", "funderIdentifierType"=>"Crossref Funder ID", "funderName"=>"The Wellcome Trust DBT India Alliance"}])
+    end
+
+    it 'returns dois with short ror id', vcr: true do
+      get "/dois?affiliation-id=046ak2485&affiliation=true", nil, headers
+      
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian", "nameType"=>"Personal", "givenName"=>"Kristian", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with ror id', vcr: true do
+      get "/dois?affiliation-id=ror.org/046ak2485&affiliation=true", nil, headers
+      
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian", "nameType"=>"Personal", "givenName"=>"Kristian", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with ror id as url', vcr: true do
+      get "/dois?affiliation-id=https://ror.org/046ak2485&affiliation=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian", "nameType"=>"Personal", "givenName"=>"Kristian", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    # it 'returns dois with re3data id', vcr: true do
+    #   get "/dois?re3data-id=10.17616/R3XS37&include=client", nil, headers
+
+    #   expect(last_response.status).to eq(200)
+    #   expect(json.dig('meta', 'total')).to eq(4)
+    #   expect(json.dig('included', 0, 'attributes', "re3data")).to eq("https://doi.org/10.17616/r3xs37")
+    # end
+
+    # it 'returns dois with re3data id as url', vcr: true do
+    #   get "/dois?re3data-id=https://doi.org/10.17616/R3XS37&include=client", nil, headers
+
+    #   expect(last_response.status).to eq(200)
+    #   expect(json.dig('meta', 'total')).to eq(1)
+    #   expect(json.dig('included', 0, 'attributes')).to eq([{"name"=>"Garza, Kristian", "nameType"=>"Personal", "givenName"=>"Kristian", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    # end
   end
 
   describe 'GET /dois/:id', elasticsearch: true do

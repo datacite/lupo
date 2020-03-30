@@ -14,6 +14,6 @@ class OrganizationConnectionWithMetaType < BaseConnection
   end
 
   def person_connection_count
-    Event.query(nil, citation_type: "Organization-Person").results.total
+    @person_connection_count ||= Event.query(nil, citation_type: "Organization-Person").results.total
   end
 end

@@ -136,6 +136,81 @@ describe "Indexable class methods", elasticsearch: true do
       expect(response.results.to_a.length).to eq(2)
     end
 
+    # def ror_from_url(url)
+    #   if /\A(?:(http|https):\/\/)?(ror\.org\/)?(.+)/.match?(url)
+    #     uri = Addressable::URI.parse(url)
+    #     puts uri
+    #     uri.path.gsub(/^\//, "").downcase
+    #   end
+    # end
+
+    context "doi_from_url" do
+      subject { Doi }
+
+      it "as id" do
+        doi = "10.13039/501100009053"
+        expect(subject.doi_from_url(doi)).to eq("10.13039/501100009053")
+      end
+
+      it "as url" do
+        doi = "https://doi.org/10.13039/501100009053"
+        expect(subject.doi_from_url(doi)).to eq("10.13039/501100009053")
+      end
+
+      it "as http url" do
+        doi = "http://doi.org/10.13039/501100009053"
+        expect(subject.doi_from_url(doi)).to eq("10.13039/501100009053")
+      end
+    end
+
+    context "orcid_from_url" do
+      subject { Doi }
+
+      it "as id" do
+        orcid = "orcid.org/0000-0003-3484-6875"
+        expect(subject.orcid_from_url(orcid)).to eq("0000-0003-3484-6875")
+      end
+
+      it "as short id" do
+        orcid = "0000-0003-3484-6875"
+        expect(subject.orcid_from_url(orcid)).to eq("0000-0003-3484-6875")
+      end
+
+      it "as url" do
+        orcid = "https://orcid.org/0000-0003-3484-6875"
+        expect(subject.orcid_from_url(orcid)).to eq("0000-0003-3484-6875")
+      end
+
+      it "as http url" do
+        orcid = "http://orcid.org/0000-0003-3484-6875"
+        expect(subject.orcid_from_url(orcid)).to eq("0000-0003-3484-6875")
+      end
+    end
+
+    context "ror_from_url" do
+      subject { Doi }
+
+      it "as id" do
+        ror_id = "ror.org/046ak2485"
+        expect(subject.ror_from_url(ror_id)).to eq("046ak2485")
+      end
+
+      it "as short id" do
+        ror_id = "046ak2485"
+        expect(subject.ror_from_url(ror_id)).to eq("046ak2485")
+      end
+
+      it "as url" do
+        ror_id = "https://ror.org/046ak2485"
+        expect(subject.ror_from_url(ror_id)).to eq("046ak2485")
+      end
+
+      it "as http url" do
+        ror_id = "http://ror.org/046ak2485"
+        expect(subject.ror_from_url(ror_id)).to eq("046ak2485")
+      end
+    end
+
     context "aggregations" do
       it 'returns query_aggregation when filters aggregation with empty' do
         aggregations = Doi.get_aggregations_hash({aggregations:""})

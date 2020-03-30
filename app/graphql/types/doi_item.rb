@@ -49,7 +49,7 @@ module DoiItem
   field :references, [WorkType], null: true, description: "References."
 
   def type
-    object.types["schemaOrg"]
+    object.types["resourceTypeGeneral"]
   end
 
   def creators(first: nil)

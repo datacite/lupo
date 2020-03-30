@@ -9,10 +9,11 @@ class DataCatalogConnectionWithMetaType < BaseConnection
 
   def total_count
     args = object.arguments
+    
     DataCatalog.query(args[:query], limit: 0).dig(:meta, "total").to_i
   end
 
   def dataset_connection_count
-    Doi.query("client.re3data_id:*", page: { number: 1, size: 0 }).results.total
+    @dataset_connection_count ||= Doi.query("client.re3data_id:*", page: { number: 1, size: 0 }).results.total
   end
 end

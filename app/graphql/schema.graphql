@@ -710,7 +710,27 @@ type DataCatalog {
   certificates: [DefinedTerm!]
 
   """
-  Datasets hosted by the repository
+  The number of citations.
+  """
+  citationCount: Int
+
+  """
+  Repository contact information
+  """
+  contacts: [String!]
+
+  """
+  Data accesses
+  """
+  dataAccesses: [TextRestriction!]
+
+  """
+  Data uploads
+  """
+  dataUploads: [TextRestriction!]
+
+  """
+  Funded datasets
   """
   datasets(
     """
@@ -722,19 +742,30 @@ type DataCatalog {
     Returns the elements in the list that come before the specified cursor.
     """
     before: String
+    clientId: String
     first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
+    providerId: String
     query: String
-  ): DataCatalogDatasetConnectionWithMeta!
+    userId: String
+  ): DatasetConnectionWithMeta
 
   """
   A description of the data catalog.
   """
   description: String
+
+  """
+  The number of downloads according to the Counter Code of Practice.
+  """
+  downloadCount: Int
 
   """
   The ID of the data catalog.
@@ -763,53 +794,19 @@ type DataCatalog {
   name: String
 
   """
-  Publications hosted by the repository
+  PID Systems
   """
-  publications(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
+  pidSystems: [String!]
 
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    query: String
-  ): DataCatalogPublicationConnectionWithMeta!
+  """
+  Provider types
+  """
+  providerTypes: [String!]
 
   """
   Software
   """
   softwareApplication: [SoftwareApplication!]
-
-  """
-  Software hosted by the repository
-  """
-  softwareSourceCodes(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    query: String
-  ): DataCatalogSoftwareConnectionWithMeta!
 
   """
   Subject areas covered by the data catalog.
@@ -825,6 +822,11 @@ type DataCatalog {
   URL of the data catalog.
   """
   url: String
+
+  """
+  The number of views according to the Counter Code of Practice.
+  """
+  viewCount: Int
 }
 
 """
@@ -851,27 +853,6 @@ type DataCatalogConnectionWithMeta {
 }
 
 """
-The connection type for Dataset.
-"""
-type DataCatalogDatasetConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [DatasetEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [Dataset]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
 An edge in a connection.
 """
 type DataCatalogEdge {
@@ -884,48 +865,6 @@ type DataCatalogEdge {
   The item at the end of the edge.
   """
   node: DataCatalog
-}
-
-"""
-The connection type for Dataset.
-"""
-type DataCatalogPublicationConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [DatasetEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [Dataset]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
-The connection type for Dataset.
-"""
-type DataCatalogSoftwareConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [DatasetEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [Dataset]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
 }
 
 type DataPaper implements DoiItem {
@@ -2091,6 +2030,11 @@ type Funder {
   alternateName: [String!]
 
   """
+  The number of citations.
+  """
+  citationCount: Int
+
+  """
   Funded datasets
   """
   datasets(
@@ -2103,13 +2047,25 @@ type Funder {
     Returns the elements in the list that come before the specified cursor.
     """
     before: String
+    clientId: String
     first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
-  ): FunderDatasetConnectionWithMeta!
+    providerId: String
+    query: String
+    userId: String
+  ): DatasetConnectionWithMeta
+
+  """
+  The number of downloads according to the Counter Code of Practice.
+  """
+  downloadCount: Int
 
   """
   Crossref Funder ID
@@ -2134,19 +2090,25 @@ type Funder {
     Returns the elements in the list that come before the specified cursor.
     """
     before: String
+    clientId: String
     first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
+    providerId: String
     query: String
-  ): FunderPublicationConnectionWithMeta!
+    userId: String
+  ): PublicationConnectionWithMeta
 
   """
   Funded software
   """
-  softwareSourceCodes(
+  softwares(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2156,18 +2118,58 @@ type Funder {
     Returns the elements in the list that come before the specified cursor.
     """
     before: String
+    clientId: String
     first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
-  ): FunderSoftwareConnectionWithMeta!
+    providerId: String
+    query: String
+    userId: String
+  ): SoftwareConnectionWithMeta
 
   """
   The type of the item.
   """
   type: String!
+
+  """
+  The number of views according to the Counter Code of Practice.
+  """
+  viewCount: Int
+
+  """
+  Funded works
+  """
+  works(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 }
 
 """
@@ -2196,27 +2198,6 @@ type FunderConnectionWithMeta {
 }
 
 """
-The connection type for EventData.
-"""
-type FunderDatasetConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
 An edge in a connection.
 """
 type FunderEdge {
@@ -2229,48 +2210,6 @@ type FunderEdge {
   The item at the end of the edge.
   """
   node: Funder
-}
-
-"""
-The connection type for EventData.
-"""
-type FunderPublicationConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
-The connection type for EventData.
-"""
-type FunderSoftwareConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
 }
 
 """
@@ -2824,6 +2763,11 @@ type Organization {
   alternateName: [String!]
 
   """
+  The number of citations.
+  """
+  citationCount: Int
+
+  """
   Datasets from this organization
   """
   datasets(
@@ -2836,13 +2780,26 @@ type Organization {
     Returns the elements in the list that come before the specified cursor.
     """
     before: String
+    clientId: String
     first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
-  ): OrganizationDatasetConnectionWithMeta!
+    providerId: String
+    query: String
+    userId: String
+  ): DatasetConnectionWithMeta
+
+  """
+  The number of downloads according to the Counter Code of Practice.
+  """
+  downloadCount: Int
 
   """
   ROR ID
@@ -2872,19 +2829,26 @@ type Organization {
     Returns the elements in the list that come before the specified cursor.
     """
     before: String
+    clientId: String
     first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
+    providerId: String
     query: String
-  ): OrganizationPublicationConnectionWithMeta!
+    userId: String
+  ): PublicationConnectionWithMeta
 
   """
   Software from this organization
   """
-  softwareSourceCodes(
+  softwares(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2894,13 +2858,21 @@ type Organization {
     Returns the elements in the list that come before the specified cursor.
     """
     before: String
+    clientId: String
     first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
-  ): OrganizationSoftwareConnectionWithMeta!
+    providerId: String
+    query: String
+    userId: String
+  ): SoftwareConnectionWithMeta
 
   """
   The type of the item.
@@ -2911,6 +2883,40 @@ type Organization {
   URL of the organization.
   """
   url: [String!]
+
+  """
+  The number of views according to the Counter Code of Practice.
+  """
+  viewCount: Int
+
+  """
+  Works from this organization
+  """
+  works(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 }
 
 """
@@ -2936,27 +2942,6 @@ type OrganizationConnectionWithMeta {
 }
 
 """
-The connection type for EventData.
-"""
-type OrganizationDatasetConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
 An edge in a connection.
 """
 type OrganizationEdge {
@@ -2969,48 +2954,6 @@ type OrganizationEdge {
   The item at the end of the edge.
   """
   node: Organization
-}
-
-"""
-The connection type for EventData.
-"""
-type OrganizationPublicationConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
-The connection type for EventData.
-"""
-type OrganizationSoftwareConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
 }
 
 type Other implements DoiItem {
@@ -5361,6 +5304,31 @@ type Subject {
   The URI of the subject term
   """
   valueUri: String
+}
+
+"""
+Information
+"""
+type Text {
+  """
+  Information
+  """
+  text: String!
+}
+
+"""
+Information
+"""
+type TextRestriction {
+  """
+  Restriction
+  """
+  restriction: [Text!]
+
+  """
+  Information
+  """
+  text: String!
 }
 
 """

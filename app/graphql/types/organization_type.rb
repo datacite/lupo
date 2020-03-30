@@ -10,23 +10,57 @@ class OrganizationType < BaseObject
   field :identifiers, [IdentifierType], null: true, description: "The identifier(s) for the organization."
   field :url, [String], null: true, hash_key: "links", description: "URL of the organization."
   field :address, AddressType, null: true, description: "Physical address of the organization."
+  field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
+  field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
+  field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :datasets, OrganizationDatasetConnectionWithMetaType, null: false, description: "Datasets from this organization", connection: true do
-    argument :first, Int, required: false, default_value: 25
-  end
-
-  field :publications, OrganizationPublicationConnectionWithMetaType, null: false, description: "Publications from this organization", connection: true do
+  field :datasets, DatasetConnectionWithMetaType, null: true, description: "Datasets from this organization", connection: true do
     argument :query, String, required: false
+    argument :user_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :software_source_codes, OrganizationSoftwareConnectionWithMetaType, null: false, description: "Software from this organization", connection: true do
+  field :publications, PublicationConnectionWithMetaType, null: true, description: "Publications from this organization", connection: true do
+    argument :query, String, required: false
+    argument :user_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  # field :researchers, OrganizationResearcherConnectionWithMetaType, null: false, description: "Researchers associated with this organization", connection: true do
-  #   argument :first, Int, required: false, default_value: 25
-  # end
+  field :softwares, SoftwareConnectionWithMetaType, null: true, description: "Software from this organization", connection: true do
+    argument :query, String, required: false
+    argument :user_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+
+  field :works, WorkConnectionWithMetaType, null: true, description: "Works from this organization", connection: true do
+    argument :query, String, required: false
+    argument :user_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
 
   def type
     "Organization"
@@ -49,32 +83,37 @@ class OrganizationType < BaseObject
       "country" => object.country.to_h.fetch("name", nil) }
   end
 
-  def datasets(**args)
-    ids = Event.query(nil, obj_id: object.id, citation_type: "Dataset-Organization").results.to_a.map do |e|
-      doi_from_url(e.subj_id)
-    end
-    
-    ElasticsearchLoader.for(Doi).load_many(ids)
-  end
-
   def publications(**args)
-    ids = Event.query(nil, obj_id: object.id, citation_type: "Organization-ScholarlyArticle").results.to_a.map do |e|
-      doi_from_url(e.subj_id)
-    end
-    ElasticsearchLoader.for(Doi).load_many(ids)
+    Doi.query(args[:query], affiliation_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Text", state: "findable", page: { number: 1, size: args[:first] }).results.to_a
   end
 
-  def software_source_codes(**args)
-    ids = Event.query(nil, obj_id: object.id, citation_type: "Organization-SoftwareSourceCode").results.to_a.map do |e|
-      doi_from_url(e.subj_id)
-    end
-    ElasticsearchLoader.for(Doi).load_many(ids)
+  def datasets(**args)
+    Doi.query(args[:query], affiliation_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Dataset", state: "findable", page: { number: 1, size: args[:first] }).results.to_a
   end
 
-  # def researchers(**args)
-  #   ids = Event.query(nil, obj_id: object.id, citation_type: "Organization-Person").results.to_a.map do |e|
-  #     orcid_from_url(e.subj_id)
-  #   end
-  #   ElasticsearchLoader.for(Researcher).load_many(ids)
-  # end
+  def softwares(**args)
+    Doi.query(args[:query], affiliation_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Software", state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+  end
+
+  def works(**args)
+    Rails.logger.info object[:id]
+    Rails.logger.info args.inspect
+    Doi.query(args[:query], affiliation_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+  end
+
+  def view_count
+    response.results.total.positive? ? aggregate_count(response.response.aggregations.views.buckets) : []
+  end
+
+  def download_count
+    response.results.total.positive? ? aggregate_count(response.response.aggregations.downloads.buckets) : []
+  end
+
+  def citation_count
+    response.results.total.positive? ? aggregate_count(response.response.aggregations.citations.buckets) : []
+  end
+
+  def response
+    @response ||= Doi.query(nil, affiliation_id: object[:id], state: "findable", page: { number: 1, size: 0 })
+  end
 end

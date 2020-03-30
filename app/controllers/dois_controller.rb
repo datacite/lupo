@@ -56,6 +56,7 @@ class DoisController < ApplicationController
                           consortium_id: params[:consortium_id],
                           client_id: params[:client_id],
                           affiliation_id: params[:affiliation_id],
+                          funder_id: params[:funder_id],
                           re3data_id: params[:re3data_id],
                           opendoar_id: params[:opendoar_id],
                           certificate: params[:certificate],

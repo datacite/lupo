@@ -16,14 +16,14 @@ class FunderConnectionWithMetaType < BaseConnection
   end
 
   def publication_connection_count
-    Event.query(nil, citation_type: "Funder-ScholarlyArticle").results.total
+    @publication_connection_count ||= Event.query(nil, citation_type: "Funder-ScholarlyArticle").results.total
   end
 
   def dataset_connection_count
-    Event.query(nil, citation_type: "Dataset-Funder").results.total
+    @dataset_connection_count ||= Event.query(nil, citation_type: "Dataset-Funder").results.total
   end
 
   def software_connection_count
-    Event.query(nil, citation_type: "Funder-SoftwareSourceCode").results.total
+    @software_connection_count ||= Event.query(nil, citation_type: "Funder-SoftwareSourceCode").results.total
   end
 end

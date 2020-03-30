@@ -739,10 +739,12 @@ class Doi < ActiveRecord::Base
     must << { range: { "landing_page.redirectCount": { "gte": options[:link_check_redirect_count_gte] } } } if options[:link_check_redirect_count_gte].present?
     must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
     must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
-    must << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{options[:user_id]}" }} if options[:user_id].present?
-    must << { term: { "creators.affiliation.affiliationIdentifier" => URI.decode(options[:affiliation_id]) }} if options[:affiliation_id].present?
+    must << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
+    must << { term: { "creators.affiliation.affiliationIdentifier" => "https://ror.org/#{ror_from_url(options[:affiliation_id])}" }} if options[:affiliation_id].present?
+    must << { term: { "funding_references.funderIdentifier" => "https://doi.org/#{doi_from_url(options[:funder_id])}" }} if options[:funder_id].present?
     must << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
-    must << { term: { "client.re3data_id" => options[:re3data_id].gsub("/", '\/').upcase }} if options[:re3data_id].present?
+    # TODO align PID parsing 
+    must << { term: { "client.re3data_id" => doi_from_url(options[:re3data_id]) }} if options[:re3data_id].present?
     must << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
     must << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
     must_not << { terms: { provider_id: ["crossref", "medra", "op"] }} if options[:exclude_registration_agencies]

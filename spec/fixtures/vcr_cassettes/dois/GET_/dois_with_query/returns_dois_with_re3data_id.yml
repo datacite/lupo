@@ -1,0 +1,55 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.ror.org/organizations?query=%22https://ror.org/04wxnsj81%22%20%22https://ror.org/046ak2485%22
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Connection:
+      - keep-alive
+      Date:
+      - Sun, 29 Mar 2020 20:26:39 GMT
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      Allow:
+      - GET, HEAD, OPTIONS
+      X-Powered-By:
+      - Phusion Passenger 6.0.4
+      Server:
+      - nginx/1.17.3 + Phusion Passenger 6.0.4
+      Content-Encoding:
+      - gzip
+      Vary:
+      - Accept-Encoding,Cookie,Origin
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 c51e3be89c14e3f859ea898f7e36eced.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - DUS51-C1
+      X-Amz-Cf-Id:
+      - V5u7y-CsW8vs4ezSpcBmW6YYN-TIUln6hCAqDQB9byBAo3-xZDaFRA==
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAAAAAAAAA6xUwY6bMBD9FeQzJUCATXJsN1nlkmpTrXpYRciBIXVjDDKmWRTxN/2T/ljHJDgkVbY9lAPyjOeN/eY9+UhEnW9BxkUWS6hqrioy822iWA6xonsQGEY2YQpy3Hk9EpaSGfmmVFnNRiNZSKeQu5EbHN5E9X3iEZsImgOWPFJFPyEMM6opQYPJqhClLDKmyMYmnIl9l+2bHQ4HJ0VUgijdVRdRzmjVgXWQyEI0+TmqFFU1rjGt2A99zoHtWQkpo3Et+eCWIByz1V1XR6PBBTndAj+3TYpaKNmQ2bFfxmdGTyBzKhpiauKkSDuqc9LaBN4USEF5zNJKo7/iIZqOXpcSMpAS9OyeJ74XBj7R5Ljm3yc22ORpvXy8BewkS53gIZz4kUN72E22bVv7rjYR3fvBJLxos5DAwHoRODZZMfXrp7I+gkRBhmLN0zqhihXiD7HOWmX1h22HclLAGY+u9SKLl77ptXS4Qf5ZvrvqIQWIDYNG+9dQMHIeT8sT4wHhxiqyC2NWFdF4ikVo9vZ/OmD5ZbW8EVPUnBvhXfys7jf1vMgKJuOoM8GiFukasvegoet5GulFQYDX6UN/+uB1LT7L3V86jL3Qfwi74jtOvSp/9sKx60bvm9QL3Gno4CyvTGqyaFIcbw6nk3qjnW0Lxm769VFcj3U+yHUTJzPP+FyYx+QCWA1yBmAkZcPzUhjgFpCCpNxaQ1lvOUu0P27Exnew3bTtbwAAAP//AwBUgovSMQUAAA==
+    http_version: null
+  recorded_at: Sun, 29 Mar 2020 20:26:39 GMT
+recorded_with: VCR 5.1.0

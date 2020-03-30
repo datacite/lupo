@@ -9,32 +9,32 @@ class DataCatalogType < BaseObject
   field :name, String, null: true, description: "The name of the data catalog."
   field :alternate_name, [String], null: true, description: "An alias for the data catalog."
   field :url, String, null: true, hash_key: "repositoryUrl", description: "URL of the data catalog."
-  # field :contacts, [String], null: true, description: "Repository contact information"
+  field :contacts, [String], null: true, description: "Repository contact information"
   field :description, String, null: true, description: "A description of the data catalog."
   field :certificates, [DefinedTermType], null: true, description: "Certificates of the data catalog."
   field :subjects, [DefinedTermType], null: true, description: "Subject areas covered by the data catalog."
   # field :types, [String], null: true, description: "Repository types"
   # field :content_types, [SchemeType], null: true, description: "Content types"
-  # field :provider_types, [String], null: true, description: "Provider types"
+  field :provider_types, [String], null: true, description: "Provider types"
   field :in_language, [String], null: true, description: "The language of the content of the data catalog."
   field :keywords, String, null: true, description: "Keywords or tags used to describe this data catalog. Multiple entries in a keywords list are typically delimited by commas."
-  # field :data_accesses, [TextRestrictionType], null: true, description: "Data accesses"
-  # field :data_uploads, [TextRestrictionType], null: true, description: "Data uploads"
-  # field :pid_systems, [String], null: true, description: "PID Systems"
+  field :data_accesses, [TextRestrictionType], null: true, description: "Data accesses"
+  field :data_uploads, [TextRestrictionType], null: true, description: "Data uploads"
+  field :pid_systems, [String], null: true, description: "PID Systems"
   # field :apis, [ApiType], null: true, description: "APIs"
   field :software_application, [SoftwareApplicationType], null: true, description: "Software"
-  field :datasets, DataCatalogDatasetConnectionWithMetaType, null: false, connection: true, description: "Datasets hosted by the repository" do
-    argument :query, String, required: false
-    argument :first, Int, required: false, default_value: 25
-  end
+  field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
+  field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
+  field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :publications, DataCatalogPublicationConnectionWithMetaType, null: false, connection: true, description: "Publications hosted by the repository" do
+  field :datasets, DatasetConnectionWithMetaType, null: true, description: "Funded datasets", connection: true do
     argument :query, String, required: false
-    argument :first, Int, required: false, default_value: 25
-  end
-
-  field :software_source_codes, DataCatalogSoftwareConnectionWithMetaType, null: false, connection: true, description: "Software hosted by the repository" do
-    argument :query, String, required: false
+    argument :user_id, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
@@ -78,26 +78,22 @@ class DataCatalogType < BaseObject
   end
 
   def datasets(**args)
-    Doi.query(args[:query], re3data_id: doi_from_url(object.id), resource_type_id: "Dataset", page: { number: 1, size: args[:first] }).results.to_a
+    Doi.query(args[:query], re3data_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Dataset", state: "findable", page: { number: 1, size: args[:first] }).results.to_a
   end
 
-  def publications(**args)
-    Doi.query(args[:query], re3data_id: doi_from_url(object[:id]), resource_type_id: "Text", page: { number: 1, size: args[:first] }).results.to_a
+  def view_count
+    response.results.total.positive? ? aggregate_count(response.response.aggregations.views.buckets) : []
   end
 
-  def software_source_codes(**args)
-    Doi.query(args[:query], re3data_id: doi_from_url(object[:id]), resource_type_id: "Software", page: { number: 1, size: args[:first] }).results.to_a
+  def download_count
+    response.results.total.positive? ? aggregate_count(response.response.aggregations.downloads.buckets) : []
   end
 
-  def datasets(**args)
-    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Dataset", page: { number: 1, size: args[:first] }).results.to_a
+  def citation_count
+    response.results.total.positive? ? aggregate_count(response.response.aggregations.citations.buckets) : []
   end
 
-  def publications(**args)
-    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Text", page: { number: 1, size: args[:first] }).results.to_a
-  end
-
-  def software_source_codes(**args)
-    Doi.query(args[:query], client_id: object.uid, resource_type_id: "Software", page: { number: 1, size: args[:first] }).results.to_a
+  def response
+    @response ||= Doi.query(nil, re3data_id: object[:id], state: "findable", page: { number: 1, size: 0 })
   end
 end

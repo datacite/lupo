@@ -606,5 +606,20 @@ module Indexable
       active_index = client.indices.get_alias(name: alias_name).keys.first
       active_index.end_with?("v1") ? alternate_index_name : index_name
     end
+
+    def doi_from_url(url)
+      if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match?(url)
+        uri = Addressable::URI.parse(url)
+        uri.path.gsub(/^\//, "").downcase
+      end
+    end
+
+    def orcid_from_url(url)
+      Array(/\A(?:(http|https):\/\/)?(orcid\.org\/)?(.+)/.match(url)).last
+    end
+
+    def ror_from_url(url)
+      Array(/\A(?:(http|https):\/\/)?(ror\.org\/)?(.+)/.match(url)).last
+    end
   end
 end

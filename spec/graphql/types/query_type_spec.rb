@@ -144,7 +144,7 @@ describe QueryType do
       })
     end
 
-    it "returns all clients" do
+    it "returns clients" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "clients", "totalCount")).to eq(3)
@@ -342,13 +342,74 @@ describe QueryType do
       })
     end
 
-    it "returns all datasets" do
+    it "returns datasets" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "datasets", "totalCount")).to eq(3)
       expect(response.dig("data", "datasets", "years")).to eq([{"count"=>3, "id"=>"2011"}])
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
       expect(response.dig("data", "datasets", "nodes", 0, "id")).to eq(datasets.first.identifier)
+    end
+  end
+
+  describe "query services", elasticsearch: true do
+    let(:provider) { create(:provider, symbol: "DATACITE") }
+    let(:client) { create(:client, symbol: "DATACITE.SERVICES", provider: provider) }
+    let!(:services) { create_list(:doi, 3, aasm_state: "findable", client: client, 
+      types: { "resourceTypeGeneral" => "Service" }, titles: [{ "title" => "Test Service"}])
+    }
+
+    before do
+      Provider.import
+      Client.import
+      Doi.import
+      sleep 3
+    end
+
+    let(:query) do
+      %(query {
+        services(clientId: "datacite.services") {
+          totalCount
+          years {
+            id
+            count
+          }
+          nodes {
+            id
+            identifiers {
+              identifier
+              identifierType
+            }
+            types {
+              resourceTypeGeneral
+            }
+            titles {
+              title
+            },
+            descriptions {
+              description
+              descriptionType
+            }
+          }
+        }
+      })
+    end
+
+    it "returns services" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "services", "totalCount")).to eq(3)
+      expect(response.dig("data", "services", "years")).to eq([{"count"=>3, "id"=>"2011"}])
+      expect(response.dig("data", "services", "nodes").length).to eq(3)
+
+      service = response.dig("data", "services", "nodes", 0)
+      expect(service.fetch("id")).to eq(services.first.identifier)
+      expect(service.fetch("identifiers")).to eq([{"identifier"=>
+        "Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446.",
+        "identifierType"=>nil}])
+      expect(service.fetch("types")).to eq("resourceTypeGeneral"=>"Service")
+      expect(service.dig("titles", 0, "title")).to eq("Test Service")
+      expect(service.dig("descriptions", 0, "description")).to eq("Data from: A new malaria agent in African hominids.")
     end
   end
 
@@ -551,5 +612,414 @@ describe QueryType do
     #   expect(response.dig("data", "datasets", "nodes", 0, "references").length).to eq(2)
     #   expect(response.dig("data", "datasets", "nodes", 0, "references").first).to eq("id"=>"https://handle.test.datacite.org/#{target_doi.doi.downcase}", "publicationYear"=>2011)
     # end
+  end
+
+  describe "find funder", elasticsearch: true, vcr: true do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable", funding_references:
+      [{
+        "funderIdentifier" => "https://doi.org/10.13039/501100009053",
+        "funderIdentifierType" => "Crossref Funder ID",
+        "funderName" => "The Wellcome Trust DBT India Alliance"
+      }])
+    }
+    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:source_doi2) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by", occurred_at: "2015-06-13T16:14:19Z") }
+    let!(:citation_event2) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-referenced-by", occurred_at: "2016-06-13T16:14:19Z") }
+
+    before do
+      Client.import
+      Event.import
+      Doi.import
+      sleep 2
+    end
+
+    let(:query) do
+      %(query {
+        funder(id: "https://doi.org/10.13039/501100009053") {
+          id
+          name
+          alternateName
+          citationCount
+          viewCount
+          downloadCount
+          works {
+            totalCount
+            years {
+              title
+              count
+            }
+            resourceTypes {
+              title
+              count
+            }
+            nodes {
+              id
+              titles {
+                title
+              }
+              citationCount
+            }
+          }
+        }
+      })
+    end
+
+    it "returns funder information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "funder", "id")).to eq("https://doi.org/10.13039/501100009053")
+      expect(response.dig("data", "funder", "name")).to eq("The Wellcome Trust DBT India Alliance")
+      expect(response.dig("data", "funder", "citationCount")).to eq(0)
+      # TODO should be 1
+      expect(response.dig("data", "funder", "works", "totalCount")).to eq(3)
+      # expect(response.dig("data", "funder", "works", "years")).to eq([{"count"=>1, "title"=>"2011"}])
+      # expect(response.dig("data", "funder", "works", "resourceTypes")).to eq([{"count"=>1, "title"=>"Dataset"}])
+      # expect(response.dig("data", "funder", "works", "nodes").length).to eq(1)
+
+      work = response.dig("data", "funder", "works", "nodes", 0)
+      expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
+      expect(work.dig("citationCount")).to eq(0)
+    end
+  end
+
+  describe "query funders", elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 3, funding_references:
+      [{
+        "funderIdentifier" => "https://doi.org/10.13039/501100009053",
+        "funderIdentifierType" => "DOI",
+      }])
+    }
+
+    before do
+      Doi.import
+      sleep 1
+    end
+
+    let(:query) do
+      %(query {
+        funders(query: "Wellcome Trust") {
+          totalCount
+          nodes {
+            id
+            name
+            alternateName
+            works {
+              totalCount
+              years {
+                title
+                count
+              }
+            }
+          }
+        }
+      })
+    end
+
+    it "returns funder information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "funders", "totalCount")).to eq(4)
+      expect(response.dig("data", "funders", "nodes").length).to eq(4)
+      funder = response.dig("data", "funders", "nodes", 0)
+      expect(funder.fetch("id")).to eq("https://doi.org/10.13039/501100009053")
+      expect(funder.fetch("name")).to eq("The Wellcome Trust DBT India Alliance")
+      expect(funder.fetch("alternateName")).to eq(["India Alliance", "WTDBT India Alliance", "Wellcome Trust/DBT India Alliance", "Wellcome Trust DBt India Alliance"])
+      expect(funder.dig("works", "totalCount")).to eq(3)
+      expect(funder.dig("works", "years")).to eq([{"count"=>3, "title"=>"2011"}])
+    end
+  end
+
+  describe "find organization", elasticsearch: true, vcr: true do
+    let(:client) { create(:client) }
+    let!(:doi) { create(:doi, client: client, aasm_state: "findable", creators:
+      [{
+        "familyName" => "Garza",
+        "givenName" => "Kristian",
+        "name" => "Garza, Kristian",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameType" => "Personal",
+        "affiliation": [
+          {
+            "name": "University of Cambridge",
+            "affiliationIdentifier": "https://ror.org/013meh722",
+            "affiliationIdentifierScheme": "ROR"
+          },
+        ]
+      }])
+    }
+    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:source_doi2) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by", occurred_at: "2015-06-13T16:14:19Z") }
+    let!(:citation_event2) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-referenced-by", occurred_at: "2016-06-13T16:14:19Z") }
+
+    before do
+      Client.import
+      Event.import
+      Doi.import
+      sleep 2
+    end
+
+    let(:query) do
+      %(query {
+        organization(id: "https://ror.org/013meh722") {
+          id
+          name
+          alternateName
+          citationCount
+          viewCount
+          downloadCount
+          works {
+            totalCount
+            years {
+              title
+              count
+            }
+            resourceTypes {
+              title
+              count
+            }
+            nodes {
+              id
+              titles {
+                title
+              }
+              citationCount
+            }
+          }
+        }
+      })
+    end
+
+    it "returns organization information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
+      expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
+      expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
+      expect(response.dig("data", "organization", "citationCount")).to eq(0)
+      # TODO should be 1
+      expect(response.dig("data", "organization", "works", "totalCount")).to eq(3)
+      # expect(response.dig("data", "organization", "works", "years")).to eq([{"count"=>1, "title"=>"2011"}])
+      # expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{"count"=>1, "title"=>"Dataset"}])
+      # expect(response.dig("data", "organization", "works", "nodes").length).to eq(1)
+
+      work = response.dig("data", "organization", "works", "nodes", 0)
+      expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
+      expect(work.dig("citationCount")).to eq(0)
+    end
+  end
+
+  describe "query organizations", elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 3) }
+    let!(:doi) { create(:doi, aasm_state: "findable", creators:
+      [{
+        "familyName" => "Garza",
+        "givenName" => "Kristian",
+        "name" => "Garza, Kristian",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameType" => "Personal",
+        "affiliation": [
+          {
+            "name": "University of Cambridge",
+            "affiliationIdentifier": "https://ror.org/013meh722",
+            "affiliationIdentifierScheme": "ROR"
+          },
+        ]
+      }])
+    }
+
+    before do
+      Doi.import
+      sleep 1
+    end
+
+    let(:query) do
+      %(query {
+        organizations(query: "Cambridge University") {
+          totalCount
+          nodes {
+            id
+            name
+            alternateName
+            identifiers {
+              identifier
+              identifierType
+            }
+            works {
+              totalCount
+              years {
+                title
+                count
+              }
+            }
+          }
+        }
+      })
+    end
+
+    it "returns organization information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "organizations", "totalCount")).to eq(10744)
+      expect(response.dig("data", "organizations", "nodes").length).to eq(20)
+      organization = response.dig("data", "organizations", "nodes", 0)
+      expect(organization.fetch("id")).to eq("https://ror.org/013meh722")
+      expect(organization.fetch("name")).to eq("University of Cambridge")
+      expect(organization.fetch("alternateName")).to eq(["Cambridge University"])
+      expect(organization.fetch("identifiers").length).to eq(39)
+      expect(organization.fetch("identifiers").last).to eq("identifier"=>"http://en.wikipedia.org/wiki/University_of_Cambridge", "identifierType"=>"wikipedia")
+      # TODO should be 1
+      expect(organization.dig("works", "totalCount")).to eq(4)
+      expect(organization.dig("works", "years")).to eq([{"count"=>4, "title"=>"2011"}])
+    end
+  end
+
+  describe "find data_catalog", elasticsearch: true, vcr: true do
+    let(:client) { create(:client, re3data_id: "10.17616/r3xs37") }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:source_doi2) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by", occurred_at: "2015-06-13T16:14:19Z") }
+    let!(:citation_event2) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-referenced-by", occurred_at: "2016-06-13T16:14:19Z") }
+
+    before do
+      Client.import
+      Event.import
+      Doi.import
+      sleep 2
+    end
+
+    let(:query) do
+      %(query {
+        dataCatalog(id: "https://doi.org/10.17616/r3xs37") {
+          id
+          name
+          alternateName
+          description
+          certificates {
+            termCode
+            name
+          }
+          softwareApplication {
+            name
+            url
+            softwareVersion
+          }
+          citationCount
+          viewCount
+          downloadCount
+          datasets {
+            totalCount
+            years {
+              title
+              count
+            }
+            nodes {
+              id
+              titles {
+                title
+              }
+              citationCount
+            }
+          }
+        }
+      })
+    end
+
+    it "returns data_catalog information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "dataCatalog", "id")).to eq("https://doi.org/10.17616/r3xs37")
+      expect(response.dig("data", "dataCatalog", "name")).to eq("PANGAEA")
+      expect(response.dig("data", "dataCatalog", "alternateName")).to eq(["Data Publisher for Earth and Environmental Science"])
+      expect(response.dig("data", "dataCatalog", "description")).to start_with("The information system PANGAEA is operated as an Open Access library")
+      expect(response.dig("data", "dataCatalog", "certificates")).to eq([{"termCode"=>nil, "name"=>"CoreTrustSeal"}])
+      expect(response.dig("data", "dataCatalog", "softwareApplication")).to eq([{"name"=>"other", "url"=>nil, "softwareVersion"=>nil}])
+      expect(response.dig("data", "dataCatalog", "citationCount")).to eq(0)
+      # TODO should be 1
+      expect(response.dig("data", "dataCatalog", "datasets", "totalCount")).to eq(3)
+      # expect(response.dig("data", "funder", "works", "years")).to eq([{"count"=>1, "title"=>"2011"}])
+      # expect(response.dig("data", "funder", "works", "resourceTypes")).to eq([{"count"=>1, "title"=>"Dataset"}])
+      # expect(response.dig("data", "funder", "works", "nodes").length).to eq(1)
+
+      work = response.dig("data", "dataCatalog", "datasets", "nodes", 0)
+      expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
+      expect(work.dig("citationCount")).to eq(0)
+    end
+  end
+
+  describe "query data_catalogs", elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 3) }
+    let!(:doi) { create(:doi, aasm_state: "findable", creators:
+      [{
+        "familyName" => "Garza",
+        "givenName" => "Kristian",
+        "name" => "Garza, Kristian",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameType" => "Personal",
+        "affiliation": [
+          {
+            "name": "University of Cambridge",
+            "affiliationIdentifier": "https://ror.org/013meh722",
+            "affiliationIdentifierScheme": "ROR"
+          },
+        ]
+      }])
+    }
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query) do
+      %(query {
+        dataCatalogs(query: "Dataverse") {
+          totalCount
+          nodes {
+            id
+            name
+            alternateName
+            description
+            certificates {
+              termCode
+              name
+            }
+            softwareApplication {
+              name
+              url
+              softwareVersion
+            }
+            datasets {
+              totalCount
+              years {
+                title
+                count
+              }
+            }
+          }
+        }
+      })
+    end
+
+    it "returns data_catalog information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(84)
+      expect(response.dig("data", "dataCatalogs", "nodes").length).to eq(25)
+      
+      data_catalog = response.dig("data", "dataCatalogs", "nodes", 0)
+      expect(data_catalog.fetch("id")).to eq("https://doi.org/10.17616/r37h04")
+      expect(data_catalog.fetch("name")).to eq("AfricaRice Dataverse")
+      expect(data_catalog.fetch("alternateName")).to eq(["Rice science at the service of Africa", "la science rizicole au service de l'Afrique"])
+      expect(data_catalog.fetch("description")).to start_with("AfricaRice is a leading pan-African rice research organization")
+      expect(data_catalog.fetch("certificates")).to be_empty
+      expect(data_catalog.fetch("softwareApplication")).to eq([{"name"=>"DataVerse", "softwareVersion"=>nil, "url"=>nil}])
+      # TODO should be 1
+      expect(data_catalog.dig("datasets", "totalCount")).to eq(4)
+      # expect(data_catalog.dig("datasets", "years")).to eq([{"count"=>4, "title"=>"2011"}])
+    end
   end
 end
