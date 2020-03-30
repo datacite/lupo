@@ -1381,6 +1381,31 @@ describe "dois", type: :request do
       end
     end
 
+    context 'when providing version' do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              # "xml" => xml,
+              "source" => "test",
+              "version" => 45
+            }
+          }
+        }
+      end
+
+      it 'create a draft Doi with version' do
+        post '/dois', valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        puts json
+        expect(json.dig('data', 'attributes', 'version')).to eq("45")
+      end
+    end
+
     context 'when the request is valid random doi' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
