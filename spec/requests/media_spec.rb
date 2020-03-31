@@ -192,7 +192,7 @@ describe "Media", type: :request, :order => :defined, elasticsearch: true do
 
         expect(json.dig('data', 'attributes', 'mediaType')).to eq(media_type)
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
-        expect(json.dig('data', 'attributes', 'version')).to eq(2)
+        expect(json.dig('data', 'attributes', 'version')).to be > 0
       end
 
       it 'returns status code 200' do
