@@ -511,17 +511,17 @@ class Doi < ActiveRecord::Base
       "resource_type" => resource_type.try(:as_indexed_json),
       "media" => media.map { |m| m.try(:as_indexed_json) },
       "reference_ids" => reference_ids,
-      "references" => references,
+      "references" => options[:exclude_associations] ? [] : references.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
       "citation_ids" => citation_ids,
-      "citations" => citations,
+      "citations" => options[:exclude_associations] ? [] : citations.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
       "part_ids" => part_ids,
-      "parts" => parts,
+      "parts" => options[:exclude_associations] ? [] : parts.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
       "part_of_ids" => part_of_ids,
-      "part_of" => part_of,
+      "part_of" => options[:exclude_associations] ? [] : part_of.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
       "version_ids" => version_ids,
-      "versions" => versions,
+      "versions" => options[:exclude_associations] ? [] : versions.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
       "version_of_ids" => version_of_ids,
-      "version_of" => version_of,
+      "version_of" => options[:exclude_associations] ? [] : version_of.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
     }
   end
 
