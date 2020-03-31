@@ -307,7 +307,6 @@ class DoisController < ApplicationController
 
   def create
     fail CanCan::AuthorizationNotPerformed if current_user.blank?
-
     @doi = Doi.new(safe_params)
 
     # capture username and password for reuse in the handle system
@@ -652,8 +651,7 @@ class DoisController < ApplicationController
     read_attrs_keys.each do |attr|
       p.merge!(attr.to_s.underscore => p[attr] || meta[attr.to_s.underscore] || p[attr]) if p.has_key?(attr) || meta.has_key?(attr.to_s.underscore)
     end
-    p.merge!(version_info: p[:version] || meta["version_info"]) if p.has_key?(:version_info) || meta["version_info"].present?
-
+    p[:version_info] = p[:version] || meta["version_info"] if p.has_key?(:version) || meta["version_info"].present?
     # only update landing_page info if something is received via API to not overwrite existing data
     p.merge!(landing_page: p[:landingPage]) if p[:landingPage].present?
 
