@@ -579,8 +579,8 @@ describe Doi, type: :model, vcr: true do
     let!(:reference_events) { create(:event_for_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "references") }
 
     it "has references" do
-      expect(doi.reference_events.count).to eq(1)
-      expect(doi.reference_event_ids.count).to eq(1)
+      expect(doi.references.count).to eq(1)
+      expect(doi.reference_ids.count).to eq(1)
       expect(doi.reference_count).to eq(1)
 
       reference = doi.references.first
@@ -597,9 +597,9 @@ describe Doi, type: :model, vcr: true do
     let!(:citation_event2) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-referenced-by", occurred_at: "2016-06-13T16:14:19Z") }
     let!(:citation_event3) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-cited-by", occurred_at: "2016-06-13T16:14:19Z") }
 
-    # removing duplicate dois in citation_count and citations_over_time (different relation_type_id)
+    # removing duplicate dois in citation_ids, citation_count and citations_over_time (different relation_type_id)
     it "has citations" do
-      expect(doi.citations.count).to eq(2)
+      expect(doi.citations.count).to eq(3)
       expect(doi.citation_ids.count).to eq(2)
       expect(doi.citation_count).to eq(2)
       expect(doi.citations_over_time).to eq([{"total"=>1, "year"=>"2015"}, {"total"=>1, "year"=>"2016"}])
