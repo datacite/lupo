@@ -76,20 +76,20 @@ class Doi < ActiveRecord::Base
   has_many :download_events, -> { where target_relation_type_id: "downloads" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
   has_many :reference_events, -> { where source_relation_type_id: "references" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
   has_many :citation_events, -> { where target_relation_type_id: "citations" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
-  # has_many :part_events, -> { where source_relation_type_id: "parts" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
-  # has_many :part_of_events, -> { where target_relation_type_id: "part_of" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
-  # has_many :version_events, -> { where source_relation_type_id: "versions" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
-  # has_many :version_of_events, -> { where target_relation_type_id: "version_of" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  has_many :part_events, -> { where source_relation_type_id: "parts" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
+  has_many :part_of_events, -> { where target_relation_type_id: "part_of" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
+  has_many :version_events, -> { where source_relation_type_id: "versions" }, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
+  has_many :version_of_events, -> { where target_relation_type_id: "version_of" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
   has_many :activities, as: :auditable, dependent: :destroy
   # has_many :source_events, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
   # has_many :target_events, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
   
-  # has_many :references, class_name: "Doi", through: :reference_events, source: :doi_for_target
-  # has_many :citations, class_name: "Doi", through: :citation_events, source: :doi_for_source
-  # has_many :parts, class_name: "Doi", through: :part_events, source: :doi_for_target
-  # has_many :part_of, class_name: "Doi", through: :part_of_events, source: :doi_for_source
-  # has_many :versions, class_name: "Doi", through: :version_events, source: :doi_for_target
-  # has_many :version_of, class_name: "Doi", through: :version_of_events, source: :doi_for_source
+  has_many :references, class_name: "Doi", through: :reference_events, source: :doi_for_target
+  has_many :citations, class_name: "Doi", through: :citation_events, source: :doi_for_source
+  has_many :parts, class_name: "Doi", through: :part_events, source: :doi_for_target
+  has_many :part_of, class_name: "Doi", through: :part_of_events, source: :doi_for_source
+  has_many :versions, class_name: "Doi", through: :version_events, source: :doi_for_target
+  has_many :version_of, class_name: "Doi", through: :version_of_events, source: :doi_for_source
 
   delegate :provider, to: :client, allow_nil: true
   delegate :consortium_id, to: :provider, allow_nil: true
@@ -424,27 +424,25 @@ class Doi < ActiveRecord::Base
       indexes :download_count, type: :integer
       indexes :reference_count, type: :integer
       indexes :citation_count, type: :integer
-      # indexes :part_count, type: :integer
-      # indexes :part_of_count, type: :integer
-      # indexes :version_count, type: :integer
-      # indexes :version_of_count, type: :integer
+      indexes :part_count, type: :integer
+      indexes :part_of_count, type: :integer
+      indexes :version_count, type: :integer
+      indexes :version_of_count, type: :integer
       indexes :views_over_time, type: :object
       indexes :downloads_over_time, type: :object
       indexes :citations_over_time, type: :object
-      indexes :reference_event_ids, type: :keyword
-      indexes :citation_event_ids, type: :keyword
-      indexes :reference_events, type: :object
-      indexes :citation_events, type: :object
-      # indexes :part_ids, type: :keyword
-      # indexes :part_of_ids, type: :keyword
-      # indexes :version_ids, type: :keyword
-      # indexes :version_of_ids, type: :keyword
-      # indexes :references, type: :object
-      # indexes :citations, type: :object
-      # indexes :parts, type: :object
-      # indexes :part_of, type: :object
-      # indexes :versions, type: :object
-      # indexes :version_of, type: :object
+      indexes :part_ids, type: :keyword
+      indexes :part_of_ids, type: :keyword
+      indexes :version_ids, type: :keyword
+      indexes :version_of_ids, type: :keyword
+      indexes :reference_ids, type: :keyword
+      indexes :citation_ids, type: :keyword
+      indexes :references, type: :object
+      indexes :citations, type: :object
+      indexes :parts, type: :object
+      indexes :part_of, type: :object
+      indexes :versions, type: :object
+      indexes :version_of, type: :object
     end
   end
 
@@ -470,21 +468,13 @@ class Doi < ActiveRecord::Base
       "views_over_time" => views_over_time,
       "download_count" => download_count,
       "downloads_over_time" => downloads_over_time,
-      "reference_event_ids" => reference_event_ids,
-      "reference_count" => reference_count,
-      "reference_events" => reference_events,
-      "citation_event_ids" => citation_event_ids,
       "citation_count" => citation_count,
-      "citation_events" => citation_events,
       "citations_over_time" => citations_over_time,
-      # "part_ids" => part_ids,
-      # "part_count" => part_count,
-      # "part_of_ids" => part_of_ids,
-      # "part_of_count" => part_of_count,
-      # "version_ids" => version_ids,
-      # "version_count" => version_count,
-      # "version_of_ids" => version_of_ids,
-      # "version_of_count" => version_of_count,
+      "reference_count" => reference_count,
+      "part_count" => part_count,
+      "part_of_count" => part_of_count,
+      "version_count" => version_count,
+      "version_of_count" => version_of_count,
       "prefix" => prefix,
       "suffix" => suffix,
       "types" => types,
@@ -520,12 +510,18 @@ class Doi < ActiveRecord::Base
       "provider" => provider.try(:as_indexed_json),
       "resource_type" => resource_type.try(:as_indexed_json),
       "media" => media.map { |m| m.try(:as_indexed_json) },
-      # "references" => references,
-      # "citations" => citations,
-      # "parts" => parts,
-      # "part_of" => part_of,
-      # "versions" => versions,
-      # "version_of" => version_of,
+      "reference_ids" => reference_ids,
+      "references" => references,
+      "citation_ids" => citation_ids,
+      "citations" => citations,
+      "part_ids" => part_ids,
+      "parts" => parts,
+      "part_of_ids" => part_of_ids,
+      "part_of" => part_of,
+      "version_ids" => version_ids,
+      "versions" => versions,
+      "version_of_ids" => version_of_ids,
+      "version_of" => version_of,
     }
   end
 
@@ -849,9 +845,9 @@ class Doi < ActiveRecord::Base
       return nil
     end
 
-    doi.source_events.each { |event| IndexJob.perform_later(event) }
-    doi.target_events.each { |event| IndexJob.perform_later(event) }
-    sleep 1
+    # doi.source_events.each { |event| IndexJob.perform_later(event) }
+    # doi.target_events.each { |event| IndexJob.perform_later(event) }
+    # sleep 1
 
     IndexJob.perform_later(doi)
   end
@@ -1043,21 +1039,21 @@ class Doi < ActiveRecord::Base
       .sort_by { |h| h["yearMonth"] }
   end
 
-  def reference_event_ids
-    reference_events.pluck(:uuid)
+  def reference_ids
+    references.pluck(:doi).map(&:downcase)
   end
 
   def reference_count
-    reference_events.size
+    references.size
   end
 
-  def citation_event_ids
-    citation_events.pluck(:uuid)
+  def citation_ids
+    citations.pluck(:doi).uniq.map(&:downcase)
   end
 
   # remove duplicate citing source dois
   def citation_count
-    citation_events.pluck(:source_doi).uniq.length
+    citations.pluck(:doi).uniq.length
   end
 
   # remove duplicate citing source dois, 
@@ -1069,37 +1065,37 @@ class Doi < ActiveRecord::Base
       .sort_by { |h| h["year"] }
   end
 
-  # def part_ids
-  #   parts.pluck(:uuid)
-  # end
+  def part_ids
+    parts.pluck(:doi).map(&:downcase)
+  end
 
-  # def part_count
-  #   parts.size
-  # end
+  def part_count
+    parts.size
+  end
 
-  # def part_of_ids
-  #   part_of.pluck(:uuid)
-  # end
+  def part_of_ids
+    part_of.pluck(:doi).map(&:downcase)
+  end
 
-  # def part_of_count
-  #   part_of.size
-  # end
+  def part_of_count
+    part_of.size
+  end
 
-  # def version_ids
-  #   versions.pluck(:uuid)
-  # end
+  def version_ids
+    versions.pluck(:doi).map(&:downcase)
+  end
 
-  # def version_count
-  #   versions.size
-  # end
+  def version_count
+    versions.size
+  end
 
-  # def version_of_ids
-  #   version_of.pluck(:uuid)
-  # end
+  def version_of_ids
+    version_of.pluck(:doi).map(&:downcase)
+  end
 
-  # def version_of_count
-  #   version_of.size
-  # end
+  def version_of_count
+    version_of.size
+  end
 
   def xml_encoded
     Base64.strict_encode64(xml) if xml.present?

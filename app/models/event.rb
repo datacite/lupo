@@ -568,6 +568,13 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def uppercase_doi_from_url(url)
+    if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match?(url)
+      uri = Addressable::URI.parse(url)
+      uri.path.gsub(/^\//, "").upcase
+    end
+  end
+
   def orcid_from_url(url)
     Array(/\A(http|https):\/\/orcid\.org\/(.+)/.match(url)).last
   end
@@ -604,46 +611,46 @@ class Event < ActiveRecord::Base
 
   def date_published(doi)
     ## TODO: we need to make sure all the dois from other RA are indexed
-    item = Doi.where(doi: doi_from_url(doi)).first
+    item = Doi.where(doi: uppercase_doi_from_url(doi)).first
     item[:publication_year].to_s if item.present?
   end
 
   def set_source_and_target_doi
     case relation_type_id
     when *ACTIVE_RELATION_TYPES
-      self.source_doi = doi_from_url(subj_id)
-      self.target_doi = doi_from_url(obj_id)
+      self.source_doi = uppercase_doi_from_url(subj_id)
+      self.target_doi = uppercase_doi_from_url(obj_id)
       self.source_relation_type_id = "references"
       self.target_relation_type_id = "citations"
     when *PASSIVE_RELATION_TYPES
-      self.source_doi = doi_from_url(obj_id)
-      self.target_doi = doi_from_url(subj_id)
+      self.source_doi = uppercase_doi_from_url(obj_id)
+      self.target_doi = uppercase_doi_from_url(subj_id)
       self.source_relation_type_id = "references"
       self.target_relation_type_id = "citations"
     when "unique-dataset-investigations-regular"
-      self.target_doi = doi_from_url(obj_id)
+      self.target_doi = uppercase_doi_from_url(obj_id)
       self.target_relation_type_id = "views"
     when "unique-dataset-requests-regular"
-      self.target_doi = doi_from_url(obj_id)
+      self.target_doi = uppercase_doi_from_url(obj_id)
       self.target_relation_type_id = "downloads"
     when "has-version"
-      self.source_doi = doi_from_url(subj_id)
-      self.target_doi = doi_from_url(obj_id)
+      self.source_doi = uppercase_doi_from_url(subj_id)
+      self.target_doi = uppercase_doi_from_url(obj_id)
       self.source_relation_type_id = "versions"
       self.target_relation_type_id = "version_of"
     when "is-version-of"
-      self.source_doi = doi_from_url(obj_id)
-      self.target_doi = doi_from_url(subj_id)
+      self.source_doi = uppercase_doi_from_url(obj_id)
+      self.target_doi = uppercase_doi_from_url(subj_id)
       self.source_relation_type_id = "versions"
       self.target_relation_type_id = "version_of"
     when "has-part"
-      self.source_doi = doi_from_url(subj_id)
-      self.target_doi = doi_from_url(obj_id)
+      self.source_doi = uppercase_doi_from_url(subj_id)
+      self.target_doi = uppercase_doi_from_url(obj_id)
       self.source_relation_type_id = "parts"
       self.target_relation_type_id = "part_of"
     when "is-part-of"
-      self.source_doi = doi_from_url(obj_id)
-      self.target_doi = doi_from_url(subj_id)
+      self.source_doi = uppercase_doi_from_url(obj_id)
+      self.target_doi = uppercase_doi_from_url(subj_id)
       self.source_relation_type_id = "parts"
       self.target_relation_type_id = "part_of"
     end

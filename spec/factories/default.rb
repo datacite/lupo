@@ -361,6 +361,24 @@ FactoryBot.define do
       relation_type_id { "is-part-of" }
     end
 
+    factory :event_for_datacite_versions do
+      source_id { "datacite_related" }
+      source_token { "datacite_related_123" }
+      subj_id { "http://doi.org/10.5061/DRYAD.47SD5" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      sequence(:obj_id) { |n| "http://doi.org/10.5061/DRYAD.47SD5/#{n}" }
+      relation_type_id { "has-version" }
+    end
+
+    factory :event_for_datacite_version_of do
+      source_id { "datacite_related" }
+      source_token { "datacite_related_123" }
+      subj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      obj_id { "http://doi.org/10.5061/DRYAD.47SD5" }
+      relation_type_id { "is-version-of" }
+    end
+
     factory :event_for_datacite_crossref do
       source_id { "datacite_crossref" }
       source_token { "datacite_crossref_123" }

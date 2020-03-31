@@ -8,7 +8,6 @@ class EventsController < ApplicationController
   prepend_before_action :authenticate_user!, except: [:index, :show]
   before_action :detect_crawler
   before_action :load_event, only: [:show, :destroy]
-  before_action :set_include, only: [:index, :show, :create, :update]
   authorize_resource only: [:destroy]
 
   def create
@@ -57,7 +56,6 @@ class EventsController < ApplicationController
 
   def show
     options = {}
-    options[:include] = @include
     options[:is_collection] = false
 
     render json: EventSerializer.new(@event, options).serialized_json, status: :ok
@@ -207,15 +205,6 @@ class EventsController < ApplicationController
     response = Event.find_by_id(params[:id])
     @event = response.results.first
     fail ActiveRecord::RecordNotFound if @event.blank?
-  end
-
-  def set_include
-    if params[:include].present?
-      @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:doi_for_source, :doi_for_target]
-    else
-      @include = []
-    end
   end
 
   private

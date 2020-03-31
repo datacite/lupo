@@ -279,7 +279,7 @@ describe QueryType do
 
       work = response.dig("data", "client", "works", "nodes", 0)
       expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
-      expect(work.dig("citationCount")).to eq(0)
+      expect(work.dig("citationCount")).to eq(2)
     end
   end
 
@@ -481,7 +481,7 @@ describe QueryType do
 
       work = response.dig("data", "person", "works", "nodes", 0)
       expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
-      expect(work.dig("citationCount")).to eq(0)
+      expect(work.dig("citationCount")).to eq(2)
     end
   end
 
@@ -680,7 +680,7 @@ describe QueryType do
 
       work = response.dig("data", "funder", "works", "nodes", 0)
       expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
-      expect(work.dig("citationCount")).to eq(0)
+      expect(work.dig("citationCount")).to eq(2)
     end
   end
 
@@ -806,7 +806,7 @@ describe QueryType do
 
       work = response.dig("data", "organization", "works", "nodes", 0)
       expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
-      expect(work.dig("citationCount")).to eq(0)
+      expect(work.dig("citationCount")).to eq(2)
     end
   end
 
