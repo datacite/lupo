@@ -134,6 +134,8 @@ class WorksController < ApplicationController
         "data_center" => :client,
         "member" => :provider,
         "resource_type" => :resource_type,
+        "references" => :references,
+        "citations" => :citations,
       }
       @include = params[:include].split(",").reduce([]) do |sum, i|
         k = include_keys[i.downcase.underscore]

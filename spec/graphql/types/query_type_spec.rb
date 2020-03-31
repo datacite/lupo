@@ -17,7 +17,7 @@ describe QueryType do
 
     before do
       Provider.import
-      sleep 1
+      sleep 2
     end
 
     let(:query) do
@@ -54,7 +54,7 @@ describe QueryType do
       Doi.import
       Prefix.import
       ProviderPrefix.import
-      sleep 2
+      sleep 3
     end
 
     let(:query) do
@@ -170,7 +170,7 @@ describe QueryType do
       Doi.import
       Prefix.import
       ClientPrefix.import
-      sleep 2
+      sleep 3
     end
 
     let(:query) do
@@ -433,7 +433,7 @@ describe QueryType do
       Client.import
       Event.import
       Doi.import
-      sleep 2
+      sleep 3
     end
 
     let(:query) do
@@ -694,7 +694,7 @@ describe QueryType do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     let(:query) do
@@ -831,7 +831,7 @@ describe QueryType do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     let(:query) do

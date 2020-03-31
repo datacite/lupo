@@ -609,69 +609,69 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
-  describe "parts" do
-    let(:client) { create(:client) }
-    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:part_events) { create(:event_for_datacite_parts, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "has-part") }
+  # describe "parts" do
+  #   let(:client) { create(:client) }
+  #   let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+  #   let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
+  #   let!(:part_events) { create(:event_for_datacite_parts, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "has-part") }
 
-    it "has parts" do
-      expect(doi.parts.count).to eq(1)
-      expect(doi.part_ids.count).to eq(1)
-      expect(doi.part_count).to eq(1)
+  #   it "has parts" do
+  #     expect(doi.parts.count).to eq(1)
+  #     expect(doi.part_ids.count).to eq(1)
+  #     expect(doi.part_count).to eq(1)
 
-      part = doi.parts.first
-      expect(part.doi).to eq(target_doi.doi)
-    end
-  end
+  #     part = doi.parts.first
+  #     expect(part.doi).to eq(target_doi.doi)
+  #   end
+  # end
 
-  describe "part of" do
-    let(:client) { create(:client) }
-    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:part_of_events) { create(:event_for_datacite_part_of, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-part-of") }
+  # describe "part of" do
+  #   let(:client) { create(:client) }
+  #   let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+  #   let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
+  #   let!(:part_of_events) { create(:event_for_datacite_part_of, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-part-of") }
 
-    it "has part of" do
-      expect(doi.part_of.count).to eq(1)
-      expect(doi.part_of_ids.count).to eq(1)
-      expect(doi.part_of_count).to eq(1)
+  #   it "has part of" do
+  #     expect(doi.part_of.count).to eq(1)
+  #     expect(doi.part_of_ids.count).to eq(1)
+  #     expect(doi.part_of_count).to eq(1)
 
-      part_of = doi.part_of.first
-      expect(part_of.doi).to eq(source_doi.doi)
-    end
-  end
+  #     part_of = doi.part_of.first
+  #     expect(part_of.doi).to eq(source_doi.doi)
+  #   end
+  # end
 
-  describe "versions" do
-    let(:client) { create(:client) }
-    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:version_event) { create(:event_for_datacite_versions, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}") }
+  # describe "versions" do
+  #   let(:client) { create(:client) }
+  #   let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+  #   let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
+  #   let!(:version_event) { create(:event_for_datacite_versions, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}") }
 
-    it "has versions" do
-      expect(doi.versions.count).to eq(1)
-      expect(doi.version_ids.count).to eq(1)
-      expect(doi.version_count).to eq(1)
+  #   it "has versions" do
+  #     expect(doi.versions.count).to eq(1)
+  #     expect(doi.version_ids.count).to eq(1)
+  #     expect(doi.version_count).to eq(1)
 
-      version = doi.versions.first
-      expect(version.doi).to eq(target_doi.doi)
-    end
-  end
+  #     version = doi.versions.first
+  #     expect(version.doi).to eq(target_doi.doi)
+  #   end
+  # end
 
-  describe "version of" do
-    let(:client) { create(:client) }
-    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:part_of_events) { create(:event_for_datacite_version_of, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}") }
+  # describe "version of" do
+  #   let(:client) { create(:client) }
+  #   let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+  #   let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
+  #   let!(:part_of_events) { create(:event_for_datacite_version_of, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}") }
 
-    it "has version of" do
-      expect(doi.version_of.count).to eq(1)
-      expect(doi.version_of_ids.count).to eq(1)
-      expect(doi.version_of_count).to eq(1)
+  #   it "has version of" do
+  #     expect(doi.version_of.count).to eq(1)
+  #     expect(doi.version_of_ids.count).to eq(1)
+  #     expect(doi.version_of_count).to eq(1)
 
-      version_of = doi.version_of.first
-      expect(version_of.doi).to eq(source_doi.doi)
-    end
-  end
+  #     version_of = doi.version_of.first
+  #     expect(version_of.doi).to eq(source_doi.doi)
+  #   end
+  # end
 
   describe "convert_affiliations" do
     let(:doi) { create(:doi)}
