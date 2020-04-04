@@ -8,7 +8,6 @@ module Indexable
       # use index_document instead of update_document to also update virtual attributes
       IndexJob.perform_later(self)
       if self.class.name == "Doi"
-        update_column(:indexed, Time.zone.now)
         send_import_message(self.to_jsonapi) if aasm_state == "findable" && !Rails.env.test? && !%w(crossref.citations medra.citations jalc.citations kisti.citations op.citations).include?(client.symbol.downcase)
       # reindex prefix, not triggered by standard callbacks
       elsif ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)

@@ -1,12 +1,16 @@
-concurrency: 12
+concurrency: 15
 delay: 0
 pidfile: tmp/pids/shoryuken.pid
 queues:
   - lupo
 
 groups:
+  import:
+    concurrency: 10
+    queues:
+      - lupo_import
   transfer:
-    concurrency: 3
+    concurrency: 10
     queues:
       - lupo_transfer
   background:
