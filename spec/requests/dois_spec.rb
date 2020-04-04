@@ -178,7 +178,7 @@ describe "dois", type: :request do
 
         expect(result.dig('attributes', 'doi')).to eq(doi.doi.downcase)
         expect(result.dig('attributes', 'titles')).to eq(doi.titles)
-        # expect(result.dig('relationships','citations', 'data')).to be_empty
+        expect(result.dig('relationships','citations', 'data')).to be_empty
       end
     end
 
@@ -375,55 +375,55 @@ describe "dois", type: :request do
     end
   end
 
-  # describe "parts", elasticsearch: true, vcr: true do
-  #   let(:doi) { create(:doi, client: client, aasm_state: "findable") }
-  #   let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
-  #   let!(:part_events) { create(:event_for_datacite_parts, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "has-part") }
+  describe "parts", elasticsearch: true, vcr: true do
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:part_events) { create(:event_for_datacite_parts, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "has-part") }
 
-  #   before do
-  #     Doi.import
-  #     Event.import
-  #     sleep 2
-  #   end
+    before do
+      Doi.import
+      Event.import
+      sleep 2
+    end
 
-  #   it "has parts" do
-  #     get "/dois/#{doi.doi}", nil, headers
+    it "has parts" do
+      get "/dois/#{doi.doi}?include=parts", nil, headers
 
-  #     expect(last_response.status).to eq(200)
-  #     expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
-  #     expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-  #     expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-  #     # expect(json.dig('data', 'attributes', 'partCount')).to eq(1)
-  #     # expect(json.dig('data', 'relationships', 'parts', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
-  #     # expect(json.dig('included').length).to eq(1)
-  #     # expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
-  #   end
-  # end
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'partCount')).to eq(1)
+      expect(json.dig('data', 'relationships', 'parts', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
+    end
+  end
 
-  # describe "versions", elasticsearch: true, vcr: true do
-  #   let(:doi) { create(:doi, client: client, aasm_state: "findable") }
-  #   let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
-  #   let!(:version_events) { create(:event_for_datacite_parts, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "has-version") }
+  describe "versions", elasticsearch: true, vcr: true do
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:version_events) { create(:event_for_datacite_parts, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "has-version") }
 
-  #   before do
-  #     Doi.import
-  #     Event.import
-  #     sleep 2
-  #   end
+    before do
+      Doi.import
+      Event.import
+      sleep 2
+    end
 
-  #   it "has versions" do
-  #     get "/dois/#{doi.doi}", nil, headers
+    it "has versions" do
+      get "/dois/#{doi.doi}?include=versions", nil, headers
 
-  #     expect(last_response.status).to eq(200)
-  #     expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
-  #     expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-  #     expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-  #     # expect(json.dig('data', 'attributes', 'versionCount')).to eq(1)
-  #     # expect(json.dig('data', 'relationships', 'versions', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
-  #     # expect(json.dig('included').length).to eq(1)
-  #     # expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
-  #   end
-  # end
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'versionCount')).to eq(1)
+      expect(json.dig('data', 'relationships', 'versions', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
+    end
+  end
 
   describe "state" do
     let(:doi_id) { "10.14454/4K3M-NYVG" }
