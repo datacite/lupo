@@ -14,6 +14,7 @@ class PersonType < BaseObject
 
   field :datasets, DatasetConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Authored datasets" do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
     argument :has_citations, Int, required: false
@@ -24,6 +25,7 @@ class PersonType < BaseObject
 
   field :publications, PublicationConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Authored publications"  do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
     argument :has_citations, Int, required: false
@@ -34,6 +36,7 @@ class PersonType < BaseObject
 
   field :softwares, SoftwareConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Authored software"  do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
     argument :has_citations, Int, required: false
@@ -44,6 +47,7 @@ class PersonType < BaseObject
 
   field :works, WorkConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Authored works" do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
     argument :has_citations, Int, required: false

@@ -16,6 +16,7 @@ class OrganizationType < BaseObject
 
   field :datasets, DatasetConnectionWithMetaType, null: true, description: "Datasets from this organization", connection: true do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :client_id, String, required: false
@@ -28,6 +29,7 @@ class OrganizationType < BaseObject
 
   field :publications, PublicationConnectionWithMetaType, null: true, description: "Publications from this organization", connection: true do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :client_id, String, required: false
@@ -40,6 +42,7 @@ class OrganizationType < BaseObject
 
   field :softwares, SoftwareConnectionWithMetaType, null: true, description: "Software from this organization", connection: true do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :client_id, String, required: false
@@ -52,6 +55,7 @@ class OrganizationType < BaseObject
 
   field :works, WorkConnectionWithMetaType, null: true, description: "Works from this organization", connection: true do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :client_id, String, required: false

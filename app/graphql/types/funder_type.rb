@@ -14,6 +14,7 @@ class FunderType < BaseObject
 
   field :datasets, DatasetConnectionWithMetaType, null: true, description: "Funded datasets", connection: true do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
@@ -25,6 +26,7 @@ class FunderType < BaseObject
 
   field :publications, PublicationConnectionWithMetaType, null: true, description: "Funded publications", connection: true do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
@@ -36,6 +38,7 @@ class FunderType < BaseObject
 
   field :softwares, SoftwareConnectionWithMetaType, null: true, description: "Funded software", connection: true do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
@@ -47,6 +50,7 @@ class FunderType < BaseObject
 
   field :works, WorkConnectionWithMetaType, null: true, description: "Funded works", connection: true do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false

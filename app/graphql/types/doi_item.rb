@@ -45,8 +45,78 @@ module DoiItem
   field :citations_over_time, [YearTotalType], null: true, description: "Citations by year."
   field :views_over_time, [YearMonthTotalType], null: true, description: "Views by month."
   field :downloads_over_time, [YearMonthTotalType], null: true, description: "Downloads by month."
-  field :citations, [WorkType], null: true, description: "Citations."
-  field :references, [WorkType], null: true, description: "References."
+  field :references, WorkConnectionWithMetaType, null: true, connection: true, max_page_size: 100, description: "References for this DOI." do
+    argument :query, String, required: false
+    argument :ids, String, required: false
+    argument :user_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+  field :citations, WorkConnectionWithMetaType, null: true, connection: true, max_page_size: 100, description: "Citations for this DOI." do
+    argument :query, String, required: false
+    argument :ids, String, required: false
+    argument :user_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+  field :parts, WorkConnectionWithMetaType, null: true, connection: true, max_page_size: 100, description: "Parts of this DOI." do
+    argument :query, String, required: false
+    argument :ids, String, required: false
+    argument :user_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+  field :part_of, WorkConnectionWithMetaType, null: true, connection: true, max_page_size: 100, description: "The DOI is a part of this DOI." do
+    argument :query, String, required: false
+    argument :ids, String, required: false
+    argument :user_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+  field :versions, WorkConnectionWithMetaType, null: true, connection: true, max_page_size: 100, description: "Versions of this DOI." do
+    argument :query, String, required: false
+    argument :ids, String, required: false
+    argument :user_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+  field :version_of, WorkConnectionWithMetaType, null: true, connection: true, max_page_size: 100, description: "The DOI is a version of this DOI." do
+    argument :query, String, required: false
+    argument :ids, String, required: false
+    argument :user_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
 
   def type
     object.types["resourceTypeGeneral"]
@@ -86,15 +156,55 @@ module DoiItem
     end
     bibliography.first.gsub(url, doi_link(url))
   end
+
+  def references(**args)
+    ids = object.reference_ids
+    return [] if ids.blank?
+
+    response(**args)
+  end
   
-  def citations
-    ids = object.citation_events.map {|e| e.source_doi }
-    ElasticsearchLoader.for(Doi).load_many(ids)
+  def citations(**args)
+    args[:ids] = object.citation_ids
+    return [] if args[:ids].blank?
+
+    Rails.logger.warn args[:ids]
+
+    response(**args)
   end
 
-  def references
-    ids = object.reference_events.map { |e| e.target_doi }
-    ElasticsearchLoader.for(Doi).load_many(ids)
+  def parts(**args)
+    args[:ids] = object.part_ids
+    return [] if args[:ids].blank?
+
+    response(**args)
+  end
+
+  def part_of(**args)
+    args[:ids] = object.part_of_ids
+    return [] if args[:ids].blank?
+
+    response(**args)
+  end
+
+  def versions(**args)
+    args[:ids] = object.version_ids
+    return [] if args[:ids].blank?
+
+    response(**args)
+  end
+
+  def version_of(**args)
+    args[:ids] = object.version_of_ids
+    return [] if args[:ids].blank?
+
+    response(**args)
+  end
+
+  def response(**args)
+    return [] if args[:ids].blank?
+
+    @response ||=  Doi.query(args[:query], ids: args[:ids], funder_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   def doi_link(url)

@@ -697,10 +697,14 @@ class Doi < ActiveRecord::Base
       query = query.gsub("/", '\/')
     end
 
+    # turn ids into an array if provided as comma-separated string
+    options[:ids] = options[:ids].split(",") if options[:ids].is_a?(String)
+
     must = []
     must_not = []
 
     must << { query_string: { query: query, fields: query_fields } } if query.present?
+    must << { terms: { doi: options[:ids].map(&:upcase) }} if options[:ids].present? 
     must << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
     must << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
     must << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
@@ -710,7 +714,12 @@ class Doi < ActiveRecord::Base
     must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
     must << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
     must << { term: { source: options[:source] } } if options[:source].present?
+    must << { range: { reference_count: { "gte": options[:has_references].to_i } } } if options[:has_references].present?
     must << { range: { citation_count: { "gte": options[:has_citations].to_i } } } if options[:has_citations].present?
+    must << { range: { part_count: { "gte": options[:has_parts].to_i } } } if options[:has_parts].present?
+    must << { range: { part_of_count: { "gte": options[:has_part_of_count].to_i } } } if options[:has_part_of].present?
+    must << { range: { version_count: { "gte": options[:has_version_count].to_i } } } if options[:has_versions].present?
+    must << { range: { version_of_count: { "gte": options[:has_version_of_count].to_i } } } if options[:has_version_of].present?
     must << { range: { view_count: { "gte": options[:has_views].to_i } } } if options[:has_views].present?
     must << { range: { download_count: { "gte": options[:has_downloads].to_i } } } if options[:has_downloads].present?
     must << { term: { "landing_page.status": options[:link_check_status] } } if options[:link_check_status].present?
@@ -726,6 +735,9 @@ class Doi < ActiveRecord::Base
     must << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
     must << { term: { "creators.affiliation.affiliationIdentifier" => "https://ror.org/#{ror_from_url(options[:affiliation_id])}" }} if options[:affiliation_id].present?
     must << { term: { "funding_references.funderIdentifier" => "https://doi.org/#{doi_from_url(options[:funder_id])}" }} if options[:funder_id].present?
+    must << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" }} if options[:has_person].present?
+    must << { term: { "creators.affiliation.affiliationIdentifierScheme" => "ROR" }} if options[:has_organization].present?
+    must << { term: { "funding_references.funderIdentifierType" => "Crossref Funder ID" }} if options[:has_funder].present?
     must << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
     # TODO align PID parsing 
     must << { term: { "client.re3data_id" => doi_from_url(options[:re3data_id]) }} if options[:re3data_id].present?
@@ -1036,7 +1048,7 @@ class Doi < ActiveRecord::Base
   end
 
   def indexed_references
-    Doi.find_by_ids(reference_ids.join(","), page: { number: 1, size: 100 }).results
+    Doi.query(nil, ids: reference_ids, page: { number: 1, size: 100 }).results
   end
 
   def citation_ids
@@ -1058,7 +1070,7 @@ class Doi < ActiveRecord::Base
   end
 
   def indexed_citations
-    Doi.find_by_ids(citation_ids.join(","), page: { number: 1, size: 100 }).results
+    Doi.query(nil, ids: citation_ids, page: { number: 1, size: 100 }).results
   end
 
   def part_ids
@@ -1070,7 +1082,7 @@ class Doi < ActiveRecord::Base
   end
 
   def indexed_parts
-    Doi.find_by_ids(part_ids.join(","), page: { number: 1, size: 100 }).results
+    Doi.query(nil, ids: part_ids, page: { number: 1, size: 100 }).results.to_a
   end
 
   def part_of_ids
@@ -1082,7 +1094,7 @@ class Doi < ActiveRecord::Base
   end
 
   def indexed_part_of
-    Doi.find_by_ids(part_of_ids.join(","), page: { number: 1, size: 100 }).results
+    Doi.query(nil, ids: part_of_ids, page: { number: 1, size: 100 }).results
   end
 
   def version_ids
@@ -1094,7 +1106,7 @@ class Doi < ActiveRecord::Base
   end
 
   def indexed_versions
-    Doi.find_by_ids(version_ids.join(","), page: { number: 1, size: 100 }).results
+    Doi.query(nil, ids: version_ids, page: { number: 1, size: 100 }).results
   end
 
   def version_of_ids
@@ -1106,7 +1118,7 @@ class Doi < ActiveRecord::Base
   end
 
   def indexed_version_of
-    Doi.find_by_ids(version_of_ids.join(","), page: { number: 1, size: 100 }).results
+    Doi.query(nil, ids: version_of_ids, page: { number: 1, size: 100 }).results
   end
 
   def xml_encoded

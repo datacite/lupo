@@ -27,8 +27,9 @@ class PublicationConnectionWithMetaType < BaseConnection
   end
 
   def response(**args)
-    @response ||= Doi.query(args[:query], 
-                            user_id: args[:user_id], 
+    @response ||= Doi.query(args[:query],
+                            ids: args[:ids],
+                            user_id: args[:user_id],
                             client_id: args[:client_id], 
                             provider_id: args[:provider_id],
                             funder_id: args[:funder_id], 
