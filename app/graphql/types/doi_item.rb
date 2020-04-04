@@ -52,6 +52,9 @@ module DoiItem
     argument :funder_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
@@ -64,6 +67,9 @@ module DoiItem
     argument :funder_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
@@ -76,6 +82,9 @@ module DoiItem
     argument :funder_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
@@ -88,6 +97,9 @@ module DoiItem
     argument :funder_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
@@ -100,6 +112,9 @@ module DoiItem
     argument :funder_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
@@ -204,7 +219,7 @@ module DoiItem
   def response(**args)
     return [] if args[:ids].blank?
 
-    @response ||=  Doi.query(args[:query], ids: args[:ids], funder_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    @response ||=  Doi.query(args[:query], ids: args[:ids], funder_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   def doi_link(url)

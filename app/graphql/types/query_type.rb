@@ -148,16 +148,18 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :resource_type_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_citations, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def works(query: nil, ids: nil, user_id: nil, client_id: nil, provider_id: nil, first: nil)
-    if ids.present?
-      dois = ids.split(",").map { |i| doi_from_url(i) }
-      ElasticsearchLoader.for(Doi).load_many(dois)
-    else
-      Doi.query(query, user_id: user_id, client_id: client_id, provider_id: provider_id, state: "findable", page: { number: 1, size: first }).results.to_a
-    end
+  def works(**args)
+    response(**args)
   end
 
   field :work, WorkType, null: false do
@@ -173,14 +175,18 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def datasets(query: nil, user_id: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
-    Doi.query(query, user_id: user_id.present? ? orcid_from_url(user_id) : nil, client_id: client_id, provider_id: provider_id, resource_type_id: "Dataset", state: "findable", has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, page: { number: 1, size: first }).results.to_a
+  def datasets(**args)
+    args[:resource_type_id] = "Dataset"
+    response(**args)
   end
 
   field :dataset, DatasetType, null: false do
@@ -196,14 +202,18 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def publications(query: nil, user_id: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
-    Doi.query(query, user_id: user_id.present? ? orcid_from_url(user_id) : nil, client_id: client_id, provider_id: provider_id, has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, resource_type_id: "Text", state: "findable", page: { number: 1, size: first }).results.to_a
+  def publications(query: nil, user_id: nil, client_id: nil, provider_id: nil, has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
+    args[:resource_type_id] = "Text"
+    response(**args)
   end
 
   field :publication, PublicationType, null: false do
@@ -222,8 +232,9 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def audiovisuals(query: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
-    Doi.query(query, resource_type_id: "Audiovisual", state: "findable", has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, page: { number: 1, size: first }).results.to_a
+  def audiovisuals(**args)
+    args[:resource_type_id] = "Audiovisual"
+    response(**args)
   end
 
   field :audiovisual, AudiovisualType, null: false do
@@ -239,8 +250,9 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def collections(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Collection", state: "findable", page: { number: 1, size: first }).results.to_a
+  def collections(**args)
+    args[:resource_type_id] = "Collection"
+    response(**args)
   end
 
   field :collection, CollectionType, null: false do
@@ -256,8 +268,9 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def data_papers(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "DataPaper", state: "findable", page: { number: 1, size: first }).results.to_a
+  def data_papers(**args)
+    args[:resource_type_id] = "DataPaper"
+    response(**args)
   end
 
   field :data_paper, DataPaperType, null: false do
@@ -273,8 +286,9 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def events(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Event", state: "findable", page: { number: 1, size: first }).results.to_a
+  def events(**args)
+    args[:resource_type_id] = "Event"
+    response(**args)
   end
 
   field :event, EventType, null: false do
@@ -290,8 +304,9 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def images(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Image", state: "findable", page: { number: 1, size: first }).results.to_a
+  def images(**args)
+    args[:resource_type_id] = "Image"
+    response(**args)
   end
 
   field :image, ImageType, null: false do
@@ -310,8 +325,9 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def interactive_resources(query: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
-    Doi.query(query, resource_type_id: "InteractiveResource", state: "findable", has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, page: { number: 1, size: first }).results.to_a
+  def interactive_resources(**args)
+    args[:resource_type_id] = "InteractiveResource"
+    response(**args)
   end
 
   field :interactive_resource, InteractiveResourceType, null: false do
@@ -327,8 +343,9 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def models(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Model", state: "findable", page: { number: 1, size: first }).results.to_a
+  def models(**args)
+    args[:resource_type_id] = "Model"
+    response(**args)
   end
 
   field :model, ModelType, null: false do
@@ -344,14 +361,18 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def physical_objects(query: nil, user_id: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
-    Doi.query(query, user_id: user_id.present? ? orcid_from_url(user_id) : nil, client_id: client_id, provider_id: provider_id, resource_type_id: "PhysicalObject", state: "findable", has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, page: { number: 1, size: first }).results.to_a
+  def physical_objects(query: nil, user_id: nil, client_id: nil, provider_id: nil, has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
+    args[:resource_type_id] = "PhysicalObject"
+    response(**args)
   end
 
   field :physical_object, PhysicalObjectType, null: false do
@@ -370,7 +391,8 @@ class QueryType < BaseObject
   end
 
   def services(**args)
-    Doi.query(args[:query], resource_type_id: "Service", client_id: args[:client_id], provider_id: args[:provider_id], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    args[:resource_type_id] = "Service"
+    response(**args)
   end
 
   field :service, ServiceType, null: false do
@@ -386,14 +408,18 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def softwares(query: nil, user_id: nil, client_id: nil, provider_id: nil, has_citations: nil, has_views: nil, has_downloads: nil, first: nil)
-    Doi.query(query, user_id: user_id.present? ? orcid_from_url(user_id) : nil, client_id: client_id, provider_id: provider_id, has_citations: has_citations, has_views: has_views, has_downloads: has_downloads, resource_type_id: "Software", state: "findable", page: { number: 1, size: first }).results.to_a
+  def softwares(**args)
+    args[:resource_type_id] = "Software"
+    response(**args)
   end
 
   field :software, SoftwareType, null: false do
@@ -409,8 +435,9 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def sounds(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Sound", state: "findable", page: { number: 1, size: first }).results.to_a
+  def sounds(**args)
+    args[:resource_type_id] = "Sound"
+    response(**args)
   end
 
   field :sound, SoundType, null: false do
@@ -426,8 +453,9 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def workflows(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Workflow", state: "findable", page: { number: 1, size: first }).results.to_a
+  def workflows(**args)
+    args[:resource_type_id] = "Workflow"
+    response(**args)
   end
 
   field :workflow, WorkflowType, null: false do
@@ -443,8 +471,9 @@ class QueryType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  def others(query: nil, first: nil)
-    Doi.query(query, resource_type_id: "Other", state: "findable", page: { number: 1, size: first }).results.to_a
+  def others(**args)
+    args[:resource_type_id] = "Other"
+    response(**args)
   end
 
   field :other, OtherType, null: false do
@@ -472,6 +501,10 @@ class QueryType < BaseObject
     fail ActiveRecord::RecordNotFound if result.nil?
 
     result
+  end
+
+  def response(**args)
+    @response ||= Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   def set_doi(id)

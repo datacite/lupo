@@ -40,9 +40,37 @@ type Audiovisual implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -110,6 +138,72 @@ type Audiovisual implements DoiItem {
   language: String
 
   """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   The provider account managing this resource
   """
   provider: Provider
@@ -130,9 +224,37 @@ type Audiovisual implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -183,6 +305,69 @@ type Audiovisual implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
@@ -490,9 +675,37 @@ type Collection implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -560,6 +773,72 @@ type Collection implements DoiItem {
   language: String
 
   """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   The provider account managing this resource
   """
   provider: Provider
@@ -580,9 +859,37 @@ type Collection implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -633,6 +940,69 @@ type Collection implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
@@ -874,9 +1244,37 @@ type DataPaper implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -944,6 +1342,72 @@ type DataPaper implements DoiItem {
   language: String
 
   """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   The provider account managing this resource
   """
   provider: Provider
@@ -964,9 +1428,37 @@ type DataPaper implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -1019,6 +1511,69 @@ type DataPaper implements DoiItem {
   version: String
 
   """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   Total number of views.
   """
   viewCount: Int
@@ -1036,9 +1591,37 @@ type Dataset implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -1054,27 +1637,6 @@ type Dataset implements DoiItem {
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
-
-  """
-  Referenced datasets
-  """
-  datasets(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-  ): DatasetDatasetConnectionWithMeta!
 
   """
   Different dates relevant to the work
@@ -1127,19 +1689,9 @@ type Dataset implements DoiItem {
   language: String
 
   """
-  The provider account managing this resource
+  The DOI is a part of this DOI.
   """
-  provider: Provider
-
-  """
-  The year when the data was or will be made publicly available
-  """
-  publicationYear: Int
-
-  """
-  Referenced publications
-  """
-  publications(
+  partOf(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -1149,14 +1701,68 @@ type Dataset implements DoiItem {
     Returns the elements in the list that come before the specified cursor.
     """
     before: String
+    clientId: String
     first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
+    providerId: String
     query: String
-  ): DatasetPublicationConnectionWithMeta!
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
 
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
@@ -1169,9 +1775,37 @@ type Dataset implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -1192,27 +1826,6 @@ type Dataset implements DoiItem {
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
-
-  """
-  Referenced software
-  """
-  softwareSourceCodes(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-  ): DatasetSoftwareConnectionWithMeta!
 
   """
   Subject, keyword, classification code, or key phrase describing the resource
@@ -1266,6 +1879,69 @@ type Dataset implements DoiItem {
   version: String
 
   """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   Total number of views.
   """
   viewCount: Int
@@ -1306,27 +1982,6 @@ type DatasetConnectionWithMeta {
 }
 
 """
-The connection type for EventData.
-"""
-type DatasetDatasetConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
 An edge in a connection.
 """
 type DatasetEdge {
@@ -1339,48 +1994,6 @@ type DatasetEdge {
   The item at the end of the edge.
   """
   node: Dataset
-}
-
-"""
-The connection type for EventData.
-"""
-type DatasetPublicationConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
-The connection type for EventData.
-"""
-type DatasetSoftwareConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
 }
 
 """
@@ -1476,9 +2089,37 @@ interface DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -1546,6 +2187,72 @@ interface DoiItem {
   language: String
 
   """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   The provider account managing this resource
   """
   provider: Provider
@@ -1566,9 +2273,37 @@ interface DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -1619,6 +2354,69 @@ interface DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
@@ -1638,9 +2436,37 @@ type Event implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -1708,6 +2534,72 @@ type Event implements DoiItem {
   language: String
 
   """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   The provider account managing this resource
   """
   provider: Provider
@@ -1728,9 +2620,37 @@ type Event implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -1781,6 +2701,69 @@ type Event implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
@@ -1800,9 +2783,37 @@ type EventData implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -1870,6 +2881,72 @@ type EventData implements DoiItem {
   language: String
 
   """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   The provider account managing this resource
   """
   provider: Provider
@@ -1890,9 +2967,37 @@ type EventData implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -1943,6 +3048,69 @@ type EventData implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
@@ -2052,6 +3220,7 @@ type Funder {
     hasCitations: Int
     hasDownloads: Int
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
@@ -2095,6 +3264,7 @@ type Funder {
     hasCitations: Int
     hasDownloads: Int
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
@@ -2123,6 +3293,7 @@ type Funder {
     hasCitations: Int
     hasDownloads: Int
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
@@ -2161,6 +3332,7 @@ type Funder {
     hasCitations: Int
     hasDownloads: Int
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
@@ -2269,9 +3441,37 @@ type Image implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -2339,6 +3539,72 @@ type Image implements DoiItem {
   language: String
 
   """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   The provider account managing this resource
   """
   provider: Provider
@@ -2359,9 +3625,37 @@ type Image implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -2412,6 +3706,69 @@ type Image implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
@@ -2431,9 +3788,37 @@ type InteractiveResource implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -2501,6 +3886,72 @@ type InteractiveResource implements DoiItem {
   language: String
 
   """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   The provider account managing this resource
   """
   provider: Provider
@@ -2521,9 +3972,37 @@ type InteractiveResource implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -2574,6 +4053,69 @@ type InteractiveResource implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
@@ -2593,9 +4135,37 @@ type Model implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -2663,6 +4233,72 @@ type Model implements DoiItem {
   language: String
 
   """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   The provider account managing this resource
   """
   provider: Provider
@@ -2683,9 +4319,37 @@ type Model implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -2736,6 +4400,69 @@ type Model implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
@@ -2786,6 +4513,7 @@ type Organization {
     hasCitations: Int
     hasDownloads: Int
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
@@ -2835,6 +4563,7 @@ type Organization {
     hasCitations: Int
     hasDownloads: Int
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
@@ -2864,6 +4593,7 @@ type Organization {
     hasCitations: Int
     hasDownloads: Int
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
@@ -2908,6 +4638,7 @@ type Organization {
     hasCitations: Int
     hasDownloads: Int
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
@@ -2963,9 +4694,37 @@ type Other implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -3033,6 +4792,72 @@ type Other implements DoiItem {
   language: String
 
   """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   The provider account managing this resource
   """
   provider: Provider
@@ -3053,9 +4878,37 @@ type Other implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -3106,6 +4959,69 @@ type Other implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
@@ -3170,6 +5086,7 @@ type Person {
     hasCitations: Int
     hasDownloads: Int
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
@@ -3222,6 +5139,7 @@ type Person {
     hasCitations: Int
     hasDownloads: Int
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
@@ -3249,6 +5167,7 @@ type Person {
     hasCitations: Int
     hasDownloads: Int
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
@@ -3286,6 +5205,7 @@ type Person {
     hasCitations: Int
     hasDownloads: Int
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
@@ -3344,9 +5264,37 @@ type PhysicalObject implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -3414,6 +5362,72 @@ type PhysicalObject implements DoiItem {
   language: String
 
   """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   The provider account managing this resource
   """
   provider: Provider
@@ -3434,9 +5448,37 @@ type PhysicalObject implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -3487,6 +5529,69 @@ type PhysicalObject implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
@@ -3856,9 +5961,37 @@ type Publication implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -3874,27 +6007,6 @@ type Publication implements DoiItem {
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
-
-  """
-  Referenced datasets
-  """
-  datasets(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-  ): PublicationDatasetConnectionWithMeta!
 
   """
   Different dates relevant to the work
@@ -3947,19 +6059,9 @@ type Publication implements DoiItem {
   language: String
 
   """
-  The provider account managing this resource
+  The DOI is a part of this DOI.
   """
-  provider: Provider
-
-  """
-  The year when the data was or will be made publicly available
-  """
-  publicationYear: Int
-
-  """
-  Referenced publications
-  """
-  publications(
+  partOf(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -3969,14 +6071,68 @@ type Publication implements DoiItem {
     Returns the elements in the list that come before the specified cursor.
     """
     before: String
+    clientId: String
     first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
+    providerId: String
     query: String
-  ): PublicationPublicationConnectionWithMeta!
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
 
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
@@ -3989,9 +6145,37 @@ type Publication implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -4012,27 +6196,6 @@ type Publication implements DoiItem {
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
-
-  """
-  Referenced software
-  """
-  softwareSourceCodes(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-  ): PublicationSoftwareConnectionWithMeta!
 
   """
   Subject, keyword, classification code, or key phrase describing the resource
@@ -4063,6 +6226,69 @@ type Publication implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
@@ -4105,27 +6331,6 @@ type PublicationConnectionWithMeta {
 }
 
 """
-The connection type for EventData.
-"""
-type PublicationDatasetConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
 An edge in a connection.
 """
 type PublicationEdge {
@@ -4138,48 +6343,6 @@ type PublicationEdge {
   The item at the end of the edge.
   """
   node: Publication
-}
-
-"""
-The connection type for EventData.
-"""
-type PublicationPublicationConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
-The connection type for EventData.
-"""
-type PublicationSoftwareConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
 }
 
 type Query {
@@ -4245,6 +6408,9 @@ type Query {
     first: Int = 25
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
 
     """
@@ -4327,7 +6493,7 @@ type Query {
   ): PersonConnectionWithMeta!
   person(id: ID!): Person
   physicalObject(id: ID!): PhysicalObject!
-  physicalObjects(clientId: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasViews: Int, providerId: String, query: String, userId: String): [PhysicalObject!]!
+  physicalObjects(clientId: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasPerson: Boolean, hasViews: Int, providerId: String, query: String, userId: String): [PhysicalObject!]!
   prefix(id: ID!): Prefix!
   prefixes(first: Int = 25, query: String): [Prefix!]!
   provider(id: ID!): Provider!
@@ -4364,6 +6530,9 @@ type Query {
     first: Int = 25
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
 
     """
@@ -4410,6 +6579,9 @@ type Query {
     first: Int = 25
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
 
     """
@@ -4455,6 +6627,12 @@ type Query {
     before: String
     clientId: String
     first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
     ids: String
 
     """
@@ -4463,6 +6641,7 @@ type Query {
     last: Int
     providerId: String
     query: String
+    resourceTypeId: String
     userId: String
   ): WorkConnectionWithMeta!
 }
@@ -4584,9 +6763,37 @@ type Service implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -4654,6 +6861,72 @@ type Service implements DoiItem {
   language: String
 
   """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   The provider account managing this resource
   """
   provider: Provider
@@ -4674,9 +6947,37 @@ type Service implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -4727,6 +7028,69 @@ type Service implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
@@ -4783,9 +7147,37 @@ type Software implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -4801,27 +7193,6 @@ type Software implements DoiItem {
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
-
-  """
-  Referenced datasets
-  """
-  datasets(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-  ): SoftwareDatasetConnectionWithMeta!
 
   """
   Different dates relevant to the work
@@ -4874,19 +7245,9 @@ type Software implements DoiItem {
   language: String
 
   """
-  The provider account managing this resource
+  The DOI is a part of this DOI.
   """
-  provider: Provider
-
-  """
-  The year when the data was or will be made publicly available
-  """
-  publicationYear: Int
-
-  """
-  Referenced publications
-  """
-  publications(
+  partOf(
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4896,14 +7257,68 @@ type Software implements DoiItem {
     Returns the elements in the list that come before the specified cursor.
     """
     before: String
+    clientId: String
     first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
+    providerId: String
     query: String
-  ): SoftwarePublicationConnectionWithMeta!
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  The provider account managing this resource
+  """
+  provider: Provider
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
 
   """
   The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
@@ -4916,9 +7331,37 @@ type Software implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -4939,27 +7382,6 @@ type Software implements DoiItem {
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
-
-  """
-  Referenced software
-  """
-  softwareSourceCodes(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-  ): SoftwareSoftwareConnectionWithMeta!
 
   """
   Subject, keyword, classification code, or key phrase describing the resource
@@ -4990,6 +7412,69 @@ type Software implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
@@ -5057,27 +7542,6 @@ type SoftwareConnectionWithMeta {
 }
 
 """
-The connection type for EventData.
-"""
-type SoftwareDatasetConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
 An edge in a connection.
 """
 type SoftwareEdge {
@@ -5092,48 +7556,6 @@ type SoftwareEdge {
   node: Software
 }
 
-"""
-The connection type for EventData.
-"""
-type SoftwarePublicationConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-"""
-The connection type for EventData.
-"""
-type SoftwareSoftwareConnectionWithMeta {
-  """
-  A list of edges.
-  """
-  edges: [EventDataEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [EventData]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
 type Sound implements DoiItem {
   """
   Total number of citations.
@@ -5141,9 +7563,37 @@ type Sound implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -5211,6 +7661,72 @@ type Sound implements DoiItem {
   language: String
 
   """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   The provider account managing this resource
   """
   provider: Provider
@@ -5231,9 +7747,37 @@ type Sound implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -5284,6 +7828,69 @@ type Sound implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
@@ -5481,9 +8088,37 @@ type Work implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -5551,6 +8186,72 @@ type Work implements DoiItem {
   language: String
 
   """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   The provider account managing this resource
   """
   provider: Provider
@@ -5571,9 +8272,37 @@ type Work implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -5624,6 +8353,69 @@ type Work implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
@@ -5681,9 +8473,37 @@ type Workflow implements DoiItem {
   citationCount: Int
 
   """
-  Citations.
+  Citations for this DOI.
   """
-  citations: [Work!]
+  citations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Citations by year.
@@ -5751,6 +8571,72 @@ type Workflow implements DoiItem {
   language: String
 
   """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
   The provider account managing this resource
   """
   provider: Provider
@@ -5771,9 +8657,37 @@ type Workflow implements DoiItem {
   referenceCount: Int
 
   """
-  References.
+  References for this DOI.
   """
-  references: [Work!]
+  references(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -5824,6 +8738,69 @@ type Workflow implements DoiItem {
   The version number of the resource
   """
   version: String
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+    ids: String
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkConnectionWithMeta
 
   """
   Total number of views.
