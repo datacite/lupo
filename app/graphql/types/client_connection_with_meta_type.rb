@@ -17,15 +17,15 @@ class ClientConnectionWithMetaType < BaseConnection
   def years
     args = prepare_args(object.arguments)
 
-    res = response(**args)
-    res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : nil
+    r = response(**args)
+    r.results.total.positive? ? facet_by_year(r.response.aggregations.years.buckets) : nil
   end
 
   def software
     args = prepare_args(object.arguments)
 
-    res = response(**args)
-    res.results.total.positive? ? facet_by_software(res.response.aggregations.software.buckets) : nil
+    r = response(**args)
+    r.results.total.positive? ? facet_by_software(r.response.aggregations.software.buckets) : nil
   end
 
   def response(**args)

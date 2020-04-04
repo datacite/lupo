@@ -84,36 +84,51 @@ class OrganizationType < BaseObject
   end
 
   def publications(**args)
-    Doi.query(args[:query], affiliation_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Text", state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    args[:resource_type_id] = "Text"
+    r = response(args)
+
+    r.results.to_a
   end
 
   def datasets(**args)
-    Doi.query(args[:query], affiliation_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Dataset", state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    args[:resource_type_id] = "Dataset"
+    r = response(args)
+
+    r.results.to_a
   end
 
   def softwares(**args)
-    Doi.query(args[:query], affiliation_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Software", state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    args[:resource_type_id] = "Software"
+    r = response(args)
+
+    r.results.to_a
   end
 
   def works(**args)
-    Rails.logger.info object[:id]
-    Rails.logger.info args.inspect
-    Doi.query(args[:query], affiliation_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    r = response(args)
+
+    r.results.to_a
   end
 
   def view_count
-    response.results.total.positive? ? aggregate_count(response.response.aggregations.views.buckets) : 0
+    args = { first: 0 }
+    r = response(args)
+    r.results.total.positive? ? aggregate_count(r.response.aggregations.views.buckets) : 0
   end
 
   def download_count
-    response.results.total.positive? ? aggregate_count(response.response.aggregations.downloads.buckets) : 0
+    args = { first: 0 }
+    r = response(args)
+    r.results.total.positive? ? aggregate_count(r.response.aggregations.downloads.buckets) : 0
   end
 
   def citation_count
-    response.results.total.positive? ? aggregate_count(response.response.aggregations.citations.buckets) : 0
+    args = { first: 0 }
+    r = response(args)
+    r.results.total.positive? ? aggregate_count(r.response.aggregations.citations.buckets) : 0
   end
 
-  def response
-    @response ||= Doi.query(nil, affiliation_id: object[:id], state: "findable", page: { number: 1, size: 0 })
+  def response(**args)
+    Doi.query(args[:query], affiliation_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], funder_id: args[:funder_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
   end
 end

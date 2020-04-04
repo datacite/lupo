@@ -43,6 +43,8 @@ type Audiovisual implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -141,6 +143,8 @@ type Audiovisual implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -174,6 +178,8 @@ type Audiovisual implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -227,6 +233,8 @@ type Audiovisual implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -310,6 +318,8 @@ type Audiovisual implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -324,6 +334,9 @@ type Audiovisual implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -340,6 +353,8 @@ type Audiovisual implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -398,6 +413,8 @@ type Client {
   Datasets managed by the client
   """
   datasets(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -408,15 +425,22 @@ type Client {
     """
     before: String
     first: Int = 25
+    funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
+    providerId: String
     query: String
+    resourceTypeId: String
     userId: String
   ): DatasetConnectionWithMeta
 
@@ -468,6 +492,8 @@ type Client {
   Publications managed by the client
   """
   publications(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -478,15 +504,22 @@ type Client {
     """
     before: String
     first: Int = 25
+    funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
+    providerId: String
     query: String
+    resourceTypeId: String
     userId: String
   ): PublicationConnectionWithMeta
 
@@ -504,6 +537,8 @@ type Client {
   Software managed by the client
   """
   softwares(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -514,15 +549,22 @@ type Client {
     """
     before: String
     first: Int = 25
+    funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
+    providerId: String
     query: String
+    resourceTypeId: String
     userId: String
   ): SoftwareConnectionWithMeta
 
@@ -550,6 +592,8 @@ type Client {
   Works managed by the client
   """
   works(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -560,15 +604,22 @@ type Client {
     """
     before: String
     first: Int = 25
+    funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
+    providerId: String
     query: String
+    resourceTypeId: String
     userId: String
   ): WorkConnectionWithMeta
 }
@@ -678,6 +729,8 @@ type Collection implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -776,6 +829,8 @@ type Collection implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -809,6 +864,8 @@ type Collection implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -862,6 +919,8 @@ type Collection implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -945,6 +1004,8 @@ type Collection implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -959,6 +1020,9 @@ type Collection implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -975,6 +1039,8 @@ type Collection implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -1247,6 +1313,8 @@ type DataPaper implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -1345,6 +1413,8 @@ type DataPaper implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -1378,6 +1448,8 @@ type DataPaper implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -1431,6 +1503,8 @@ type DataPaper implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -1514,6 +1588,8 @@ type DataPaper implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -1528,6 +1604,9 @@ type DataPaper implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -1544,6 +1623,8 @@ type DataPaper implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -1594,6 +1675,8 @@ type Dataset implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -1692,6 +1775,8 @@ type Dataset implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -1725,6 +1810,8 @@ type Dataset implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -1778,6 +1865,8 @@ type Dataset implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -1882,6 +1971,8 @@ type Dataset implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -1896,6 +1987,9 @@ type Dataset implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -1912,6 +2006,8 @@ type Dataset implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2092,6 +2188,8 @@ interface DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2190,6 +2288,8 @@ interface DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2223,6 +2323,8 @@ interface DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2276,6 +2378,8 @@ interface DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2359,6 +2463,8 @@ interface DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2373,6 +2479,9 @@ interface DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -2389,6 +2498,8 @@ interface DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2439,6 +2550,8 @@ type Event implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2537,6 +2650,8 @@ type Event implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2570,6 +2685,8 @@ type Event implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2623,6 +2740,8 @@ type Event implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2706,6 +2825,8 @@ type Event implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2720,6 +2841,9 @@ type Event implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -2736,6 +2860,8 @@ type Event implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2786,6 +2912,8 @@ type EventData implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2884,6 +3012,8 @@ type EventData implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2917,6 +3047,8 @@ type EventData implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -2970,6 +3102,8 @@ type EventData implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -3053,6 +3187,8 @@ type EventData implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -3067,6 +3203,9 @@ type EventData implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -3083,6 +3222,8 @@ type EventData implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -3219,6 +3360,8 @@ type Funder {
     first: Int = 25
     hasCitations: Int
     hasDownloads: Int
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -3263,6 +3406,8 @@ type Funder {
     first: Int = 25
     hasCitations: Int
     hasDownloads: Int
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -3292,6 +3437,8 @@ type Funder {
     first: Int = 25
     hasCitations: Int
     hasDownloads: Int
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -3318,6 +3465,8 @@ type Funder {
   Funded works
   """
   works(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -3331,6 +3480,8 @@ type Funder {
     first: Int = 25
     hasCitations: Int
     hasDownloads: Int
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -3340,6 +3491,7 @@ type Funder {
     last: Int
     providerId: String
     query: String
+    resourceTypeId: String
     userId: String
   ): WorkConnectionWithMeta
 }
@@ -3444,6 +3596,8 @@ type Image implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -3542,6 +3696,8 @@ type Image implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -3575,6 +3731,8 @@ type Image implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -3628,6 +3786,8 @@ type Image implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -3711,6 +3871,8 @@ type Image implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -3725,6 +3887,9 @@ type Image implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -3741,6 +3906,8 @@ type Image implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -3791,6 +3958,8 @@ type InteractiveResource implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -3889,6 +4058,8 @@ type InteractiveResource implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -3922,6 +4093,8 @@ type InteractiveResource implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -3975,6 +4148,8 @@ type InteractiveResource implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4058,6 +4233,8 @@ type InteractiveResource implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4072,6 +4249,9 @@ type InteractiveResource implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -4088,6 +4268,8 @@ type InteractiveResource implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4138,6 +4320,8 @@ type Model implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4236,6 +4420,8 @@ type Model implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4269,6 +4455,8 @@ type Model implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4322,6 +4510,8 @@ type Model implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4405,6 +4595,8 @@ type Model implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4419,6 +4611,9 @@ type Model implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -4435,6 +4630,8 @@ type Model implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4697,6 +4894,8 @@ type Other implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4795,6 +4994,8 @@ type Other implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4828,6 +5029,8 @@ type Other implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4881,6 +5084,8 @@ type Other implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4964,6 +5169,8 @@ type Other implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -4978,6 +5185,9 @@ type Other implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -4994,6 +5204,8 @@ type Other implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -5085,6 +5297,8 @@ type Person {
     first: Int = 25
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
     hasViews: Int
     ids: String
 
@@ -5138,6 +5352,8 @@ type Person {
     first: Int = 25
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
     hasViews: Int
     ids: String
 
@@ -5166,6 +5382,8 @@ type Person {
     first: Int = 25
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
     hasViews: Int
     ids: String
 
@@ -5191,6 +5409,8 @@ type Person {
   Authored works
   """
   works(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -5204,6 +5424,8 @@ type Person {
     first: Int = 25
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
     hasViews: Int
     ids: String
 
@@ -5267,6 +5489,8 @@ type PhysicalObject implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -5365,6 +5589,8 @@ type PhysicalObject implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -5398,6 +5624,8 @@ type PhysicalObject implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -5451,6 +5679,8 @@ type PhysicalObject implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -5534,6 +5764,8 @@ type PhysicalObject implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -5548,6 +5780,9 @@ type PhysicalObject implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -5564,6 +5799,8 @@ type PhysicalObject implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -5653,9 +5890,11 @@ type Provider {
   country: Country
 
   """
-  Authored datasets
+  Datasets by this provider.
   """
   datasets(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -5667,15 +5906,21 @@ type Provider {
     before: String
     clientId: String
     first: Int = 25
+    funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
     query: String
+    resourceTypeId: String
     userId: String
   ): DatasetConnectionWithMeta
 
@@ -5754,9 +5999,11 @@ type Provider {
   ): ProviderPrefixConnectionWithMeta
 
   """
-  Authored publications
+  Publications by this provider.
   """
   publications(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -5768,15 +6015,21 @@ type Provider {
     before: String
     clientId: String
     first: Int = 25
+    funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
     query: String
+    resourceTypeId: String
     userId: String
   ): PublicationConnectionWithMeta
 
@@ -5791,9 +6044,11 @@ type Provider {
   rorId: String!
 
   """
-  Authored software
+  Software by this provider.
   """
   softwares(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -5805,15 +6060,21 @@ type Provider {
     before: String
     clientId: String
     first: Int = 25
+    funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
     query: String
+    resourceTypeId: String
     userId: String
   ): SoftwareConnectionWithMeta
 
@@ -5833,9 +6094,11 @@ type Provider {
   website: String
 
   """
-  Authored works
+  Works by this provider.
   """
   works(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -5847,15 +6110,21 @@ type Provider {
     before: String
     clientId: String
     first: Int = 25
+    funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
+    ids: String
 
     """
     Returns the last _n_ elements from the list.
     """
     last: Int
     query: String
+    resourceTypeId: String
     userId: String
   ): WorkConnectionWithMeta
 }
@@ -5964,6 +6233,8 @@ type Publication implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -6062,6 +6333,8 @@ type Publication implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -6095,6 +6368,8 @@ type Publication implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -6148,6 +6423,8 @@ type Publication implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -6231,6 +6508,8 @@ type Publication implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -6245,6 +6524,9 @@ type Publication implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -6261,6 +6543,8 @@ type Publication implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -6766,6 +7050,8 @@ type Service implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -6864,6 +7150,8 @@ type Service implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -6897,6 +7185,8 @@ type Service implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -6950,6 +7240,8 @@ type Service implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7033,6 +7325,8 @@ type Service implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7047,6 +7341,9 @@ type Service implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -7063,6 +7360,8 @@ type Service implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7150,6 +7449,8 @@ type Software implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7248,6 +7549,8 @@ type Software implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7281,6 +7584,8 @@ type Software implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7334,6 +7639,8 @@ type Software implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7417,6 +7724,8 @@ type Software implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7431,6 +7740,9 @@ type Software implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -7447,6 +7759,8 @@ type Software implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7566,6 +7880,8 @@ type Sound implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7664,6 +7980,8 @@ type Sound implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7697,6 +8015,8 @@ type Sound implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7750,6 +8070,8 @@ type Sound implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7833,6 +8155,8 @@ type Sound implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -7847,6 +8171,9 @@ type Sound implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -7863,6 +8190,8 @@ type Sound implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -8091,6 +8420,8 @@ type Work implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -8189,6 +8520,8 @@ type Work implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -8222,6 +8555,8 @@ type Work implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -8275,6 +8610,8 @@ type Work implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -8358,6 +8695,8 @@ type Work implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -8372,6 +8711,9 @@ type Work implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -8388,6 +8730,8 @@ type Work implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -8476,6 +8820,8 @@ type Workflow implements DoiItem {
   Citations for this DOI.
   """
   citations(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -8574,6 +8920,8 @@ type Workflow implements DoiItem {
   The DOI is a part of this DOI.
   """
   partOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -8607,6 +8955,8 @@ type Workflow implements DoiItem {
   Parts of this DOI.
   """
   parts(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -8660,6 +9010,8 @@ type Workflow implements DoiItem {
   References for this DOI.
   """
   references(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -8743,6 +9095,8 @@ type Workflow implements DoiItem {
   The DOI is a version of this DOI.
   """
   versionOf(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """
@@ -8757,6 +9111,9 @@ type Workflow implements DoiItem {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
     hasViews: Int
     ids: String
 
@@ -8773,6 +9130,8 @@ type Workflow implements DoiItem {
   Versions of this DOI.
   """
   versions(
+    affiliationId: String
+
     """
     Returns the elements in the list that come after the specified cursor.
     """

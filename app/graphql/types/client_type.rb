@@ -24,7 +24,15 @@ class ClientType < BaseObject
 
   field :datasets, DatasetConnectionWithMetaType, null: true, connection: true, description: "Datasets managed by the client" do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :user_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :affiliation_id, String, required: false
+    argument :resource_type_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_funder, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
@@ -33,7 +41,15 @@ class ClientType < BaseObject
 
   field :publications, PublicationConnectionWithMetaType, null: true, connection: true, description: "Publications managed by the client" do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :user_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :affiliation_id, String, required: false
+    argument :resource_type_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_funder, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
@@ -42,7 +58,15 @@ class ClientType < BaseObject
 
   field :softwares, SoftwareConnectionWithMetaType, null: true, connection: true, description: "Software managed by the client" do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :user_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :affiliation_id, String, required: false
+    argument :resource_type_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_funder, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
@@ -51,7 +75,15 @@ class ClientType < BaseObject
 
   field :works, WorkConnectionWithMetaType, null: true, connection: true, description: "Works managed by the client" do
     argument :query, String, required: false
+    argument :ids, String, required: false
     argument :user_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :affiliation_id, String, required: false
+    argument :resource_type_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_funder, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
@@ -70,19 +102,30 @@ class ClientType < BaseObject
   end
 
   def datasets(**args)
-    Doi.query(args[:query], user_id: args[:user_id].present? ? orcid_from_url(args[:user_id]) : nil, client_id: object.uid, resource_type_id: "Dataset", page: { number: 1, size: args[:first] }).results.to_a
+    args[:resource_type_id] = "Dataset"
+    r = response(**args)
+
+    r.results.to_a
   end
 
   def publications(**args)
-    Doi.query(args[:query], user_id: args[:user_id].present? ? orcid_from_url(args[:user_id]) : nil, client_id: object.uid, resource_type_id: "Text", page: { number: 1, size: args[:first] }).results.to_a
+    args[:resource_type_id] = "Text"
+    r = response(**args)
+
+    r.results.to_a
   end
 
   def softwares(**args)
-    Doi.query(args[:query], user_id: args[:user_id].present? ? orcid_from_url(args[:user_id]) : nil, client_id: object.uid, resource_type_id: "Software", page: { number: 1, size: args[:first] }).results.to_a
+    args[:resource_type_id] = "Software"
+    r = response(**args)
+
+    r.results.to_a
   end
 
   def works(**args)
-    Doi.query(args[:query], user_id: args[:user_id].present? ? orcid_from_url(args[:user_id]) : nil, client_id: object.uid, page: { number: 1, size: args[:first] }).results.to_a
+    r = response(**args)
+
+    r.results.to_a
   end
 
   def prefixes(**args)
@@ -90,18 +133,24 @@ class ClientType < BaseObject
   end
 
   def view_count
-    response.results.total.positive? ? aggregate_count(response.response.aggregations.views.buckets) : []
+    args = { first: 0 }
+    r = response(args)
+    r.results.total.positive? ? aggregate_count(r.response.aggregations.views.buckets) : []
   end
 
   def download_count
-    response.results.total.positive? ? aggregate_count(response.response.aggregations.downloads.buckets) : []
+    args = { first: 0 }
+    r = response(args)
+    r.results.total.positive? ? aggregate_count(r.response.aggregations.downloads.buckets) : []
   end
 
   def citation_count
-    response.results.total.positive? ? aggregate_count(response.response.aggregations.citations.buckets) : []
+    args = { first: 0 }
+    r = response(args)
+    r.results.total.positive? ? aggregate_count(r.response.aggregations.citations.buckets) : []
   end
 
-  def response
-    @response ||= Doi.query(nil, client_id: object.uid, state: "findable", page: { number: 1, size: 0 })
+  def response(**args)
+    Doi.query(args[:query], funder_id: args[:funder_id], user_id: args[:user_id], client_id: object.uid, provider_id: args[:provider_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_organization: args[:has_organization], has_funder: args[:has_funder], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
   end
 end

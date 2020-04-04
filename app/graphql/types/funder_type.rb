@@ -18,6 +18,8 @@ class FunderType < BaseObject
     argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
@@ -30,6 +32,8 @@ class FunderType < BaseObject
     argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
@@ -42,6 +46,8 @@ class FunderType < BaseObject
     argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
@@ -54,6 +60,10 @@ class FunderType < BaseObject
     argument :user_id, String, required: false
     argument :client_id, String, required: false
     argument :provider_id, String, required: false
+    argument :affiliation_id, String, required: false
+    argument :resource_type_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
@@ -66,34 +76,51 @@ class FunderType < BaseObject
   end
 
   def publications(**args)
-    Doi.query(args[:query], funder_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Text", state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    args[:resource_type_id] = "Text"
+    r = response(**args)
+
+    r.results.to_a
   end
 
   def datasets(**args)
-    Doi.query(args[:query], funder_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Dataset", state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    args[:resource_type_id] = "Dataset"
+    r = response(**args)
+
+    r.results.to_a
   end
 
   def softwares(**args)
-    Doi.query(args[:query], funder_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Software", state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    args[:resource_type_id] = "Software"
+    r = response(**args)
+
+    r.results.to_a
   end
 
   def works(**args)
-    Doi.query(args[:query], funder_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    r = response(**args)
+
+    r.results.to_a
   end
 
   def view_count
-    response.results.total.positive? ? aggregate_count(response.response.aggregations.views.buckets) : 0
+    args = { first: 0 }
+    r = response(args)
+    r.results.total.positive? ? aggregate_count(r.response.aggregations.views.buckets) : 0
   end
 
   def download_count
-    response.results.total.positive? ? aggregate_count(response.response.aggregations.downloads.buckets) : 0
+    args = { first: 0 }
+    r = response(args)
+    r.results.total.positive? ? aggregate_count(r.response.aggregations.downloads.buckets) : 0
   end
 
   def citation_count
-    response.results.total.positive? ? aggregate_count(response.response.aggregations.citations.buckets) : 0
+    args = { first: 0 }
+    r = response(args)
+    r.results.total.positive? ? aggregate_count(r.response.aggregations.citations.buckets) : 0
   end
 
-  def response
-    @response ||= Doi.query(nil, funder_id: object[:id], state: "findable", page: { number: 1, size: 0 })
+  def response(**args)
+    Doi.query(args[:query], funder_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_organization: args[:has_organization], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
   end
 end
