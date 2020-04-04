@@ -497,7 +497,8 @@ class DoisController < ApplicationController
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
 
-      @include = @include & [:client, :media, :references, :citations, :parts, :part_of, :versions, :version_of]
+      # @include = @include & [:client, :media, :references, :citations, :parts, :part_of, :versions, :version_of]
+      @include = @include & [:client, :media]
     else
       @include = []
     end
