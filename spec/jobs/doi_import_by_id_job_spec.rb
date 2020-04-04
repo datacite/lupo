@@ -6,7 +6,7 @@ describe DoiImportByIdJob, type: :job do
 
   it 'queues the job' do
     expect { job }.to have_enqueued_job(DoiImportByIdJob)
-      .on_queue("test_lupo_background")
+      .on_queue("test_lupo_import")
   end
 
   after do
