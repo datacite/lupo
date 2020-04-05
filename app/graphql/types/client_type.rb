@@ -16,13 +16,13 @@ class ClientType < BaseObject
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
   
-  field :prefixes, PrefixConnectionWithMetaType, null: true, description: "Prefixes managed by the client", connection: true do
+  field :prefixes, PrefixConnectionType, null: true, description: "Prefixes managed by the client", connection: true do
     argument :query, String, required: false
     argument :year, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :datasets, DatasetConnectionWithMetaType, null: true, connection: true, description: "Datasets managed by the client" do
+  field :datasets, DatasetConnectionType, null: true, connection: true, description: "Datasets managed by the client" do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -39,7 +39,7 @@ class ClientType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, PublicationConnectionWithMetaType, null: true, connection: true, description: "Publications managed by the client" do
+  field :publications, PublicationConnectionType, null: true, connection: true, description: "Publications managed by the client" do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -56,7 +56,7 @@ class ClientType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, SoftwareConnectionWithMetaType, null: true, connection: true, description: "Software managed by the client" do
+  field :softwares, SoftwareConnectionType, null: true, connection: true, description: "Software managed by the client" do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -73,7 +73,7 @@ class ClientType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :works, WorkConnectionWithMetaType, null: true, connection: true, description: "Works managed by the client" do
+  field :works, WorkConnectionType, null: true, connection: true, description: "Works managed by the client" do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -90,7 +90,7 @@ class ClientType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :prefixes, ClientPrefixConnectionWithMetaType, null: true, description: "Prefixes managed by the client", connection: true do
+  field :prefixes, ClientPrefixConnectionType, null: true, description: "Prefixes managed by the client", connection: true do
     argument :query, String, required: false
     argument :state, String, required: false
     argument :year, String, required: false

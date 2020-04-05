@@ -544,7 +544,7 @@ describe "/events", type: :request, elasticsearch: true do
     context "as admin user" do
       it "JSON" do
         get uri, nil, headers
-        puts last_response.body
+
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'relationTypeId')).to eq("is-referenced-by")
         expect(json.dig('data', 'attributes', 'sourceDoi')).to eq(source_doi.doi.downcase)

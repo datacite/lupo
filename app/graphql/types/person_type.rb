@@ -12,7 +12,7 @@ class PersonType < BaseObject
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :datasets, DatasetConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Authored datasets" do
+  field :datasets, DatasetConnectionType, null: true, connection: true, max_page_size: 1000, description: "Authored datasets" do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :client_id, String, required: false
@@ -25,7 +25,7 @@ class PersonType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, PublicationConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Authored publications"  do
+  field :publications, PublicationConnectionType, null: true, connection: true, max_page_size: 1000, description: "Authored publications"  do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :client_id, String, required: false
@@ -38,7 +38,7 @@ class PersonType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, SoftwareConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Authored software"  do
+  field :softwares, SoftwareConnectionType, null: true, connection: true, max_page_size: 1000, description: "Authored software"  do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :client_id, String, required: false
@@ -51,7 +51,7 @@ class PersonType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :works, WorkConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Authored works" do
+  field :works, WorkConnectionType, null: true, connection: true, max_page_size: 1000, description: "Authored works" do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :client_id, String, required: false

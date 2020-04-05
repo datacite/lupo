@@ -21,7 +21,7 @@ class ProviderType < BaseObject
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
   
-  field :datasets, DatasetConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Datasets by this provider." do
+  field :datasets, DatasetConnectionType, null: true, connection: true, max_page_size: 1000, description: "Datasets by this provider." do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -38,7 +38,7 @@ class ProviderType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, PublicationConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Publications by this provider."  do
+  field :publications, PublicationConnectionType, null: true, connection: true, max_page_size: 1000, description: "Publications by this provider."  do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -55,7 +55,7 @@ class ProviderType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, SoftwareConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Software by this provider."  do
+  field :softwares, SoftwareConnectionType, null: true, connection: true, max_page_size: 1000, description: "Software by this provider."  do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -72,7 +72,7 @@ class ProviderType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :works, WorkConnectionWithMetaType, null: true, connection: true, max_page_size: 1000, description: "Works by this provider." do
+  field :works, WorkConnectionType, null: true, connection: true, max_page_size: 1000, description: "Works by this provider." do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -89,14 +89,14 @@ class ProviderType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :prefixes, ProviderPrefixConnectionWithMetaType, null: true, description: "Prefixes managed by the provider", connection: true do
+  field :prefixes, ProviderPrefixConnectionType, null: true, description: "Prefixes managed by the provider", connection: true do
     argument :query, String, required: false
     argument :state, String, required: false
     argument :year, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :clients, ClientConnectionWithMetaType, null: true, description: "Clients associated with the provider", connection: true do
+  field :clients, ClientConnectionType, null: true, description: "Clients associated with the provider", connection: true do
     argument :query, String, required: false
     argument :year, String, required: false
     argument :software, String, required: false

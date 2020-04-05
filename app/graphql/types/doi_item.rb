@@ -17,7 +17,6 @@ module DoiItem
   field :publication_year, Int, null: true, description: "The year when the data was or will be made publicly available"
   field :publisher, String, null: true, description: "The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource"
   field :subjects, [SubjectType], null: true, description: "Subject, keyword, classification code, or key phrase describing the resource"
-  field :resource_type_general, String, null: true, hash_key: "resource_type_id", description: "The general type of a resource"
   field :dates, [DateType], null: true, description: "Different dates relevant to the work"
   field :language, String, null: true, description: "The primary language of the resource"
   field :identifiers, [IdentifierType], null: true, description: "An identifier or identifiers applied to the resource being registered"
@@ -34,19 +33,24 @@ module DoiItem
   field :url, String, null: true, description: "The URL registered for the resource"
   field :client, ClientType, null: true, description: "The client account managing this resource"
   field :provider, ProviderType, null: true, description: "The provider account managing this resource"
+  field :agency, String, null: true, description: "The DOI registration agency for the resource"
   field :formatted_citation, String, null: true, description: "Metadata as formatted citation" do
     argument :style, String, required: false, default_value: "apa"
     argument :locale, String, required: false, default_value: "en-US"
   end
-  field :reference_count, Int, null: true, description: "Total number of references."
-  field :citation_count, Int, null: true, description: "Total number of citations."
-  field :view_count, Int, null: true, description: "Total number of views."
-  field :download_count, Int, null: true, description: "Total number of downloads."
-  field :citations_over_time, [YearTotalType], null: true, description: "Citations by year."
-  field :views_over_time, [YearMonthTotalType], null: true, description: "Views by month."
-  field :downloads_over_time, [YearMonthTotalType], null: true, description: "Downloads by month."
+  field :reference_count, Int, null: true, description: "Total number of references"
+  field :citation_count, Int, null: true, description: "Total number of citations"
+  field :view_count, Int, null: true, description: "Total number of views"
+  field :download_count, Int, null: true, description: "Total number of downloads"
+  field :version_count, Int, null: true, description: "Total number of versions"
+  field :version_of_count, Int, null: true, description: "Total number of DOIs the resource is a version of"
+  field :part_count, Int, null: true, description: "Total number of parts"
+  field :part_of_count, Int, null: true, description: "Total number of DOIs the resource is a part of"
+  field :citations_over_time, [YearTotalType], null: true, description: "Citations by year"
+  field :views_over_time, [YearMonthTotalType], null: true, description: "Views by month"
+  field :downloads_over_time, [YearMonthTotalType], null: true, description: "Downloads by month"
   
-  field :references, WorkConnectionWithMetaType, null: true, connection: true, max_page_size: 100, description: "References for this DOI." do
+  field :references, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "References for this DOI" do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -62,7 +66,7 @@ module DoiItem
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
-  field :citations, WorkConnectionWithMetaType, null: true, connection: true, max_page_size: 100, description: "Citations for this DOI." do
+  field :citations, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "Citations for this DOI." do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -78,7 +82,7 @@ module DoiItem
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
-  field :parts, WorkConnectionWithMetaType, null: true, connection: true, max_page_size: 100, description: "Parts of this DOI." do
+  field :parts, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "Parts of this DOI." do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -94,7 +98,7 @@ module DoiItem
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
-  field :part_of, WorkConnectionWithMetaType, null: true, connection: true, max_page_size: 100, description: "The DOI is a part of this DOI." do
+  field :part_of, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "The DOI is a part of this DOI." do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -110,7 +114,7 @@ module DoiItem
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
-  field :versions, WorkConnectionWithMetaType, null: true, connection: true, max_page_size: 100, description: "Versions of this DOI." do
+  field :versions, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "Versions of this DOI." do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -126,7 +130,7 @@ module DoiItem
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
-  field :version_of, WorkConnectionWithMetaType, null: true, connection: true, max_page_size: 100, description: "The DOI is a version of this DOI." do
+  field :version_of, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "The DOI is a version of this DOI." do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -147,8 +151,8 @@ module DoiItem
     object.types["resourceTypeGeneral"]
   end
 
-  def creators(first: nil)
-    Array.wrap(object.creators[0...first]).map do |c|
+  def creators(**args)
+    Array.wrap(object.creators[0...args[:first]]).map do |c|
       Hashie::Mash.new(
         "id" => c.fetch("nameIdentifiers", []).find { |n| n.fetch("nameIdentifierScheme", nil) == "ORCID" }.to_h.fetch("nameIdentifier", nil),
         "name_type" => c.fetch("nameType", nil),
@@ -192,8 +196,6 @@ module DoiItem
   def citations(**args)
     args[:ids] = object.citation_ids
     return [] if args[:ids].blank?
-
-    Rails.logger.warn args[:ids]
 
     response(**args)
   end

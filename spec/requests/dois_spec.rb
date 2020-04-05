@@ -1401,7 +1401,6 @@ describe "dois", type: :request do
         post '/dois', valid_attributes, headers
 
         expect(last_response.status).to eq(201)
-        puts json
         expect(json.dig('data', 'attributes', 'version')).to eq("45")
       end
     end

@@ -12,7 +12,7 @@ class FunderType < BaseObject
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :datasets, DatasetConnectionWithMetaType, null: true, description: "Funded datasets", connection: true do
+  field :datasets, DatasetConnectionType, null: true, description: "Funded datasets", connection: true do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -26,7 +26,7 @@ class FunderType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, PublicationConnectionWithMetaType, null: true, description: "Funded publications", connection: true do
+  field :publications, PublicationConnectionType, null: true, description: "Funded publications", connection: true do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -40,7 +40,7 @@ class FunderType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, SoftwareConnectionWithMetaType, null: true, description: "Funded software", connection: true do
+  field :softwares, SoftwareConnectionType, null: true, description: "Funded software", connection: true do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -54,7 +54,7 @@ class FunderType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :works, WorkConnectionWithMetaType, null: true, description: "Funded works", connection: true do
+  field :works, WorkConnectionType, null: true, description: "Funded works", connection: true do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false

@@ -14,14 +14,18 @@ describe DoiItem do
     it { is_expected.to have_field(:referenceCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
     it { is_expected.to have_field(:downloadCount).of_type("Int") }
+    it { is_expected.to have_field(:versionCount).of_type("Int") }
+    it { is_expected.to have_field(:versionOfCount).of_type("Int") }
+    it { is_expected.to have_field(:partCount).of_type("Int") }
+    it { is_expected.to have_field(:partOfCount).of_type("Int") }
     it { is_expected.to have_field(:citationsOverTime).of_type("[YearTotal!]") }
     it { is_expected.to have_field(:viewsOverTime).of_type("[YearMonthTotal!]") }
     it { is_expected.to have_field(:downloadsOverTime).of_type("[YearMonthTotal!]") }
-    it { is_expected.to have_field(:citations).of_type("WorkConnectionWithMeta") }
-    it { is_expected.to have_field(:references).of_type("WorkConnectionWithMeta") }
-    it { is_expected.to have_field(:parts).of_type("WorkConnectionWithMeta") }
-    it { is_expected.to have_field(:part_of).of_type("WorkConnectionWithMeta") }
-    it { is_expected.to have_field(:versions).of_type("WorkConnectionWithMeta") }
-    it { is_expected.to have_field(:version_of).of_type("WorkConnectionWithMeta") }
+    it { is_expected.to have_field(:citations).of_type("WorkConnection") }
+    it { is_expected.to have_field(:references).of_type("WorkConnection") }
+    it { is_expected.to have_field(:parts).of_type("WorkConnection") }
+    it { is_expected.to have_field(:part_of).of_type("WorkConnection") }
+    it { is_expected.to have_field(:versions).of_type("WorkConnection") }
+    it { is_expected.to have_field(:version_of).of_type("WorkConnection") }
   end
 end

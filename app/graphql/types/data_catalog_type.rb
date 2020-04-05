@@ -27,7 +27,7 @@ class DataCatalogType < BaseObject
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :datasets, DatasetConnectionWithMetaType, null: true, description: "Funded datasets", connection: true do
+  field :datasets, DatasetConnectionType, null: true, description: "Funded datasets", connection: true do
     argument :query, String, required: false
     argument :user_id, String, required: false
     argument :client_id, String, required: false

@@ -35,7 +35,12 @@ type Address {
 
 type Audiovisual implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -72,10 +77,10 @@ type Audiovisual implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -100,12 +105,12 @@ type Audiovisual implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -140,6 +145,11 @@ type Audiovisual implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -172,7 +182,12 @@ type Audiovisual implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -207,7 +222,7 @@ type Audiovisual implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -225,12 +240,12 @@ type Audiovisual implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -262,17 +277,12 @@ type Audiovisual implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -315,6 +325,11 @@ type Audiovisual implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -347,7 +362,12 @@ type Audiovisual implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -382,17 +402,54 @@ type Audiovisual implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+The connection type for Audiovisual.
+"""
+type AudiovisualConnection {
+  """
+  A list of edges.
+  """
+  edges: [AudiovisualEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Audiovisual]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type AudiovisualEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Audiovisual
 }
 
 """
@@ -442,7 +499,7 @@ type Client {
     query: String
     resourceTypeId: String
     userId: String
-  ): DatasetConnectionWithMeta
+  ): DatasetConnection
 
   """
   Description of the client
@@ -486,7 +543,7 @@ type Client {
     query: String
     state: String
     year: String
-  ): ClientPrefixConnectionWithMeta
+  ): ClientPrefixConnection
 
   """
   Publications managed by the client
@@ -521,7 +578,7 @@ type Client {
     query: String
     resourceTypeId: String
     userId: String
-  ): PublicationConnectionWithMeta
+  ): PublicationConnection
 
   """
   The re3data identifier for the client
@@ -566,7 +623,7 @@ type Client {
     query: String
     resourceTypeId: String
     userId: String
-  ): SoftwareConnectionWithMeta
+  ): SoftwareConnection
 
   """
   Client system email
@@ -621,13 +678,13 @@ type Client {
     query: String
     resourceTypeId: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 }
 
 """
 The connection type for Client.
 """
-type ClientConnectionWithMeta {
+type ClientConnection {
   """
   A list of edges.
   """
@@ -685,7 +742,7 @@ type ClientPrefix {
 """
 The connection type for ClientPrefix.
 """
-type ClientPrefixConnectionWithMeta {
+type ClientPrefixConnection {
   """
   A list of edges.
   """
@@ -721,7 +778,12 @@ type ClientPrefixEdge {
 
 type Collection implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -758,10 +820,10 @@ type Collection implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -786,12 +848,12 @@ type Collection implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -826,6 +888,11 @@ type Collection implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -858,7 +925,12 @@ type Collection implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -893,7 +965,7 @@ type Collection implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -911,12 +983,12 @@ type Collection implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -948,17 +1020,12 @@ type Collection implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -1001,6 +1068,11 @@ type Collection implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -1033,7 +1105,12 @@ type Collection implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -1068,17 +1145,54 @@ type Collection implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+The connection type for Collection.
+"""
+type CollectionConnection {
+  """
+  A list of edges.
+  """
+  edges: [CollectionEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Collection]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type CollectionEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Collection
 }
 
 """
@@ -1123,7 +1237,7 @@ type Creator {
   """
   The name of the creator.
   """
-  name: String
+  name: String!
 
   """
   The type of the item.
@@ -1191,7 +1305,7 @@ type DataCatalog {
     providerId: String
     query: String
     userId: String
-  ): DatasetConnectionWithMeta
+  ): DatasetConnection
 
   """
   A description of the data catalog.
@@ -1268,7 +1382,7 @@ type DataCatalog {
 """
 The connection type for DataCatalog.
 """
-type DataCatalogConnectionWithMeta {
+type DataCatalogConnection {
   datasetConnectionCount: Int!
 
   """
@@ -1305,7 +1419,12 @@ type DataCatalogEdge {
 
 type DataPaper implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -1342,10 +1461,10 @@ type DataPaper implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -1370,12 +1489,12 @@ type DataPaper implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -1410,6 +1529,11 @@ type DataPaper implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -1442,7 +1566,12 @@ type DataPaper implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -1477,7 +1606,7 @@ type DataPaper implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -1495,12 +1624,12 @@ type DataPaper implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -1532,17 +1661,12 @@ type DataPaper implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -1585,6 +1709,11 @@ type DataPaper implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -1617,7 +1746,12 @@ type DataPaper implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -1652,22 +1786,64 @@ type DataPaper implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
 }
 
+"""
+The connection type for DataPaper.
+"""
+type DataPaperConnection {
+  """
+  A list of edges.
+  """
+  edges: [DataPaperEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [DataPaper]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type DataPaperEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: DataPaper
+}
+
 type Dataset implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -1704,10 +1880,10 @@ type Dataset implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -1732,12 +1908,12 @@ type Dataset implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -1772,6 +1948,11 @@ type Dataset implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -1804,7 +1985,12 @@ type Dataset implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -1839,7 +2025,7 @@ type Dataset implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -1857,12 +2043,12 @@ type Dataset implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -1894,17 +2080,12 @@ type Dataset implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -1960,12 +2141,17 @@ type Dataset implements DoiItem {
     Returns the last _n_ elements from the list.
     """
     last: Int
-  ): DatasetUsageReportConnectionWithMeta!
+  ): DatasetUsageReportConnection!
 
   """
   The version number of the resource
   """
   version: String
+
+  """
+  Total number of versions
+  """
+  versionCount: Int
 
   """
   The DOI is a version of this DOI.
@@ -2000,7 +2186,12 @@ type Dataset implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -2035,15 +2226,15 @@ type Dataset implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
 }
@@ -2051,7 +2242,7 @@ type Dataset implements DoiItem {
 """
 The connection type for Dataset.
 """
-type DatasetConnectionWithMeta {
+type DatasetConnection {
   datasetConnectionCount: Int!
 
   """
@@ -2095,7 +2286,7 @@ type DatasetEdge {
 """
 The connection type for EventData.
 """
-type DatasetUsageReportConnectionWithMeta {
+type DatasetUsageReportConnection {
   """
   A list of edges.
   """
@@ -2118,7 +2309,7 @@ Information about dates
 """
 type Date {
   """
-  Any rights information for this resource
+  Date information for this resource
   """
   date: String
 
@@ -2180,7 +2371,12 @@ Information about DOIs
 """
 interface DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -2217,10 +2413,10 @@ interface DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -2245,12 +2441,12 @@ interface DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -2285,6 +2481,11 @@ interface DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -2317,7 +2518,12 @@ interface DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -2352,7 +2558,7 @@ interface DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -2370,12 +2576,12 @@ interface DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -2407,17 +2613,12 @@ interface DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -2460,6 +2661,11 @@ interface DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -2492,7 +2698,12 @@ interface DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -2527,22 +2738,27 @@ interface DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
 }
 
 type Event implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -2579,10 +2795,10 @@ type Event implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -2607,12 +2823,12 @@ type Event implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -2647,6 +2863,11 @@ type Event implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -2679,7 +2900,12 @@ type Event implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -2714,7 +2940,7 @@ type Event implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -2732,12 +2958,12 @@ type Event implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -2769,17 +2995,12 @@ type Event implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -2822,6 +3043,11 @@ type Event implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -2854,7 +3080,12 @@ type Event implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -2889,22 +3120,49 @@ type Event implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
 }
 
+"""
+The connection type for Event.
+"""
+type EventConnection {
+  """
+  A list of edges.
+  """
+  edges: [EventEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Event]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+  years: [Facet!]
+}
+
 type EventData implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -2941,10 +3199,10 @@ type EventData implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -2969,12 +3227,12 @@ type EventData implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -3009,6 +3267,11 @@ type EventData implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -3041,7 +3304,12 @@ type EventData implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -3076,7 +3344,7 @@ type EventData implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -3094,12 +3362,12 @@ type EventData implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -3131,17 +3399,12 @@ type EventData implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -3184,6 +3447,11 @@ type EventData implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -3216,7 +3484,12 @@ type EventData implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -3251,15 +3524,15 @@ type EventData implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
 }
@@ -3302,6 +3575,21 @@ type EventDataEdge {
   Total count for this event.
   """
   total: Int
+}
+
+"""
+An edge in a connection.
+"""
+type EventEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Event
 }
 
 """
@@ -3372,7 +3660,7 @@ type Funder {
     providerId: String
     query: String
     userId: String
-  ): DatasetConnectionWithMeta
+  ): DatasetConnection
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -3418,7 +3706,7 @@ type Funder {
     providerId: String
     query: String
     userId: String
-  ): PublicationConnectionWithMeta
+  ): PublicationConnection
 
   """
   Funded software
@@ -3449,7 +3737,7 @@ type Funder {
     providerId: String
     query: String
     userId: String
-  ): SoftwareConnectionWithMeta
+  ): SoftwareConnection
 
   """
   The type of the item.
@@ -3493,13 +3781,13 @@ type Funder {
     query: String
     resourceTypeId: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 }
 
 """
 The connection type for Funder.
 """
-type FunderConnectionWithMeta {
+type FunderConnection {
   datasetConnectionCount: Int!
 
   """
@@ -3588,7 +3876,12 @@ type Identifier {
 
 type Image implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -3625,10 +3918,10 @@ type Image implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -3653,12 +3946,12 @@ type Image implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -3693,6 +3986,11 @@ type Image implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -3725,7 +4023,12 @@ type Image implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -3760,7 +4063,7 @@ type Image implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -3778,12 +4081,12 @@ type Image implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -3815,17 +4118,12 @@ type Image implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -3868,6 +4166,11 @@ type Image implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -3900,7 +4203,12 @@ type Image implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -3935,22 +4243,64 @@ type Image implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+The connection type for Image.
+"""
+type ImageConnection {
+  """
+  A list of edges.
+  """
+  edges: [ImageEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Image]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type ImageEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Image
 }
 
 type InteractiveResource implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -3987,10 +4337,10 @@ type InteractiveResource implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -4015,12 +4365,12 @@ type InteractiveResource implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -4055,6 +4405,11 @@ type InteractiveResource implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -4087,7 +4442,12 @@ type InteractiveResource implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -4122,7 +4482,7 @@ type InteractiveResource implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -4140,12 +4500,12 @@ type InteractiveResource implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -4177,17 +4537,12 @@ type InteractiveResource implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -4230,6 +4585,11 @@ type InteractiveResource implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -4262,7 +4622,12 @@ type InteractiveResource implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -4297,22 +4662,64 @@ type InteractiveResource implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
 }
 
+"""
+The connection type for InteractiveResource.
+"""
+type InteractiveResourceConnection {
+  """
+  A list of edges.
+  """
+  edges: [InteractiveResourceEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [InteractiveResource]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type InteractiveResourceEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: InteractiveResource
+}
+
 type Model implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -4349,10 +4756,10 @@ type Model implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -4377,12 +4784,12 @@ type Model implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -4417,6 +4824,11 @@ type Model implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -4449,7 +4861,12 @@ type Model implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -4484,7 +4901,7 @@ type Model implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -4502,12 +4919,12 @@ type Model implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -4539,17 +4956,12 @@ type Model implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -4592,6 +5004,11 @@ type Model implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -4624,7 +5041,12 @@ type Model implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -4659,17 +5081,54 @@ type Model implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+The connection type for Model.
+"""
+type ModelConnection {
+  """
+  A list of edges.
+  """
+  edges: [ModelEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Model]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type ModelEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Model
 }
 
 """
@@ -4719,7 +5178,7 @@ type Organization {
     providerId: String
     query: String
     userId: String
-  ): DatasetConnectionWithMeta
+  ): DatasetConnection
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -4769,7 +5228,7 @@ type Organization {
     providerId: String
     query: String
     userId: String
-  ): PublicationConnectionWithMeta
+  ): PublicationConnection
 
   """
   Software from this organization
@@ -4799,7 +5258,7 @@ type Organization {
     providerId: String
     query: String
     userId: String
-  ): SoftwareConnectionWithMeta
+  ): SoftwareConnection
 
   """
   The type of the item.
@@ -4844,13 +5303,13 @@ type Organization {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 }
 
 """
 The connection type for Organization.
 """
-type OrganizationConnectionWithMeta {
+type OrganizationConnection {
   """
   A list of edges.
   """
@@ -4886,7 +5345,12 @@ type OrganizationEdge {
 
 type Other implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -4923,10 +5387,10 @@ type Other implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -4951,12 +5415,12 @@ type Other implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -4991,6 +5455,11 @@ type Other implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -5023,7 +5492,12 @@ type Other implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -5058,7 +5532,7 @@ type Other implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -5076,12 +5550,12 @@ type Other implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -5113,17 +5587,12 @@ type Other implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -5166,6 +5635,11 @@ type Other implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -5198,7 +5672,12 @@ type Other implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -5233,17 +5712,54 @@ type Other implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+The connection type for Other.
+"""
+type OtherConnection {
+  """
+  A list of edges.
+  """
+  edges: [OtherEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Other]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type OtherEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Other
 }
 
 """
@@ -5308,7 +5824,7 @@ type Person {
     last: Int
     providerId: String
     query: String
-  ): DatasetConnectionWithMeta
+  ): DatasetConnection
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -5363,7 +5879,7 @@ type Person {
     last: Int
     providerId: String
     query: String
-  ): PublicationConnectionWithMeta
+  ): PublicationConnection
 
   """
   Authored software
@@ -5393,7 +5909,7 @@ type Person {
     last: Int
     providerId: String
     query: String
-  ): SoftwareConnectionWithMeta
+  ): SoftwareConnection
 
   """
   The type of the item.
@@ -5435,13 +5951,13 @@ type Person {
     last: Int
     providerId: String
     query: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 }
 
 """
 The connection type for Person.
 """
-type PersonConnectionWithMeta {
+type PersonConnection {
   datasetConnectionCount: Int!
 
   """
@@ -5481,7 +5997,12 @@ type PersonEdge {
 
 type PhysicalObject implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -5518,10 +6039,10 @@ type PhysicalObject implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -5546,12 +6067,12 @@ type PhysicalObject implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -5586,6 +6107,11 @@ type PhysicalObject implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -5618,7 +6144,12 @@ type PhysicalObject implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -5653,7 +6184,7 @@ type PhysicalObject implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -5671,12 +6202,12 @@ type PhysicalObject implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -5708,17 +6239,12 @@ type PhysicalObject implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -5761,6 +6287,11 @@ type PhysicalObject implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -5793,7 +6324,12 @@ type PhysicalObject implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -5828,17 +6364,54 @@ type PhysicalObject implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+The connection type for PhysicalObject.
+"""
+type PhysicalObjectConnection {
+  """
+  A list of edges.
+  """
+  edges: [PhysicalObjectEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [PhysicalObject]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type PhysicalObjectEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: PhysicalObject
 }
 
 """
@@ -5849,6 +6422,49 @@ type Prefix {
   Unique identifier for each prefix
   """
   id: ID!
+
+  """
+  The type of the item.
+  """
+  type: String!
+}
+
+"""
+The connection type for Prefix.
+"""
+type PrefixConnection {
+  """
+  A list of edges.
+  """
+  edges: [PrefixEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Prefix]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  states: [Facet!]!
+  totalCount: Int!
+  years: [Facet!]!
+}
+
+"""
+An edge in a connection.
+"""
+type PrefixEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Prefix
 }
 
 """
@@ -5882,7 +6498,7 @@ type Provider {
     query: String
     software: String
     year: String
-  ): ClientConnectionWithMeta
+  ): ClientConnection
 
   """
   Country where the provider is located
@@ -5922,7 +6538,7 @@ type Provider {
     query: String
     resourceTypeId: String
     userId: String
-  ): DatasetConnectionWithMeta
+  ): DatasetConnection
 
   """
   Description of the provider
@@ -5996,7 +6612,7 @@ type Provider {
     query: String
     state: String
     year: String
-  ): ProviderPrefixConnectionWithMeta
+  ): ProviderPrefixConnection
 
   """
   Publications by this provider.
@@ -6031,7 +6647,7 @@ type Provider {
     query: String
     resourceTypeId: String
     userId: String
-  ): PublicationConnectionWithMeta
+  ): PublicationConnection
 
   """
   Geographic region where the provider is located
@@ -6076,7 +6692,7 @@ type Provider {
     query: String
     resourceTypeId: String
     userId: String
-  ): SoftwareConnectionWithMeta
+  ): SoftwareConnection
 
   """
   The type of the item.
@@ -6126,13 +6742,13 @@ type Provider {
     query: String
     resourceTypeId: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 }
 
 """
 The connection type for Provider.
 """
-type ProviderConnectionWithMeta {
+type ProviderConnection {
   """
   A list of edges.
   """
@@ -6188,7 +6804,7 @@ type ProviderPrefix {
 """
 The connection type for ProviderPrefix.
 """
-type ProviderPrefixConnectionWithMeta {
+type ProviderPrefixConnection {
   """
   A list of edges.
   """
@@ -6225,7 +6841,12 @@ type ProviderPrefixEdge {
 
 type Publication implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -6262,10 +6883,10 @@ type Publication implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -6290,12 +6911,12 @@ type Publication implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -6330,6 +6951,11 @@ type Publication implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -6362,7 +6988,12 @@ type Publication implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -6397,7 +7028,7 @@ type Publication implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -6415,12 +7046,12 @@ type Publication implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -6452,17 +7083,12 @@ type Publication implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -6505,6 +7131,11 @@ type Publication implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -6537,7 +7168,12 @@ type Publication implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -6572,15 +7208,15 @@ type Publication implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
 }
@@ -6588,7 +7224,7 @@ type Publication implements DoiItem {
 """
 The connection type for Publication.
 """
-type PublicationConnectionWithMeta {
+type PublicationConnection {
   datasetConnectionCount: Int!
 
   """
@@ -6632,7 +7268,33 @@ type PublicationEdge {
 type Query {
   _service: _Service!
   audiovisual(id: ID!): Audiovisual!
-  audiovisuals(first: Int = 25, hasCitations: Int, hasDownloads: Int, hasViews: Int, query: String): [Audiovisual!]!
+  audiovisuals(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): AudiovisualConnection!
   client(id: ID!): Client!
   clients(
     """
@@ -6653,9 +7315,35 @@ type Query {
     query: String
     software: String
     year: String
-  ): ClientConnectionWithMeta!
+  ): ClientConnection!
   collection(id: ID!): Collection!
-  collections(first: Int = 25, query: String): [Collection!]!
+  collections(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): CollectionConnection!
   dataCatalog(id: ID!): DataCatalog!
   dataCatalogs(
     """
@@ -6674,9 +7362,35 @@ type Query {
     """
     last: Int
     query: String
-  ): DataCatalogConnectionWithMeta!
+  ): DataCatalogConnection!
   dataPaper(id: ID!): DataPaper!
-  dataPapers(first: Int = 25, query: String): [DataPaper!]!
+  dataPapers(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): DataPaperConnection!
   dataset(id: ID!): Dataset!
   datasets(
     """
@@ -6704,9 +7418,35 @@ type Query {
     providerId: String
     query: String
     userId: String
-  ): DatasetConnectionWithMeta!
+  ): DatasetConnection!
   event(id: ID!): Event!
-  events(first: Int = 25, query: String): [Event!]!
+  events(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): EventConnection!
   funder(id: ID!): Funder!
   funders(
     """
@@ -6725,13 +7465,91 @@ type Query {
     """
     last: Int
     query: String
-  ): FunderConnectionWithMeta!
+  ): FunderConnection!
   image(id: ID!): Image!
-  images(first: Int = 25, query: String): [Image!]!
+  images(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): ImageConnection!
   interactiveResource(id: ID!): InteractiveResource!
-  interactiveResources(first: Int = 25, hasCitations: Int, hasDownloads: Int, hasViews: Int, query: String): [InteractiveResource!]!
+  interactiveResources(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): InteractiveResourceConnection!
   model(id: ID!): Model!
-  models(first: Int = 25, query: String): [Model!]!
+  models(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): ModelConnection!
   organization(id: ID!): Organization!
   organizations(
     """
@@ -6754,9 +7572,35 @@ type Query {
     """
     last: Int
     query: String
-  ): OrganizationConnectionWithMeta!
+  ): OrganizationConnection!
   other(id: ID!): Other!
-  others(first: Int = 25, query: String): [Other!]!
+  others(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): OtherConnection!
   people(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -6774,12 +7618,55 @@ type Query {
     """
     last: Int
     query: String
-  ): PersonConnectionWithMeta!
-  person(id: ID!): Person
+  ): PersonConnection!
+  person(id: ID!): Person!
   physicalObject(id: ID!): PhysicalObject!
-  physicalObjects(clientId: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasPerson: Boolean, hasViews: Int, providerId: String, query: String, userId: String): [PhysicalObject!]!
+  physicalObjects(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): PhysicalObjectConnection!
   prefix(id: ID!): Prefix!
-  prefixes(first: Int = 25, query: String): [Prefix!]!
+  prefixes(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): PrefixConnection!
   provider(id: ID!): Provider!
   providers(
     """
@@ -6798,7 +7685,7 @@ type Query {
     """
     last: Int
     query: String
-  ): ProviderConnectionWithMeta!
+  ): ProviderConnection!
   publication(id: ID!): Publication!
   publications(
     """
@@ -6826,7 +7713,7 @@ type Query {
     providerId: String
     query: String
     userId: String
-  ): PublicationConnectionWithMeta!
+  ): PublicationConnection!
   service(id: ID!): Service!
   services(
     """
@@ -6840,6 +7727,12 @@ type Query {
     before: String
     clientId: String
     first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
 
     """
     Returns the last _n_ elements from the list.
@@ -6847,7 +7740,8 @@ type Query {
     last: Int
     providerId: String
     query: String
-  ): ServiceConnectionWithMeta!
+    userId: String
+  ): ServiceConnection!
   software(id: ID!): Software!
   softwares(
     """
@@ -6875,9 +7769,35 @@ type Query {
     providerId: String
     query: String
     userId: String
-  ): SoftwareConnectionWithMeta!
+  ): SoftwareConnection!
   sound(id: ID!): Sound!
-  sounds(first: Int = 25, query: String): [Sound!]!
+  sounds(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): SoundConnection!
   usageReport(id: ID!): UsageReport!
   usageReports(
     """
@@ -6895,10 +7815,36 @@ type Query {
     Returns the last _n_ elements from the list.
     """
     last: Int
-  ): UsageReportConnectionWithMeta!
+  ): UsageReportConnection!
   work(id: ID!): Work!
   workflow(id: ID!): Workflow!
-  workflows(first: Int = 25, query: String): [Workflow!]!
+  workflows(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    clientId: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasPerson: Boolean
+    hasViews: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    providerId: String
+    query: String
+    userId: String
+  ): WorkflowConnection!
   works(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -6927,7 +7873,7 @@ type Query {
     query: String
     resourceTypeId: String
     userId: String
-  ): WorkConnectionWithMeta!
+  ): WorkConnection!
 }
 
 """
@@ -7042,7 +7988,12 @@ type Rights {
 
 type Service implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -7079,10 +8030,10 @@ type Service implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -7107,12 +8058,12 @@ type Service implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -7147,6 +8098,11 @@ type Service implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -7179,7 +8135,12 @@ type Service implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -7214,7 +8175,7 @@ type Service implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -7232,12 +8193,12 @@ type Service implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -7269,17 +8230,12 @@ type Service implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -7322,6 +8278,11 @@ type Service implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -7354,7 +8315,12 @@ type Service implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -7389,15 +8355,15 @@ type Service implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
 }
@@ -7405,7 +8371,7 @@ type Service implements DoiItem {
 """
 The connection type for Service.
 """
-type ServiceConnectionWithMeta {
+type ServiceConnection {
   """
   A list of edges.
   """
@@ -7441,7 +8407,12 @@ type ServiceEdge {
 
 type Software implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -7478,10 +8449,10 @@ type Software implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -7506,12 +8477,12 @@ type Software implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -7546,6 +8517,11 @@ type Software implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -7578,7 +8554,12 @@ type Software implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -7613,7 +8594,7 @@ type Software implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -7631,12 +8612,12 @@ type Software implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -7668,17 +8649,12 @@ type Software implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -7721,6 +8697,11 @@ type Software implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -7753,7 +8734,12 @@ type Software implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -7788,15 +8774,15 @@ type Software implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
 }
@@ -7829,7 +8815,7 @@ type SoftwareApplication {
 """
 The connection type for Software.
 """
-type SoftwareConnectionWithMeta {
+type SoftwareConnection {
   datasetConnectionCount: Int!
 
   """
@@ -7872,7 +8858,12 @@ type SoftwareEdge {
 
 type Sound implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -7909,10 +8900,10 @@ type Sound implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -7937,12 +8928,12 @@ type Sound implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -7977,6 +8968,11 @@ type Sound implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -8009,7 +9005,12 @@ type Sound implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -8044,7 +9045,7 @@ type Sound implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -8062,12 +9063,12 @@ type Sound implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -8099,17 +9100,12 @@ type Sound implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -8152,6 +9148,11 @@ type Sound implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -8184,7 +9185,12 @@ type Sound implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -8219,17 +9225,54 @@ type Sound implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+The connection type for Sound.
+"""
+type SoundConnection {
+  """
+  A list of edges.
+  """
+  edges: [SoundEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Sound]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type SoundEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Sound
 }
 
 """
@@ -8294,7 +9337,7 @@ type Title {
   """
   Language
   """
-  lang: String
+  lang: ID
 
   """
   Title
@@ -8335,7 +9378,7 @@ type UsageReport {
     Returns the last _n_ elements from the list.
     """
     last: Int
-  ): UsageReportDatasetConnectionWithMeta!
+  ): UsageReportDatasetConnection!
 
   """
   Date information was created
@@ -8356,7 +9399,7 @@ type UsageReport {
 """
 The connection type for UsageReport.
 """
-type UsageReportConnectionWithMeta {
+type UsageReportConnection {
   """
   A list of edges.
   """
@@ -8377,7 +9420,7 @@ type UsageReportConnectionWithMeta {
 """
 The connection type for EventData.
 """
-type UsageReportDatasetConnectionWithMeta {
+type UsageReportDatasetConnection {
   """
   A list of edges.
   """
@@ -8412,7 +9455,12 @@ type UsageReportEdge {
 
 type Work implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -8449,10 +9497,10 @@ type Work implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -8477,12 +9525,12 @@ type Work implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -8517,6 +9565,11 @@ type Work implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -8549,7 +9602,12 @@ type Work implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -8584,7 +9642,7 @@ type Work implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -8602,12 +9660,12 @@ type Work implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -8639,17 +9697,12 @@ type Work implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -8692,6 +9745,11 @@ type Work implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -8724,7 +9782,12 @@ type Work implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -8759,15 +9822,15 @@ type Work implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
 }
@@ -8775,7 +9838,7 @@ type Work implements DoiItem {
 """
 The connection type for Work.
 """
-type WorkConnectionWithMeta {
+type WorkConnection {
   """
   A list of edges.
   """
@@ -8812,7 +9875,12 @@ type WorkEdge {
 
 type Workflow implements DoiItem {
   """
-  Total number of citations.
+  The DOI registration agency for the resource
+  """
+  agency: String
+
+  """
+  Total number of citations
   """
   citationCount: Int
 
@@ -8849,10 +9917,10 @@ type Workflow implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Citations by year.
+  Citations by year
   """
   citationsOverTime: [YearTotal!]
 
@@ -8877,12 +9945,12 @@ type Workflow implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
-  Total number of downloads.
+  Total number of downloads
   """
   downloadCount: Int
 
   """
-  Downloads by month.
+  Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
 
@@ -8917,6 +9985,11 @@ type Workflow implements DoiItem {
   language: String
 
   """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
   The DOI is a part of this DOI.
   """
   partOf(
@@ -8949,7 +10022,12 @@ type Workflow implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
 
   """
   Parts of this DOI.
@@ -8984,7 +10062,7 @@ type Workflow implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   The provider account managing this resource
@@ -9002,12 +10080,12 @@ type Workflow implements DoiItem {
   publisher: String
 
   """
-  Total number of references.
+  Total number of references
   """
   referenceCount: Int
 
   """
-  References for this DOI.
+  References for this DOI
   """
   references(
     affiliationId: String
@@ -9039,17 +10117,12 @@ type Workflow implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
   Identifiers of related resources. These must be globally unique identifiers
   """
   relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The general type of a resource
-  """
-  resourceTypeGeneral: String
 
   """
   Any rights information for this resource
@@ -9092,6 +10165,11 @@ type Workflow implements DoiItem {
   version: String
 
   """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
   The DOI is a version of this DOI.
   """
   versionOf(
@@ -9124,7 +10202,12 @@ type Workflow implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
 
   """
   Versions of this DOI.
@@ -9159,17 +10242,54 @@ type Workflow implements DoiItem {
     providerId: String
     query: String
     userId: String
-  ): WorkConnectionWithMeta
+  ): WorkConnection
 
   """
-  Total number of views.
+  Total number of views
   """
   viewCount: Int
 
   """
-  Views by month.
+  Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+The connection type for Workflow.
+"""
+type WorkflowConnection {
+  """
+  A list of edges.
+  """
+  edges: [WorkflowEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Workflow]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type WorkflowEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Workflow
 }
 
 """

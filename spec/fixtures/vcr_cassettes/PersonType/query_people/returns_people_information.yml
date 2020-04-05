@@ -1,0 +1,127 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.datacite.org/users?page%5Bnumber%5D=1&page%5Bsize%5D=25&query=Fenner
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 05 Apr 2020 06:45:50 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Anonymous-Consumer:
+      - 'true'
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Accept-Encoding, Origin
+      Content-Encoding:
+      - gzip
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Request-Id:
+      - c75deb4e-c059-4f5e-9522-407029711597
+      X-Download-Options:
+      - noopen
+      Etag:
+      - W/"768c7af88e478c31ab042225aec0e272"
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Runtime:
+      - '0.112203'
+      X-Content-Type-Options:
+      - nosniff
+      X-Powered-By:
+      - Phusion Passenger 6.0.4
+      Server:
+      - nginx/1.14.0 + Phusion Passenger 6.0.4
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAJ5+iV4AA6yZa2/bNhSG/0ogoP1kJrzqQqAY2nUFuq1D0QnosGEYGJuOiciyR1HZsiD/vUeykzCKLYmTAwSQxVfKmweH50LfRQvlVCT/uIvMIpIRhh8EvwQJgVOUYZZFs8jdbjUs1pW2FXxUzllzWTtdRfIuujI3uvxFrRvF23JhjS7OfrhRcLUB7VKtTXG7X/6gy1JbuFselJ89rm/svLWzcm5byYuL9vP5xl5dHDZ4ZdyqvoxkWRfFLLKbQn9c7A3Dqqnezh24jORSFZWeRXOrldONgmKSIpwgzHMiJOYSx+fw9t/hqXq78EWEIpzmFEueScZ2onv4W7pQzmzKamW2DY77+9kLlAkXCdhNRQjKz2pTqCcivRx9bRhE39oEiBReRxEhORZSxJIkhyAeEY2EGOM4RSmlOATiT8qtrCmH+O1lYeh8Q9PR0ZzwNv5ED7quaCS6lIkYMZ6lIeh+dXq70oPo9rIwdL6h6ejSnGBJqCRpD7quaBQ6igTJBKKcB23dH+vKmVIPodvLQtA9NzQdHc8plRzAkB50XdFIdJyyDCUi4SHocqtvNoP5bqcKA+fbmQ4O54TJpmL0geuKRoFjiDGcIQ57JATcz/W1qoa4taIQbM/NnKRAZJD4+7F1RWOxQUJGgoogbN9D3q/cBlLYYNB50kCEnrHJCCluEhmjjz3IIYQvRGOznYCSlgTW2E/aFpDEoJFbaGuuB9NeVx+Y/zyL0+MxyzGWEG28Lx67opFVV6QsbforFgLzi5qvdDGEcKcKbJc9O6eIQgAimKS8Nwqfi0ZGIeMxQxk0piHgvpqiMGo9RG4vC4s539CJai5mkvU1yV3RSHQZTYA7Ib8FxZyZr5RdDAbdThaGzjc0ZUjLoJoiDDsxlRwqAz44pHVEYe2KaHrSJMZB7co7reohbo0mMMd5Vk4Vb4nkPQXjhWgkNBzzDDGaBE0WMG0NFolGEwbNtzIdGssBBgxbvG+m6IrGblJMKEoTRkKgfdC2VOVCDYF70AVuU8/SiY4BaCJp3yzbFY3s8giHbU45DuryPinrhk8Bdqqw3s638wDu8YHdjfP5Zn2xXj689RFo5dRy+ZdarFtnT1ydrbvZLwZciCb7msAPHlE1WBmi7ZzLucQ0CCvO4gSlcRZUc9+r0gw3KztVGFbfzsSzPYJI0vQhVEiRHTnbOyQaCY4y6EdjGgd1eblaK3vscG8Xhsabdn312dPyGJC+vVOUEkygrsJM21tKnovGRmAqYDtBAg/LiocI5qqs/tFF4WfFlp23MCoKPUsnGdxSSeMjJ8xHRGNb5iRlKCYsaHD7aPXLQ6qv2my1dai7i1vx2YvVUe2zZ27KZk6gxgOk5gyU4iMHpUdEBzH+OYvWuvny4y5yG6eKCJ6Y7S4/q6uGF5lFW7iCC3hBYcrrlmGli6X3L6utOW++RJkbp9v/vCX/XfPgK/GurNeX2r4S79+Q1/tblflPNzeoeP13re3tmyfW+l/3P95Mh958f/8NAAD//wMAFYS/qugZAAA=
+    http_version: null
+  recorded_at: Sun, 05 Apr 2020 06:45:50 GMT
+- request:
+    method: get
+    uri: https://api.datacite.org/users?page%5Bnumber%5D=1&page%5Bsize%5D=25&query=Fenner
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 05 Apr 2020 06:45:50 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Anonymous-Consumer:
+      - 'true'
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Accept-Encoding, Origin
+      Content-Encoding:
+      - gzip
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Request-Id:
+      - 2f703065-9166-4a92-be30-95d324ec659e
+      X-Download-Options:
+      - noopen
+      Etag:
+      - W/"768c7af88e478c31ab042225aec0e272"
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Runtime:
+      - '0.036301'
+      X-Content-Type-Options:
+      - nosniff
+      X-Powered-By:
+      - Phusion Passenger 6.0.4
+      Server:
+      - nginx/1.14.0 + Phusion Passenger 6.0.4
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAJ5+iV4AA6yZa2/bNhSG/0ogoP1kJrzqQqAY2nUFuq1D0QnosGEYGJuOiciyR1HZsiD/vUeykzCKLYmTAwSQxVfKmweH50LfRQvlVCT/uIvMIpIRhh8EvwQJgVOUYZZFs8jdbjUs1pW2FXxUzllzWTtdRfIuujI3uvxFrRvF23JhjS7OfrhRcLUB7VKtTXG7X/6gy1JbuFselJ89rm/svLWzcm5byYuL9vP5xl5dHDZ4ZdyqvoxkWRfFLLKbQn9c7A3Dqqnezh24jORSFZWeRXOrldONgmKSIpwgzHMiJOYSx+fw9t/hqXq78EWEIpzmFEueScZ2onv4W7pQzmzKamW2DY77+9kLlAkXCdhNRQjKz2pTqCcivRx9bRhE39oEiBReRxEhORZSxJIkhyAeEY2EGOM4RSmlOATiT8qtrCmH+O1lYeh8Q9PR0ZzwNv5ED7quaCS6lIkYMZ6lIeh+dXq70oPo9rIwdL6h6ejSnGBJqCRpD7quaBQ6igTJBKKcB23dH+vKmVIPodvLQtA9NzQdHc8plRzAkB50XdFIdJyyDCUi4SHocqtvNoP5bqcKA+fbmQ4O54TJpmL0geuKRoFjiDGcIQ57JATcz/W1qoa4taIQbM/NnKRAZJD4+7F1RWOxQUJGgoogbN9D3q/cBlLYYNB50kCEnrHJCCluEhmjjz3IIYQvRGOznYCSlgTW2E/aFpDEoJFbaGuuB9NeVx+Y/zyL0+MxyzGWEG28Lx67opFVV6QsbforFgLzi5qvdDGEcKcKbJc9O6eIQgAimKS8Nwqfi0ZGIeMxQxk0piHgvpqiMGo9RG4vC4s539CJai5mkvU1yV3RSHQZTYA7Ib8FxZyZr5RdDAbdThaGzjc0ZUjLoJoiDDsxlRwqAz44pHVEYe2KaHrSJMZB7co7reohbo0mMMd5Vk4Vb4nkPQXjhWgkNBzzDDGaBE0WMG0NFolGEwbNtzIdGssBBgxbvG+m6IrGblJMKEoTRkKgfdC2VOVCDYF70AVuU8/SiY4BaCJp3yzbFY3s8giHbU45DuryPinrhk8Bdqqw3s638wDu8YHdjfP5Zn2xXj689RFo5dRy+ZdarFtnT1ydrbvZLwZciCb7msAPHlE1WBmi7ZzLucQ0CCvO4gSlcRZUc9+r0gw3KztVGFbfzsSzPYJI0vQhVEiRHTnbOyQaCY4y6EdjGgd1eblaK3vscG8Xhsabdn312dPyGJC+vVOUEkygrsJM21tKnovGRmAqYDtBAg/LiocI5qqs/tFF4WfFlp23MCoKPUsnGdxSSeMjJ8xHRGNb5iRlKCYsaHD7aPXLQ6qv2my1dai7i1vx2YvVUe2zZ27KZk6gxgOk5gyU4iMHpUdEBzH+OYvWuvny4y5yG6eKCJ6Y7S4/q6uGF5lFW7iCC3hBYcrrlmGli6X3L6utOW++RJkbp9v/vCX/XfPgK/GurNeX2r4S79+Q1/tblflPNzeoeP13re3tmyfW+l/3P95Mh958f/8NAAD//wMAFYS/qugZAAA=
+    http_version: null
+  recorded_at: Sun, 05 Apr 2020 06:45:50 GMT
+recorded_with: VCR 5.1.0

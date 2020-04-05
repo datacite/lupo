@@ -1,0 +1,65 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.datacite.org/users/0000-0003-3484-6875
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sun, 05 Apr 2020 06:45:48 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Anonymous-Consumer:
+      - 'true'
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Accept-Encoding, Origin
+      Content-Encoding:
+      - gzip
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Request-Id:
+      - dc0c49b2-02c5-4036-874b-dac3b7f3cd8f
+      X-Download-Options:
+      - noopen
+      Etag:
+      - W/"54da1f35dbdb9a6a2893befb555bdc3a"
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Runtime:
+      - '32.642347'
+      X-Content-Type-Options:
+      - nosniff
+      X-Powered-By:
+      - Phusion Passenger 6.0.4
+      Server:
+      - nginx/1.14.0 + Phusion Passenger 6.0.4
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAJx+iV4AA6yTb2vbMBDGv0rRa9ux5fxx9G6sMNrB3iyvNsZQ5EuiTraMdGrWFX/3SbGJZdpCYTMYdI9/9+juZD2TmiMn7JnImjCS+yf1b5mWy2qZrqvNiiQEnzrwH50FY33IEY3cOwQb8o7yEdovvPFE65RKyIE3Uj3FSntZk8/ZzX1284mbP9y7aCMuW54QO8sWi0ucaXNcvF7EUeLJ7aOEQciEbha/Ho6jq9EK7oKtRX44/OR1I1svS/tBoC+UMDQOEiIMcITA0bxYp3mV5sWuWDO6YmWV+b2/+STX1VeI+orKtMh3tGC0YmU+QL3fERRHqVt7kl0YSO+1BoaZ1lp66fs43LBVmKZEBVMotGuRsGWfTNhmjm0mrIyxao5Vb7ht59h2wmiE0XyGXcIRK/ofCencXkl7CvOIGlrNvVdvVPrPfdP39U3/f98GrHZGwM5fgugwEX5jlLgbwjFxe/UXWikQ4f+I4I+x+KKkcCEtxOa3V+UFbPUBz9xARH+dpLiPRwnnUL9f1vrcKs3rMRQShz/4nSfr7fr+LwAAAP//AwDCYjxKOQQAAA==
+    http_version: null
+  recorded_at: Sun, 05 Apr 2020 06:45:48 GMT
+recorded_with: VCR 5.1.0

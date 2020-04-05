@@ -14,7 +14,7 @@ class OrganizationType < BaseObject
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :datasets, DatasetConnectionWithMetaType, null: true, description: "Datasets from this organization", connection: true do
+  field :datasets, DatasetConnectionType, null: true, description: "Datasets from this organization", connection: true do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -27,7 +27,7 @@ class OrganizationType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, PublicationConnectionWithMetaType, null: true, description: "Publications from this organization", connection: true do
+  field :publications, PublicationConnectionType, null: true, description: "Publications from this organization", connection: true do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -40,7 +40,7 @@ class OrganizationType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, SoftwareConnectionWithMetaType, null: true, description: "Software from this organization", connection: true do
+  field :softwares, SoftwareConnectionType, null: true, description: "Software from this organization", connection: true do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -53,7 +53,7 @@ class OrganizationType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :works, WorkConnectionWithMetaType, null: true, description: "Works from this organization", connection: true do
+  field :works, WorkConnectionType, null: true, description: "Works from this organization", connection: true do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false

@@ -3,7 +3,7 @@
 class DatasetType < BaseObject
   implements DoiItem
 
-  field :usage_reports, DatasetUsageReportConnectionWithMetaType, null: false, description: "Usage reports for this dataset", connection: true do
+  field :usage_reports, DatasetUsageReportConnectionType, null: false, description: "Usage reports for this dataset", connection: true do
     argument :first, Int, required: false, default_value: 25
   end
   
