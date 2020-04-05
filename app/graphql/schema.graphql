@@ -66,7 +66,9 @@ type Audiovisual implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -171,7 +173,9 @@ type Audiovisual implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -211,7 +215,9 @@ type Audiovisual implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -266,7 +272,9 @@ type Audiovisual implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -351,7 +359,9 @@ type Audiovisual implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -391,7 +401,9 @@ type Audiovisual implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -487,7 +499,9 @@ type Client {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -566,7 +580,9 @@ type Client {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -611,7 +627,9 @@ type Client {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -666,7 +684,9 @@ type Client {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -809,7 +829,9 @@ type Collection implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -914,7 +936,9 @@ type Collection implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -954,7 +978,9 @@ type Collection implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -1009,7 +1035,9 @@ type Collection implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -1094,7 +1122,9 @@ type Collection implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -1134,7 +1164,9 @@ type Collection implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -1296,6 +1328,8 @@ type DataCatalog {
     first: Int = 25
     hasCitations: Int
     hasDownloads: Int
+    hasParts: Int
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -1450,7 +1484,9 @@ type DataPaper implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -1555,7 +1591,9 @@ type DataPaper implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -1595,7 +1633,9 @@ type DataPaper implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -1650,7 +1690,9 @@ type DataPaper implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -1735,7 +1777,9 @@ type DataPaper implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -1775,7 +1819,9 @@ type DataPaper implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -1869,7 +1915,9 @@ type Dataset implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -1974,7 +2022,9 @@ type Dataset implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -2014,7 +2064,9 @@ type Dataset implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -2069,7 +2121,9 @@ type Dataset implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -2175,7 +2229,9 @@ type Dataset implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -2215,7 +2271,9 @@ type Dataset implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -2402,7 +2460,9 @@ interface DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -2507,7 +2567,9 @@ interface DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -2547,7 +2609,9 @@ interface DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -2602,7 +2666,9 @@ interface DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -2687,7 +2753,9 @@ interface DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -2727,7 +2795,9 @@ interface DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -2784,7 +2854,9 @@ type Event implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -2889,7 +2961,9 @@ type Event implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -2929,7 +3003,9 @@ type Event implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -2984,7 +3060,9 @@ type Event implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -3069,7 +3147,9 @@ type Event implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -3109,7 +3189,9 @@ type Event implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -3188,7 +3270,9 @@ type EventData implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -3293,7 +3377,9 @@ type EventData implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -3333,7 +3419,9 @@ type EventData implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -3388,7 +3476,9 @@ type EventData implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -3473,7 +3563,9 @@ type EventData implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -3513,7 +3605,9 @@ type EventData implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -3649,7 +3743,9 @@ type Funder {
     hasCitations: Int
     hasDownloads: Int
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -3695,7 +3791,9 @@ type Funder {
     hasCitations: Int
     hasDownloads: Int
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -3726,7 +3824,9 @@ type Funder {
     hasCitations: Int
     hasDownloads: Int
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -3769,7 +3869,9 @@ type Funder {
     hasCitations: Int
     hasDownloads: Int
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -3907,7 +4009,9 @@ type Image implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -4012,7 +4116,9 @@ type Image implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -4052,7 +4158,9 @@ type Image implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -4107,7 +4215,9 @@ type Image implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -4192,7 +4302,9 @@ type Image implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -4232,7 +4344,9 @@ type Image implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -4326,7 +4440,9 @@ type InteractiveResource implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -4431,7 +4547,9 @@ type InteractiveResource implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -4471,7 +4589,9 @@ type InteractiveResource implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -4526,7 +4646,9 @@ type InteractiveResource implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -4611,7 +4733,9 @@ type InteractiveResource implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -4651,7 +4775,9 @@ type InteractiveResource implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -4745,7 +4871,9 @@ type Model implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -4850,7 +4978,9 @@ type Model implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -4890,7 +5020,9 @@ type Model implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -4945,7 +5077,9 @@ type Model implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5030,7 +5164,9 @@ type Model implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5070,7 +5206,9 @@ type Model implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5168,6 +5306,8 @@ type Organization {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasParts: Int
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5218,6 +5358,8 @@ type Organization {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasParts: Int
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5248,6 +5390,8 @@ type Organization {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasParts: Int
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5293,6 +5437,8 @@ type Organization {
     funderId: String
     hasCitations: Int
     hasDownloads: Int
+    hasParts: Int
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5376,7 +5522,9 @@ type Other implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5481,7 +5629,9 @@ type Other implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5521,7 +5671,9 @@ type Other implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5576,7 +5728,9 @@ type Other implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5661,7 +5815,9 @@ type Other implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5701,7 +5857,9 @@ type Other implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5815,6 +5973,8 @@ type Person {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5870,6 +6030,8 @@ type Person {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5900,6 +6062,8 @@ type Person {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -5942,6 +6106,8 @@ type Person {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -6028,7 +6194,9 @@ type PhysicalObject implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -6133,7 +6301,9 @@ type PhysicalObject implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -6173,7 +6343,9 @@ type PhysicalObject implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -6228,7 +6400,9 @@ type PhysicalObject implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -6313,7 +6487,9 @@ type PhysicalObject implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -6353,7 +6529,9 @@ type PhysicalObject implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -6527,7 +6705,9 @@ type Provider {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -6636,7 +6816,9 @@ type Provider {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -6681,7 +6863,9 @@ type Provider {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -6731,7 +6915,9 @@ type Provider {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -6872,7 +7058,9 @@ type Publication implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -6977,7 +7165,9 @@ type Publication implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -7017,7 +7207,9 @@ type Publication implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -7072,7 +7264,9 @@ type Publication implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -7157,7 +7351,9 @@ type Publication implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -7197,7 +7393,9 @@ type Publication implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -7284,7 +7482,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -7333,7 +7533,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -7380,7 +7582,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -7408,7 +7612,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -7436,7 +7642,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -7483,7 +7691,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -7511,7 +7721,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -7539,7 +7751,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -7590,7 +7804,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -7637,7 +7853,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -7703,7 +7921,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -7731,7 +7951,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -7759,7 +7981,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -7787,7 +8011,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -7834,7 +8060,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
 
     """
@@ -7861,7 +8089,9 @@ type Query {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -8019,7 +8249,9 @@ type Service implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -8124,7 +8356,9 @@ type Service implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -8164,7 +8398,9 @@ type Service implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -8219,7 +8455,9 @@ type Service implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -8304,7 +8542,9 @@ type Service implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -8344,7 +8584,9 @@ type Service implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -8438,7 +8680,9 @@ type Software implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -8543,7 +8787,9 @@ type Software implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -8583,7 +8829,9 @@ type Software implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -8638,7 +8886,9 @@ type Software implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -8723,7 +8973,9 @@ type Software implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -8763,7 +9015,9 @@ type Software implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -8889,7 +9143,9 @@ type Sound implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -8994,7 +9250,9 @@ type Sound implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -9034,7 +9292,9 @@ type Sound implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -9089,7 +9349,9 @@ type Sound implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -9174,7 +9436,9 @@ type Sound implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -9214,7 +9478,9 @@ type Sound implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -9486,7 +9752,9 @@ type Work implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -9591,7 +9859,9 @@ type Work implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -9631,7 +9901,9 @@ type Work implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -9686,7 +9958,9 @@ type Work implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -9771,7 +10045,9 @@ type Work implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -9811,7 +10087,9 @@ type Work implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -9906,7 +10184,9 @@ type Workflow implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -10011,7 +10291,9 @@ type Workflow implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -10051,7 +10333,9 @@ type Workflow implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -10106,7 +10390,9 @@ type Workflow implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -10191,7 +10477,9 @@ type Workflow implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
@@ -10231,7 +10519,9 @@ type Workflow implements DoiItem {
     hasDownloads: Int
     hasFunder: Boolean
     hasOrganization: Boolean
+    hasParts: Int
     hasPerson: Boolean
+    hasVersions: Int
     hasViews: Int
     ids: String
 
