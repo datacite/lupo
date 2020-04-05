@@ -336,9 +336,9 @@ describe "dois", type: :request do
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
       expect(json.dig('data', 'attributes', 'referenceCount')).to eq(1)
-      # expect(json.dig('data', 'relationships', 'references', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
-      # expect(json.dig('included').length).to eq(1)
-      # expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
+      expect(json.dig('data', 'relationships', 'references', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
     end
   end
 
@@ -362,9 +362,9 @@ describe "dois", type: :request do
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
       expect(json.dig('data', 'attributes', 'citationCount')).to eq(1)
       expect(json.dig('data', 'attributes', 'citationsOverTime')).to eq([{"total"=>1, "year"=>"2020"}])
-      # expect(json.dig('data', 'relationships', 'citations', 'data')).to eq([{"id"=>source_doi.doi.downcase, "type"=>"dois"}])
-      # expect(json.dig('included').length).to eq(1)
-      # expect(json.dig('included', 0, 'attributes', 'doi')).to eq(source_doi.doi.downcase)
+      expect(json.dig('data', 'relationships', 'citations', 'data')).to eq([{"id"=>source_doi.doi.downcase, "type"=>"dois"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'doi')).to eq(source_doi.doi.downcase)
     end
 
     it "has citations meta" do
@@ -393,10 +393,10 @@ describe "dois", type: :request do
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-      # expect(json.dig('data', 'attributes', 'partCount')).to eq(1)
-      # expect(json.dig('data', 'relationships', 'parts', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
-      # expect(json.dig('included').length).to eq(1)
-      # expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'partCount')).to eq(1)
+      expect(json.dig('data', 'relationships', 'parts', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
     end
   end
 
@@ -418,10 +418,10 @@ describe "dois", type: :request do
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-      # expect(json.dig('data', 'attributes', 'versionCount')).to eq(1)
-      # expect(json.dig('data', 'relationships', 'versions', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
-      # expect(json.dig('included').length).to eq(1)
-      # expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'versionCount')).to eq(1)
+      expect(json.dig('data', 'relationships', 'versions', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
     end
   end
 
