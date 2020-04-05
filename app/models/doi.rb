@@ -1040,7 +1040,7 @@ class Doi < ActiveRecord::Base
   end
 
   def reference_ids
-    reference_events.pluck(:target_doi).uniq.map(&:downcase)
+    reference_events.pluck(:target_doi).uniq.map { |d| d.present? ? d.downcase : nil }.compact
   end
 
   def reference_count
@@ -1048,11 +1048,11 @@ class Doi < ActiveRecord::Base
   end
 
   def indexed_references
-    Doi.query(nil, ids: reference_ids, page: { number: 1, size: 100 }).results
+    Doi.query(nil, ids: reference_ids, page: { number: 1, size: 25 }).results
   end
 
   def citation_ids
-    citation_events.pluck(:source_doi).uniq.map(&:downcase)
+    citation_events.pluck(:source_doi).uniq.map { |d| d.present? ? d.downcase : nil }.compact
   end
 
   # remove duplicate citing source dois
@@ -1070,11 +1070,11 @@ class Doi < ActiveRecord::Base
   end
 
   def indexed_citations
-    Doi.query(nil, ids: citation_ids, page: { number: 1, size: 100 }).results
+    Doi.query(nil, ids: citation_ids, page: { number: 1, size: 25 }).results
   end
 
   def part_ids
-    part_events.pluck(:target_doi).uniq.map(&:downcase)
+    part_events.pluck(:target_doi).uniq.map { |d| d.present? ? d.downcase : nil }.compact
   end
 
   def part_count
@@ -1082,11 +1082,11 @@ class Doi < ActiveRecord::Base
   end
 
   def indexed_parts
-    Doi.query(nil, ids: part_ids, page: { number: 1, size: 100 }).results.to_a
+    Doi.query(nil, ids: part_ids, page: { number: 1, size: 25 }).results.to_a
   end
 
   def part_of_ids
-    part_of_events.pluck(:source_doi).uniq.map(&:downcase)
+    part_of_events.pluck(:source_doi).uniq.map { |d| d.present? ? d.downcase : nil }.compact
   end
 
   def part_of_count
@@ -1094,11 +1094,11 @@ class Doi < ActiveRecord::Base
   end
 
   def indexed_part_of
-    Doi.query(nil, ids: part_of_ids, page: { number: 1, size: 100 }).results
+    Doi.query(nil, ids: part_of_ids, page: { number: 1, size: 25 }).results
   end
 
   def version_ids
-    version_events.pluck(:target_doi).uniq.map(&:downcase)
+    version_events.pluck(:target_doi).uniq.map { |d| d.present? ? d.downcase : nil }.compact
   end
 
   def version_count
@@ -1106,11 +1106,11 @@ class Doi < ActiveRecord::Base
   end
 
   def indexed_versions
-    Doi.query(nil, ids: version_ids, page: { number: 1, size: 100 }).results
+    Doi.query(nil, ids: version_ids, page: { number: 1, size: 25 }).results
   end
 
   def version_of_ids
-    version_of_events.pluck(:source_doi).uniq.map(&:downcase)
+    version_of_events.pluck(:source_doi).uniq.map { |d| d.present? ? d.downcase : nil }.compact
   end
 
   def version_of_count
@@ -1118,7 +1118,7 @@ class Doi < ActiveRecord::Base
   end
 
   def indexed_version_of
-    Doi.query(nil, ids: version_of_ids, page: { number: 1, size: 100 }).results
+    Doi.query(nil, ids: version_of_ids, page: { number: 1, size: 25 }).results
   end
 
   def xml_encoded
