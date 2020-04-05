@@ -146,6 +146,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -172,6 +174,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -199,6 +203,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -226,6 +232,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -253,6 +261,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -280,6 +290,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -307,6 +319,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -334,6 +348,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -361,6 +377,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -388,6 +406,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -415,6 +435,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -442,6 +464,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -469,6 +493,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -496,6 +522,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -523,6 +551,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -550,6 +580,8 @@ class QueryType < BaseObject
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
@@ -588,7 +620,7 @@ class QueryType < BaseObject
   end
 
   def response(**args)
-    @response ||= Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    @response ||= Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   def set_doi(id)

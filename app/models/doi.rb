@@ -717,9 +717,9 @@ class Doi < ActiveRecord::Base
     must << { range: { reference_count: { "gte": options[:has_references].to_i } } } if options[:has_references].present?
     must << { range: { citation_count: { "gte": options[:has_citations].to_i } } } if options[:has_citations].present?
     must << { range: { part_count: { "gte": options[:has_parts].to_i } } } if options[:has_parts].present?
-    must << { range: { part_of_count: { "gte": options[:has_part_of_count].to_i } } } if options[:has_part_of].present?
-    must << { range: { version_count: { "gte": options[:has_version_count].to_i } } } if options[:has_versions].present?
-    must << { range: { version_of_count: { "gte": options[:has_version_of_count].to_i } } } if options[:has_version_of].present?
+    must << { range: { part_of_count: { "gte": options[:has_part_of].to_i } } } if options[:has_part_of].present?
+    must << { range: { version_count: { "gte": options[:has_versions].to_i } } } if options[:has_versions].present?
+    must << { range: { version_of_count: { "gte": options[:has_version_of].to_i } } } if options[:has_version_of].present?
     must << { range: { view_count: { "gte": options[:has_views].to_i } } } if options[:has_views].present?
     must << { range: { download_count: { "gte": options[:has_downloads].to_i } } } if options[:has_downloads].present?
     must << { term: { "landing_page.status": options[:link_check_status] } } if options[:link_check_status].present?

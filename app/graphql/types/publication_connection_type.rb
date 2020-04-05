@@ -40,7 +40,9 @@ class PublicationConnectionType < BaseConnection
                             has_person: args[:has_person],
                             has_funder: args[:has_funder], 
                             has_organization: args[:has_organization], 
-                            has_citations: args[:has_citations], 
+                            has_citations: args[:has_citations],
+                            has_parts: args[:has_parts], 
+                            has_versions: args[:has_versions],
                             has_views: args[:has_views], 
                             has_downloads: args[:has_downloads], 
                             page: { number: 1, size: 0 })
