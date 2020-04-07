@@ -63,6 +63,7 @@ class DoisController < ApplicationController
                           prefix: params[:prefix],
                           user_id: params[:user_id],
                           resource_type_id: params[:resource_type_id],
+                          resource_type: params[:resource_type],
                           schema_version: params[:schema_version],
                           subject: params[:subject],
                           has_citations: params[:has_citations],

@@ -231,6 +231,44 @@ describe "dois", type: :request do
     end
   end
 
+  describe 'GET /dois for theses', elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Thesis" }, client: client, aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 3
+    end
+
+    it 'filter for theses' do
+      get "/dois?resource-type=thesis", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(3)
+      expect(json.dig('meta', 'total')).to eq(3)
+      expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Thesis", "resourceTypeGeneral"=>"Text")
+    end
+  end
+
+  describe 'GET /dois for instruments', elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Other", "resourceType" => "Instrument" }, client: client, aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 3
+    end
+
+    it 'filter for theses' do
+      get "/dois?resource-type=instrument", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(3)
+      expect(json.dig('meta', 'total')).to eq(3)
+      expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Instrument", "resourceTypeGeneral"=>"Other")
+    end
+  end
+  
   describe 'GET /dois with views and downloads', elasticsearch: true, vcr: true do
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:views) { create_list(:event_for_datacite_investigations, 2, obj_id: doi.doi) }

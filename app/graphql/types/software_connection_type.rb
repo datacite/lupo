@@ -14,17 +14,14 @@ class SoftwareConnectionType < BaseConnection
   field :organization_connection_count, Integer, null: false, cache: true
 
   def total_count
-    args = object.arguments
-    args[:user_id] ||= object.parent.try(:orcid).present? ? orcid_from_url(object.parent.orcid) : nil
-    args[:client_id] ||= object.parent.try(:client_type).present? ? object.parent.symbol.downcase : nil
-    args[:provider_id] ||= object.parent.try(:role_name).present? ? object.parent.symbol.downcase : nil
-
-    response(**args).results.total  
+    args = prepare_args(object.arguments)
+    
+    response(**args).results.total
   end
 
   def years
     args = object.arguments
-    args[:provider_id] ||= object.parent.try(:role_name).present? ? object.parent.symbol.downcase : nil
+    args = prepare_args(object.arguments)
 
     res = response(**args)
     res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : nil

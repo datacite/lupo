@@ -706,6 +706,7 @@ class Doi < ActiveRecord::Base
     must << { query_string: { query: query, fields: query_fields } } if query.present?
     must << { terms: { doi: options[:ids].map(&:upcase) }} if options[:ids].present? 
     must << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
+    must << { term: { "types.resourceType": options[:resource_type].humanize }} if options[:resource_type].present?
     must << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
     must << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
     must << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?

@@ -571,6 +571,67 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
+  field :theses, ThesisConnectionType, null: false, connection: true, max_page_size: 1000 do
+    argument :query, String, required: false
+    argument :user_id, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+
+  def theses(**args)
+    args[:resource_type_id] = "Text"
+    args[:resource_type] = "thesis"
+    response(**args)
+  end
+
+  field :thesis, PublicationType, null: false do
+    argument :id, ID, required: true
+  end
+
+  def thesis(id:)
+    set_doi(id)
+  end
+
+  field :instruments, InstrumentConnectionType, null: false, connection: true, max_page_size: 1000 do
+    argument :query, String, required: false
+    argument :user_id, String, required: false
+    argument :client_id, String, required: false
+    argument :provider_id, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :first, Int, required: false, default_value: 25
+  end
+
+  def instruments(**args)
+    args[:resource_type_id] = "Other"
+    args[:resource_type] = "Instrument"
+
+    response(**args)
+  end
+
+  field :instrument, OtherType, null: false do
+    argument :id, ID, required: true
+  end
+
+  def instrument(id:)
+    set_doi(id)
+  end
+
   field :others, OtherConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
@@ -620,7 +681,7 @@ class QueryType < BaseObject
   end
 
   def response(**args)
-    @response ||= Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    @response ||= Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   def set_doi(id)
