@@ -3,14 +3,14 @@ require 'rails_helper'
 describe Person, type: :model, vcr: true do
   describe "find_by_id" do
     it "found" do
-      id = "https://orcid.org/0000-0003-1519-3661"
+      id = "https://orcid.org/0000-0003-2706-4082"
       people = Person.find_by_id(id)
       expect(people[:data].size).to eq(1)
       person = people[:data].first
-      expect(person.id).to eq("https://orcid.org/0000-0003-1519-3661")
-      expect(person.name).to eq("Peter Godfrey-Smith")
-      expect(person.given_name).to eq("Peter")
-      expect(person.family_name).to eq("Godfrey-Smith")
+      expect(person.id).to eq("https://orcid.org/0000-0003-2706-4082")
+      expect(person.name).to eq("Agnes Ebenberger")
+      expect(person.given_name).to eq("Agnes")
+      expect(person.family_name).to eq("Ebenberger")
     end
 
     it "not found" do
@@ -22,34 +22,33 @@ describe Person, type: :model, vcr: true do
   end
 
   describe "query" do
-    it "all" do
-      query = nil
-      people = Person.query(query)
-      expect(people.dig(:meta, "total")).to eq(648608)
-      expect(people[:data].size).to eq(25)
-      person = people[:data].first
-      expect(person.id).to eq("https://orcid.org/0000-0002-8362-4294")
-      expect(person.name).to eq("swoyam prakash    pandit ")
-      expect(person.given_name).to eq("swoyam prakash ")
-      expect(person.family_name).to eq("  pandit ")
-    end
-
-    it "found" do
+    it "found miller" do
       query = "miller"
       people = Person.query(query)
-      expect(people.dig(:meta, "total")).to eq(428)
-      expect(people[:data].size).to eq(25)
+      expect(people.dig(:meta, "total")).to eq(7089)
+      expect(people.dig(:data).size).to eq(25)
       person = people[:data].first
-      expect(person.id).to eq("https://orcid.org/0000-0002-6219-6358")
-      expect(person.name).to eq("Elizabeth A. (Miller) McGuier")
-      expect(person.given_name).to eq("Elizabeth A.")
-      expect(person.family_name).to eq("(Miller) McGuier")
+      expect(person.id).to eq("https://orcid.org/0000-0002-2131-0054")
+      expect(person.name).to eq("Edmund Miller")
+      expect(person.given_name).to eq("Edmund")
+      expect(person.family_name).to eq("Miller")
+      expect(person.affiliation).to eq([{"name"=>"Feinstein Institute for Medical Research"},
+        {"name"=>"Hofstra Northwell School of Medicine at Hofstra University"},
+        {"name"=>"King's College London"},
+        {"name"=>"University of Texas Health Northeast"}])
     end
 
-    it "not found" do
-      query = "xxx"
+    it "found datacite" do
+      query = "datacite"
       people = Person.query(query)
-      expect(people[:data]).to be_empty
+      expect(people.dig(:meta, "total")).to eq(15163)
+      expect(people.dig(:data).size).to eq(25)
+      person = people[:data].first
+      expect(person.id).to eq("https://orcid.org/0000-0002-9300-5278")
+      expect(person.name).to eq("Patricia Cruse")
+      expect(person.given_name).to eq("Patricia")
+      expect(person.family_name).to eq("Cruse")
+      expect(person.affiliation).to eq([{"name"=>"DataCite"}, {"name"=>"University of California Berkeley"}])
     end
   end
 end

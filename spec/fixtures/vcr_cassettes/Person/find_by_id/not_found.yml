@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.datacite.org/users/xxxxx
+    uri: https://pub.orcid.org/v3.0/xxxxx/person
     body:
       encoding: US-ASCII
       string: ''
@@ -10,7 +10,7 @@ http_interactions:
       User-Agent:
       - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
       Accept:
-      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      - application/json;charset=UTF-8
       Accept-Encoding:
       - gzip,deflate
   response:
@@ -18,44 +18,36 @@ http_interactions:
       code: 404
       message: Not Found
     headers:
-      Date:
-      - Sat, 28 Mar 2020 05:12:23 GMT
-      Content-Type:
-      - application/json; charset=utf-8
-      Connection:
-      - keep-alive
-      Status:
-      - 404 Not Found
+      Server:
+      - nginx/1.16.1
       Cache-Control:
-      - no-cache
-      Vary:
-      - Accept-Encoding, Origin
+      - no-cache, no-store, max-age=0, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
       Content-Encoding:
       - gzip
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-      X-Permitted-Cross-Domain-Policies:
-      - none
+      Date:
+      - Wed, 08 Apr 2020 17:09:17 GMT
+      Expires:
+      - '0'
+      Pragma:
+      - no-cache
       X-Xss-Protection:
       - 1; mode=block
-      X-Request-Id:
-      - d615d90f-a83e-443b-a229-7e6b431076af
-      X-Download-Options:
-      - noopen
-      X-Runtime:
-      - '0.054006'
-      X-Frame-Options:
-      - SAMEORIGIN
+      Access-Control-Allow-Origin:
+      - "*"
       X-Content-Type-Options:
       - nosniff
-      X-Powered-By:
-      - Phusion Passenger 6.0.4
-      Server:
-      - nginx/1.14.0 + Phusion Passenger 6.0.4
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - X-Mapping-fjhppofk=26484D0F5DA32D2D6AF64AA1C9DBBA16; path=/
+      X-Frame-Options:
+      - DENY
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        H4sIALfcfl4AAwzHMQqAMAwF0KuELC4iDp08h5s4FP1qsTSQpKCId9ftvYehKmo8TA+bR68/OfSBW/bkGf/GA6QwqbqAbqkUFZRFzlR22kRpFVhpnHAl847f+f0AAAD//wMArpOW4VcAAAA=
+        H4sIAAAAAAAAA32OwQrCMAyGXyX0vK0KIrirInhREF+grnErdM1I2imI724ningxhxzy5/uSu2KUgYJg2ZBFVS9mi0JZHNHTgFz2KGLaPFc5gD1F2FIKtoZTh5BRStwgXI1AyNllyirYJu9hNN5ZEx0FQGbiGg7H9W4DbgO3qb6AKlSSn1t/5Hn5pXu/u5rNl4XqibF04UKZ7WIcpNa6x/6MLBVx42zurTaD0x+r6MiUzh6lI4outOrxBN6+4ecLAQAA
     http_version: null
-  recorded_at: Sat, 28 Mar 2020 05:12:23 GMT
+  recorded_at: Wed, 08 Apr 2020 17:09:17 GMT
 recorded_with: VCR 5.1.0

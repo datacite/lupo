@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.datacite.org/users/0000-0003-1519-3661
+    uri: https://pub.orcid.org/v3.0/0000-0003-2706-4082/person
     body:
       encoding: US-ASCII
       string: ''
@@ -10,7 +10,7 @@ http_interactions:
       User-Agent:
       - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
       Accept:
-      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      - application/json;charset=UTF-8
       Accept-Encoding:
       - gzip,deflate
   response:
@@ -18,48 +18,36 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Date:
-      - Sat, 28 Mar 2020 05:12:23 GMT
-      Content-Type:
-      - application/json; charset=utf-8
-      Connection:
-      - keep-alive
-      Status:
-      - 200 OK
-      X-Anonymous-Consumer:
-      - 'true'
+      Server:
+      - nginx/1.16.1
       Cache-Control:
-      - max-age=0, private, must-revalidate
-      Vary:
-      - Accept-Encoding, Origin
+      - no-cache, no-store, max-age=0, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
       Content-Encoding:
       - gzip
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-      X-Permitted-Cross-Domain-Policies:
-      - none
+      Date:
+      - Wed, 08 Apr 2020 16:57:50 GMT
+      Expires:
+      - '0'
+      Pragma:
+      - no-cache
       X-Xss-Protection:
       - 1; mode=block
-      X-Request-Id:
-      - 24361814-692c-4f89-8b86-56def189ef65
-      X-Download-Options:
-      - noopen
-      Etag:
-      - W/"f53377f17fa2a03e3dc42f01085ac448"
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Runtime:
-      - '1.022590'
+      Access-Control-Allow-Origin:
+      - "*"
       X-Content-Type-Options:
       - nosniff
-      X-Powered-By:
-      - Phusion Passenger 6.0.4
-      Server:
-      - nginx/1.14.0 + Phusion Passenger 6.0.4
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - X-Mapping-fjhppofk=EDEB8B375DA428655747278237992826; path=/
+      X-Frame-Options:
+      - DENY
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        H4sIALfcfl4AA4RRQWrDMBD8StHZTiybOKluPZVeSqE5tfSgWOtYIFtGWiU1wX/vKjHYKYUKBJqdmdVodWFKomTiwrRigmW0UtpFyjf8MS3KkrOE4dADkcGD8wQlotOHgOCj76hP0L3KNireAMGRopatNsNUfLaqdjCk763GhshuoX34TVpXXYM0iL0X6/UVr6w7rv+OdiRbODDRBWMS5qyBFzVFJVb7pwopHxO1NB4SVjmQCFGRZ3yb8pya7XkuikxsyhV1/yBX6NV/opHuAiNR2843uo+DGKnWwm2WymoqfU5DzbM8i1PUaGCGlQ0dMlGMXwnrw8Fo38Q7ZxPf3pmucDLlYzLLdvey3SzjsbcDb4OrYE+fuAiF8I0L4/4Gl6FOGs7RQEdlz52xUk2w0nh7eoTj+AMAAP//AwABjzEcRAIAAA==
+        H4sIAAAAAAAAA+1UwY6bMBD9FeRzDCzrQpRTq7aHPa1UqaeqBwcMWGtsZJs0KMq/d5wECA2JW6m9FQkJM2/em/E8+4AENRY3quAlZwUuqGVoc0A7Kjr4eCIkJe/WcULIc3ZcIUmbUzjXDIAL8DTOUkLWSUyeAO7hnoMrvmMSOwVzhUIfKgk/IF7ShoseDyUM8c9bJrdMV0w7EBRWcHsByU6IFTKq0/m42nHDt1xw20Nu220Fz9EKtdTWsI7hwfA+4ySLU0zideJIla2Znipb6upMPgHR5tv3kTZa4I2uSUFjy1WlaVv3A5dmhlGdO1CnhUd4DvaL/0oOBbCG8vsydx1xSgPBB56YElK/J+bgYXaHyxdWOufFfLI4F5xJi93/A+o0h6Zra1uziaITPFS6is6gcTMSTEic4Swjye3458FaGQvBkQqNdd148fXLx5dPwYu0DGZpuZIBtQHMOfgqwdzagOsCVQav+1LpwvFQY5h2QGiMV1zO+7uJXnV6BzEZf5oNou4IhWw8KO9Ny0O1D2kedm9j+4/OBxR/mhfalFQYBimaN1T307qzOFfFqP1bdsj+xA7Zfzv8MztQaf+WH6zubu3guY3Ohbn+iwJuJuO7Zi8w/zU3AIH6jfU/YJc9zBeUn3mkc/u6t0xLKmAQMA5Hqj0yCxl+yUWZ4+OcFjBKouNPWyW3POcHAAA=
     http_version: null
-  recorded_at: Sat, 28 Mar 2020 05:12:23 GMT
+  recorded_at: Wed, 08 Apr 2020 16:57:50 GMT
 recorded_with: VCR 5.1.0
