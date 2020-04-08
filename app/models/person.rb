@@ -16,7 +16,7 @@ class Person
       "given-names" => message.dig("name", "given-names", "value"),
       "family-names" => message.dig("name", "family-name", "value"),
       "other-name" => message.dig("name", "other-names", "other-name"),
-      "credit-name" => message.dig("name", "credit-name"),
+      "credit-name" => message.dig("name", "credit-name", "value"),
     }
     
     data = [parse_message(message: message)]

@@ -132,7 +132,7 @@ class QueryType < BaseObject
   end
 
   def people(**args)
-    Person.query(args[:query], limit: args[:first]).fetch(:data, [])
+    Person.query(args[:query], rows: args[:first]).fetch(:data, [])
   end
 
   field :works, WorkConnectionType, null: false, connection: true, max_page_size: 1000 do

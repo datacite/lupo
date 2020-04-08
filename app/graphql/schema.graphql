@@ -33,6 +33,21 @@ type Address {
   type: String
 }
 
+"""
+Information about affiliations
+"""
+type Affiliation {
+  """
+  Unique identifier for each affiliation
+  """
+  id: ID
+
+  """
+  Affiliation name
+  """
+  name: String
+}
+
 type Audiovisual implements DoiItem {
   """
   The DOI registration agency for the resource
@@ -6380,6 +6395,11 @@ type PageInfo {
 A person.
 """
 type Person {
+  """
+  Affiliations(s) of the person.
+  """
+  affiliation: [Affiliation!]
+
   """
   The number of citations.
   """

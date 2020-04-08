@@ -115,11 +115,11 @@ describe PersonType do
     it "returns people information" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "people", "totalCount")).to eq(20)
+      expect(response.dig("data", "people", "totalCount")).to eq(241)
 
       person = response.dig("data", "people", "nodes", 0)
-      expect(person.fetch("id")).to eq("https://orcid.org/0000-0001-5508-9039")
-      expect(person.fetch("name")).to eq("Andriel Evandro Fenner")
+      expect(person.fetch("id")).to eq("https://orcid.org/0000-0002-6028-9323")
+      expect(person.fetch("name")).to eq("Stephen A. Fenner")
     end
   end
 end

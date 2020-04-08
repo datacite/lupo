@@ -13,6 +13,17 @@ describe Person, type: :model, vcr: true do
       expect(person.family_name).to eq("Ebenberger")
     end
 
+    it "also found" do
+      id = "https://orcid.org/0000-0003-3484-6875"
+      people = Person.find_by_id(id)
+      expect(people[:data].size).to eq(1)
+      person = people[:data].first
+      expect(person.id).to eq("https://orcid.org/0000-0003-3484-6875")
+      expect(person.name).to eq("K. J. Garza")
+      expect(person.given_name).to eq("Kristian")
+      expect(person.family_name).to eq("Garza")
+    end
+
     it "not found" do
       id = "https://orcid.org/xxxxx"
       people = Person.find_by_id(id)
