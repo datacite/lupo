@@ -521,18 +521,20 @@ class Event < ActiveRecord::Base
         cursor = response.results.to_a.last[:sort]
         Rails.logger.warn "[modify_nested_objects] Cursor: #{cursor} "
 
-        ids = response.results.results.map(&:obj_id).uniq
+        ids = response.results.results.map(&:uuid).uniq
         CamelcaseNestedObjectsJob.perform_later(ids, options)
       end
     end
   end
 
 
-  def self.camelcace_nested_objects(uuid)
+  def self.camelcase_nested_objects(uuid)
       event = Event.find_by(uuid: uuid)
-      subj = event.subj.transform_keys { |key| key.to_s.underscore.camelcase(:lower) } 
-      obj = event.obj.transform_keys { |key| key.to_s.underscore.camelcase(:lower) }
-      event.update_attributes(subj: subj, obj: obj)
+      if event.present?
+        subj = event.subj.transform_keys { |key| key.to_s.underscore.camelcase(:lower) } 
+        obj = event.obj.transform_keys { |key| key.to_s.underscore.camelcase(:lower) }
+        event.update_attributes(subj: subj, obj: obj)
+      end
   end
 
   def self.label_state_event(event)
