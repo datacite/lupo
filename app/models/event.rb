@@ -630,8 +630,8 @@ class Event < ActiveRecord::Base
 
   def citation_year
     "" unless (INCLUDED_RELATION_TYPES + RELATIONS_RELATION_TYPES).include?(relation_type_id)
-    subj_publication = subj["date_published"] || (date_published(subj_id) || year_month)
-    obj_publication =  obj["date_published"]  || (date_published(obj_id) || year_month)
+    subj_publication = subj["datePublished"] || subj["date_published"] || (date_published(subj_id) || year_month)
+    obj_publication =  obj["datePublished"]  || obj["date_published"]  || (date_published(obj_id) || year_month)
     [subj_publication[0..3].to_i, obj_publication[0..3].to_i].max
   end
 
