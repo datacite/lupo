@@ -43,6 +43,7 @@ describe Person, type: :model, vcr: true do
       expect(person.name).to eq("Letícia Rodrigues Bueno")
       expect(person.given_name).to eq("Letícia Rodrigues")
       expect(person.family_name).to eq("Bueno")
+      expect(person.other_names).to eq([])
       expect(person.affiliation).to eq([{"name"=>"Universidade Estadual de Maringá"},
         {"name"=>"Universidade Federal do ABC"},
         {"name"=>"Universidade Federal do Rio de Janeiro"}])
@@ -74,6 +75,7 @@ describe Person, type: :model, vcr: true do
       expect(person.name).to eq("Patricia Cruse")
       expect(person.given_name).to eq("Patricia")
       expect(person.family_name).to eq("Cruse")
+      expect(person.other_names).to eq(["Trisha Cruse"])
       expect(person.affiliation).to eq([{"name"=>"DataCite"}, {"name"=>"University of California Berkeley"}])
     end
   end

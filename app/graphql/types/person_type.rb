@@ -8,6 +8,7 @@ class PersonType < BaseObject
   field :name, String, null: true, description: "The name of the person."
   field :given_name, String, null: true, description: "Given name. In the U.S., the first name of a Person."
   field :family_name, String, null: true, description: "Family name. In the U.S., the last name of an Person."
+  field :other_names, [String], null: true, description: "Other names."
   field :affiliation, [AffiliationType], null: true, description: "Affiliations(s) of the person."
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."

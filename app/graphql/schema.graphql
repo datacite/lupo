@@ -38,14 +38,14 @@ Information about affiliations
 """
 type Affiliation {
   """
-  Unique identifier for each affiliation
+  Affiliation ROR identifier
   """
   id: ID
 
   """
   Affiliation name
   """
-  name: String
+  name: String!
 }
 
 type Audiovisual implements DoiItem {
@@ -2052,7 +2052,7 @@ type Date {
   """
   Date information for this resource
   """
-  date: ISO8601Date!
+  date: ISO8601DateTime!
 
   """
   The type of date
@@ -3648,6 +3648,11 @@ type Funding {
 An ISO 8601-encoded date
 """
 scalar ISO8601Date
+
+"""
+An ISO 8601-encoded datetime
+"""
+scalar ISO8601DateTime
 
 """
 Information about identifiers
@@ -6509,6 +6514,11 @@ type Person {
   The name of the person.
   """
   name: String
+
+  """
+  Other names.
+  """
+  otherNames: [String!]
 
   """
   Authored publications
