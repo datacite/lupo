@@ -100,6 +100,9 @@ describe PersonType do
             name
             givenName
             familyName
+            affiliation {
+              name
+            }
             works {
               totalCount
               years {
@@ -120,6 +123,10 @@ describe PersonType do
       person = response.dig("data", "people", "nodes", 0)
       expect(person.fetch("id")).to eq("https://orcid.org/0000-0002-6028-9323")
       expect(person.fetch("name")).to eq("Stephen A. Fenner")
+      expect(person.fetch("affiliation")).to eq([{"name"=>"Harvard College"},
+        {"name"=>"University of Chicago"},
+        {"name"=>"University of South Carolina"},
+        {"name"=>"University of Southern Maine"}])
     end
   end
 end
