@@ -29,6 +29,6 @@ class PrefixConnectionType < BaseConnection
   end
 
   def response(**args)
-    @response ||= Prefix.query(args[:query], provider_id: args[:provider_id], state: args[:state], year: args[:year], page: { number: 1, size: 0 })
+    @response ||= Prefix.query(args[:query], provider_id: args[:member_id], state: args[:state], year: args[:year], page: { number: 1, size: 0 })
   end
 end

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe ClientType do
+describe RepositoryType do
   describe "fields" do
     subject { described_class }
 
@@ -15,7 +15,7 @@ describe ClientType do
     it { is_expected.to have_field(:works).of_type("WorkConnection") }
   end
 
-  describe "query clients", elasticsearch: true do
+  describe "query repositories", elasticsearch: true do
     let!(:clients) { create_list(:client, 3) }
 
     before do
@@ -25,7 +25,7 @@ describe ClientType do
 
     let(:query) do
       %(query {
-        clients {
+        repositories {
           totalCount
           nodes {
             id
@@ -36,20 +36,20 @@ describe ClientType do
       })
     end
 
-    it "returns clients" do
+    it "returns repositories" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "clients", "totalCount")).to eq(3)
-      expect(response.dig("data", "clients", "nodes").length).to eq(3)
+      expect(response.dig("data", "repositories", "totalCount")).to eq(3)
+      expect(response.dig("data", "repositories", "nodes").length).to eq(3)
 
-      client1 = response.dig("data", "clients", "nodes", 0)
+      client1 = response.dig("data", "repositories", "nodes", 0)
       expect(client1.fetch("id")).to eq(clients.first.uid)
       expect(client1.fetch("name")).to eq(clients.first.name)
       expect(client1.fetch("alternateName")).to eq(clients.first.alternate_name)
     end
   end
 
-  describe "find client", elasticsearch: true do
+  describe "find repository", elasticsearch: true do
     let(:provider) { create(:provider, symbol: "TESTC") }
     let(:client) { create(:client, symbol: "TESTC.TESTC", alternate_name: "ABC", provider: provider) }
     let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -67,7 +67,7 @@ describe ClientType do
 
     let(:query) do
       %(query {
-        client(id: "testc.testc") {
+        repository(id: "testc.testc") {
           id
           name
           alternateName
@@ -88,24 +88,24 @@ describe ClientType do
       })
     end
 
-    it "returns client" do
+    it "returns repository" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "client", "id")).to eq(client.uid)
-      expect(response.dig("data", "client", "name")).to eq("My data center")
-      expect(response.dig("data", "client", "alternateName")).to eq("ABC")
+      expect(response.dig("data", "repository", "id")).to eq(client.uid)
+      expect(response.dig("data", "repository", "name")).to eq("My data center")
+      expect(response.dig("data", "repository", "alternateName")).to eq("ABC")
 
-      expect(response.dig("data", "client", "datasets", "totalCount")).to eq(1)
+      expect(response.dig("data", "repository", "datasets", "totalCount")).to eq(1)
 
-      expect(response.dig("data", "client", "prefixes", "totalCount")).to eq(3)
-      expect(response.dig("data", "client", "prefixes", "years")).to eq([{"count"=>3, "id"=>"2020"}])
-      expect(response.dig("data", "client", "prefixes", "nodes").length).to eq(3)
-      prefix1 = response.dig("data", "client", "prefixes", "nodes", 0)
+      expect(response.dig("data", "repository", "prefixes", "totalCount")).to eq(3)
+      expect(response.dig("data", "repository", "prefixes", "years")).to eq([{"count"=>3, "id"=>"2020"}])
+      expect(response.dig("data", "repository", "prefixes", "nodes").length).to eq(3)
+      prefix1 = response.dig("data", "repository", "prefixes", "nodes", 0)
       expect(prefix1.fetch("name")).to eq(client_prefixes.first.prefix_id)
     end
   end
 
-  describe "find client with citations", elasticsearch: true do
+  describe "find repository with citations", elasticsearch: true do
     let(:provider) { create(:provider, symbol: "TESTR") }
     let(:client) { create(:client, symbol: "TESTR.TESTR", provider: provider) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable", creators:
@@ -132,7 +132,7 @@ describe ClientType do
 
     let(:query) do
       %(query {
-        client(id: "testr.testr") {
+        repository(id: "testr.testr") {
           id
           name
           citationCount
@@ -158,18 +158,18 @@ describe ClientType do
       })
     end
 
-    it "returns client information" do
+    it "returns repository information" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "client", "id")).to eq("testr.testr")
-      expect(response.dig("data", "client", "name")).to eq("My data center")
-      expect(response.dig("data", "client", "citationCount")).to eq(0)
-      expect(response.dig("data", "client", "works", "totalCount")).to eq(3)
-      expect(response.dig("data", "client", "works", "years")).to eq([{"count"=>3, "title"=>"2011"}])
-      expect(response.dig("data", "client", "works", "resourceTypes")).to eq([{"count"=>3, "title"=>"Dataset"}])
-      expect(response.dig("data", "client", "works", "nodes").length).to eq(3)
+      expect(response.dig("data", "repository", "id")).to eq("testr.testr")
+      expect(response.dig("data", "repository", "name")).to eq("My data center")
+      expect(response.dig("data", "repository", "citationCount")).to eq(0)
+      expect(response.dig("data", "repository", "works", "totalCount")).to eq(3)
+      expect(response.dig("data", "repository", "works", "years")).to eq([{"count"=>3, "title"=>"2011"}])
+      expect(response.dig("data", "repository", "works", "resourceTypes")).to eq([{"count"=>3, "title"=>"Dataset"}])
+      expect(response.dig("data", "repository", "works", "nodes").length).to eq(3)
 
-      work = response.dig("data", "client", "works", "nodes", 0)
+      work = response.dig("data", "repository", "works", "nodes", 0)
       expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
       expect(work.dig("citationCount")).to eq(2)
     end

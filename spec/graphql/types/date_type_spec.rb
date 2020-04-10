@@ -5,6 +5,6 @@ describe DateType do
     subject { described_class }
 
     it { is_expected.to have_field(:dateType).of_type("String") }
-    it { is_expected.to have_field(:date).of_type("String") }
+    it { is_expected.to have_field(:date).of_type("ISO8601Date!") }
   end
 end

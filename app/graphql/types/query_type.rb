@@ -3,39 +3,39 @@
 class QueryType < BaseObject
   extend_type
 
-  field :providers, ProviderConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :members, MemberConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def providers(query: nil, year: nil, first: nil)
+  def members(query: nil, year: nil, first: nil)
     Provider.query(query, year: year, page: { number: 1, size: first }).results.to_a
   end
 
-  field :provider, ProviderType, null: false do
+  field :member, MemberType, null: false do
     argument :id, ID, required: true
   end
 
-  def provider(id:)
+  def member(id:)
     Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: id).first
   end
 
-  field :clients, ClientConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :repositories, RepositoryConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :year, String, required: false
     argument :software, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  def clients(**args)
+  def repositories(**args)
     Client.query(args[:query], year: args[:year], software: args[:software], page: { number: 1, size: args[:first] }).results.to_a
   end
 
-  field :client, ClientType, null: false do
+  field :repository, RepositoryType, null: false do
     argument :id, ID, required: true
   end
 
-  def client(id:)
+  def repository(id:)
     Client.where(symbol: id).where(deleted_at: nil).first
   end
 
@@ -139,8 +139,8 @@ class QueryType < BaseObject
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :resource_type_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
@@ -168,8 +168,8 @@ class QueryType < BaseObject
   field :datasets, DatasetConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -197,8 +197,8 @@ class QueryType < BaseObject
   field :publications, PublicationConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -226,8 +226,8 @@ class QueryType < BaseObject
   field :audiovisuals, AudiovisualConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -255,8 +255,8 @@ class QueryType < BaseObject
   field :collections, CollectionConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -284,8 +284,8 @@ class QueryType < BaseObject
   field :data_papers, DataPaperConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -313,8 +313,8 @@ class QueryType < BaseObject
   field :events, EventConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -342,8 +342,8 @@ class QueryType < BaseObject
   field :images, ImageConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -371,8 +371,8 @@ class QueryType < BaseObject
   field :interactive_resources, InteractiveResourceConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -400,8 +400,8 @@ class QueryType < BaseObject
   field :models, ModelConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -429,8 +429,8 @@ class QueryType < BaseObject
   field :physical_objects, PhysicalObjectConnectionType, null: false do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -458,8 +458,8 @@ class QueryType < BaseObject
   field :services, ServiceConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -487,8 +487,8 @@ class QueryType < BaseObject
   field :softwares, SoftwareConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -516,8 +516,8 @@ class QueryType < BaseObject
   field :sounds, SoundConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -545,8 +545,8 @@ class QueryType < BaseObject
   field :workflows, WorkflowConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -574,8 +574,8 @@ class QueryType < BaseObject
   field :theses, ThesisConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -604,8 +604,8 @@ class QueryType < BaseObject
   field :instruments, InstrumentConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -635,8 +635,8 @@ class QueryType < BaseObject
   field :others, OtherConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -681,7 +681,7 @@ class QueryType < BaseObject
   end
 
   def response(**args)
-    @response ||= Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    @response ||= Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], repository_id: args[:repository_id], member_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   def set_doi(id)

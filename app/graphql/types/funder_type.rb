@@ -16,8 +16,8 @@ class FunderType < BaseObject
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
@@ -32,8 +32,8 @@ class FunderType < BaseObject
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
@@ -48,8 +48,8 @@ class FunderType < BaseObject
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
@@ -64,8 +64,8 @@ class FunderType < BaseObject
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :affiliation_id, String, required: false
     argument :resource_type_id, String, required: false
     argument :has_person, Boolean, required: false
@@ -129,6 +129,6 @@ class FunderType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], funder_id: object[:id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
+    Doi.query(args[:query], funder_id: object[:id], user_id: args[:user_id], repository_id: args[:repository_id], member_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
   end
 end

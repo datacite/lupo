@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class ProviderConnectionType < BaseConnection
-  edge_type(ProviderEdgeType)
+class MemberConnectionType < BaseConnection
+  edge_type(MemberEdgeType)
   field_class GraphQL::Cache::Field
   
   field :total_count, Integer, null: false, cache: true

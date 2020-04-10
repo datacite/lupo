@@ -21,7 +21,7 @@ module DoiItem
   field :language, String, null: true, description: "The primary language of the resource"
   field :identifiers, [IdentifierType], null: true, description: "An identifier or identifiers applied to the resource being registered"
   field :related_identifiers, [RelatedIdentifierType], null: true, description: "Identifiers of related resources. These must be globally unique identifiers"
-  field :types, ResourceTypeType, null: true, description: "The resource type"
+  field :types, ResourceTypeType, null: false, description: "The resource type"
   field :formats, [String], null: true, description: "Technical format of the resource"
   field :sizes, [String], null: true, description: "Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource"
   field :version, String, null: true, hash_key: "version_info", description: "The version number of the resource"
@@ -30,10 +30,10 @@ module DoiItem
     argument :first, Int, required: false, default_value: 5
   end
   field :funding_references, [FundingType], null: true, description: "Information about financial support (funding) for the resource being registered"
-  field :url, String, null: true, description: "The URL registered for the resource"
-  field :client, ClientType, null: true, description: "The client account managing this resource"
-  field :provider, ProviderType, null: true, description: "The provider account managing this resource"
-  field :agency, String, null: true, description: "The DOI registration agency for the resource"
+  field :url, Url, null: true, description: "The URL registered for the resource"
+  field :repository, RepositoryType, null: true, description: "The repository account managing this resource"
+  field :member, MemberType, null: true, description: "The member account managing this resource"
+  field :registration_agency, String, hash_key: "agency", null: true, description: "The DOI registration agency for the resource"
   field :formatted_citation, String, null: true, description: "Metadata as formatted citation" do
     argument :style, String, required: false, default_value: "apa"
     argument :locale, String, required: false, default_value: "en-US"
@@ -55,8 +55,8 @@ module DoiItem
     argument :ids, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :affiliation_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
@@ -73,8 +73,8 @@ module DoiItem
     argument :ids, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :affiliation_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
@@ -91,8 +91,8 @@ module DoiItem
     argument :ids, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :affiliation_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
@@ -109,8 +109,8 @@ module DoiItem
     argument :ids, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :affiliation_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
@@ -127,8 +127,8 @@ module DoiItem
     argument :ids, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :affiliation_id, String, required: false
@@ -145,8 +145,8 @@ module DoiItem
     argument :ids, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
-    argument :client_id, String, required: false
-    argument :provider_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
     argument :affiliation_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
@@ -243,7 +243,7 @@ module DoiItem
   def response(**args)
     return [] if args[:ids].blank?
 
-    Doi.query(args[:query], ids: args[:ids], funder_id: args[:funder_id], user_id: args[:user_id], client_id: args[:client_id], provider_id: args[:provider_id], affiliation_id: args[:affiliation_id], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    Doi.query(args[:query], ids: args[:ids], funder_id: args[:funder_id], user_id: args[:user_id], repository_id: args[:repository_id], member_id: args[:member_id], affiliation_id: args[:affiliation_id], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   def doi_link(url)

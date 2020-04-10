@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class ClientConnectionType < BaseConnection
-  edge_type(ClientEdgeType)
+class RepositoryConnectionType < BaseConnection
+  edge_type(RepositoryEdgeType)
   field_class GraphQL::Cache::Field
   
   field :total_count, Integer, null: true, cache: true
@@ -29,6 +29,6 @@ class ClientConnectionType < BaseConnection
   end
 
   def response(**args)
-    @response ||= Client.query(args[:query], provider_id: args[:provider_id], year: args[:year], software: args[:software], page: { number: 1, size: 0 })
+    @response ||= Client.query(args[:query], provider_id: args[:member_id], year: args[:year], software: args[:software], page: { number: 1, size: 0 })
   end
 end

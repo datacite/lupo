@@ -17,8 +17,8 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
 
   def prepare_args(args)
     args[:user_id] ||= object.parent.try(:type) == "Person" ? object.parent.orcid : nil
-    args[:client_id] ||= object.parent.try(:client_type).present? ? object.parent.symbol.downcase : nil
-    args[:provider_id] ||= object.parent.try(:region).present? ? object.parent.symbol.downcase : nil
+    args[:repository_id] ||= object.parent.try(:client_type).present? ? object.parent.symbol.downcase : nil
+    args[:member_id] ||= object.parent.try(:region).present? ? object.parent.symbol.downcase : nil
     args[:affiliation_id] ||= object.parent.try(:type) == "Organization" ? object.parent[:id] : nil
     args[:funder_id] ||= object.parent.try(:type) == "Funder" ? object.parent[:id] : nil
     args[:re3data_id] ||= object.parent.try(:type) == "DataCatalog" ? object.parent[:id] : nil
