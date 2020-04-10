@@ -4963,6 +4963,26 @@ type InteractiveResourceEdge {
 }
 
 """
+Information about ISSN
+"""
+type Issn {
+  """
+  The electronic ISSN
+  """
+  electronic: String
+
+  """
+  The ISSNL
+  """
+  issnl: String
+
+  """
+  The print ISSN
+  """
+  print: String
+}
+
+"""
 Information about providers
 """
 type Member {
@@ -8360,9 +8380,19 @@ type Repository {
   alternateName: String
 
   """
+  The certificate(s) for the repository
+  """
+  certificate: [String!]
+
+  """
   The number of citations.
   """
   citationCount: Int
+
+  """
+  The client type (repository or periodical)
+  """
+  clientType: String
 
   """
   Datasets managed by the repository
@@ -8415,6 +8445,16 @@ type Repository {
   Unique identifier for each repository
   """
   id: ID!
+
+  """
+  The ISSN
+  """
+  issn: Issn
+
+  """
+  The langauge of the repository
+  """
+  language: [String!]
 
   """
   Repository name
@@ -8486,6 +8526,11 @@ type Repository {
   The re3data identifier for the repository
   """
   re3data: ID
+
+  """
+  The repository type(s)
+  """
+  repositoryType: [String!]
 
   """
   The name of the software that is used to run the repository

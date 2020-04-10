@@ -6,9 +6,18 @@ describe RepositoryType do
 
     it { is_expected.to have_field(:id).of_type(!types.ID) }
     it { is_expected.to have_field(:type).of_type("String!") }
+    it { is_expected.to have_field(:re3data).of_type(types.ID) }
     it { is_expected.to have_field(:name).of_type("String!") }
     it { is_expected.to have_field(:alternateName).of_type("String") }
     it { is_expected.to have_field(:description).of_type("String") }
+    it { is_expected.to have_field(:url).of_type("Url") }
+    it { is_expected.to have_field(:software).of_type("String") }
+    it { is_expected.to have_field(:clientType).of_type("String") }
+    it { is_expected.to have_field(:repositoryType).of_type("[String!]") }
+    it { is_expected.to have_field(:certificate).of_type("[String!]") }
+    it { is_expected.to have_field(:language).of_type("[String!]") }
+    it { is_expected.to have_field(:issn).of_type("Issn") }
+
     it { is_expected.to have_field(:datasets).of_type("DatasetConnection") }
     it { is_expected.to have_field(:publications).of_type("PublicationConnection") }
     it { is_expected.to have_field(:softwares).of_type("SoftwareConnection") }
