@@ -36,17 +36,16 @@ describe Person, type: :model, vcr: true do
     it "found all" do
       query = "*"
       people = Person.query(query)
-      expect(people.dig(:meta, "total")).to eq(7089)
+      expect(people.dig(:meta, "total")).to eq(8522184)
       expect(people.dig(:data).size).to eq(25)
       person = people[:data].first
-      expect(person.id).to eq("https://orcid.org/0000-0002-2131-0054")
-      expect(person.name).to eq("Edmund Miller")
-      expect(person.given_name).to eq("Edmund")
-      expect(person.family_name).to eq("Miller")
-      expect(person.affiliation).to eq([{"name"=>"Feinstein Institute for Medical Research"},
-        {"name"=>"Hofstra Northwell School of Medicine at Hofstra University"},
-        {"name"=>"King's College London"},
-        {"name"=>"University of Texas Health Northeast"}])
+      expect(person.id).to eq("https://orcid.org/0000-0003-3995-3004")
+      expect(person.name).to eq("Letícia Rodrigues Bueno")
+      expect(person.given_name).to eq("Letícia Rodrigues")
+      expect(person.family_name).to eq("Bueno")
+      expect(person.affiliation).to eq([{"name"=>"Universidade Estadual de Maringá"},
+        {"name"=>"Universidade Federal do ABC"},
+        {"name"=>"Universidade Federal do Rio de Janeiro"}])
     end
 
     it "found miller" do
