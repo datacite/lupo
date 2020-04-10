@@ -32,6 +32,6 @@ class MemberPrefixConnectionType < BaseConnection
   end
 
   def response(**args)
-    @response ||= ProviderPrefix.query(args[:query], member_id: args[:member_id], state: args[:state], year: args[:year], page: { number: 1, size: 0 })
+    @response ||= ProviderPrefix.query(args[:query], provider_id: args[:member_id], state: args[:state], year: args[:year], page: { number: 1, size: 0 })
   end
 end
