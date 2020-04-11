@@ -50,6 +50,11 @@ type Affiliation {
 
 type Audiovisual implements DoiItem {
   """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
   Total number of citations
   """
   citationCount: Int
@@ -480,6 +485,11 @@ type AudiovisualEdge {
 }
 
 type Collection implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
   """
   Total number of citations
   """
@@ -1136,6 +1146,11 @@ type DataCatalogEdge {
 
 type DataPaper implements DoiItem {
   """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
   Total number of citations
   """
   citationCount: Int
@@ -1566,6 +1581,11 @@ type DataPaperEdge {
 }
 
 type Dataset implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
   """
   Total number of citations
   """
@@ -2112,6 +2132,11 @@ Information about DOIs
 """
 interface DoiItem {
   """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
   Total number of citations
   """
   citationCount: Int
@@ -2505,6 +2530,11 @@ interface DoiItem {
 }
 
 type Event implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
   """
   Total number of citations
   """
@@ -2921,6 +2951,11 @@ type EventConnection {
 }
 
 type EventData implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
   """
   Total number of citations
   """
@@ -3671,6 +3706,11 @@ type Identifier {
 
 type Image implements DoiItem {
   """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
   Total number of citations
   """
   citationCount: Int
@@ -4102,6 +4142,11 @@ type ImageEdge {
 
 type Instrument implements DoiItem {
   """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
   Total number of citations
   """
   citationCount: Int
@@ -4532,6 +4577,11 @@ type InstrumentEdge {
 }
 
 type InteractiveResource implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
   """
   Total number of citations
   """
@@ -5359,6 +5409,11 @@ type MemberPrefixEdge {
 
 type Model implements DoiItem {
   """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
   Total number of citations
   """
   citationCount: Int
@@ -6009,6 +6064,11 @@ type OrganizationEdge {
 }
 
 type Other implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
   """
   Total number of citations
   """
@@ -6692,6 +6752,11 @@ type PersonEdge {
 
 type PhysicalObject implements DoiItem {
   """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
   Total number of citations
   """
   citationCount: Int
@@ -7175,6 +7240,11 @@ type PrefixEdge {
 }
 
 type Publication implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
   """
   Total number of citations
   """
@@ -8779,6 +8849,11 @@ type Rights {
 
 type Service implements DoiItem {
   """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
   Total number of citations
   """
   citationCount: Int
@@ -9209,6 +9284,11 @@ type ServiceEdge {
 }
 
 type Software implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
   """
   Total number of citations
   """
@@ -9672,6 +9752,11 @@ type SoftwareEdge {
 }
 
 type Sound implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
   """
   Total number of citations
   """
@@ -10158,6 +10243,11 @@ type TextRestriction {
 }
 
 type Thesis implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
   """
   Total number of citations
   """
@@ -10718,6 +10808,11 @@ type UsageReportEdge {
 
 type Work implements DoiItem {
   """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
   Total number of citations
   """
   citationCount: Int
@@ -11149,6 +11244,11 @@ type WorkEdge {
 }
 
 type Workflow implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
   """
   Total number of citations
   """

@@ -38,6 +38,7 @@ module DoiItem
     argument :style, String, required: false, default_value: "apa"
     argument :locale, String, required: false, default_value: "en-US"
   end
+  field :bibtex, String, null: true, description: "Metadata in bibtex format"
   field :reference_count, Int, null: true, description: "Total number of references"
   field :citation_count, Int, null: true, description: "Total number of citations"
   field :view_count, Int, null: true, description: "Total number of views"
@@ -184,6 +185,28 @@ module DoiItem
 
   def descriptions(first: nil)
     object.descriptions[0...first]
+  end
+
+  def bibtex
+    pages = object.container.to_h["firstPage"].present? ? [object.container["firstPage"], object.container["lastPage"]].join("-") : nil
+
+    bib = {
+      bibtex_type: object.types["bibtex"].presence || "misc",
+      bibtex_key: normalize_doi(object.doi),
+      doi: object.doi,
+      url: object.url,
+      author: authors_as_string(object.creators),
+      keywords: object.subjects.present? ? Array.wrap(object.subjects).map { |k| parse_attributes(k, content: "subject", first: true) }.join(", ") : nil,
+      language: object.language,
+      title: parse_attributes(object.titles, content: "title", first: true),
+      journal: object.container && container["title"],
+      volume: object.container.to_h["volume"],
+      issue: object.container.to_h["issue"],
+      pages: pages,
+      publisher: object.publisher,
+      year: object.publication_year
+    }.compact
+    BibTeX::Entry.new(bib).to_s
   end
 
   # defaults to style: apa and locale: en-US

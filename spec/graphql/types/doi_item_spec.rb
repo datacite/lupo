@@ -26,6 +26,7 @@ describe DoiItem do
     it { is_expected.to have_field(:member).of_type("Member") }
     it { is_expected.to have_field(:registrationAgency).of_type("String") }
     it { is_expected.to have_field(:formattedCitation).of_type("String") }
+    it { is_expected.to have_field(:bibtex).of_type("String") }
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:referenceCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
