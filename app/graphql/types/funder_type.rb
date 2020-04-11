@@ -14,7 +14,7 @@ class FunderType < BaseObject
 
   field :datasets, DatasetConnectionType, null: true, description: "Funded datasets", connection: true do
     argument :query, String, required: false
-    argument :ids, String, required: false
+    argument :ids, [String], required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
@@ -30,7 +30,7 @@ class FunderType < BaseObject
 
   field :publications, PublicationConnectionType, null: true, description: "Funded publications", connection: true do
     argument :query, String, required: false
-    argument :ids, String, required: false
+    argument :ids, [String], required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
@@ -46,7 +46,7 @@ class FunderType < BaseObject
 
   field :softwares, SoftwareConnectionType, null: true, description: "Funded software", connection: true do
     argument :query, String, required: false
-    argument :ids, String, required: false
+    argument :ids, [String], required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
@@ -62,7 +62,7 @@ class FunderType < BaseObject
 
   field :works, WorkConnectionType, null: true, description: "Funded works", connection: true do
     argument :query, String, required: false
-    argument :ids, String, required: false
+    argument :ids, [String], required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
@@ -85,27 +85,27 @@ class FunderType < BaseObject
 
   def publications(**args)
     args[:resource_type_id] = "Text"
-    r = response(**args)
+    r = response(args)
 
     r.results.to_a
   end
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    r = response(**args)
+    r = response(args)
 
     r.results.to_a
   end
 
   def softwares(**args)
     args[:resource_type_id] = "Software"
-    r = response(**args)
+    r = response(args)
 
     r.results.to_a
   end
 
   def works(**args)
-    r = response(**args)
+    r = response(args)
 
     r.results.to_a
   end
@@ -129,6 +129,6 @@ class FunderType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], funder_id: object[:id], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
+    Doi.query(args[:query], ids: args[:ids], funder_id: object[:id], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
   end
 end

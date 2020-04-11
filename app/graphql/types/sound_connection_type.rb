@@ -10,14 +10,14 @@ class SoundConnectionType < BaseConnection
   def total_count
     args = prepare_args(object.arguments)
 
-    response(**args).results.total  
+    response(args).results.total  
   end
 
   def years
     args = prepare_args(object.arguments)
 
-    res = response(**args)
-    res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : nil
+    res = response(args)
+    res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : []
   end
 
   def response(**args)

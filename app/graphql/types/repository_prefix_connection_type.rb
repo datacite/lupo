@@ -10,17 +10,17 @@ class RepositoryPrefixConnectionType < BaseConnection
   def total_count
     args = prepare_args(object.arguments)
 
-    response(**args).results.total
+    response(args).results.total
   end
 
   def years
     args = prepare_args(object.arguments)
     
-    res = response(**args)
-    res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : nil
+    res = response(args)
+    res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : []
   end
 
   def response(**args)
-    @response ||= ClientPrefix.query(args[:query], client_id: args[:repository_id], provider_id: args[:member_id], state: args[:state], year: args[:year], page: { number: 1, size: 0 })
+    ClientPrefix.query(args[:query], client_id: args[:repository_id], provider_id: args[:member_id], state: args[:state], year: args[:year], page: { number: 1, size: 0 })
   end
 end

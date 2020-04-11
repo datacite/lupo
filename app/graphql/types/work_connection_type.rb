@@ -11,21 +11,21 @@ class WorkConnectionType < BaseConnection
   def total_count
     args = prepare_args(object.arguments)
 
-    response(**args).results.total  
+    response(args).results.total  
   end
 
   def years
     args = prepare_args(object.arguments)
     
-    res = response(**args)
-    res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : nil
+    res = response(args)
+    res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : []
   end
 
   def resource_types
     args = prepare_args(object.arguments)
 
-    res = response(**args)
-    res.results.total.positive? ? facet_by_resource_type(res.response.aggregations.resource_types.buckets) : nil
+    res = response(args)
+    res.results.total.positive? ? facet_by_resource_type(res.response.aggregations.resource_types.buckets) : []
   end
 
   def response(**args)

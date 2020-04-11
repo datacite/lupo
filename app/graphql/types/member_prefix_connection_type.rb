@@ -9,29 +9,26 @@ class MemberPrefixConnectionType < BaseConnection
   field :years, [FacetType], null: false, cache: true
 
   def total_count
-    args = object.arguments
-    args[:member_id] ||= object.parent.try(:role_name).present? ? object.parent.symbol.downcase : nil
+    args = prepare_args(object.arguments)
 
-    response(**args).results.total
+    response(args).results.total
   end
 
   def states
-    args = object.arguments
-    args[:member_id] ||= object.parent.try(:role_name).present? ? object.parent.symbol.downcase : nil
+    args = prepare_args(object.arguments)
 
-    res = response(**args)
-    res.results.total.positive? ? facet_by_key(res.response.aggregations.states.buckets) : nil
+    res = response(args)
+    res.results.total.positive? ? facet_by_key(res.response.aggregations.states.buckets) : []
   end
 
   def years
-    args = object.arguments
-    args[:member_id] ||= object.parent.try(:role_name).present? ? object.parent.symbol.downcase : nil
+    args = prepare_args(object.arguments)
 
-    res = response(**args)
-    res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : nil
+    res = response(args)
+    res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : []
   end
 
   def response(**args)
-    @response ||= ProviderPrefix.query(args[:query], provider_id: args[:member_id], state: args[:state], year: args[:year], page: { number: 1, size: 0 })
+    ProviderPrefix.query(args[:query], provider_id: args[:member_id], state: args[:state], year: args[:year], page: { number: 1, size: 0 })
   end
 end

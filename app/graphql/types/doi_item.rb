@@ -53,7 +53,7 @@ module DoiItem
   
   field :references, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "References for this DOI" do
     argument :query, String, required: false
-    argument :ids, String, required: false
+    argument :ids, [String], required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
@@ -71,7 +71,7 @@ module DoiItem
   end
   field :citations, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "Citations for this DOI." do
     argument :query, String, required: false
-    argument :ids, String, required: false
+    argument :ids, [String], required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
@@ -89,7 +89,7 @@ module DoiItem
   end
   field :parts, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "Parts of this DOI." do
     argument :query, String, required: false
-    argument :ids, String, required: false
+    argument :ids, [String], required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
@@ -107,7 +107,7 @@ module DoiItem
   end
   field :part_of, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "The DOI is a part of this DOI." do
     argument :query, String, required: false
-    argument :ids, String, required: false
+    argument :ids, [String], required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
@@ -125,7 +125,7 @@ module DoiItem
   end
   field :versions, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "Versions of this DOI." do
     argument :query, String, required: false
-    argument :ids, String, required: false
+    argument :ids, [String], required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
@@ -143,7 +143,7 @@ module DoiItem
   end
   field :version_of, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "The DOI is a version of this DOI." do
     argument :query, String, required: false
-    argument :ids, String, required: false
+    argument :ids, [String], required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
@@ -222,45 +222,45 @@ module DoiItem
   end
 
   def references(**args)
-    ids = object.reference_ids
-    return [] if ids.blank?
+    args[:ids] = object.reference_ids
+    return [] if args[:ids].blank?
 
-    response(**args)
+    response(args)
   end
   
   def citations(**args)
     args[:ids] = object.citation_ids
     return [] if args[:ids].blank?
 
-    response(**args)
+    response(args)
   end
 
   def parts(**args)
     args[:ids] = object.part_ids
     return [] if args[:ids].blank?
 
-    response(**args)
+    response(args)
   end
 
   def part_of(**args)
     args[:ids] = object.part_of_ids
     return [] if args[:ids].blank?
 
-    response(**args)
+    response(args)
   end
 
   def versions(**args)
     args[:ids] = object.version_ids
     return [] if args[:ids].blank?
 
-    response(**args)
+    response(args)
   end
 
   def version_of(**args)
     args[:ids] = object.version_of_ids
     return [] if args[:ids].blank?
 
-    response(**args)
+    response(args)
   end
 
   def response(**args)

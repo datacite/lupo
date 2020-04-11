@@ -137,7 +137,7 @@ class QueryType < BaseObject
 
   field :works, WorkConnectionType, null: false, connection: true, max_page_size: 1000 do
     argument :query, String, required: false
-    argument :ids, String, required: false
+    argument :ids, [String], required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
@@ -154,7 +154,7 @@ class QueryType < BaseObject
   end
 
   def works(**args)
-    response(**args)
+    response(args)
   end
 
   field :work, WorkType, null: false do
@@ -183,7 +183,7 @@ class QueryType < BaseObject
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    response(**args)
+    response(args)
   end
 
   field :dataset, DatasetType, null: false do
@@ -212,7 +212,7 @@ class QueryType < BaseObject
 
   def publications(**args)
     args[:resource_type_id] = "Text"
-    response(**args)
+    response(args)
   end
 
   field :publication, PublicationType, null: false do
@@ -241,7 +241,7 @@ class QueryType < BaseObject
 
   def audiovisuals(**args)
     args[:resource_type_id] = "Audiovisual"
-    response(**args)
+    response(args)
   end
 
   field :audiovisual, AudiovisualType, null: false do
@@ -270,7 +270,7 @@ class QueryType < BaseObject
 
   def collections(**args)
     args[:resource_type_id] = "Collection"
-    response(**args)
+    response(args)
   end
 
   field :collection, CollectionType, null: false do
@@ -299,7 +299,7 @@ class QueryType < BaseObject
 
   def data_papers(**args)
     args[:resource_type_id] = "DataPaper"
-    response(**args)
+    response(args)
   end
 
   field :data_paper, DataPaperType, null: false do
@@ -328,7 +328,7 @@ class QueryType < BaseObject
 
   def events(**args)
     args[:resource_type_id] = "Event"
-    response(**args)
+    response(args)
   end
 
   field :event, EventType, null: false do
@@ -357,7 +357,7 @@ class QueryType < BaseObject
 
   def images(**args)
     args[:resource_type_id] = "Image"
-    response(**args)
+    response(args)
   end
 
   field :image, ImageType, null: false do
@@ -386,7 +386,7 @@ class QueryType < BaseObject
 
   def interactive_resources(**args)
     args[:resource_type_id] = "InteractiveResource"
-    response(**args)
+    response(args)
   end
 
   field :interactive_resource, InteractiveResourceType, null: false do
@@ -415,7 +415,7 @@ class QueryType < BaseObject
 
   def models(**args)
     args[:resource_type_id] = "Model"
-    response(**args)
+    response(args)
   end
 
   field :model, ModelType, null: false do
@@ -444,7 +444,7 @@ class QueryType < BaseObject
 
   def physical_objects(**args)
     args[:resource_type_id] = "PhysicalObject"
-    response(**args)
+    response(args)
   end
 
   field :physical_object, PhysicalObjectType, null: false do
@@ -473,7 +473,7 @@ class QueryType < BaseObject
 
   def services(**args)
     args[:resource_type_id] = "Service"
-    response(**args)
+    response(args)
   end
 
   field :service, ServiceType, null: false do
@@ -502,7 +502,7 @@ class QueryType < BaseObject
 
   def softwares(**args)
     args[:resource_type_id] = "Software"
-    response(**args)
+    response(args)
   end
 
   field :software, SoftwareType, null: false do
@@ -531,7 +531,7 @@ class QueryType < BaseObject
 
   def sounds(**args)
     args[:resource_type_id] = "Sound"
-    response(**args)
+    response(args)
   end
 
   field :sound, SoundType, null: false do
@@ -560,7 +560,7 @@ class QueryType < BaseObject
 
   def workflows(**args)
     args[:resource_type_id] = "Workflow"
-    response(**args)
+    response(args)
   end
 
   field :workflow, WorkflowType, null: false do
@@ -590,7 +590,7 @@ class QueryType < BaseObject
   def theses(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "thesis"
-    response(**args)
+    response(args)
   end
 
   field :thesis, PublicationType, null: false do
@@ -621,7 +621,7 @@ class QueryType < BaseObject
     args[:resource_type_id] = "Other"
     args[:resource_type] = "Instrument"
 
-    response(**args)
+    response(args)
   end
 
   field :instrument, OtherType, null: false do
@@ -650,7 +650,7 @@ class QueryType < BaseObject
 
   def others(**args)
     args[:resource_type_id] = "Other"
-    response(**args)
+    response(args)
   end
 
   field :other, OtherType, null: false do
@@ -681,7 +681,7 @@ class QueryType < BaseObject
   end
 
   def response(**args)
-    @response ||= Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   def set_doi(id)

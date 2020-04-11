@@ -60,7 +60,7 @@ class MemberType < BaseObject
 
   field :softwares, SoftwareConnectionType, null: true, connection: true, max_page_size: 1000, description: "Software by this provider."  do
     argument :query, String, required: false
-    argument :ids, String, required: false
+    argument :ids, [String], required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :funder_id, String, required: false
@@ -79,7 +79,7 @@ class MemberType < BaseObject
 
   field :works, WorkConnectionType, null: true, connection: true, max_page_size: 1000, description: "Works by this provider." do
     argument :query, String, required: false
-    argument :ids, String, required: false
+    argument :ids, [String], required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :funder_id, String, required: false
@@ -124,27 +124,27 @@ class MemberType < BaseObject
 
   def publications(**args)
     args[:resource_type_id] = "Text"
-    r = response(**args)
+    r = response(args)
 
     r.results.to_a
   end
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    r = response(**args)
+    r = response(args)
 
     r.results.to_a
   end
 
   def softwares(**args)
     args[:resource_type_id] = "Software"
-    r = response(**args)
+    r = response(args)
 
     r.results.to_a
   end
 
   def works(**args)  
-    r = response(**args)
+    r = response(args)
 
     r.results.to_a
   end
@@ -160,13 +160,13 @@ class MemberType < BaseObject
   def view_count
     args = { first: 0 }
     r = response(args)
-    r.results.total.positive? ? aggregate_count(r.response.aggregations.views.buckets) : []
+    r.results.total.positive? ? aggregate_count(r.response.aggregations.views.buckets) : 0
   end
 
   def download_count
     args = { first: 0 }
     r = response(args)
-    r.results.total.positive? ? aggregate_count(r.response.aggregations.downloads.buckets) : []
+    r.results.total.positive? ? aggregate_count(r.response.aggregations.downloads.buckets) : 0
   end
 
   def citation_count
@@ -176,6 +176,6 @@ class MemberType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], user_id: args[:user_id], client_id: args[:repository_id], provider_id: object.uid, funder_id: args[:funder_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_affiliation: args[:has_affiliation], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
+    Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: object.uid, funder_id: args[:funder_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_affiliation: args[:has_affiliation], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
   end
 end

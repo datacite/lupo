@@ -110,27 +110,27 @@ class RepositoryType < BaseObject
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    r = response(**args)
+    r = response(args)
 
     r.results.to_a
   end
 
   def publications(**args)
     args[:resource_type_id] = "Text"
-    r = response(**args)
+    r = response(args)
 
     r.results.to_a
   end
 
   def softwares(**args)
     args[:resource_type_id] = "Software"
-    r = response(**args)
+    r = response(args)
 
     r.results.to_a
   end
 
   def works(**args)
-    r = response(**args)
+    r = response(args)
 
     r.results.to_a
   end

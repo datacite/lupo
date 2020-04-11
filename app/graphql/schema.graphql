@@ -84,7 +84,7 @@ type Audiovisual implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -191,7 +191,7 @@ type Audiovisual implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -233,7 +233,7 @@ type Audiovisual implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -285,7 +285,7 @@ type Audiovisual implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -382,7 +382,7 @@ type Audiovisual implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -424,7 +424,7 @@ type Audiovisual implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -520,7 +520,7 @@ type Collection implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -627,7 +627,7 @@ type Collection implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -669,7 +669,7 @@ type Collection implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -721,7 +721,7 @@ type Collection implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -818,7 +818,7 @@ type Collection implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -860,7 +860,7 @@ type Collection implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -1180,7 +1180,7 @@ type DataPaper implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -1287,7 +1287,7 @@ type DataPaper implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -1329,7 +1329,7 @@ type DataPaper implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -1381,7 +1381,7 @@ type DataPaper implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -1478,7 +1478,7 @@ type DataPaper implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -1520,7 +1520,7 @@ type DataPaper implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -1616,7 +1616,7 @@ type Dataset implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -1723,7 +1723,7 @@ type Dataset implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -1765,7 +1765,7 @@ type Dataset implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -1817,7 +1817,7 @@ type Dataset implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -1935,7 +1935,7 @@ type Dataset implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -1977,7 +1977,7 @@ type Dataset implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -2166,7 +2166,7 @@ interface DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -2273,7 +2273,7 @@ interface DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -2315,7 +2315,7 @@ interface DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -2367,7 +2367,7 @@ interface DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -2464,7 +2464,7 @@ interface DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -2506,7 +2506,7 @@ interface DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -2565,7 +2565,7 @@ type Event implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -2672,7 +2672,7 @@ type Event implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -2714,7 +2714,7 @@ type Event implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -2766,7 +2766,7 @@ type Event implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -2863,7 +2863,7 @@ type Event implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -2905,7 +2905,7 @@ type Event implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -2986,7 +2986,7 @@ type EventData implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -3093,7 +3093,7 @@ type EventData implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -3135,7 +3135,7 @@ type EventData implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -3187,7 +3187,7 @@ type EventData implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -3284,7 +3284,7 @@ type EventData implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -3326,7 +3326,7 @@ type EventData implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -3464,7 +3464,7 @@ type Funder {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -3512,7 +3512,7 @@ type Funder {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -3545,7 +3545,7 @@ type Funder {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -3590,7 +3590,7 @@ type Funder {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -3740,7 +3740,7 @@ type Image implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -3847,7 +3847,7 @@ type Image implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -3889,7 +3889,7 @@ type Image implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -3941,7 +3941,7 @@ type Image implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -4038,7 +4038,7 @@ type Image implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -4080,7 +4080,7 @@ type Image implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -4176,7 +4176,7 @@ type Instrument implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -4283,7 +4283,7 @@ type Instrument implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -4325,7 +4325,7 @@ type Instrument implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -4377,7 +4377,7 @@ type Instrument implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -4474,7 +4474,7 @@ type Instrument implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -4516,7 +4516,7 @@ type Instrument implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -4612,7 +4612,7 @@ type InteractiveResource implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -4719,7 +4719,7 @@ type InteractiveResource implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -4761,7 +4761,7 @@ type InteractiveResource implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -4813,7 +4813,7 @@ type InteractiveResource implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -4910,7 +4910,7 @@ type InteractiveResource implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -4952,7 +4952,7 @@ type InteractiveResource implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -5248,7 +5248,7 @@ type Member {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -5300,7 +5300,7 @@ type Member {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -5443,7 +5443,7 @@ type Model implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -5550,7 +5550,7 @@ type Model implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -5592,7 +5592,7 @@ type Model implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -5644,7 +5644,7 @@ type Model implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -5741,7 +5741,7 @@ type Model implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -5783,7 +5783,7 @@ type Model implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -5882,7 +5882,7 @@ type Organization {
     hasParts: Int
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -5934,7 +5934,7 @@ type Organization {
     hasParts: Int
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -5966,7 +5966,7 @@ type Organization {
     hasParts: Int
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -6013,7 +6013,7 @@ type Organization {
     hasParts: Int
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -6099,7 +6099,7 @@ type Other implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -6206,7 +6206,7 @@ type Other implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -6248,7 +6248,7 @@ type Other implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -6300,7 +6300,7 @@ type Other implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -6397,7 +6397,7 @@ type Other implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -6439,7 +6439,7 @@ type Other implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -6559,7 +6559,7 @@ type Person {
     hasParts: Int
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -6621,7 +6621,7 @@ type Person {
     hasParts: Int
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -6653,7 +6653,7 @@ type Person {
     hasParts: Int
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -6697,7 +6697,7 @@ type Person {
     hasParts: Int
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -6786,7 +6786,7 @@ type PhysicalObject implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -6893,7 +6893,7 @@ type PhysicalObject implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -6935,7 +6935,7 @@ type PhysicalObject implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -6987,7 +6987,7 @@ type PhysicalObject implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7084,7 +7084,7 @@ type PhysicalObject implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7126,7 +7126,7 @@ type PhysicalObject implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7275,7 +7275,7 @@ type Publication implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7382,7 +7382,7 @@ type Publication implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7424,7 +7424,7 @@ type Publication implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7476,7 +7476,7 @@ type Publication implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7573,7 +7573,7 @@ type Publication implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7615,7 +7615,7 @@ type Publication implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -8371,7 +8371,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -8883,7 +8883,7 @@ type Service implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -8990,7 +8990,7 @@ type Service implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -9032,7 +9032,7 @@ type Service implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -9084,7 +9084,7 @@ type Service implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -9181,7 +9181,7 @@ type Service implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -9223,7 +9223,7 @@ type Service implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -9319,7 +9319,7 @@ type Software implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -9426,7 +9426,7 @@ type Software implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -9468,7 +9468,7 @@ type Software implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -9520,7 +9520,7 @@ type Software implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -9617,7 +9617,7 @@ type Software implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -9659,7 +9659,7 @@ type Software implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -9787,7 +9787,7 @@ type Sound implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -9894,7 +9894,7 @@ type Sound implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -9936,7 +9936,7 @@ type Sound implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -9988,7 +9988,7 @@ type Sound implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -10085,7 +10085,7 @@ type Sound implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -10127,7 +10127,7 @@ type Sound implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -10278,7 +10278,7 @@ type Thesis implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -10385,7 +10385,7 @@ type Thesis implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -10427,7 +10427,7 @@ type Thesis implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -10479,7 +10479,7 @@ type Thesis implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -10576,7 +10576,7 @@ type Thesis implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -10618,7 +10618,7 @@ type Thesis implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -10842,7 +10842,7 @@ type Work implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -10949,7 +10949,7 @@ type Work implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -10991,7 +10991,7 @@ type Work implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -11043,7 +11043,7 @@ type Work implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -11140,7 +11140,7 @@ type Work implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -11182,7 +11182,7 @@ type Work implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -11279,7 +11279,7 @@ type Workflow implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -11386,7 +11386,7 @@ type Workflow implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -11428,7 +11428,7 @@ type Workflow implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -11480,7 +11480,7 @@ type Workflow implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -11577,7 +11577,7 @@ type Workflow implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -11619,7 +11619,7 @@ type Workflow implements DoiItem {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
-    ids: String
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
