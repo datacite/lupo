@@ -33,7 +33,7 @@ class WorkConnectionType < BaseConnection
               ids: args[:ids],
               user_id: args[:user_id], 
               client_id: args[:repository_id], 
-              member_id: args[:member_id],
+              provider_id: args[:member_id],
               funder_id: args[:funder_id], 
               affiliation_id: args[:affiliation_id],
               re3data_id: args[:re3data_id], 

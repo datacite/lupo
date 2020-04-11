@@ -176,6 +176,6 @@ class MemberType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], user_id: args[:user_id], repository_id: args[:repository_id], provider_id: object.uid, funder_id: args[:funder_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_affiliation: args[:has_affiliation], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
+    Doi.query(args[:query], user_id: args[:user_id], client_id: args[:repository_id], provider_id: object.uid, funder_id: args[:funder_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_affiliation: args[:has_affiliation], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
   end
 end

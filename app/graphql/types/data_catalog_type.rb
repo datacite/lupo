@@ -76,7 +76,7 @@ class DataCatalogType < BaseObject
   end
 
   def datasets(**args)
-    Doi.query(args[:query], re3data_id: object[:id], user_id: args[:user_id], client_id: args[:repository_id], member_id: args[:member_id], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Dataset", state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    Doi.query(args[:query], re3data_id: object[:id], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Dataset", state: "findable", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   def view_count

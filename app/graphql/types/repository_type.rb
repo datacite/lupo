@@ -142,22 +142,22 @@ class RepositoryType < BaseObject
   def view_count
     args = { first: 0 }
     r = response(args)
-    r.results.total.positive? ? aggregate_count(r.response.aggregations.views.buckets) : []
+    r.results.total.positive? ? aggregate_count(r.response.aggregations.views.buckets) : 0
   end
 
   def download_count
     args = { first: 0 }
     r = response(args)
-    r.results.total.positive? ? aggregate_count(r.response.aggregations.downloads.buckets) : []
+    r.results.total.positive? ? aggregate_count(r.response.aggregations.downloads.buckets) : 0
   end
 
   def citation_count
     args = { first: 0 }
     r = response(args)
-    r.results.total.positive? ? aggregate_count(r.response.aggregations.citations.buckets) : []
+    r.results.total.positive? ? aggregate_count(r.response.aggregations.citations.buckets) : 0
   end
 
   def response(**args)
-    Doi.query(args[:query], funder_id: args[:funder_id], user_id: args[:user_id], repository_id: object.uid, member_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_organization: args[:has_organization], has_funder: args[:has_funder], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
+    Doi.query(args[:query], funder_id: args[:funder_id], user_id: args[:user_id], client_id: object.uid, provider_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_organization: args[:has_organization], has_funder: args[:has_funder], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
   end
 end

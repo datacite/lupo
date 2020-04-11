@@ -266,7 +266,7 @@ module DoiItem
   def response(**args)
     return [] if args[:ids].blank?
 
-    Doi.query(args[:query], ids: args[:ids], funder_id: args[:funder_id], user_id: args[:user_id], repository_id: args[:repository_id], member_id: args[:member_id], affiliation_id: args[:affiliation_id], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    Doi.query(args[:query], ids: args[:ids], funder_id: args[:funder_id], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], affiliation_id: args[:affiliation_id], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
   end
 
   def doi_link(url)
