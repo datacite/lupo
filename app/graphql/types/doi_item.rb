@@ -199,7 +199,7 @@ module DoiItem
       keywords: object.subjects.present? ? Array.wrap(object.subjects).map { |k| parse_attributes(k, content: "subject", first: true) }.join(", ") : nil,
       language: object.language,
       title: parse_attributes(object.titles, content: "title", first: true),
-      journal: object.container && container["title"],
+      journal: object.container && object.container["title"],
       volume: object.container.to_h["volume"],
       issue: object.container.to_h["issue"],
       pages: pages,
