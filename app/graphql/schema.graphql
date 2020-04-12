@@ -451,6 +451,8 @@ type Audiovisual implements DoiItem {
 The connection type for Audiovisual.
 """
 type AudiovisualConnection {
+  affiliations: [Facet!]
+
   """
   A list of edges.
   """
@@ -465,6 +467,8 @@ type AudiovisualConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   totalCount: Int!
   years: [Facet!]
 }
@@ -482,6 +486,886 @@ type AudiovisualEdge {
   The item at the end of the edge.
   """
   node: Audiovisual
+}
+
+type Book implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
+  Total number of citations
+  """
+  citationCount: Int
+
+  """
+  Citations for this DOI.
+  """
+  citations(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Citations by year
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Creator!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month
+  """
+  downloadsOverTime: [YearMonthTotal!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The member account managing this resource
+  """
+  member: Member
+
+  """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Total number of references
+  """
+  referenceCount: Int
+
+  """
+  References for this DOI
+  """
+  references(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  The DOI registration agency for the resource
+  """
+  registrationAgency: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The repository account managing this resource
+  """
+  repository: Repository
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType!
+
+  """
+  The URL registered for the resource
+  """
+  url: Url
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of views
+  """
+  viewCount: Int
+
+  """
+  Views by month
+  """
+  viewsOverTime: [YearMonthTotal!]
+}
+
+type BookChapter implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
+  Total number of citations
+  """
+  citationCount: Int
+
+  """
+  Citations for this DOI.
+  """
+  citations(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Citations by year
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Creator!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month
+  """
+  downloadsOverTime: [YearMonthTotal!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The member account managing this resource
+  """
+  member: Member
+
+  """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Total number of references
+  """
+  referenceCount: Int
+
+  """
+  References for this DOI
+  """
+  references(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  The DOI registration agency for the resource
+  """
+  registrationAgency: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The repository account managing this resource
+  """
+  repository: Repository
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType!
+
+  """
+  The URL registered for the resource
+  """
+  url: Url
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of views
+  """
+  viewCount: Int
+
+  """
+  Views by month
+  """
+  viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+The connection type for BookChapter.
+"""
+type BookChapterConnection {
+  affiliations: [Facet!]
+
+  """
+  A list of edges.
+  """
+  edges: [BookChapterEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [BookChapter]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type BookChapterEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: BookChapter
+}
+
+"""
+The connection type for Book.
+"""
+type BookConnection {
+  affiliations: [Facet!]
+
+  """
+  A list of edges.
+  """
+  edges: [BookEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Book]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type BookEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Book
 }
 
 type Collection implements DoiItem {
@@ -887,6 +1771,8 @@ type Collection implements DoiItem {
 The connection type for Collection.
 """
 type CollectionConnection {
+  affiliations: [Facet!]
+
   """
   A list of edges.
   """
@@ -901,6 +1787,7 @@ type CollectionConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  repositories: [Facet!]
   totalCount: Int!
   years: [Facet!]
 }
@@ -918,6 +1805,446 @@ type CollectionEdge {
   The item at the end of the edge.
   """
   node: Collection
+}
+
+type ConferencePaper implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
+  Total number of citations
+  """
+  citationCount: Int
+
+  """
+  Citations for this DOI.
+  """
+  citations(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Citations by year
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Creator!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month
+  """
+  downloadsOverTime: [YearMonthTotal!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The member account managing this resource
+  """
+  member: Member
+
+  """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Total number of references
+  """
+  referenceCount: Int
+
+  """
+  References for this DOI
+  """
+  references(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  The DOI registration agency for the resource
+  """
+  registrationAgency: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The repository account managing this resource
+  """
+  repository: Repository
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType!
+
+  """
+  The URL registered for the resource
+  """
+  url: Url
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of views
+  """
+  viewCount: Int
+
+  """
+  Views by month
+  """
+  viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+The connection type for ConferencePaper.
+"""
+type ConferencePaperConnection {
+  affiliations: [Facet!]
+
+  """
+  A list of edges.
+  """
+  edges: [ConferencePaperEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [ConferencePaper]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type ConferencePaperEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: ConferencePaper
 }
 
 """
@@ -1547,6 +2874,8 @@ type DataPaper implements DoiItem {
 The connection type for DataPaper.
 """
 type DataPaperConnection {
+  affiliations: [Facet!]
+
   """
   A list of edges.
   """
@@ -1561,6 +2890,8 @@ type DataPaperConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   totalCount: Int!
   years: [Facet!]
 }
@@ -2004,6 +3335,7 @@ type Dataset implements DoiItem {
 The connection type for Dataset.
 """
 type DatasetConnection {
+  affiliations: [Facet!]
   datasetConnectionCount: Int!
 
   """
@@ -2024,6 +3356,8 @@ type DatasetConnection {
   pageInfo: PageInfo!
   personConnectionCount: Int!
   publicationConnectionCount: Int!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   softwareConnectionCount: Int!
   totalCount: Int!
   years: [Facet!]
@@ -2125,6 +3459,446 @@ type Description {
   Language
   """
   lang: ID
+}
+
+type Dissertation implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
+  Total number of citations
+  """
+  citationCount: Int
+
+  """
+  Citations for this DOI.
+  """
+  citations(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Citations by year
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Creator!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month
+  """
+  downloadsOverTime: [YearMonthTotal!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The member account managing this resource
+  """
+  member: Member
+
+  """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Total number of references
+  """
+  referenceCount: Int
+
+  """
+  References for this DOI
+  """
+  references(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  The DOI registration agency for the resource
+  """
+  registrationAgency: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The repository account managing this resource
+  """
+  repository: Repository
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType!
+
+  """
+  The URL registered for the resource
+  """
+  url: Url
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of views
+  """
+  viewCount: Int
+
+  """
+  Views by month
+  """
+  viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+The connection type for Dissertation.
+"""
+type DissertationConnection {
+  affiliations: [Facet!]
+
+  """
+  A list of edges.
+  """
+  edges: [DissertationEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Dissertation]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type DissertationEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Dissertation
 }
 
 """
@@ -2932,6 +4706,8 @@ type Event implements DoiItem {
 The connection type for Event.
 """
 type EventConnection {
+  affiliations: [Facet!]
+
   """
   A list of edges.
   """
@@ -2946,6 +4722,8 @@ type EventConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   totalCount: Int!
   years: [Facet!]
 }
@@ -4107,6 +5885,8 @@ type Image implements DoiItem {
 The connection type for Image.
 """
 type ImageConnection {
+  affiliations: [Facet!]
+
   """
   A list of edges.
   """
@@ -4121,6 +5901,8 @@ type ImageConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   totalCount: Int!
   years: [Facet!]
 }
@@ -4543,6 +6325,8 @@ type Instrument implements DoiItem {
 The connection type for Instrument.
 """
 type InstrumentConnection {
+  affiliations: [Facet!]
+
   """
   A list of edges.
   """
@@ -4557,6 +6341,8 @@ type InstrumentConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   totalCount: Int!
   years: [Facet!]
 }
@@ -4979,6 +6765,8 @@ type InteractiveResource implements DoiItem {
 The connection type for InteractiveResource.
 """
 type InteractiveResourceConnection {
+  affiliations: [Facet!]
+
   """
   A list of edges.
   """
@@ -4993,6 +6781,8 @@ type InteractiveResourceConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   totalCount: Int!
   years: [Facet!]
 }
@@ -5030,6 +6820,446 @@ type Issn {
   The print ISSN
   """
   print: String
+}
+
+type JournalArticle implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
+  Total number of citations
+  """
+  citationCount: Int
+
+  """
+  Citations for this DOI.
+  """
+  citations(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Citations by year
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Creator!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month
+  """
+  downloadsOverTime: [YearMonthTotal!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The member account managing this resource
+  """
+  member: Member
+
+  """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Total number of references
+  """
+  referenceCount: Int
+
+  """
+  References for this DOI
+  """
+  references(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  The DOI registration agency for the resource
+  """
+  registrationAgency: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The repository account managing this resource
+  """
+  repository: Repository
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType!
+
+  """
+  The URL registered for the resource
+  """
+  url: Url
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of views
+  """
+  viewCount: Int
+
+  """
+  Views by month
+  """
+  viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+The connection type for JournalArticle.
+"""
+type JournalArticleConnection {
+  affiliations: [Facet!]
+
+  """
+  A list of edges.
+  """
+  edges: [JournalArticleEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [JournalArticle]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type JournalArticleEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: JournalArticle
 }
 
 """
@@ -5810,6 +8040,8 @@ type Model implements DoiItem {
 The connection type for Model.
 """
 type ModelConnection {
+  affiliations: [Facet!]
+
   """
   A list of edges.
   """
@@ -5824,6 +8056,8 @@ type ModelConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   totalCount: Int!
   years: [Facet!]
 }
@@ -6466,6 +8700,8 @@ type Other implements DoiItem {
 The connection type for Other.
 """
 type OtherConnection {
+  affiliations: [Facet!]
+
   """
   A list of edges.
   """
@@ -6480,6 +8716,8 @@ type OtherConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   totalCount: Int!
   years: [Facet!]
 }
@@ -6522,6 +8760,446 @@ type PageInfo {
   When paginating backwards, the cursor to continue.
   """
   startCursor: String
+}
+
+type PeerReview implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
+  Total number of citations
+  """
+  citationCount: Int
+
+  """
+  Citations for this DOI.
+  """
+  citations(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Citations by year
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Creator!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month
+  """
+  downloadsOverTime: [YearMonthTotal!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The member account managing this resource
+  """
+  member: Member
+
+  """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Total number of references
+  """
+  referenceCount: Int
+
+  """
+  References for this DOI
+  """
+  references(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  The DOI registration agency for the resource
+  """
+  registrationAgency: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The repository account managing this resource
+  """
+  repository: Repository
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType!
+
+  """
+  The URL registered for the resource
+  """
+  url: Url
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of views
+  """
+  viewCount: Int
+
+  """
+  Views by month
+  """
+  viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+The connection type for PeerReview.
+"""
+type PeerReviewConnection {
+  affiliations: [Facet!]
+
+  """
+  A list of edges.
+  """
+  edges: [PeerReviewEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [PeerReview]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type PeerReviewEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: PeerReview
 }
 
 """
@@ -7153,6 +9831,8 @@ type PhysicalObject implements DoiItem {
 The connection type for PhysicalObject.
 """
 type PhysicalObjectConnection {
+  affiliations: [Facet!]
+
   """
   A list of edges.
   """
@@ -7167,6 +9847,8 @@ type PhysicalObjectConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   totalCount: Int!
   years: [Facet!]
 }
@@ -7237,6 +9919,446 @@ type PrefixEdge {
   The item at the end of the edge.
   """
   node: Prefix
+}
+
+type Preprint implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String
+
+  """
+  Total number of citations
+  """
+  citationCount: Int
+
+  """
+  Citations for this DOI.
+  """
+  citations(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Citations by year
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Creator!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  Total number of downloads
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month
+  """
+  downloadsOverTime: [YearMonthTotal!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: String
+
+  """
+  The member account managing this resource
+  """
+  member: Member
+
+  """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
+  The DOI is a part of this DOI.
+  """
+  partOf(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
+
+  """
+  Parts of this DOI.
+  """
+  parts(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Total number of references
+  """
+  referenceCount: Int
+
+  """
+  References for this DOI
+  """
+  references(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  The DOI registration agency for the resource
+  """
+  registrationAgency: String
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The repository account managing this resource
+  """
+  repository: Repository
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType!
+
+  """
+  The URL registered for the resource
+  """
+  url: Url
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
+
+  """
+  Versions of this DOI.
+  """
+  versions(
+    affiliationId: String
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    funderId: String
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): WorkConnection
+
+  """
+  Total number of views
+  """
+  viewCount: Int
+
+  """
+  Views by month
+  """
+  viewsOverTime: [YearMonthTotal!]
+}
+
+"""
+The connection type for Preprint.
+"""
+type PreprintConnection {
+  affiliations: [Facet!]
+
+  """
+  A list of edges.
+  """
+  edges: [PreprintEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Preprint]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
+  totalCount: Int!
+  years: [Facet!]
+}
+
+"""
+An edge in a connection.
+"""
+type PreprintEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Preprint
 }
 
 type Publication implements DoiItem {
@@ -7642,6 +10764,7 @@ type Publication implements DoiItem {
 The connection type for Publication.
 """
 type PublicationConnection {
+  affiliations: [Facet!]
   datasetConnectionCount: Int!
 
   """
@@ -7662,6 +10785,8 @@ type PublicationConnection {
   pageInfo: PageInfo!
   personConnectionCount: Int!
   publicationConnectionCount: Int!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   softwareConnectionCount: Int!
   totalCount: Int!
   years: [Facet!]
@@ -7704,6 +10829,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7714,6 +10840,68 @@ type Query {
     repositoryId: String
     userId: String
   ): AudiovisualConnection!
+  book(id: ID!): Book!
+  bookChapter(id: ID!): BookChapter!
+  bookChapters(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): BookChapterConnection!
+  books(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): BookConnection!
   collection(id: ID!): Collection!
   collections(
     """
@@ -7734,6 +10922,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7744,6 +10933,37 @@ type Query {
     repositoryId: String
     userId: String
   ): CollectionConnection!
+  conferencePaper(id: ID!): ConferencePaper!
+  conferencePapers(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): ConferencePaperConnection!
   dataCatalog(id: ID!): DataCatalog!
   dataCatalogs(
     """
@@ -7783,6 +11003,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7813,6 +11034,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7823,6 +11045,37 @@ type Query {
     repositoryId: String
     userId: String
   ): DatasetConnection!
+  dissertation(id: ID!): Dissertation!
+  dissertations(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): DissertationConnection!
   event(id: ID!): Event!
   events(
     """
@@ -7843,6 +11096,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7892,6 +11146,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7902,7 +11157,7 @@ type Query {
     repositoryId: String
     userId: String
   ): ImageConnection!
-  instrument(id: ID!): Other!
+  instrument(id: ID!): Instrument!
   instruments(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -7922,6 +11177,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7952,6 +11208,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -7962,6 +11219,37 @@ type Query {
     repositoryId: String
     userId: String
   ): InteractiveResourceConnection!
+  journalArticle(id: ID!): JournalArticle!
+  journalArticles(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): JournalArticleConnection!
   member(id: ID!): Member!
   members(
     """
@@ -8001,6 +11289,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -8054,6 +11343,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -8064,6 +11354,37 @@ type Query {
     repositoryId: String
     userId: String
   ): OtherConnection!
+  peerReview(id: ID!): PeerReview!
+  peerReviews(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): PeerReviewConnection!
   people(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -8103,6 +11424,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -8132,6 +11454,37 @@ type Query {
     last: Int
     query: String
   ): PrefixConnection!
+  preprint(id: ID!): Preprint!
+  preprints(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+    first: Int = 25
+    hasCitations: Int
+    hasDownloads: Int
+    hasFunder: Boolean
+    hasOrganization: Boolean
+    hasParts: Int
+    hasPerson: Boolean
+    hasVersions: Int
+    hasViews: Int
+    ids: [String!]
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    memberId: String
+    query: String
+    repositoryId: String
+    userId: String
+  ): PreprintConnection!
   publication(id: ID!): Publication!
   publications(
     """
@@ -8152,6 +11505,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -8203,6 +11557,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -8233,6 +11588,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -8263,6 +11619,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -8273,36 +11630,6 @@ type Query {
     repositoryId: String
     userId: String
   ): SoundConnection!
-  theses(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-    hasCitations: Int
-    hasDownloads: Int
-    hasFunder: Boolean
-    hasOrganization: Boolean
-    hasParts: Int
-    hasPerson: Boolean
-    hasVersions: Int
-    hasViews: Int
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    memberId: String
-    query: String
-    repositoryId: String
-    userId: String
-  ): ThesisConnection!
-  thesis(id: ID!): Publication!
   usageReport(id: ID!): UsageReport!
   usageReports(
     """
@@ -8342,6 +11669,7 @@ type Query {
     hasPerson: Boolean
     hasVersions: Int
     hasViews: Int
+    ids: [String!]
 
     """
     Returns the last _n_ elements from the list.
@@ -9250,6 +12578,8 @@ type Service implements DoiItem {
 The connection type for Service.
 """
 type ServiceConnection {
+  affiliations: [Facet!]
+
   """
   A list of edges.
   """
@@ -9264,6 +12594,8 @@ type ServiceConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   totalCount: Int!
   years: [Facet!]
 }
@@ -9711,6 +13043,7 @@ type SoftwareApplication {
 The connection type for Software.
 """
 type SoftwareConnection {
+  affiliations: [Facet!]
   datasetConnectionCount: Int!
 
   """
@@ -9731,6 +13064,8 @@ type SoftwareConnection {
   pageInfo: PageInfo!
   personConnectionCount: Int!
   publicationConnectionCount: Int!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   softwareConnectionCount: Int!
   totalCount: Int!
   years: [Facet!]
@@ -10154,6 +13489,8 @@ type Sound implements DoiItem {
 The connection type for Sound.
 """
 type SoundConnection {
+  affiliations: [Facet!]
+
   """
   A list of edges.
   """
@@ -10168,6 +13505,8 @@ type SoundConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   totalCount: Int!
   years: [Facet!]
 }
@@ -10240,442 +13579,6 @@ type TextRestriction {
   Information
   """
   text: String!
-}
-
-type Thesis implements DoiItem {
-  """
-  Metadata in bibtex format
-  """
-  bibtex: String
-
-  """
-  Total number of citations
-  """
-  citationCount: Int
-
-  """
-  Citations for this DOI.
-  """
-  citations(
-    affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-    funderId: String
-    hasCitations: Int
-    hasDownloads: Int
-    hasFunder: Boolean
-    hasOrganization: Boolean
-    hasParts: Int
-    hasPerson: Boolean
-    hasVersions: Int
-    hasViews: Int
-    ids: [String!]
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    memberId: String
-    query: String
-    repositoryId: String
-    userId: String
-  ): WorkConnection
-
-  """
-  Citations by year
-  """
-  citationsOverTime: [YearTotal!]
-
-  """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
-  """
-  creators(first: Int = 20): [Creator!]
-
-  """
-  Different dates relevant to the work
-  """
-  dates: [Date!]
-
-  """
-  All additional information that does not fit in any of the other categories
-  """
-  descriptions(first: Int = 5): [Description!]
-
-  """
-  Total number of downloads
-  """
-  downloadCount: Int
-
-  """
-  Downloads by month
-  """
-  downloadsOverTime: [YearMonthTotal!]
-
-  """
-  Technical format of the resource
-  """
-  formats: [String!]
-
-  """
-  Metadata as formatted citation
-  """
-  formattedCitation(locale: String = "en-US", style: String = "apa"): String
-
-  """
-  Information about financial support (funding) for the resource being registered
-  """
-  fundingReferences: [Funding!]
-
-  """
-  The persistent identifier for the resource
-  """
-  id: ID!
-
-  """
-  An identifier or identifiers applied to the resource being registered
-  """
-  identifiers: [Identifier!]
-
-  """
-  The primary language of the resource
-  """
-  language: String
-
-  """
-  The member account managing this resource
-  """
-  member: Member
-
-  """
-  Total number of parts
-  """
-  partCount: Int
-
-  """
-  The DOI is a part of this DOI.
-  """
-  partOf(
-    affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-    funderId: String
-    hasCitations: Int
-    hasDownloads: Int
-    hasFunder: Boolean
-    hasOrganization: Boolean
-    hasParts: Int
-    hasPerson: Boolean
-    hasVersions: Int
-    hasViews: Int
-    ids: [String!]
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    memberId: String
-    query: String
-    repositoryId: String
-    userId: String
-  ): WorkConnection
-
-  """
-  Total number of DOIs the resource is a part of
-  """
-  partOfCount: Int
-
-  """
-  Parts of this DOI.
-  """
-  parts(
-    affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-    funderId: String
-    hasCitations: Int
-    hasDownloads: Int
-    hasFunder: Boolean
-    hasOrganization: Boolean
-    hasParts: Int
-    hasPerson: Boolean
-    hasVersions: Int
-    hasViews: Int
-    ids: [String!]
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    memberId: String
-    query: String
-    repositoryId: String
-    userId: String
-  ): WorkConnection
-
-  """
-  The year when the data was or will be made publicly available
-  """
-  publicationYear: Int
-
-  """
-  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
-  """
-  publisher: String
-
-  """
-  Total number of references
-  """
-  referenceCount: Int
-
-  """
-  References for this DOI
-  """
-  references(
-    affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-    funderId: String
-    hasCitations: Int
-    hasDownloads: Int
-    hasFunder: Boolean
-    hasOrganization: Boolean
-    hasParts: Int
-    hasPerson: Boolean
-    hasVersions: Int
-    hasViews: Int
-    ids: [String!]
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    memberId: String
-    query: String
-    repositoryId: String
-    userId: String
-  ): WorkConnection
-
-  """
-  The DOI registration agency for the resource
-  """
-  registrationAgency: String
-
-  """
-  Identifiers of related resources. These must be globally unique identifiers
-  """
-  relatedIdentifiers: [RelatedIdentifier!]
-
-  """
-  The repository account managing this resource
-  """
-  repository: Repository
-
-  """
-  Any rights information for this resource
-  """
-  rights: [Rights!]
-
-  """
-  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
-  """
-  sizes: [String!]
-
-  """
-  Subject, keyword, classification code, or key phrase describing the resource
-  """
-  subjects: [Subject!]
-
-  """
-  A name or title by which a resource is known
-  """
-  titles(first: Int = 5): [Title!]
-
-  """
-  The type of the item.
-  """
-  type: String!
-
-  """
-  The resource type
-  """
-  types: ResourceType!
-
-  """
-  The URL registered for the resource
-  """
-  url: Url
-
-  """
-  The version number of the resource
-  """
-  version: String
-
-  """
-  Total number of versions
-  """
-  versionCount: Int
-
-  """
-  The DOI is a version of this DOI.
-  """
-  versionOf(
-    affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-    funderId: String
-    hasCitations: Int
-    hasDownloads: Int
-    hasFunder: Boolean
-    hasOrganization: Boolean
-    hasParts: Int
-    hasPerson: Boolean
-    hasVersions: Int
-    hasViews: Int
-    ids: [String!]
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    memberId: String
-    query: String
-    repositoryId: String
-    userId: String
-  ): WorkConnection
-
-  """
-  Total number of DOIs the resource is a version of
-  """
-  versionOfCount: Int
-
-  """
-  Versions of this DOI.
-  """
-  versions(
-    affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-    funderId: String
-    hasCitations: Int
-    hasDownloads: Int
-    hasFunder: Boolean
-    hasOrganization: Boolean
-    hasParts: Int
-    hasPerson: Boolean
-    hasVersions: Int
-    hasViews: Int
-    ids: [String!]
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    memberId: String
-    query: String
-    repositoryId: String
-    userId: String
-  ): WorkConnection
-
-  """
-  Total number of views
-  """
-  viewCount: Int
-
-  """
-  Views by month
-  """
-  viewsOverTime: [YearMonthTotal!]
-}
-
-"""
-The connection type for Thesis.
-"""
-type ThesisConnection {
-  """
-  A list of edges.
-  """
-  edges: [ThesisEdge]
-
-  """
-  A list of nodes.
-  """
-  nodes: [Thesis]
-
-  """
-  Information to aid in pagination.
-  """
-  pageInfo: PageInfo!
-  totalCount: Int!
-  years: [Facet!]
-}
-
-"""
-An edge in a connection.
-"""
-type ThesisEdge {
-  """
-  A cursor for use in pagination.
-  """
-  cursor: String!
-
-  """
-  The item at the end of the edge.
-  """
-  node: Thesis
 }
 
 """
@@ -11209,6 +14112,8 @@ type Work implements DoiItem {
 The connection type for Work.
 """
 type WorkConnection {
+  affiliations: [Facet!]
+
   """
   A list of edges.
   """
@@ -11223,6 +14128,8 @@ type WorkConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   resourceTypes: [Facet!]
   totalCount: Int!
   years: [Facet!]
@@ -11646,6 +14553,8 @@ type Workflow implements DoiItem {
 The connection type for Workflow.
 """
 type WorkflowConnection {
+  affiliations: [Facet!]
+
   """
   A list of edges.
   """
@@ -11660,6 +14569,8 @@ type WorkflowConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
   totalCount: Int!
   years: [Facet!]
 }

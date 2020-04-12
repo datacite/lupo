@@ -6,6 +6,9 @@ class DataPaperConnectionType < BaseConnection
 
   field :total_count, Integer, null: false, cache: true
   field :years, [FacetType], null: true, cache: true
+  field :registration_agencies, [FacetType], null: true, cache: true
+  field :repositories, [FacetType], null: true, cache: true
+  field :affiliations, [FacetType], null: true, cache: true
 
   def total_count
     args = prepare_args(object.arguments)
@@ -18,6 +21,27 @@ class DataPaperConnectionType < BaseConnection
 
     res = response(args)
     res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : []
+  end
+
+  def registration_agencies
+    args = prepare_args(object.arguments)
+
+    res = response(args)
+    res.results.total.positive? ? facet_by_software(res.response.aggregations.registration_agencies.buckets) : []
+  end
+
+  def repositories
+    args = prepare_args(object.arguments)
+
+    res = response(args)
+    res.results.total.positive? ? facet_by_client(res.response.aggregations.clients.buckets) : []
+  end
+
+  def affiliations
+    args = prepare_args(object.arguments)
+
+    res = response(args)
+    res.results.total.positive? ? facet_by_affiliation(res.response.aggregations.affiliations.buckets) : []
   end
 
   def response(**args)

@@ -231,22 +231,22 @@ describe "dois", type: :request do
     end
   end
 
-  describe 'GET /dois for theses', elasticsearch: true, vcr: true do
-    let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Thesis" }, client: client, aasm_state: "findable") }
+  describe 'GET /dois for dissertations', elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, client: client, aasm_state: "findable") }
 
     before do
       Doi.import
       sleep 3
     end
 
-    it 'filter for theses' do
-      get "/dois?resource-type=thesis", nil, headers
+    it 'filter for dissertations' do
+      get "/dois?resource-type=Dissertation", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(3)
       expect(json.dig('meta', 'total')).to eq(3)
       expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
-      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Thesis", "resourceTypeGeneral"=>"Text")
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Dissertation", "resourceTypeGeneral"=>"Text")
     end
   end
 
@@ -259,7 +259,7 @@ describe "dois", type: :request do
     end
 
     it 'filter for theses' do
-      get "/dois?resource-type=instrument", nil, headers
+      get "/dois?resource-type=Instrument", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(3)
