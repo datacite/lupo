@@ -55,8 +55,8 @@ describe "dois", type: :request do
     let!(:doi) { create(:doi, client: client, aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
-        "givenName" => "Kristian",
-        "name" => "Garza, Kristian",
+        "givenName" => "Kristian J.",
+        "name" => "Garza, Kristian J.",
         "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
         "nameType" => "Personal",
         "affiliation": [
@@ -85,7 +85,7 @@ describe "dois", type: :request do
 
       expect(last_response.status).to eq(200)
       expect(json.dig('meta', 'total')).to eq(1)
-      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian", "nameType"=>"Personal", "givenName"=>"Kristian", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
     end
 
     it 'returns dois with orcid id', vcr: true do
@@ -93,7 +93,7 @@ describe "dois", type: :request do
 
       expect(last_response.status).to eq(200)
       expect(json.dig('meta', 'total')).to eq(1)
-      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian", "nameType"=>"Personal", "givenName"=>"Kristian", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
     end
 
     it 'returns dois with orcid id as url', vcr: true do
@@ -101,7 +101,7 @@ describe "dois", type: :request do
 
       expect(last_response.status).to eq(200)
       expect(json.dig('meta', 'total')).to eq(1)
-      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian", "nameType"=>"Personal", "givenName"=>"Kristian", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
     end
 
     it 'returns dois with crossref funder id', vcr: true do
@@ -125,7 +125,7 @@ describe "dois", type: :request do
       
       expect(last_response.status).to eq(200)
       expect(json.dig('meta', 'total')).to eq(1)
-      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian", "nameType"=>"Personal", "givenName"=>"Kristian", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
     end
 
     it 'returns dois with ror id', vcr: true do
@@ -133,7 +133,7 @@ describe "dois", type: :request do
       
       expect(last_response.status).to eq(200)
       expect(json.dig('meta', 'total')).to eq(1)
-      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian", "nameType"=>"Personal", "givenName"=>"Kristian", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
     end
 
     it 'returns dois with ror id as url', vcr: true do
@@ -141,7 +141,7 @@ describe "dois", type: :request do
 
       expect(last_response.status).to eq(200)
       expect(json.dig('meta', 'total')).to eq(1)
-      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian", "nameType"=>"Personal", "givenName"=>"Kristian", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
     end
 
     it 'returns dois with re3data id', vcr: true do
@@ -158,6 +158,14 @@ describe "dois", type: :request do
       expect(last_response.status).to eq(200)
       expect(json.dig('meta', 'total')).to eq(1)
       expect(json.dig('included', 0, 'attributes', "re3data")).to eq("https://doi.org/10.17616/r3xs37")
+    end
+
+    it 'returns dois with full name', vcr: true do
+      get "/dois?query=Kristian%20Garza&affiliation=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
     end
   end
 

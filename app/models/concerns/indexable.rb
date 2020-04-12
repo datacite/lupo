@@ -212,7 +212,7 @@ module Indexable
 
       # filters for some classes
       if self.name == "Provider"
-        must << { query_string: { query: query, fields: query_fields }} if query.present?
+        must << { query_string: { query: query, fields: query_fields, default_operator: "AND" }} if query.present?
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
         must << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
@@ -230,7 +230,7 @@ module Indexable
           must_not << { term: { role_name: "ROLE_ADMIN" }}
         end
       elsif self.name == "Client"
-        must << { query_string: { query: query, fields: query_fields }} if query.present?
+        must << { query_string: { query: query, fields: query_fields, default_operator: "AND" }} if query.present?
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
         must << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
@@ -244,36 +244,8 @@ module Indexable
         must << { term: { client_type: options[:client_type] }} if options[:client_type].present?
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
         must_not << { terms: { uid: %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations) }} if options[:exclude_registration_agencies]
-      elsif self.name == "Doi"
-        must << { query_string: { query: query, fields: query_fields }} if query.present?
-        must << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
-        must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
-        must << { terms: { client_id: options[:client_id].to_s.split(",") }} if options[:client_id].present?
-        must << { term: { uid: options[:uid] }} if options[:uid].present?
-        must << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
-        must << { terms: { prefix: options[:prefix].to_s.split(",") }} if options[:prefix].present?
-        must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
-        must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
-        must << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{options[:user_id]}" }} if options[:user_id].present?
-        must << { term: { "creators.affiliation.affiliationIdentifier" => URI.decode(options[:affiliation_id]) }} if options[:affiliation_id].present?
-        must << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
-        must << { term: { "client.re3data_id" => options[:re3data_id].gsub("/", '\/').upcase }} if options[:re3data_id].present?
-        must << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
-        must << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
-        must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
-        must << { terms: { "subjects.subject": options[:subject].split(",") }} if options[:subject].present?
-        must << { term: { source: options[:source] }} if options[:source].present?
-        must << { term: { "landing_page.status": options[:link_check_status] }} if options[:link_check_status].present?
-        must << { exists: { field: "landing_page.checked" }} if options[:link_checked].present?
-        must << { term: { "landing_page.hasSchemaOrg": options[:link_check_has_schema_org] }} if options[:link_check_has_schema_org].present?
-        must << { term: { "landing_page.bodyHasPid": options[:link_check_body_has_pid] }} if options[:link_check_body_has_pid].present?
-        must << { exists: { field: "landing_page.schemaOrgId" }} if options[:link_check_found_schema_org_id].present?
-        must << { exists: { field: "landing_page.dcIdentifier" }} if options[:link_check_found_dc_identifier].present?
-        must << { exists: { field: "landing_page.citationDoi" }} if options[:link_check_found_citation_doi].present?
-        must << { range: { "landing_page.redirectCount": { "gte": options[:link_check_redirect_count_gte] } } } if options[:link_check_redirect_count_gte].present?
-        must_not << { terms: { "client.uid" => %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations) }} if options[:exclude_registration_agencies]
       elsif self.name == "Event"
-        must << { query_string: { query: query, fields: query_fields }} if query.present?
+        must << { query_string: { query: query, fields: query_fields, default_operator: "AND" }} if query.present?
         must << { term: { subj_id: URI.decode(options[:subj_id]) }} if options[:subj_id].present?
         must << { term: { obj_id: URI.decode(options[:obj_id]) }} if options[:obj_id].present?
         must << { term: { citation_type: options[:citation_type] }} if options[:citation_type].present?

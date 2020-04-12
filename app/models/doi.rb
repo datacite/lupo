@@ -704,7 +704,7 @@ class Doi < ActiveRecord::Base
     must = []
     must_not = []
 
-    must << { query_string: { query: query, fields: query_fields } } if query.present?
+    must << { query_string: { query: query, fields: query_fields, default_operator: "AND", phrase_slop: 1 } } if query.present?
     must << { terms: { doi: options[:ids].map(&:upcase) }} if options[:ids].present? 
     must << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
     must << { terms: { "types.resourceType": options[:resource_type].split(",") }} if options[:resource_type].present?
