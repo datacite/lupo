@@ -3406,7 +3406,7 @@ type Date {
   """
   Date information for this resource
   """
-  date: ISO8601DateTime!
+  date: String!
 
   """
   The type of date
@@ -5461,11 +5461,6 @@ type Funding {
 An ISO 8601-encoded date
 """
 scalar ISO8601Date
-
-"""
-An ISO 8601-encoded datetime
-"""
-scalar ISO8601DateTime
 
 """
 Information about identifiers
