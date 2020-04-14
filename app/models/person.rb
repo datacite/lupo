@@ -54,7 +54,7 @@ class Person
     orcid = message.fetch("orcid-id", nil)
     given_name = message.fetch("given-names", nil)
     family_name = message.fetch("family-names", nil)
-    other_name = message.fetch("other-name", nil)
+    other_names = Array.wrap(message.fetch("other-name", nil))
     if message.fetch("credit-name", nil).present?
       name = message.fetch("credit-name")
     elsif given_name.present? || family_name.present?
@@ -70,7 +70,7 @@ class Person
       orcid: orcid,
       given_name: given_name,
       family_name: family_name,
-      other_name: other_name,
+      other_names: other_names,
       name: name,
       affiliation: affiliation }.compact)
   end

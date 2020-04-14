@@ -97,14 +97,6 @@ describe DatasetType do
           totalCount
           nodes {
             id
-            creators {
-              id
-              name
-              affiliation {
-                id
-                name
-              }
-            }
             citationCount
             citationsOverTime {
               year
@@ -127,11 +119,10 @@ describe DatasetType do
 
       expect(response.dig("data", "datasets", "totalCount")).to eq(3)
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
-      expect(response.dig("data", "datasets", "nodes", 0, "creators").last).to eq("affiliation"=>[{"id"=>"https://ror.org/04wxnsj81", "name"=>"DataCite"}], "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Renaud, François")
       expect(response.dig("data", "datasets", "nodes", 0, "citationCount")).to eq(2)
       expect(response.dig("data", "datasets", "nodes", 0, "citationsOverTime")).to eq([{"total"=>1, "year"=>2015}, {"total"=>1, "year"=>2016}])
       # TODO totalCount should be 2
-      #expect(response.dig("data", "datasets", "nodes", 0, "citations", "totalCount")).to eq(2)
+      # expect(response.dig("data", "datasets", "nodes", 0, "citations", "totalCount")).to eq(2)
       expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes").length).to eq(2)
       expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes", 0)).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.doi.downcase}", "publicationYear"=>2011)
     end
@@ -140,8 +131,8 @@ describe DatasetType do
   describe "query with references", elasticsearch: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
-    let(:target_doi2) { create(:doi, client: client, aasm_state: "findable") }
+    let(:target_doi) { create(:doi, aasm_state: "findable") }
+    let(:target_doi2) { create(:doi, aasm_state: "findable") }
     let!(:reference_event) { create(:event_for_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "references") }
     let!(:reference_event2) { create(:event_for_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi2.doi}", relation_type_id: "references") }
 
@@ -178,8 +169,188 @@ describe DatasetType do
       expect(response.dig("data", "datasets", "nodes", 0, "referenceCount")).to eq(2)
       # TODO totalCount should be 2
       # expect(response.dig("data", "datasets", "nodes", 0, "references", "totalCount")).to eq(2)
-      # expect(response.dig("data", "datasets", "nodes", 0, "references", "nodes").length).to eq(2)
-      # expect(response.dig("data", "datasets", "nodes", 0, "references", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{target_doi.doi.downcase}", "publicationYear"=>2011)
+      expect(response.dig("data", "datasets", "nodes", 0, "references", "nodes").length).to eq(2)
+      expect(response.dig("data", "datasets", "nodes", 0, "references", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{target_doi.doi.downcase}", "publicationYear"=>2011)
+    end
+  end
+
+  describe "query with versions", elasticsearch: true do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:target_doi2) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:version_event) { create(:event_for_datacite_versions, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}") }
+
+    before do
+      Doi.import
+      Event.import
+      sleep 2
+    end
+
+    let(:query) do
+      %(query {
+        datasets {
+          totalCount
+          nodes {
+            id
+            versionCount
+            versions {
+              totalCount
+              nodes {
+                id
+                publicationYear
+              }
+            }
+          }
+        }
+      })
+    end
+
+    it "returns all datasets with counts" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "datasets", "totalCount")).to eq(3)
+      expect(response.dig("data", "datasets", "nodes").length).to eq(3)
+      expect(response.dig("data", "datasets", "nodes", 1, "versionCount")).to eq(1)
+      # TODO totalCount should be 1
+      # expect(response.dig("data", "datasets", "nodes", 1, "versions", "totalCount")).to eq(1)
+      expect(response.dig("data", "datasets", "nodes", 1, "versions", "nodes").length).to eq(1)
+      expect(response.dig("data", "datasets", "nodes", 1, "versions", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{target_doi.doi.downcase}", "publicationYear"=>2011)
+    end
+  end
+
+  describe "query with version of", elasticsearch: true do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:source_doi2) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:part_of_events) { create(:event_for_datacite_version_of, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}") }
+
+    before do
+      Doi.import
+      Event.import
+      sleep 2
+    end
+
+    let(:query) do
+      %(query {
+        datasets {
+          totalCount
+          nodes {
+            id
+            versionOfCount
+            versionOf {
+              totalCount
+              nodes {
+                id
+                publicationYear
+              }
+            }
+          }
+        }
+      })
+    end
+
+    it "returns all datasets with counts" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "datasets", "totalCount")).to eq(3)
+      expect(response.dig("data", "datasets", "nodes").length).to eq(3)
+      expect(response.dig("data", "datasets", "nodes", 1, "versionOfCount")).to eq(1)
+      # TODO totalCount should be 1
+      # expect(response.dig("data", "datasets", "nodes", 0, "versionOf", "totalCount")).to eq(1)
+      expect(response.dig("data", "datasets", "nodes", 1, "versionOf", "nodes").length).to eq(1)
+      expect(response.dig("data", "datasets", "nodes", 1, "versionOf", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.doi.downcase}", "publicationYear"=>2011)
+    end
+  end
+
+  describe "query with parts", elasticsearch: true do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:target_doi2) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:part_events) { create(:event_for_datacite_parts, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "has-part") }
+
+    before do
+      Doi.import
+      Event.import
+      sleep 2
+    end
+
+    let(:query) do
+      %(query {
+        datasets {
+          totalCount
+          nodes {
+            id
+            partCount
+            parts {
+              totalCount
+              nodes {
+                id
+                publicationYear
+              }
+            }
+          }
+        }
+      })
+    end
+
+    it "returns all datasets with counts" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "datasets", "totalCount")).to eq(3)
+      expect(response.dig("data", "datasets", "nodes").length).to eq(3)
+      expect(response.dig("data", "datasets", "nodes", 1, "partCount")).to eq(1)
+      # TODO totalCount should be 1
+      # expect(response.dig("data", "datasets", "nodes", 1, "parts", "totalCount")).to eq(1)
+      expect(response.dig("data", "datasets", "nodes", 1, "parts", "nodes").length).to eq(1)
+      expect(response.dig("data", "datasets", "nodes", 1, "parts", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{target_doi.doi.downcase}", "publicationYear"=>2011)
+    end
+  end
+
+  describe "query with part of", elasticsearch: true do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:source_doi2) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:part_of_events) { create(:event_for_datacite_part_of, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-part-of") }
+
+    before do
+      Doi.import
+      Event.import
+      sleep 2
+    end
+
+    let(:query) do
+      %(query {
+        datasets {
+          totalCount
+          nodes {
+            id
+            partOfCount
+            partOf {
+              totalCount
+              nodes {
+                id
+                publicationYear
+              }
+            }
+          }
+        }
+      })
+    end
+
+    it "returns all datasets with counts" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "datasets", "totalCount")).to eq(3)
+      expect(response.dig("data", "datasets", "nodes").length).to eq(3)
+      expect(response.dig("data", "datasets", "nodes", 1, "partOfCount")).to eq(1)
+      # TODO totalCount should be 1
+      # expect(response.dig("data", "datasets", "nodes", 1, "partOf", "totalCount")).to eq(1)
+      expect(response.dig("data", "datasets", "nodes", 1, "partOf", "nodes").length).to eq(1)
+      expect(response.dig("data", "datasets", "nodes", 1, "partOf", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.doi.downcase}", "publicationYear"=>2011)
     end
   end
 end

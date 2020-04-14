@@ -17,8 +17,8 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
 
   def prepare_args(args)
     args[:user_id] ||= object.parent.try(:type) == "Person" ? object.parent.orcid : nil
-    args[:client_id] ||= object.parent.try(:client_type).present? ? object.parent.symbol.downcase : nil
-    args[:provider_id] ||= object.parent.try(:region).present? ? object.parent.symbol.downcase : nil
+    args[:repository_id] ||= object.parent.try(:client_type).present? ? object.parent.symbol.downcase : nil
+    args[:member_id] ||= object.parent.try(:region).present? ? object.parent.symbol.downcase : nil
     args[:affiliation_id] ||= object.parent.try(:type) == "Organization" ? object.parent[:id] : nil
     args[:funder_id] ||= object.parent.try(:type) == "Funder" ? object.parent[:id] : nil
     args[:re3data_id] ||= object.parent.try(:type) == "DataCatalog" ? object.parent[:id] : nil
@@ -53,6 +53,32 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     arr.map do |hsh|
       { "id" => hsh["key"].downcase,
         "title" => hsh["key"],
+        "count" => hsh["doc_count"] }
+    end
+  end
+
+  def facet_by_affiliation(arr)
+    # generate hash with id and name for each affiliation in facet
+    return [] if arr.blank?
+
+    ids = arr.map { |hsh| "\"#{hsh["key"]}\"" }.join(" ")
+    affiliations = Organization.query(ids, size: 1000)[:data] || []
+
+    arr.map do |hsh|
+      { "id" => hsh["key"],
+        "title" => affiliations.find { |a| a["id"] == hsh["key"] }.to_h["name"] || hsh["key"],
+        "count" => hsh["doc_count"] }
+    end
+  end
+
+  def facet_by_client(arr)
+    # generate hash with id and name for each client in facet
+    ids = arr.map { |hsh| hsh["key"] }.join(",")
+    clients = Client.find_by_id(ids).records.pluck(:symbol, :name).to_h
+
+    arr.map do |hsh|
+      { "id" => hsh["key"],
+        "title" => clients[hsh["key"].upcase],
         "count" => hsh["doc_count"] }
     end
   end

@@ -33,6 +33,22 @@ describe Person, type: :model, vcr: true do
   end
 
   describe "query" do
+    it "found all" do
+      query = "*"
+      people = Person.query(query)
+      expect(people.dig(:meta, "total")).to eq(8522184)
+      expect(people.dig(:data).size).to eq(25)
+      person = people[:data].first
+      expect(person.id).to eq("https://orcid.org/0000-0003-3995-3004")
+      expect(person.name).to eq("Letícia Rodrigues Bueno")
+      expect(person.given_name).to eq("Letícia Rodrigues")
+      expect(person.family_name).to eq("Bueno")
+      expect(person.other_names).to eq([])
+      expect(person.affiliation).to eq([{"name"=>"Universidade Estadual de Maringá"},
+        {"name"=>"Universidade Federal do ABC"},
+        {"name"=>"Universidade Federal do Rio de Janeiro"}])
+    end
+
     it "found miller" do
       query = "miller"
       people = Person.query(query)
@@ -59,6 +75,7 @@ describe Person, type: :model, vcr: true do
       expect(person.name).to eq("Patricia Cruse")
       expect(person.given_name).to eq("Patricia")
       expect(person.family_name).to eq("Cruse")
+      expect(person.other_names).to eq(["Trisha Cruse"])
       expect(person.affiliation).to eq([{"name"=>"DataCite"}, {"name"=>"University of California Berkeley"}])
     end
   end

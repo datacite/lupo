@@ -518,6 +518,7 @@ class Doi < ActiveRecord::Base
       resource_types: { terms: { field: 'types.resourceTypeGeneral', size: 16, min_doc_count: 1 } },
       states: { terms: { field: 'aasm_state', size: 3, min_doc_count: 1 } },
       years: { date_histogram: { field: 'publication_year', interval: 'year', min_doc_count: 1 } },
+      registration_agencies: { terms: { field: 'agency', size: 10, min_doc_count: 1 } },
       created: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
       registered: { date_histogram: { field: 'registered', interval: 'year', min_doc_count: 1 } },
       providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1} },
@@ -703,10 +704,10 @@ class Doi < ActiveRecord::Base
     must = []
     must_not = []
 
-    must << { query_string: { query: query, fields: query_fields } } if query.present?
+    must << { query_string: { query: query, fields: query_fields, default_operator: "AND", phrase_slop: 1 } } if query.present?
     must << { terms: { doi: options[:ids].map(&:upcase) }} if options[:ids].present? 
     must << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
-    must << { term: { "types.resourceType": options[:resource_type].humanize }} if options[:resource_type].present?
+    must << { terms: { "types.resourceType": options[:resource_type].split(",") }} if options[:resource_type].present?
     must << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
     must << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
     must << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
@@ -1041,7 +1042,7 @@ class Doi < ActiveRecord::Base
   end
 
   def reference_ids
-    reference_events.pluck(:target_doi).uniq.map { |d| d.present? ? d.downcase : nil }.compact
+    reference_events.pluck(:target_doi).compact.uniq.map(&:downcase)
   end
 
   def reference_count
@@ -1053,7 +1054,7 @@ class Doi < ActiveRecord::Base
   end
 
   def citation_ids
-    citation_events.pluck(:source_doi).uniq.map { |d| d.present? ? d.downcase : nil }.compact
+    citation_events.pluck(:source_doi).compact.uniq.map(&:downcase)
   end
 
   # remove duplicate citing source dois
@@ -1075,7 +1076,7 @@ class Doi < ActiveRecord::Base
   end
 
   def part_ids
-    part_events.pluck(:target_doi).uniq.map { |d| d.present? ? d.downcase : nil }.compact
+    part_events.pluck(:target_doi).compact.uniq.map(&:downcase)
   end
 
   def part_count
@@ -1087,7 +1088,7 @@ class Doi < ActiveRecord::Base
   end
 
   def part_of_ids
-    part_of_events.pluck(:source_doi).uniq.map { |d| d.present? ? d.downcase : nil }.compact
+    part_of_events.pluck(:source_doi).compact.uniq.map(&:downcase)
   end
 
   def part_of_count
@@ -1099,7 +1100,7 @@ class Doi < ActiveRecord::Base
   end
 
   def version_ids
-    version_events.pluck(:target_doi).uniq.map { |d| d.present? ? d.downcase : nil }.compact
+    version_events.pluck(:target_doi).compact.uniq.map(&:downcase)
   end
 
   def version_count
@@ -1111,7 +1112,7 @@ class Doi < ActiveRecord::Base
   end
 
   def version_of_ids
-    version_of_events.pluck(:source_doi).uniq.map { |d| d.present? ? d.downcase : nil }.compact
+    version_of_events.pluck(:source_doi).compact.uniq.map(&:downcase)
   end
 
   def version_of_count

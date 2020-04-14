@@ -3,6 +3,6 @@
 class AffiliationType < BaseObject
   description "Information about affiliations"
 
-  field :id, ID, null: true, description: "Unique identifier for each affiliation"
-  field :name, String, null: true, description: "Affiliation name"
+  field :id, ID, null: true, description: "Affiliation ROR identifier"
+  field :name, String, null: false, description: "Affiliation name"
 end

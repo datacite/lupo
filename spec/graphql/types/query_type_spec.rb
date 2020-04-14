@@ -37,10 +37,10 @@ describe QueryType do
     it { is_expected.to have_field(:other).of_type("Other!") }
     it { is_expected.to have_field(:others).of_type("OtherConnection!") }
 
-    it { is_expected.to have_field(:provider).of_type("Provider!") }
-    it { is_expected.to have_field(:providers).of_type("ProviderConnection!") }
-    it { is_expected.to have_field(:client).of_type("Client!") }
-    it { is_expected.to have_field(:clients).of_type("ClientConnection!") }
+    it { is_expected.to have_field(:member).of_type("Member!") }
+    it { is_expected.to have_field(:members).of_type("MemberConnection!") }
+    it { is_expected.to have_field(:repository).of_type("Repository!") }
+    it { is_expected.to have_field(:repositories).of_type("RepositoryConnection!") }
     it { is_expected.to have_field(:prefix).of_type("Prefix!") }
     it { is_expected.to have_field(:prefixes).of_type("PrefixConnection!") }
     it { is_expected.to have_field(:usage_report).of_type("UsageReport!") }

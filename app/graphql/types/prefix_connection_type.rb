@@ -11,24 +11,24 @@ class PrefixConnectionType < BaseConnection
   def total_count
     args = prepare_args(object.arguments)
 
-    response(**args).results.total
+    response(args).results.total
   end
 
   def states
     args = prepare_args(object.arguments)
 
-    res = response(**args)
-    res.results.total.positive? ? facet_by_key(res.response.aggregations.states.buckets) : nil
+    res = response(args)
+    res.results.total.positive? ? facet_by_key(res.response.aggregations.states.buckets) : []
   end
 
   def years
     args = prepare_args(object.arguments)
 
-    res = response(**args)
-    res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : nil
+    res = response(args)
+    res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : []
   end
 
   def response(**args)
-    @response ||= Prefix.query(args[:query], provider_id: args[:provider_id], state: args[:state], year: args[:year], page: { number: 1, size: 0 })
+    Prefix.query(args[:query], provider_id: args[:member_id], state: args[:state], year: args[:year], page: { number: 1, size: 0 })
   end
 end

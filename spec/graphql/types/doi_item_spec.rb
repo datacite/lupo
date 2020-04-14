@@ -10,6 +10,23 @@ describe DoiItem do
     it { is_expected.to have_field(:titles).of_type("[Title!]") }
     it { is_expected.to have_field(:publicationYear).of_type("Int") }
     it { is_expected.to have_field(:publisher).of_type("String") }
+    it { is_expected.to have_field(:subjects).of_type("[Subject!]") }
+    it { is_expected.to have_field(:dates).of_type("[Date!]") }
+    it { is_expected.to have_field(:language).of_type("String") }
+    it { is_expected.to have_field(:identifiers).of_type("[Identifier!]") }
+    it { is_expected.to have_field(:types).of_type("ResourceType!") }
+    it { is_expected.to have_field(:formats).of_type("[String!]") }
+    it { is_expected.to have_field(:sizes).of_type("[String!]") }
+    it { is_expected.to have_field(:version).of_type("String") }
+    it { is_expected.to have_field(:rights).of_type("[Rights!]") }
+    it { is_expected.to have_field(:descriptions).of_type("[Description!]") }
+    it { is_expected.to have_field(:fundingReferences).of_type("[Funding!]") }
+    it { is_expected.to have_field(:url).of_type("Url") }
+    it { is_expected.to have_field(:repository).of_type("Repository") }
+    it { is_expected.to have_field(:member).of_type("Member") }
+    it { is_expected.to have_field(:registrationAgency).of_type("String") }
+    it { is_expected.to have_field(:formattedCitation).of_type("String") }
+    it { is_expected.to have_field(:bibtex).of_type("String") }
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:referenceCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }

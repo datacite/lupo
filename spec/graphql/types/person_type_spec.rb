@@ -9,6 +9,7 @@ describe PersonType do
     it { is_expected.to have_field(:name).of_type("String") }
     it { is_expected.to have_field(:givenName).of_type("String") }
     it { is_expected.to have_field(:familyName).of_type("String") }
+    it { is_expected.to have_field(:otherNames).of_type("[String!]") }
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
     it { is_expected.to have_field(:downloadCount).of_type("Int") }
@@ -48,6 +49,10 @@ describe PersonType do
           name
           givenName
           familyName
+          otherNames
+          affiliation {
+            name
+          }
           citationCount
           viewCount
           downloadCount
@@ -78,6 +83,10 @@ describe PersonType do
 
       expect(response.dig("data", "person", "id")).to eq("https://orcid.org/0000-0003-3484-6875")
       expect(response.dig("data", "person", "name")).to eq("K. J. Garza")
+      expect(response.dig("data", "person", "givenName")).to eq("Kristian")
+      expect(response.dig("data", "person", "familyName")).to eq("Garza")
+      expect(response.dig("data", "person", "otherNames")).to eq([])
+      expect(response.dig("data", "person", "affiliation")).to eq([])
       expect(response.dig("data", "person", "citationCount")).to eq(0)
       expect(response.dig("data", "person", "works", "totalCount")).to eq(1)
       expect(response.dig("data", "person", "works", "years")).to eq([{"count"=>1, "title"=>"2011"}])
@@ -100,6 +109,10 @@ describe PersonType do
             name
             givenName
             familyName
+            otherNames
+            affiliation {
+              name
+            }
             works {
               totalCount
               years {
@@ -120,6 +133,13 @@ describe PersonType do
       person = response.dig("data", "people", "nodes", 0)
       expect(person.fetch("id")).to eq("https://orcid.org/0000-0002-6028-9323")
       expect(person.fetch("name")).to eq("Stephen A. Fenner")
+      expect(person.fetch("givenName")).to eq("Stephen")
+      expect(person.fetch("familyName")).to eq("Fenner")
+      expect(person.fetch("otherNames")).to eq([])
+      expect(person.fetch("affiliation")).to eq([{"name"=>"Harvard College"},
+        {"name"=>"University of Chicago"},
+        {"name"=>"University of South Carolina"},
+        {"name"=>"University of Southern Maine"}])
     end
   end
 end

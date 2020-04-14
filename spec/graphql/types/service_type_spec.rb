@@ -24,7 +24,7 @@ describe ServiceType do
 
     let(:query) do
       %(query {
-        services(clientId: "datacite.services") {
+        services(repositoryId: "datacite.services") {
           totalCount
           years {
             id
