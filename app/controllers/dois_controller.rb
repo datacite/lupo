@@ -355,7 +355,11 @@ class DoisController < ApplicationController
         @doi.assign_attributes(safe_params.slice(:client_id))
       else
         authorize! :update, @doi
-        @doi.assign_attributes(safe_params.except(:doi, :client_id))
+        if safe_params[:schema_version].blank?
+          @doi.assign_attributes(safe_params.except(:doi, :client_id).merge(schema_version: @doi[:schema_version] || LAST_SCHEMA_VERSION))
+        else
+          @doi.assign_attributes(safe_params.except(:doi, :client_id))
+        end
       end
     else
       doi_id = validate_doi(params[:id])
@@ -624,7 +628,7 @@ class DoisController < ApplicationController
     meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
     p[:schemaVersion] = METADATA_FORMATS.include?(meta["from"]) ? LAST_SCHEMA_VERSION : p[:schemaVersion]
     xml = meta["string"]
-
+  
     # if metadata for DOIs from other registration agencies are not found
     fail ActiveRecord::RecordNotFound if meta["state"] == "not_found"
 
@@ -663,7 +667,7 @@ class DoisController < ApplicationController
     p[:version_info] = p[:version] || meta["version_info"] if p.has_key?(:version) || meta["version_info"].present?
     # only update landing_page info if something is received via API to not overwrite existing data
     p.merge!(landing_page: p[:landingPage]) if p[:landingPage].present?
-
+    
     p.merge(
       regenerate: p[:regenerate] || regenerate
     ).except(
