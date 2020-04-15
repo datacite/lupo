@@ -41,7 +41,7 @@ class BookChapterConnectionType < BaseConnection
     args = prepare_args(object.arguments)
 
     res = response(args)
-    res.results.total.positive? ? facet_by_affiliation(res.response.aggregations.affiliations.buckets) : []
+    res.results.total.positive? ? facet_by_combined_key(res.response.aggregations.affiliations.buckets) : []
   end
 
   def response(**args)

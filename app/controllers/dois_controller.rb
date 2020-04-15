@@ -153,16 +153,16 @@ class DoisController < ApplicationController
         end
       else
         states = total.positive? ? facet_by_key(response.aggregations.states.buckets) : nil
-        resource_types = total.positive? ? facet_by_resource_type(response.aggregations.resource_types.buckets) : nil
+        resource_types = total.positive? ? facet_by_combined_key(response.aggregations.resource_types.buckets) : nil
         years = total.positive? ? facet_by_year(response.aggregations.years.buckets) : nil
         created = total.positive? ? facet_by_year(response.aggregations.created.buckets) : nil
         registered = total.positive? ? facet_by_year(response.aggregations.registered.buckets) : nil
-        providers = total.positive? ? facet_by_provider(response.aggregations.providers.buckets) : nil
-        clients = total.positive? ? facet_by_client(response.aggregations.clients.buckets) : nil
+        providers = total.positive? ? facet_by_combined_key(response.aggregations.providers.buckets) : nil
+        clients = total.positive? ? facet_by_combined_key(response.aggregations.clients.buckets) : nil
         prefixes = total.positive? ? facet_by_key(response.aggregations.prefixes.buckets) : nil
         schema_versions = total.positive? ? facet_by_schema(response.aggregations.schema_versions.buckets) : nil
 
-        affiliations = total.positive? ? facet_by_affiliation(response.aggregations.affiliations.buckets) : nil
+        affiliations = total.positive? ? facet_by_combined_key(response.aggregations.affiliations.buckets) : nil
         sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
         subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
         certificates = total.positive? ? facet_by_key(response.aggregations.certificates.buckets) : nil
