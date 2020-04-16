@@ -57,16 +57,12 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     end
   end
 
-  def facet_by_affiliation(arr)
-    # generate hash with id and name for each affiliation in facet
-    return [] if arr.blank?
-
-    ids = arr.map { |hsh| "\"#{hsh["key"]}\"" }.join(" ")
-    affiliations = Organization.query(ids, size: 1000)[:data] || []
-
+  def facet_by_combined_key(arr)
     arr.map do |hsh|
-      { "id" => hsh["key"],
-        "title" => affiliations.find { |a| a["id"] == hsh["key"] }.to_h["name"] || hsh["key"],
+      id, title = hsh["key"].split(":", 2)
+
+      { "id" => id,
+        "title" => title,
         "count" => hsh["doc_count"] }
     end
   end

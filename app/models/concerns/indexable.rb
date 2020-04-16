@@ -68,6 +68,11 @@ module Indexable
 
       sqs.send_message(options)
     end
+
+    def ror_from_url(url)
+      ror = Array(/\A(?:(http|https):\/\/)?(ror\.org\/)?(.+)/.match(url)).last
+      "ror.org/#{ror}" if ror.present?
+    end
   end
 
   module ClassMethods
@@ -590,7 +595,8 @@ module Indexable
     end
 
     def ror_from_url(url)
-      Array(/\A(?:(http|https):\/\/)?(ror\.org\/)?(.+)/.match(url)).last
+      ror = Array(/\A(?:(http|https):\/\/)?(ror\.org\/)?(.+)/.match(url)).last
+      "ror.org/#{ror}" if ror.present?
     end
   end
 end

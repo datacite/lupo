@@ -184,22 +184,27 @@ describe "Indexable class methods", elasticsearch: true do
 
       it "as id" do
         ror_id = "ror.org/046ak2485"
-        expect(subject.ror_from_url(ror_id)).to eq("046ak2485")
+        expect(subject.ror_from_url(ror_id)).to eq("ror.org/046ak2485")
       end
 
       it "as short id" do
         ror_id = "046ak2485"
-        expect(subject.ror_from_url(ror_id)).to eq("046ak2485")
+        expect(subject.ror_from_url(ror_id)).to eq("ror.org/046ak2485")
       end
 
       it "as url" do
         ror_id = "https://ror.org/046ak2485"
-        expect(subject.ror_from_url(ror_id)).to eq("046ak2485")
+        expect(subject.ror_from_url(ror_id)).to eq("ror.org/046ak2485")
       end
 
       it "as http url" do
         ror_id = "http://ror.org/046ak2485"
-        expect(subject.ror_from_url(ror_id)).to eq("046ak2485")
+        expect(subject.ror_from_url(ror_id)).to eq("ror.org/046ak2485")
+      end
+
+      it "nil" do
+        ror_id = nil
+        expect(subject.ror_from_url(ror_id)).to be_nil
       end
     end
 

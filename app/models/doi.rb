@@ -201,6 +201,11 @@ class Doi < ActiveRecord::Base
       indexes :provider_id,                    type: :keyword
       indexes :consortium_id,                  type: :keyword
       indexes :resource_type_id,               type: :keyword
+      indexes :affiliation_id,                 type: :keyword
+      indexes :client_id_and_name,             type: :keyword
+      indexes :provider_id_and_name,           type: :keyword
+      indexes :resource_type_id_and_name,      type: :keyword
+      indexes :affiliation_id_and_name,        type: :keyword
       indexes :media_ids,                      type: :keyword
       indexes :media,                          type: :object, properties: {
         type: { type: :keyword },
@@ -457,6 +462,11 @@ class Doi < ActiveRecord::Base
       "provider_id" => provider_id,
       "consortium_id" => consortium_id,
       "resource_type_id" => resource_type_id,
+      "client_id_and_name" => client_id_and_name,
+      "provider_id_and_name" => provider_id_and_name,
+      "resource_type_id_and_name" => resource_type_id_and_name,
+      "affiliation_id" => affiliation_id,
+      "affiliation_id_and_name" => affiliation_id_and_name,
       "media_ids" => media_ids,
       "view_count" => view_count,
       "views_over_time" => views_over_time,
@@ -515,15 +525,15 @@ class Doi < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      resource_types: { terms: { field: 'types.resourceTypeGeneral', size: 16, min_doc_count: 1 } },
+      resource_types: { terms: { field: 'resource_type_id_and_name', size: 16, min_doc_count: 1 } },
       states: { terms: { field: 'aasm_state', size: 3, min_doc_count: 1 } },
       years: { date_histogram: { field: 'publication_year', interval: 'year', min_doc_count: 1 } },
       registration_agencies: { terms: { field: 'agency', size: 10, min_doc_count: 1 } },
       created: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
       registered: { date_histogram: { field: 'registered', interval: 'year', min_doc_count: 1 } },
-      providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1} },
-      clients: { terms: { field: 'client_id', size: 15, min_doc_count: 1 } },
-      affiliations: { terms: { field: 'creators.affiliation.affiliationIdentifier', size: 15, min_doc_count: 1 } },
+      providers: { terms: { field: 'provider_id_and_name', size: 15, min_doc_count: 1} },
+      clients: { terms: { field: 'client_id_and_name', size: 15, min_doc_count: 1 } },
+      affiliations: { terms: { field: 'affiliation_id_and_name', size: 15, min_doc_count: 1 } },
       prefixes: { terms: { field: 'prefix', size: 15, min_doc_count: 1 } },
       schema_versions: { terms: { field: 'schema_version', size: 15, min_doc_count: 1 } },
       link_checks_status: { terms: { field: 'landing_page.status', size: 15, min_doc_count: 1 } },
@@ -735,7 +745,7 @@ class Doi < ActiveRecord::Base
     must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
     must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
     must << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
-    must << { term: { "creators.affiliation.affiliationIdentifier" => "https://ror.org/#{ror_from_url(options[:affiliation_id])}" }} if options[:affiliation_id].present?
+    must << { term: { "affiliation_id" => ror_from_url(options[:affiliation_id]) }} if options[:affiliation_id].present?
     must << { term: { "funding_references.funderIdentifier" => "https://doi.org/#{doi_from_url(options[:funder_id])}" }} if options[:funder_id].present?
     must << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" }} if options[:has_person].present?
     must << { term: { "creators.affiliation.affiliationIdentifierScheme" => "ROR" }} if options[:has_organization].present?
@@ -1015,6 +1025,10 @@ class Doi < ActiveRecord::Base
     types["resourceTypeGeneral"].underscore.dasherize if types.to_h["resourceTypeGeneral"].present?
   rescue TypeError
     nil
+  end
+
+  def resource_type_id_and_name
+    "#{resource_type_id}:#{types["resourceTypeGeneral"]}" if types.to_h["resourceTypeGeneral"].present?
   end
 
   def media_ids
@@ -1336,6 +1350,10 @@ class Doi < ActiveRecord::Base
     client.symbol.downcase if client.present?
   end
 
+  def client_id_and_name
+    "#{client_id}:#{client.name}" if client.present?
+  end
+
   def client_id=(value)
     r = ::Client.where(symbol: value).first
     fail ActiveRecord::RecordNotFound unless r.present?
@@ -1345,6 +1363,30 @@ class Doi < ActiveRecord::Base
 
   def provider_id
     client.provider.symbol.downcase if client.present?
+  end
+
+  def provider_id_and_name
+    "#{provider_id}:#{client.provider.name}" if client.present?
+  end
+
+  def affiliation_id
+    Array.wrap(creators).reduce([]) do |sum, creator|
+      Array.wrap(creator.fetch("affiliation", nil)).each do |affiliation|
+        sum << ror_from_url(affiliation.fetch("affiliationIdentifier", nil)) if affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
+      end
+
+      sum
+    end
+  end
+
+  def affiliation_id_and_name
+    Array.wrap(creators).reduce([]) do |sum, creator|
+      Array.wrap(creator.fetch("affiliation", nil)).each do |affiliation|
+        sum << "#{ror_from_url(affiliation.fetch("affiliationIdentifier", nil)).to_s}:#{affiliation.fetch("name", nil).to_s}" if affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
+      end
+      
+      sum
+    end
   end
 
   def prefix

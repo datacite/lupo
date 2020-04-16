@@ -40,14 +40,14 @@ class PublicationConnectionType < BaseConnection
     args = prepare_args(object.arguments)
 
     res = response(args)
-    res.results.total.positive? ? facet_by_client(res.response.aggregations.clients.buckets) : []
+    res.results.total.positive? ? facet_by_combined_key(res.response.aggregations.clients.buckets) : []
   end
 
   def affiliations
     args = prepare_args(object.arguments)
 
     res = response(args)
-    res.results.total.positive? ? facet_by_affiliation(res.response.aggregations.affiliations.buckets) : []
+    res.results.total.positive? ? facet_by_combined_key(res.response.aggregations.affiliations.buckets) : []
   end
 
   def response(**args)
