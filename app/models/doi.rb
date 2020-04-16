@@ -745,7 +745,7 @@ class Doi < ActiveRecord::Base
     must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
     must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
     must << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
-    must << { term: { "affiliation_id" => "https://ror.org/#{ror_from_url(options[:affiliation_id])}" }} if options[:affiliation_id].present?
+    must << { term: { "affiliation_id" => ror_from_url(options[:affiliation_id]) }} if options[:affiliation_id].present?
     must << { term: { "funding_references.funderIdentifier" => "https://doi.org/#{doi_from_url(options[:funder_id])}" }} if options[:funder_id].present?
     must << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" }} if options[:has_person].present?
     must << { term: { "creators.affiliation.affiliationIdentifierScheme" => "ROR" }} if options[:has_organization].present?
@@ -1372,7 +1372,7 @@ class Doi < ActiveRecord::Base
   def affiliation_id
     Array.wrap(creators).reduce([]) do |sum, creator|
       Array.wrap(creator.fetch("affiliation", nil)).each do |affiliation|
-        sum << affiliation.fetch("affiliationIdentifier", nil) if affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR"
+        sum << ror_from_url(affiliation.fetch("affiliationIdentifier", nil)) if affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
 
       sum
@@ -1382,7 +1382,7 @@ class Doi < ActiveRecord::Base
   def affiliation_id_and_name
     Array.wrap(creators).reduce([]) do |sum, creator|
       Array.wrap(creator.fetch("affiliation", nil)).each do |affiliation|
-        sum << "#{affiliation.fetch("affiliationIdentifier", nil).to_s}:#{affiliation.fetch("name", nil).to_s}" if affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR"
+        sum << "#{ror_from_url(affiliation.fetch("affiliationIdentifier", nil)).to_s}:#{affiliation.fetch("name", nil).to_s}" if affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
       
       sum
