@@ -151,8 +151,7 @@ describe Doi, vcr: true do
       expect(meta["creators"]).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin","name"=>"Fenner, Martin",
         "nameIdentifiers"=>
           [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405",
-            "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
-        "nameType"=>"Personal"}])
+            "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}]}])
       expect(meta["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
       expect(meta["publication_year"]).to eq("2016")
       expect(meta["publisher"]).to eq("DataCite")

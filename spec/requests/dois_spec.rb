@@ -1411,8 +1411,7 @@ describe "dois", type: :request do
           "nameIdentifiers"=>
             [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405",
               "nameIdentifierScheme"=>"ORCID",
-              "schemeUri"=>"https://orcid.org"}],
-          "nameType"=>"Personal"}])
+              "schemeUri"=>"https://orcid.org"}]}])
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
         expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
@@ -1501,8 +1500,7 @@ describe "dois", type: :request do
           "nameIdentifiers"=>
             [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405",
               "nameIdentifierScheme"=>"ORCID",
-              "schemeUri"=>"https://orcid.org"}],
-          "nameType"=>"Personal"}])
+              "schemeUri"=>"https://orcid.org"}]}])
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
         expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
