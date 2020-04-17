@@ -25,6 +25,14 @@ module Facetable
   }
 
   included do
+    def facet_by_key_as_string(arr)
+      arr.map do |hsh|
+        { "id" => hsh["key_as_string"],
+          "title" => hsh["key_as_string"],
+          "count" => hsh["doc_count"] }
+      end
+    end
+
     def facet_by_year(arr)
       arr.map do |hsh|
         { "id" => hsh["key_as_string"][0..3],

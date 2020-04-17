@@ -527,10 +527,10 @@ class Doi < ActiveRecord::Base
     {
       resource_types: { terms: { field: 'resource_type_id_and_name', size: 16, min_doc_count: 1 } },
       states: { terms: { field: 'aasm_state', size: 3, min_doc_count: 1 } },
-      years: { date_histogram: { field: 'publication_year', interval: 'year', min_doc_count: 1 } },
+      years: { date_histogram: { field: 'publication_year', interval: 'year', format: 'year', min_doc_count: 1 } },
       registration_agencies: { terms: { field: 'agency', size: 10, min_doc_count: 1 } },
-      created: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
-      registered: { date_histogram: { field: 'registered', interval: 'year', min_doc_count: 1 } },
+      created: { date_histogram: { field: 'created', interval: 'year', format: 'year', min_doc_count: 1 } },
+      registered: { date_histogram: { field: 'registered', interval: 'year', format: 'year', min_doc_count: 1 } },
       providers: { terms: { field: 'provider_id_and_name', size: 15, min_doc_count: 1} },
       clients: { terms: { field: 'client_id_and_name', size: 15, min_doc_count: 1 } },
       affiliations: { terms: { field: 'affiliation_id_and_name', size: 15, min_doc_count: 1 } },
@@ -546,19 +546,19 @@ class Doi < ActiveRecord::Base
       subjects: { terms: { field: 'subjects.subject', size: 15, min_doc_count: 1 } },
       certificates: { terms: { field: 'client.certificate', size: 15, min_doc_count: 1 } },
       views: {
-        date_histogram: { field: "publication_year", interval: "year", min_doc_count: 1 },
+        date_histogram: { field: "publication_year", interval: "year", format: 'year', min_doc_count: 1 },
         aggs: {
           metric_count: { sum: { field: "view_count" } },
         },
       },
       downloads: {
-        date_histogram: { field: "publication_year", interval: "year", min_doc_count: 1 }, 
+        date_histogram: { field: "publication_year", interval: "year", format: 'year', min_doc_count: 1 }, 
         aggs: {
           metric_count: { sum: { field: "download_count" } }, 
         },
       },
       citations: {
-        date_histogram: { field: "publication_year", interval: "year", min_doc_count: 1 }, 
+        date_histogram: { field: "publication_year", interval: "year", format: 'year', min_doc_count: 1 }, 
         aggs: {
           metric_count: { sum: { field: "citation_count" } },
         },

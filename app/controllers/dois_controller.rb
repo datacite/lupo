@@ -154,9 +154,9 @@ class DoisController < ApplicationController
       else
         states = total.positive? ? facet_by_key(response.aggregations.states.buckets) : nil
         resource_types = total.positive? ? facet_by_combined_key(response.aggregations.resource_types.buckets) : nil
-        years = total.positive? ? facet_by_year(response.aggregations.years.buckets) : nil
-        created = total.positive? ? facet_by_year(response.aggregations.created.buckets) : nil
-        registered = total.positive? ? facet_by_year(response.aggregations.registered.buckets) : nil
+        years = total.positive? ? facet_by_key_as_string(response.aggregations.years.buckets) : nil
+        created = total.positive? ? facet_by_key_as_string(response.aggregations.created.buckets) : nil
+        registered = total.positive? ? facet_by_key_as_string(response.aggregations.registered.buckets) : nil
         providers = total.positive? ? facet_by_combined_key(response.aggregations.providers.buckets) : nil
         clients = total.positive? ? facet_by_combined_key(response.aggregations.clients.buckets) : nil
         prefixes = total.positive? ? facet_by_key(response.aggregations.prefixes.buckets) : nil

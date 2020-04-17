@@ -42,7 +42,8 @@ class ProvidersController < ApplicationController
     begin
       total = response.results.total
       total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
-      years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
+      
+      years = total > 0 ? facet_by_key_as_string(response.response.aggregations.years.buckets) : nil
       regions = total > 0 ? facet_by_region(response.response.aggregations.regions.buckets) : nil
       member_types = total > 0 ? facet_by_key(response.response.aggregations.member_types.buckets) : nil
       organization_types = total > 0 ? facet_by_key(response.response.aggregations.organization_types.buckets) : nil
