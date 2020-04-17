@@ -1028,7 +1028,7 @@ class Doi < ActiveRecord::Base
   end
 
   def resource_type_id_and_name
-    "#{resource_type_id}:#{types["resourceTypeGeneral"]}" if types.to_h["resourceTypeGeneral"].present?
+    "#{resource_type_id}:#{types["resourceTypeGeneral"].titleize}" if types.to_h["resourceTypeGeneral"].present?
   end
 
   def media_ids

@@ -266,7 +266,7 @@ describe "dois", type: :request do
       sleep 3
     end
 
-    it 'filter for theses' do
+    it 'filter for instruments' do
       get "/dois?resource-type=Instrument", nil, headers
 
       expect(last_response.status).to eq(200)
@@ -274,6 +274,26 @@ describe "dois", type: :request do
       expect(json.dig('meta', 'total')).to eq(3)
       expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
       expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Instrument", "resourceTypeGeneral"=>"Other")
+    end
+  end
+
+  describe 'GET /dois for interactive resources', elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "InteractiveResource", "resourceType" => "Presentation" }, client: client, aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 3
+    end
+
+    it 'filter for instruments' do
+      get "/dois?resource-type-id=interactive-resource", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(3)
+      expect(json.dig('meta', 'total')).to eq(3)
+      expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Presentation", "resourceTypeGeneral"=>"InteractiveResource")
+      expect(json.dig('meta', 'resourceTypes')).to eq([{"count"=>3, "id"=>"interactive-resource", "title"=>"Interactive Resource"}])
     end
   end
   
