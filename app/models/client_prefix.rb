@@ -62,7 +62,8 @@ class ClientPrefix < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      years: { date_histogram: { field: "created_at", interval: "year", min_doc_count: 1 } },
+      years: { date_histogram: { field: 'created_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+               aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
       providers: { terms: { field: "provider_id", size: 15, min_doc_count: 1 } },
       clients: { terms: { field: "client_id", size: 15, min_doc_count: 1 } },
     }

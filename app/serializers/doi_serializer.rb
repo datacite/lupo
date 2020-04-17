@@ -64,6 +64,38 @@ class DoiSerializer
     Array.wrap(object.rights_list)
   end
 
+  attribute :funding_references do |object|
+    Array.wrap(object.funding_references)
+  end
+
+  attribute :identifiers do |object|
+    Array.wrap(object.identifiers)
+  end
+
+  attribute :related_identifiers do |object|
+    Array.wrap(object.related_identifiers)
+  end
+
+  attribute :geo_locations do |object|
+    Array.wrap(object.geo_locations)
+  end
+
+  attribute :dates do |object|
+    Array.wrap(object.dates)
+  end
+
+  attribute :subjects do |object|
+    Array.wrap(object.subjects)
+  end
+
+  attribute :sizes do |object|
+    Array.wrap(object.sizes)
+  end
+
+  attribute :formats do |object|
+    Array.wrap(object.formats)
+  end
+
   attribute :container do |object|
     object.container || {}
   end

@@ -245,7 +245,8 @@ class Provider < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      years: { date_histogram: { field: 'created', interval: 'year', format: 'year', min_doc_count: 1 } },
+      years: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+               aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
       cumulative_years: { terms: { field: 'cumulative_years', size: 15, min_doc_count: 1, order: { _count: "asc" } } },
       regions: { terms: { field: 'region', size: 10, min_doc_count: 1 } },
       member_types: { terms: { field: 'member_type', size: 10, min_doc_count: 1 } },

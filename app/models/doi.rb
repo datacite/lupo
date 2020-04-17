@@ -1332,6 +1332,34 @@ class Doi < ActiveRecord::Base
     write_attribute(:sizes, Array.wrap(value))
   end
 
+  def dates=(value)
+    write_attribute(:dates, Array.wrap(value))
+  end
+
+  def subjects=(value)
+    write_attribute(:subjects, Array.wrap(value))
+  end
+
+  def rights_list=(value)
+    write_attribute(:rights_list, Array.wrap(value))
+  end
+
+  def identifiers=(value)
+    write_attribute(:identifiers, Array.wrap(value))
+  end
+
+  def related_identifiers=(value)
+    write_attribute(:related_identifiers, Array.wrap(value))
+  end
+
+  def funding_references=(value)
+    write_attribute(:funding_references, Array.wrap(value))
+  end
+
+  def geo_locations=(value)
+    write_attribute(:geo_locations, Array.wrap(value))
+  end
+
   def content_url=(value)
     write_attribute(:content_url, Array.wrap(value))
   end

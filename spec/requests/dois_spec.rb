@@ -1009,7 +1009,7 @@ describe "dois", type: :request do
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'dates')).to eq("date"=>":tba", "dateType"=>"Issued")
+        expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>":tba", "dateType"=>"Issued"}])
       end
 
       it 'sets state to findable' do
@@ -2690,7 +2690,7 @@ describe "dois", type: :request do
           expect(last_response.status).to eq(200)
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Analysis Tools for Crossover Experiment of UI using Choice Architecture"}])
-          expect(json.dig('data', 'attributes', 'dates')).to eq("date"=>"2016-03-27", "dateType"=>"Issued")
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-03-27", "dateType"=>"Issued"}])
         end
       end
 
