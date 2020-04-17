@@ -549,21 +549,24 @@ class Doi < ActiveRecord::Base
       subjects: { terms: { field: 'subjects.subject', size: 15, min_doc_count: 1 } },
       certificates: { terms: { field: 'client.certificate', size: 15, min_doc_count: 1 } },
       views: {
-        date_histogram: { field: "publication_year", interval: "year", format: 'year', min_doc_count: 1 },
+        date_histogram: { field: 'publication_year', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
         aggs: {
           metric_count: { sum: { field: "view_count" } },
+          bucket_truncate: { bucket_sort: { size: 10 } },
         },
       },
       downloads: {
-        date_histogram: { field: "publication_year", interval: "year", format: 'year', min_doc_count: 1 }, 
+        date_histogram: { field: 'publication_year', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
         aggs: {
-          metric_count: { sum: { field: "download_count" } }, 
+          metric_count: { sum: { field: "download_count" } },
+          bucket_truncate: { bucket_sort: { size: 10 } },
         },
       },
       citations: {
-        date_histogram: { field: "publication_year", interval: "year", format: 'year', min_doc_count: 1 }, 
+        date_histogram: { field: 'publication_year', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
         aggs: {
           metric_count: { sum: { field: "citation_count" } },
+          bucket_truncate: { bucket_sort: { size: 10 } },
         },
       },
     }
