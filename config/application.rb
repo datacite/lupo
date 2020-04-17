@@ -117,7 +117,7 @@ module Lupo
     config.cache_store = :dalli_store, nil, { :namespace => ENV['APPLICATION'] }
 
     # raise error with unpermitted parameters
-    config.action_controller.action_on_unpermitted_parameters = :raise
+    config.action_controller.action_on_unpermitted_parameters = :log
 
     config.action_view.sanitized_allowed_tags = %w(strong em b i code pre sub sup br)
     config.action_view.sanitized_allowed_attributes = []
