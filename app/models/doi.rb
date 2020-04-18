@@ -1055,13 +1055,17 @@ class Doi < ActiveRecord::Base
   end
 
   def resource_type_id
-    types["resourceTypeGeneral"].underscore.dasherize if types.to_h["resourceTypeGeneral"].present?
+    r = types.to_h["resourceTypeGeneral"]
+    r.underscore.dasherize if RESOURCE_TYPES_GENERAL[r].present?
   rescue TypeError
     nil
   end
 
   def resource_type_id_and_name
-    "#{resource_type_id}:#{types["resourceTypeGeneral"].titleize}" if types.to_h["resourceTypeGeneral"].present?
+    r = types.to_h["resourceTypeGeneral"]
+    "#{r.underscore.dasherize}:#{RESOURCE_TYPES_GENERAL[r]}" if RESOURCE_TYPES_GENERAL[r].present?
+  rescue TypeError
+    nil
   end
 
   def media_ids
