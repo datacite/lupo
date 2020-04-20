@@ -5,7 +5,7 @@ http_interactions:
     uri: "<SLACK_WEBHOOK_URL>"
     body:
       encoding: US-ASCII
-      string: payload=%7B%22username%22%3A%22Fabrica%22%2C%22icon_url%22%3A%22https%3A%2F%2Fgithub.com%2Fdatacite%2Fsegugio%2Fblob%2Fmaster%2Fsource%2Fimages%2Ffabrica.png%22%2C%22attachments%22%3A%5B%7B%22title%22%3A%22DataCite+Fabrica%3A+New+Account%22%2C%22color%22%3A%22good%22%2C%22fields%22%3A%5B%7B%22title%22%3A%22Account+ID%22%2C%22value%22%3A%22DATACITE.DATACITE%22%7D%2C%7B%22title%22%3A%22Contact+name%22%2C%22value%22%3A%22DataCite+Repository%22%2C%22short%22%3Atrue%7D%2C%7B%22title%22%3A%22Contact+email%22%2C%22value%22%3A%22test%40datacite.org%22%2C%22short%22%3Atrue%7D%5D%7D%5D%7D
+      string: payload=%7B%22username%22%3A%22Fabrica%22%2C%22icon_url%22%3A%22https%3A%2F%2Fgithub.com%2Fdatacite%2Fsegugio%2Fblob%2Fmaster%2Fsource%2Fimages%2Ffabrica.png%22%2C%22attachments%22%3A%5B%7B%22title%22%3A%22DataCite+Fabrica%3A+New+Account%22%2C%22color%22%3A%22good%22%2C%22fields%22%3A%5B%7B%22title%22%3A%22Account+ID%22%2C%22value%22%3A%22DATACITE.DATACITE%22%2C%22short%22%3Atrue%7D%2C%7B%22title%22%3A%22Account+type%22%2C%22value%22%3A%22repository%22%2C%22short%22%3Atrue%7D%2C%7B%22title%22%3A%22Account+name%22%2C%22value%22%3A%22DataCite+Repository%22%2C%22short%22%3Atrue%7D%2C%7B%22title%22%3A%22System+email%22%2C%22value%22%3A%22test%40datacite.org%22%2C%22short%22%3Atrue%7D%5D%7D%5D%7D
     headers:
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
@@ -20,14 +20,8 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Content-Type:
-      - text/html
-      Content-Length:
-      - '22'
-      Connection:
-      - keep-alive
       Date:
-      - Sat, 28 Mar 2020 07:53:10 GMT
+      - Mon, 20 Apr 2020 09:51:18 GMT
       Server:
       - Apache
       Vary:
@@ -37,24 +31,20 @@ http_interactions:
       Referrer-Policy:
       - no-referrer
       X-Slack-Backend:
-      - h
+      - r
       X-Frame-Options:
       - SAMEORIGIN
       Access-Control-Allow-Origin:
       - "*"
+      Content-Length:
+      - '22'
+      Content-Type:
+      - text/html
       X-Via:
-      - haproxy-www-itvd
-      X-Cache:
-      - Miss from cloudfront
-      Via:
-      - 1.1 e8640ab30463560abfb6a2665bafb393.cloudfront.net (CloudFront)
-      X-Amz-Cf-Pop:
-      - DUS51-C1
-      X-Amz-Cf-Id:
-      - fRUDXsnGgVVW90DuHGE5mmv8Vhm65hUIZrCk5kKvQARvmg0oxt24mw==
+      - haproxy-www-y6ft
     body:
       encoding: ASCII-8BIT
       string: ok
     http_version: null
-  recorded_at: Sat, 28 Mar 2020 07:53:10 GMT
+  recorded_at: Mon, 20 Apr 2020 09:51:18 GMT
 recorded_with: VCR 5.1.0

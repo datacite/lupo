@@ -50,7 +50,7 @@ describe "Mailable", type: :model, vcr: true do
 
   context "send_notification_to_slack" do
     it "succeeds" do
-      text =  "Using contact email #{client.system_email}."
+      text =  "Using system email #{client.system_email}."
       options = { title: "TEST: new client account #{client.symbol} created." }
       expect(Client.send_notification_to_slack(text, options)).to eq("ok")
     end
