@@ -16,7 +16,7 @@ gem "nokogiri", ">= 1.10.4"
 gem "diffy", "~> 3.2", ">= 3.2.1"
 gem "commonmarker", "~> 0.17.9"
 gem "iso8601", "~> 0.9.0"
-gem "maremma", ">= 4.1"
+gem "maremma", "~> 4.6.1"
 gem "bolognese", "~> 1.5"
 gem "dalli", "~> 2.7", ">= 2.7.6"
 gem "lograge", "~> 0.11.2"
@@ -31,7 +31,6 @@ gem "bcrypt", "~> 3.1.7"
 gem "pwqgen.rb", "~> 0.1.0"
 gem "string_pattern"
 gem "simple_command"
-gem "kaminari", "~> 1.0", ">= 1.0.1"
 gem "cancancan", "~> 2.0"
 gem "country_select", "~> 3.1"
 gem "countries", "~> 2.1", ">= 2.1.2"
@@ -59,7 +58,7 @@ gem "rack-utf8_sanitizer", "~> 1.6"
 gem "turnout", "~> 2.5"
 gem "audited", "~> 4.8"
 gem "git", "~> 1.5"
-gem "graphql", "~> 1.9", ">= 1.9.16"
+gem "graphql", "~> 1.9.16"
 gem "graphql-errors", "~> 0.4.0"
 gem "graphql-batch", "~> 0.4.1"
 gem "batch-loader", "~> 1.4", ">= 1.4.1"
@@ -72,6 +71,7 @@ gem 'strong_migrations', '~> 0.6.0'
 gem 'crawler_detect'
 gem 'lhm', '~> 2.2'
 gem 'kt-paperclip', '~> 6.2', '>= 6.2.2'
+gem 'kaminari', '~> 1.2'
 
 group :development, :test do
   gem "rspec-rails", "~> 3.8", ">= 3.8.2"
@@ -83,6 +83,7 @@ group :development, :test do
   gem "better_errors"
   gem "binding_of_caller"
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
+  gem 'bullet', '~> 6.1'
 end
 
 group :development do
@@ -98,7 +99,7 @@ group :test do
   gem "capybara"
   gem "webmock", "~> 3.1"
   gem "hashdiff", [">= 1.0.0.beta1", "< 2.0.0"]
-  gem "vcr", "~> 3.0.3"
+  gem 'vcr', '~> 5.1'
   gem "factory_bot_rails", "~> 4.8", ">= 4.8.2"
   gem "shoulda-matchers", "~> 4.1", ">= 4.1.2"
   gem "faker", "~> 1.9"

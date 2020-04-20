@@ -1,25 +1,76 @@
 require 'rails_helper'
 
-describe "Repository Prefixes", type: :request do
-  let!(:client_prefixes)  { create_list(:client_prefix, 5) }
-  let(:client_prefix) { create(:client_prefix) }
+describe "Repository Prefixes", type: :request, elasticsearch: true do
+  let(:prefix) { create(:prefix) }
+  let(:provider) { create(:provider) }
+  let(:client) { create(:client, provider: provider) }
+  let(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
+  let!(:client_prefixes) { create_list(:client_prefix, 5) }
+  let(:client_prefix) { create(:client_prefix, client: client, prefix: prefix, provider_prefix: provider_prefix) }
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
 
   describe 'GET /repository-prefixes' do
+    before do
+      Prefix.import
+      ClientPrefix.import
+      sleep 2
+    end
+
     it 'returns repository-prefixes' do
       get '/repository-prefixes', nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(5)
     end
+
+    it 'returns repository-prefixes by repository-id' do
+      get "/repository-prefixes?repository-id=#{client_prefixes.first.client_id}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(1)
+    end
+
+    it 'returns repository-prefixes by prefix-id' do
+      get "/repository-prefixes?prefix-id=#{client_prefixes.first.prefix_id}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(1)
+    end
+
+    it 'returns repository-prefixes by partial prefix' do
+      get "/repository-prefixes?query=10.508", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(5)
+    end
+
+    it 'returns repository-prefixes by repository-id and prefix-id' do
+      get "/repository-prefixes?repository-id=#{client_prefixes.first.client_id}&#{client_prefixes.first.prefix_id}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(1)
+    end
+
+    it 'returns prefixes by client-id' do
+      get "/prefixes?client-id=#{client_prefixes.first.client_id}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(1)
+    end
   end
 
   describe 'GET /repository-prefixes/:uid' do
+    before do
+      Prefix.import
+      ClientPrefix.import
+      sleep 2
+    end
+
     context 'when the record exists' do
       it 'returns the repository-prefix' do
         get "/repository-prefixes/#{client_prefix.uid}", nil, headers
-        
+
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "id")).to eq(client_prefix.uid)
       end
@@ -44,33 +95,46 @@ describe "Repository Prefixes", type: :request do
     end
   end
 
+  describe 'DELETE /repository-prefixes/:uid' do
+    let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix, provider_prefix: provider_prefix) }
+
+    before do
+      ProviderPrefix.import
+      Prefix.import
+      ClientPrefix.import
+      sleep 2
+    end
+
+    it 'deletes a repository-prefix' do
+      delete "/repository-prefixes/#{client_prefix.uid}", nil, headers
+
+      expect(last_response.status).to eq(204)
+    end
+  end
+
   describe 'POST /repository-prefixes' do
     context 'when the request is valid' do
-      let(:provider) { create(:provider) }
-      let(:client) { create(:client, provider: provider) }
-      let(:prefix) { create(:prefix) }
-      let(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
       let(:valid_attributes) do
         {
           "data" => {
-            "type" => "repository-prefixes",
+            "type" => "client-prefixes",
             "relationships": {
               "repository": {
-                "data":{
-                  "type": "repositories",
-                  "id": client.symbol.downcase
+                "data": {
+                  "type": "repository",
+                  "id": client.symbol.downcase,
                 }
               },
               "provider-prefix": {
-                "data":{
-                  "type": "provider-prefixes",
-                  "id": provider_prefix.prefix
+                "data": {
+                  "type": "provider-prefix",
+                  "id": provider_prefix.uid,
                 }
               },
               "prefix": {
-                "data":{
-                  "type": "prefixes",
-                  "id": prefix.prefix
+                "data": {
+                  "type": "prefix",
+                  "id": prefix.uid,
                 }
               }
             }
@@ -87,7 +151,7 @@ describe "Repository Prefixes", type: :request do
     end
 
     context 'when the request is invalid' do
-      let!(:client)  { create(:client) }
+      let!(:client) { create(:client) }
       let(:not_valid_attributes) do
         {
           "data" => {

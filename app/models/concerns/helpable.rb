@@ -98,7 +98,7 @@ module Helpable
     end
 
     def encode_doi(prefix, options={})
-      return nil unless prefix.present?
+      return nil if prefix.blank?
 
       number = options[:number].to_s.scan(/\d+/).join("").to_i
       shoulder = options[:shoulder].to_s
@@ -108,7 +108,7 @@ module Helpable
       size = (options[:size] || 1).to_i
 
       Array.new(size).map do |a|
-        n = number > 0 ? number : SecureRandom.random_number(UPPER_LIMIT)
+        n = number.positive? ? number : SecureRandom.random_number(UPPER_LIMIT)
         prefix.to_s + "/" + shoulder + Base32::URL.encode(n, split: split, length: length, checksum: true)
       end.uniq
     end

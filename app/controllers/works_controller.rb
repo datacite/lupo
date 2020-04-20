@@ -55,12 +55,12 @@ class WorksController < ApplicationController
       total = response.results.total
       total_pages = page[:size].positive? ? ([total.to_f, 10000].min / page[:size]).ceil : 0
 
-      resource_types = total > 0 ? facet_by_resource_type(response.response.aggregations.resource_types.buckets) : nil
+      resource_types = total > 0 ? facet_by_combined_key(response.response.aggregations.resource_types.buckets) : nil
       registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
-      providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
-      clients = total > 0 ? facet_by_client(response.response.aggregations.clients.buckets) : nil
+      providers = total > 0 ? facet_by_combined_key(response.response.aggregations.providers.buckets) : nil
+      clients = total > 0 ? facet_by_combined_key(response.response.aggregations.clients.buckets) : nil
 
-      affiliations = total > 0 ? facet_by_affiliation(response.response.aggregations.affiliations.buckets) : nil
+      affiliations = total > 0 ? facet_by_combined_key(response.response.aggregations.affiliations.buckets) : nil
 
       @dois = response.results
 
@@ -134,8 +134,8 @@ class WorksController < ApplicationController
         "data_center" => :client,
         "member" => :provider,
         "resource_type" => :resource_type,
-        "reference_events" => :reference_events,
-        "citation_events" => :citation_events,
+        "references" => :references,
+        "citations" => :citations,
       }
       @include = params[:include].split(",").reduce([]) do |sum, i|
         k = include_keys[i.downcase.underscore]
@@ -143,7 +143,7 @@ class WorksController < ApplicationController
         sum
       end
     else
-      @include = nil
+      @include = []
     end
   end
 end

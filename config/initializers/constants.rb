@@ -49,6 +49,24 @@ REGIONS = {
   "AMER" => "Americas"
 }
 
+RESOURCE_TYPES_GENERAL = {
+  "Audiovisual" => "Audiovisual",
+  "Collection" => "Collection",
+  "Dataset" => "Dataset",
+  "DataPaper" => "Data Paper",
+  "Event" => "Event",
+  "Image" => "Image",
+  "InteractiveResource" => "Interactive Resource",
+  "Model" => "Model",
+  "PhysicalObject" => "Physical Object",
+  "Service" => "Service",
+  "Sound" => "Sound",
+  "Software" => "Software",
+  "Text" => "Text",
+  "Workflow" => "Workflow",
+  "Other" => "Other"
+}
+
 LAST_SCHEMA_VERSION = "http://datacite.org/schema/kernel-4"
 
 METADATA_FORMATS = [

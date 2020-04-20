@@ -9,7 +9,7 @@ class Metadata < ActiveRecord::Base
   validates_presence_of :xml, :namespace
   validate :metadata_must_be_valid
 
-  belongs_to :doi, foreign_key: :dataset
+  belongs_to :doi, foreign_key: :dataset, inverse_of: :metadata
   delegate :client, to: :doi
 
   before_validation :set_metadata_version, :set_namespace

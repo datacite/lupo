@@ -3,106 +3,76 @@ class PrefixesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show, :totals]
+  around_action :skip_bullet, only: [:index], if: -> { defined?(Bullet) }
 
   def index
-    # support nested routes
-    if params[:id].present?
-      collection = Prefix.where(prefix: params[:id])
-    elsif params[:provider_id].present?
-      provider = Provider.where('allocator.symbol = ?', params[:provider_id]).first
-      collection = provider.present? ? provider.prefixes : Prefix.none
-    elsif params[:client_id].present?
-      client = Client.where('datacentre.symbol = ?', params[:client_id]).first
-      collection = client.present? ? client.prefixes : Prefix.none
-    else
-      collection = Prefix
-    end
-
-    collection = collection.state(params[:state]) if params[:state].present?
-    collection = collection.query(params[:query]) if params[:query].present?
-    collection = collection.where('YEAR(prefix.created) = ?', params[:year]) if params[:year].present?
-
-    if params[:year].present?
-      years = [{ id: params[:year],
-                 title: params[:year],
-                 count: collection.where('YEAR(prefix.created) = ?', params[:year]).count }]
-    else
-      years = collection.where.not(prefix: nil).order("YEAR(prefix.created) DESC").group("YEAR(prefix.created)").count
-      years = years.map { |k,v| { id: k.to_s, title: k.to_s, count: v } }
-    end
-
-    # calculate facet counts after filtering
-    # no faceting by client
-    if params[:provider_id].present?
-      providers = [{ id: params[:provider_id],
-                     title: provider.name,
-                     count: collection.includes(:providers).where('allocator.id' => provider.id).count }]
-    else
-      providers = collection.includes(:providers).where.not('allocator.id' => nil).group('allocator.id').count
-      providers = providers
-                  .sort { |a, b| b[1] <=> a[1] }
-                  .reduce([]) do |sum, i|
-                                if provider = Provider.where(symbol: i[0]).first
-                                  sum << { id: provider.symbol.downcase, title: provider.name, count: i[1] }
-                                end
-
-                                sum
-                              end
-    end
-
-    if params[:state].present?
-      states = [{ id: params[:state],
-                  title: params[:state].underscore.humanize,
-                  count: collection.count }]
-    else
-      states = [{ id: "unassigned",
-                  title: "Unassigned",
-                  count: collection.state("unassigned").count },
-                { id: "without-repository",
-                  title: "Without repository",
-                  count: collection.state("without-client").count },
-                { id: "with-repository",
-                  title: "With repository",
-                  count: collection.state("with-client").count }]
-    end
+    sort = case params[:sort]
+           when "relevance" then { "_score" => { order: 'desc' }}
+           when "name" then { "uid" => { order: 'asc', unmapped_type: "keyword" }}
+           when "-name" then { "uid" => { order: 'desc', unmapped_type: "keyword" }}
+           when "created" then { created_at: { order: 'asc' }}
+           when "-created" then { created_at: { order: 'desc' }}
+           else { "uid" => { order: 'asc', unmapped_type: "keyword" }}
+           end
 
     page = page_from_params(params)
-    total = collection.count
 
-    order = case params[:sort]
-            when "name" then "prefix.prefix"
-            when "-name" then "prefix.prefix DESC"
-            when "created" then "prefix.created"
-            else "prefix.created DESC"
-            end
+    if params[:id].present?
+      response = Prefix.find_by_id(params[:id]) 
+    else
+      response = Prefix.query(params[:query],
+                              year: params[:year],
+                              state: params[:state],
+                              provider_id: params[:provider_id],
+                              client_id: params[:client_id],
+                              page: page,
+                              sort: sort)
+    end
 
-    @prefixes = collection.order(order).page(page[:number]).per(page[:size])
+    begin
+      total = response.results.total
+      total_pages = page[:size].positive? ? (total.to_f / page[:size]).ceil : 0
+      years = total.positive? ? facet_by_year(response.response.aggregations.years.buckets) : nil
+      states = total.positive? ? facet_by_key(response.response.aggregations.states.buckets) : nil
+      providers = total.positive? ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+      clients = total.positive? ? facet_by_client(response.response.aggregations.clients.buckets) : nil
 
-    options = {}
-    options[:meta] = {
-      total: total,
-      "totalPages" => @prefixes.total_pages,
-      page: page[:number].to_i,
-      states: states,
-      providers: providers,
-      years: years
-    }.compact
+      prefixes = response.results
 
-    options[:links] = {
-      self: request.original_url,
-      next: @provider_prefixes.blank? ? nil : request.base_url + "/prefixes?" + {
-        query: params[:query],
-        "provider-id" => params[:provider_id],
-        "client_id" => params[:client_id],
-        year: params[:year],
-        "page[number]" => page[:number] + 1,
-        "page[size]" => page[:size],
-        sort: params[:sort] }.compact.to_query
+      options = {}
+      options[:meta] = {
+        total: total,
+        "totalPages" => total_pages,
+        page: page[:number],
+        years: years,
+        states: states,
+        providers: providers,
+        clients: clients
       }.compact
-    options[:include] = @include
-    options[:is_collection] = true
 
-    render json: PrefixSerializer.new(@prefixes, options).serialized_json, status: :ok
+      options[:links] = {
+        self: request.original_url,
+        next: prefixes.blank? ? nil : request.base_url + "/prefixes?" + {
+          query: params[:query],
+          prefix: params[:prefix],
+          year: params[:year],
+          provider_id: params[:provider_id],
+          client_id: params[:client_id],
+          "page[number]" => page[:number] + 1,
+          "page[size]" => page[:size],
+          sort: params[:sort] }.compact.to_query
+        }.compact
+      options[:include] = @include
+      options[:is_collection] = true
+
+      render json: PrefixSerializer.new(prefixes, options).serialized_json, status: :ok
+    rescue Elasticsearch::Transport::Transport::Errors::BadRequest => exception
+      Raven.capture_exception(exception)
+
+      message = JSON.parse(exception.message[6..-1]).to_h.dig("error", "root_cause", 0, "reason")
+
+      render json: { "errors" => { "title" => message }}.to_json, status: :bad_request
+    end
   end
 
   def show
@@ -130,8 +100,19 @@ class PrefixesController < ApplicationController
   end
 
   def update
-    response.headers["Allow"] = "HEAD, GET, POST, DELETE, OPTIONS"
+    response.headers["Allow"] = "HEAD, GET, POST, OPTIONS"
     render json: { errors: [{ status: "405", title: "Method not allowed" }] }.to_json, status: :method_not_allowed
+  end
+
+  def destroy
+    message = "Prefix #{@prefix.uid} deleted."
+    if @prefix.destroy
+      Rails.logger.warn message
+      head :no_content
+    else
+      Rails.logger.error @prefix.errors.inspect
+      render json: serialize_errors(@prefix.errors), status: :unprocessable_entity
+    end
   end
 
   def totals
@@ -140,12 +121,8 @@ class PrefixesController < ApplicationController
     page = { size: 0, number: 1}
     response = Doi.query(nil, client_id: params[:client_id], state: "findable,registered", page: page, totals_agg: "prefix")
     registrant = prefixes_totals(response.response.aggregations.prefixes_totals.buckets)
-    
-    render json: registrant, status: :ok
-  end
 
-  def destroy
-    @prefix.destroy
+    render json: registrant, status: :ok
   end
 
   protected
@@ -153,17 +130,16 @@ class PrefixesController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:clients, :providers]
+      @include = @include & [:clients, :providers, :client_prefixes, :provider_prefixes]
     else
-      # always include because Ember pagination doesn't (yet) understand include parameter
-      @include = [:clients, :providers]
+      @include = []
     end
   end
 
   private
 
   def set_prefix
-    @prefix = Prefix.where(prefix: params[:id]).first
+    @prefix = Prefix.where(uid: params[:id]).first
 
     # fallback to call handle server, i.e. for prefixes not from DataCite
     @prefix = Handle.where(id: params[:id]) unless @prefix.present? ||  Rails.env.test?
@@ -172,8 +148,8 @@ class PrefixesController < ApplicationController
 
   def safe_params
     ActiveModelSerializers::Deserialization.jsonapi_parse!(
-      params, only: [:id, :created],
-              keys: { id: :prefix }
+      params, only: [:id, :created_at],
+              keys: { id: :uid }
     )
   end
 end

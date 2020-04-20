@@ -259,7 +259,7 @@ describe "/events", type: :request, elasticsearch: true do
         expect(json.dig("data", "attributes", "objId")).to eq("https://doi.org/10.1016/j.jastp.2013.05.001")
 
         Event.import
-        sleep 1
+        sleep 2
         get uri, nil, headers
 
         expect(json.dig("meta", "registrants", 0, "count")).to eq(1)
@@ -533,12 +533,12 @@ describe "/events", type: :request, elasticsearch: true do
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by") }
 
-    let(:uri) { "/events/#{event.uuid}" }
+    let(:uri) { "/events/#{event.uuid}?include=doi-for-source,doi-for-target" }
 
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     context "as admin user" do
@@ -551,8 +551,6 @@ describe "/events", type: :request, elasticsearch: true do
         expect(json.dig('data', 'attributes', 'targetDoi')).to eq(doi.doi.downcase)
         expect(json.dig('data', 'attributes', 'sourceRelationTypeId')).to eq("references")
         expect(json.dig('data', 'attributes', 'targetRelationTypeId')).to eq("citations")
-        expect(json.dig('data', 'relationships', 'doiForSource', 'data')).to eq("id"=>source_doi.doi.downcase, "type"=>"doi")
-        expect(json.dig('data', 'relationships', 'doiForTarget', 'data')).to eq("id"=>doi.doi.downcase, "type"=>"doi")
       end
     end
 
@@ -568,8 +566,6 @@ describe "/events", type: :request, elasticsearch: true do
         expect(json.dig('data', 'attributes', 'targetDoi')).to eq(doi.doi.downcase)
         expect(json.dig('data', 'attributes', 'sourceRelationTypeId')).to eq("references")
         expect(json.dig('data', 'attributes', 'targetRelationTypeId')).to eq("citations")
-        expect(json.dig('data', 'relationships', 'doiForSource', 'data')).to eq("id"=>source_doi.doi.downcase, "type"=>"doi")
-        expect(json.dig('data', 'relationships', 'doiForTarget', 'data')).to eq("id"=>doi.doi.downcase, "type"=>"doi")
       end
     end
 

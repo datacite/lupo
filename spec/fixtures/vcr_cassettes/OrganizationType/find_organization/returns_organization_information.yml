@@ -1,0 +1,55 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.ror.org/organizations/ror.org/013meh722
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Connection:
+      - keep-alive
+      Date:
+      - Sun, 05 Apr 2020 06:45:08 GMT
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      Allow:
+      - GET, HEAD, OPTIONS
+      X-Powered-By:
+      - Phusion Passenger 6.0.4
+      Server:
+      - nginx/1.17.3 + Phusion Passenger 6.0.4
+      Content-Encoding:
+      - gzip
+      Vary:
+      - Accept-Encoding,Cookie,Origin
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 4ecd74dda94d7576e134fcdf16df8129.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - DUS51-C1
+      X-Amz-Cf-Id:
+      - NB8Ecv_jVEswNkgn3SAzF1GAZZE8la1VwhlKPx1vOPye5BPERMsPUw==
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAAAAAAAAA3xUXU/jMBD8K5WfURp/233jOI5DSBwFIR5OqAqJWyzSpHKS61Wo//3WDrR2daIv9eyOZ3c2m7wjW6EZeu37TTebTl3rstatpjmma/MqCUFnqCnWBiiPjf1jXGf73aRdTi6K9Yuz1coAod9tTIdmv9FlNZRFb9sGPZ+h2jZvIeq1QXq73WZlsc6KMhvepp5R1LboxpsHucmxTKCUrm12a88B1PVFP8AZwj2woPTWvtmNqWyxGFz94QNqmSY7ZIIfj6ZH6UW7XMQO6uLF1L7I+3gEpTtnl7tu1dZg1biVK7ZND0zbtYJqyJc7tIeWynZoerdDs/fP4+I4r95UkxvbrKp2jQ7URdlWPn/1De3PkPnbG9cU9cJWnRe5fri99v8bZ5bGOQMPpxnq2g+r9oPKxx8mWCmuKUPPIPJjaKp7szy5h3iOcWBLytFB4ST6CSXnJIKKkRygP+OcMRylBNE6goyQ+CJjOpblWsRZIZiIYM5VnkKeQhlDkZMU0hjKPLkrcaxMdSLFOI0hlzrpSpKkLtdJk5LFbWBB0p41TpvUCSRplqSOGEuhSiBP/ApBEwtg3+/Cz8uH8y8XCONxaR4vzh++Il74JRuZN3f3t19RfQdSKhXYv9zqP7tIuJaKS3LcwyhCpKY0rB9WOSX+WVAiZbAvKQ7rhrEAurfMlJB+igQ+UsKnmFY4jJlAxzKQOSZCjrelzkUISaLCdS658HOmUMw/Ogk7Sj8w/ZALy0+oZNAFDzVz0AwxPb4ZREBE43HoT/B5qYq+OHU9p7Ba7Oj5gOc4V1pj4R3OCRPQZGh8jhVWmgTRq/vr76eCK/hiZRyGleWfqklsv9//AwAA//8DALZf1ADSBQAA
+    http_version: null
+  recorded_at: Sun, 05 Apr 2020 06:45:08 GMT
+recorded_with: VCR 5.1.0

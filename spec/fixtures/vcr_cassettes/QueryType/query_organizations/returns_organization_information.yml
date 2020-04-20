@@ -1,0 +1,107 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.ror.org/organizations?query=Cambridge%20University
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Connection:
+      - keep-alive
+      Date:
+      - Mon, 30 Mar 2020 05:37:36 GMT
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      Allow:
+      - GET, HEAD, OPTIONS
+      X-Powered-By:
+      - Phusion Passenger 6.0.4
+      Server:
+      - nginx/1.17.3 + Phusion Passenger 6.0.4
+      Content-Encoding:
+      - gzip
+      Vary:
+      - Accept-Encoding,Cookie,Origin
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 4ecd74dda94d7576e134fcdf16df8129.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - DUS51-C1
+      X-Amz-Cf-Id:
+      - rLrtwfAJwmcGP0Vi37fdRUpA66wBoH2myByG8XqydzLCTJ5pOmvA6w==
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        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
+    http_version: null
+  recorded_at: Mon, 30 Mar 2020 05:37:36 GMT
+- request:
+    method: get
+    uri: https://api.ror.org/organizations?query=Cambridge%20University
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Connection:
+      - keep-alive
+      Date:
+      - Mon, 30 Mar 2020 05:37:36 GMT
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      Allow:
+      - GET, HEAD, OPTIONS
+      X-Powered-By:
+      - Phusion Passenger 6.0.4
+      Server:
+      - nginx/1.17.3 + Phusion Passenger 6.0.4
+      Content-Encoding:
+      - gzip
+      Vary:
+      - Accept-Encoding,Cookie,Origin
+      X-Cache:
+      - Hit from cloudfront
+      Via:
+      - 1.1 bfd667b9fb826986b85315f856bf5885.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - DUS51-C1
+      X-Amz-Cf-Id:
+      - V8_lzfVGH0Il6FjLxMGEZdeYp219B3uZWovpfNK8Bz2PNgy_Xt6nvA==
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        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
+    http_version: null
+  recorded_at: Mon, 30 Mar 2020 05:37:36 GMT
+recorded_with: VCR 5.1.0

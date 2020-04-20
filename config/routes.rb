@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   get '/dois/application/vnd.datacite.datacite+json/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :datacite_json }
   get '/dois/application/vnd.crosscite.crosscite+json/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :crosscite }
   get '/dois/application/vnd.schemaorg.ld+json/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :schema_org }
+  get '/dois/application/ld+json/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :schema_org }
   get '/dois/application/vnd.codemeta.ld+json/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :codemeta }
   get '/dois/application/vnd.citationstyles.csl+json/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :citeproc }
   get '/dois/application/vnd.jats+xml/:id', :to => 'dois#show', constraints: { :id => /.+/ }, defaults: { format: :jats }
@@ -31,6 +32,7 @@ Rails.application.routes.draw do
   get '/dois/application/vnd.datacite.datacite+json', :to => 'dois#index', defaults: { format: :datacite_json }
   get '/dois/application/vnd.crosscite.crosscite+json', :to => 'dois#index', defaults: { format: :crosscite }
   get '/dois/application/vnd.schemaorg.ld+json', :to => 'dois#index', defaults: { format: :schema_org }
+  get '/dois/application/ld+json', :to => 'dois#index', defaults: { format: :schema_org }
   get '/dois/application/vnd.codemeta.ld+json', :to => 'dois#index', defaults: { format: :codemeta }
   get '/dois/application/vnd.citationstyles.csl+json', :to => 'dois#index', defaults: { format: :citeproc }
   get '/dois/application/vnd.jats+xml', :to => 'dois#index', defaults: { format: :jats }
@@ -53,11 +55,16 @@ Rails.application.routes.draw do
   get 'dois/random', :to => 'dois#random'
   get 'dois/:id/get-url', :to => 'dois#get_url', constraints: { :id => /.+/ }
   get 'dois/get-dois', :to => 'dois#get_dois'
+
   get 'providers/image/:id', :to => 'providers#image', constraints: { :id => /.+/ }
+
   get 'providers/totals', :to => 'providers#totals'
   get 'clients/totals', :to => 'clients#totals'
   get 'repositories/totals', :to => 'repositories#totals'
   get 'prefixes/totals', :to => 'prefixes#totals'
+  get '/providers/:id/stats', :to => 'providers#stats'
+  get '/clients/:id/stats', :to => 'clients#stats', constraints: { :id => /.+/ }
+  get '/repositories/:id/stats', :to => 'repositories#stats', constraints: { :id => /.+/ }
 
   # Reporting
   get 'export/organizations', :to => 'export#organizations',  defaults: { format: :csv }

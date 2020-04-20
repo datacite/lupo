@@ -10,7 +10,7 @@ describe "exports", type: :request do
   describe "GET /export/organizations", elasticsearch: true do
     before do
       Provider.import
-      sleep 1
+      sleep 2
     end
 
     it 'returns organizations', vcr: false do
@@ -43,7 +43,7 @@ describe "exports", type: :request do
     before do
       Doi.import
       Client.import
-      sleep 1
+      sleep 2
     end
 
     it 'returns repositories', vcr: false do
@@ -74,7 +74,7 @@ describe "exports", type: :request do
   describe "GET /export/contacts", elasticsearch: true do
     before do
       Provider.import
-      sleep 1
+      sleep 2
     end
 
     it 'returns all contacts', vcr: false do

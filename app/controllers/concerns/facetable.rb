@@ -25,6 +25,14 @@ module Facetable
   }
 
   included do
+    def facet_by_key_as_string(arr)
+      arr.map do |hsh|
+        { "id" => hsh["key_as_string"],
+          "title" => hsh["key_as_string"],
+          "count" => hsh["doc_count"] }
+      end
+    end
+
     def facet_by_year(arr)
       arr.map do |hsh|
         { "id" => hsh["key_as_string"][0..3],
@@ -109,19 +117,6 @@ module Facetable
       arr.map do |hsh|
         { "id" => hsh["key"].underscore.dasherize,
           "title" => hsh["key"],
-          "count" => hsh["doc_count"] }
-      end
-    end
-
-    def facet_by_affiliation(arr)
-      # generate hash with id and name for each provider in facet
-
-      ids = arr.map { |hsh| "\"#{hsh["key"]}\"" }.join(" ")
-      affiliations = Organization.query(ids, size: 1000)[:data] || []
-
-      arr.map do |hsh|
-        { "id" => hsh["key"],
-          "title" => affiliations.find { |a| a["id"] == hsh["key"] }.to_h["name"] || hsh["key"],
           "count" => hsh["doc_count"] }
       end
     end
@@ -401,20 +396,14 @@ module Facetable
       end
     end
 
+    def facet_by_combined_key(arr)
+      arr.map do |hsh|
+        id, title = hsh["key"].split(":", 2)
 
-    # def get_all_providers_aggs
-    #   page = { size: 25, number: 1}
-    #   response = Doi.query("", page: page)
-    #   after = response.response.aggregations.providers_x.after_key.doi ||=""
-    #   aggs  = response.response.aggregations.providers_x.buckets
-    #   loop do
-    #     resp = Doi.query("", {after_key: after })
-    #     aggs = aggs.concat resp.response.aggregations.providers_x.buckets
-    #     after = response.response.aggregations.providers_x.after_key.doi
-    #     break if after.nil?
-    #   end
-    #   aggs
-    # end
+        { "id" => id,
+          "title" => title,
+          "count" => hsh["doc_count"] }
+      end
+    end
   end
 end
-

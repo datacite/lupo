@@ -6,8 +6,8 @@ describe "dois", type: :request do
   let(:admin_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer} }
 
   let(:provider) { create(:provider, symbol: "DATACITE") }
-  let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
-  let!(:prefix) { create(:prefix, prefix: "10.14454") }
+  let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], re3data_id: "10.17616/r3xs37") }
+  let!(:prefix) { create(:prefix, uid: "10.14454") }
   let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
 
   let(:doi) { create(:doi, client: client) }
@@ -19,7 +19,7 @@ describe "dois", type: :request do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     it 'returns dois', vcr: true do
@@ -50,13 +50,131 @@ describe "dois", type: :request do
       end
     end
   end
+  
+  describe "GET /dois with query", elasticsearch: true do
+    let!(:doi) { create(:doi, client: client, aasm_state: "findable", creators:
+      [{
+        "familyName" => "Garza",
+        "givenName" => "Kristian J.",
+        "name" => "Garza, Kristian J.",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameType" => "Personal",
+        "affiliation": [
+          {
+            "name": "Freie Universität Berlin",
+            "affiliationIdentifier": "https://ror.org/046ak2485",
+            "affiliationIdentifierScheme": "ROR"
+          },
+        ]
+      }], funding_references:
+      [{
+        "funderIdentifier" => "https://doi.org/10.13039/501100009053",
+        "funderIdentifierType" => "Crossref Funder ID",
+        "funderName" => "The Wellcome Trust DBT India Alliance"
+      }])
+    }
+    let!(:dois) { create_list(:doi, 3, aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    it 'returns dois with short orcid id', vcr: true do
+      get "/dois?user-id=0000-0003-3484-6875", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with orcid id', vcr: true do
+      get "/dois?user-id=orcid.org/0000-0003-3484-6875", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with orcid id as url', vcr: true do
+      get "/dois?user-id=https://orcid.org/0000-0003-3484-6875", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with crossref funder id', vcr: true do
+      get "/dois?funder-id=10.13039/501100009053", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'fundingReferences')).to eq([{"funderIdentifier"=>"https://doi.org/10.13039/501100009053", "funderIdentifierType"=>"Crossref Funder ID", "funderName"=>"The Wellcome Trust DBT India Alliance"}])
+    end
+
+    it 'returns dois with crossref funder id as url', vcr: true do
+      get "/dois?funder-id=https://doi.org/10.13039/501100009053", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'fundingReferences')).to eq([{"funderIdentifier"=>"https://doi.org/10.13039/501100009053", "funderIdentifierType"=>"Crossref Funder ID", "funderName"=>"The Wellcome Trust DBT India Alliance"}])
+    end
+
+    it 'returns dois with short ror id', vcr: true do
+      get "/dois?affiliation-id=046ak2485&affiliation=true", nil, headers
+      
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with ror id', vcr: true do
+      get "/dois?affiliation-id=ror.org/046ak2485&affiliation=true", nil, headers
+      
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with ror id as url', vcr: true do
+      get "/dois?affiliation-id=https://ror.org/046ak2485&affiliation=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with re3data id', vcr: true do
+      get "/dois?re3data-id=10.17616/R3XS37&include=client", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('included', 0, 'attributes', "re3data")).to eq("https://doi.org/10.17616/r3xs37")
+    end
+
+    it 'returns dois with re3data id as url', vcr: true do
+      get "/dois?re3data-id=https://doi.org/10.17616/R3XS37&include=client", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('included', 0, 'attributes', "re3data")).to eq("https://doi.org/10.17616/r3xs37")
+    end
+
+    it 'returns dois with full name', vcr: true do
+      get "/dois?query=Kristian%20Garza&affiliation=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+  end
 
   describe 'GET /dois/:id', elasticsearch: true do
     let!(:doi) { create(:doi, client: client) }
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     context 'when the record exists' do
@@ -68,7 +186,7 @@ describe "dois", type: :request do
 
         expect(result.dig('attributes', 'doi')).to eq(doi.doi.downcase)
         expect(result.dig('attributes', 'titles')).to eq(doi.titles)
-        expect(result.dig('relationships','citationEvents')).to eq("data"=>[])
+        # expect(result.dig('relationships','citations', 'data')).to be_empty
       end
     end
 
@@ -121,6 +239,84 @@ describe "dois", type: :request do
     end
   end
 
+  describe 'GET /dois for dissertations', elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, client: client, aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 3
+    end
+
+    it 'filter for dissertations' do
+      get "/dois?resource-type=Dissertation", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(3)
+      expect(json.dig('meta', 'total')).to eq(3)
+      expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Dissertation", "resourceTypeGeneral"=>"Text")
+    end
+  end
+
+  describe 'GET /dois for instruments', elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Other", "resourceType" => "Instrument" }, client: client, aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 3
+    end
+
+    it 'filter for instruments' do
+      get "/dois?resource-type=Instrument", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(3)
+      expect(json.dig('meta', 'total')).to eq(3)
+      expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Instrument", "resourceTypeGeneral"=>"Other")
+    end
+  end
+
+  describe 'GET /dois for interactive resources', elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "InteractiveResource", "resourceType" => "Presentation" }, client: client, aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 3
+    end
+
+    it 'filter for interactive resources' do
+      get "/dois?resource-type-id=interactive-resource", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(3)
+      expect(json.dig('meta', 'total')).to eq(3)
+      expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Presentation", "resourceTypeGeneral"=>"InteractiveResource")
+      expect(json.dig('meta', 'resourceTypes')).to eq([{"count"=>3, "id"=>"interactive-resource", "title"=>"Interactive Resource"}])
+    end
+  end
+
+  describe 'GET /dois for fake resources', elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Fake", "resourceType" => "Presentation" }, client: client) }
+
+    before do
+      Doi.import
+      sleep 3
+    end
+
+    it 'filter for fake resources' do
+      get "/dois?resource-type-id=fake", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(3)
+      expect(json.dig('meta', 'total')).to eq(3)
+      expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Presentation", "resourceTypeGeneral"=>"Fake")
+      expect(json.dig('meta', 'resourceTypes')).to eq([])
+    end
+  end
+  
   describe 'GET /dois with views and downloads', elasticsearch: true, vcr: true do
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:views) { create_list(:event_for_datacite_investigations, 2, obj_id: doi.doi) }
@@ -129,7 +325,7 @@ describe "dois", type: :request do
     before do
       Event.import
       Doi.import
-      sleep 1
+      sleep 3
     end
 
     # TODO aggregations in meta should not be by publication year
@@ -156,7 +352,7 @@ describe "dois", type: :request do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     it "has views" do
@@ -176,14 +372,6 @@ describe "dois", type: :request do
       expect(last_response.status).to eq(200)
       expect(json.dig('meta', 'views')).to eq([{"count"=>75, "id"=>"2011", "title"=>"2011"}])
     end
-
-    it "repository shows summary count" do
-      get "/repositories/#{client.uid}", nil, headers
-
-      expect(last_response.status).to eq(200)
-      expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
-      expect(json.dig('meta', 'views')).to eq([{"count"=>75, "id"=>"2011", "title"=>"2011"}])
-    end
   end
 
   describe "downloads", elasticsearch: true, vcr: true do
@@ -193,7 +381,7 @@ describe "dois", type: :request do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     it "has downloads" do
@@ -213,14 +401,6 @@ describe "dois", type: :request do
       expect(last_response.status).to eq(200)
       expect(json.dig('meta', 'downloads')).to eq([{"count"=>30, "id"=>"2011", "title"=>"2011"}])
     end
-
-    it "repository shows summary count" do
-      get "/repositories/#{client.uid}", nil, headers
-
-      expect(last_response.status).to eq(200)
-      expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
-      expect(json.dig('meta', 'downloads')).to eq([{"count"=>30, "id"=>"2011", "title"=>"2011"}])
-    end
   end
 
   describe "references", elasticsearch: true, vcr: true do
@@ -231,20 +411,20 @@ describe "dois", type: :request do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     it "has references" do
-      get "/dois/#{doi.doi}?include=reference-events", nil, headers
+      get "/dois/#{doi.doi}?include=references", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
       expect(json.dig('data', 'attributes', 'referenceCount')).to eq(1)
-      expect(json.dig('data', 'relationships', 'referenceEvents', 'data')).to eq([{"id" => reference_event.uuid, "type" => "events"}])
+      expect(json.dig('data', 'relationships', 'references', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
       expect(json.dig('included').length).to eq(1)
-      expect(json.dig('included', 0, 'attributes', 'relationTypeId')).to eq("references")
+      expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
     end
   end
 
@@ -256,11 +436,11 @@ describe "dois", type: :request do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     it "has citations" do
-      get "/dois/#{doi.doi}?include=citation-events,client", nil, headers
+      get "/dois/#{doi.doi}?include=citations", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
@@ -268,23 +448,15 @@ describe "dois", type: :request do
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
       expect(json.dig('data', 'attributes', 'citationCount')).to eq(1)
       expect(json.dig('data', 'attributes', 'citationsOverTime')).to eq([{"total"=>1, "year"=>"2020"}])
-      expect(json.dig('data', 'relationships', 'citationEvents', 'data')).to eq([{"id" => citation_event.uuid, "type"=>"events"}])
-      expect(json.dig('included').length).to eq(2)
-      expect(json.dig('included', 0, 'attributes', 'relationTypeId')).to eq("is-referenced-by")
+      expect(json.dig('data', 'relationships', 'citations', 'data')).to eq([{"id"=>source_doi.doi.downcase, "type"=>"dois"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'doi')).to eq(source_doi.doi.downcase)
     end
 
     it "has citations meta" do
       get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
-    end
-
-    it "repository shows summary count" do
-      get "/repositories/#{client.uid}", nil, headers
-
-      expect(last_response.status).to eq(200)
-      expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
       expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
     end
   end
@@ -297,20 +469,20 @@ describe "dois", type: :request do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     it "has parts" do
-      get "/dois/#{doi.doi}", nil, headers
+      get "/dois/#{doi.doi}?include=parts", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-      # expect(json.dig('data', 'attributes', 'partCount')).to eq(1)
-      # expect(json.dig('data', 'relationships', 'parts', 'data')).to eq(1)
-      # expect(json.dig('included').length).to eq(2)
-      # expect(json.dig('included', 1, 'attributes', 'doi')).to eq(target_doi.doi)
+      expect(json.dig('data', 'attributes', 'partCount')).to eq(1)
+      expect(json.dig('data', 'relationships', 'parts', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
     end
   end
 
@@ -322,21 +494,20 @@ describe "dois", type: :request do
     before do
       Doi.import
       Event.import
-      sleep 1
+      sleep 2
     end
 
     it "has versions" do
-      get "/dois/#{doi.doi}", nil, headers
+      get "/dois/#{doi.doi}?include=versions", nil, headers
 
-      puts last_response.body
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-      # expect(json.dig('data', 'attributes', 'versionCount')).to eq(1)
-      # expect(json.dig('data', 'relationships', 'versions', 'data')).to eq(1)
-      # expect(json.dig('included').length).to eq(2)
-      # expect(json.dig('included', 1, 'attributes', 'doi')).to eq(target_doi.doi)
+      expect(json.dig('data', 'attributes', 'versionCount')).to eq(1)
+      expect(json.dig('data', 'relationships', 'versions', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
     end
   end
 
@@ -351,7 +522,7 @@ describe "dois", type: :request do
 
       before do
         Doi.import
-        sleep 1
+        sleep 2
       end
 
       it 'fetches the record' do
@@ -858,7 +1029,7 @@ describe "dois", type: :request do
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'dates')).to eq("date"=>":tba", "dateType"=>"Issued")
+        expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>":tba", "dateType"=>"Issued"}])
       end
 
       it 'sets state to findable' do
@@ -1260,8 +1431,7 @@ describe "dois", type: :request do
           "nameIdentifiers"=>
             [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405",
               "nameIdentifierScheme"=>"ORCID",
-              "schemeUri"=>"https://orcid.org"}],
-          "nameType"=>"Personal"}])
+              "schemeUri"=>"https://orcid.org"}]}])
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
         expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
@@ -1296,6 +1466,30 @@ describe "dois", type: :request do
       end
     end
 
+    context 'when providing version' do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              # "xml" => xml,
+              "source" => "test",
+              "version" => 45
+            }
+          }
+        }
+      end
+
+      it 'create a draft Doi with version' do
+        post '/dois', valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig('data', 'attributes', 'version')).to eq("45")
+      end
+    end
+
     context 'when the request is valid random doi' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
@@ -1326,8 +1520,7 @@ describe "dois", type: :request do
           "nameIdentifiers"=>
             [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405",
               "nameIdentifierScheme"=>"ORCID",
-              "schemeUri"=>"https://orcid.org"}],
-          "nameType"=>"Personal"}])
+              "schemeUri"=>"https://orcid.org"}]}])
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
         expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
@@ -1624,39 +1817,39 @@ describe "dois", type: :request do
       end
     end
 
-    context 'crossref url not found', vcr: true do
-      let(:provider) { create(:provider, name: "Crossref", symbol: "CROSSREF", role_name: "ROLE_REGISTRATION_AGENCY") }
-      let(:client) { create(:client, provider: provider, name: "Crossref Citations", symbol: "CROSSREF.CITATIONS") }
+    # context 'crossref url not found', vcr: true do
+    #   let(:provider) { create(:provider, name: "Crossref", symbol: "CROSSREF", role_name: "ROLE_REGISTRATION_AGENCY") }
+    #   let(:client) { create(:client, provider: provider, name: "Crossref Citations", symbol: "CROSSREF.CITATIONS") }
 
-      let(:xml) { Base64.strict_encode64("https://doi.org/10.3389/fmicb.2019.01425") }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "xml" => xml,
-              "source" => "test",
-              "event" => "publish"
-            },
-            "relationships" => {
-              "client" =>  {
-                "data" => {
-                  "type" => "clients",
-                  "id" => client.symbol.downcase
-                }
-              }
-            }
-          }
-        }
-      end
+    #   let(:xml) { Base64.strict_encode64("https://doi.org/10.3389/fmicb.2019.01425") }
+    #   let(:valid_attributes) do
+    #     {
+    #       "data" => {
+    #         "type" => "dois",
+    #         "attributes" => {
+    #           "xml" => xml,
+    #           "source" => "test",
+    #           "event" => "publish"
+    #         },
+    #         "relationships" => {
+    #           "client" =>  {
+    #             "data" => {
+    #               "type" => "clients",
+    #               "id" => client.symbol.downcase
+    #             }
+    #           }
+    #         }
+    #       }
+    #     }
+    #   end
 
-      it 'not found on updating the record' do
-        patch "/dois/10.3389/fmicb.2019.01425", valid_attributes, headers
+    #   it 'not found on updating the record' do
+    #     patch "/dois/10.3389/fmicb.2019.01425", valid_attributes, headers
 
-        expect(last_response.status).to eq(404)
-        expect(json['errors']).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
-      end
-    end
+    #     expect(last_response.status).to eq(404)
+    #     expect(json['errors']).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
+    #   end
+    # end
 
     context 'medra url', vcr: true do
       let(:provider) { create(:provider, name: "mEDRA", symbol: "MEDRA", role_name: "ROLE_REGISTRATION_AGENCY") }
@@ -2210,12 +2403,12 @@ describe "dois", type: :request do
         post '/dois', valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json.dig('errors')).to eq([{"source"=>"metadata", "title"=>"Is invalid"}])
+        expect(json.dig('errors')).to eq([{"source"=>"metadata", "title"=>"Is invalid"}, {"source"=>"metadata", "title"=>"Is invalid"}])
       end
     end
 
     context 'draft doi no url' do
-      let(:prefix) { create(:prefix, prefix: "10.14454") }
+      let(:prefix) { create(:prefix, uid: "10.14454") }
       let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
 
       let(:valid_attributes) do
@@ -2515,7 +2708,7 @@ describe "dois", type: :request do
           expect(last_response.status).to eq(200)
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Analysis Tools for Crossover Experiment of UI using Choice Architecture"}])
-          expect(json.dig('data', 'attributes', 'dates')).to eq("date"=>"2016-03-27", "dateType"=>"Issued")
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-03-27", "dateType"=>"Issued"}])
         end
       end
 
@@ -2864,7 +3057,7 @@ describe "dois", type: :request do
 
       before do
         Doi.import
-        sleep 1
+        sleep 2
       end
 
       it 'updates the Doi' do
@@ -3108,7 +3301,7 @@ describe "dois", type: :request do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     context 'anonymous get' do
@@ -3162,7 +3355,7 @@ describe "dois", type: :request do
 
   describe 'GET /dois/random?prefix' do
     it 'returns random doi with prefix' do
-      get "/dois/random?prefix=#{prefix.prefix}", nil, headers
+      get "/dois/random?prefix=#{prefix.uid}", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json['dois'].first).to start_with("10.14454")
@@ -3186,7 +3379,7 @@ describe "dois", type: :request do
 
       before do
         Doi.import
-        sleep 1
+        sleep 2
       end
 
       it 'returns url' do
@@ -3202,7 +3395,7 @@ describe "dois", type: :request do
 
       before do
         Doi.import
-        sleep 1
+        sleep 2
       end
 
       it 'returns url' do
@@ -3218,7 +3411,7 @@ describe "dois", type: :request do
 
       before do
         Doi.import
-        sleep 1
+        sleep 2
       end
 
       it 'returns not found' do
@@ -3234,7 +3427,7 @@ describe "dois", type: :request do
 
       before do
         Doi.import
-        sleep 1
+        sleep 2
       end
 
       it 'returns not found' do
@@ -3258,7 +3451,7 @@ describe "dois", type: :request do
   end
 
   describe 'GET /dois/get-dois', vcr: true do
-    let(:prefix) { create(:prefix, prefix: "10.5438") }
+    let(:prefix) { create(:prefix, uid: "10.5438") }
     let!(:client_prefix) { create(:client_prefix, prefix: prefix, client: client) }
 
     it 'returns all dois' do
@@ -3287,7 +3480,7 @@ describe "dois", type: :request do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     context "no permission" do
@@ -3444,6 +3637,24 @@ describe "dois", type: :request do
     context "application/vnd.schemaorg.ld+json link" do
       it 'returns the Doi' do
         get "/dois/application/vnd.schemaorg.ld+json/#{doi.doi}"
+
+        expect(last_response.status).to eq(200)
+        expect(json["@type"]).to eq("Dataset")
+      end
+    end
+
+    context "application/ld+json" do
+      it 'returns the Doi' do
+        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/ld+json", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+
+        expect(last_response.status).to eq(200)
+        expect(json["@type"]).to eq("Dataset")
+      end
+    end
+
+    context "application/ld+json link" do
+      it 'returns the Doi' do
+        get "/dois/application/ld+json/#{doi.doi}"
 
         expect(last_response.status).to eq(200)
         expect(json["@type"]).to eq("Dataset")

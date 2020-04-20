@@ -46,10 +46,10 @@ module Cacheable
     def cached_prefix_response(prefix, options={})
       if Rails.application.config.action_controller.perform_caching
         Rails.cache.fetch("prefix_response/#{prefix}", expires_in: 24.hours) do
-          Prefix.where(prefix: prefix).first
+          Prefix.where(uid: prefix).first
         end
       else
-        Prefix.where(prefix: prefix).first
+        Prefix.where(uid: prefix).first
       end
     end
 

@@ -6,13 +6,20 @@ class Person
     orcid = orcid_from_url(id)
     return {} unless orcid.present?
 
-    url = "https://api.datacite.org/users/#{orcid}"
-    response = Maremma.get(url, host: true)
-
-    return {} if response.status != 200 || response.body.dig("data", "id") != orcid
+    url = "https://pub.orcid.org/v3.0/#{orcid}/person"
+    response = Maremma.get(url, accept: "json")
+    return {} if response.status != 200 #|| response.body.dig("data", "orcid-identifier", "path") != orcid
     
-    message = response.body.dig("data", "attributes")
-    data = [parse_message(id: id, message: message)]
+    message = response.body.dig("data")
+    message = {
+      "orcid-id" => message.dig("name", "path"),
+      "given-names" => message.dig("name", "given-names", "value"),
+      "family-names" => message.dig("name", "family-name", "value"),
+      "other-name" => message.dig("name", "other-names", "other-name"),
+      "credit-name" => message.dig("name", "credit-name", "value"),
+    }
+    
+    data = [parse_message(message: message)]
 
     errors = response.body.fetch("errors", nil)
 
@@ -20,37 +27,52 @@ class Person
   end
 
   def self.query(query, options={})
-    limit ||= 25
-    page ||= 1
+    options[:rows] ||= 25
+    options[:start] ||= 1
 
     params = {
-      query: query,
-      subject: options[:subject],
-      "page[size]" => limit,
-      "page[number]" => page }.compact
+      q: query,
+      "rows" => options[:rows],
+      "start" => options[:start] }.compact
 
-    url = "https://api.datacite.org/users?" + URI.encode_www_form(params)
+    url = "https://pub.orcid.org/v3.0/expanded-search/?" + URI.encode_www_form(params)
 
-    response = Maremma.get(url, host: true)
+    response = Maremma.get(url, accept: "json")
 
     return [] if response.status != 200
     
-    data = Array.wrap(response.body.fetch("data", nil)).map do |message|
-      parse_message(id: orcid_as_url(message["id"]), message: message["attributes"])
+    data = Array.wrap(response.body.dig("data", "expanded-result")).map do |message|
+      parse_message(message: message)
     end
-    meta = { "total" => response.body.dig("meta", "total") }
+    meta = { "total" => response.body.dig("data", "num-found").to_i }
     errors = response.body.fetch("errors", nil)
 
     { data: data, meta: meta, errors: errors }
   end
 
-  def self.parse_message(id: nil, message: nil)
+  def self.parse_message(message: nil)
+    orcid = message.fetch("orcid-id", nil)
+    given_name = message.fetch("given-names", nil)
+    family_name = message.fetch("family-names", nil)
+    other_names = Array.wrap(message.fetch("other-name", nil))
+    if message.fetch("credit-name", nil).present?
+      name = message.fetch("credit-name")
+    elsif given_name.present? || family_name.present?
+      name = [given_name, family_name].join(" ")
+    else
+      name = orcid
+    end
+    affiliation = Array.wrap(message.fetch("institution-name", nil)).map { |a| { name: a } }.compact
+
     Hashie::Mash.new({
-      id: id,
-      orcid: message["orcid"],
-      name: message["name"],
-      given_names: message["givenNames"],
-      family_name: message["familyName"] })
+      id: orcid_as_url(orcid),
+      type: "Person",
+      orcid: orcid,
+      given_name: given_name,
+      family_name: family_name,
+      other_names: other_names,
+      name: name,
+      affiliation: affiliation }.compact)
   end
 
   def self.orcid_as_url(orcid)

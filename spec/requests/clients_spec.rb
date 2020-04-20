@@ -93,6 +93,26 @@ describe 'Clients', type: :request, elasticsearch: true do
     end
   end
 
+  describe 'GET /clients/totals' do
+    let(:client)  { create(:client) }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+
+    before do
+      Client.import
+      Doi.import
+      sleep 3
+    end
+
+    it "returns clients" do
+      get "/clients/totals", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.first.dig('count')).to eq(3)
+      expect(json.first.dig('states')).to eq([{"count"=>3, "id"=>"findable", "title"=>"Findable"}])
+      expect(json.first.dig('temporal')).not_to be_nil
+    end
+  end
+
   describe 'POST /clients' do
     context 'when the request is valid' do    
       it 'creates a client' do
@@ -108,7 +128,7 @@ describe 'Clients', type: :request, elasticsearch: true do
         expect(relationships.dig("provider", "data", "id")).to eq(provider.symbol.downcase)
 
         Client.import
-        sleep 1
+        sleep 2
         
         get '/clients', nil, headers
 
@@ -282,7 +302,7 @@ describe 'Clients', type: :request, elasticsearch: true do
 
     before do
       Doi.import
-      sleep 1
+      sleep 2
     end
 
     it 'returns status code 200' do

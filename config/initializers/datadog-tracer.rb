@@ -6,4 +6,5 @@ Datadog.configure do |c|
   c.use :elasticsearch
   c.use :active_record, analytics_enabled: false
   c.use :graphql, schemas: [LupoSchema]
+  c.analytics_enabled = true
 end

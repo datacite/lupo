@@ -96,8 +96,18 @@ module Lupo
     config.lograge.base_controller_class = "ActionController::API"
 
     config.lograge.custom_options = lambda do |event|
+      # Retrieves trace information for current thread
+      correlation = Datadog.tracer.active_correlation
+
       exceptions = %w(controller action format id)
+      
       {
+        # Adds IDs as tags to log output
+        dd: {
+          trace_id: correlation.trace_id,
+          span_id: correlation.span_id
+        },
+        ddsource: ["ruby"],
         params: event.payload[:params].except(*exceptions),
         uid: event.payload[:uid],
       }
@@ -107,7 +117,7 @@ module Lupo
     config.cache_store = :dalli_store, nil, { :namespace => ENV['APPLICATION'] }
 
     # raise error with unpermitted parameters
-    config.action_controller.action_on_unpermitted_parameters = :raise
+    config.action_controller.action_on_unpermitted_parameters = :log
 
     config.action_view.sanitized_allowed_tags = %w(strong em b i code pre sub sup br)
     config.action_view.sanitized_allowed_attributes = []

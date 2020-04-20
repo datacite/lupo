@@ -57,9 +57,9 @@ FactoryBot.define do
   end
 
   factory :client_prefix do
-    prefix
-    provider_prefix
-    client
+    association :prefix, factory: :prefix, strategy: :create
+    association :provider_prefix, factory: :provider_prefix, strategy: :create
+    association :client, factory: :client, strategy: :create
   end
 
   factory :doi do
@@ -201,47 +201,43 @@ FactoryBot.define do
       ]
     end
     version { "1" }
-    rights_list do
-      [
-        {
-          "rightsUri": "http://creativecommons.org/publicdomain/zero/1.0",
-        },
-      ]
-    end
-    related_identifiers do
-      [
-        {
-          "relatedIdentifier": "10.5061/dryad.8515/1",
-          "relatedIdentifierType": "DOI",
-          "relationType": "HasPart",
-        },
-        {
-          "relatedIdentifier": "10.5061/dryad.8515/2",
-          "relatedIdentifierType": "DOI",
-          "relationType": "HasPart",
-        },
-        {
-          "relatedIdentifier": "10.1371/journal.ppat.1000446",
-          "relatedIdentifierType": "DOI",
-          "relationType": "IsReferencedBy",
-        },
-        {
-          "relatedIdentifier": "10.1371/journal.ppat.1000446",
-          "relatedIdentifierType": "DOI",
-          "relationType": "IsSupplementTo",
-        },
-        {
-          "relatedIdentifier": "19478877",
-          "relatedIdentifierType": "PMID",
-          "relationType": "IsReferencedBy",
-        },
-        {
-          "relatedIdentifier": "19478877",
-          "relatedIdentifierType": "PMID",
-          "relationType": "IsSupplementTo",
-        },
-      ]
-    end
+    rights_list {[
+      {
+        "rightsUri": "http://creativecommons.org/publicdomain/zero/1.0"
+      }
+    ]}
+    related_identifiers {[
+      {
+        "relatedIdentifier": "10.5061/dryad.8515/1",
+        "relatedIdentifierType": "DOI",
+        "relationType": "HasPart",
+      },
+      {
+        "relatedIdentifier": "10.5061/dryad.8515/2",
+        "relatedIdentifierType": "DOI",
+        "relationType": "HasPart",
+      },
+      {
+        "relatedIdentifier": "10.1371/journal.ppat.1000446",
+        "relatedIdentifierType": "DOI",
+        "relationType": "IsReferencedBy",
+      },
+      {
+        "relatedIdentifier": "10.1371/journal.ppat.1000446",
+        "relatedIdentifierType": "DOI",
+        "relationType": "IsSupplementTo",
+      },
+      {
+        "relatedIdentifier": "19478877",
+        "relatedIdentifierType": "PMID",
+        "relationType": "IsReferencedBy",
+      },
+      {
+        "relatedIdentifier": "19478877",
+        "relatedIdentifierType": "PMID",
+        "relationType": "IsSupplementTo",
+      }
+    ]}
     schema_version { "http://datacite.org/schema/kernel-4" }
     source { "test" }
     regenerate { true }
@@ -264,12 +260,13 @@ FactoryBot.define do
   end
 
   factory :prefix do
-    sequence(:prefix) { |n| "10.508#{n}" }
+    sequence(:uid) { |n| "10.508#{n}" }
   end
 
   factory :provider do
     system_email { "josiah@example.org" }
-    sequence(:symbol, "A") { |n| "TEST#{n}" }
+    sequence(:symbol, 'A') { |n| "TEST#{n}" }
+    role_name { "ROLE_ALLOCATOR" }
     globus_uuid { "53d8d984-450d-4b1d-970b-67faff28db1c" }
     name { "My provider" }
     display_name { "My provider" }
@@ -398,6 +395,24 @@ FactoryBot.define do
       subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
       obj_id { "http://doi.org/10.5061/DRYAD.47SD5" }
       relation_type_id { "is-part-of" }
+    end
+
+    factory :event_for_datacite_versions do
+      source_id { "datacite_related" }
+      source_token { "datacite_related_123" }
+      subj_id { "http://doi.org/10.5061/DRYAD.47SD5" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      sequence(:obj_id) { |n| "http://doi.org/10.5061/DRYAD.47SD5/#{n}" }
+      relation_type_id { "has-version" }
+    end
+
+    factory :event_for_datacite_version_of do
+      source_id { "datacite_related" }
+      source_token { "datacite_related_123" }
+      subj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      obj_id { "http://doi.org/10.5061/DRYAD.47SD5" }
+      relation_type_id { "is-version-of" }
     end
 
     factory :event_for_datacite_crossref do

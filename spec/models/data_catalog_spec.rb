@@ -26,7 +26,7 @@ describe DataCatalog, type: :model, vcr: true do
     it "all" do
       query = nil
       data_catalogs = DataCatalog.query(query)
-      expect(data_catalogs.dig(:meta, "total")).to eq(1612)
+      expect(data_catalogs.dig(:meta, "total")).to eq(1675)
       expect(data_catalogs[:data].size).to eq(25)
       data_catalog = data_catalogs[:data].first
       expect(data_catalog.id).to eq("https://doi.org/10.17616/r3w05r")
@@ -39,7 +39,7 @@ describe DataCatalog, type: :model, vcr: true do
     it "found" do
       query = "climate"
       data_catalogs = DataCatalog.query(query)
-      expect(data_catalogs.dig(:meta, "total")).to eq(169)
+      expect(data_catalogs.dig(:meta, "total")).to eq(174)
       expect(data_catalogs[:data].size).to eq(25)
       data_catalog = data_catalogs[:data].first
       expect(data_catalog.id).to eq("https://doi.org/10.17616/r3qd26")
@@ -51,7 +51,7 @@ describe DataCatalog, type: :model, vcr: true do
 
     it "pid" do
       data_catalogs = DataCatalog.query(nil, pid: true)
-      expect(data_catalogs.dig(:meta, "total")).to eq(677)
+      expect(data_catalogs.dig(:meta, "total")).to eq(728)
       expect(data_catalogs[:data].size).to eq(25)
       data_catalog = data_catalogs[:data].first
       expect(data_catalog.id).to eq("https://doi.org/10.17616/r3vg6n")
@@ -63,7 +63,7 @@ describe DataCatalog, type: :model, vcr: true do
 
     it "certified" do
       data_catalogs = DataCatalog.query(nil, certified: true)
-      expect(data_catalogs.dig(:meta, "total")).to eq(163)
+      expect(data_catalogs.dig(:meta, "total")).to eq(162)
       expect(data_catalogs[:data].size).to eq(25)
       data_catalog = data_catalogs[:data].first
       expect(data_catalog.id).to eq("https://doi.org/10.17616/r3vg6n")
@@ -75,7 +75,7 @@ describe DataCatalog, type: :model, vcr: true do
 
     it "open" do
       data_catalogs = DataCatalog.query(nil, open: true)
-      expect(data_catalogs.dig(:meta, "total")).to eq(1420)
+      expect(data_catalogs.dig(:meta, "total")).to eq(1474)
       expect(data_catalogs[:data].size).to eq(25)
       data_catalog = data_catalogs[:data].first
       expect(data_catalog.id).to eq("https://doi.org/10.17616/r3w05r")

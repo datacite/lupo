@@ -8,42 +8,43 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.2.6; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
       code: 200
       message: ''
     headers:
       Date:
-      - Sat, 06 Jul 2019 15:17:18 GMT
+      - Sat, 28 Mar 2020 05:05:06 GMT
       Content-Type:
       - application/json;charset=UTF-8
-      Content-Length:
-      - '51'
       Connection:
       - keep-alive
       Set-Cookie:
-      - __cfduid=da534236fb22acb7735a579278d2a2a381562426238; expires=Sun, 05-Jul-20
-        15:17:18 GMT; path=/; domain=.doi.org; HttpOnly
+      - __cfduid=d003fe082bb9c899375f89bb10ad17f481585371906; expires=Mon, 27-Apr-20
+        05:05:06 GMT; path=/; domain=.doi.org; HttpOnly; SameSite=Lax; Secure
+      Content-Encoding:
+      - gzip
+      Cf-Cache-Status:
+      - DYNAMIC
       Expect-Ct:
       - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
       Server:
       - cloudflare
       Cf-Ray:
-      - 4f228b74beabd72d-FRA
+      - 57aed070dd3ffadc-DUS
     body:
       encoding: ASCII-8BIT
-      string: |-
-        [
-          {
-            "DOI": "10.5012",
-            "RA": "KISTI"
-          }
-        ]
-    http_version: 
-  recorded_at: Sat, 06 Jul 2019 15:17:18 GMT
+      string: !binary |-
+        H4sIAAAAAAAAA4vmUlCoBmIFBSUXf08lKwUlQwM9UwNDIyUdiGiQI0jQ2zM4xFMJKFLLFQsAjMx0pDMAAAA=
+    http_version: null
+  recorded_at: Sat, 28 Mar 2020 05:05:06 GMT
 - request:
     method: get
     uri: https://api.crossref.org/works/10.5012/bkcs.2013.34.10.2889/transform/application/vnd.crossref.unixsd+xml
@@ -52,9 +53,11 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.2.6; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
       Accept:
       - text/xml
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
       code: 200
@@ -72,7 +75,7 @@ http_interactions:
       Server:
       - http-kit
       Date:
-      - Sat, 06 Jul 2019 15:17:18 GMT
+      - Sat, 28 Mar 2020 05:05:07 GMT
       X-Rate-Limit-Limit:
       - '50'
       X-Rate-Limit-Interval:
@@ -142,6 +145,6 @@ http_interactions:
         \                   </item>\r\n                  </collection>\r\n                </doi_data>\r\n
         \             </journal_article>\r\n            </journal>\r\n          </crossref>\r\n
         \       </doi_record>\r\n      </query>\r\n    </body>\r\n  </query_result>\r\n</crossref_result>"
-    http_version: 
-  recorded_at: Sat, 06 Jul 2019 15:17:18 GMT
-recorded_with: VCR 3.0.3
+    http_version: null
+  recorded_at: Sat, 28 Mar 2020 05:05:07 GMT
+recorded_with: VCR 5.1.0

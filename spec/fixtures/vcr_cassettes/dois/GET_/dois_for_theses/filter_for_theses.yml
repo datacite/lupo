@@ -1,0 +1,55 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.ror.org/organizations?query=%22https://ror.org/04wxnsj81%22
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '603'
+      Connection:
+      - keep-alive
+      Date:
+      - Tue, 07 Apr 2020 18:44:27 GMT
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      Allow:
+      - GET, HEAD, OPTIONS
+      X-Powered-By:
+      - Phusion Passenger 6.0.4
+      Server:
+      - nginx/1.17.3 + Phusion Passenger 6.0.4
+      Vary:
+      - Cookie,Origin
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 91528fdf97ef415d04fa66a0fbb562d7.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - DUS51-C1
+      X-Amz-Cf-Id:
+      - siInYmxiRU8T-PFvyQr-hGb_KSoxjpVG_51vO8GU611WcWlYi8oYbQ==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"number_of_results":1,"time_taken":16,"items":[{"id":"https://ror.org/04wxnsj81","name":"DataCite","types":["Nonprofit"],"links":["https://www.datacite.org"],"aliases":[],"acronyms":[],"status":"active","wikipedia_url":"https://en.wikipedia.org/wiki/DataCite","labels":[],"country":{"country_name":"Germany","country_code":"DE"},"external_ids":{"Wikidata":{"preferred":"Q821542","all":["Q821542"]},"GRID":{"preferred":"grid.475826.a","all":"grid.475826.a"}}}],"meta":{"types":[{"id":"nonprofit","title":"Nonprofit","count":1}],"countries":[{"id":"de","title":"Federal
+        Republic of Germany","count":1}]}}'
+    http_version: null
+  recorded_at: Tue, 07 Apr 2020 18:44:27 GMT
+recorded_with: VCR 5.1.0

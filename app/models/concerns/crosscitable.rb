@@ -51,7 +51,7 @@ module Crosscitable
     rescue NoMethodError, ArgumentError => e
       Raven.capture_exception(e)
 
-      Rails.logger.error "Error " + e.message + " for doi " + @doi + "." if e.message.present?
+      Rails.logger.error "Error " + e.message.to_s + " for doi " + @doi.to_s + "."
       Rails.logger.error exception.inspect
 
       {}

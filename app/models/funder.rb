@@ -55,6 +55,7 @@ class Funder
     
     Hashie::Mash.new({
       id: id,
+      type: "Funder",
       name: message["name"],
       alternate_name: message["alt-names"],
       country: country,

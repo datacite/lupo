@@ -54,7 +54,7 @@ class Client < ActiveRecord::Base
 
   belongs_to :provider, foreign_key: :allocator, touch: true
   has_many :dois, foreign_key: :datacentre
-  has_many :client_prefixes, foreign_key: :datacentre, dependent: :destroy
+  has_many :client_prefixes, dependent: :destroy
   has_many :prefixes, through: :client_prefixes
   has_many :provider_prefixes, through: :client_prefixes
   has_many :activities, as: :auditable, dependent: :destroy
@@ -219,7 +219,7 @@ class Client < ActiveRecord::Base
       "salesforce_id" => salesforce_id,
       "globus_uuid" => globus_uuid,
       "issn" => issn,
-      "prefix_ids" => prefix_ids,
+      "prefix_ids" => options[:exclude_associations] ? nil : prefix_ids,
       "name" => name,
       "alternate_name" => alternate_name,
       "description" => description,
@@ -241,7 +241,7 @@ class Client < ActiveRecord::Base
       "updated" => updated,
       "deleted_at" => deleted_at,
       "cumulative_years" => cumulative_years,
-      "provider" => provider.as_indexed_json
+      "provider" => options[:exclude_associations] ? nil : provider.as_indexed_json(exclude_associations: true)
     }
   end
 
@@ -251,7 +251,8 @@ class Client < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
+      years: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+               aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
       cumulative_years: { terms: { field: 'cumulative_years', size: 15, min_doc_count: 1, order: { _count: "asc" } } },
       providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } },
       software: { terms: { field: 'software.keyword', size: 15, min_doc_count: 1 } },
@@ -260,7 +261,6 @@ class Client < ActiveRecord::Base
       certificates: { terms: { field: 'certificate', size: 15, min_doc_count: 1 } }
     }
   end
-
 
   def csv
     client = {
@@ -311,7 +311,7 @@ class Client < ActiveRecord::Base
   end
 
   def prefix_ids
-    prefixes.pluck(:prefix)
+    prefixes.pluck(:uid)
   end
 
   def target_id=(value)

@@ -52,6 +52,7 @@ class DataCatalog
   def self.parse_message(id: nil, message: nil)
     Hashie::Mash.new({
       id: id,
+      type: "DataCatalog",
       re3data_id: message["re3dataId"],
       name: message["repositoryName"],
       url: message["repositoryUrl"],

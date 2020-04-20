@@ -251,6 +251,7 @@ module Authenticable
         client_id: attributes.fetch(:client_id, nil),
         role_id: attributes.fetch(:role_id, "staff_admin"),
         password: attributes.fetch(:password, nil),
+        aud: Rails.env,
         iat: Time.now.to_i,
         exp: Time.now.to_i + attributes.fetch(:exp, 30)
       }.compact
@@ -270,6 +271,7 @@ module Authenticable
         client_id: attributes.fetch(:client_id, nil),
         role_id: attributes.fetch(:role_id, "user"),
         password: attributes.fetch(:password, nil),
+        aud: Rails.env,
         iat: Time.now.to_i,
         exp: Time.now.to_i + attributes.fetch(:exp, 30)
       }.compact

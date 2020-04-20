@@ -2,6 +2,7 @@ require "rails_helper"
 
 describe Event, type: :model, vcr: true do
   before(:each) { allow(Time.zone).to receive(:now).and_return(Time.mktime(2015, 4, 8)) }
+  
   context "event" do
     subject { create(:event) }
 
@@ -15,19 +16,14 @@ describe Event, type: :model, vcr: true do
   end
 
   context "citation" do
-    subject { create(:event_for_datacite_related) }
+    subject { create(:event_for_datacite_related, subj_id: "https://doi.org/10.5061/dryad.47sd5e/2") }
 
     it "has citation_id" do
-      expect(subject.citation_id).to eq("https://doi.org/10.5061/dryad.47sd5/1-https://doi.org/10.5061/dryad.47sd5e/1")
+      expect(subject.citation_id).to eq("https://doi.org/10.5061/dryad.47sd5/1-https://doi.org/10.5061/dryad.47sd5e/2")
     end
 
     it "has citation_year" do
       expect(subject.citation_year).to eq(2015)
-    end
-
-    it "has published_dates" do
-      expect(subject.subj["datePublished"]).to eq("2006-06-13T16:14:19Z")
-      expect(subject.obj["datePublished"]).to be_nil
     end
 
     let(:doi) { create(:doi) }
@@ -45,7 +41,7 @@ describe Event, type: :model, vcr: true do
     end
 
     context "prefix exists, then dont to change" do
-      let!(:prefix) { create(:prefix, prefix: "10.5061") }
+      let!(:prefix) { create(:prefix, uid: "10.5061") }
       it "label_state_event with  existent prefix" do
         expect(Event.find_by(uuid: subject.uuid ).state_event).to be_nil
         Event.label_state_event({uuid:subject.uuid , subj_id:subject.subj_id})

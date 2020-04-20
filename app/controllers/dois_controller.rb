@@ -56,17 +56,27 @@ class DoisController < ApplicationController
                           consortium_id: params[:consortium_id],
                           client_id: params[:client_id],
                           affiliation_id: params[:affiliation_id],
+                          funder_id: params[:funder_id],
                           re3data_id: params[:re3data_id],
                           opendoar_id: params[:opendoar_id],
                           certificate: params[:certificate],
                           prefix: params[:prefix],
                           user_id: params[:user_id],
                           resource_type_id: params[:resource_type_id],
+                          resource_type: params[:resource_type],
                           schema_version: params[:schema_version],
                           subject: params[:subject],
                           has_citations: params[:has_citations],
+                          has_references: params[:has_references],
+                          has_parts: params[:has_parts],
+                          has_part_of: params[:has_part_of],
+                          has_versions: params[:has_versions],
+                          has_version_of: params[:has_version_of],
                           has_views: params[:has_views],
                           has_downloads: params[:has_downloads],
+                          has_person: params[:has_person],
+                          has_affiliation: params[:has_affiliation],
+                          has_funder: params[:has_funder],
                           link_check_status: params[:link_check_status],
                           link_check_has_schema_org: params[:link_check_has_schema_org],
                           link_check_body_has_pid: params[:link_check_body_has_pid],
@@ -143,16 +153,16 @@ class DoisController < ApplicationController
         end
       else
         states = total.positive? ? facet_by_key(response.aggregations.states.buckets) : nil
-        resource_types = total.positive? ? facet_by_resource_type(response.aggregations.resource_types.buckets) : nil
-        years = total.positive? ? facet_by_year(response.aggregations.years.buckets) : nil
-        created = total.positive? ? facet_by_year(response.aggregations.created.buckets) : nil
-        registered = total.positive? ? facet_by_year(response.aggregations.registered.buckets) : nil
-        providers = total.positive? ? facet_by_provider(response.aggregations.providers.buckets) : nil
-        clients = total.positive? ? facet_by_client(response.aggregations.clients.buckets) : nil
+        resource_types = total.positive? ? facet_by_combined_key(response.aggregations.resource_types.buckets) : nil
+        years = total.positive? ? facet_by_key_as_string(response.aggregations.years.buckets) : nil
+        created = total.positive? ? facet_by_key_as_string(response.aggregations.created.buckets) : nil
+        registered = total.positive? ? facet_by_key_as_string(response.aggregations.registered.buckets) : nil
+        providers = total.positive? ? facet_by_combined_key(response.aggregations.providers.buckets) : nil
+        clients = total.positive? ? facet_by_combined_key(response.aggregations.clients.buckets) : nil
         prefixes = total.positive? ? facet_by_key(response.aggregations.prefixes.buckets) : nil
         schema_versions = total.positive? ? facet_by_schema(response.aggregations.schema_versions.buckets) : nil
 
-        affiliations = total.positive? ? facet_by_affiliation(response.aggregations.affiliations.buckets) : nil
+        affiliations = total.positive? ? facet_by_combined_key(response.aggregations.affiliations.buckets) : nil
         sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
         subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
         certificates = total.positive? ? facet_by_key(response.aggregations.certificates.buckets) : nil
@@ -306,7 +316,6 @@ class DoisController < ApplicationController
 
   def create
     fail CanCan::AuthorizationNotPerformed if current_user.blank?
-
     @doi = Doi.new(safe_params)
 
     # capture username and password for reuse in the handle system
@@ -463,7 +472,7 @@ class DoisController < ApplicationController
     client_prefix = client.prefixes.first
     head :no_content && return if client_prefix.blank?
 
-    dois = Doi.get_dois(prefix: client_prefix.prefix, username: current_user.uid.upcase, password: current_user.password)
+    dois = Doi.get_dois(prefix: client_prefix.uid, username: current_user.uid.upcase, password: current_user.password)
     if dois.length.positive?
       render json: { dois: dois }.to_json, status: :ok
     else
@@ -489,9 +498,9 @@ class DoisController < ApplicationController
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
 
-      @include = @include & [:client, :media, :reference_events, :citation_events]
+      @include = @include & [:client, :media, :references, :citations, :parts, :part_of, :versions, :version_of]
     else
-      @include = [:client, :media]
+      @include = []
     end
   end
 
@@ -651,8 +660,7 @@ class DoisController < ApplicationController
     read_attrs_keys.each do |attr|
       p.merge!(attr.to_s.underscore => p[attr] || meta[attr.to_s.underscore] || p[attr]) if p.has_key?(attr) || meta.has_key?(attr.to_s.underscore)
     end
-    p.merge!(version_info: p[:version] || meta["version_info"]) if p.has_key?(:version_info) || meta["version_info"].present?
-
+    p[:version_info] = p[:version] || meta["version_info"] if p.has_key?(:version) || meta["version_info"].present?
     # only update landing_page info if something is received via API to not overwrite existing data
     p.merge!(landing_page: p[:landingPage]) if p[:landingPage].present?
 

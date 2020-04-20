@@ -3,64 +3,78 @@ class Prefix < ActiveRecord::Base
   include Cacheable
 
   # include helper module for Elasticsearch
-  # include Indexable
+  include Indexable
 
-  # include Elasticsearch::Model
+  include Elasticsearch::Model
 
-  self.table_name = "prefix"
-  alias_attribute :created_at, :created
-  alias_attribute :updated_at, :updated
+  validates_presence_of :uid
+  validates_uniqueness_of :uid
+  validates_format_of :uid, :with => /\A10\.\d{4,9}\z/
 
-  validates_presence_of :prefix
-  validates_uniqueness_of :prefix
-  validates_format_of :prefix, :with => /\A10\.\d{4,9}\z/
-
-  has_many :client_prefixes, foreign_key: :prefixes
+  has_many :client_prefixes, dependent: :destroy
   has_many :clients, through: :client_prefixes
-  has_many :provider_prefixes, foreign_key: :prefixes
+  has_many :provider_prefixes, dependent: :destroy
   has_many :providers, through: :provider_prefixes
 
-  before_validation :set_defaults
-  before_create { self.created = Time.zone.now.utc.iso8601 }
-  before_save { self.updated = Time.zone.now.utc.iso8601 }
-
-  scope :query, ->(query) { where("prefix like ?", "%#{query}%") }
-
   # use different index for testing
-  # index_name Rails.env.test? ? "prefixes-test" : "prefixes"
+  index_name Rails.env.test? ? "prefixes-test" : "prefixes"
 
-  # mapping dynamic: 'false' do
-  #   indexes :prefix,                         type: :keyword
-  #   indexes :provider_ids,                   type: :keyword
-  #   indexes :registration_agency,            type: :keyword
-  #   indexes :created,                        type: :date
-  #   indexes :updated_at,                     type: :date
-  # end
+  mapping dynamic: "false" do
+    indexes :id,                  type: :keyword
+    indexes :uid,                 type: :keyword
+    indexes :provider_ids,        type: :keyword
+    indexes :client_ids,          type: :keyword
+    indexes :provider_prefix_ids, type: :keyword
+    indexes :client_prefix_ids,   type: :keyword
+    indexes :state,               type: :keyword
+    indexes :prefix,              type: :text
+    indexes :created_at,          type: :date
 
-  # def as_indexed_json(options={})
-  #   {
-  #     "prefix" => prefix,
-  #     "provider_ids" => provider_ids,
-  #     "registration_agency" => registration_agency,
-  #     "created" => created,
-  #     "updated_at" => updated_at
-  #   }
-  # end
+    # index associations
+    indexes :clients,             type: :object
+    indexes :providers,           type: :object
+    indexes :client_prefixes,     type: :object
+    indexes :provider_prefixes,   type: :object
+  end
 
-  # def self.query_aggregations
-  #   {
-  #     #states: { terms: { field: 'aasm_state', size: 15, min_doc_count: 1 } },
-  #     years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
-  #     providers: { terms: { field: 'provider_ids', size: 15, min_doc_count: 1 } }
-  #   }
-  # end
+  def as_indexed_json(options={})
+    {
+      "id" => uid,
+      "uid" => uid,
+      "provider_ids" => provider_ids,
+      "client_ids" => client_ids,
+      "provider_prefix_ids" => provider_prefix_ids,
+      "client_prefix_ids" => client_prefix_ids,
+      "state" => state,
+      "prefix" => prefix,
+      "created_at" => created_at,
+      "clients" => clients.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
+      "providers" => providers.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
+      "client_prefixes" => client_prefixes.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
+      "provider_prefixes" => provider_prefixes.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
+    }
+  end
 
-  # def self.query_fields
-  #   ['prefix^10', '_all']
-  # end
+  def self.query_aggregations
+    {
+      states: { terms: { field: 'state', size: 3, min_doc_count: 1 } },
+      years: { date_histogram: { field: 'created_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+               aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
+      providers: { terms: { field: 'provider_ids', size: 15, min_doc_count: 1 } },
+      clients: { terms: { field: 'client_ids', size: 15, min_doc_count: 1 } },
+    }
+  end
 
-  def registration_agency
-    "DataCite"
+  # return results for one prefix
+  def self.find_by_id(id)
+    __elasticsearch__.search(
+      query: {
+        term: {
+          uid: id,
+        },
+      },
+      aggregations: query_aggregations
+    )
   end
 
   def client_ids
@@ -71,27 +85,25 @@ class Prefix < ActiveRecord::Base
     providers.pluck(:symbol).map(&:downcase)
   end
 
-  # # workaround for non-standard database column names and association
-  # def client_ids=(values)
-  #   ids = Client.where(symbol: values).pluck(:id)
-  #   association(:clients).ids_writer ids
-  # end
-  #
-  # # workaround for non-standard database column names and association
-  # def provider_ids=(values)
-  #   ids = Provider.where(symbol: values).pluck(:id)
-  #   association(:providers).ids_writer ids
-  # end
-
-  def set_defaults
-    self.version = 0
+  def client_prefix_ids
+    client_prefixes.pluck(:uid)
   end
 
-  def self.state(state)
-    case state
-    when "unassigned" then where.not(id: ProviderPrefix.pluck(:prefixes))
-    when "without-client" then joins(:providers).where.not(id: ClientPrefix.pluck(:prefixes)).distinct
-    when "with-client" then joins(:clients).distinct
+  def provider_prefix_ids
+    provider_prefixes.pluck(:uid)
+  end
+
+  def prefix
+    uid
+  end
+
+  def state
+    if client_prefix_ids.present?
+      "with-repository"
+    elsif provider_prefix_ids.present?
+      "without-repository"
+    else
+      "unassigned"
     end
   end
 end

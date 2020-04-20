@@ -1,0 +1,96 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.crossref.org/funders?query=Wellcome%20Trust&rows=100
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - X-Requested-With
+      Content-Length:
+      - '1424'
+      Server:
+      - http-kit
+      Date:
+      - Sun, 29 Mar 2020 14:00:44 GMT
+      X-Rate-Limit-Limit:
+      - '50'
+      X-Rate-Limit-Interval:
+      - 1s
+      Connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"ok","message-type":"funder-list","message-version":"1.0.0","message":{"items-per-page":100,"query":{"start-index":0,"search-terms":"Wellcome
+        Trust"},"total-results":4,"items":[{"id":"501100009053","location":null,"name":"The
+        Wellcome Trust DBT India Alliance","alt-names":["India Alliance","WTDBT India
+        Alliance","Wellcome Trust\/DBT India Alliance","Wellcome Trust DBt India Alliance"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100009053","replaces":[],"replaced-by":[],"tokens":["the","wellcome","trust","dbt","india","alliance","india","alliance","wtdbt","india","alliance","wellcome","trust\/dbt","india","alliance","wellcome","trust","dbt","india","alliance"]},{"id":"501100013372","location":"United
+        Kingdom","name":"Wellcome Trust Centre for Mitochondrial Research","alt-names":["WCMR"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100013372","replaces":[],"replaced-by":[],"tokens":["wellcome","trust","centre","for","mitochondrial","research","wcmr"]},{"id":"100004440","location":"United
+        Kingdom","name":"Wellcome Trust","alt-names":["Wellcome"],"uri":"http:\/\/dx.doi.org\/10.13039\/100004440","replaces":[],"replaced-by":["100010269"],"tokens":["wellcome","trust","wellcome"]},{"id":"100010269","location":"United
+        Kingdom","name":"Wellcome Trust","alt-names":["Wellcome","WT"],"uri":"http:\/\/dx.doi.org\/10.13039\/100010269","replaces":[],"replaced-by":[],"tokens":["wellcome","trust","wellcome","wt"]}]}}'
+    http_version: null
+  recorded_at: Sun, 29 Mar 2020 14:00:44 GMT
+- request:
+    method: get
+    uri: https://api.crossref.org/funders?query=Wellcome%20Trust&rows=0
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - X-Requested-With
+      Content-Length:
+      - '188'
+      Server:
+      - http-kit
+      Date:
+      - Sun, 29 Mar 2020 14:00:46 GMT
+      X-Rate-Limit-Limit:
+      - '50'
+      X-Rate-Limit-Interval:
+      - 1s
+      Connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"ok","message-type":"funder-list","message-version":"1.0.0","message":{"items-per-page":0,"query":{"start-index":0,"search-terms":"Wellcome
+        Trust"},"total-results":4,"items":[]}}'
+    http_version: null
+  recorded_at: Sun, 29 Mar 2020 14:00:46 GMT
+recorded_with: VCR 5.1.0

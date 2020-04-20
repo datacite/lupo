@@ -4,135 +4,55 @@ describe QueryType do
   describe "fields" do
     subject { described_class }
 
+    it { is_expected.to have_field(:work).of_type("Work!") }
+    it { is_expected.to have_field(:works).of_type("WorkConnection!") }
     it { is_expected.to have_field(:dataset).of_type("Dataset!") }
-    it { is_expected.to have_field(:datasets).of_type("DatasetConnectionWithMeta!") }
+    it { is_expected.to have_field(:datasets).of_type("DatasetConnection!") }
     it { is_expected.to have_field(:publication).of_type("Publication!") }
-    it { is_expected.to have_field(:publications).of_type("PublicationConnectionWithMeta!") }
+    it { is_expected.to have_field(:publications).of_type("PublicationConnection!") }
+    it { is_expected.to have_field(:software).of_type("Software!") }
+    it { is_expected.to have_field(:softwares).of_type("SoftwareConnection!") }
     it { is_expected.to have_field(:service).of_type("Service!") }
-    it { is_expected.to have_field(:services).of_type("ServiceConnectionWithMeta!") }
-  end
+    it { is_expected.to have_field(:services).of_type("ServiceConnection!") }
+    it { is_expected.to have_field(:audiovisual).of_type("Audiovisual!") }
+    it { is_expected.to have_field(:audiovisuals).of_type("AudiovisualConnection!") }
+    it { is_expected.to have_field(:collection).of_type("Collection!") }
+    it { is_expected.to have_field(:collections).of_type("CollectionConnection!") }
+    it { is_expected.to have_field(:data_paper).of_type("DataPaper!") }
+    it { is_expected.to have_field(:data_papers).of_type("DataPaperConnection!") }
+    it { is_expected.to have_field(:image).of_type("Image!") }
+    it { is_expected.to have_field(:images).of_type("ImageConnection!") }
+    it { is_expected.to have_field(:interactive_resource).of_type("InteractiveResource!") }
+    it { is_expected.to have_field(:interactive_resources).of_type("InteractiveResourceConnection!") }
+    it { is_expected.to have_field(:event).of_type("Event!") }
+    it { is_expected.to have_field(:events).of_type("EventConnection!") }
+    it { is_expected.to have_field(:model).of_type("Model!") }
+    it { is_expected.to have_field(:models).of_type("ModelConnection!") }
+    it { is_expected.to have_field(:physical_object).of_type("PhysicalObject!") }
+    it { is_expected.to have_field(:physical_objects).of_type("PhysicalObjectConnection!") }
+    it { is_expected.to have_field(:sound).of_type("Sound!") }
+    it { is_expected.to have_field(:sounds).of_type("SoundConnection!") }
+    it { is_expected.to have_field(:workflow).of_type("Workflow!") }
+    it { is_expected.to have_field(:workflows).of_type("WorkflowConnection!") }
+    it { is_expected.to have_field(:other).of_type("Other!") }
+    it { is_expected.to have_field(:others).of_type("OtherConnection!") }
 
-  describe "query datasets", elasticsearch: true do
-    let!(:datasets) { create_list(:doi, 3, aasm_state: "findable") }
+    it { is_expected.to have_field(:member).of_type("Member!") }
+    it { is_expected.to have_field(:members).of_type("MemberConnection!") }
+    it { is_expected.to have_field(:repository).of_type("Repository!") }
+    it { is_expected.to have_field(:repositories).of_type("RepositoryConnection!") }
+    it { is_expected.to have_field(:prefix).of_type("Prefix!") }
+    it { is_expected.to have_field(:prefixes).of_type("PrefixConnection!") }
+    it { is_expected.to have_field(:usage_report).of_type("UsageReport!") }
+    it { is_expected.to have_field(:usage_reports).of_type("UsageReportConnection!") }
 
-    before do
-      Doi.import
-      sleep 1
-    end
-
-    let(:query) do
-      %(query {
-        datasets {
-          totalCount
-          nodes {
-            id
-          }
-        }
-      })
-    end
-
-    it "returns all datasets" do
-      response = LupoSchema.execute(query).as_json
-
-      expect(response.dig("data", "datasets", "totalCount")).to eq(3)
-      expect(response.dig("data", "datasets", "nodes").length).to eq(3)
-      expect(response.dig("data", "datasets", "nodes", 0, "id")).to eq(datasets.first.identifier)
-    end
-  end
-
-  describe "query with citations", elasticsearch: true do
-    let(:client) { create(:client) }
-    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
-    let(:source_doi2) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by", occurred_at: "2015-06-13T16:14:19Z") }
-    let!(:citation_event2) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-referenced-by", occurred_at: "2016-06-13T16:14:19Z") }
-
-    before do
-      Doi.import
-      Event.import
-      sleep 1
-    end
-
-    let(:query) do
-      %(query {
-        datasets {
-          totalCount
-          nodes {
-            id
-            creators {
-              id
-              name
-              affiliation {
-                id
-                name
-              }
-            }
-            citationCount
-            citationsOverTime {
-              year
-              total
-            }
-            citations {
-              id
-              publicationYear
-            }
-          }
-        }
-      })
-    end
-
-    it "returns all datasets with counts" do
-      response = LupoSchema.execute(query).as_json
-
-      expect(response.dig("data", "datasets", "totalCount")).to eq(3)
-      expect(response.dig("data", "datasets", "nodes").length).to eq(3)
-      expect(response.dig("data", "datasets", "nodes", 0, "creators").last).to eq("affiliation"=>[{"id"=>"https://ror.org/04wxnsj81", "name"=>"DataCite"}], "id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Renaud, François")
-      expect(response.dig("data", "datasets", "nodes", 0, "citationCount")).to eq(2)
-      expect(response.dig("data", "datasets", "nodes", 0, "citationsOverTime")).to eq([{"total"=>1, "year"=>2015}, {"total"=>1, "year"=>2016}])
-      expect(response.dig("data", "datasets", "nodes", 0, "citations").length).to eq(2)
-      expect(response.dig("data", "datasets", "nodes", 0, "citations").first).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.doi.downcase}", "publicationYear"=>2011)
-    end
-  end
-
-  describe "query with references", elasticsearch: true do
-    let(:client) { create(:client) }
-    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
-    let(:target_doi2) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:reference_event) { create(:event_for_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "references") }
-    let!(:reference_event2) { create(:event_for_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi2.doi}", relation_type_id: "references") }
-
-    before do
-      Doi.import
-      Event.import
-      sleep 1
-    end
-
-    let(:query) do
-      %(query {
-        datasets {
-          totalCount
-          nodes {
-            id
-            referenceCount
-            references {
-              id
-              publicationYear
-            }
-          }
-        }
-      })
-    end
-
-    it "returns all datasets with counts" do
-      response = LupoSchema.execute(query).as_json
-
-      expect(response.dig("data", "datasets", "totalCount")).to eq(3)
-      expect(response.dig("data", "datasets", "nodes").length).to eq(3)
-      expect(response.dig("data", "datasets", "nodes", 0, "referenceCount")).to eq(2)
-      expect(response.dig("data", "datasets", "nodes", 0, "references").length).to eq(2)
-      expect(response.dig("data", "datasets", "nodes", 0, "references").first).to eq("id"=>"https://handle.test.datacite.org/#{target_doi.doi.downcase}", "publicationYear"=>2011)
-    end
+    it { is_expected.to have_field(:funder).of_type("Funder!") }
+    it { is_expected.to have_field(:funders).of_type("FunderConnection!") }
+    it { is_expected.to have_field(:data_catalog).of_type("DataCatalog!") }
+    it { is_expected.to have_field(:data_catalogs).of_type("DataCatalogConnection!") }
+    it { is_expected.to have_field(:organization).of_type("Organization!") }
+    it { is_expected.to have_field(:organizations).of_type("OrganizationConnection!") }
+    it { is_expected.to have_field(:person).of_type("Person!") }
+    it { is_expected.to have_field(:people).of_type("PersonConnection!") }
   end
 end

@@ -37,7 +37,6 @@ class Provider < ActiveRecord::Base
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   attr_readonly :symbol
-  attr_accessor :password_input
 
   validates_presence_of :symbol, :name, :display_name, :system_email
   validates_uniqueness_of :symbol, message: "This name has already been taken"
@@ -70,7 +69,7 @@ class Provider < ActiveRecord::Base
 
   has_many :clients, foreign_key: :allocator
   has_many :dois, through: :clients
-  has_many :provider_prefixes, foreign_key: :allocator, dependent: :destroy
+  has_many :provider_prefixes, dependent: :destroy
   has_many :prefixes, through: :provider_prefixes
   has_many :consortium_organizations, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_id", inverse_of: :consortium
   belongs_to :consortium, class_name: "Provider", primary_key: "symbol", foreign_key: "consortium_id", inverse_of: :consortium_organizations, optional: true
@@ -83,10 +82,6 @@ class Provider < ActiveRecord::Base
   after_create :send_welcome_email, unless: Proc.new { Rails.env.test? }
 
   accepts_nested_attributes_for :prefixes
-
-  #default_scope { where("allocator.role_name IN ('ROLE_ALLOCATOR', 'ROLE_DEV')").where(deleted_at: nil) }
-
-  #scope :query, ->(query) { where("allocator.symbol like ? OR allocator.name like ?", "%#{query}%", "%#{query}%") }
 
   # use different index for testing
   index_name Rails.env.test? ? "providers-test" : "providers"
@@ -194,8 +189,8 @@ class Provider < ActiveRecord::Base
       "uid" => uid,
       "name" => name,
       "display_name" => display_name,
-      "client_ids" => client_ids,
-      "prefix_ids" => prefix_ids,
+      "client_ids" => options[:exclude_associations] ? nil : client_ids,
+      "prefix_ids" => options[:exclude_associations] ? nil : prefix_ids,
       "symbol" => symbol,
       "year" => year,
       "system_email" => system_email,
@@ -211,7 +206,7 @@ class Provider < ActiveRecord::Base
       "member_type" => member_type,
       "non_profit_status" => non_profit_status,
       "consortium_id" => consortium_id,
-      "consortium_organization_ids" => consortium_organization_ids,
+      "consortium_organization_ids" => options[:exclude_associations] ? nil : consortium_organization_ids,
       "role_name" => role_name,
       "password" => password,
       "cache_key" => cache_key,
@@ -250,7 +245,8 @@ class Provider < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
+      years: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+               aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
       cumulative_years: { terms: { field: 'cumulative_years', size: 15, min_doc_count: 1, order: { _count: "asc" } } },
       regions: { terms: { field: 'region', size: 10, min_doc_count: 1 } },
       member_types: { terms: { field: 'member_type', size: 10, min_doc_count: 1 } },
@@ -481,7 +477,7 @@ class Provider < ActiveRecord::Base
       "ROLE_CONTRACTUAL_PROVIDER" => "contractual_member",
       "ROLE_FOR_PROFIT_PROVIDER" => "for_profit_provider",
       "ROLE_REGISTRATION_AGENCY" => "registration_agency",
-     }
+    }
   end
 
   # count years account has been active. Ignore if deleted the same year as created
@@ -535,7 +531,7 @@ class Provider < ActiveRecord::Base
   end
 
   def prefix_ids
-    prefixes.pluck(:prefix)
+    prefixes.pluck(:uid)
   end
 
   def can_be_in_consortium

@@ -1,14 +1,33 @@
 require 'rails_helper'
 
-describe "Prefixes", type: :request do
-  let!(:prefixes)  { create_list(:prefix, 10) }
+describe "Prefixes", type: :request, elasticsearch: true do
+  let!(:prefixes) { create_list(:prefix, 10) }
   let(:bearer) { User.generate_token }
-  let(:prefix_id) { prefixes.first.prefix }
+  let(:prefix_id) { prefixes.first.uid }
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
 
   describe 'GET /prefixes' do
+    before do
+      Prefix.import
+      sleep 2
+    end
+
     it 'returns prefixes' do
       get '/prefixes', nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(10)
+    end
+
+    it "returns prefixes by id" do
+      get "/prefixes?id=#{prefixes.first.uid}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(1)
+    end
+
+    it "returns prefixes by query" do
+      get "/prefixes?query=10.508", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(10)
@@ -16,16 +35,17 @@ describe "Prefixes", type: :request do
   end
 
   describe 'GET /prefixes/:id' do
-    context 'when the record exists' do
-      # it 'returns the prefix' do
-      #   expect(json).not_to be_empty
-      #   expect(json['data']['id']).to eq(prefix_id)
-      # end
+    before do
+      Prefix.import
+      sleep 2
+    end
 
+    context 'when the record exists' do
       it 'returns status code 200' do
         get "/prefixes/#{prefix_id}", nil, headers
 
         expect(last_response.status).to eq(200)
+        expect(json.dig("data", "id")).to eq(prefix_id)
       end
     end
 
@@ -58,16 +78,18 @@ describe "Prefixes", type: :request do
   end
 
   describe 'POST /prefixes' do
+    before do
+      Prefix.import
+      sleep 2
+    end
+
     context 'when the request is valid' do
       let!(:provider)  { create(:provider) }
       let(:valid_attributes) do
         {
           "data" => {
             "type" => "prefixes",
-            "attributes" => {
-              "prefix" => "10.17177",
-              "id" => "10.17177"
-            }
+            "id" => "10.17177"
           }
         }
       end
@@ -86,7 +108,7 @@ describe "Prefixes", type: :request do
           "data" => {
             "type" => "prefixes",
             "attributes" => {
-              "prefix" => "dsds10.33342"
+              "uid" => "dsds10.33342"
             }
           }
         }
@@ -96,41 +118,11 @@ describe "Prefixes", type: :request do
         post '/prefixes', not_valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"].first).to eq("source"=>"prefix", "title"=>"Can't be blank")
+        expect(json["errors"].first).to eq("source"=>"uid", "title"=>"Can't be blank")
       end
     end
   end
 
-  # # Test suite for PUT /prefixes/:id
-  # Prefixes have no updates
-  # describe 'PUT /prefixes/:id' do
-  #   let!(:provider)  { create(:provider) }
-  #   let(:valid_attributes) do
-  #     {
-  #       "data" => {
-  #                 "id": "10.17177",
-  #                 "type": "prefixes",
-  #                 "attributes": {
-  #                   "prefix": "10.17177"
-  #                 }
-  #         }
-  #     }
-  #   end
-  #
-  #   context 'when the record exists' do
-  #     before { put "/prefixes/#{prefix_id}", params: valid_attributes.to_json , headers: headers}
-  #
-  #     it 'updates the record' do
-  #       expect(response.body).not_to be_empty
-  #     end
-  #
-  #     it 'returns status code 204' do
-  #       expect(response).to have_http_status(200)
-  #     end
-  #   end
-  # end
-
-  # Test suite for DELETE /prefixes/:id
   describe 'DELETE /prefixes/:id' do
     it 'returns status code 204' do
       delete "/prefixes/#{prefix_id}", nil, headers

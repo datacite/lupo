@@ -5,8 +5,9 @@ class RepositoriesController < ApplicationController
   before_action :set_repository, only: [:show, :update, :destroy]
   before_action :authenticate_user!
   before_action :set_include
-  load_and_authorize_resource :client, parent: false, except: [:index, :show, :create, :totals, :random]
-
+  load_and_authorize_resource :client, parent: false, except: [:index, :show, :create, :totals, :random, :stats]
+  around_action :skip_bullet, only: [:index], if: -> { defined?(Bullet) }
+  
   def index
     sort = case params[:sort]
            when "relevance" then { "_score" => { order: 'desc' }}
@@ -25,19 +26,19 @@ class RepositoriesController < ApplicationController
       response = Client.find_by_id(params[:ids], page: page, sort: sort)
     else
       response = Client.query(params[:query],
-        year: params[:year],
-        from_date: params[:from_date],
-        until_date: params[:until_date],
-        provider_id: params[:provider_id],
-        consortium_id: params[:consortium_id],
-        re3data_id: params[:re3data_id],
-        opendoar_id: params[:opendoar_id],
-        software: params[:software],
-        certificate: params[:certificate],
-        repository_type: params[:repository_type],
-        client_type: params[:client_type],
-        page: page,
-        sort: sort)
+                              year: params[:year],
+                              from_date: params[:from_date],
+                              until_date: params[:until_date],
+                              provider_id: params[:provider_id],
+                              consortium_id: params[:consortium_id],
+                              re3data_id: params[:re3data_id],
+                              opendoar_id: params[:opendoar_id],
+                              software: params[:software],
+                              certificate: params[:certificate],
+                              repository_type: params[:repository_type],
+                              client_type: params[:client_type],
+                              page: page,
+                              sort: sort)
     end
 
     begin
@@ -123,11 +124,11 @@ class RepositoriesController < ApplicationController
 
     options = {}
     options[:meta] = {
-      dois: doi_count(client_id: params[:id]),
-      "resourceTypes" => resource_type_count(client_id: params[:id]),
-      citations: citation_count(client_id: params[:id]),
-      views: view_count(client_id: params[:id]),
-      downloads: download_count(client_id: params[:id]),
+      "doiCount" => doi_count(client_id: params[:id]).reduce(0) do |sum, item|
+        sum += item["count"]
+        sum
+      end,
+      "prefixCount" => Array.wrap(repository.prefix_ids).length,
     }.compact
     options[:include] = @include
     options[:is_collection] = false
@@ -156,7 +157,6 @@ class RepositoriesController < ApplicationController
   def update
     if @client.update_attributes(safe_params)
       options = {}
-      options[:meta] = { dois: doi_count(client_id: params[:id]) }
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability }
 
@@ -190,13 +190,25 @@ class RepositoriesController < ApplicationController
   end
 
   def totals
-    page = { size: 0, number: 1}
+    page = { size: 0, number: 1 }
 
     state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
-    response = Doi.query(nil, provider_id: params[:provider_id], state: state, page: page, totals_agg: true)
-    registrant = clients_totals(response.response.aggregations.clients_totals.buckets)
+    response = Doi.query(nil, provider_id: params[:provider_id], state: state, page: page, totals_agg: "client")
+    registrant = response.results.total.positive? ? clients_totals(response.response.aggregations.clients_totals.buckets) : []
 
     render json: registrant, status: :ok
+  end
+
+  def stats
+    meta = {
+      dois: doi_count(client_id: params[:id]),
+      "resourceTypes" => resource_type_count(client_id: params[:id]),
+      # citations: citation_count(client_id: params[:id]),
+      # views: view_count(client_id: params[:id]),
+      # downloads: download_count(client_id: params[:id]),
+    }.compact
+
+    render json: meta, status: :ok
   end
 
   protected
@@ -206,7 +218,7 @@ class RepositoriesController < ApplicationController
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
       @include = @include & [:provider]
     else
-      @include = [:provider]
+      @include = []
     end
   end
 

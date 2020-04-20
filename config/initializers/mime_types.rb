@@ -16,7 +16,7 @@ Mime::Type.register "application/vnd.crossref.unixref+xml", :crossref
 Mime::Type.register "application/vnd.crosscite.crosscite+json", :crosscite
 Mime::Type.register "application/vnd.datacite.datacite+xml", :datacite, %w( application/x-datacite+xml )
 Mime::Type.register "application/vnd.datacite.datacite+json", :datacite_json
-Mime::Type.register "application/vnd.schemaorg.ld+json", :schema_org
+Mime::Type.register "application/vnd.schemaorg.ld+json", :schema_org, %w( application/ld+json )
 Mime::Type.register "application/vnd.jats+xml", :jats
 Mime::Type.register "application/vnd.citationstyles.csl+json", :citeproc, %w( application/citeproc+json )
 Mime::Type.register "application/vnd.codemeta.ld+json", :codemeta

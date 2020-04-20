@@ -36,6 +36,8 @@ Shoulda::Matchers.configure do |config|
 end
 
 RSpec.configure do |config|
+  config.order = "random"
+
   config.include FactoryBot::Syntax::Methods
   config.include StripAttributes::Matchers
   config.include RSpec::Benchmark::Matchers
@@ -51,9 +53,22 @@ RSpec.configure do |config|
   config.include JobHelper, type: :job
 
   ActiveJob::Base.queue_adapter = :test
+
+  if Bullet.enable?
+    config.before(:each) do
+      Bullet.start_request
+    end
+  
+    config.after(:each) do
+      Bullet.perform_out_of_channel_notifications if Bullet.notification?
+      Bullet.end_request
+    end
+  end
 end
 
 VCR.configure do |c|
+  vcr_mode = ENV['VCR_MODE'] =~ /rec/i ? :all : :once
+
   mds_token = Base64.strict_encode64("#{ENV['MDS_USERNAME']}:#{ENV['MDS_PASSWORD']}")
   admin_token = Base64.strict_encode64("#{ENV['ADMIN_USERNAME']}:#{ENV['ADMIN_PASSWORD']}")
   handle_token = Base64.strict_encode64("300%3A#{ENV['HANDLE_USERNAME']}:#{ENV['HANDLE_PASSWORD']}")
@@ -71,7 +86,7 @@ VCR.configure do |c|
   c.filter_sensitive_data("<VOLPINO_TOKEN>") { ENV["VOLPINO_TOKEN"] }
   c.filter_sensitive_data("<SLACK_WEBHOOK_URL>") { ENV["SLACK_WEBHOOK_URL"] }
   c.configure_rspec_metadata!
-  c.default_cassette_options = { :match_requests_on => [:method, :path] }
+  c.default_cassette_options = { :match_requests_on => %i[method uri body] }
 end
 
 def capture_stdout(&block)

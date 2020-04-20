@@ -15,16 +15,12 @@ describe "Media", type: :request, :order => :defined, elasticsearch: true do
     it 'returns media' do
       get "/dois/#{doi.doi}/media", nil, headers
 
+      puts last_response.body
+      expect(last_response.status).to eq(200)
       expect(json).not_to be_empty
       expect(json['data'].size).to eq(6)
       result = json['data'].first
       expect(result.dig("attributes", "mediaType")).to eq("application/json")
-    end
-
-    it 'returns status code 200' do
-      get "/dois/#{doi.doi}/media", nil, headers
-
-      expect(last_response.status).to eq(200)
     end
   end
 
@@ -192,7 +188,7 @@ describe "Media", type: :request, :order => :defined, elasticsearch: true do
 
         expect(json.dig('data', 'attributes', 'mediaType')).to eq(media_type)
         expect(json.dig('data', 'attributes', 'url')).to eq(url)
-        expect(json.dig('data', 'attributes', 'version')).to eq(1)
+        expect(json.dig('data', 'attributes', 'version')).to be > 0
       end
 
       it 'returns status code 200' do

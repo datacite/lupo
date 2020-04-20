@@ -8,22 +8,35 @@ module Indexable
       # use index_document instead of update_document to also update virtual attributes
       IndexJob.perform_later(self)
       if self.class.name == "Doi"
-        update_column(:indexed, Time.zone.now)
         send_import_message(self.to_jsonapi) if aasm_state == "findable" && !Rails.env.test? && !%w(crossref.citations medra.citations jalc.citations kisti.citations op.citations).include?(client.symbol.downcase)
+      # reindex prefix, not triggered by standard callbacks
+      elsif ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
+        IndexJob.perform_later(self.prefix)
       end
     end
 
     after_touch do
       # use index_document instead of update_document to also update virtual attributes
-      IndexBackgroundJob.perform_later(self)
+      # prefixes need to be reindexed immediately
+      if ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(self.class.name)
+        IndexJob.perform_later(self)
+      else
+        IndexBackgroundJob.perform_later(self)
+      end
     end
 
-    before_destroy do
+    after_commit on: [:destroy] do
       begin
         __elasticsearch__.delete_document
+        Rails.logger.warn "#{self.class.name} #{uid} deleted from Elasticsearch index."
         # send_delete_message(self.to_jsonapi) if self.class.name == "Doi" && !Rails.env.test?
-      rescue Elasticsearch::Transport::Transport::Errors::NotFound
-        nil
+
+        # reindex prefix
+        if ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
+          IndexJob.perform_later(self.prefix)
+        end
+      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+        Rails.logger.error e.message
       end
     end
 
@@ -55,6 +68,11 @@ module Indexable
 
       sqs.send_message(options)
     end
+
+    def ror_from_url(url)
+      ror = Array(/\A(?:(http|https):\/\/)?(ror\.org\/)?(.+)/.match(url)).last
+      "ror.org/#{ror}" if ror.present?
+    end
   end
 
   module ClassMethods
@@ -64,7 +82,12 @@ module Indexable
       options[:page] ||= {}
       options[:page][:number] ||= 1
       options[:page][:size] ||= 2000
-      options[:sort] ||= { created: { order: "asc" }}
+    
+      if ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(self.name)
+        options[:sort] ||= { created_at: { order: "asc" }}
+      else
+        options[:sort] ||= { created: { order: "asc" }}
+      end
 
       __elasticsearch__.search({
         from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
@@ -165,6 +188,8 @@ module Indexable
           sort = [{ created: "asc", uid: "asc" }]
         elsif self.name == "Researcher"
           sort = [{ created_at: "asc", uid: "asc" }]
+        elsif ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(self.name)
+          sort = [{ created_at: "asc" }]
         else
           sort = [{ created: "asc" }]
         end
@@ -188,29 +213,11 @@ module Indexable
       end
 
       must = []
-      must << { query_string: { query: query, fields: query_fields }} if query.present?
-      must << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
-      must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
-      must << { terms: { client_id: options[:client_id].to_s.split(",") }} if options[:client_id].present?
-      must << { terms: { prefix: options[:prefix].to_s.split(",") }} if options[:prefix].present?
-      must << { term: { uid: options[:uid] }} if options[:uid].present?
-      must << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
-      must << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
-      must << { terms: { "subjects.subject": options[:subject].split(",") }} if options[:subject].present?
-      must << { term: { source: options[:source] }} if options[:source].present?
-      must << { term: { "landing_page.status": options[:link_check_status] }} if options[:link_check_status].present?
-      must << { exists: { field: "landing_page.checked" }} if options[:link_checked].present?
-      must << { term: { "landing_page.hasSchemaOrg": options[:link_check_has_schema_org] }} if options[:link_check_has_schema_org].present?
-      must << { term: { "landing_page.bodyHasPid": options[:link_check_body_has_pid] }} if options[:link_check_body_has_pid].present?
-      must << { exists: { field: "landing_page.schemaOrgId" }} if options[:link_check_found_schema_org_id].present?
-      must << { exists: { field: "landing_page.dcIdentifier" }} if options[:link_check_found_dc_identifier].present?
-      must << { exists: { field: "landing_page.citationDoi" }} if options[:link_check_found_citation_doi].present?
-      must << { range: { "landing_page.redirectCount": { "gte": options[:link_check_redirect_count_gte] } } } if options[:link_check_redirect_count_gte].present?
-
       must_not = []
 
       # filters for some classes
       if self.name == "Provider"
+        must << { query_string: { query: query, fields: query_fields, default_operator: "AND" }} if query.present?
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
         must << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
@@ -228,9 +235,11 @@ module Indexable
           must_not << { term: { role_name: "ROLE_ADMIN" }}
         end
       elsif self.name == "Client"
+        must << { query_string: { query: query, fields: query_fields, default_operator: "AND" }} if query.present?
         must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
         must << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
         must << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
+        must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
         must << { terms: { "software.raw" => options[:software].split(",") }} if options[:software].present?
         must << { terms: { certificate: options[:certificate].split(",") }} if options[:certificate].present?
         must << { terms: { repository_type: options[:repository_type].split(",") }} if options[:repository_type].present?
@@ -240,17 +249,8 @@ module Indexable
         must << { term: { client_type: options[:client_type] }} if options[:client_type].present?
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
         must_not << { terms: { uid: %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations) }} if options[:exclude_registration_agencies]
-      elsif self.name == "Doi"
-        must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
-        must << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
-        must << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{options[:user_id]}" }} if options[:user_id].present?
-        must << { term: { "creators.affiliation.affiliationIdentifier" => URI.decode(options[:affiliation_id]) }} if options[:affiliation_id].present?
-        must << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
-        must << { term: { "client.re3data_id" => options[:re3data_id].gsub("/", '\/').upcase }} if options[:re3data_id].present?
-        must << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
-        must << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
-        must_not << { terms: { "client.uid" => %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations) }} if options[:exclude_registration_agencies]
       elsif self.name == "Event"
+        must << { query_string: { query: query, fields: query_fields, default_operator: "AND" }} if query.present?
         must << { term: { subj_id: URI.decode(options[:subj_id]) }} if options[:subj_id].present?
         must << { term: { obj_id: URI.decode(options[:obj_id]) }} if options[:obj_id].present?
         must << { term: { citation_type: options[:citation_type] }} if options[:citation_type].present?
@@ -271,6 +271,26 @@ module Indexable
         must << { terms: { registrant_id: options[:registrant_id].split(",") }} if options[:registrant_id].present?
         must << { terms: { registrant_id: options[:provider_id].split(",") }} if options[:provider_id].present?
         must << { terms: { issn: options[:issn].split(",") }} if options[:issn].present?
+      elsif self.name == "Prefix"
+        must << { prefix: { prefix: query }} if query.present?
+        must << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        must << { terms: { provider_ids: options[:provider_id].split(",") }} if options[:provider_id].present?
+        must << { terms: { client_ids: options[:client_id].to_s.split(",") }} if options[:client_id].present?
+        must << { terms: { state: options[:state].to_s.split(",") }} if options[:state].present?
+      elsif self.name == "ProviderPrefix"
+        must << { prefix: { "prefix.prefix" => query }} if query.present?
+        must << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
+        must << { terms: { provider_id: options[:consortium_organization_id].split(",") }} if options[:consortium_organization_id].present?
+        must << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
+        must << { term: { prefix_id: options[:prefix_id] }} if options[:prefix_id].present?
+        must << { terms: { uid: options[:uid].to_s.split(",") }} if options[:uid].present?
+        must << { terms: { state: options[:state].to_s.split(",") }} if options[:state].present?
+      elsif self.name == "ClientPrefix"
+        must << { prefix: { "prefix.prefix" => query }} if query.present?
+        must << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        must << { terms: { client_id: options[:client_id].split(",") }} if options[:client_id].present?
+        must << { term: { prefix_id: options[:prefix_id] }} if options[:prefix_id].present?
       end
 
       # ES query can be optionally defined in different ways
@@ -561,6 +581,22 @@ module Indexable
       client = Elasticsearch::Model.client
       active_index = client.indices.get_alias(name: alias_name).keys.first
       active_index.end_with?("v1") ? alternate_index_name : index_name
+    end
+
+    def doi_from_url(url)
+      if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match?(url)
+        uri = Addressable::URI.parse(url)
+        uri.path.gsub(/^\//, "").downcase
+      end
+    end
+
+    def orcid_from_url(url)
+      Array(/\A(?:(http|https):\/\/)?(orcid\.org\/)?(.+)/.match(url)).last
+    end
+
+    def ror_from_url(url)
+      ror = Array(/\A(?:(http|https):\/\/)?(ror\.org\/)?(.+)/.match(url)).last
+      "ror.org/#{ror}" if ror.present?
     end
   end
 end
