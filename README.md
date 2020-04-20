@@ -31,6 +31,8 @@ bundle exec rake db:schema:load
 bundle exec rake db:seed:development:base
 ```
 
+All other seed opntion can be found using rake --tasks
+
 We use Rspec for testing:
 
 ```bash
