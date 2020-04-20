@@ -28,7 +28,7 @@ module Mailable
       reset_url = ENV['BRACCO_URL'] + "/reset"
       title = Rails.env.stage? ? "DataCite Fabrica Test" : "DataCite Fabrica"
       subject = "#{title}: New Account"
-      account_type = self.class.name == "Provider" ? member_type : client_type
+      account_type = self.class.name == "Provider" ? member_type.humanize : client_type.humanize
       text = User.format_message_text(template: "users/welcome.text.erb", title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url)
       html = User.format_message_html(template: "users/welcome.html.erb", title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url)
 
@@ -48,7 +48,7 @@ module Mailable
     def send_delete_email
       title = Rails.env.stage? ? "DataCite Fabrica Test" : "DataCite Fabrica"
       subject = "#{title}: Account Deleted"
-      account_type = self.class.name == "Provider" ? member_type : client_type
+      account_type = self.class.name == "Provider" ? member_type.humanize : client_type.humanize
       text = User.format_message_text(template: "users/delete.text.erb", title: title, contact_name: name, name: symbol)
       html = User.format_message_html(template: "users/delete.html.erb", title: title, contact_name: name, name: symbol)
 
