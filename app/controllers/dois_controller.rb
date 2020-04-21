@@ -244,6 +244,7 @@ class DoisController < ApplicationController
             options[:params] = {
               current_ability: current_ability,
               detail: params[:detail],
+              composite: params[:composite],
               affiliation: params[:affiliation],
               is_collection: options[:is_collection],
             }
@@ -292,6 +293,7 @@ class DoisController < ApplicationController
         options[:params] = {
           current_ability: current_ability,
           detail: true,
+          composite: nil,
           affiliation: params[:affiliation],
         }
 

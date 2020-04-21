@@ -72,7 +72,7 @@ class DoiSerializer
     Array.wrap(object.identifiers)
   end
 
-  attribute :related_identifiers do |object|
+  attribute :related_identifiers, if: Proc.new { |object, params| params && params[:composite].blank? } do |object|
     Array.wrap(object.related_identifiers)
   end
 
