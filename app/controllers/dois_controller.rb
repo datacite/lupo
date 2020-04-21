@@ -235,6 +235,9 @@ class DoisController < ApplicationController
                 "has-person" => params[:has_person],
                 "has-affiliation" => params[:has_affiliation],
                 "has-funder" => params[:has_funder],
+                detail: params[:detail],
+                composite: params[:composite],
+                affiliation: params[:affiliation],
                 # The cursor link should be an array of values, but we want to encode it into a single string for the URL
                 "page[cursor]" => page[:cursor] ? make_cursor(results) : nil,
                 "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
