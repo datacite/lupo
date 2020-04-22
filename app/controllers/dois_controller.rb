@@ -213,10 +213,31 @@ class DoisController < ApplicationController
               self: request.original_url,
               next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/dois?" + {
                 query: params[:query],
+                "exclude-registration-agencies" => params[:exclude_registration_agencies],
                 "provider-id" => params[:provider_id],
                 "consortium-id" => params[:consortium_id],
                 "client-id" => params[:client_id],
+                "funder-id" => params[:funder_id],
+                "affiliation-id" => params[:affiliation_id],
+                "resource-type-id" => params[:resource_type_id],
+                prefix: params[:prefix],
                 certificate: params[:certificate],
+                created: params[:created],
+                registered: params[:registered],
+                "has-citations" => params[:has_citations],
+                "has-references" => params[:has_references],
+                "has-parts" => params[:has_parts],
+                "has-part-of" => params[:has_part_of],
+                "has-versions" => params[:has_versions],
+                "has-version-of" => params[:has_version_of],
+                "has-views" => params[:has_views],
+                "has-downloads" => params[:has_downloads],
+                "has-person" => params[:has_person],
+                "has-affiliation" => params[:has_affiliation],
+                "has-funder" => params[:has_funder],
+                detail: params[:detail],
+                composite: params[:composite],
+                affiliation: params[:affiliation],
                 # The cursor link should be an array of values, but we want to encode it into a single string for the URL
                 "page[cursor]" => page[:cursor] ? make_cursor(results) : nil,
                 "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
@@ -227,6 +248,7 @@ class DoisController < ApplicationController
             options[:params] = {
               current_ability: current_ability,
               detail: params[:detail],
+              composite: params[:composite],
               affiliation: params[:affiliation],
               is_collection: options[:is_collection],
             }
@@ -275,6 +297,7 @@ class DoisController < ApplicationController
         options[:params] = {
           current_ability: current_ability,
           detail: true,
+          composite: nil,
           affiliation: params[:affiliation],
         }
 

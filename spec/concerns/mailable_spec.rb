@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe "Mailable", type: :model, vcr: true do
   let(:token) { User.generate_token }
-  let(:provider) { create(:provider, symbol: "DATACITE") }
+  let(:provider) { create(:provider, symbol: "DATACITE", name: "DataCite", system_email: "test@datacite.org") }
   let(:client) { create(:client, symbol: "DATACITE.DATACITE", name: "DataCite Repository", system_email: "test@datacite.org", provider: provider) }
   let(:title) { "DataCite Fabrica" }
 
@@ -50,8 +50,16 @@ describe "Mailable", type: :model, vcr: true do
 
   context "send_notification_to_slack" do
     it "succeeds" do
-      text =  "Using contact email #{client.system_email}."
+      text =  "Using system email #{client.system_email}."
       options = { title: "TEST: new client account #{client.symbol} created." }
+      expect(Client.send_notification_to_slack(text, options)).to eq("ok")
+    end
+  end
+
+  context "send_notification_to_slack provider" do
+    it "succeeds" do
+      text =  "Using system email #{provider.system_email}."
+      options = { title: "TEST: new provider account #{provider.symbol} created." }
       expect(Client.send_notification_to_slack(text, options)).to eq("ok")
     end
   end

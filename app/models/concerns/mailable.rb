@@ -28,15 +28,17 @@ module Mailable
       reset_url = ENV['BRACCO_URL'] + "/reset"
       title = Rails.env.stage? ? "DataCite Fabrica Test" : "DataCite Fabrica"
       subject = "#{title}: New Account"
+      account_type = self.class.name == "Provider" ? member_type.humanize : client_type.humanize
       text = User.format_message_text(template: "users/welcome.text.erb", title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url)
       html = User.format_message_html(template: "users/welcome.html.erb", title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url)
 
       response = User.send_message(name: name, email: system_email, subject: subject, text: text, html: html)
 
       fields = [
-        { title: "Account ID", value: symbol},
-        { title: "Contact name", value: name, short: true },
-        { title: "Contact email", value: system_email, short: true }
+        { title: "Account ID", value: symbol, short: true },
+        { title: "Account type", value: account_type, short: true },
+        { title: "Account name", value: name, short: true },
+        { title: "System email", value: system_email, short: true }
       ]
       User.send_notification_to_slack(nil, title: subject, level: "good", fields: fields)
 
@@ -46,15 +48,17 @@ module Mailable
     def send_delete_email
       title = Rails.env.stage? ? "DataCite Fabrica Test" : "DataCite Fabrica"
       subject = "#{title}: Account Deleted"
+      account_type = self.class.name == "Provider" ? member_type.humanize : client_type.humanize
       text = User.format_message_text(template: "users/delete.text.erb", title: title, contact_name: name, name: symbol)
       html = User.format_message_html(template: "users/delete.html.erb", title: title, contact_name: name, name: symbol)
 
       response = User.send_message(name: name, email: system_email, subject: subject, text: text, html: html)
 
       fields = [
-        { title: "Account ID", value: symbol},
-        { title: "Contact name", value: name, short: true },
-        { title: "Contact email", value: system_email, short: true }
+        { title: "Account ID", value: symbol, short: true },
+        { title: "Account type", value: account_type, short: true },
+        { title: "Account name", value: name, short: true },
+        { title: "System email", value: system_email, short: true }
       ]
       User.send_notification_to_slack(nil, title: subject, level: "warning", fields: fields)
 
