@@ -8,6 +8,7 @@ module DoiItem
 
   field :id, ID, null: false, hash_key: "identifier", description: "The persistent identifier for the resource"
   field :type, String, null: false, description: "The type of the item."
+  field :doi, String, null: false, description: "The DOI for the resource."
   field :creators, [CreatorType], null: true, description: "The main researchers involved in producing the data, or the authors of the publication, in priority order" do
     argument :first, Int, required: false, default_value: 20
   end
