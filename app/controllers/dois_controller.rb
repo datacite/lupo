@@ -163,16 +163,16 @@ class DoisController < ApplicationController
         schema_versions = total.positive? ? facet_by_schema(response.aggregations.schema_versions.buckets) : nil
 
         affiliations = total.positive? ? facet_by_combined_key(response.aggregations.affiliations.buckets) : nil
-        sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
-        subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
+        # sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
+        # subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
         certificates = total.positive? ? facet_by_key(response.aggregations.certificates.buckets) : nil
 
         link_checks_status = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
-        links_with_schema_org = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
-        link_checks_schema_org_id = total.positive? ? response.aggregations.link_checks_schema_org_id.value : nil
-        link_checks_dc_identifier = total.positive? ? response.aggregations.link_checks_dc_identifier.value : nil
-        link_checks_citation_doi = total.positive? ? response.aggregations.link_checks_citation_doi.value : nil
-        links_checked = total.positive? ? response.aggregations.links_checked.value : nil
+        # links_with_schema_org = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
+        # link_checks_schema_org_id = total.positive? ? response.aggregations.link_checks_schema_org_id.value : nil
+        # link_checks_dc_identifier = total.positive? ? response.aggregations.link_checks_dc_identifier.value : nil
+        # link_checks_citation_doi = total.positive? ? response.aggregations.link_checks_citation_doi.value : nil
+        # links_checked = total.positive? ? response.aggregations.links_checked.value : nil
 
         citations = total.positive? ? metric_facet_by_year(response.aggregations.citations.buckets) : nil
         views = total.positive? ? metric_facet_by_year(response.aggregations.views.buckets) : nil
@@ -196,14 +196,14 @@ class DoisController < ApplicationController
               prefixes: prefixes,
               certificates: certificates,
               "schemaVersions" => schema_versions,
-              sources: sources,
+              # sources: sources,
               "linkChecksStatus" => link_checks_status,
-              "linksChecked" => links_checked,
-              "linksWithSchemaOrg" => links_with_schema_org,
-              "linkChecksSchemaOrgId" => link_checks_schema_org_id,
-              "linkChecksDcIdentifier" => link_checks_dc_identifier,
-              "linkChecksCitationDoi" => link_checks_citation_doi,
-              subjects: subjects,
+              # "linksChecked" => links_checked,
+              # "linksWithSchemaOrg" => links_with_schema_org,
+              # "linkChecksSchemaOrgId" => link_checks_schema_org_id,
+              # "linkChecksDcIdentifier" => link_checks_dc_identifier,
+              # "linkChecksCitationDoi" => link_checks_citation_doi,
+              # subjects: subjects,
               citations: citations,
               views: views,
               downloads: downloads,
