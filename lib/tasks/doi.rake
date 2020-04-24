@@ -89,6 +89,18 @@ namespace :doi do
     Doi.set_minted
   end
 
+  desc "Set schema version"
+  task set_schema_version: :environment do
+    options = {
+      from_id: (ENV["FROM_ID"] || Doi.minimum(:id)).to_i,
+      until_id: (ENV["UNTIL_ID"] || Doi.maximum(:id)).to_i,
+      query: "+aasm_state:findable -schema_version:*",
+      label: "[SetSchemaVersion]",
+      job_name: "SchemaVersionJob",
+    }
+    Doi.loop_through_dois(options)
+  end
+
   desc 'Convert affiliations to new format'
   task :convert_affiliations => :environment do
     from_id = (ENV['FROM_ID'] || Doi.minimum(:id)).to_i
