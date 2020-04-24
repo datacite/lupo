@@ -2859,6 +2859,55 @@ describe "dois", type: :request do
       # end
     end
 
+    context 'mds doi' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite_schema_3.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "should_validate" => "true",
+              "source" => "mds",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "should_validate" => "true",
+              "xml" => xml,
+              "source" => "mds",
+              "event" => "show"
+            }
+          }
+        }
+      end
+
+
+      it 'add metadata' do
+        puts "####FIRST ROUND"
+        put "/dois/10.14454/10703", update_attributes, headers
+
+        puts json
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
+
+        puts "####SECOND ROUND"
+        put '/dois/10.14454/10703', valid_attributes, headers
+       
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
+      end
+    end
+
     context 'update rightsList' do
       let(:rights_list) { [{ "rights" => "Creative Commons Attribution 3.0", "rightsUri" => "http://creativecommons.org/licenses/by/3.0/", "lang" => "en"}] }
       let(:update_attributes) do
