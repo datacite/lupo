@@ -253,12 +253,12 @@ class Client < ActiveRecord::Base
     {
       years: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-      cumulative_years: { terms: { field: 'cumulative_years', size: 15, min_doc_count: 1, order: { _count: "asc" } } },
-      providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } },
-      software: { terms: { field: 'software.keyword', size: 15, min_doc_count: 1 } },
-      client_types: { terms: { field: 'client_type', size: 15, min_doc_count: 1 } },
-      repository_types: { terms: { field: 'repository_type', size: 15, min_doc_count: 1 } },
-      certificates: { terms: { field: 'certificate', size: 15, min_doc_count: 1 } }
+      cumulative_years: { terms: { field: 'cumulative_years', size: 10, min_doc_count: 1, order: { _count: "asc" } } },
+      providers: { terms: { field: 'provider_id', size: 10, min_doc_count: 1 } },
+      software: { terms: { field: 'software.keyword', size: 10, min_doc_count: 1 } },
+      client_types: { terms: { field: 'client_type', size: 10, min_doc_count: 1 } },
+      repository_types: { terms: { field: 'repository_type', size: 10, min_doc_count: 1 } },
+      certificates: { terms: { field: 'certificate', size: 10, min_doc_count: 1 } }
     }
   end
 
