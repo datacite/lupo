@@ -79,12 +79,25 @@ namespace :crossref do
 end
 
 namespace :subj_id_check do
-  desc 'checks that events subject node congruency'
-  task :check => :environment do
-    from_id = (ENV['FROM_ID'] || Event.minimum(:id)).to_i
-    until_id = (ENV['UNTIL_ID'] || Event.maximum(:id)).to_i
-    
+  desc "checks that events subject node congruency"
+  task check: :environment do
+    from_id = (ENV["FROM_ID"] || Event.minimum(:id)).to_i
+    until_id = (ENV["UNTIL_ID"] || Event.maximum(:id)).to_i
     Event.subj_id_check(from_id: from_id, until_id: until_id)
+  end
+end
+
+namespace :crossref_events do
+  desc "delete events labeled with crossref errors"
+  task delete: :environment do
+    options = {
+      from_id: (ENV["FROM_ID"] || Event.minimum(:id)).to_i,
+      until_id: (ENV["UNTIL_ID"] || Event.maximum(:id)).to_i,
+      filter: { state_event: "crossref_citations_error" },
+      label: "[DeleteEventwithCrossrefError]",
+      job_name: "DeleteEventByAttributeJob",
+    }
+    Event.loop_through_events(options)
   end
 end
 

@@ -511,6 +511,35 @@ class Event < ActiveRecord::Base
     end
   end
 
+  def self.loop_through_events(options)
+    size = (options[:size] || 1000).to_i
+    cursor = [options[:from_id], options[:until_id]]
+    filter = options[:filter] || {} 
+    label = options[:label] || "" 
+    job_name = options[:job_name] || "" 
+    query = options[:query] || nil
+
+    query_hsh = {page: { size: 1, cursor: [] } }.merge(filter)
+
+    response = Event.query(query, query_hsh)
+    Rails.logger.warn "#{label} #{response.results.total} events with #{label}."
+
+    # walk through results using cursor
+    if response.results.total.positive?
+      while response.results.results.length.positive?
+        response = Event.query(query, query_hsh.merge!(page: { size: size, cursor: cursor }))
+        break unless response.results.results.length.positive?
+
+        Rails.logger.warn "#{label} #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
+        cursor = response.results.to_a.last[:sort]
+        Rails.logger.warn "#{label} Cursor: #{cursor} "
+
+        ids = response.results.results.map(&:uuid).uniq
+        Object.const_get(job_name).perform_later(ids, filter)
+      end
+    end
+  end
+
   def metric_type
     if relation_type_id.to_s =~ /(requests|investigations)/
       arr = relation_type_id.split("-", 4)
