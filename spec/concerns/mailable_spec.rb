@@ -7,7 +7,13 @@ describe "Mailable", type: :model, vcr: true do
   let(:title) { "DataCite Fabrica" }
 
   it "send_welcome_email" do
-    response = client.send_welcome_email
+    response = client.send_welcome_email(responsible_id: provider.symbol)
+    expect(response[:status]).to eq(200)
+    expect(response[:message]).to eq("Queued. Thank you.")
+  end
+
+  it "send_delete_email" do
+    response = client.send_delete_email(responsible_id: provider.symbol)
     expect(response[:status]).to eq(200)
     expect(response[:message]).to eq("Queued. Thank you.")
   end
