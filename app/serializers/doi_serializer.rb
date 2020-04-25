@@ -45,7 +45,7 @@ class DoiSerializer
     end.compact
   end
 
-  attribute :contributors do |object, params|
+  attribute :contributors, if: Proc.new { |object, params| params && params[:composite].blank? } do |object, params|
     # Always return an array of contributors and affiliations
     # use new array format only if param present
     Array.wrap(object.contributors).map do |c|
@@ -64,7 +64,7 @@ class DoiSerializer
     Array.wrap(object.rights_list)
   end
 
-  attribute :funding_references do |object|
+  attribute :funding_references, if: Proc.new { |object, params| params && params[:composite].blank? } do |object|
     Array.wrap(object.funding_references)
   end
 
@@ -76,7 +76,7 @@ class DoiSerializer
     Array.wrap(object.related_identifiers)
   end
 
-  attribute :geo_locations do |object|
+  attribute :geo_locations, if: Proc.new { |object, params| params && params[:composite].blank? } do |object|
     Array.wrap(object.geo_locations)
   end
 
@@ -84,7 +84,7 @@ class DoiSerializer
     Array.wrap(object.dates)
   end
 
-  attribute :subjects do |object|
+  attribute :subjects, if: Proc.new { |object, params| params && params[:composite].blank? } do |object|
     Array.wrap(object.subjects)
   end
 
