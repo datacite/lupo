@@ -34,8 +34,8 @@ class ClientPrefixesController < ApplicationController
       total = response.results.total
       total_pages = page[:size].positive? ? (total.to_f / page[:size]).ceil : 0
       years = total.positive? ? facet_by_year(response.response.aggregations.years.buckets) : nil
-      providers = total.positive? ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
-      clients = total.positive? ? facet_by_client(response.response.aggregations.clients.buckets) : nil
+      providers = total.positive? ? facet_by_combined_key(response.response.aggregations.providers.buckets) : nil
+      clients = total.positive? ? facet_by_combined_key(response.response.aggregations.clients.buckets) : nil
 
       client_prefixes = response.results
 

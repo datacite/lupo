@@ -121,19 +121,6 @@ module Facetable
       end
     end
 
-    def facet_by_provider(arr)
-      # generate hash with id and name for each provider in facet
-
-      ids = arr.map { |hsh| hsh["key"] }.join(",")
-      providers = Provider.find_by_id(ids, size: 1000).records.pluck(:symbol, :name).to_h
-
-      arr.map do |hsh|
-        { "id" => hsh["key"],
-          "title" => providers[hsh["key"].upcase],
-          "count" => hsh["doc_count"] }
-      end
-    end
-
     def facet_by_year_month(arr)
       arr.map do |hsh|
         month = hsh["key_as_string"][5..6].to_i
@@ -369,30 +356,6 @@ module Facetable
           },
           "states" => facet_by_key(hsh.states.buckets)
         }
-      end
-    end
-
-    def facet_by_provider_ids(arr)
-      # generate hash with id and name for each provider in facet
-      ids = arr.map { |hsh| hsh["key"] }.join(",")
-      providers = Provider.find_by_id_list(ids).records.pluck(:symbol, :name).to_h
-
-      arr.map do |hsh|
-        { "id" => hsh["key"],
-          "title" => providers[hsh["key"].upcase],
-          "count" => hsh["doc_count"] }
-      end
-    end
-
-    def facet_by_client(arr)
-      # generate hash with id and name for each client in facet
-      ids = arr.map { |hsh| hsh["key"] }.join(",")
-      clients = Client.find_by_id(ids).records.pluck(:symbol, :name).to_h
-
-      arr.map do |hsh|
-        { "id" => hsh["key"],
-          "title" => clients[hsh["key"].upcase],
-          "count" => hsh["doc_count"] }
       end
     end
 

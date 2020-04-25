@@ -70,7 +70,7 @@ class ProviderPrefix < ActiveRecord::Base
       states: { terms: { field: 'state', size: 2, min_doc_count: 1 } },
       years: { date_histogram: { field: 'created_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-      providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } },
+      providers: { terms: { field: 'provider_id_and_name', size: 10, min_doc_count: 1 } },
     }
   end
 
@@ -81,6 +81,10 @@ class ProviderPrefix < ActiveRecord::Base
   # convert external id / internal id
   def provider_id
     provider.symbol.downcase
+  end
+
+  def provider_id_and_name
+    "#{provider_id}:#{provider.name}" if provider.present?
   end
 
   # convert external id / internal id
