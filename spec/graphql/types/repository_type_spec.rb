@@ -29,7 +29,7 @@ describe Types::RepositoryType do
 
     before do
       Client.import
-      sleep 1
+      sleep 2
     end
 
     let(:query) do

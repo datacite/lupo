@@ -2890,16 +2890,12 @@ describe "dois", type: :request do
         }
       end
 
-
       it 'add metadata' do
-        puts "####FIRST ROUND"
         put "/dois/10.14454/10703", update_attributes, headers
 
-        puts json
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
 
-        puts "####SECOND ROUND"
         put '/dois/10.14454/10703', valid_attributes, headers
        
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
