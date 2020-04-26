@@ -83,6 +83,18 @@ module Lupo
     # secret_key_base is not used by Rails API, as there are no sessions
     config.secret_key_base = "blipblapblup"
 
+    # enable datadog tracing here so that we can inject tracing 
+    # information into logs
+    Datadog.configure do |c|
+      c.tracer hostname: "datadog.local", enabled: Rails.env.production?, env: Rails.env
+      c.use :rails, service_name: "client-api"
+      c.use :elasticsearch
+      c.use :active_record, analytics_enabled: false
+      c.use :graphql, schemas: [LupoSchema]
+      c.use :aws
+      c.analytics_enabled = true
+    end
+
     config.lograge.enabled = true
     config.lograge.formatter = Lograge::Formatters::Logstash.new
     config.lograge.logger = LogStashLogger.new(type: :stdout)
