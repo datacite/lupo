@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class MemberEdgeType < GraphQL::Types::Relay::BaseEdge
-  node_type(MemberType)
+class Types::MemberEdgeType < GraphQL::Types::Relay::BaseEdge
+  node_type(Types::MemberType)
 end

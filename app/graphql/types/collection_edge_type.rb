@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class CollectionEdgeType < GraphQL::Types::Relay::BaseEdge
-  node_type(CollectionType)
+class Types::CollectionEdgeType < GraphQL::Types::Relay::BaseEdge
+  node_type(Types::CollectionType)
 end

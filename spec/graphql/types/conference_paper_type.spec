@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe ConferencePaperType do
+describe Types::ConferencePaperType do
   describe "fields" do
     subject { described_class }
 

@@ -65,11 +65,8 @@ module Lupo
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
 
-    config.middleware.use Rack::CrawlerDetect
-
     # include graphql
-    config.paths.add Rails.root.join('app', 'graphql', 'types').to_s, eager_load: true
-    config.paths.add Rails.root.join('app', 'graphql', 'mutations').to_s, eager_load: true
+    # config.paths.add Rails.root.join('app', 'graphql').to_s, eager_load: true
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -136,6 +133,9 @@ module Lupo
 
     # make sure all input is UTF-8
     config.middleware.insert 0, Rack::UTF8Sanitizer, additional_content_types: ['application/vnd.api+json', 'application/xml']
+
+    # detect bots and crawlers
+    config.middleware.use Rack::CrawlerDetect
 
     # compress responses with deflate or gzip
     config.middleware.use Rack::Deflater

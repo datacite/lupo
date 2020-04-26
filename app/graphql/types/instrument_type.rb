@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class InstrumentType < BaseObject
-  implements DoiItem
+class Types::InstrumentType < Types::BaseObject
+  implements Types::DoiItem
 end

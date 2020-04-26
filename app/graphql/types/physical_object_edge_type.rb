@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class PhysicalObjectEdgeType < GraphQL::Types::Relay::BaseEdge
-  node_type(PhysicalObjectType)
+class Types::PhysicalObjectEdgeType < GraphQL::Types::Relay::BaseEdge
+  node_type(Types::PhysicalObjectType)
 end

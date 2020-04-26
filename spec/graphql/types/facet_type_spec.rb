@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe FacetType do
+describe Types::FacetType do
   describe "fields" do
     subject { described_class }
 

@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class CollectionType < BaseObject
-  implements DoiItem
+class Types::CollectionType < Types::BaseObject
+  implements Types::DoiItem
 end

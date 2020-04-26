@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe IssnType do
+describe Types::IssnType do
   describe "fields" do
     subject { described_class }
 

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe BookType do
+describe Types::BookType do
   describe "fields" do
     subject { described_class }
 

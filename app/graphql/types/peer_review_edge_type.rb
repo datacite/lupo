@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class PeerReviewEdgeType < GraphQL::Types::Relay::BaseEdge
-  node_type(PeerReviewType)
+class Types::PeerReviewEdgeType < GraphQL::Types::Relay::BaseEdge
+  node_type(Types::PeerReviewType)
 end

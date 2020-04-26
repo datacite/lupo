@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class MemberType < BaseObject
+class Types::MemberType < Types::BaseObject
   description "Information about providers"
 
   field :id, ID, null: false, hash_key: "uid", description: "Unique identifier for each provider"
@@ -9,10 +9,10 @@ class MemberType < BaseObject
   field :displayName, String, null: false, description: "Provider display name"
   field :ror_id, ID, null: true, description: "Research Organization Registry (ROR) identifier"
   field :description, String, null: true, description: "Description of the provider"
-  field :website, Url, null: true, description: "Website of the provider"
-  field :logo_url, Url, null: true, description: "URL for the provider logo"
+  field :website, Types::Url, null: true, description: "Website of the provider"
+  field :logo_url, Types::Url, null: true, description: "URL for the provider logo"
   field :region, String, null: true, description: "Geographic region where the provider is located"
-  field :country, CountryType, null: true, description: "Country where the provider is located"
+  field :country, Types::CountryType, null: true, description: "Country where the provider is located"
   field :organization_type, String, null: true, description: "Type of organization"
   field :focus_area, String, null: true, description: "Field of science covered by provider"
   field :joined, GraphQL::Types::ISO8601Date, null: true, description: "Date provider joined DataCite"
@@ -20,7 +20,7 @@ class MemberType < BaseObject
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
   
-  field :datasets, DatasetConnectionType, null: true, connection: true, max_page_size: 1000, description: "Datasets by this provider." do
+  field :datasets, Types::DatasetConnectionType, null: true, connection: true, max_page_size: 1000, description: "Datasets by this provider." do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -39,7 +39,7 @@ class MemberType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, PublicationConnectionType, null: true, connection: true, max_page_size: 1000, description: "Publications by this provider."  do
+  field :publications, Types::PublicationConnectionType, null: true, connection: true, max_page_size: 1000, description: "Publications by this provider."  do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -58,7 +58,7 @@ class MemberType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, SoftwareConnectionType, null: true, connection: true, max_page_size: 1000, description: "Software by this provider."  do
+  field :softwares, Types::SoftwareConnectionType, null: true, connection: true, max_page_size: 1000, description: "Software by this provider."  do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -77,7 +77,7 @@ class MemberType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :works, WorkConnectionType, null: true, connection: true, max_page_size: 1000, description: "Works by this provider." do
+  field :works, Types::WorkConnectionType, null: true, connection: true, max_page_size: 1000, description: "Works by this provider." do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -96,14 +96,14 @@ class MemberType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :prefixes, MemberPrefixConnectionType, null: true, description: "Prefixes managed by the member", connection: true do
+  field :prefixes, Types::MemberPrefixConnectionType, null: true, description: "Prefixes managed by the member", connection: true do
     argument :query, String, required: false
     argument :state, String, required: false
     argument :year, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :repositories, RepositoryConnectionType, null: true, description: "Repositories associated with the member", connection: true do
+  field :repositories, Types::RepositoryConnectionType, null: true, description: "Repositories associated with the member", connection: true do
     argument :query, String, required: false
     argument :year, String, required: false
     argument :software, String, required: false

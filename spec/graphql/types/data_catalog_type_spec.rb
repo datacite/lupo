@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe DataCatalogType do
+describe Types::DataCatalogType do
   describe "fields" do
     subject { described_class }
 
@@ -141,7 +141,7 @@ describe DataCatalogType do
     it "returns data_catalog information" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(83)
+      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(84)
       expect(response.dig("data", "dataCatalogs", "nodes").length).to eq(25)
       
       data_catalog = response.dig("data", "dataCatalogs", "nodes", 0)

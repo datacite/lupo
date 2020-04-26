@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CountryType < BaseObject
+class Types::CountryType < Types::BaseObject
   description "Information about countries"
 
   field :code, String, null: true, description: "Country ISO 3166-1 code"

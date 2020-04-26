@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class UsageReportConnectionType < BaseConnection
-  edge_type(UsageReportEdgeType)
+class Types::UsageReportConnectionType < Types::BaseConnection
+  edge_type(Types::UsageReportEdgeType)
   field_class GraphQL::Cache::Field
   
   field :total_count, Integer, null: false, cache: true

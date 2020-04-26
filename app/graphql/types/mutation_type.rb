@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-class MutationType < BaseObject
+class Types::MutationType < Types::BaseObject
 end

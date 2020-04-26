@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-module BaseInterface
+module Types::BaseInterface
   include GraphQL::Schema::Interface
   include ApolloFederation::Interface
 
-  field_class BaseField
+  field_class Types::BaseField
 end

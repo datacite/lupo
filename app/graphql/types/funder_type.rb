@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-class FunderType < BaseObject
+class Types::FunderType < Types::BaseObject
   description "Information about funders"
 
   field :id, ID, null: false, description: "Crossref Funder ID"
   field :type, String, null: false, description: "The type of the item."
   field :name, String, null: false, description: "The name of the funder."
   field :alternate_name, [String], null: true, description: "An alias for the funder."
-  field :address, AddressType, null: true, description: "Physical address of the funder."
+  field :address, Types::AddressType, null: true, description: "Physical address of the funder."
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :datasets, DatasetConnectionType, null: true, description: "Funded datasets", connection: true do
+  field :datasets, Types::DatasetConnectionType, null: true, description: "Funded datasets", connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -28,7 +28,7 @@ class FunderType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, PublicationConnectionType, null: true, description: "Funded publications", connection: true do
+  field :publications, Types::PublicationConnectionType, null: true, description: "Funded publications", connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -44,7 +44,7 @@ class FunderType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, SoftwareConnectionType, null: true, description: "Funded software", connection: true do
+  field :softwares, Types::SoftwareConnectionType, null: true, description: "Funded software", connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -60,7 +60,7 @@ class FunderType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :works, WorkConnectionType, null: true, description: "Funded works", connection: true do
+  field :works, Types::WorkConnectionType, null: true, description: "Funded works", connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe MemberType do
+describe Types::MemberType do
   describe "fields" do
     subject { described_class }
 

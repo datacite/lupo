@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DefinedTermType < BaseObject
+class Types::DefinedTermType < Types::BaseObject
   description "A word, name, acronym, phrase, etc. with a formal definition. Often used in the context of category or subject classification, glossaries or dictionaries, product or creative work types, etc."
 
   field :term_code, String, null: true, description: "A code that identifies this DefinedTerm within a DefinedTermSet."

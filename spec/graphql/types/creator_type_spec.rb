@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe CreatorType do
+describe Types::CreatorType do
   describe "fields" do
     subject { described_class }
 

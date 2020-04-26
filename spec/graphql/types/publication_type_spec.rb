@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe PublicationType do
+describe Types::PublicationType do
   describe "fields" do
     subject { described_class }
 

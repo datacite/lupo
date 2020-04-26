@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe InstrumentType do
+describe Types::InstrumentType do
   describe "fields" do
     subject { described_class }
 

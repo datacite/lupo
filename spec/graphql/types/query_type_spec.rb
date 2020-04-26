@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe QueryType do
+describe Types::QueryType do
   describe "fields" do
     subject { described_class }
 

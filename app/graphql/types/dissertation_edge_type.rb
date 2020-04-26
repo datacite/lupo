@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class DissertationEdgeType < GraphQL::Types::Relay::BaseEdge
-  node_type(DissertationType)
+class Types::DissertationEdgeType < GraphQL::Types::Relay::BaseEdge
+  node_type(Types::DissertationType)
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ResourceTypeType < BaseObject
+class Types::ResourceTypeType < Types::BaseObject
   description "Information about types"
 
   field :ris, String, null: true, description: "RIS"

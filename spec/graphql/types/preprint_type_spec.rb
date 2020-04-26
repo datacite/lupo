@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe PreprintType do
+describe Types::PreprintType do
   describe "fields" do
     subject { described_class }
 

@@ -1,4 +1,4 @@
-class RepositoryPrefixType < BaseObject
+class Types::RepositoryPrefixType < Types::BaseObject
   description "Information about repository prefixes"
 
   field :id, ID, null: false, hash_key: "uid", description: "Unique identifier for each repository prefix"

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TitleType < BaseObject
+class Types::TitleType < Types::BaseObject
   description "Information about titles"
 
   field :title, String, null: true, description: "Title"

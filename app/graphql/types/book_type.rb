@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class BookType < BaseObject
-  implements DoiItem
+class Types::BookType < Types::BaseObject
+  implements Types::DoiItem
 
   def type
     "Book"

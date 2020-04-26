@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class LabelType < BaseObject
+class Types::LabelType < Types::BaseObject
   description "Information about labels"
 
   field :code, ID, null: false, description: "Label language ISO 639-1 code"

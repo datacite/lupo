@@ -9,7 +9,7 @@ class LupoSchema < GraphQL::Schema
   max_depth 10
 
   # mutation(Types::MutationType)
-  query(QueryType)
+  query(Types::QueryType)
 
   use GraphQL::Batch
   use GraphQL::Cache

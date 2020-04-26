@@ -1,4 +1,4 @@
-class MemberPrefixType < BaseObject
+class Types::MemberPrefixType < Types::BaseObject
   description "Information about member prefixes"
 
   field :id, ID, null: false, hash_key: "uid", description: "Unique identifier for each provider prefix"

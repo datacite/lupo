@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe PeerReviewType do
+describe Types::PeerReviewType do
   describe "fields" do
     subject { described_class }
 

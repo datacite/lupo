@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class ModelType < BaseObject
-  implements ::DoiItem
+class Types::ModelType < Types::BaseObject
+  implements Types::DoiItem
 end

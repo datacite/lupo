@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class EventDataEdgeType < GraphQL::Types::Relay::BaseEdge
-  node_type(EventDataType)
+class Types::EventDataEdgeType < GraphQL::Types::Relay::BaseEdge
+  node_type(Types::EventDataType)
 
   field :source_id, String, null: true, description: "The source ID of the event."
   field :target_id, String, null: true, description: "The target ID of the event."

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Url < BaseScalar
+class Types::Url < Types::BaseScalar
   description "A valid URL, transported as a string"
 
   def self.coerce_input(input_value, context)

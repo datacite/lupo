@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe WorkType do
+describe Types::WorkType do
   describe "fields" do
     subject { described_class }
 

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe PersonType do
+describe Types::PersonType do
   describe "fields" do
     subject { described_class }
 

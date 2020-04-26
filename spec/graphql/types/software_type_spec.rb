@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe SoftwareType do
+describe Types::SoftwareType do
   describe "fields" do
     subject { described_class }
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class IssnType < BaseObject
+class Types::IssnType < Types::BaseObject
   description "Information about ISSN"
 
   field :issnl, String, null: true, description: "The ISSNL"

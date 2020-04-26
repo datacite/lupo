@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe LabelType do
+describe Types::LabelType do
   describe "fields" do
     subject { described_class }
 

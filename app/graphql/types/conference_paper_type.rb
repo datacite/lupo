@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class ConferencePaperType < BaseObject
-  implements DoiItem
+class Types::ConferencePaperType < Types::BaseObject
+  implements Types::DoiItem
 
   def type
     "ConferencePaper"

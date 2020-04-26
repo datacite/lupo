@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class EventDataType < BaseObject
-  implements DoiItem
+class Types::EventDataType < Types::BaseObject
+  implements Types::DoiItem
 end

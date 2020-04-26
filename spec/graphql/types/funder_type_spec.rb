@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe FunderType do
+describe Types::FunderType do
   describe "fields" do
     subject { described_class }
 

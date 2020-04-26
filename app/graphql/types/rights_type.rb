@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class RightsType < BaseObject
+class Types::RightsType < Types::BaseObject
   description "Information about rights"
 
   field :rights, String, null: true, description: "Any rights information for this resource"

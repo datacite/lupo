@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-class BaseUnion < GraphQL::Schema::Union
+class Types::BaseUnion < GraphQL::Schema::Union
 end

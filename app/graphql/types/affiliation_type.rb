@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AffiliationType < BaseObject
+class Types::AffiliationType < Types::BaseObject
   description "Information about affiliations"
 
   field :id, ID, null: true, description: "Affiliation ROR identifier"

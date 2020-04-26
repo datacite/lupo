@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DateType < BaseObject
+class Types::DateType < Types::BaseObject
   description "Information about dates"
 
   field :date, String, null: false, description: "Date information for this resource"

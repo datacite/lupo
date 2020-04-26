@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class WorkType < BaseObject
-  implements DoiItem
+class Types::WorkType < Types::BaseObject
+  implements Types::DoiItem
 end

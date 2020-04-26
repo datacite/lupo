@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe RepositoryPrefixType do
+describe Types::RepositoryPrefixType do
   describe "fields" do
     subject { described_class }
 

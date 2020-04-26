@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EventDataEdge < GraphQL::Relay::Edge
+class Types::EventDataEdge < GraphQL::Relay::Edge
   RELATION_TYPES = {
     "funds" => "isFundedBy",
     "isFundedBy" => "funds",

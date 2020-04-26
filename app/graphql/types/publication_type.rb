@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class PublicationType < BaseObject
-  implements DoiItem
+class Types::PublicationType < Types::BaseObject
+  implements Types::DoiItem
 end
