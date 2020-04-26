@@ -87,6 +87,7 @@ module Lupo
       c.use :rails, service_name: "client-api"
       c.use :elasticsearch
       c.use :active_record, analytics_enabled: false
+      # define graphql integration in app/graphql/lupo_schema.rb
       # c.use :graphql, schemas: [LupoSchema]
       c.use :aws
       c.analytics_enabled = true
