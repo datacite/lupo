@@ -522,7 +522,7 @@ class Event < ActiveRecord::Base
     query_hsh = {page: { size: 1, cursor: [] } }.merge(filter)
 
     response = Event.query(query, query_hsh)
-    Rails.logger.warn "#{label} #{response.results.total} events with #{label}."
+    Rails.logger.info "#{label} #{response.results.total} events with #{label}."
 
     # walk through results using cursor
     if response.results.total.positive?
@@ -530,12 +530,14 @@ class Event < ActiveRecord::Base
         response = Event.query(query, query_hsh.merge!(page: { size: size, cursor: cursor }))
         break unless response.results.results.length.positive?
 
-        Rails.logger.warn "#{label} #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "#{label} #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
-        Rails.logger.warn "#{label} Cursor: #{cursor} "
+        Rails.logger.info "#{label} Cursor: #{cursor} "
 
-        ids = response.results.results.map(&:uuid).uniq
-        Object.const_get(job_name).perform_later(ids, filter)
+        ids = response.results.results.map(&:uuid)
+        ids.each do |id|
+          Object.const_get(job_name).perform_later(id, filter)
+        end
       end
     end
   end

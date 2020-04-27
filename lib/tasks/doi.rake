@@ -94,7 +94,7 @@ namespace :doi do
     options = {
       from_id: (ENV["FROM_ID"] || Doi.minimum(:id)).to_i,
       until_id: (ENV["UNTIL_ID"] || Doi.maximum(:id)).to_i,
-      query: "+aasm_state:findable -schema_version:*",
+      query: "+aasm_state:findable&&registered -schema_version:*",
       label: "[SetSchemaVersion]",
       job_name: "SchemaVersionJob",
     }

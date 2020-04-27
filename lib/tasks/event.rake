@@ -79,7 +79,7 @@ namespace :crossref do
 end
 
 namespace :subj_id_check do
-  desc "checks that events subject node congruency"
+  desc "checks that events subject node is congruent with relation_type and source"
   task check: :environment do
     from_id = (ENV["FROM_ID"] || Event.minimum(:id)).to_i
     until_id = (ENV["UNTIL_ID"] || Event.maximum(:id)).to_i

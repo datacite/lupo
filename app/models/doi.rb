@@ -1776,7 +1776,7 @@ class Doi < ActiveRecord::Base
     query_hsh = {page: { size: 1, cursor: [] } }.merge(filter)
 
     response = Doi.query(query, query_hsh)
-    Rails.logger.warn "#{label} #{response.results.total} Dois with #{label}."
+    Rails.logger.info "#{label} #{response.results.total} Dois with #{label}."
 
     # walk through results using cursor
     if response.results.total.positive?
@@ -1784,12 +1784,14 @@ class Doi < ActiveRecord::Base
         response = Doi.query(query, query_hsh.merge!(page: { size: size, cursor: cursor }))
         break unless response.results.results.length.positive?
 
-        Rails.logger.warn "#{label} #{response.results.results.length}  Dois starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "#{label} #{response.results.results.length}  Dois starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
-        Rails.logger.warn "#{label} Cursor: #{cursor} "
+        Rails.logger.info "#{label} Cursor: #{cursor} "
 
-        ids = response.results.results.map(&:uid).uniq
-        Object.const_get(job_name).perform_later(ids, filter)
+        ids = response.results.results.map(&:uid)
+        ids.each do |id|
+          Object.const_get(job_name).perform_later(id, filter)
+        end
       end
     end
   end
