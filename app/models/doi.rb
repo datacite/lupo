@@ -1765,6 +1765,12 @@ class Doi < ActiveRecord::Base
     response.results.total
   end
 
+  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filer
+  # Options:
+  # +filter+:: paramaters to filter the index
+  # +label+:: String to output in the logs printout
+  # +query+:: ES query to filter the index
+  # +job_name+:: Acive Job class name of the Job that would be executed on every matched results 
   def self.loop_through_dois(options)
     size = (options[:size] || 1000).to_i
     cursor = [options[:from_id], options[:until_id]]
@@ -1773,15 +1779,14 @@ class Doi < ActiveRecord::Base
     job_name = options[:job_name] || "" 
     query = options[:query] || nil
 
-    query_hsh = {page: { size: 1, cursor: [] } }.merge(filter)
 
-    response = Doi.query(query, query_hsh)
+    response = Doi.query(query, filter.merge(page: { size: 1, cursor: [] }))
     Rails.logger.info "#{label} #{response.results.total} Dois with #{label}."
 
     # walk through results using cursor
     if response.results.total.positive?
       while response.results.results.length.positive?
-        response = Doi.query(query, query_hsh.merge!(page: { size: size, cursor: cursor }))
+        response = Doi.query(query, filter.merge!(page: { size: size, cursor: cursor }))
         break unless response.results.results.length.positive?
 
         Rails.logger.info "#{label} #{response.results.results.length}  Dois starting with _id #{response.results.to_a.first[:_id]}."
