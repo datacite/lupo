@@ -1786,7 +1786,7 @@ class Doi < ActiveRecord::Base
     # walk through results using cursor
     if response.results.total.positive?
       while response.results.results.length.positive?
-        response = Doi.query(query, filter.merge!(page: { size: size, cursor: cursor }))
+        response = Doi.query(query, filter.merge(page: { size: size, cursor: cursor }))
         break unless response.results.results.length.positive?
 
         Rails.logger.info "#{label} #{response.results.results.length}  Dois starting with _id #{response.results.to_a.first[:_id]}."
