@@ -124,15 +124,31 @@ class ClientsController < ApplicationController
   end
 
   def update
-    if @client.update(safe_params)
+    @client = Client.where(symbol: params[:id]).first
+    exists = @client.present?
+
+    if exists
       options = {}
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability }
-  
-      render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
-    else
-      Rails.logger.error @client.errors.inspect
-      render json: serialize_errors(@client.errors), status: :unprocessable_entity
+
+      if params.dig(:data, :attributes, :mode) == "transfer"
+
+        # only update provider_id
+        authorize! :transfer, @client
+
+        @client.transfer(target_id: safe_params.slice(:provider).dig(:provider))
+        render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
+      else
+        authorize! :update, @client
+        if @client.update(safe_params)
+
+          render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
+        else
+          Rails.logger.error @client.errors.inspect
+          render json: serialize_errors(@client.errors), status: :unprocessable_entity
+        end
+      end
     end
   end
 
