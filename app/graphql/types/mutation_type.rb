@@ -1,4 +1,6 @@
 # frozen_string_literal: true
 
-class Types::MutationType < Types::BaseObject
+module Types
+  class MutationType < Types::BaseObject
+  end
 end

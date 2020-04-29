@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-class Types::PreprintType < Types::BaseObject
-  implements Types::DoiItem
+module Types
+  class PreprintType < Types::BaseObject
+    implements Types::DoiItem
 
-  def type
-    "Preprint"
+    def type
+      "Preprint"
+    end
   end
 end

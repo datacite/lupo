@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-class Types::PeerReviewType < Types::BaseObject
-  implements Types::DoiItem
+module Types
+  class PeerReviewType < Types::BaseObject
+    implements Types::DoiItem
 
-  def type
-    "PeerReview"
+    def type
+      "PeerReview"
+    end
   end
 end

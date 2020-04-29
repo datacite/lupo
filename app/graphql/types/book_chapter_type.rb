@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-class Types::BookChapterType < Types::BaseObject
-  implements Types::DoiItem
+module Types
+  class BookChapterType < Types::BaseObject
+    implements Types::DoiItem
 
-  def type
-    "BookChapter"
+    def type
+      "BookChapter"
+    end
   end
 end

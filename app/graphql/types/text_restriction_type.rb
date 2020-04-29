@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
-class Types::TextRestrictionType < Types::BaseObject
-  description "Information"
-  
-  field :text, String, null: false, description: "Information"
-  field :restriction, [TextType], null: true, description: "Restriction"
+module Types
+  class TextRestrictionType < Types::BaseObject
+    description "Information"
+    
+    field :text, String, null: false, description: "Information"
+    field :restriction, [TextType], null: true, description: "Restriction"
+  end
 end

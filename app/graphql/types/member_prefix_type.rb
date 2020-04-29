@@ -1,11 +1,15 @@
-class Types::MemberPrefixType < Types::BaseObject
-  description "Information about member prefixes"
+# frozen_string_literal: true
 
-  field :id, ID, null: false, hash_key: "uid", description: "Unique identifier for each provider prefix"
-  field :type, String, null: false, description: "The type of the item."
-  field :name, String, null: false, hash_key: "prefix_id", description: "Provider prefix name"
+module Types
+  class MemberPrefixType < Types::BaseObject
+    description "Information about member prefixes"
 
-  def type
-    "MemberPrefix"
+    field :id, ID, null: false, hash_key: "uid", description: "Unique identifier for each provider prefix"
+    field :type, String, null: false, description: "The type of the item."
+    field :name, String, null: false, hash_key: "prefix_id", description: "Provider prefix name"
+
+    def type
+      "MemberPrefix"
+    end
   end
 end

@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
-class Types::DateType < Types::BaseObject
-  description "Information about dates"
+module Types
+  class DateType < Types::BaseObject
+    description "Information about dates"
 
-  field :date, String, null: false, description: "Date information for this resource"
-  field :date_type, String, null: true, hash_key: "dateType", description: "The type of date"
+    field :date, String, null: false, description: "Date information for this resource"
+    field :date_type, String, null: true, hash_key: "dateType", description: "The type of date"
+  end
 end

@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
-class Types::FacetType < Types::BaseObject
-  description "Summary information"
+module Types
+  class FacetType < Types::BaseObject
+    description "Summary information"
 
-  field :id, String, null: true, description: "ID"
-  field :title, String, null: true, description: "Title"
-  field :count, Int, null: true, description: "Count"
+    field :id, String, null: true, description: "ID"
+    field :title, String, null: true, description: "Title"
+    field :count, Int, null: true, description: "Count"
+  end
 end

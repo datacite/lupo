@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
-class Types::RepositoryPrefixEdgeType < GraphQL::Types::Relay::BaseEdge
-  node_type(Types::RepositoryPrefixType)
+module Types
+  class RepositoryPrefixEdgeType < GraphQL::Types::Relay::BaseEdge
+    node_type(Types::RepositoryPrefixType)
+  end
 end

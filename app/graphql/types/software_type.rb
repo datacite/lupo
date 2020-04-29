@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
-class Types::SoftwareType < Types::BaseObject
-  implements Types::DoiItem
+module Types
+  class SoftwareType < Types::BaseObject
+    implements Types::DoiItem
+  end
 end

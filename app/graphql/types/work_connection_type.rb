@@ -1,76 +1,78 @@
 # frozen_string_literal: true
 
-class Types::WorkConnectionType < Types::BaseConnection
-  edge_type(Types::WorkEdgeType)
-  field_class GraphQL::Cache::Field
+module Types
+  class WorkConnectionType < Types::BaseConnection
+    edge_type(Types::WorkEdgeType)
+    field_class GraphQL::Cache::Field
 
-  field :total_count, Integer, null: false, cache: true
-  field :years, [Types::FacetType], null: true, cache: true
-  field :resource_types, [Types::FacetType], null: true, cache: true
-  field :registration_agencies, [Types::FacetType], null: true, cache: true
-  field :repositories, [Types::FacetType], null: true, cache: true
-  field :affiliations, [Types::FacetType], null: true, cache: true
-  
-  def total_count
-    args = prepare_args(object.arguments)
-
-    response(args).results.total  
-  end
-
-  def years
-    args = prepare_args(object.arguments)
+    field :total_count, Integer, null: false, cache: true
+    field :years, [Types::FacetType], null: true, cache: true
+    field :resource_types, [Types::FacetType], null: true, cache: true
+    field :registration_agencies, [Types::FacetType], null: true, cache: true
+    field :repositories, [Types::FacetType], null: true, cache: true
+    field :affiliations, [Types::FacetType], null: true, cache: true
     
-    res = response(args)
-    res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : []
-  end
+    def total_count
+      args = prepare_args(object.arguments)
 
-  def resource_types
-    args = prepare_args(object.arguments)
+      response(args).results.total  
+    end
 
-    res = response(args)
-    res.results.total.positive? ? facet_by_combined_key(res.response.aggregations.resource_types.buckets) : []
-  end
+    def years
+      args = prepare_args(object.arguments)
+      
+      res = response(args)
+      res.results.total.positive? ? facet_by_year(res.response.aggregations.years.buckets) : []
+    end
 
-  def registration_agencies
-    args = prepare_args(object.arguments)
+    def resource_types
+      args = prepare_args(object.arguments)
 
-    res = response(args)
-    res.results.total.positive? ? facet_by_software(res.response.aggregations.registration_agencies.buckets) : []
-  end
+      res = response(args)
+      res.results.total.positive? ? facet_by_combined_key(res.response.aggregations.resource_types.buckets) : []
+    end
 
-  def repositories
-    args = prepare_args(object.arguments)
+    def registration_agencies
+      args = prepare_args(object.arguments)
 
-    res = response(args)
-    res.results.total.positive? ? facet_by_combined_key(res.response.aggregations.clients.buckets) : []
-  end
+      res = response(args)
+      res.results.total.positive? ? facet_by_software(res.response.aggregations.registration_agencies.buckets) : []
+    end
 
-  def affiliations
-    args = prepare_args(object.arguments)
+    def repositories
+      args = prepare_args(object.arguments)
 
-    res = response(args)
-    res.results.total.positive? ? facet_by_combined_key(res.response.aggregations.affiliations.buckets) : []
-  end
+      res = response(args)
+      res.results.total.positive? ? facet_by_combined_key(res.response.aggregations.clients.buckets) : []
+    end
 
-  def response(**args)
-    Doi.query(args[:query],
-              ids: args[:ids],
-              user_id: args[:user_id], 
-              client_id: args[:repository_id], 
-              provider_id: args[:member_id],
-              funder_id: args[:funder_id], 
-              affiliation_id: args[:affiliation_id],
-              re3data_id: args[:re3data_id], 
-              year: args[:year], 
-              resource_type_id: args[:resource_type_id],
-              has_person: args[:has_person],
-              has_funder: args[:has_funder], 
-              has_organization: args[:has_organization], 
-              has_citations: args[:has_citations],
-              has_parts: args[:has_parts],
-              has_versions: args[:has_versions],
-              has_views: args[:has_views], 
-              has_downloads: args[:has_downloads], 
-              page: { number: 1, size: 0 })
+    def affiliations
+      args = prepare_args(object.arguments)
+
+      res = response(args)
+      res.results.total.positive? ? facet_by_combined_key(res.response.aggregations.affiliations.buckets) : []
+    end
+
+    def response(**args)
+      Doi.query(args[:query],
+                ids: args[:ids],
+                user_id: args[:user_id], 
+                client_id: args[:repository_id], 
+                provider_id: args[:member_id],
+                funder_id: args[:funder_id], 
+                affiliation_id: args[:affiliation_id],
+                re3data_id: args[:re3data_id], 
+                year: args[:year], 
+                resource_type_id: args[:resource_type_id],
+                has_person: args[:has_person],
+                has_funder: args[:has_funder], 
+                has_organization: args[:has_organization], 
+                has_citations: args[:has_citations],
+                has_parts: args[:has_parts],
+                has_versions: args[:has_versions],
+                has_views: args[:has_views], 
+                has_downloads: args[:has_downloads], 
+                page: { number: 1, size: 0 })
+    end
   end
 end

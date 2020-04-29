@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
-class Types::InteractiveResourceType < Types::BaseObject
-  implements Types::DoiItem
+module Types
+  class InteractiveResourceType < Types::BaseObject
+    implements Types::DoiItem
+  end
 end

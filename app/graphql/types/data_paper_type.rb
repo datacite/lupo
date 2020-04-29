@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
-class Types::DataPaperType < Types::BaseObject
-  implements Types::DoiItem
+module Types
+  class DataPaperType < Types::BaseObject
+    implements Types::DoiItem
+  end
 end

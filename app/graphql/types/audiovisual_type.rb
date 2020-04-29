@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
-class Types::AudiovisualType < Types::BaseObject
-  implements Types::DoiItem
+module Types
+  class AudiovisualType < Types::BaseObject
+    implements Types::DoiItem
+  end
 end
