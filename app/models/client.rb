@@ -336,6 +336,11 @@ class Client < ActiveRecord::Base
       Rails.logger.error "[Transfer] Provider doesn't exist."
       return nil
     end
+    
+    if target_provider.member_type == "consortium"
+      Rails.logger.error "[Transfer] Consortiums cannot have repositories."
+      return nil
+    end
 
     original_provider = Provider.where(symbol: provider_id).first
     ## Transfer client
@@ -352,9 +357,6 @@ class Client < ActiveRecord::Base
       response = ProviderPrefix.where("prefix_id IN (?)", prefix_ids).destroy_all
       puts "#{response.count} provider prefixes deleted."
     end
-
-    # # update dois
-    # Doi.transfer(from_date: "2011-01-01", client_id: client.symbol, target_id: target.symbol)
 
     # Transfer DOIs
     TransferClientJob.perform_later(symbol, target_id: options[:target_id])

@@ -46,6 +46,22 @@ describe Client, type: :model do
       expect(provider.prefix_ids).to include(prefix.uid)
     end
   end
+  
+  describe "Client transfer to consortium organisation" do
+    let!(:prefix)  { create(:prefix) }
+    let!(:prefixes)  { create(:client_prefix, client: client, prefix: prefix) }
+    let!(:prefixes_dos)  { create(:provider_prefix, provider: provider, prefix: prefix) }
+    let(:new_provider) { create(:provider, symbol: "QUECHUA", role_name: "ROLE_CONSORTIUM") }
+    let(:options) { { target_id: new_provider.symbol } }
+
+    it "it fails" do
+      client.transfer(options)
+
+      expect(client.provider_id).to eq(provider.symbol.downcase)
+      expect(provider.prefix_ids).to include(prefix.uid)
+    end
+  end
+
 
   describe "methods" do
     it "should not update the symbol" do
