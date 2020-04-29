@@ -323,6 +323,50 @@ class Client < ActiveRecord::Base
     Doi.transfer(client_id: symbol.downcase, target_id: target.id)
   end
 
+  def transfer(options = {})
+
+    if options[:target_id].blank?
+      Rails.logger.error "[Transfer] No target provider provided."
+      return nil
+    end
+
+    target_provider = Provider.where(symbol: options[:target_id]).first
+
+    if target_provider.blank?
+      Rails.logger.error "[Transfer] Provider doesn't exist."
+      return nil
+    end
+
+    original_provider = Provider.where(symbol: provider_id).first
+    ## Transfer client
+    update_attribute(:allocator, target_provider.id)
+
+    # These prefixes are used by multiple clients
+    prefixes_to_keep = ["10.4124", "10.4225", "10.4226", "10.4227"]
+
+    # delete all associated prefixes
+    prefix_ids = original_provider.prefixes.reject{ |prefix| prefixes_to_keep.include?(prefix)}.pluck(:id)
+    prefixes = original_provider.prefix_ids.reject{ |prefix| prefixes_to_keep.include?(prefix)}
+
+    if prefix_ids.present?
+      response = ProviderPrefix.where("prefix_id IN (?)", prefix_ids).destroy_all
+      puts "#{response.count} provider prefixes deleted."
+    end
+
+    # # update dois
+    # Doi.transfer(from_date: "2011-01-01", client_id: client.symbol, target_id: target.symbol)
+
+    # Transfer DOIs
+    TransferClientJob.perform_later(symbol, target_id: options[:target_id])
+
+    # # assign prefixes to new client
+    prefixes.each do |prefix|
+      ProviderPrefix.create(provider_id: target_provider.symbol, prefix_id: prefix)
+      puts "Provider prefix for provider #{target_provider.symbol} and prefix #{prefix} created."
+    end
+
+  end
+
   def service_contact_email
     service_contact.fetch("email",nil) if service_contact.present?
   end
