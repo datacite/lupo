@@ -3,7 +3,7 @@
 class LupoSchema < GraphQL::Schema
   include ApolloFederation::Schema
 
-  # use GraphQL::Tracing::DataDogTracing, service: 'graphql'
+  use GraphQL::Tracing::DataDogTracing, service: 'graphql'
   use ApolloFederation::Tracing
 
   default_max_page_size 1000
