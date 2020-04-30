@@ -509,7 +509,7 @@ class Event < ActiveRecord::Base
     cursor = [options[:from_id], options[:until_id]]
 
     response = Event.query(nil,  page: { size: 1, cursor: [] })
-    Rails.logger.warn "[modify_nested_objects] #{response.results.total} events for source datacite-crossref."
+    Rails.logger.info "[modify_nested_objects] #{response.results.total} events for source datacite-crossref."
 
     # walk through results using cursor
     if response.results.total.positive?
@@ -517,12 +517,14 @@ class Event < ActiveRecord::Base
         response = Event.query(nil, page: { size: size, cursor: cursor })
         break unless response.results.results.length.positive?
 
-        Rails.logger.warn "[modify_nested_objects] modify_nested_objects #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[modify_nested_objects] modify_nested_objects #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
-        Rails.logger.warn "[modify_nested_objects] Cursor: #{cursor} "
+        Rails.logger.info "[modify_nested_objects] Cursor: #{cursor} "
 
         ids = response.results.results.map(&:uuid).uniq
-        CamelcaseNestedObjectsJob.perform_later(ids, options)
+        ids.each do |id|
+          CamelcaseNestedObjectsByIdJob.perform_later(id, options)
+        end
       end
     end
   end
