@@ -66,7 +66,8 @@ module Lupo
     config.load_defaults 5.2
 
     # include graphql
-    config.paths.add Rails.root.join('app', 'graphql').to_s, eager_load: true
+    config.paths.add Rails.root.join('app', 'graphql', 'types').to_s, eager_load: true
+    config.paths.add Rails.root.join('app', 'graphql', 'mutations').to_s, eager_load: true
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
@@ -89,7 +90,6 @@ module Lupo
       c.use :active_record, analytics_enabled: false
       # define graphql integration in app/graphql/lupo_schema.rb
       # c.use :graphql, schemas: [LupoSchema]
-      c.use :aws
       c.analytics_enabled = true
     end
 
@@ -107,17 +107,17 @@ module Lupo
 
     config.lograge.custom_options = lambda do |event|
       # Retrieves trace information for current thread
-      correlation = Datadog.tracer.active_correlation
+      # correlation = Datadog.tracer.active_correlation
 
       exceptions = %w(controller action format id)
       
       {
         # Adds IDs as tags to log output
-        dd: {
-          trace_id: correlation.trace_id,
-          span_id: correlation.span_id
-        },
-        ddsource: ["ruby"],
+        # dd: {
+        #   trace_id: correlation.trace_id,
+        #   span_id: correlation.span_id
+        # },
+        # ddsource: ["ruby"],
         params: event.payload[:params].except(*exceptions),
         uid: event.payload[:uid],
       }

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::DefinedTermType do
+describe DefinedTermType do
   describe "fields" do
     subject { described_class }
 

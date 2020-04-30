@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::IdentifierType do
+describe IdentifierType do
   describe "fields" do
     subject { described_class }
 

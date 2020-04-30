@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::InteractiveResourceType do
+describe InteractiveResourceType do
   describe "fields" do
     subject { described_class }
 

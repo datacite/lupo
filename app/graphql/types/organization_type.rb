@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-class Types::OrganizationType < Types::BaseObject
+class OrganizationType < BaseObject
   description "Information about organizations"
 
   field :id, ID, null: true, description: "ROR ID"
   field :type, String, null: false, description: "The type of the item."
   field :name, String, null: false, description: "The name of the organization."
   field :alternate_name, [String], null: true, description: "An alias for the organization."
-  field :identifiers, [Types::IdentifierType], null: true, description: "The identifier(s) for the organization."
+  field :identifiers, [IdentifierType], null: true, description: "The identifier(s) for the organization."
   field :url, [String], null: true, hash_key: "links", description: "URL of the organization."
-  field :address, Types::AddressType, null: true, description: "Physical address of the organization."
+  field :address, AddressType, null: true, description: "Physical address of the organization."
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :datasets, Types::DatasetConnectionType, null: true, description: "Datasets from this organization", connection: true do
+  field :datasets, DatasetConnectionType, null: true, description: "Datasets from this organization", connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -29,7 +29,7 @@ class Types::OrganizationType < Types::BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, Types::PublicationConnectionType, null: true, description: "Publications from this organization", connection: true do
+  field :publications, PublicationConnectionType, null: true, description: "Publications from this organization", connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -44,7 +44,7 @@ class Types::OrganizationType < Types::BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, Types::SoftwareConnectionType, null: true, description: "Software from this organization", connection: true do
+  field :softwares, SoftwareConnectionType, null: true, description: "Software from this organization", connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -59,7 +59,7 @@ class Types::OrganizationType < Types::BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :works, Types::WorkConnectionType, null: true, description: "Works from this organization", connection: true do
+  field :works, WorkConnectionType, null: true, description: "Works from this organization", connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false

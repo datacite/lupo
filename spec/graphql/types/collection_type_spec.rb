@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::CollectionType do
+describe CollectionType do
   describe "fields" do
     subject { described_class }
 

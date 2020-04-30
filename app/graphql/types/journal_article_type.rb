@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class Types::JournalArticleType < Types::BaseObject
-  implements Types::DoiItem
+class JournalArticleType < BaseObject
+  implements DoiItem
 
   def type
     "JournalArticle"

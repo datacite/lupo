@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::JournalArticleType do
+describe JournalArticleType do
   describe "fields" do
     subject { described_class }
 

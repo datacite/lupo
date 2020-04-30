@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class Types::AudiovisualEdgeType < GraphQL::Types::Relay::BaseEdge
-  node_type(Types::AudiovisualType)
+class AudiovisualEdgeType < GraphQL::Types::Relay::BaseEdge
+  node_type(AudiovisualType)
 end

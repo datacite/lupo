@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::SoundType do
+describe SoundType do
   describe "fields" do
     subject { described_class }
 

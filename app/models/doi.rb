@@ -1496,7 +1496,7 @@ class Doi < ActiveRecord::Base
     media.delete_all
 
     Array.wrap(content_url).each_with_index do |c, index|
-      media << Media.create(url: c, media_type: Array.wrap(formats)[index])
+      media << Media.create(dataset: id, url: c, media_type: Array.wrap(formats)[index])
     end
   end
 

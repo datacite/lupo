@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::DoiItem do
+describe DoiItem do
   describe "fields" do
     subject { described_class }
 

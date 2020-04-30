@@ -112,7 +112,7 @@ describe "Client Prefixes", type: :request, elasticsearch: true do
         post '/client-prefixes', not_valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"].first).to eq("source" => "client", "title"=>"Must exist")
+        expect(json["errors"].first).to eq("source" => "client", "title"=>"Can't be blank")
       end
     end
   end

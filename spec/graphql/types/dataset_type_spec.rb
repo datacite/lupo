@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::DatasetType do
+describe DatasetType do
   describe "fields" do
     subject { described_class }
 

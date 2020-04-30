@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Types::IdentifierType < Types::BaseObject
+class IdentifierType < BaseObject
   description "Information about identifiers"
 
   field :identifier_type, String, null: true, description: "The type of identifier."

@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-class Types::MemberPrefixConnectionType < Types::BaseConnection
-  edge_type(Types::MemberPrefixEdgeType)
+class MemberPrefixConnectionType < BaseConnection
+  edge_type(MemberPrefixEdgeType)
   field_class GraphQL::Cache::Field
   
   field :total_count, Integer, null: false, cache: true
-  field :states, [Types::FacetType], null: false, cache: true
-  field :years, [Types::FacetType], null: false, cache: true
+  field :states, [FacetType], null: false, cache: true
+  field :years, [FacetType], null: false, cache: true
 
   def total_count
     args = prepare_args(object.arguments)

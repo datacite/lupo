@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Types::RelatedIdentifierType < Types::BaseObject
+class RelatedIdentifierType < BaseObject
   description "Information about related identifiers"
 
   field :related_identifier, String, null: true, hash_key: "relatedIdentifier", description: "Related identifier"

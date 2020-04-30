@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module Types::DoiItem
-  include Types::BaseInterface
+module DoiItem
+  include BaseInterface
   include Bolognese::MetadataUtils
 
   description "Information about DOIs"
@@ -9,31 +9,31 @@ module Types::DoiItem
   field :id, ID, null: false, hash_key: "identifier", description: "The persistent identifier for the resource"
   field :type, String, null: false, description: "The type of the item."
   field :doi, String, null: false, description: "The DOI for the resource."
-  field :creators, [Types::CreatorType], null: true, description: "The main researchers involved in producing the data, or the authors of the publication, in priority order" do
+  field :creators, [CreatorType], null: true, description: "The main researchers involved in producing the data, or the authors of the publication, in priority order" do
     argument :first, Int, required: false, default_value: 20
   end
-  field :titles, [Types::TitleType], null: true, description: "A name or title by which a resource is known" do
+  field :titles, [TitleType], null: true, description: "A name or title by which a resource is known" do
     argument :first, Int, required: false, default_value: 5
   end
   field :publication_year, Int, null: true, description: "The year when the data was or will be made publicly available"
   field :publisher, String, null: true, description: "The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource"
-  field :subjects, [Types::SubjectType], null: true, description: "Subject, keyword, classification code, or key phrase describing the resource"
-  field :dates, [Types::DateType], null: true, description: "Different dates relevant to the work"
+  field :subjects, [SubjectType], null: true, description: "Subject, keyword, classification code, or key phrase describing the resource"
+  field :dates, [DateType], null: true, description: "Different dates relevant to the work"
   field :language, String, null: true, description: "The primary language of the resource"
-  field :identifiers, [Types::IdentifierType], null: true, description: "An identifier or identifiers applied to the resource being registered"
-  field :related_identifiers, [Types::RelatedIdentifierType], null: true, description: "Identifiers of related resources. These must be globally unique identifiers"
-  field :types, Types::ResourceTypeType, null: false, description: "The resource type"
+  field :identifiers, [IdentifierType], null: true, description: "An identifier or identifiers applied to the resource being registered"
+  field :related_identifiers, [RelatedIdentifierType], null: true, description: "Identifiers of related resources. These must be globally unique identifiers"
+  field :types, ResourceTypeType, null: false, description: "The resource type"
   field :formats, [String], null: true, description: "Technical format of the resource"
   field :sizes, [String], null: true, description: "Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource"
   field :version, String, null: true, hash_key: "version_info", description: "The version number of the resource"
-  field :rights, [Types::RightsType], null: true, hash_key: "rights_list", description: "Any rights information for this resource"
-  field :descriptions, [Types::DescriptionType], null: true, description: "All additional information that does not fit in any of the other categories" do
+  field :rights, [RightsType], null: true, hash_key: "rights_list", description: "Any rights information for this resource"
+  field :descriptions, [DescriptionType], null: true, description: "All additional information that does not fit in any of the other categories" do
     argument :first, Int, required: false, default_value: 5
   end
-  field :funding_references, [Types::FundingType], null: true, description: "Information about financial support (funding) for the resource being registered"
-  field :url, Types::Url, null: true, description: "The URL registered for the resource"
-  field :repository, Types::RepositoryType, null: true, description: "The repository account managing this resource"
-  field :member, Types::MemberType, null: true, description: "The member account managing this resource"
+  field :funding_references, [FundingType], null: true, description: "Information about financial support (funding) for the resource being registered"
+  field :url, Url, null: true, description: "The URL registered for the resource"
+  field :repository, RepositoryType, null: true, description: "The repository account managing this resource"
+  field :member, MemberType, null: true, description: "The member account managing this resource"
   field :registration_agency, String, hash_key: "agency", null: true, description: "The DOI registration agency for the resource"
   field :formatted_citation, String, null: true, description: "Metadata as formatted citation" do
     argument :style, String, required: false, default_value: "apa"
@@ -48,11 +48,11 @@ module Types::DoiItem
   field :version_of_count, Int, null: true, description: "Total number of DOIs the resource is a version of"
   field :part_count, Int, null: true, description: "Total number of parts"
   field :part_of_count, Int, null: true, description: "Total number of DOIs the resource is a part of"
-  field :citations_over_time, [Types::YearTotalType], null: true, description: "Citations by year"
-  field :views_over_time, [Types::YearMonthTotalType], null: true, description: "Views by month"
-  field :downloads_over_time, [Types::YearMonthTotalType], null: true, description: "Downloads by month"
+  field :citations_over_time, [YearTotalType], null: true, description: "Citations by year"
+  field :views_over_time, [YearMonthTotalType], null: true, description: "Views by month"
+  field :downloads_over_time, [YearMonthTotalType], null: true, description: "Downloads by month"
   
-  field :references, Types::WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "References for this DOI" do
+  field :references, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "References for this DOI" do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -70,7 +70,7 @@ module Types::DoiItem
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
-  field :citations, Types::WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "Citations for this DOI." do
+  field :citations, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "Citations for this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -88,7 +88,7 @@ module Types::DoiItem
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
-  field :parts, Types::WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "Parts of this DOI." do
+  field :parts, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "Parts of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -106,7 +106,7 @@ module Types::DoiItem
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
-  field :part_of, Types::WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "The DOI is a part of this DOI." do
+  field :part_of, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "The DOI is a part of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -124,7 +124,7 @@ module Types::DoiItem
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
-  field :versions, Types::WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "Versions of this DOI." do
+  field :versions, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "Versions of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -142,7 +142,7 @@ module Types::DoiItem
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
   end
-  field :version_of, Types::WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "The DOI is a version of this DOI." do
+  field :version_of, WorkConnectionType, null: true, connection: true, max_page_size: 100, description: "The DOI is a version of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false

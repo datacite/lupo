@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::OrganizationType do
+describe OrganizationType do
   describe "fields" do
     subject { described_class }
 

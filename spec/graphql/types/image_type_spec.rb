@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::ImageType do
+describe ImageType do
   describe "fields" do
     subject { described_class }
 

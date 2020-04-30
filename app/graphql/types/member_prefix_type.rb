@@ -1,4 +1,6 @@
-class Types::MemberPrefixType < Types::BaseObject
+# frozen_string_literal: true
+
+class MemberPrefixType < BaseObject
   description "Information about member prefixes"
 
   field :id, ID, null: false, hash_key: "uid", description: "Unique identifier for each provider prefix"

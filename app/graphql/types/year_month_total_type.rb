@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Types::YearMonthTotalType < Types::BaseObject
+class YearMonthTotalType < BaseObject
   description "Information about totals over time (years)"
 
   field :year_month, Int, null: true, description: "Year-month"
