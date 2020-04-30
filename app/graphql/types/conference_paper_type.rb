@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-module Types
-  class ConferencePaperType < Types::BaseObject
-    implements Types::DoiItem
+class ConferencePaperType < BaseObject
+  implements DoiItem
 
-    def type
-      "ConferencePaper"
-    end
+  def type
+    "ConferencePaper"
   end
 end

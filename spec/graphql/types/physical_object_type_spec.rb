@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::PhysicalObjectType do
+describe PhysicalObjectType do
   describe "fields" do
     subject { described_class }
 

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::AddressType do
+describe AddressType do
   describe "fields" do
     subject { described_class }
 

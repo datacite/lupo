@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-module Types
-  class DatasetEdgeType < GraphQL::Types::Relay::BaseEdge
-    node_type(Types::DatasetType)
-  end
+class DatasetEdgeType < GraphQL::Types::Relay::BaseEdge
+  node_type(DatasetType)
 end

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::TitleType do
+describe TitleType do
   describe "fields" do
     subject { described_class }
 

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::ServiceType do
+describe ServiceType do
   describe "fields" do
     subject { described_class }
 

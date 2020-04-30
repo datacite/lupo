@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-module Types
-  class DissertationType < Types::BaseObject
-    implements Types::DoiItem
+class DissertationType < BaseObject
+  implements DoiItem
 
-    def type
-      "Dissertation"
-    end
+  def type
+    "Dissertation"
   end
 end

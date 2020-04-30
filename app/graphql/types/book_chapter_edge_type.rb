@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-module Types
-  class BookChapterEdgeType < GraphQL::Types::Relay::BaseEdge
-    node_type(BookChapterType)
-  end
+class BookChapterEdgeType < GraphQL::Types::Relay::BaseEdge
+  node_type(BookChapterType)
 end

@@ -2,10 +2,8 @@
 
 require 'apollo-federation'
 
-module Types
-  class BaseField < GraphQL::Schema::Field
-    include ApolloFederation::Field
+class BaseField < GraphQL::Schema::Field
+  include ApolloFederation::Field
 
-    #field_class GraphQL::Cache::Field
-  end
+  #field_class GraphQL::Cache::Field
 end

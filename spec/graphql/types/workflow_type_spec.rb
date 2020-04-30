@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::WorkflowType do
+describe WorkflowType do
   describe "fields" do
     subject { described_class }
 
