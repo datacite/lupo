@@ -241,7 +241,7 @@ describe 'Clients', type: :request, elasticsearch: true do
         expect(last_response.status).to eq(200)
         expect(json.dig("data", "attributes", "name")).to eq("My data center")
         expect(json.dig("data", "relationships", "provider", "data", "id")).to eq("quechua")
-        expect(json.dig("data", "relationships", "prefixes", "data").first.dig("id")).to eq("10.5081")
+        expect(json.dig("data", "relationships", "prefixes", "data").first.dig("id")).to eq(prefix.uid)
 
         get "/providers/#{provider.symbol}"
 
@@ -249,7 +249,7 @@ describe 'Clients', type: :request, elasticsearch: true do
 
         get "/providers/#{new_provider.symbol}"
 
-        expect(json.dig("data", "relationships", "prefixes", "data").first.dig("id")).to eq("10.5081")
+        expect(json.dig("data", "relationships", "prefixes", "data").first.dig("id")).to eq(prefix.uid)
       end
     end
 
