@@ -146,7 +146,7 @@ describe "Provider Prefixes", type: :request, elasticsearch: true do
         post '/provider-prefixes', not_valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json["errors"].first).to eq("source"=>"provider", "title"=>"Can't be blank")
+        expect(json["errors"].first).to eq("source"=>"provider", "title"=>"Must exist")
       end
     end
   end
