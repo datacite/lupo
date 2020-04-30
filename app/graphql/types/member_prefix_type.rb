@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MemberPrefixType < BaseObject
   description "Information about member prefixes"
 

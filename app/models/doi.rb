@@ -561,20 +561,20 @@ class Doi < ActiveRecord::Base
                  aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
       registered: { date_histogram: { field: 'registered', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                  aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-      providers: { terms: { field: 'provider_id_and_name', size: 15, min_doc_count: 1} },
-      clients: { terms: { field: 'client_id_and_name', size: 15, min_doc_count: 1 } },
-      affiliations: { terms: { field: 'affiliation_id_and_name', size: 15, min_doc_count: 1 } },
-      prefixes: { terms: { field: 'prefix', size: 15, min_doc_count: 1 } },
-      schema_versions: { terms: { field: 'schema_version', size: 15, min_doc_count: 1 } },
-      link_checks_status: { terms: { field: 'landing_page.status', size: 15, min_doc_count: 1 } },
-      link_checks_has_schema_org: { terms: { field: 'landing_page.hasSchemaOrg', size: 2, min_doc_count: 1 } },
-      link_checks_schema_org_id: { value_count: { field: "landing_page.schemaOrgId" } },
-      link_checks_dc_identifier: { value_count: { field: "landing_page.dcIdentifier" } },
-      link_checks_citation_doi: { value_count: { field: "landing_page.citationDoi" } },
-      links_checked: { value_count: { field: "landing_page.checked" } },
-      sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
-      subjects: { terms: { field: 'subjects.subject', size: 15, min_doc_count: 1 } },
-      certificates: { terms: { field: 'client.certificate', size: 15, min_doc_count: 1 } },
+      providers: { terms: { field: 'provider_id_and_name', size: 10, min_doc_count: 1} },
+      clients: { terms: { field: 'client_id_and_name', size: 10, min_doc_count: 1 } },
+      affiliations: { terms: { field: 'affiliation_id_and_name', size: 10, min_doc_count: 1 } },
+      prefixes: { terms: { field: 'prefix', size: 10, min_doc_count: 1 } },
+      schema_versions: { terms: { field: 'schema_version', size: 10, min_doc_count: 1 } },
+      link_checks_status: { terms: { field: 'landing_page.status', size: 10, min_doc_count: 1 } },
+      # link_checks_has_schema_org: { terms: { field: 'landing_page.hasSchemaOrg', size: 2, min_doc_count: 1 } },
+      # link_checks_schema_org_id: { value_count: { field: "landing_page.schemaOrgId" } },
+      # link_checks_dc_identifier: { value_count: { field: "landing_page.dcIdentifier" } },
+      # link_checks_citation_doi: { value_count: { field: "landing_page.citationDoi" } },
+      # links_checked: { value_count: { field: "landing_page.checked" } },
+      # sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
+      # subjects: { terms: { field: 'subjects.subject', size: 15, min_doc_count: 1 } },
+      certificates: { terms: { field: 'client.certificate', size: 10, min_doc_count: 1 } },
       views: {
         date_histogram: { field: 'publication_year', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
         aggs: {
@@ -1496,7 +1496,7 @@ class Doi < ActiveRecord::Base
     media.delete_all
 
     Array.wrap(content_url).each_with_index do |c, index|
-      media << Media.create(url: c, media_type: Array.wrap(formats)[index])
+      media << Media.create(dataset: id, url: c, media_type: Array.wrap(formats)[index])
     end
   end
 

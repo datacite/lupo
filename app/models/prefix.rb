@@ -60,8 +60,8 @@ class Prefix < ActiveRecord::Base
       states: { terms: { field: 'state', size: 3, min_doc_count: 1 } },
       years: { date_histogram: { field: 'created_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-      providers: { terms: { field: 'provider_ids', size: 15, min_doc_count: 1 } },
-      clients: { terms: { field: 'client_ids', size: 15, min_doc_count: 1 } },
+      providers: { terms: { field: 'provider_ids_and_names', size: 10, min_doc_count: 1 } },
+      clients: { terms: { field: 'client_ids_and_names', size: 10, min_doc_count: 1 } },
     }
   end
 
@@ -81,8 +81,20 @@ class Prefix < ActiveRecord::Base
     clients.pluck(:symbol).map(&:downcase)
   end
 
+  def client_ids_and_name
+    clients.pluck(:symbol, :name).map do |p|
+      "#{p[0].downcase}:#{p[1]}"
+    end
+  end
+
   def provider_ids
     providers.pluck(:symbol).map(&:downcase)
+  end
+
+  def provider_ids_and_names
+    providers.pluck(:symbol, :name).map do |p|
+      "#{p[0].downcase}:#{p[1]}"
+    end
   end
 
   def client_prefix_ids

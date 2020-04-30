@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RepositoryPrefixType < BaseObject
   description "Information about repository prefixes"
 

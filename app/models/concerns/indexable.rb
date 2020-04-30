@@ -28,7 +28,11 @@ module Indexable
     after_commit on: [:destroy] do
       begin
         __elasticsearch__.delete_document
-        Rails.logger.warn "#{self.class.name} #{uid} deleted from Elasticsearch index."
+        if self.class.name == "Event"
+          Rails.logger.warn "#{self.class.name} #{uuid} deleted from Elasticsearch index."
+        else
+          Rails.logger.warn "#{self.class.name} #{uid} deleted from Elasticsearch index."
+        end
         # send_delete_message(self.to_jsonapi) if self.class.name == "Doi" && !Rails.env.test?
 
         # reindex prefix

@@ -117,6 +117,11 @@ type Audiovisual implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
+  The DOI for the resource.
+  """
+  doi: String!
+
+  """
   Total number of downloads
   """
   downloadCount: Int
@@ -557,6 +562,11 @@ type Book implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
+  The DOI for the resource.
+  """
+  doi: String!
+
+  """
   Total number of downloads
   """
   downloadCount: Int
@@ -954,6 +964,11 @@ type BookChapter implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  The DOI for the resource.
+  """
+  doi: String!
 
   """
   Total number of downloads
@@ -1437,6 +1452,11 @@ type Collection implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
+  The DOI for the resource.
+  """
+  doi: String!
+
+  """
   Total number of downloads
   """
   downloadCount: Int
@@ -1874,6 +1894,11 @@ type ConferencePaper implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  The DOI for the resource.
+  """
+  doi: String!
 
   """
   Total number of downloads
@@ -2540,6 +2565,11 @@ type DataPaper implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
+  The DOI for the resource.
+  """
+  doi: String!
+
+  """
   Total number of downloads
   """
   downloadCount: Int
@@ -2978,6 +3008,11 @@ type Dataset implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  The DOI for the resource.
+  """
+  doi: String!
 
   """
   Total number of downloads
@@ -3530,6 +3565,11 @@ type Dissertation implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
+  The DOI for the resource.
+  """
+  doi: String!
+
+  """
   Total number of downloads
   """
   downloadCount: Int
@@ -3973,6 +4013,11 @@ interface DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
+  The DOI for the resource.
+  """
+  doi: String!
+
+  """
   Total number of downloads
   """
   downloadCount: Int
@@ -4370,6 +4415,11 @@ type Event implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  The DOI for the resource.
+  """
+  doi: String!
 
   """
   Total number of downloads
@@ -4795,6 +4845,11 @@ type EventData implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  The DOI for the resource.
+  """
+  doi: String!
 
   """
   Total number of downloads
@@ -5546,6 +5601,11 @@ type Image implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
+  The DOI for the resource.
+  """
+  doi: String!
+
+  """
   Total number of downloads
   """
   downloadCount: Int
@@ -5986,6 +6046,11 @@ type Instrument implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
+  The DOI for the resource.
+  """
+  doi: String!
+
+  """
   Total number of downloads
   """
   downloadCount: Int
@@ -6424,6 +6489,11 @@ type InteractiveResource implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  The DOI for the resource.
+  """
+  doi: String!
 
   """
   Total number of downloads
@@ -6884,6 +6954,11 @@ type JournalArticle implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  The DOI for the resource.
+  """
+  doi: String!
 
   """
   Total number of downloads
@@ -7701,6 +7776,11 @@ type Model implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
+  The DOI for the resource.
+  """
+  doi: String!
+
+  """
   Total number of downloads
   """
   downloadCount: Int
@@ -8361,6 +8441,11 @@ type Other implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
+  The DOI for the resource.
+  """
+  doi: String!
+
+  """
   Total number of downloads
   """
   downloadCount: Int
@@ -8824,6 +8909,11 @@ type PeerReview implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  The DOI for the resource.
+  """
+  doi: String!
 
   """
   Total number of downloads
@@ -9492,6 +9582,11 @@ type PhysicalObject implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
+  The DOI for the resource.
+  """
+  doi: String!
+
+  """
   Total number of downloads
   """
   downloadCount: Int
@@ -9985,6 +10080,11 @@ type Preprint implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
+  The DOI for the resource.
+  """
+  doi: String!
+
+  """
   Total number of downloads
   """
   downloadCount: Int
@@ -10423,6 +10523,11 @@ type Publication implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  The DOI for the resource.
+  """
+  doi: String!
 
   """
   Total number of downloads
@@ -12239,6 +12344,11 @@ type Service implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
+  The DOI for the resource.
+  """
+  doi: String!
+
+  """
   Total number of downloads
   """
   downloadCount: Int
@@ -12677,6 +12787,11 @@ type Software implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  The DOI for the resource.
+  """
+  doi: String!
 
   """
   Total number of downloads
@@ -13148,6 +13263,11 @@ type Sound implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  The DOI for the resource.
+  """
+  doi: String!
 
   """
   Total number of downloads
@@ -13773,6 +13893,11 @@ type Work implements DoiItem {
   descriptions(first: Int = 5): [Description!]
 
   """
+  The DOI for the resource.
+  """
+  doi: String!
+
+  """
   Total number of downloads
   """
   downloadCount: Int
@@ -14212,6 +14337,11 @@ type Workflow implements DoiItem {
   All additional information that does not fit in any of the other categories
   """
   descriptions(first: Int = 5): [Description!]
+
+  """
+  The DOI for the resource.
+  """
+  doi: String!
 
   """
   Total number of downloads

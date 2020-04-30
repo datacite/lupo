@@ -32,6 +32,7 @@ describe ServiceType do
           }
           nodes {
             id
+            doi
             identifiers {
               identifier
               identifierType
@@ -60,6 +61,7 @@ describe ServiceType do
 
       service = response.dig("data", "services", "nodes", 0)
       expect(service.fetch("id")).to eq(services.first.identifier)
+      expect(service.fetch("doi")).to eq(services.first.doi)
       expect(service.fetch("identifiers")).to eq([{"identifier"=>
         "Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446.",
         "identifierType"=>nil}])

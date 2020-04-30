@@ -6,7 +6,7 @@ module Mailable
   require 'slack-notifier'
 
   included do
-    def send_welcome_email
+    def send_welcome_email(responsible_id: nil)
       if self.class.name == "Provider"
         client_id = nil
         provider_id = symbol.downcase
@@ -29,6 +29,7 @@ module Mailable
       title = Rails.env.stage? ? "DataCite Fabrica Test" : "DataCite Fabrica"
       subject = "#{title}: New Account"
       account_type = self.class.name == "Provider" ? member_type.humanize : client_type.humanize
+      responsible_id ||= "ADMIN"
       text = User.format_message_text(template: "users/welcome.text.erb", title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url)
       html = User.format_message_html(template: "users/welcome.html.erb", title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url)
 
@@ -38,17 +39,19 @@ module Mailable
         { title: "Account ID", value: symbol, short: true },
         { title: "Account type", value: account_type, short: true },
         { title: "Account name", value: name, short: true },
-        { title: "System email", value: system_email, short: true }
+        { title: "System email", value: system_email, short: true },
+        { title: "Responsible Account ID", value: responsible_id }
       ]
       User.send_notification_to_slack(nil, title: subject, level: "good", fields: fields)
 
       response
     end
 
-    def send_delete_email
+    def send_delete_email(responsible_id: nil)
       title = Rails.env.stage? ? "DataCite Fabrica Test" : "DataCite Fabrica"
       subject = "#{title}: Account Deleted"
       account_type = self.class.name == "Provider" ? member_type.humanize : client_type.humanize
+      responsible_id ||= "ADMIN"
       text = User.format_message_text(template: "users/delete.text.erb", title: title, contact_name: name, name: symbol)
       html = User.format_message_html(template: "users/delete.html.erb", title: title, contact_name: name, name: symbol)
 
@@ -58,7 +61,8 @@ module Mailable
         { title: "Account ID", value: symbol, short: true },
         { title: "Account type", value: account_type, short: true },
         { title: "Account name", value: name, short: true },
-        { title: "System email", value: system_email, short: true }
+        { title: "System email", value: system_email, short: true },
+        { title: "Responsible Account ID", value: responsible_id }
       ]
       User.send_notification_to_slack(nil, title: subject, level: "warning", fields: fields)
 

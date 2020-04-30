@@ -64,14 +64,18 @@ class ClientPrefix < ActiveRecord::Base
     {
       years: { date_histogram: { field: 'created_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-      providers: { terms: { field: "provider_id", size: 15, min_doc_count: 1 } },
-      clients: { terms: { field: "client_id", size: 15, min_doc_count: 1 } },
+      providers: { terms: { field: "provider_id_and_name", size: 10, min_doc_count: 1 } },
+      clients: { terms: { field: "client_id_and_name", size: 10, min_doc_count: 1 } },
     }
   end
 
   # convert external id / internal id
   def client_id
     client.symbol.downcase
+  end
+
+  def client_id_and_name
+    "#{client_id}:#{client.name}" if client.present?
   end
 
   # convert external id / internal id
@@ -98,6 +102,10 @@ class ClientPrefix < ActiveRecord::Base
 
   def provider_id
     client.provider_id if client.present?
+  end
+
+  def provider_id_and_name
+    "#{client.provider_id}:#{client.provider.name}" if client.present?
   end
 
   def provider

@@ -44,7 +44,7 @@ class ClientsController < ApplicationController
       total = response.results.total
       total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
       years = total > 0 ? facet_by_key_as_string(response.response.aggregations.years.buckets) : nil
-      providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+      providers = total > 0 ? facet_by_combined_key(response.response.aggregations.providers.buckets) : nil
       software = total > 0 ? facet_by_software(response.response.aggregations.software.buckets) : nil
       client_types = total > 0 ? facet_by_key(response.response.aggregations.client_types.buckets) : nil
       certificates = total > 0 ? facet_by_key(response.response.aggregations.certificates.buckets) : nil
@@ -112,6 +112,7 @@ class ClientsController < ApplicationController
     authorize! :create, @client
 
     if @client.save
+      @client.send_welcome_email(responsible_id: current_user.uid) unless Rails.env.test?
       options = {}
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability }
@@ -161,7 +162,7 @@ class ClientsController < ApplicationController
       Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @client.update(is_active: nil, deleted_at: Time.zone.now)
-      @client.send_delete_email unless Rails.env.test?
+      @client.send_delete_email(responsible_id: current_user.uid) unless Rails.env.test?
       head :no_content
     else
       Rails.logger.error @client.errors.inspect
