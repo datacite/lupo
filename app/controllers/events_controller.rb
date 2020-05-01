@@ -26,9 +26,10 @@ class EventsController < ApplicationController
     if @event.update_attributes(safe_params)
       options = {}
       options[:is_collection] = false
-
+      logger.warn "Created event #{@event.uuid} with source_id #{@event.source_id}"
       render json: EventSerializer.new(@event, options).serialized_json, status: exists ? :ok : :created
     else
+      logger.error @event.errors.inspect
       errors = @event.errors.full_messages.map { |message| { status: 422, title: message } }
       render json: { errors: errors }, status: :unprocessable_entity
     end
@@ -47,8 +48,10 @@ class EventsController < ApplicationController
       options = {}
       options[:is_collection] = false
 
+      logger.warn "Updated event #{@event.uuid} with source_id #{@event.source_id}"
       render json: EventSerializer.new(@event, options).serialized_json, status: exists ? :ok : :created
     else
+      logger.error @event.errors.inspect
       errors = @event.errors.full_messages.map { |message| { status: 422, title: message } }
       render json: { errors: errors }, status: :unprocessable_entity
     end
