@@ -6,7 +6,7 @@ class DoiSerializer
   set_id :uid
   # don't cache dois, as works are cached using the doi model
 
-  attributes :doi, :prefix, :suffix, :identifiers, :creators, :titles, :publisher, :container, :publication_year, :subjects, :contributors, :dates, :language, :types, :related_identifiers, :sizes, :formats, :version, :rights_list, :descriptions, :geo_locations, :funding_references, :xml, :url, :content_url, :metadata_version, :schema_version, :source, :is_active, :state, :reason, :landing_page, :view_count, :views_over_time, :download_count, :downloads_over_time, :reference_count, :citation_count, :citations_over_time, :part_count, :part_of_count, :version_count, :version_of_count, :created, :registered, :published, :updated
+  attributes :doi, :prefix, :suffix, :identifiers, :alternate_identifiers, :creators, :titles, :publisher, :container, :publication_year, :subjects, :contributors, :dates, :language, :types, :related_identifiers, :sizes, :formats, :version, :rights_list, :descriptions, :geo_locations, :funding_references, :xml, :url, :content_url, :metadata_version, :schema_version, :source, :is_active, :state, :reason, :landing_page, :view_count, :views_over_time, :download_count, :downloads_over_time, :reference_count, :citation_count, :citations_over_time, :part_count, :part_of_count, :version_count, :version_of_count, :created, :registered, :published, :updated
   attributes :prefix, :suffix, :views_over_time, :downloads_over_time, :citations_over_time, if: Proc.new { |object, params| params && params[:detail] }
   
   belongs_to :client, record_type: :clients
@@ -70,6 +70,12 @@ class DoiSerializer
 
   attribute :identifiers do |object|
     Array.wrap(object.identifiers)
+  end
+
+  attribute :alternate_identifiers, if: Proc.new { |object, params| params && params[:detail] } do |object|
+    Array.wrap(object.identifiers).select { |r| r["identifierType"] != "DOI" }.map do |a|
+      { "alternateIdentifierType" => a["identifierType"], "alternateIdentifier" => a["identifier"] }
+    end.compact
   end
 
   attribute :related_identifiers, if: Proc.new { |object, params| params && params[:composite].blank? } do |object|
