@@ -3,6 +3,7 @@
 source "https://rubygems.org"
 
 gem "rails", "~> 5.2.0"
+gem 'puma', '~> 4.3', '>= 4.3.3'
 gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
 gem "mysql2", "~> 0.4.4"
 gem 'ddtrace', '~> 0.32.0'
@@ -72,6 +73,7 @@ gem 'crawler_detect'
 gem 'lhm', '~> 2.2'
 gem 'kt-paperclip', '~> 6.2', '>= 6.2.2'
 gem 'kaminari', '~> 1.2'
+gem 'puma-cloudwatch', '~> 0.4.0'
 
 group :development, :test do
   gem "rspec-rails", "~> 3.8", ">= 3.8.2"
@@ -80,6 +82,7 @@ group :development, :test do
   gem "rubocop", "~> 0.77.0"
   gem 'rubocop-performance', '~> 1.5', '>= 1.5.1'
   gem "rubocop-rails", "~> 2.4"
+  gem 'rubocop-thread_safety', '~> 0.3.4'
   gem "better_errors"
   gem "binding_of_caller"
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]

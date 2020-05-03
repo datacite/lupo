@@ -9,6 +9,7 @@ AllCops:
 require:
   - rubocop-rails
   - rubocop-performance
+  - rubocop-thread_safety
 
 Naming/AccessorMethodName:
   Description: Check the naming of accessor methods for get_/set_.
