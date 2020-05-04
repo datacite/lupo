@@ -13,8 +13,7 @@ class TransferClientJob < ActiveJob::Base
         job_name: "UpdateProviderIdJob",
         target_id: options[:target_id],
       }
-      puts "fgdkjlfdgjklgfdjklgfd"
-      puts options
+
       Doi.loop_through_dois(options)
 
       Rails.logger.info "[Transfer] DOIs transfer has started for #{client.symbol} to #{options[:target_id]}."
