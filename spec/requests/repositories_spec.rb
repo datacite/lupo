@@ -279,6 +279,44 @@ describe 'Repositories', type: :request, elasticsearch: true do
       end
     end
 
+    context "transfer repository" do
+      let(:bearer) { User.generate_token }
+      let(:staff_headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer}}
+
+      let(:new_provider) { create(:provider, symbol: "QUECHUA", password_input: "12345") }
+      let!(:prefix)  { create(:prefix) }
+      let!(:client_prefix)  { create(:client_prefix, client: client, prefix: prefix) }
+      let!(:provider_prefix)  { create(:provider_prefix, provider: provider, prefix: prefix) }
+      let(:doi) { create_list(:doi,10, client: client) }
+
+
+      let(:params) do
+        { "data" => { "type" => "clients",
+                      "attributes" => {
+                        "mode" => "transfer",
+                        "targetId" => new_provider.symbol,
+                     
+                      } } }
+      end
+
+      it "updates the record" do
+        put "/repositories/#{client.symbol}", params, staff_headers
+        puts params
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "name")).to eq("My data center")
+        expect(json.dig("data", "relationships", "provider", "data", "id")).to eq("quechua")
+        expect(json.dig("data", "relationships", "prefixes", "data").first.dig("id")).to eq(prefix.uid)
+
+        get "/providers/#{provider.symbol}"
+
+        expect(json.dig("data", "relationships", "prefixes", "data")).to be_empty
+
+        get "/providers/#{new_provider.symbol}"
+
+        expect(json.dig("data", "relationships", "prefixes", "data").first.dig("id")).to eq(prefix.uid)
+      end
+    end
+
     context 'invalid globus_uuid' do
       let(:params) do
         { "data" => { "type" => "repositories",
