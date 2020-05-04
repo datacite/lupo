@@ -187,7 +187,7 @@ describe "dois", type: :request do
         expect(result.dig('attributes', 'doi')).to eq(doi.doi.downcase)
         expect(result.dig('attributes', 'titles')).to eq(doi.titles)
         expect(result.dig('attributes', 'identifiers')).to eq([{"identifier"=>"Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446.", "identifierType"=>"citation"}])
-        expect(result.dig('attributes', 'alternateIdentifiers')).to eq([{"identifier"=>"Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446.", "identifierType"=>"citation"}])
+        expect(result.dig('attributes', 'alternateIdentifiers')).to eq([{"alternateIdentifier"=>"Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446.", "alternateIdentifierType"=>"citation"}])
         # expect(result.dig('relationships','citations', 'data')).to be_empty
       end
     end
