@@ -606,6 +606,8 @@ class DoisController < ApplicationController
       { contributors: [:nameType, { nameIdentifiers: [:nameIdentifier, :nameIdentifierScheme, :schemeUri] }, :name, :givenName, :familyName, { affiliation: [:name, :affiliationIdentifier, :affiliationIdentifierScheme, :schemeUri] }, :contributorType, :lang] },
       :identifiers,
       { identifiers: [:identifier, :identifierType] },
+      :alternateIdentifiers,
+      { alternateIdentifiers: [:alternateIdentifier, :alternateIdentifierType] },
       :relatedIdentifiers,
       { relatedIdentifiers: [:relatedIdentifier, :relatedIdentifierType, :relationType, :relatedMetadataScheme, :schemeUri, :schemeType, :resourceTypeGeneral, :relatedMetadataScheme, :schemeUri, :schemeType] },
       :fundingReferences,
@@ -680,7 +682,7 @@ class DoisController < ApplicationController
 
     read_attrs_keys = [:url, :creators, :contributors, :titles, :publisher,
       :publicationYear, :types, :descriptions, :container, :sizes,
-      :formats, :language, :dates, :identifiers, :relatedIdentifiers,
+      :formats, :language, :dates, :identifiers, :alternateIdentifiers, :relatedIdentifiers,
       :fundingReferences, :geoLocations, :rightsList, :agency,
       :subjects, :contentUrl, :schemaVersion]
 
@@ -689,14 +691,23 @@ class DoisController < ApplicationController
     read_attrs_keys.each do |attr|
       p.merge!(attr.to_s.underscore => p[attr] || meta[attr.to_s.underscore] || p[attr]) if p.has_key?(attr) || meta.has_key?(attr.to_s.underscore)
     end
+
+    # handle alternate_identifiers
+    p[:identifiers] = Array.wrap(p[:alternate_identifiers]).map do |a|
+      { "identifierType" => a["alternateIdentifierType"], "identifier" => a["alternateIdentifier"] }
+    end.compact
+
+    # handle version metadata
     p[:version_info] = p[:version] || meta["version_info"] if p.has_key?(:version) || meta["version_info"].present?
+    
     # only update landing_page info if something is received via API to not overwrite existing data
     p.merge!(landing_page: p[:landingPage]) if p[:landingPage].present?
     
     p.merge(
       regenerate: p[:regenerate] || regenerate
     ).except(
-      :confirmDoi, :prefix, :suffix, :publicationYear,
+      # ignore camelCase keys, read-only keys and alternate_identifiers
+      :confirmDoi, :prefix, :suffix, :publicationYear, :alternateIdentifiers, :alternate_identifiers,
       :rightsList, :relatedIdentifiers, :fundingReferences, :geoLocations,
       :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage,
       :created, :registered, :updated, :published, :lastLandingPage, :version,
