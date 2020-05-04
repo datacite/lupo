@@ -27,7 +27,10 @@ class Ability
       can [:manage], ProviderPrefix do |provider_prefix|
         provider_prefix.provider && user.provider_id.casecmp(provider_prefix.provider.consortium_id)
       end
-      can [:read, :create, :update, :destroy], Client do |client|
+      can [:manage], Client do |client|
+        client.provider && user.provider_id.casecmp(client.provider.consortium_id)
+      end
+      cannot [:transfer], Client do |client|
         client.provider && user.provider_id.casecmp(client.provider.consortium_id)
       end
       can [:manage], ClientPrefix #, :client_id => user.provider_id
@@ -50,7 +53,8 @@ class Ability
     elsif user.role_id == "provider_admin" && user.provider_id.present?
       can [:update, :read, :read_billing_information], Provider, symbol: user.provider_id.upcase
       can [:manage], ProviderPrefix, provider_id: user.provider_id
-      can [:read, :create, :update, :destroy], Client, provider_id: user.provider_id
+      can [:manage], Client, provider_id: user.provider_id
+      cannot [:transfer], Client, provider_id: user.provider_id
       can [:manage], ClientPrefix #, :client_id => user.provider_id
 
       # if Flipper[:delete_doi].enabled?(user)
