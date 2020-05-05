@@ -34,37 +34,51 @@ describe Client, type: :model do
     let(:options) { { target_id: new_provider.symbol } }
     let(:bad_options) { { target_id: "SALS" } }
 
-    it "works" do
-      client.transfer(options)
+    context "to direct_member" do
+      it "works" do
+        client.transfer(options)
 
-      expect(client.provider_id).to eq(new_provider.symbol.downcase)
-      expect(new_provider.prefixes.length).to eq(1)
-      expect(provider.prefixes.length).to eq(1)
+        expect(client.provider_id).to eq(new_provider.symbol.downcase)
+        expect(new_provider.prefixes.length).to eq(1)
+        expect(provider.prefixes.length).to eq(1)
 
-      expect(new_provider.prefix_ids).to include(prefix.uid)
-      expect(provider.prefix_ids).not_to include(prefix.uid)
+        expect(new_provider.prefix_ids).to include(prefix.uid)
+        expect(provider.prefix_ids).not_to include(prefix.uid)
+      end
+
+      it "it doesn't transfer" do
+        client.transfer(bad_options)
+
+        expect(client.provider_id).to eq(provider.symbol.downcase)
+        expect(provider.prefixes.length).to eq(2)
+        expect(provider.prefix_ids).to include(prefix.uid)
+      end
     end
 
-    it "it doesn't transfer" do
-      client.transfer(bad_options)
+    context "to member_only" do
+      let(:new_provider) { create(:provider, symbol: "QUECHUA", member_type: "member_only") }
+      let(:options) { { target_id: new_provider.symbol } }
 
-      expect(client.provider_id).to eq(provider.symbol.downcase)
-      expect(provider.prefix_ids).to include(prefix.uid)
+      it "it doesn't transfer" do
+        client.transfer(options)
+
+        expect(client.provider_id).to eq(provider.symbol.downcase)
+        expect(provider.prefixes.length).to eq(2)
+        expect(provider.prefix_ids).to include(prefix.uid)
+      end
     end
-  end
-  
-  describe "Client transfer to consortium organisation" do
-    let!(:prefix)  { create(:prefix) }
-    let!(:prefixes)  { create(:client_prefix, client: client, prefix: prefix) }
-    let!(:prefixes_dos)  { create(:provider_prefix, provider: provider, prefix: prefix) }
-    let(:new_provider) { create(:provider, symbol: "QUECHUA", role_name: "ROLE_CONSORTIUM") }
-    let(:options) { { target_id: new_provider.symbol } }
 
-    it "it fails" do
-      client.transfer(options)
+    context "to consortium" do
+      let(:new_provider) { create(:provider, symbol: "QUECHUA", role_name: "ROLE_CONSORTIUM") }
+      let(:options) { { target_id: new_provider.symbol } }
 
-      expect(client.provider_id).to eq(provider.symbol.downcase)
-      expect(provider.prefix_ids).to include(prefix.uid)
+      it "it doesn't transfer" do
+        client.transfer(options)
+
+        expect(client.provider_id).to eq(provider.symbol.downcase)
+        expect(provider.prefixes.length).to eq(2)
+        expect(provider.prefix_ids).to include(prefix.uid)
+      end
     end
   end
 
