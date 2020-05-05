@@ -335,13 +335,23 @@ class Client < ActiveRecord::Base
       return nil
     end
 
-    if target_provider.member_type == "consortium"
-      Rails.logger.error "[Transfer] Consortiums cannot have repositories."
+    if ["member_only", "consortium"].include?(target_provider.member_type)
+      Rails.logger.error "[Transfer] Consortiums and Members-only cannot have repositories."
       return nil
     end
 
     ## Transfer client
     update_attribute(:allocator, target_provider.id)
+    
+    # transfer prefixes
+    transfer_prefixes(target_provider.symbol)
+
+    # Update DOIs
+    TransferClientJob.perform_later(symbol, target_id: options[:target_id])
+  end
+
+
+  def transfer_prefixes(target_id)
     # These prefixes are used by multiple clients
     prefixes_to_keep = ["10.4124", "10.4225", "10.4226", "10.4227"]
 
@@ -355,13 +365,10 @@ class Client < ActiveRecord::Base
       puts "#{response.count} provider prefixes deleted."
     end
 
-    # Update DOIs
-    TransferClientJob.perform_later(symbol, target_id: options[:target_id])
-
-    # Assign prefixes to provider
+    # Assign prefix(es) to provider
     prefixes_names.each do |prefix|
-      ProviderPrefix.create(provider_id: target_provider.symbol, prefix_id: prefix)
-      puts "Provider prefix for provider #{target_provider.symbol} and prefix #{prefix} created."
+      ProviderPrefix.create(provider_id: target_id, prefix_id: prefix)
+      puts "Provider prefix for provider #{target_id} and prefix #{prefix} created."
     end
   end
 
