@@ -6,8 +6,6 @@ class TransferClientJob < ActiveJob::Base
 
     if client.present? && options[:target_id].present?
       options = {
-        from_id: Doi.minimum(:id).to_i,
-        until_id: Doi.maximum(:id).to_i,
         filter: { client_id: symbol.downcase },
         label: "[ClientTransfer]",
         job_name: "UpdateProviderIdJob",
@@ -16,9 +14,9 @@ class TransferClientJob < ActiveJob::Base
 
       Doi.loop_through_dois(options)
 
-      Rails.logger.info "[Transfer] DOIs transfer has started for #{client.symbol} to #{options[:target_id]}."
+      Rails.logger.info "[Transfer] DOIs updating has started for #{client.symbol} to #{options[:target_id]}."
     else
-      Rails.logger.error "[Transfer] Error transferring DOIs " + symbol + ": not found"
+      Rails.logger.error "[Transfer] Error updating DOIs " + symbol + ": not found"
     end
   end
 end

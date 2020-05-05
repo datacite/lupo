@@ -1765,7 +1765,7 @@ class Doi < ActiveRecord::Base
     response.results.total
   end
 
-  ## Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filer
+  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filer
   # Options:
   # +filter+:: paramaters to filter the index
   # +label+:: String to output in the logs printout
@@ -1773,7 +1773,7 @@ class Doi < ActiveRecord::Base
   # +job_name+:: Acive Job class name of the Job that would be executed on every matched results 
   def self.loop_through_dois(options)
     size = (options[:size] || 1000).to_i
-    cursor = [options[:from_id], options[:until_id]]
+    cursor = [options[:from_id] || Doi.minimum(:id).to_i, options[:until_id] || Doi.maximum(:id).to_i]
     filter = options[:filter] || {}  
     label = options[:label] || "" 
     job_name = options[:job_name] || "" 
