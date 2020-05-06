@@ -529,14 +529,13 @@ class Event < ActiveRecord::Base
     end
   end
 
-
   def self.camelcase_nested_objects(uuid)
-      event = Event.find_by(uuid: uuid)
-      if event.present?
-        subj = event.subj.transform_keys { |key| key.to_s.underscore.camelcase(:lower) } 
-        obj = event.obj.transform_keys { |key| key.to_s.underscore.camelcase(:lower) }
-        event.update_attributes(subj: subj, obj: obj)
-      end
+    event = Event.find_by(uuid: uuid)
+    if event.present?
+      subj = event.subj.transform_keys { |key| key.to_s.underscore.camelcase(:lower) } 
+      obj = event.obj.transform_keys { |key| key.to_s.underscore.camelcase(:lower) }
+      event.update_attributes(subj: subj, obj: obj)
+    end
   end
 
   def self.label_state_event(event)
