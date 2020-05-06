@@ -12,11 +12,11 @@ class UpdateProviderIdJob < ActiveJob::Base
     if doi.present? && options[:target_id].present?
       doi.__elasticsearch__.index_document
 
-      Rails.logger.info "[Transfer] Transferred DOI #{doi.doi}."
+      Rails.logger.info "[Transfer] updated DOI #{doi.doi}."
     elsif doi.present?
-      Rails.logger.error "[Transfer] Error transferring DOI " + doi_id + ": no target client"
+      Rails.logger.error "[Transfer] Error updateding DOI " + doi_id + ": no target client"
     else
-      Rails.logger.error "[Transfer] Error transferring DOI " + doi_id + ": not found"
+      Rails.logger.error "[Transfer] Error updateding DOI " + doi_id + ": not found"
     end
   end
 end
