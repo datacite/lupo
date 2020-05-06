@@ -124,32 +124,24 @@ class ClientsController < ApplicationController
     end
   end
 
+
   def update
-    @client = Client.where(symbol: params[:id]).first
-    exists = @client.present?
+    options = {}
+    options[:is_collection] = false
+    options[:params] = { current_ability: current_ability }
 
-    if exists
-      options = {}
-      options[:is_collection] = false
-      options[:params] = { current_ability: current_ability }
+    if params.dig(:data, :attributes, :mode) == "transfer"
+      # only update provider_id
+      authorize! :transfer, @client
 
-      if params.dig(:data, :attributes, :mode) == "transfer"
+      @client.transfer(target_id: safe_params.slice(:target_id).dig(:target_id))
+      render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
+    elsif @client.update(safe_params)
 
-        # only update provider_id
-        authorize! :transfer, @client
-
-        @client.transfer(target_id: safe_params.slice(:target_id).dig(:target_id))
-        render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
-      else
-        authorize! :update, @client
-        if @client.update(safe_params)
-
-          render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
-        else
-          Rails.logger.error @client.errors.inspect
-          render json: serialize_errors(@client.errors), status: :unprocessable_entity
-        end
-      end
+      render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
+    else
+      Rails.logger.error @client.errors.inspect
+      render json: serialize_errors(@client.errors), status: :unprocessable_entity
     end
   end
 
