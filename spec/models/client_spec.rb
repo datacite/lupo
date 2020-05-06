@@ -30,7 +30,7 @@ describe Client, type: :model do
     let!(:client_prefix)  { create(:client_prefix, client: client, prefix: prefix) }
     let!(:provider_prefix)  { create(:provider_prefix, provider: provider, prefix: prefix) }
     let!(:provider_prefix_more) { create(:provider_prefix, provider: provider, prefix: prefixes.last) }
-    let(:new_provider) { create(:provider, symbol: "QUECHUA") }
+    let(:new_provider) { create(:provider, symbol: "QUECHUA", member_type: "direct_member") }
     let(:options) { { target_id: new_provider.symbol } }
     let(:bad_options) { { target_id: "SALS" } }
 
