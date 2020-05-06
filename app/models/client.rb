@@ -322,7 +322,6 @@ class Client < ActiveRecord::Base
   end
 
   def transfer(options = {})
-
     if options[:target_id].blank?
       Rails.logger.error "[Transfer] No target provider provided."
       return nil
@@ -335,21 +334,20 @@ class Client < ActiveRecord::Base
       return nil
     end
 
-    if ["member_only", "consortium"].include?(target_provider.member_type)
+    unless ["direct_member", "consortium_organization"].include?(target_provider.member_type)
       Rails.logger.error "[Transfer] Consortiums and Members-only cannot have repositories."
       return nil
     end
 
-    ## Transfer client
+    # Transfer client
     update_attribute(:allocator, target_provider.id)
-    
+
     # transfer prefixes
     transfer_prefixes(target_provider.symbol)
 
     # Update DOIs
     TransferClientJob.perform_later(symbol, target_id: options[:target_id])
   end
-
 
   def transfer_prefixes(target_id)
     # These prefixes are used by multiple clients
