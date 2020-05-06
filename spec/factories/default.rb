@@ -337,7 +337,7 @@ FactoryBot.define do
       source_id { "datacite_related" }
       source_token { "datacite_related_123" }
       sequence(:subj_id) { |n| "http://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
-      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      subj { { "date_published" => "2006-06-13T16:14:19Z", "registrant_id" => "datacite.datacite" } }
       obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
       relation_type_id { "references" }
     end
