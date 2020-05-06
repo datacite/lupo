@@ -81,7 +81,7 @@ describe Event, type: :model, vcr: true do
 
     it "should transform keys" do
       Event.camelcase_nested_objects(subject.uuid)
-      expect(subject.subj).to eq({"datePublished"=>"2006-06-13T16:14:19Z", "id"=>"https://doi.org/10.5061/dryad.47sd5e/1", "registrantId"=>"datacite.datacite"})
+      expect(subject.subj.keys).to include("datePublished", "registrantId", "id")
     end
   end
 end
