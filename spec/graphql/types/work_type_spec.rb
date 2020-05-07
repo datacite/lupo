@@ -20,6 +20,16 @@ describe WorkType do
       %(query {
         work(id: "https://doi.org/#{work.doi}") {
           id
+          repository {
+            id
+            type
+            name
+          }
+          member {
+            id
+            type
+            name
+          }
           bibtex
         }
       })
@@ -28,6 +38,11 @@ describe WorkType do
     it "returns work" do
       response = LupoSchema.execute(query).as_json
 
+      expect(response.dig("data", "work", "id")).to eq("https://handle.test.datacite.org/#{work.doi.downcase}")
+      expect(response.dig("data", "work", "repository", "id")).to eq(work.client_id)
+      expect(response.dig("data", "work", "repository", "name")).to eq(work.client.name)
+      expect(response.dig("data", "work", "member", "id")).to eq(work.provider_id)
+      expect(response.dig("data", "work", "member", "name")).to eq(work.provider.name)
       expect(response.dig("data", "work", "id")).to eq("https://handle.test.datacite.org/#{work.doi.downcase}")
       bibtex = BibTeX.parse(response.dig("data", "work", "bibtex")).to_a(quotes: '').first
       expect(bibtex[:bibtex_type].to_s).to eq("misc")

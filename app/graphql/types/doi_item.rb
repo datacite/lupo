@@ -32,8 +32,8 @@ module DoiItem
   end
   field :funding_references, [FundingType], null: true, description: "Information about financial support (funding) for the resource being registered"
   field :url, Url, null: true, description: "The URL registered for the resource"
-  field :repository, RepositoryType, null: true, description: "The repository account managing this resource"
-  field :member, MemberType, null: true, description: "The member account managing this resource"
+  field :repository, RepositoryType, null: true,  hash_key: "client", description: "The repository account managing this resource"
+  field :member, MemberType, null: true, hash_key: "provider", description: "The member account managing this resource"
   field :registration_agency, String, hash_key: "agency", null: true, description: "The DOI registration agency for the resource"
   field :formatted_citation, String, null: true, description: "Metadata as formatted citation" do
     argument :style, String, required: false, default_value: "apa"
