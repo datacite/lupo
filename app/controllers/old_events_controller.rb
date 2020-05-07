@@ -132,10 +132,9 @@ class OldEventsController < ApplicationController
     else
       sources = total > 0 ? facet_by_source(response.aggregations.sources.buckets) : nil
       prefixes = total > 0 ? facet_by_source(response.aggregations.prefixes.buckets) : nil
-      citation_types = total > 0 ? facet_by_citation_type(response.aggregations.citation_types.buckets) : nil
+      citation_types = total > 0 ? facet_by_citation_type_v1(response.aggregations.citation_types.buckets) : nil
       relation_types = total > 0 ? facet_by_relation_type_v1(response.aggregations.relation_types.buckets) : nil
-      registrants = total > 0  && params[:extra] ? facet_by_registrants(response.aggregations.registrants.buckets) : nil
-      pairings = total > 0 && params[:extra] ? facet_by_pairings(response.aggregations.pairings.buckets) : nil
+      registrants = total > 0 ? facet_by_registrants(response.aggregations.registrants.buckets) : nil
 
       results = response.results
 
@@ -148,7 +147,6 @@ class OldEventsController < ApplicationController
         prefixes: prefixes,
         "citation-types" => citation_types,
         "relation-types" => relation_types,
-        pairings: pairings,
         registrants: registrants
       }.compact
 

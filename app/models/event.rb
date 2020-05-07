@@ -213,18 +213,60 @@ class Event < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      sources: { terms: { field: "source_id", size: 50, min_doc_count: 1 } },
-      prefixes: { terms: { field: "prefix", size: 50, min_doc_count: 1 } },
-      registrants: { terms: { field: "registrant_id", size: 50, min_doc_count: 1 }, aggs: { year: { date_histogram: { field: "occurred_at", interval: "year", min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: "total" } } } } } },
-      pairings: { terms: { field: "registrant_id", size: 50, min_doc_count: 1 }, aggs: { recipient: { terms: { field: "registrant_id", size: 50, min_doc_count: 1 }, aggs: { "total" => { sum: { field: "total" } } } } } },
-      citation_types: { terms: { field: "citation_type", size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: "occurred_at", interval: "month", min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: "total" } } } } } },
-      relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: "occurred_at", interval: "month", min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: "total" } } } } } },
-      dois: { terms: { field: "obj_id", size: 50, min_doc_count: 1 }, aggs: { relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: "total" } } } } } },
+      sources: { terms: { field: "source_id", size: 10, min_doc_count: 1 } },
+      prefixes: { terms: { field: "prefix", size: 10, min_doc_count: 1 } },
+      registrants: { 
+        terms: { 
+          field: "registrant_id", size: 10, min_doc_count: 1
+        }, 
+        aggs: { 
+          year: { 
+            date_histogram: { 
+              field: 'occurred_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 
+            },
+            aggs: { 
+              bucket_truncate: { 
+                bucket_sort: { size: 10 }
+              }
+            }
+          }
+        }
+      },
+      citation_types: {
+        terms: {
+          field: "citation_type", size: 10, min_doc_count: 1
+        },
+        aggs: { 
+          year_month: {
+            date_histogram: {
+              field: 'occurred_at', interval: 'month', format: 'yyyy-MM', order: { _key: "desc" }, min_doc_count: 1
+            },
+            aggs: { 
+              bucket_truncate: {
+                bucket_sort: { size: 10 }
+              }
+            }
+          }
+        }
+      },
+      relation_types: { 
+        terms: {
+          field: "relation_type_id", size: 10, min_doc_count: 1
+        }, 
+        aggs: {
+          year_month: { 
+            date_histogram: { 
+              field: 'occurred_at', interval: 'month', format: 'yyyy-MM', order: { _key: "desc" }, min_doc_count: 1
+            },
+            aggs: { 
+              bucket_truncate: { 
+                bucket_sort: { size: 10 }
+              }
+            }
+          }
+        }
+      },
     }
-  end
-
-  def self.state_aggregations
-    { states: { terms: { field: "state_event", size: 50, min_doc_count: 1 } }}
   end
 
   # return results for one or more ids
@@ -593,7 +635,7 @@ class Event < ActiveRecord::Base
   def citation_type
     return nil if subj["@type"].blank? || subj["@type"] == "CreativeWork" || obj["@type"].blank? || obj["@type"] == "CreativeWork"
 
-   [subj["@type"], obj["@type"]].compact.sort.join("-")
+    [subj["@type"], obj["@type"]].compact.sort.join("-")
   end
 
   def doi_from_url(url)

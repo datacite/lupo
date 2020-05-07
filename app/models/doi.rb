@@ -711,8 +711,6 @@ class Doi < ActiveRecord::Base
       aggregations = client_export_aggregations
     elsif options[:totals_agg] == "prefix"
       aggregations = prefix_aggregations
-    else
-      aggregations = get_aggregations_hash(options)
     end
 
     # Cursor nav use the search after, this should always be an array of values that match the sort.

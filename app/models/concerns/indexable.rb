@@ -124,17 +124,6 @@ module Indexable
       })
     end
 
-    def get_aggregations_hash(options={})
-      aggregations = options[:aggregations] || ""
-      return send(:query_aggregations) if aggregations.blank?
-      aggs = {}
-      aggregations.split(",").each do |agg|
-        agg = :query_aggregations if agg.blank? || !respond_to?(agg)
-        aggs.merge! send(agg)
-      end
-      aggs
-    end
-
     def query(query, options={})
       # support scroll api
       # map function is small performance hit
@@ -168,7 +157,7 @@ module Indexable
       elsif options[:totals_agg] == "prefix"
         aggregations = prefix_aggregations
       else
-        aggregations = get_aggregations_hash(options)
+        aggregations = query_aggregations
       end
 
       options[:page] ||= {}
@@ -346,16 +335,6 @@ module Indexable
         }
       end
 
-      # Collap results list by unique citations
-      unique = options[:unique].blank? ? nil : {
-        field: "citation_id",
-        inner_hits: {
-          name: "first_unique_event",
-          size: 1
-        },
-        "max_concurrent_group_searches": 1
-      }
-
       # three options for going through results are scroll, cursor and pagination
       # the default is pagination
       # scroll is triggered by the page[scroll] query parameter
@@ -371,7 +350,6 @@ module Indexable
             size: options.dig(:page, :size),
             sort: sort,
             query: es_query,
-            collapse: unique,
             aggregations: aggregations,
             track_total_hits: true
           }.compact)
@@ -386,7 +364,6 @@ module Indexable
           search_after: search_after,
           sort: sort,
           query: es_query,
-          collapse: unique,
           aggregations: aggregations,
           track_total_hits: true
         }.compact)
@@ -396,7 +373,6 @@ module Indexable
           from: from,
           sort: sort,
           query: es_query,
-          collapse: unique,
           aggregations: aggregations,
           track_total_hits: true
         }.compact)
