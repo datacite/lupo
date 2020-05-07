@@ -157,7 +157,6 @@ class EventsController < ApplicationController
         "citationTypes" => citation_types,
         "relationTypes" => relation_types,
         registrants: registrants,
-        "states": states,
       }.compact
 
       options[:links] = {

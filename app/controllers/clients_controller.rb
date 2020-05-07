@@ -156,7 +156,7 @@ class ClientsController < ApplicationController
     page = { size: 0, number: 1 }
     state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
     response = Doi.query(nil, provider_id: params[:provider_id], state: state, page: page, totals_agg: "client")
-    registrant = response.results.total.positive? ? clients_totals(response.response.aggregations.clients_totals.buckets) : []
+    registrant = response.results.total.positive? ? clients_totals(response.aggregations.clients_totals.buckets) : []
     
     render json: registrant, status: :ok
   end
