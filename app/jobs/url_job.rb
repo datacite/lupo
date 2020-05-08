@@ -11,7 +11,7 @@ class UrlJob < ActiveJob::Base
 
     if doi.present?
       response = Doi.get_doi(doi: doi.doi, agency: doi.agency)
-      url = if response.is_a?(String) ? nil : response.body.dig('data', 'values', 0, 'data', 'value')
+      url = response.is_a?(String) ? nil : response.body.dig('data', 'values', 0, 'data', 'value')
       if url.present?
         if (doi.is_registered_or_findable? || %w(europ).include?(doi.provider_id)) && doi.minted.blank?
           doi.update_attributes(url: url, minted: Time.zone.now)
