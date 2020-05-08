@@ -24,6 +24,7 @@ class ProviderPrefix < ActiveRecord::Base
     indexes :uid,               type: :keyword
     indexes :state,             type: :keyword
     indexes :provider_id,       type: :keyword
+    indexes :provider_id_and_name, type: :keyword
     indexes :consortium_id,     type: :keyword
     indexes :prefix_id,         type: :keyword
     indexes :client_ids,        type: :keyword
@@ -51,6 +52,7 @@ class ProviderPrefix < ActiveRecord::Base
       "id" => uid,
       "uid" => uid,
       "provider_id" => provider_id,
+      "provider_id_and_name" => provider_id_and_name,
       "consortium_id" => consortium_id,
       "prefix_id" => prefix_id,
       "client_ids" => client_ids,

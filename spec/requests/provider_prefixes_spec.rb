@@ -23,6 +23,9 @@ describe "Provider Prefixes", type: :request, elasticsearch: true do
 
       expect(last_response.status).to eq(200)
       expect(json["data"].size).to eq(3)
+      expect(json.dig('meta', 'years')).to eq([{"count"=>3, "id"=>"2020", "title"=>"2020"}])
+      expect(json.dig('meta', 'states')).to eq([{"count"=>3, "id"=>"without-repository", "title"=>"Without Repository"}])
+      expect(json.dig('meta', 'providers')).to eq([{"count"=>3, "id"=>provider.symbol.downcase, "title"=>"My provider"}])
     end
   end
 

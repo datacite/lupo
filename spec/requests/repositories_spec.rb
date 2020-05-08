@@ -44,6 +44,8 @@ describe 'Repositories', type: :request, elasticsearch: true do
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(4)
       expect(json.dig('meta', 'total')).to eq(4)
+      expect(json.dig('meta', 'providers').length).to eq(4)
+      expect(json.dig('meta', 'providers').first).to eq("count"=>1, "id"=>provider.symbol.downcase, "title"=>"My provider")
     end
   end
 
