@@ -14,7 +14,7 @@ describe DataCatalogType do
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
     it { is_expected.to have_field(:downloadCount).of_type("Int") }
-    it { is_expected.to have_field(:datasets).of_type("DatasetConnection") }
+    it { is_expected.to have_field(:datasets).of_type("DatasetConnectionWithTotal") }
   end
 
   # describe "find data_catalog", elasticsearch: true, vcr: true do

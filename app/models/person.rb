@@ -47,7 +47,10 @@ class Person
     meta = { "total" => response.body.dig("data", "num-found").to_i }
     errors = response.body.fetch("errors", nil)
 
-    { data: data, meta: meta, errors: errors }
+    { 
+      data: data, 
+      meta: meta, 
+      errors: errors }
   end
 
   def self.parse_message(message: nil)

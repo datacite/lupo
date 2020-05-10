@@ -121,8 +121,7 @@ describe DatasetType do
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
       expect(response.dig("data", "datasets", "nodes", 0, "citationCount")).to eq(2)
       expect(response.dig("data", "datasets", "nodes", 0, "citationsOverTime")).to eq([{"total"=>1, "year"=>2015}, {"total"=>1, "year"=>2016}])
-      # TODO totalCount should be 2
-      # expect(response.dig("data", "datasets", "nodes", 0, "citations", "totalCount")).to eq(2)
+      expect(response.dig("data", "datasets", "nodes", 0, "citations", "totalCount")).to eq(2)
       expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes").length).to eq(2)
       expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes", 0)).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.doi.downcase}", "publicationYear"=>2011)
     end
@@ -163,12 +162,11 @@ describe DatasetType do
 
     it "returns all datasets with counts" do
       response = LupoSchema.execute(query).as_json
-
+      
       expect(response.dig("data", "datasets", "totalCount")).to eq(3)
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
       expect(response.dig("data", "datasets", "nodes", 0, "referenceCount")).to eq(2)
-      # TODO totalCount should be 2
-      # expect(response.dig("data", "datasets", "nodes", 0, "references", "totalCount")).to eq(2)
+      expect(response.dig("data", "datasets", "nodes", 0, "references", "totalCount")).to eq(2)
       expect(response.dig("data", "datasets", "nodes", 0, "references", "nodes").length).to eq(2)
       expect(response.dig("data", "datasets", "nodes", 0, "references", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{target_doi.doi.downcase}", "publicationYear"=>2011)
     end
@@ -212,8 +210,7 @@ describe DatasetType do
       expect(response.dig("data", "datasets", "totalCount")).to eq(3)
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
       expect(response.dig("data", "datasets", "nodes", 1, "versionCount")).to eq(1)
-      # TODO totalCount should be 1
-      # expect(response.dig("data", "datasets", "nodes", 1, "versions", "totalCount")).to eq(1)
+      expect(response.dig("data", "datasets", "nodes", 1, "versions", "totalCount")).to eq(1)
       expect(response.dig("data", "datasets", "nodes", 1, "versions", "nodes").length).to eq(1)
       expect(response.dig("data", "datasets", "nodes", 1, "versions", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{target_doi.doi.downcase}", "publicationYear"=>2011)
     end
@@ -253,12 +250,11 @@ describe DatasetType do
 
     it "returns all datasets with counts" do
       response = LupoSchema.execute(query).as_json
-
+      puts response
       expect(response.dig("data", "datasets", "totalCount")).to eq(3)
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
       expect(response.dig("data", "datasets", "nodes", 1, "versionOfCount")).to eq(1)
-      # TODO totalCount should be 1
-      # expect(response.dig("data", "datasets", "nodes", 0, "versionOf", "totalCount")).to eq(1)
+      expect(response.dig("data", "datasets", "nodes", 0, "versionOf", "totalCount")).to eq(1)
       expect(response.dig("data", "datasets", "nodes", 1, "versionOf", "nodes").length).to eq(1)
       expect(response.dig("data", "datasets", "nodes", 1, "versionOf", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.doi.downcase}", "publicationYear"=>2011)
     end
@@ -302,8 +298,7 @@ describe DatasetType do
       expect(response.dig("data", "datasets", "totalCount")).to eq(3)
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
       expect(response.dig("data", "datasets", "nodes", 1, "partCount")).to eq(1)
-      # TODO totalCount should be 1
-      # expect(response.dig("data", "datasets", "nodes", 1, "parts", "totalCount")).to eq(1)
+      expect(response.dig("data", "datasets", "nodes", 1, "parts", "totalCount")).to eq(1)
       expect(response.dig("data", "datasets", "nodes", 1, "parts", "nodes").length).to eq(1)
       expect(response.dig("data", "datasets", "nodes", 1, "parts", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{target_doi.doi.downcase}", "publicationYear"=>2011)
     end
@@ -347,8 +342,7 @@ describe DatasetType do
       expect(response.dig("data", "datasets", "totalCount")).to eq(3)
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
       expect(response.dig("data", "datasets", "nodes", 1, "partOfCount")).to eq(1)
-      # TODO totalCount should be 1
-      # expect(response.dig("data", "datasets", "nodes", 1, "partOf", "totalCount")).to eq(1)
+      expect(response.dig("data", "datasets", "nodes", 1, "partOf", "totalCount")).to eq(1)
       expect(response.dig("data", "datasets", "nodes", 1, "partOf", "nodes").length).to eq(1)
       expect(response.dig("data", "datasets", "nodes", 1, "partOf", "nodes").first).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.doi.downcase}", "publicationYear"=>2011)
     end

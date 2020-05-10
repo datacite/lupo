@@ -17,12 +17,12 @@ describe MemberType do
     it { is_expected.to have_field(:organizationType).of_type("String") }
     it { is_expected.to have_field(:focusArea).of_type("String") }
     it { is_expected.to have_field(:joined).of_type("ISO8601Date") }
-    it { is_expected.to have_field(:repositories).of_type("RepositoryConnection") }
-    it { is_expected.to have_field(:prefixes).of_type("MemberPrefixConnection") }
-    it { is_expected.to have_field(:datasets).of_type("DatasetConnection") }
-    it { is_expected.to have_field(:publications).of_type("PublicationConnection") }
-    it { is_expected.to have_field(:softwares).of_type("SoftwareConnection") }
-    it { is_expected.to have_field(:works).of_type("WorkConnection") }
+    it { is_expected.to have_field(:repositories).of_type("RepositoryConnectionWithTotal") }
+    it { is_expected.to have_field(:prefixes).of_type("MemberPrefixConnectionWithTotal") }
+    it { is_expected.to have_field(:datasets).of_type("DatasetConnectionWithTotal") }
+    it { is_expected.to have_field(:publications).of_type("PublicationConnectionWithTotal") }
+    it { is_expected.to have_field(:softwares).of_type("SoftwareConnectionWithTotal") }
+    it { is_expected.to have_field(:works).of_type("WorkConnectionWithTotal") }
   end
 
   describe "query members", elasticsearch: true do
@@ -37,6 +37,30 @@ describe MemberType do
       %(query {
         members {
           totalCount
+          years {
+            title
+            count
+          }
+          regions {
+            title
+            count
+          }
+          memberTypes {
+            title
+            count
+          }
+          organizationTypes {
+            title
+            count
+          }
+          focusAreas {
+            title
+            count
+          }
+          nonProfitStatuses {
+            title
+            count
+          }
           nodes {
             id
             name
@@ -49,8 +73,15 @@ describe MemberType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "members", "totalCount")).to eq(3)
+      expect(response.dig("data", "members", "years")).to eq([{"count"=>3, "title"=>"2020"}])
+      expect(response.dig("data", "members", "regions")).to eq([{"count"=>3, "title"=>"Europe, Middle East and Africa"}])
+      expect(response.dig("data", "members", "memberTypes")).to eq([{"count"=>3, "title"=>"Direct Member"}])
+      expect(response.dig("data", "members", "organizationTypes")).to eq([])
+      expect(response.dig("data", "members", "focusAreas")).to eq([])
+      expect(response.dig("data", "members", "nonProfitStatuses")).to eq([{"count"=>3, "title"=>"Non Profit"}])
       expect(response.dig("data", "members", "nodes").length).to eq(3)
       expect(response.dig("data", "members", "nodes", 0, "id")).to eq(providers.first.uid)
+      expect(response.dig("data", "members", "nodes", 0, "name")).to eq(providers.first.name)
     end
   end
 

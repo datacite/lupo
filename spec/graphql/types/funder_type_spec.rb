@@ -11,10 +11,10 @@ describe FunderType do
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
     it { is_expected.to have_field(:downloadCount).of_type("Int") }
-    it { is_expected.to have_field(:datasets).of_type("DatasetConnection") }
-    it { is_expected.to have_field(:publications).of_type("PublicationConnection") }
-    it { is_expected.to have_field(:softwares).of_type("SoftwareConnection") }
-    it { is_expected.to have_field(:works).of_type("WorkConnection") }
+    it { is_expected.to have_field(:datasets).of_type("DatasetConnectionWithTotal") }
+    it { is_expected.to have_field(:publications).of_type("PublicationConnectionWithTotal") }
+    it { is_expected.to have_field(:softwares).of_type("SoftwareConnectionWithTotal") }
+    it { is_expected.to have_field(:works).of_type("WorkConnectionWithTotal") }
   end
 
   describe "find funder", elasticsearch: true, vcr: true do
@@ -122,7 +122,7 @@ describe FunderType do
 
     it "returns funder information" do
       response = LupoSchema.execute(query).as_json
-
+      puts response
       expect(response.dig("data", "funders", "totalCount")).to eq(4)
       expect(response.dig("data", "funders", "nodes").length).to eq(4)
       funder = response.dig("data", "funders", "nodes", 0)

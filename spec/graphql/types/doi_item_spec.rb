@@ -38,11 +38,11 @@ describe DoiItem do
     it { is_expected.to have_field(:citationsOverTime).of_type("[YearTotal!]") }
     it { is_expected.to have_field(:viewsOverTime).of_type("[YearMonthTotal!]") }
     it { is_expected.to have_field(:downloadsOverTime).of_type("[YearMonthTotal!]") }
-    it { is_expected.to have_field(:citations).of_type("WorkConnection") }
-    it { is_expected.to have_field(:references).of_type("WorkConnection") }
-    it { is_expected.to have_field(:parts).of_type("WorkConnection") }
-    it { is_expected.to have_field(:part_of).of_type("WorkConnection") }
-    it { is_expected.to have_field(:versions).of_type("WorkConnection") }
-    it { is_expected.to have_field(:version_of).of_type("WorkConnection") }
+    it { is_expected.to have_field(:citations).of_type("WorkConnectionWithTotal") }
+    it { is_expected.to have_field(:references).of_type("WorkConnectionWithTotal") }
+    it { is_expected.to have_field(:parts).of_type("WorkConnectionWithTotal") }
+    it { is_expected.to have_field(:part_of).of_type("WorkConnectionWithTotal") }
+    it { is_expected.to have_field(:versions).of_type("WorkConnectionWithTotal") }
+    it { is_expected.to have_field(:version_of).of_type("WorkConnectionWithTotal") }
   end
 end

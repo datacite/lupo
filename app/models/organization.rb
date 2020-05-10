@@ -17,7 +17,7 @@ class Organization
   end
 
   def self.query(query, options={})
-    # rows = options[:limit] || 25
+    # rows = options[:limit] || 20
 
     if query.present?
       url = "https://api.ror.org/organizations?query=#{query}"
@@ -32,10 +32,19 @@ class Organization
     data = Array.wrap(response.body.dig("data", "items")).map do |message|
       parse_message(id: message["id"], message: message)
     end
-    meta = { "total" => response.body.dig("data", "number_of_results") }
+
+    meta = { 
+      "total" => response.body.dig("data", "number_of_results"),
+      "types" => response.body.dig("data", "meta", "types"),
+      "countries" => response.body.dig("data", "meta", "countries"),
+    }.compact
+
     errors = response.body.fetch("errors", nil)
 
-    { data: data, meta: meta, errors: errors }
+    {
+      data: data, 
+      meta: meta, 
+      errors: errors }
   end
 
   def self.parse_message(id: nil, message: nil)

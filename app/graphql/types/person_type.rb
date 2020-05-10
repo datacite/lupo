@@ -14,7 +14,7 @@ class PersonType < BaseObject
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :datasets, DatasetConnectionType, null: true, connection: true, max_page_size: 1000, description: "Authored datasets" do
+  field :datasets, DatasetConnectionWithTotalType, null: true, connection: true, description: "Authored datasets" do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :repository_id, String, required: false
@@ -29,7 +29,7 @@ class PersonType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, PublicationConnectionType, null: true, connection: true, max_page_size: 1000, description: "Authored publications"  do
+  field :publications, PublicationConnectionWithTotalType, null: true, connection: true, description: "Authored publications"  do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :repository_id, String, required: false
@@ -44,7 +44,7 @@ class PersonType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, SoftwareConnectionType, null: true, connection: true, max_page_size: 1000, description: "Authored software"  do
+  field :softwares, SoftwareConnectionWithTotalType, null: true, connection: true, description: "Authored software"  do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :repository_id, String, required: false
@@ -59,7 +59,7 @@ class PersonType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :works, WorkConnectionType, null: true, connection: true, max_page_size: 1000, description: "Authored works" do
+  field :works, WorkConnectionWithTotalType, null: true, connection: true, description: "Authored works" do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :repository_id, String, required: false
@@ -77,29 +77,21 @@ class PersonType < BaseObject
 
   def publications(**args)
     args[:resource_type_id] = "Text"
-    r = response(args)
-
-    r.results.to_a
+    response(args)
   end
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    r = response(args)
-
-    r.results.to_a
+    response(args)
   end
 
   def softwares(**args)
     args[:resource_type_id] = "Software"
-    r = response(args)
-
-    r.results.to_a
+    response(args)
   end
 
   def works(**args)
-    r = response(args)
-
-    r.results.to_a
+    response(args)
   end
 
   def view_count

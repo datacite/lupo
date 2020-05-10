@@ -46,7 +46,10 @@ class DataCatalog
     meta = { "total" => response.body.dig("meta", "total") }
     errors = response.body.fetch("errors", nil)
 
-    { data: data, meta: meta, errors: errors }
+    { 
+      data: data, 
+      meta: meta, 
+      errors: errors }
   end
 
   def self.parse_message(id: nil, message: nil)

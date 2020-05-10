@@ -7,7 +7,7 @@ class UsageReportType < BaseObject
   field :repository_id, String, null: true, description: "Repository that created the report"
   field :reporting_period, ReportingPeriodType, null: false, description: "Time period covered by the report"
   field :date_created, String, null: false, description: "Date information was created"
-  field :datasets, UsageReportDatasetConnectionType, null: false, description: "Datasets included in usage report", connection: true do
+  field :datasets, UsageReportDatasetConnectionWithTotalType, null: false, description: "Datasets included in usage report", connection: true do
     argument :first, Int, required: false, default_value: 25
   end
 

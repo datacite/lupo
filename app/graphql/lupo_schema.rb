@@ -3,6 +3,13 @@
 class LupoSchema < GraphQL::Schema
   include ApolloFederation::Schema
 
+  use GraphQL::Pagination::Connections
+  # custom connection wrapper for Elasticsearch
+  connections.add(Elasticsearch::Model::Response::Response, ElasticsearchModelResponseConnection)
+
+  # custom connection wrapper for external REST APIs
+  connections.add(Hash, HashConnection)
+
   use GraphQL::Tracing::DataDogTracing, service: 'graphql'
   use ApolloFederation::Tracing
 

@@ -94,7 +94,7 @@ type Audiovisual implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -206,7 +206,7 @@ type Audiovisual implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -248,7 +248,7 @@ type Audiovisual implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -300,7 +300,7 @@ type Audiovisual implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -397,7 +397,7 @@ type Audiovisual implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -439,7 +439,7 @@ type Audiovisual implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -455,7 +455,7 @@ type Audiovisual implements DoiItem {
 """
 The connection type for Audiovisual.
 """
-type AudiovisualConnection {
+type AudiovisualConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -539,7 +539,7 @@ type Book implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -651,7 +651,7 @@ type Book implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -693,7 +693,7 @@ type Book implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -745,7 +745,7 @@ type Book implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -842,7 +842,7 @@ type Book implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -884,7 +884,7 @@ type Book implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -943,7 +943,7 @@ type BookChapter implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -1055,7 +1055,7 @@ type BookChapter implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -1097,7 +1097,7 @@ type BookChapter implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -1149,7 +1149,7 @@ type BookChapter implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -1246,7 +1246,7 @@ type BookChapter implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -1288,7 +1288,7 @@ type BookChapter implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -1304,7 +1304,7 @@ type BookChapter implements DoiItem {
 """
 The connection type for BookChapter.
 """
-type BookChapterConnection {
+type BookChapterConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -1345,7 +1345,7 @@ type BookChapterEdge {
 """
 The connection type for Book.
 """
-type BookConnection {
+type BookConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -1429,7 +1429,7 @@ type Collection implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -1541,7 +1541,7 @@ type Collection implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -1583,7 +1583,7 @@ type Collection implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -1635,7 +1635,7 @@ type Collection implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -1732,7 +1732,7 @@ type Collection implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -1774,7 +1774,7 @@ type Collection implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -1790,7 +1790,7 @@ type Collection implements DoiItem {
 """
 The connection type for Collection.
 """
-type CollectionConnection {
+type CollectionConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -1873,7 +1873,7 @@ type ConferencePaper implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -1985,7 +1985,7 @@ type ConferencePaper implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -2027,7 +2027,7 @@ type ConferencePaper implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -2079,7 +2079,7 @@ type ConferencePaper implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -2176,7 +2176,7 @@ type ConferencePaper implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -2218,7 +2218,7 @@ type ConferencePaper implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -2234,7 +2234,7 @@ type ConferencePaper implements DoiItem {
 """
 The connection type for ConferencePaper.
 """
-type ConferencePaperConnection {
+type ConferencePaperConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -2384,7 +2384,7 @@ type DataCatalog {
     query: String
     repositoryId: String
     userId: String
-  ): DatasetConnection
+  ): DatasetConnectionWithTotal
 
   """
   A description of the data catalog.
@@ -2461,7 +2461,7 @@ type DataCatalog {
 """
 The connection type for DataCatalog.
 """
-type DataCatalogConnection {
+type DataCatalogConnectionWithTotal {
   datasetConnectionCount: Int!
 
   """
@@ -2542,7 +2542,7 @@ type DataPaper implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -2654,7 +2654,7 @@ type DataPaper implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -2696,7 +2696,7 @@ type DataPaper implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -2748,7 +2748,7 @@ type DataPaper implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -2845,7 +2845,7 @@ type DataPaper implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -2887,7 +2887,7 @@ type DataPaper implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -2903,7 +2903,7 @@ type DataPaper implements DoiItem {
 """
 The connection type for DataPaper.
 """
-type DataPaperConnection {
+type DataPaperConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -2987,7 +2987,7 @@ type Dataset implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -3099,7 +3099,7 @@ type Dataset implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -3141,7 +3141,7 @@ type Dataset implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -3193,7 +3193,7 @@ type Dataset implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -3264,7 +3264,7 @@ type Dataset implements DoiItem {
     Returns the last _n_ elements from the list.
     """
     last: Int
-  ): DatasetUsageReportConnection!
+  ): DatasetUsageReportConnectionWithTotal!
 
   """
   The version number of the resource
@@ -3311,7 +3311,7 @@ type Dataset implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -3353,7 +3353,7 @@ type Dataset implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -3369,7 +3369,7 @@ type Dataset implements DoiItem {
 """
 The connection type for Dataset.
 """
-type DatasetConnection {
+type DatasetConnectionWithTotal {
   affiliations: [Facet!]
   datasetConnectionCount: Int!
 
@@ -3416,7 +3416,7 @@ type DatasetEdge {
 """
 The connection type for EventData.
 """
-type DatasetUsageReportConnection {
+type DatasetUsageReportConnectionWithTotal {
   """
   A list of edges.
   """
@@ -3542,7 +3542,7 @@ type Dissertation implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -3654,7 +3654,7 @@ type Dissertation implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -3696,7 +3696,7 @@ type Dissertation implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -3748,7 +3748,7 @@ type Dissertation implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -3845,7 +3845,7 @@ type Dissertation implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -3887,7 +3887,7 @@ type Dissertation implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -3903,7 +3903,7 @@ type Dissertation implements DoiItem {
 """
 The connection type for Dissertation.
 """
-type DissertationConnection {
+type DissertationConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -3990,7 +3990,7 @@ interface DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -4102,7 +4102,7 @@ interface DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -4144,7 +4144,7 @@ interface DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -4196,7 +4196,7 @@ interface DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -4293,7 +4293,7 @@ interface DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -4335,7 +4335,7 @@ interface DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -4394,7 +4394,7 @@ type Event implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -4506,7 +4506,7 @@ type Event implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -4548,7 +4548,7 @@ type Event implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -4600,7 +4600,7 @@ type Event implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -4697,7 +4697,7 @@ type Event implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -4739,7 +4739,7 @@ type Event implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -4755,7 +4755,7 @@ type Event implements DoiItem {
 """
 The connection type for Event.
 """
-type EventConnection {
+type EventConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -4824,7 +4824,7 @@ type EventData implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -4936,7 +4936,7 @@ type EventData implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -4978,7 +4978,7 @@ type EventData implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -5030,7 +5030,7 @@ type EventData implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -5127,7 +5127,7 @@ type EventData implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -5169,7 +5169,7 @@ type EventData implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -5307,7 +5307,7 @@ type Funder {
     query: String
     repositoryId: String
     userId: String
-  ): DatasetConnection
+  ): DatasetConnectionWithTotal
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -5355,7 +5355,7 @@ type Funder {
     query: String
     repositoryId: String
     userId: String
-  ): PublicationConnection
+  ): PublicationConnectionWithTotal
 
   """
   Funded software
@@ -5388,7 +5388,7 @@ type Funder {
     query: String
     repositoryId: String
     userId: String
-  ): SoftwareConnection
+  ): SoftwareConnectionWithTotal
 
   """
   The type of the item.
@@ -5434,13 +5434,13 @@ type Funder {
     repositoryId: String
     resourceTypeId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 }
 
 """
 The connection type for Funder.
 """
-type FunderConnection {
+type FunderConnectionWithTotal {
   datasetConnectionCount: Int!
 
   """
@@ -5578,7 +5578,7 @@ type Image implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -5690,7 +5690,7 @@ type Image implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -5732,7 +5732,7 @@ type Image implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -5784,7 +5784,7 @@ type Image implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -5881,7 +5881,7 @@ type Image implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -5923,7 +5923,7 @@ type Image implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -5939,7 +5939,7 @@ type Image implements DoiItem {
 """
 The connection type for Image.
 """
-type ImageConnection {
+type ImageConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -6023,7 +6023,7 @@ type Instrument implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -6135,7 +6135,7 @@ type Instrument implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -6177,7 +6177,7 @@ type Instrument implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -6229,7 +6229,7 @@ type Instrument implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -6326,7 +6326,7 @@ type Instrument implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -6368,7 +6368,7 @@ type Instrument implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -6384,7 +6384,7 @@ type Instrument implements DoiItem {
 """
 The connection type for Instrument.
 """
-type InstrumentConnection {
+type InstrumentConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -6468,7 +6468,7 @@ type InteractiveResource implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -6580,7 +6580,7 @@ type InteractiveResource implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -6622,7 +6622,7 @@ type InteractiveResource implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -6674,7 +6674,7 @@ type InteractiveResource implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -6771,7 +6771,7 @@ type InteractiveResource implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -6813,7 +6813,7 @@ type InteractiveResource implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -6829,7 +6829,7 @@ type InteractiveResource implements DoiItem {
 """
 The connection type for InteractiveResource.
 """
-type InteractiveResourceConnection {
+type InteractiveResourceConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -6933,7 +6933,7 @@ type JournalArticle implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -7045,7 +7045,7 @@ type JournalArticle implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -7087,7 +7087,7 @@ type JournalArticle implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -7139,7 +7139,7 @@ type JournalArticle implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -7236,7 +7236,7 @@ type JournalArticle implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -7278,7 +7278,7 @@ type JournalArticle implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -7294,7 +7294,7 @@ type JournalArticle implements DoiItem {
 """
 The connection type for JournalArticle.
 """
-type JournalArticleConnection {
+type JournalArticleConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -7381,7 +7381,7 @@ type Member {
     repositoryId: String
     resourceTypeId: String
     userId: String
-  ): DatasetConnection
+  ): DatasetConnectionWithTotal
 
   """
   Description of the provider
@@ -7450,7 +7450,7 @@ type Member {
     query: String
     state: String
     year: String
-  ): MemberPrefixConnection
+  ): MemberPrefixConnectionWithTotal
 
   """
   Publications by this provider.
@@ -7487,7 +7487,7 @@ type Member {
     repositoryId: String
     resourceTypeId: String
     userId: String
-  ): PublicationConnection
+  ): PublicationConnectionWithTotal
 
   """
   Geographic region where the provider is located
@@ -7516,7 +7516,7 @@ type Member {
     query: String
     software: String
     year: String
-  ): RepositoryConnection
+  ): RepositoryConnectionWithTotal
 
   """
   Research Organization Registry (ROR) identifier
@@ -7558,7 +7558,7 @@ type Member {
     repositoryId: String
     resourceTypeId: String
     userId: String
-  ): SoftwareConnection
+  ): SoftwareConnectionWithTotal
 
   """
   The type of the item.
@@ -7610,28 +7610,34 @@ type Member {
     repositoryId: String
     resourceTypeId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 }
 
 """
 The connection type for Member.
 """
-type MemberConnection {
+type MemberConnectionWithTotal {
   """
   A list of edges.
   """
   edges: [MemberEdge]
+  focusAreas: [Facet!]
+  memberTypes: [Facet!]
 
   """
   A list of nodes.
   """
   nodes: [Member]
+  nonProfitStatuses: [Facet!]
+  organizationTypes: [Facet!]
 
   """
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  regions: [Facet!]
   totalCount: Int!
+  years: [Facet!]
 }
 
 """
@@ -7672,7 +7678,7 @@ type MemberPrefix {
 """
 The connection type for MemberPrefix.
 """
-type MemberPrefixConnection {
+type MemberPrefixConnectionWithTotal {
   """
   A list of edges.
   """
@@ -7753,7 +7759,7 @@ type Model implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -7865,7 +7871,7 @@ type Model implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -7907,7 +7913,7 @@ type Model implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -7959,7 +7965,7 @@ type Model implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -8056,7 +8062,7 @@ type Model implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -8098,7 +8104,7 @@ type Model implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -8114,7 +8120,7 @@ type Model implements DoiItem {
 """
 The connection type for Model.
 """
-type ModelConnection {
+type ModelConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -8201,7 +8207,7 @@ type Organization {
     query: String
     repositoryId: String
     userId: String
-  ): DatasetConnection
+  ): DatasetConnectionWithTotal
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -8253,7 +8259,7 @@ type Organization {
     query: String
     repositoryId: String
     userId: String
-  ): PublicationConnection
+  ): PublicationConnectionWithTotal
 
   """
   Software from this organization
@@ -8285,7 +8291,7 @@ type Organization {
     query: String
     repositoryId: String
     userId: String
-  ): SoftwareConnection
+  ): SoftwareConnectionWithTotal
 
   """
   The type of the item.
@@ -8332,13 +8338,15 @@ type Organization {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 }
 
 """
 The connection type for Organization.
 """
-type OrganizationConnection {
+type OrganizationConnectionWithTotal {
+  countries: [Facet!]
+
   """
   A list of edges.
   """
@@ -8355,6 +8363,7 @@ type OrganizationConnection {
   pageInfo: PageInfo!
   personConnectionCount: Int!
   totalCount: Int!
+  types: [Facet!]
 }
 
 """
@@ -8418,7 +8427,7 @@ type Other implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -8530,7 +8539,7 @@ type Other implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -8572,7 +8581,7 @@ type Other implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -8624,7 +8633,7 @@ type Other implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -8721,7 +8730,7 @@ type Other implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -8763,7 +8772,7 @@ type Other implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -8779,7 +8788,7 @@ type Other implements DoiItem {
 """
 The connection type for Other.
 """
-type OtherConnection {
+type OtherConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -8888,7 +8897,7 @@ type PeerReview implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -9000,7 +9009,7 @@ type PeerReview implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -9042,7 +9051,7 @@ type PeerReview implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -9094,7 +9103,7 @@ type PeerReview implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -9191,7 +9200,7 @@ type PeerReview implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -9233,7 +9242,7 @@ type PeerReview implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -9249,7 +9258,7 @@ type PeerReview implements DoiItem {
 """
 The connection type for PeerReview.
 """
-type PeerReviewConnection {
+type PeerReviewConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -9331,7 +9340,7 @@ type Person {
     memberId: String
     query: String
     repositoryId: String
-  ): DatasetConnection
+  ): DatasetConnectionWithTotal
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -9393,7 +9402,7 @@ type Person {
     memberId: String
     query: String
     repositoryId: String
-  ): PublicationConnection
+  ): PublicationConnectionWithTotal
 
   """
   Authored software
@@ -9425,7 +9434,7 @@ type Person {
     memberId: String
     query: String
     repositoryId: String
-  ): SoftwareConnection
+  ): SoftwareConnectionWithTotal
 
   """
   The type of the item.
@@ -9469,13 +9478,13 @@ type Person {
     memberId: String
     query: String
     repositoryId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 }
 
 """
 The connection type for Person.
 """
-type PersonConnection {
+type PersonConnectionWithTotal {
   datasetConnectionCount: Int!
 
   """
@@ -9559,7 +9568,7 @@ type PhysicalObject implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -9671,7 +9680,7 @@ type PhysicalObject implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -9713,7 +9722,7 @@ type PhysicalObject implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -9765,7 +9774,7 @@ type PhysicalObject implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -9862,7 +9871,7 @@ type PhysicalObject implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -9904,7 +9913,7 @@ type PhysicalObject implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -9920,7 +9929,7 @@ type PhysicalObject implements DoiItem {
 """
 The connection type for PhysicalObject.
 """
-type PhysicalObjectConnection {
+type PhysicalObjectConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -9976,7 +9985,7 @@ type Prefix {
 """
 The connection type for Prefix.
 """
-type PrefixConnection {
+type PrefixConnectionWithTotal {
   """
   A list of edges.
   """
@@ -10057,7 +10066,7 @@ type Preprint implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -10169,7 +10178,7 @@ type Preprint implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -10211,7 +10220,7 @@ type Preprint implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -10263,7 +10272,7 @@ type Preprint implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -10360,7 +10369,7 @@ type Preprint implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -10402,7 +10411,7 @@ type Preprint implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -10418,7 +10427,7 @@ type Preprint implements DoiItem {
 """
 The connection type for Preprint.
 """
-type PreprintConnection {
+type PreprintConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -10502,7 +10511,7 @@ type Publication implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -10614,7 +10623,7 @@ type Publication implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -10656,7 +10665,7 @@ type Publication implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -10708,7 +10717,7 @@ type Publication implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -10805,7 +10814,7 @@ type Publication implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -10847,7 +10856,7 @@ type Publication implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -10863,7 +10872,7 @@ type Publication implements DoiItem {
 """
 The connection type for Publication.
 """
-type PublicationConnection {
+type PublicationConnectionWithTotal {
   affiliations: [Facet!]
   datasetConnectionCount: Int!
 
@@ -10939,7 +10948,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): AudiovisualConnection!
+  ): AudiovisualConnectionWithTotal!
   book(id: ID!): Book!
   bookChapter(id: ID!): BookChapter!
   bookChapters(
@@ -10971,7 +10980,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): BookChapterConnection!
+  ): BookChapterConnectionWithTotal!
   books(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -11001,7 +11010,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): BookConnection!
+  ): BookConnectionWithTotal!
   collection(id: ID!): Collection!
   collections(
     """
@@ -11032,7 +11041,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): CollectionConnection!
+  ): CollectionConnectionWithTotal!
   conferencePaper(id: ID!): ConferencePaper!
   conferencePapers(
     """
@@ -11063,7 +11072,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): ConferencePaperConnection!
+  ): ConferencePaperConnectionWithTotal!
   dataCatalog(id: ID!): DataCatalog!
   dataCatalogs(
     """
@@ -11082,7 +11091,7 @@ type Query {
     """
     last: Int
     query: String
-  ): DataCatalogConnection!
+  ): DataCatalogConnectionWithTotal!
   dataPaper(id: ID!): DataPaper!
   dataPapers(
     """
@@ -11113,7 +11122,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): DataPaperConnection!
+  ): DataPaperConnectionWithTotal!
   dataset(id: ID!): Dataset!
   datasets(
     """
@@ -11144,7 +11153,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): DatasetConnection!
+  ): DatasetConnectionWithTotal!
   dissertation(id: ID!): Dissertation!
   dissertations(
     """
@@ -11175,7 +11184,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): DissertationConnection!
+  ): DissertationConnectionWithTotal!
   event(id: ID!): Event!
   events(
     """
@@ -11206,7 +11215,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): EventConnection!
+  ): EventConnectionWithTotal!
   funder(id: ID!): Funder!
   funders(
     """
@@ -11225,7 +11234,7 @@ type Query {
     """
     last: Int
     query: String
-  ): FunderConnection!
+  ): FunderConnectionWithTotal!
   image(id: ID!): Image!
   images(
     """
@@ -11256,7 +11265,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): ImageConnection!
+  ): ImageConnectionWithTotal!
   instrument(id: ID!): Instrument!
   instruments(
     """
@@ -11287,7 +11296,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): InstrumentConnection!
+  ): InstrumentConnectionWithTotal!
   interactiveResource(id: ID!): InteractiveResource!
   interactiveResources(
     """
@@ -11318,7 +11327,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): InteractiveResourceConnection!
+  ): InteractiveResourceConnectionWithTotal!
   journalArticle(id: ID!): JournalArticle!
   journalArticles(
     """
@@ -11349,7 +11358,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): JournalArticleConnection!
+  ): JournalArticleConnectionWithTotal!
   member(id: ID!): Member!
   members(
     """
@@ -11368,7 +11377,7 @@ type Query {
     """
     last: Int
     query: String
-  ): MemberConnection!
+  ): MemberConnectionWithTotal!
   model(id: ID!): Model!
   models(
     """
@@ -11399,7 +11408,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): ModelConnection!
+  ): ModelConnectionWithTotal!
   organization(id: ID!): Organization!
   organizations(
     """
@@ -11422,7 +11431,7 @@ type Query {
     """
     last: Int
     query: String
-  ): OrganizationConnection!
+  ): OrganizationConnectionWithTotal!
   other(id: ID!): Other!
   others(
     """
@@ -11453,7 +11462,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): OtherConnection!
+  ): OtherConnectionWithTotal!
   peerReview(id: ID!): PeerReview!
   peerReviews(
     """
@@ -11484,7 +11493,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): PeerReviewConnection!
+  ): PeerReviewConnectionWithTotal!
   people(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -11502,7 +11511,7 @@ type Query {
     """
     last: Int
     query: String
-  ): PersonConnection!
+  ): PersonConnectionWithTotal!
   person(id: ID!): Person!
   physicalObject(id: ID!): PhysicalObject!
   physicalObjects(
@@ -11534,7 +11543,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): PhysicalObjectConnection!
+  ): PhysicalObjectConnectionWithTotal!
   prefix(id: ID!): Prefix!
   prefixes(
     """
@@ -11553,7 +11562,7 @@ type Query {
     """
     last: Int
     query: String
-  ): PrefixConnection!
+  ): PrefixConnectionWithTotal!
   preprint(id: ID!): Preprint!
   preprints(
     """
@@ -11584,7 +11593,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): PreprintConnection!
+  ): PreprintConnectionWithTotal!
   publication(id: ID!): Publication!
   publications(
     """
@@ -11615,7 +11624,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): PublicationConnection!
+  ): PublicationConnectionWithTotal!
   repositories(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -11635,7 +11644,7 @@ type Query {
     query: String
     software: String
     year: String
-  ): RepositoryConnection!
+  ): RepositoryConnectionWithTotal!
   repository(id: ID!): Repository!
   service(id: ID!): Service!
   services(
@@ -11667,7 +11676,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): ServiceConnection!
+  ): ServiceConnectionWithTotal!
   software(id: ID!): Software!
   softwares(
     """
@@ -11698,7 +11707,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): SoftwareConnection!
+  ): SoftwareConnectionWithTotal!
   sound(id: ID!): Sound!
   sounds(
     """
@@ -11729,7 +11738,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): SoundConnection!
+  ): SoundConnectionWithTotal!
   usageReport(id: ID!): UsageReport!
   usageReports(
     """
@@ -11747,7 +11756,7 @@ type Query {
     Returns the last _n_ elements from the list.
     """
     last: Int
-  ): UsageReportConnection!
+  ): UsageReportConnectionWithTotal!
   work(id: ID!): Work!
   workflow(id: ID!): Workflow!
   workflows(
@@ -11779,7 +11788,7 @@ type Query {
     query: String
     repositoryId: String
     userId: String
-  ): WorkflowConnection!
+  ): WorkflowConnectionWithTotal!
   works(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -11810,7 +11819,7 @@ type Query {
     repositoryId: String
     resourceTypeId: String
     userId: String
-  ): WorkConnection!
+  ): WorkConnectionWithTotal!
 }
 
 """
@@ -11927,7 +11936,7 @@ type Repository {
     query: String
     resourceTypeId: String
     userId: String
-  ): DatasetConnection
+  ): DatasetConnectionWithTotal
 
   """
   Description of the repository
@@ -11981,7 +11990,7 @@ type Repository {
     query: String
     state: String
     year: String
-  ): RepositoryPrefixConnection
+  ): RepositoryPrefixConnectionWithTotal
 
   """
   Publications managed by the repository
@@ -12018,7 +12027,7 @@ type Repository {
     query: String
     resourceTypeId: String
     userId: String
-  ): PublicationConnection
+  ): PublicationConnectionWithTotal
 
   """
   The re3data identifier for the repository
@@ -12070,7 +12079,7 @@ type Repository {
     query: String
     resourceTypeId: String
     userId: String
-  ): SoftwareConnection
+  ): SoftwareConnectionWithTotal
 
   """
   The type of the item.
@@ -12122,17 +12131,21 @@ type Repository {
     query: String
     resourceTypeId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 }
 
 """
 The connection type for Repository.
 """
-type RepositoryConnection {
+type RepositoryConnectionWithTotal {
+  certificates: [Facet!]
+  clientTypes: [Facet!]
+
   """
   A list of edges.
   """
   edges: [RepositoryEdge]
+  members: [Facet!]
 
   """
   A list of nodes.
@@ -12143,6 +12156,7 @@ type RepositoryConnection {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  repositoryTypes: [Facet!]
   software: [Facet!]
   totalCount: Int
   years: [Facet!]
@@ -12186,7 +12200,7 @@ type RepositoryPrefix {
 """
 The connection type for RepositoryPrefix.
 """
-type RepositoryPrefixConnection {
+type RepositoryPrefixConnectionWithTotal {
   """
   A list of edges.
   """
@@ -12321,7 +12335,7 @@ type Service implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -12433,7 +12447,7 @@ type Service implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -12475,7 +12489,7 @@ type Service implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -12527,7 +12541,7 @@ type Service implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -12624,7 +12638,7 @@ type Service implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -12666,7 +12680,7 @@ type Service implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -12682,7 +12696,7 @@ type Service implements DoiItem {
 """
 The connection type for Service.
 """
-type ServiceConnection {
+type ServiceConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -12766,7 +12780,7 @@ type Software implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -12878,7 +12892,7 @@ type Software implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -12920,7 +12934,7 @@ type Software implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -12972,7 +12986,7 @@ type Software implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -13069,7 +13083,7 @@ type Software implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -13111,7 +13125,7 @@ type Software implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -13152,7 +13166,7 @@ type SoftwareApplication {
 """
 The connection type for Software.
 """
-type SoftwareConnection {
+type SoftwareConnectionWithTotal {
   affiliations: [Facet!]
   datasetConnectionCount: Int!
 
@@ -13242,7 +13256,7 @@ type Sound implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -13354,7 +13368,7 @@ type Sound implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -13396,7 +13410,7 @@ type Sound implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -13448,7 +13462,7 @@ type Sound implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -13545,7 +13559,7 @@ type Sound implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -13587,7 +13601,7 @@ type Sound implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -13603,7 +13617,7 @@ type Sound implements DoiItem {
 """
 The connection type for Sound.
 """
-type SoundConnection {
+type SoundConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -13744,7 +13758,7 @@ type UsageReport {
     Returns the last _n_ elements from the list.
     """
     last: Int
-  ): UsageReportDatasetConnection!
+  ): UsageReportDatasetConnectionWithTotal!
 
   """
   Date information was created
@@ -13770,7 +13784,7 @@ type UsageReport {
 """
 The connection type for UsageReport.
 """
-type UsageReportConnection {
+type UsageReportConnectionWithTotal {
   """
   A list of edges.
   """
@@ -13791,7 +13805,7 @@ type UsageReportConnection {
 """
 The connection type for EventData.
 """
-type UsageReportDatasetConnection {
+type UsageReportDatasetConnectionWithTotal {
   """
   A list of edges.
   """
@@ -13870,7 +13884,7 @@ type Work implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -13982,7 +13996,7 @@ type Work implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -14024,7 +14038,7 @@ type Work implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -14076,7 +14090,7 @@ type Work implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -14173,7 +14187,7 @@ type Work implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -14215,7 +14229,7 @@ type Work implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -14231,7 +14245,7 @@ type Work implements DoiItem {
 """
 The connection type for Work.
 """
-type WorkConnection {
+type WorkConnectionWithTotal {
   affiliations: [Facet!]
 
   """
@@ -14316,7 +14330,7 @@ type Workflow implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -14428,7 +14442,7 @@ type Workflow implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -14470,7 +14484,7 @@ type Workflow implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -14522,7 +14536,7 @@ type Workflow implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -14619,7 +14633,7 @@ type Workflow implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -14661,7 +14675,7 @@ type Workflow implements DoiItem {
     query: String
     repositoryId: String
     userId: String
-  ): WorkConnection
+  ): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -14677,7 +14691,7 @@ type Workflow implements DoiItem {
 """
 The connection type for Workflow.
 """
-type WorkflowConnection {
+type WorkflowConnectionWithTotal {
   affiliations: [Facet!]
 
   """

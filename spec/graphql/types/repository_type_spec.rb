@@ -18,14 +18,14 @@ describe RepositoryType do
     it { is_expected.to have_field(:language).of_type("[String!]") }
     it { is_expected.to have_field(:issn).of_type("Issn") }
 
-    it { is_expected.to have_field(:datasets).of_type("DatasetConnection") }
-    it { is_expected.to have_field(:publications).of_type("PublicationConnection") }
-    it { is_expected.to have_field(:softwares).of_type("SoftwareConnection") }
-    it { is_expected.to have_field(:works).of_type("WorkConnection") }
+    it { is_expected.to have_field(:datasets).of_type("DatasetConnectionWithTotal") }
+    it { is_expected.to have_field(:publications).of_type("PublicationConnectionWithTotal") }
+    it { is_expected.to have_field(:softwares).of_type("SoftwareConnectionWithTotal") }
+    it { is_expected.to have_field(:works).of_type("WorkConnectionWithTotal") }
   end
 
   describe "query repositories", elasticsearch: true do
-    let!(:clients) { create_list(:client, 3) }
+    let!(:clients) { create_list(:client, 3, software: "Dataverse") }
 
     before do
       Client.import
@@ -36,6 +36,30 @@ describe RepositoryType do
       %(query {
         repositories {
           totalCount
+          years {
+            title
+            count
+          }
+          members {
+            title
+            count
+          }
+          software {
+            title
+            count
+          }
+          certificates {
+            title
+            count
+          }
+          clientTypes {
+            title
+            count
+          }
+          repositoryTypes {
+            title
+            count
+          }
           nodes {
             id
             name
@@ -49,6 +73,12 @@ describe RepositoryType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "repositories", "totalCount")).to eq(3)
+      expect(response.dig("data", "repositories", "years")).to eq([{"count"=>3, "title"=>"2020"}])
+      expect(response.dig("data", "repositories", "members")).to eq([{"count"=>1, "title"=>"My provider"}, {"count"=>1, "title"=>"My provider"}, {"count"=>1, "title"=>"My provider"}])
+      expect(response.dig("data", "repositories", "software")).to eq([{"count"=>3, "title"=>"Dataverse"}])
+      expect(response.dig("data", "repositories", "certificates")).to be_empty
+      expect(response.dig("data", "repositories", "clientTypes")).to eq([{"count"=>3, "title"=>"Repository"}])
+      expect(response.dig("data", "repositories", "repositoryTypes")).to be_empty
       expect(response.dig("data", "repositories", "nodes").length).to eq(3)
 
       client1 = response.dig("data", "repositories", "nodes", 0)

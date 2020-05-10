@@ -20,7 +20,7 @@ class MemberType < BaseObject
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
   
-  field :datasets, DatasetConnectionType, null: true, connection: true, max_page_size: 1000, description: "Datasets by this provider." do
+  field :datasets, DatasetConnectionWithTotalType, null: true, connection: true, description: "Datasets by this provider." do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -39,7 +39,7 @@ class MemberType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, PublicationConnectionType, null: true, connection: true, max_page_size: 1000, description: "Publications by this provider."  do
+  field :publications, PublicationConnectionWithTotalType, null: true, connection: true, description: "Publications by this provider."  do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -58,7 +58,7 @@ class MemberType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, SoftwareConnectionType, null: true, connection: true, max_page_size: 1000, description: "Software by this provider."  do
+  field :softwares, SoftwareConnectionWithTotalType, null: true, connection: true, description: "Software by this provider."  do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -77,7 +77,7 @@ class MemberType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :works, WorkConnectionType, null: true, connection: true, max_page_size: 1000, description: "Works by this provider." do
+  field :works, WorkConnectionWithTotalType, null: true, connection: true, description: "Works by this provider." do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -96,14 +96,14 @@ class MemberType < BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :prefixes, MemberPrefixConnectionType, null: true, description: "Prefixes managed by the member", connection: true do
+  field :prefixes, MemberPrefixConnectionWithTotalType, null: true, description: "Prefixes managed by the member", connection: true do
     argument :query, String, required: false
     argument :state, String, required: false
     argument :year, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :repositories, RepositoryConnectionType, null: true, description: "Repositories associated with the member", connection: true do
+  field :repositories, RepositoryConnectionWithTotalType, null: true, description: "Repositories associated with the member", connection: true do
     argument :query, String, required: false
     argument :year, String, required: false
     argument :software, String, required: false
@@ -124,37 +124,29 @@ class MemberType < BaseObject
 
   def publications(**args)
     args[:resource_type_id] = "Text"
-    r = response(args)
-
-    r.results.to_a
+    response(args)
   end
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    r = response(args)
-
-    r.results.to_a
+    response(args)
   end
 
   def softwares(**args)
     args[:resource_type_id] = "Software"
-    r = response(args)
-
-    r.results.to_a
+    response(args)
   end
 
   def works(**args)  
-    r = response(args)
-
-    r.results.to_a
+    response(args)
   end
 
   def prefixes(**args)
-    ProviderPrefix.query(args[:query], provider_id: object.uid, state: args[:state], year: args[:year], page: { number: 1, size: args[:first] }).results.to_a
+    ProviderPrefix.query(args[:query], provider_id: object.uid, state: args[:state], year: args[:year], page: { number: 1, size: args[:first] })
   end
 
   def repositories(**args)
-    Client.query(args[:query], provider_id: object.uid, year: args[:year], software: args[:software], page: { number: 1, size: args[:first] }).results.to_a
+    Client.query(args[:query], provider_id: object.uid, year: args[:year], software: args[:software], page: { number: 1, size: args[:first] })
   end
 
   def view_count
