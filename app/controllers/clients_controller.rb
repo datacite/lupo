@@ -124,7 +124,6 @@ class ClientsController < ApplicationController
     end
   end
 
-
   def update
     options = {}
     options[:is_collection] = false
