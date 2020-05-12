@@ -155,10 +155,17 @@ class RepositoriesController < ApplicationController
   end
 
   def update
-    if @client.update_attributes(safe_params)
-      options = {}
-      options[:is_collection] = false
-      options[:params] = { current_ability: current_ability }
+    options = {}
+    options[:is_collection] = false
+    options[:params] = { current_ability: current_ability }
+
+    if params.dig(:data, :attributes, :mode) == "transfer"
+      # only update provider_id
+      authorize! :transfer, @client
+
+      @client.transfer(safe_params.slice(:target_id))
+      render json: RepositorySerializer.new(@client, options).serialized_json, status: :ok
+    elsif @client.update(safe_params)
 
       render json: RepositorySerializer.new(@client, options).serialized_json, status: :ok
     else

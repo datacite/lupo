@@ -286,7 +286,13 @@ describe Client, type: :model do
 
   describe 'decode_auth_param' do
     it "works" do
-      expect(subject.decode_auth_param(username: subject.symbol, password: 12345)).to eq("uid"=>subject.symbol.downcase, "name"=>subject.name, "email"=>subject.system_email, "password" => "12345", "role_id"=>"client_admin", "provider_id"=>subject.symbol.downcase.split(".").first, "client_id"=>subject.symbol.downcase)
+      expect(subject.decode_auth_param(username: subject.symbol, password: 12345)).to eq("uid"=>subject.symbol.downcase, "name"=>subject.name, "email"=>subject.system_email, "password" => "12345", "role_id"=>"client_admin", "provider_id"=>subject.provider_id, "client_id"=>subject.symbol.downcase)
+    end
+  end
+
+  describe 'get_payload' do
+    it "works" do
+      expect(subject.get_payload(uid: subject.symbol.downcase, user: subject, password: 12345)).to eq("uid"=>subject.symbol.downcase, "name"=>subject.name, "email"=>subject.system_email, "password" => 12345, "role_id"=>"client_admin", "provider_id"=>subject.provider_id, "client_id"=>subject.symbol.downcase)
     end
   end
 end
