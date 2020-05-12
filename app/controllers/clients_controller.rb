@@ -133,7 +133,7 @@ class ClientsController < ApplicationController
       # only update provider_id
       authorize! :transfer, @client
 
-      @client.transfer(target_id: safe_params.slice(:target_id).dig(:target_id))
+      @client.transfer(safe_params.slice(:target_id))
       render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
     elsif @client.update(safe_params)
 
