@@ -64,8 +64,9 @@
     def initialize(items, context: nil, first: nil, after: nil, max_page_size: :not_given, last: nil, before: nil)
       @items = items.results
       @context = context
+      @model = items.klass.name
+      @nodes = items.results.to_a
 
-      @nodes = items.results
       @first_value = first
       @after_value = after
       @last_value = last
@@ -142,12 +143,12 @@
 
     # @return [Boolean] True if there are more items after this page
     def has_next_page
-      raise PaginationImplementationMissingError, "Implement #{self.class}#has_next_page to return the next-page check"
+      nodes.length < total_count && !(nodes.length < first.to_i)
     end
 
     # @return [Boolean] True if there were items before these items
     def has_previous_page
-      raise PaginationImplementationMissingError, "Implement #{self.class}#has_previous_page to return the previous-page check"
+      nodes.length < total_count && !(nodes.length < last.to_i)
     end
 
     # @return [String] The cursor of the first item in {nodes}
@@ -160,11 +161,20 @@
       nodes.last && cursor_for(nodes.last)
     end
 
-    # Return a cursor for this item.
+    # Return a cursor for this item. Depends on default sorting of model
     # @param item [Object] one of the passed in {items}, taken from {nodes}
     # @return [String]
     def cursor_for(item)
-      raise PaginationImplementationMissingError, "Implement #{self.class}#cursor_for(item) to return the cursor for #{item.inspect}"
+      if %w(Doi Client Provider).include?(@model)
+        it = [item.created, item.uid]
+      elsif @model == "Event"
+        it = [item.created_at, item.uuid]
+      elsif @model == "Activity"
+        it = [item.created, item.request_uuid]
+      elsif ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(@model)
+        it = [item.created_at]
+      end
+      encode(it.join(","))
     end
 
     private

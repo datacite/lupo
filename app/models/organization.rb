@@ -18,11 +18,12 @@ class Organization
 
   def self.query(query, options={})
     # rows = options[:limit] || 20
+    page = options[:offset] || 1
 
     if query.present?
-      url = "https://api.ror.org/organizations?query=#{query}"
+      url = "https://api.ror.org/organizations?query=#{query}&page=#{page}"
     else
-      url = "https://api.ror.org/organizations"
+      url = "https://api.ror.org/organizations?page=#{page}"
     end
 
     response = Maremma.get(url, host: true)

@@ -26,6 +26,9 @@ class FunderType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :last, Int, required: false, default_value: 25
+    argument :after, String, required: false
+    argument :before, String, required: false
   end
 
   field :publications, PublicationConnectionWithTotalType, null: true, description: "Funded publications", connection: true do
@@ -42,6 +45,9 @@ class FunderType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :last, Int, required: false, default_value: 25
+    argument :after, String, required: false
+    argument :before, String, required: false
   end
 
   field :softwares, SoftwareConnectionWithTotalType, null: true, description: "Funded software", connection: true do
@@ -58,6 +64,9 @@ class FunderType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :last, Int, required: false, default_value: 25
+    argument :after, String, required: false
+    argument :before, String, required: false
   end
 
   field :works, WorkConnectionWithTotalType, null: true, description: "Funded works", connection: true do
@@ -76,6 +85,9 @@ class FunderType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :last, Int, required: false, default_value: 25
+    argument :after, String, required: false
+    argument :before, String, required: false
   end
 
   def address
@@ -121,6 +133,6 @@ class FunderType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], ids: args[:ids], funder_id: object.id, user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
+    Doi.query(args[:query], ids: args[:ids], funder_id: object.id, user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { cursor: args[:after], size: args[:first] })
   end
 end

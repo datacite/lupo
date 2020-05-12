@@ -1,0 +1,51 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.datacite.org/re3data?page%5Bnumber%5D=0&page%5Bsize%5D=25&query=xxx
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 11 May 2020 17:35:18 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Origin
+      Etag:
+      - W/"81d088222630e7a5b5f2e1322cff00e4"
+      X-Runtime:
+      - '0.119995'
+      X-Request-Id:
+      - c48763f7-ed52-4655-9805-7a4fe2e93e2b
+      X-Powered-By:
+      - Phusion Passenger 5.2.3
+      Server:
+      - nginx/1.12.2 + Phusion Passenger 5.2.3
+      Content-Encoding:
+      - gzip
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAAAAAAAAAyyMywrCMBRE/+VCd6WJlbgIBEH6Ad2ri6jXGuwj5gHRkH83se7OnGEmwk06Cfx4rmHCQhHc4uQInNYr9XJA+4s6E/BNqmFU8zO7CBbHO3B4OKctJ0Rq1ZTDq3LYLGYgBrcl78u0YofZTxc0FesEPXlK293fW/XJdSdatuqXR/MWIQRI6QsAAP//AwA8bdnQowAAAA==
+    http_version: null
+  recorded_at: Mon, 11 May 2020 17:35:19 GMT
+recorded_with: VCR 5.1.0

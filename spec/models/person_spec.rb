@@ -34,9 +34,9 @@ describe Person, type: :model, vcr: true do
 
   describe "query" do
     it "found all" do
-      query = "*"
+      query = nil
       people = Person.query(query)
-      expect(people.dig(:meta, "total")).to eq(8522184)
+      expect(people.dig(:meta, "total")).to eq(8733254)
       expect(people.dig(:data).size).to eq(25)
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0003-3995-3004")

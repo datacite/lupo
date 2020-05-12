@@ -55,7 +55,6 @@ class HashConnection
   def initialize(items, context: nil, first: nil, after: nil, max_page_size: :not_given, last: nil, before: nil)
     @items = items[:data]
     @context = context
-
     @nodes = items[:data]
     @first_value = first
     @after_value = after
@@ -131,7 +130,7 @@ class HashConnection
 
   # @return [Boolean] True if there are more items after this page
   def has_next_page
-    raise PaginationImplementationMissingError, "Implement #{self.class}#has_next_page to return the next-page check"
+    first.to_i < total_count #|| first.to_i * after.to_i < total_count
   end
 
   # @return [Boolean] True if there were items before these items
@@ -141,12 +140,12 @@ class HashConnection
 
   # @return [String] The cursor of the first item in {nodes}
   def start_cursor
-    nodes.first && cursor_for(nodes.first)
+    nodes.first && encode((after.to_i - 1).to_s)
   end
 
   # @return [String] The cursor of the last item in {nodes}
   def end_cursor
-    nodes.last && cursor_for(nodes.last)
+    nodes.last && encode((after.to_i + 1).to_s)
   end
 
   # Return a cursor for this item.

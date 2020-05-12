@@ -49,6 +49,10 @@ describe FunderType do
           downloadCount
           works {
             totalCount
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
             years {
               title
               count
@@ -77,6 +81,8 @@ describe FunderType do
       expect(response.dig("data", "funder", "citationCount")).to eq(0)
 
       expect(response.dig("data", "funder", "works", "totalCount")).to eq(1)
+      expect(Base64.urlsafe_decode64(response.dig("data", "funder", "works", "pageInfo", "endCursor")).split(",", 2).last).to eq(doi.uid)
+      expect(response.dig("data", "funder", "works", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "funder", "works", "years")).to eq([{"count"=>1, "title"=>"2011"}])
       expect(response.dig("data", "funder", "works", "resourceTypes")).to eq([{"count"=>1, "title"=>"Dataset"}])
       expect(response.dig("data", "funder", "works", "nodes").length).to eq(1)
@@ -104,6 +110,10 @@ describe FunderType do
       %(query {
         funders(query: "Wellcome Trust") {
           totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
           nodes {
             id
             name
@@ -124,6 +134,42 @@ describe FunderType do
       response = LupoSchema.execute(query).as_json
       puts response
       expect(response.dig("data", "funders", "totalCount")).to eq(4)
+      expect(response.dig("data", "funders", "pageInfo", "endCursor")).to eq("MQ")
+      expect(response.dig("data", "funders", "pageInfo", "hasNextPage")).to eq(false)
+      expect(response.dig("data", "funders", "nodes").length).to eq(4)
+      funder = response.dig("data", "funders", "nodes", 0)
+      expect(funder.fetch("id")).to eq("https://doi.org/10.13039/501100009053")
+      expect(funder.fetch("name")).to eq("The Wellcome Trust DBT India Alliance")
+      expect(funder.fetch("alternateName")).to eq(["India Alliance", "WTDBT India Alliance", "Wellcome Trust/DBT India Alliance", "Wellcome Trust DBt India Alliance"])
+      expect(funder.dig("works", "totalCount")).to eq(3)
+      expect(funder.dig("works", "years")).to eq([{"count"=>3, "title"=>"2011"}])
+    end
+  end
+
+  describe "query funders national", elasticsearch: true, vcr: true do
+    let(:query) do
+      %(query {
+        funders(query: "national", first: 10, after: "OA") {
+          totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          nodes {
+            id
+            name
+            alternateName
+          }
+        }
+      })
+    end
+
+    it "returns funder information" do
+      response = LupoSchema.execute(query).as_json
+      puts response
+      expect(response.dig("data", "funders", "totalCount")).to eq(1028)
+      expect(response.dig("data", "funders", "pageInfo", "endCursor")).to eq(1028)
+      expect(response.dig("data", "funders", "pageInfo", "hasNextPage")).to eq(true)
       expect(response.dig("data", "funders", "nodes").length).to eq(4)
       funder = response.dig("data", "funders", "nodes", 0)
       expect(funder.fetch("id")).to eq("https://doi.org/10.13039/501100009053")

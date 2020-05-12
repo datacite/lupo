@@ -19,7 +19,7 @@ describe PersonType do
     it { is_expected.to have_field(:works).of_type("WorkConnectionWithTotal") }
   end
 
-  describe "query person", elasticsearch: true, vcr: true do
+  describe "find person", elasticsearch: true, vcr: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable", creators:
       [{
@@ -102,8 +102,12 @@ describe PersonType do
   describe "query people", elasticsearch: true, vcr: true do
     let(:query) do
       %(query {
-        people(query: "Fenner") {
+        people(query: "Fenner", first: 50, after: "NA") {
           totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
           nodes {
             id
             name
@@ -127,8 +131,10 @@ describe PersonType do
 
     it "returns people information" do
       response = LupoSchema.execute(query).as_json
-
-      expect(response.dig("data", "people", "totalCount")).to eq(241)
+      puts response
+      expect(response.dig("data", "people", "totalCount")).to eq(245)
+      expect(response.dig("data", "people", "pageInfo", "endCursor")).to eq(241)
+      expect(response.dig("data", "people", "pageInfo", "hasNextPage")).to be true
 
       person = response.dig("data", "people", "nodes", 0)
       expect(person.fetch("id")).to eq("https://orcid.org/0000-0002-6028-9323")

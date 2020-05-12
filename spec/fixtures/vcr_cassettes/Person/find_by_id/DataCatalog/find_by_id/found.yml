@@ -1,0 +1,51 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.datacite.org/re3data/10.17616/r3qp53
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 11 May 2020 17:35:26 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Origin
+      Etag:
+      - W/"14771fa65e9b72416b7f1e6643de16a8"
+      X-Runtime:
+      - '0.319945'
+      X-Request-Id:
+      - 221a8379-fd35-4aba-85dd-1f95587e6473
+      X-Powered-By:
+      - Phusion Passenger 5.2.3
+      Server:
+      - nginx/1.12.2 + Phusion Passenger 5.2.3
+      Content-Encoding:
+      - gzip
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAAAAAAAAAwAAAP//vFjrbts2FH4VQr82zBc5bpLWQLEFibMa6JLMTv90LQpaom0uEqmRVFy3yAP1Ofpi+w5FO1LtOB3aDmgRxzyH5/J958J8jFLueDT4GMk0GkS9uNM7Puoddcf9P68O+1ErcqtC4MCIvhdsRdw5I6elE5a0wvcjUjb9tBfHcS9+cvQUmkYU2kqnzeqC53THa6F0qhsnr0yGg4VzhR10ux+8QEebebchdaqV44mDwb8+Rk68d9CRaqZ/u1eI7lqbox3XJdUN0d3bVpQKmxhZOKkVOTW8uDy7ZNNSZqllXKVMF8JwhMc4szIvMuG/lUrpW+7krWBWmFuZCOYW3DGh+DSDsBFWcJMshLEtZhMplJPW4fPwFSuM/lvA/3CRddKVZN4yp5ldcFOZsAu9TLgVLC8zJ1OJW4pMKm5Wm9vpAw4t+4nQ8PcV5TSTCTzDfT9XPtGFSjtWcOOYnuFLwcR7uCPVnEm1sc8zpg2z5ZS8a09hOoWBgJpEUEF3HRtLdJ6XSjqcdd6YNyok71tzMKC7BLcyW4V0kMeZhreOSzg5YzbnWbadBqmA0lKmgt1yI4VbkexMm5wjR1IlWZlSzMQZoFIYwVO7EIJw4TjSLXYLZfwg4GXO5wR7YrTFD9ibSUGsIPuEaCJ81ECmyPiK0irNtk901Vw4lhiRSoeUTlcs5zfeD4S1SeYaykQ6olAghxNzYh9dniMCEGSDHEFjPIZgBRzF2axUPkA4ruChZZm88bpsWBoQmSt2CsyktaCHdz6kmSeJoCDhqxElOOdpSL9UNKYPRLROoxBfcjUvKUn1ShRq7usqEXBuRlT056g06h0NUY2ojBfmKXIDn3hGzaEhNA4udNiESiOFB1mwi3pdWwusbWj22Isy5xU/fWgTnUiQfFKBZ3GTRYX6ZnR2/nu9Zxywl3Imvkayzy64K83XXfuEDdUcYAlD8D/oB3JFHQo94/rLlE0cMOIGbWmG3AqW6qTMIdgIBoVuRT2cC+GW2txUJR0a9yb0LemRJ349O1siE2fKBGGDzuBnsZDJfgdOqLpupS2Rp0ft+7x47njUrEM3Q5NKgu66oPc6OObLxw1dZRwdw0+QGhX2Bfuo7Al6PoZC+rjxivx77erSAOJEp2JHrCAJBgn1K7PFEkrxVTj09XUjViBA2iiPrbFSZ8z5yWjsNWvzodJW1fTe0VBa7IU28oNW7CA+iOEyia57RKhVYnapnFnh9+HwFEJho1BatRHPTDp8Vzb2AJF0BLUvjh9dyIBxOZpEd1FZC8bQoQrMPDmVmXQr1IlxZ+g90UCVWUbrR/14qNL64Xb7QXabGls5Dr22SlJK8x3jwVCOQvl+uaLQHoKtphENbPg1oStVKt53kln+azF/LtQ/pcT8sricFpl9KR+vO/SbMo4PjtgoLCZatdhE3MKvBTtHwgQ1AAZS+OyxNju/Ov4+ED0Y06w4ruJ6JxSFBnPNnH4rSJsVr4plx1ho2vs/MQwrpq1gAVPR9587rTPbvt8+a+BeFkKh5obfBxNan5fLZQczX3FpBFXOj0s/+c5OqhVipGaG2/V4oF7NNhRFs/Vtg8OV/w4Wdhps4lm9Sz1cgxtqjMejs8HkdPwu7vWPn8S+XNfY1NeW9Svhy6wF2Xb5UDFemjl2jA9+4/bhXpRJhqLehP19EAWgC52LDtYq9QOhPEXDwHPBw/T5E2AtMIRYxhENPWbwn1F8nz8Rq5owAvc6NqfD8cUOgccb6w6cHYwrWgDqBh4Gf38Dvn8ldmuVCB2amhWL1xto9dilIkIk6CV46ib+ZUVd3j8xK4kk03gs7ZdZq++S27DViDlWHWz82IVD8w/zUeRTbuZ6l/Zb/4yF86+KTONFU9F6v+8h3ErjJTZJZUPQYdhcaTwjaQTVpzFIyKe6dJ1aDosg2PWlVch0srJO5I1V4+xy5E95IavvmwO+dpvm8oASGaK+PBm1r/544WG/14EbKUZbBmCMrftyrzgeTq69Satnbol3g09KiO3+3YHdcr0mRAfoEO34sB0/vY7jgf/Xwd8vfvGfcLNo7gx4z2G9oD90VIpH7V7/On426D8b9I5eU9oKEGot8Kwd99q9w+sebj4aHBy+ju7u7v4FAAD//wMACYvp7G4RAAA=
+    http_version: null
+  recorded_at: Mon, 11 May 2020 17:35:26 GMT
+recorded_with: VCR 5.1.0

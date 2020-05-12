@@ -20,8 +20,8 @@ class DataCatalog
   end
 
   def self.query(query, options={})
-    limit ||= 25
-    page ||= 1
+    limit = options[:limit] || 25
+    page = options[:offset] || 1
 
     params = {
       query: query,

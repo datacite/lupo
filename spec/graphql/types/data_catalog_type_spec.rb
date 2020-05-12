@@ -117,8 +117,12 @@ describe DataCatalogType do
 
     let(:query) do
       %(query {
-        dataCatalogs(query: "Dataverse") {
+        dataCatalogs(query: "Dataverse", first: 10, after: "OA") {
           totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
           nodes {
             id
             name
@@ -140,8 +144,10 @@ describe DataCatalogType do
 
     it "returns data_catalog information" do
       response = LupoSchema.execute(query).as_json
-
-      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(83)
+      # puts response
+      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(85)
+      expect(response.dig("data", "dataCatalogs", "pageInfo", "endCursor")).to eq("MQ")
+      expect(response.dig("data", "dataCatalogs", "pageInfo", "hasNextPage")).to eq(true)
       expect(response.dig("data", "dataCatalogs", "nodes").length).to eq(25)
       
       data_catalog = response.dig("data", "dataCatalogs", "nodes", 0)

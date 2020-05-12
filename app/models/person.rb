@@ -27,13 +27,13 @@ class Person
   end
 
   def self.query(query, options={})
-    options[:rows] ||= 25
-    options[:start] ||= 1
+    options[:limit] ||= 25
+    options[:offset] ||= 0
 
     params = {
-      q: query,
-      "rows" => options[:rows],
-      "start" => options[:start] }.compact
+      q: query || "*",
+      "rows" => options[:limit],
+      "start" => options[:offset] }.compact
 
     url = "https://pub.orcid.org/v3.0/expanded-search/?" + URI.encode_www_form(params)
 

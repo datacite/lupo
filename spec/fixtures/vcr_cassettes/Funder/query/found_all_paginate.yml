@@ -1,0 +1,84 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.crossref.org/funders?offset=1&rows=25
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - X-Requested-With
+      Content-Length:
+      - '8617'
+      Server:
+      - http-kit
+      Date:
+      - Mon, 11 May 2020 07:47:51 GMT
+      X-Rate-Limit-Limit:
+      - '50'
+      X-Rate-Limit-Interval:
+      - 1s
+      Connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"ok","message-type":"funder-list","message-version":"1.0.0","message":{"items-per-page":25,"query":{"start-index":1,"search-terms":null},"total-results":22357,"items":[{"id":"501100006568","location":"Japan","name":"Toagosei","alt-names":["Toagosei
+        Co., Ltd.","Toagosei Chemical Industry Company Limited","Toagosei Company
+        Limited"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100006568","replaces":[],"replaced-by":[],"tokens":["toagosei","toagosei","co","ltd","toagosei","chemical","industry","company","limited","toagosei","company","limited"]},{"id":"501100004246","location":"Venezuela","name":"Provita","alt-names":[],"uri":"http:\/\/dx.doi.org\/10.13039\/501100004246","replaces":[],"replaced-by":[],"tokens":["provita"]},{"id":"100015057","location":"Austria","name":"Servicestelle
+        f\u00fcr Mobilit\u00e4tsprogramme des \u00f6sterreichischen Bundesministeriums
+        f\u00fcr Bildung, Wissenschaft und Forschung, KulturKontakt Austria","alt-names":["Servicestelle
+        f\u00fcr Mobilit\u00e4tsprogramme","Servicestelle f\u00fcr Mobilit\u00e4tsprogramme
+        des BMBWF, Kulturkontakt Austria","Service Centre for International Mobility
+        Programmes of the Austrian Federal Ministry of Education, Science and Research"],"uri":"http:\/\/dx.doi.org\/10.13039\/100015057","replaces":[],"replaced-by":[],"tokens":["servicestelle","f\u00fcr","mobilit\u00e4tsprogramme","des","\u00f6sterreichischen","bundesministeriums","f\u00fcr","bildung","wissenschaft","und","forschung","kulturkontakt","austria","servicestelle","f\u00fcr","mobilit\u00e4tsprogramme","servicestelle","f\u00fcr","mobilit\u00e4tsprogramme","des","bmbwf","kulturkontakt","austria","service","centre","for","international","mobility","programmes","of","the","austrian","federal","ministry","of","education","science","and","research"]},{"id":"501100007416","location":"Sweden","name":"Swedish
+        Brain Power","alt-names":["SBP"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100007416","replaces":[],"replaced-by":[],"tokens":["swedish","brain","power","sbp"]},{"id":"100014885","location":"United
+        States","name":"Hussman Foundation","alt-names":["John P. Hussman Foundation"],"uri":"http:\/\/dx.doi.org\/10.13039\/100014885","replaces":[],"replaced-by":[],"tokens":["hussman","foundation","john","p","hussman","foundation"]},{"id":"100005633","location":"United
+        States","name":"King Pharmaceuticals","alt-names":[],"uri":"http:\/\/dx.doi.org\/10.13039\/100005633","replaces":[],"replaced-by":[],"tokens":["king","pharmaceuticals"]},{"id":"100001079","location":"United
+        States","name":"Geraldine R. Dodge Foundation","alt-names":["The Geraldine
+        R. Dodge Foundation","GRDF","Dodge Foundation"],"uri":"http:\/\/dx.doi.org\/10.13039\/100001079","replaces":[],"replaced-by":[],"tokens":["geraldine","r","dodge","foundation","the","geraldine","r","dodge","foundation","grdf","dodge","foundation"]},{"id":"100005149","location":"United
+        States","name":"Starbucks Coffee","alt-names":[],"uri":"http:\/\/dx.doi.org\/10.13039\/100005149","replaces":[],"replaced-by":[],"tokens":["starbucks","coffee"]},{"id":"501100008392","location":"France","name":"Fondation
+        Nelia et Amadeo Barletta","alt-names":["Nelia and Amadeo Barletta Foundation","Fondazione
+        Nelia e Amadeo Barletta"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100008392","replaces":[],"replaced-by":[],"tokens":["fondation","nelia","et","amadeo","barletta","nelia","and","amadeo","barletta","foundation","fondazione","nelia","e","amadeo","barletta"]},{"id":"501100002944","location":"France","name":"D\u00e9partement
+        Caract\u00e9risation et \u00c9laboration des Produits Issus de l\u2019Agriculture,
+        Institut National de la Recherche Agronomique","alt-names":["Division for
+        Science and Process Engineering of Agricultural Products, French National
+        Instiute for Agricultural Research","CEPIA, INRA"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100002944","replaces":[],"replaced-by":[],"tokens":["d\u00e9partement","caract\u00e9risation","et","\u00e9laboration","des","produits","issus","de","l\u2019agriculture","institut","national","de","la","recherche","agronomique","division","for","science","and","process","engineering","of","agricultural","products","french","national","instiute","for","agricultural","research","cepia","inra"]},{"id":"100010387","location":"United
+        Kingdom","name":"Rutlish Foundation","alt-names":[],"uri":"http:\/\/dx.doi.org\/10.13039\/100010387","replaces":[],"replaced-by":[],"tokens":["rutlish","foundation"]},{"id":"501100002327","location":"Finland","name":"Kela","alt-names":["Kansanel\u00e4kelaitos"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100002327","replaces":[],"replaced-by":[],"tokens":["kela","kansanel\u00e4kelaitos"]},{"id":"501100006518","location":"Ireland","name":"Department
+        of Communications, Energy and Natural Resources, Ireland","alt-names":["DCENR","An
+        Roinn Cumars\u00e1ide, Fuinnimh agus Achmhainn\u00ed N\u00e1d\u00fartha"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100006518","replaces":[],"replaced-by":[],"tokens":["department","of","communications","energy","and","natural","resources","ireland","dcenr","an","roinn","cumars\u00e1ide","fuinnimh","agus","achmhainn\u00ed","n\u00e1d\u00fartha"]},{"id":"501100009109","location":"Germany","name":"Pharmaceuticals
+        Bayer","alt-names":[],"uri":"http:\/\/dx.doi.org\/10.13039\/501100009109","replaces":[],"replaced-by":[],"tokens":["pharmaceuticals","bayer"]},{"id":"100004676","location":"United
+        States","name":"CA Technologies","alt-names":["CA, Inc.","CA"],"uri":"http:\/\/dx.doi.org\/10.13039\/100004676","replaces":[],"replaced-by":[],"tokens":["ca","technologies","ca","inc","ca"]},{"id":"100003386","location":"United
+        States","name":"Sigma-Aldrich Foundation","alt-names":[],"uri":"http:\/\/dx.doi.org\/10.13039\/100003386","replaces":[],"replaced-by":[],"tokens":["sigma","aldrich","foundation"]},{"id":"501100003108","location":"Germany","name":"Bundeszentrale
+        f\u00fcr gesundheitliche Aufkl\u00e4rung","alt-names":["BZgA","Federal Centre
+        for Health Education"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100003108","replaces":[],"replaced-by":[],"tokens":["bundeszentrale","f\u00fcr","gesundheitliche","aufkl\u00e4rung","bzga","federal","centre","for","health","education"]},{"id":"501100000849","location":"United
+        Kingdom","name":"National Centre for the Replacement, Refinement and Reduction
+        of Animals in Research","alt-names":["NC3Rs"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100000849","replaces":[],"replaced-by":["501100010757"],"tokens":["national","centre","for","the","replacement","refinement","and","reduction","of","animals","in","research","nc3rs"]},{"id":"100001238","location":"United
+        States","name":"Merck Company Foundation","alt-names":[],"uri":"http:\/\/dx.doi.org\/10.13039\/100001238","replaces":[],"replaced-by":[],"tokens":["merck","company","foundation"]},{"id":"100010412","location":"Canada","name":"Global
+        Risk Institute in Financial Services","alt-names":["GRI","Institut Mondial
+        de Gestion des Risques du Secteur Financier","Institut du Risque"],"uri":"http:\/\/dx.doi.org\/10.13039\/100010412","replaces":[],"replaced-by":[],"tokens":["global","risk","institute","in","financial","services","gri","institut","mondial","de","gestion","des","risques","du","secteur","financier","institut","du","risque"]},{"id":"100004186","location":"United
+        States","name":"UNLV Research Foundation","alt-names":[],"uri":"http:\/\/dx.doi.org\/10.13039\/100004186","replaces":[],"replaced-by":[],"tokens":["unlv","research","foundation"]},{"id":"100004929","location":"United
+        States","name":"Texas Board of Nursing","alt-names":["BON"],"uri":"http:\/\/dx.doi.org\/10.13039\/100004929","replaces":[],"replaced-by":[],"tokens":["texas","board","of","nursing","bon"]},{"id":"501100005958","location":"Netherlands","name":"Stichting
+        HPCN","alt-names":["Dutch Foundation HPCN","Foundation HPCN","Stichting Platform
+        HPCN"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100005958","replaces":[],"replaced-by":[],"tokens":["stichting","hpcn","dutch","foundation","hpcn","foundation","hpcn","stichting","platform","hpcn"]},{"id":"501100011279","location":"China","name":"State
+        Key Laboratory of Separation Membranes and Membrane Processes","alt-names":[],"uri":"http:\/\/dx.doi.org\/10.13039\/501100011279","replaces":[],"replaced-by":[],"tokens":["state","key","laboratory","of","separation","membranes","and","membrane","processes"]},{"id":"501100004566","location":"Belarus","name":"Ministry
+        of Education of the Republic of Belarus","alt-names":[],"uri":"http:\/\/dx.doi.org\/10.13039\/501100004566","replaces":[],"replaced-by":[],"tokens":["ministry","of","education","of","the","republic","of","belarus"]}]}}'
+    http_version: null
+  recorded_at: Mon, 11 May 2020 07:47:51 GMT
+recorded_with: VCR 5.1.0
