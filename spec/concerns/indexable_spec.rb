@@ -207,33 +207,5 @@ describe "Indexable class methods", elasticsearch: true do
         expect(subject.ror_from_url(ror_id)).to be_nil
       end
     end
-
-    context "aggregations" do
-      it 'returns query_aggregation when filters aggregation with empty' do
-        aggregations = Doi.get_aggregations_hash({aggregations:""})
-        expect(aggregations[:resource_types]).not_to be_nil
-        expect(aggregations[:states]).not_to be_nil
-        expect(aggregations[:created]).not_to be_nil
-        expect(aggregations[:schema_versions]).not_to be_nil
-      end
-  
-      it 'returns multiple aggregations when filters aggregations with multiple' do
-        aggregations = Doi.get_aggregations_hash({aggregations:""})
-        expect(aggregations[:resource_types]).not_to be_nil
-        expect(aggregations[:states]).not_to be_nil
-        expect(aggregations[:created]).not_to be_nil
-        expect(aggregations[:schema_versions]).not_to be_nil
-      end
-    end
-  end
-
-  context "when event" do
-    let!(:event) { create(:event) }
-    let!(:events) { create_list(:event, 3) }
-
-    before do
-      Event.import
-      sleep 2
-    end
   end
 end

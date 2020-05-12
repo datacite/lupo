@@ -26,9 +26,10 @@ class EventsController < ApplicationController
     if @event.update_attributes(safe_params)
       options = {}
       options[:is_collection] = false
-
+      logger.warn "Created event #{@event.uuid} with source_id #{@event.source_id}"
       render json: EventSerializer.new(@event, options).serialized_json, status: exists ? :ok : :created
     else
+      logger.error @event.errors.inspect
       errors = @event.errors.full_messages.map { |message| { status: 422, title: message } }
       render json: { errors: errors }, status: :unprocessable_entity
     end
@@ -47,8 +48,10 @@ class EventsController < ApplicationController
       options = {}
       options[:is_collection] = false
 
+      logger.warn "Updated event #{@event.uuid} with source_id #{@event.source_id}"
       render json: EventSerializer.new(@event, options).serialized_json, status: exists ? :ok : :created
     else
+      logger.error @event.errors.inspect
       errors = @event.errors.full_messages.map { |message| { status: 422, title: message } }
       render json: { errors: errors }, status: :unprocessable_entity
     end
@@ -136,16 +139,12 @@ class EventsController < ApplicationController
 
       render json: EventSerializer.new(results, options).serialized_json, status: :ok
     else
-      aggregations = params.fetch(:aggregations, "") || ""
-
-      sources = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_source(response.response.aggregations.sources.buckets) : nil
-      prefixes = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_source(response.response.aggregations.prefixes.buckets) : nil
-      citation_types = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
-      relation_types = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_relation_type(response.response.aggregations.relation_types.buckets) : nil
-      registrants = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations")  ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
-      pairings = total.positive? && aggregations.blank? || aggregations.include?("query_aggregations") ? facet_by_pairings(response.response.aggregations.pairings.buckets) : nil
-      states = total.positive? && aggregations.include?("state_aggregations") ? facet_by_source(response.response.aggregations.states.buckets) : nil
-
+      sources = total.positive? ? facet_by_source(response.response.aggregations.sources.buckets) : nil
+      prefixes = total.positive? ? facet_by_source(response.response.aggregations.prefixes.buckets) : nil
+      citation_types = total.positive? ? facet_by_citation_type(response.response.aggregations.citation_types.buckets) : nil
+      relation_types = total.positive? ? facet_by_relation_type(response.response.aggregations.relation_types.buckets) : nil
+      registrants = total.positive? ? facet_by_registrants(response.response.aggregations.registrants.buckets) : nil
+      
       results = response.results
 
       options = {}
@@ -157,9 +156,7 @@ class EventsController < ApplicationController
         prefixes: prefixes,
         "citationTypes" => citation_types,
         "relationTypes" => relation_types,
-        pairings: pairings,
         registrants: registrants,
-        "states": states,
       }.compact
 
       options[:links] = {

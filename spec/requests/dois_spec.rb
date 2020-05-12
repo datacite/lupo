@@ -186,6 +186,8 @@ describe "dois", type: :request do
 
         expect(result.dig('attributes', 'doi')).to eq(doi.doi.downcase)
         expect(result.dig('attributes', 'titles')).to eq(doi.titles)
+        expect(result.dig('attributes', 'identifiers')).to eq([{"identifier"=>"Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446.", "identifierType"=>"citation"}])
+        expect(result.dig('attributes', 'alternateIdentifiers')).to eq([{"alternateIdentifier"=>"Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446.", "alternateIdentifierType"=>"citation"}])
         # expect(result.dig('relationships','citations', 'data')).to be_empty
       end
     end
@@ -202,7 +204,6 @@ describe "dois", type: :request do
     context 'provider_admin' do
       let(:provider_bearer) { Client.generate_token(role_id: "provider_admin", uid: provider.symbol, provider_id: provider.symbol.downcase, password: provider.password) }
       let(:provider_headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + provider_bearer }}
-
 
       it 'returns the Doi' do
         get "/dois/#{doi.doi}", nil, provider_headers
@@ -1568,6 +1569,154 @@ describe "dois", type: :request do
 
         doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10703")
+      end
+    end
+
+    context 'when the request is valid with recommended properties' do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "types" => { "bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle" },
+              "titles" => [{"title"=>"Eating your own Dog Food"}],
+              "publisher" => "DataCite",
+              "publicationYear" => 2016,
+              "creators" => [{"familyName"=>"Fenner", "givenName"=>"Martin", "nameIdentifiers"=>[{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri"=>"https://orcid.org" }], "name"=>"Fenner, Martin", "nameType"=>"Personal"}],
+              "subjects" => [{ "subject" => "80505 Web Technologies (excl. Web Search)",
+                "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
+                "subjectScheme" => "FOR",
+                "lang" => "en" }],
+              "contributors" => [{"contributorType"=>"DataManager", "familyName"=>"Fenner", "givenName"=>"Kurt", "nameIdentifiers"=>[{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2401", "nameIdentifierScheme" => "ORCID", "schemeUri"=>"https://orcid.org" }], "name"=>"Fenner, Kurt", "nameType"=>"Personal"}],
+              "dates" => [{"date"=>"2017-02-24", "dateType"=>"Issued"}, {"date"=>"2015-11-28", "dateType"=>"Created"}, {"date"=>"2017-02-24", "dateType"=>"Updated"}],
+              "relatedIdentifiers" => [{ "relatedIdentifier"=>"10.5438/55e5-t5c0", "relatedIdentifierType"=>"DOI", "relationType"=>"References" }],
+              "descriptions" => [
+                {
+                  "lang" => "en",
+                  "description" => "Diet and physical activity are two modifiable factors that can curtail the development of osteoporosis in the aging population. One purpose of this study was to assess the differences in dietary intake and bone mineral density (BMD) in a Masters athlete population (n=87, n=49 female; 41.06 ± 5.00 years of age) and examine sex- and sport-related differences in dietary and total calcium and vitamin K intake and BMD of the total body, lumbar spine, and dual femoral neck (TBBMD, LSBMD and DFBMD, respectively). Total calcium is defined as calcium intake from diet and supplements. Athletes were categorized as participating in an endurance or interval sport. BMD was measured using dual-energy X-ray absorptiometry (DXA). Data on dietary intake was collected from Block 2005 Food Frequency Questionnaires (FFQs). Dietary calcium, total calcium, or vitamin K intake did not differ between the female endurance and interval athletes. All three BMD sites were significantly different among the female endurance and interval athletes, with female interval athletes having higher BMD at each site (TBBMD: 1.26 ± 0.10 g/cm2, p<0.05; LSBMD: 1.37 ± 0.14 g/cm2, p<0.01; DFBMD: 1.11 ± 0.12 g/cm2, p<0.05, for female interval athletes; TBBMD: 1.19 ± 0.09 g/cm2; LSBMD: 1.23 ± 0.16 g/cm2; DFBMD: 1.04 ± 0.10 g/cm2, for female endurance athletes). Male interval athletes had higher BMD at all three sites (TBBMD 1.44 ± 0.11 g/cm2, p<0.05; LSBMD 1.42 ± 0.15 g/cm2, p=0.179; DFBMD 1.26 ± 0.14 g/cm2, p<0.01, for male interval athletes; TBBMD 1.33 ± 0.11 g/cm2; LSBMD 1.33 ± 0.17 g/cm2; DFBMD 1.10 ± 0.12 g/cm2 for male endurance athletes). Dietary calcium, total daily calcium and vitamin K intake did not differ between the male endurance and interval athletes. This study evaluated the relationship between calcium intake and BMD. No relationship between dietary or total calcium intake and BMD was evident in all female athletes, female endurance athletes or female interval athletes. In all male athletes, there was no significant correlation between dietary or total calcium intake and BMD at any of the measured sites. However, the male interval athlete group had a negative relationship between dietary calcium intake and TBBMD (r=-0.738, p<0.05) and LSBMD (r=-0.738, p<0.05). The negative relationship persisted between total calcium intake and LSBMD (r=-0.714, p<0.05), but not TBBMD, when calcium from supplements was included. The third purpose of this study was to evaluate the relationship between vitamin K intake (as phylloquinone) and BMD. In all female athletes, there was no significant correlation between vitamin K intake and BMD at any of the measured sites. No relationship between vitamin K and BMD was evident in female interval or female endurance athletes. Similarly, there was no relationship between vitamin K intake and BMD in the male endurance and interval groups. The final purpose of this study was to assess the relationship between the Calcium-to-Vitamin K (Ca:K) ratio and BMD. A linear regression model established that the ratio predicted TBBMD in female athletes, F(1,47) = 4.652, p <0.05, and the ratio accounted for 9% of the variability in TBBMD. The regression equation was: predicted TBBMD in a female athlete = 1.250 - 0.008 x (Ca:K). In conclusion, Masters interval athletes have higher BMD than Masters endurance athletes; however, neither dietary or supplemental calcium nor vitamin K were related to BMD in skeletal sites prone to fracture in older adulthood. We found that a Ca:K ratio could predict TBBMD in female athletes. Further research should consider the calcium-to-vitamin K relationship in conjunction with other modifiable, lifestyle factors associated with bone health in the investigation of methods to minimize the development and effect of osteoporosis in the older athlete population.",
+                  "descriptionType" => "Abstract"
+                }
+              ],
+              "geoLocations" => [
+                {
+                  "geoLocationPoint" => {
+                    "pointLatitude" => "49.0850736",
+                    "pointLongitude" => "-123.3300992"
+                  }
+                }
+              ],
+              "source" => "test",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      it 'creates a Doi' do
+        post '/dois', valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+        expect(json.dig('data', 'attributes', 'creators')).to eq([{"affiliation"=>[],"familyName"=>"Fenner", "givenName"=>"Martin", "nameIdentifiers"=>[{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405","nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}], "name"=>"Fenner, Martin", "nameType"=>"Personal"}])
+        expect(json.dig('data', 'attributes', 'publisher')).to eq("DataCite")
+        expect(json.dig('data', 'attributes', 'publicationYear')).to eq(2016)
+        # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig('data', 'attributes', 'subjects')).to eq([{"lang"=>"en",
+          "schemeUri"=>
+          "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
+          "subject"=>"80505 Web Technologies (excl. Web Search)",
+          "subjectScheme"=>"FOR"}])
+        expect(json.dig('data', 'attributes', 'contributors')).to eq([{"affiliation"=>[],
+          "contributorType"=>"DataManager",
+          "familyName"=>"Fenner",
+          "givenName"=>"Kurt",
+          "name"=>"Fenner, Kurt",
+          "nameIdentifiers"=>
+            [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2401",
+              "nameIdentifierScheme"=>"ORCID",
+              "schemeUri"=>"https://orcid.org"}],
+          "nameType"=>"Personal"}])
+        expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2017-02-24", "dateType"=>"Issued"}, {"date"=>"2015-11-28", "dateType"=>"Created"}, {"date"=>"2017-02-24", "dateType"=>"Updated"}])
+        expect(json.dig('data', 'attributes', 'relatedIdentifiers')).to eq([{"relatedIdentifier"=>"10.5438/55e5-t5c0", "relatedIdentifierType"=>"DOI", "relationType"=>"References"}])
+        expect(json.dig('data', 'attributes', 'descriptions', 0, 'description')).to start_with("Diet and physical activity")
+        expect(json.dig('data', 'attributes', 'geoLocations')).to eq([{"geoLocationPoint"=>{"pointLatitude"=>"49.0850736", "pointLongitude"=>"-123.3300992"}}])
+        expect(json.dig('data', 'attributes', 'source')).to eq("test")
+        expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
+        expect(doc.at_css("identifier").content).to eq("10.14454/10703")
+        expect(doc.at_css("subjects").content).to eq("80505 Web Technologies (excl. Web Search)")
+        expect(doc.at_css("contributors").content).to eq("Fenner, KurtKurtFennerhttps://orcid.org/0000-0003-1419-2401")
+        expect(doc.at_css("dates").content).to eq("2017-02-242015-11-282017-02-24")
+        expect(doc.at_css("relatedIdentifiers").content).to eq("10.5438/55e5-t5c0")
+        expect(doc.at_css("descriptions").content).to start_with("Diet and physical activity")
+        expect(doc.at_css("geoLocations").content).to eq("49.0850736-123.3300992")
+      end
+    end
+
+    context 'when the request is valid with optional properties' do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "types" => { "bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle" },
+              "titles" => [{"title"=>"Eating your own Dog Food"}],
+              "publisher" => "DataCite",
+              "publicationYear" => 2016,
+              "creators" => [{"familyName"=>"Fenner", "givenName"=>"Martin", "nameIdentifiers"=>[{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri"=>"https://orcid.org" }], "name"=>"Fenner, Martin", "nameType"=>"Personal"}],
+              "language" => "en",
+              "alternateIdentifiers" => [{ "alternateIdentifier" => "123", "alternateIdentifierType" => "Repository ID" }],
+              "rightsList" => [{ "rights" => "Creative Commons Attribution 3.0", "rightsUri" => "http://creativecommons.org/licenses/by/3.0/", "lang" => "en"}],
+              "sizes" => ["4 kB", "12.6 MB"],
+              "formats" => ["application/pdf", "text/csv"],
+              "version" => "1.1",
+              "fundingReferences" => [{"funderIdentifier"=>"https://doi.org/10.13039/501100009053", "funderIdentifierType"=>"Crossref Funder ID", "funderName"=>"The Wellcome Trust DBT India Alliance"}],
+              "source" => "test",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      it 'creates a Doi' do
+        post '/dois', valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+        expect(json.dig('data', 'attributes', 'creators')).to eq([{"affiliation"=>[],"familyName"=>"Fenner", "givenName"=>"Martin", "nameIdentifiers"=>[{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405","nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}], "name"=>"Fenner, Martin", "nameType"=>"Personal"}])
+        expect(json.dig('data', 'attributes', 'publisher')).to eq("DataCite")
+        expect(json.dig('data', 'attributes', 'publicationYear')).to eq(2016)
+        # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig('data', 'attributes', 'language')).to eq("en")
+        expect(json.dig('data', 'attributes', 'alternateIdentifiers')).to eq([{"alternateIdentifier"=>"123", "alternateIdentifierType"=>"Repository ID"}])
+        expect(json.dig('data', 'attributes', 'rightsList')).to eq([{"lang"=>"en", "rights"=>"Creative Commons Attribution 3.0", "rightsUri"=>"http://creativecommons.org/licenses/by/3.0/"}])
+        expect(json.dig('data', 'attributes', 'sizes')).to eq(["4 kB", "12.6 MB"])
+        expect(json.dig('data', 'attributes', 'formats')).to eq(["application/pdf", "text/csv"])
+        expect(json.dig('data', 'attributes', 'version')).to eq("1.1")
+        expect(json.dig('data', 'attributes', 'fundingReferences')).to eq([{"funderIdentifier"=>"https://doi.org/10.13039/501100009053", "funderIdentifierType"=>"Crossref Funder ID", "funderName"=>"The Wellcome Trust DBT India Alliance"}])
+        expect(json.dig('data', 'attributes', 'source')).to eq("test")
+        expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
+        expect(doc.at_css("identifier").content).to eq("10.14454/10703")
+        expect(doc.at_css("language").content).to eq("en")
+        expect(doc.at_css("alternateIdentifiers").content).to eq("123")
+        expect(doc.at_css("rightsList").content).to eq("Creative Commons Attribution 3.0")
+        expect(doc.at_css("sizes").content).to eq("4 kB12.6 MB")
+        expect(doc.at_css("formats").content).to eq("application/pdftext/csv")
+        expect(doc.at_css("version").content).to eq("1.1")
+        expect(doc.at_css("fundingReferences").content).to eq("The Wellcome Trust DBT India Alliancehttps://doi.org/10.13039/501100009053")
       end
     end
 
