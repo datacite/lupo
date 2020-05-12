@@ -12,7 +12,7 @@ module Countable
       elsif user_id
         response = Doi.query(nil, user_id: user_id, state: state, page: { number: 1, size: 0 })
       else
-        response = Doi.query(nil, page: { number: 1, size: 0 })
+        response = Doi.stats_query(nil, page: { number: 1, size: 0 })
       end
       
       response.results.total.positive? ? facet_by_year(response.response.aggregations.created.buckets) : []

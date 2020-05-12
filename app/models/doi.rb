@@ -675,6 +675,24 @@ class Doi < ActiveRecord::Base
     )
   end
 
+  def self.stats_query(query, options={})
+    aggregations = {created: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+                    aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
+                   }
+
+    from = 0
+    sort = [{ created: "asc", uid: "asc" }]
+
+    __elasticsearch__.search({
+      size: options.dig(:page, :size),
+      from: from,
+      sort: sort,
+      query: query,
+      aggregations: aggregations,
+      track_total_hits: true
+    }.compact)
+  end
+
   def self.query(query, options={})
     # support scroll api
     # map function is small performance hit
