@@ -346,7 +346,7 @@ class Client < ActiveRecord::Base
     transfer_prefixes(target_provider.symbol)
 
     # Update DOIs
-    TransferClientJob.perform_later(symbol, target_id: options[:target_id])
+    TransferClientJob.perform_later(self, target_id: options[:target_id])
   end
 
   def transfer_prefixes(target_id)
