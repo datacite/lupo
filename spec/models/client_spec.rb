@@ -68,6 +68,22 @@ describe Client, type: :model do
       end
     end
 
+    context "to consortium_organization" do
+      let(:new_provider) { create(:provider, symbol: "QUECHUA", member_type: "consortium_organization") }
+      let(:options) { { target_id: new_provider.symbol } }
+
+      it "works" do
+        client.transfer(options)
+
+        expect(client.provider_id).to eq(new_provider.symbol.downcase)
+        expect(new_provider.prefixes.length).to eq(1)
+        expect(provider.prefixes.length).to eq(1)
+
+        expect(new_provider.prefix_ids).to include(prefix.uid)
+        expect(provider.prefix_ids).not_to include(prefix.uid)
+      end
+    end
+
     context "to consortium" do
       let(:new_provider) { create(:provider, symbol: "QUECHUA", role_name: "ROLE_CONSORTIUM") }
       let(:options) { { target_id: new_provider.symbol } }
