@@ -23,7 +23,8 @@ class ClientsController < ApplicationController
     elsif params[:ids].present?
       response = Client.find_by_id(params[:ids], page: page, sort: sort)
     else
-      response = Client.query(params[:query], 
+      response = Client.query(
+        params[:query],
         year: params[:year],
         from_date: params[:from_date],
         until_date: params[:until_date],
@@ -33,9 +34,10 @@ class ClientsController < ApplicationController
         software: params[:software],
         certificate: params[:certificate],
         repository_type: params[:repository_type],
-        client_type: params[:client_type], 
-        page: page, 
-        sort: sort)
+        client_type: params[:client_type],
+        page: page,
+        sort: sort,
+      )
     end
 
     begin
@@ -123,11 +125,18 @@ class ClientsController < ApplicationController
   end
 
   def update
-    if @client.update(safe_params)
-      options = {}
-      options[:is_collection] = false
-      options[:params] = { current_ability: current_ability }
-  
+    options = {}
+    options[:is_collection] = false
+    options[:params] = { current_ability: current_ability }
+
+    if params.dig(:data, :attributes, :mode) == "transfer"
+      # only update provider_id
+      authorize! :transfer, @client
+
+      @client.transfer(safe_params.slice(:target_id))
+      render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
+    elsif @client.update(safe_params)
+
       render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
     else
       Rails.logger.error @client.errors.inspect
@@ -156,7 +165,7 @@ class ClientsController < ApplicationController
     page = { size: 0, number: 1 }
     state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
     response = Doi.query(nil, provider_id: params[:provider_id], state: state, page: page, totals_agg: "client")
-    registrant = response.results.total.positive? ? clients_totals(response.response.aggregations.clients_totals.buckets) : []
+    registrant = response.results.total.positive? ? clients_totals(response.aggregations.clients_totals.buckets) : []
     
     render json: registrant, status: :ok
   end

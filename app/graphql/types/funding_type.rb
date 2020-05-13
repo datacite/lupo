@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Types::FundingType < Types::BaseObject
+class FundingType < BaseObject
   description "Information about funding"
 
   field :funder_name, String, null: true, hash_key: "funderName", description: "Funder name"

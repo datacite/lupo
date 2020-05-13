@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class Types::WorkflowEdgeType < GraphQL::Types::Relay::BaseEdge
-  node_type(Types::WorkflowType)
+class WorkflowEdgeType < GraphQL::Types::Relay::BaseEdge
+  node_type(WorkflowType)
 end

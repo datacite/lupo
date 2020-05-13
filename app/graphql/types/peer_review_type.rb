@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class Types::PeerReviewType < Types::BaseObject
-  implements Types::DoiItem
+class PeerReviewType < BaseObject
+  implements DoiItem
 
   def type
     "PeerReview"

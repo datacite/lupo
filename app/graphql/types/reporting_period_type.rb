@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Types::ReportingPeriodType < Types::BaseObject
+class ReportingPeriodType < BaseObject
   description "Information about reporting periods"
 
   field :begin_date, String, null: true, description: "Begin reporting period"

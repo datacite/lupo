@@ -208,23 +208,65 @@ class Event < ActiveRecord::Base
   end
 
   def self.query_fields
-    ["subj_id^10", "obj_id^10", "subj.name^5", "subj.author^5", "subj.periodical^5", "subj.publisher^5", "obj.name^5", "obj.author^5", "obj.periodical^5", "obj.publisher^5", "_all"]
+    ["subj_id^10", "obj_id^10", "source_id", "relation_type_id"]
   end
 
   def self.query_aggregations
     {
-      sources: { terms: { field: "source_id", size: 50, min_doc_count: 1 } },
-      prefixes: { terms: { field: "prefix", size: 50, min_doc_count: 1 } },
-      registrants: { terms: { field: "registrant_id", size: 50, min_doc_count: 1 }, aggs: { year: { date_histogram: { field: "occurred_at", interval: "year", min_doc_count: 1 }, aggs: { "total_by_year" => { sum: { field: "total" } } } } } },
-      pairings: { terms: { field: "registrant_id", size: 50, min_doc_count: 1 }, aggs: { recipient: { terms: { field: "registrant_id", size: 50, min_doc_count: 1 }, aggs: { "total" => { sum: { field: "total" } } } } } },
-      citation_types: { terms: { field: "citation_type", size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: "occurred_at", interval: "month", min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: "total" } } } } } },
-      relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { year_months: { date_histogram: { field: "occurred_at", interval: "month", min_doc_count: 1 }, aggs: { "total_by_year_month" => { sum: { field: "total" } } } } } },
-      dois: { terms: { field: "obj_id", size: 50, min_doc_count: 1 }, aggs: { relation_types: { terms: { field: "relation_type_id", size: 50, min_doc_count: 1 }, aggs: { "total_by_type" => { sum: { field: "total" } } } } } },
+      sources: { terms: { field: "source_id", size: 10, min_doc_count: 1 } },
+      prefixes: { terms: { field: "prefix", size: 10, min_doc_count: 1 } },
+      registrants: { 
+        terms: { 
+          field: "registrant_id", size: 10, min_doc_count: 1
+        }, 
+        aggs: { 
+          year: { 
+            date_histogram: { 
+              field: 'occurred_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 
+            },
+            aggs: { 
+              bucket_truncate: { 
+                bucket_sort: { size: 10 }
+              }
+            }
+          }
+        }
+      },
+      citation_types: {
+        terms: {
+          field: "citation_type", size: 10, min_doc_count: 1
+        },
+        aggs: { 
+          year_month: {
+            date_histogram: {
+              field: 'occurred_at', interval: 'month', format: 'yyyy-MM', order: { _key: "desc" }, min_doc_count: 1
+            },
+            aggs: { 
+              bucket_truncate: {
+                bucket_sort: { size: 10 }
+              }
+            }
+          }
+        }
+      },
+      relation_types: { 
+        terms: {
+          field: "relation_type_id", size: 10, min_doc_count: 1
+        }, 
+        aggs: {
+          year_month: { 
+            date_histogram: { 
+              field: 'occurred_at', interval: 'month', format: 'yyyy-MM', order: { _key: "desc" }, min_doc_count: 1
+            },
+            aggs: { 
+              bucket_truncate: { 
+                bucket_sort: { size: 10 }
+              }
+            }
+          }
+        }
+      },
     }
-  end
-
-  def self.state_aggregations
-    { states: { terms: { field: "state_event", size: 50, min_doc_count: 1 } }}
   end
 
   # return results for one or more ids
@@ -511,6 +553,41 @@ class Event < ActiveRecord::Base
     end
   end
 
+  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filer
+  # Options:
+  # +filter+:: paramaters to filter the index
+  # +label+:: String to output in the logs printout
+  # +query+:: ES query to filter the index
+  # +job_name+:: Acive Job class name of the Job that would be executed on every matched results 
+  def self.loop_through_events(options)
+    size = (options[:size] || 1000).to_i
+    cursor = [options[:from_id] || Doi.minimum(:id).to_i, options[:until_id] || Doi.maximum(:id).to_i]
+    filter = options[:filter] || {}
+    label = options[:label] || ""
+    job_name = options[:job_name] || ""
+    query = options[:query] || nil
+
+    response = Event.query(query, filter.merge(page: { size: 1, cursor: [] }))
+    Rails.logger.info "#{label} #{response.results.total} events with #{label}."
+
+    # walk through results using cursor
+    if response.results.total.positive?
+      while response.results.results.length.positive?
+        response = Event.query(query, filter.merge(page: { size: size, cursor: cursor }))
+        break unless response.results.results.length.positive?
+
+        Rails.logger.info "#{label} #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
+        cursor = response.results.to_a.last[:sort]
+        Rails.logger.info "#{label} Cursor: #{cursor} "
+
+        ids = response.results.results.map(&:uuid)
+        ids.each do |id|
+          Object.const_get(job_name).perform_later(id, filter)
+        end
+      end
+    end
+  end
+
   def metric_type
     if relation_type_id.to_s =~ /(requests|investigations)/
       arr = relation_type_id.split("-", 4)
@@ -558,7 +635,7 @@ class Event < ActiveRecord::Base
   def citation_type
     return nil if subj["@type"].blank? || subj["@type"] == "CreativeWork" || obj["@type"].blank? || obj["@type"] == "CreativeWork"
 
-   [subj["@type"], obj["@type"]].compact.sort.join("-")
+    [subj["@type"], obj["@type"]].compact.sort.join("-")
   end
 
   def doi_from_url(url)

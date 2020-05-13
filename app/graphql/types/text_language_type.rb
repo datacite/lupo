@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Types::TextLanguageType < Types::BaseObject
+class TextLanguageType < BaseObject
   description "Information"
   
   field :language, String, null: true, description: "Language"

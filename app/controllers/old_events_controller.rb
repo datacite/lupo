@@ -7,7 +7,6 @@ class OldEventsController < ApplicationController
   prepend_before_action :authenticate_user!, except: [:index, :show]
   before_action :detect_crawler
   before_action :load_event, only: [:show, :destroy]
-  before_action :set_include, only: [:index, :show, :create, :update]
   authorize_resource only: [:destroy]
 
   def create
@@ -56,7 +55,6 @@ class OldEventsController < ApplicationController
 
   def show
     options = {}
-    options[:include] = @include
     options[:is_collection] = false
 
     render json: OldEventSerializer.new(@event, options).serialized_json, status: :ok
@@ -132,10 +130,9 @@ class OldEventsController < ApplicationController
     else
       sources = total > 0 ? facet_by_source(response.aggregations.sources.buckets) : nil
       prefixes = total > 0 ? facet_by_source(response.aggregations.prefixes.buckets) : nil
-      citation_types = total > 0 ? facet_by_citation_type(response.aggregations.citation_types.buckets) : nil
+      citation_types = total > 0 ? facet_by_citation_type_v1(response.aggregations.citation_types.buckets) : nil
       relation_types = total > 0 ? facet_by_relation_type_v1(response.aggregations.relation_types.buckets) : nil
-      registrants = total > 0  && params[:extra] ? facet_by_registrants(response.aggregations.registrants.buckets) : nil
-      pairings = total > 0 && params[:extra] ? facet_by_pairings(response.aggregations.pairings.buckets) : nil
+      registrants = total > 0 ? facet_by_registrants(response.aggregations.registrants.buckets) : nil
 
       results = response.results
 
@@ -148,7 +145,6 @@ class OldEventsController < ApplicationController
         prefixes: prefixes,
         "citation-types" => citation_types,
         "relation-types" => relation_types,
-        pairings: pairings,
         registrants: registrants
       }.compact
 
@@ -173,7 +169,6 @@ class OldEventsController < ApplicationController
           "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
           "page[size]" => page[:size] }.compact.to_query
         }.compact
-      options[:include] = @include
       options[:is_collection] = true
 
       render json: OldEventSerializer.new(results, options).serialized_json, status: :ok
@@ -195,15 +190,6 @@ class OldEventsController < ApplicationController
     response = Event.find_by_id(params[:id])
     @event = response.results.first
     fail ActiveRecord::RecordNotFound unless @event.present?
-  end
-
-  def set_include
-    if params[:include].present?
-      @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:subj, :obj]
-    else
-      @include = []
-    end
   end
 
   private

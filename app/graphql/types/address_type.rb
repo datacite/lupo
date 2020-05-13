@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Types::AddressType < Types::BaseObject
+class AddressType < BaseObject
   description "Information about addresses"
 
   field :type, String, null: true, description: "The type."

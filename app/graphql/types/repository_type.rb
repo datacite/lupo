@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Types::RepositoryType < Types::BaseObject
+class RepositoryType < BaseObject
   description "Information about repositories"
 
   field :id, ID, null: false, hash_key: "uid", description: "Unique identifier for each repository"
@@ -9,19 +9,19 @@ class Types::RepositoryType < Types::BaseObject
   field :name, String, null: false, description: "Repository name"
   field :alternate_name, String, null: true, description: "Repository alternate name"
   field :description, String, null: true, description: "Description of the repository"
-  field :url, Types::Url, null: true, description: "The homepage of the repository"
+  field :url, Url, null: true, description: "The homepage of the repository"
   field :software, String, null: true, description: "The name of the software that is used to run the repository"
   field :client_type, String, null: true, description: "The client type (repository or periodical)"
   field :repository_type, [String], null: true, description: "The repository type(s)"
   field :certificate, [String], null: true, description: "The certificate(s) for the repository"
   field :language, [String], null: true, description: "The langauge of the repository"
-  field :issn, Types::IssnType, null: true, description: "The ISSN"
+  field :issn, IssnType, null: true, description: "The ISSN"
     
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :datasets, Types::DatasetConnectionType, null: true, connection: true, description: "Datasets managed by the repository" do
+  field :datasets, DatasetConnectionType, null: true, connection: true, description: "Datasets managed by the repository" do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -40,7 +40,7 @@ class Types::RepositoryType < Types::BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :publications, Types::PublicationConnectionType, null: true, connection: true, description: "Publications managed by the repository" do
+  field :publications, PublicationConnectionType, null: true, connection: true, description: "Publications managed by the repository" do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -59,7 +59,7 @@ class Types::RepositoryType < Types::BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :softwares, Types::SoftwareConnectionType, null: true, connection: true, description: "Software managed by the repository" do
+  field :softwares, SoftwareConnectionType, null: true, connection: true, description: "Software managed by the repository" do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -78,7 +78,7 @@ class Types::RepositoryType < Types::BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :works, Types::WorkConnectionType, null: true, connection: true, description: "Works managed by the repository" do
+  field :works, WorkConnectionType, null: true, connection: true, description: "Works managed by the repository" do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -97,7 +97,7 @@ class Types::RepositoryType < Types::BaseObject
     argument :first, Int, required: false, default_value: 25
   end
 
-  field :prefixes, Types::RepositoryPrefixConnectionType, null: true, description: "Prefixes managed by the repository", connection: true do
+  field :prefixes, RepositoryPrefixConnectionType, null: true, description: "Prefixes managed by the repository", connection: true do
     argument :query, String, required: false
     argument :state, String, required: false
     argument :year, String, required: false

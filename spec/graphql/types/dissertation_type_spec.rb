@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::DissertationType do
+describe DissertationType do
   describe "fields" do
     subject { described_class }
 

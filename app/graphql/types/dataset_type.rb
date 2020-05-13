@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class Types::DatasetType < Types::BaseObject
-  implements Types::DoiItem
+class DatasetType < BaseObject
+  implements DoiItem
 
   field :usage_reports, DatasetUsageReportConnectionType, null: false, description: "Usage reports for this dataset", connection: true do
     argument :first, Int, required: false, default_value: 25

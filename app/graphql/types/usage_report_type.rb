@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-class Types::UsageReportType < Types::BaseObject
+class UsageReportType < BaseObject
   description "Information about usage reports"
 
   field :id, ID, null: false, description: "Usage report ID"
   field :repository_id, String, null: true, description: "Repository that created the report"
-  field :reporting_period, Types::ReportingPeriodType, null: false, description: "Time period covered by the report"
+  field :reporting_period, ReportingPeriodType, null: false, description: "Time period covered by the report"
   field :date_created, String, null: false, description: "Date information was created"
-  field :datasets, Types::UsageReportDatasetConnectionType, null: false, description: "Datasets included in usage report", connection: true do
+  field :datasets, UsageReportDatasetConnectionType, null: false, description: "Datasets included in usage report", connection: true do
     argument :first, Int, required: false, default_value: 25
   end
 

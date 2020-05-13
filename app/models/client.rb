@@ -86,6 +86,7 @@ class Client < ActiveRecord::Base
       indexes :uid,           type: :keyword, normalizer: "keyword_lowercase"
       indexes :symbol,        type: :keyword
       indexes :provider_id,   type: :keyword
+      indexes :provider_id_and_name, type: :keyword
       indexes :consortium_id, type: :keyword
       indexes :re3data_id,    type: :keyword
       indexes :opendoar_id,   type: :integer
@@ -211,6 +212,7 @@ class Client < ActiveRecord::Base
       "id" => uid,
       "uid" => uid,
       "provider_id" => provider_id,
+      "provider_id_and_name" => provider_id_and_name,
       "consortium_id" => consortium_id,
       "re3data_id" => re3data_id,
       "opendoar_id" => opendoar_id,
@@ -252,7 +254,7 @@ class Client < ActiveRecord::Base
       years: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
       cumulative_years: { terms: { field: 'cumulative_years', size: 10, min_doc_count: 1, order: { _count: "asc" } } },
-      providers: { terms: { field: 'provider_id', size: 10, min_doc_count: 1 } },
+      providers: { terms: { field: 'provider_id_and_name', size: 10, min_doc_count: 1 } },
       software: { terms: { field: 'software.keyword', size: 10, min_doc_count: 1 } },
       client_types: { terms: { field: 'client_type', size: 10, min_doc_count: 1 } },
       repository_types: { terms: { field: 'repository_type', size: 10, min_doc_count: 1 } },
@@ -291,6 +293,10 @@ class Client < ActiveRecord::Base
     provider_symbol.downcase
   end
 
+  def provider_id_and_name
+    "#{provider_id}:#{provider.name}"
+  end
+
   def provider_id=(value)
     r = Provider.where(symbol: value).first
     return nil unless r.present?
@@ -319,6 +325,55 @@ class Client < ActiveRecord::Base
     target = c.records.first
 
     Doi.transfer(client_id: symbol.downcase, target_id: target.id)
+  end
+
+  def transfer(options = {})
+    if options[:target_id].blank?
+      Rails.logger.error "[Transfer] No target provider provided."
+      return nil
+    end
+
+    target_provider = Provider.where(symbol: options[:target_id]).first
+
+    if target_provider.blank?
+      Rails.logger.error "[Transfer] Provider doesn't exist."
+      return nil
+    end
+
+    unless ["direct_member", "consortium_organization"].include?(target_provider.member_type)
+      Rails.logger.error "[Transfer] Consortiums and Members-only cannot have repositories."
+      return nil
+    end
+
+    # Transfer client
+    update_attribute(:allocator, target_provider.id)
+
+    # transfer prefixes
+    transfer_prefixes(target_provider.symbol)
+
+    # Update DOIs
+    TransferClientJob.perform_later(self, target_id: options[:target_id])
+  end
+
+  def transfer_prefixes(target_id)
+    # These prefixes are used by multiple clients
+    prefixes_to_keep = ["10.4124", "10.4225", "10.4226", "10.4227"]
+
+    # delete all associated prefixes
+    associated_prefixes = prefixes.reject{ |prefix| prefixes_to_keep.include?(prefix.uid)}
+    prefix_ids = associated_prefixes.pluck(:id)
+    prefixes_names = associated_prefixes.pluck(:uid)
+
+    if prefix_ids.present?
+      response = ProviderPrefix.where("prefix_id IN (?)", prefix_ids).destroy_all
+      puts "#{response.count} provider prefixes deleted."
+    end
+
+    # Assign prefix(es) to provider
+    prefixes_names.each do |prefix|
+      ProviderPrefix.create(provider_id: target_id, prefix_id: prefix)
+      puts "Provider prefix for provider #{target_id} and prefix #{prefix} created."
+    end
   end
 
   def service_contact_email

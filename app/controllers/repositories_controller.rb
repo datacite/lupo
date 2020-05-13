@@ -44,12 +44,12 @@ class RepositoriesController < ApplicationController
     begin
       total = response.results.total
       total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
-      years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
-      providers = total > 0 ? facet_by_combined_key(response.response.aggregations.providers.buckets) : nil
-      software = total > 0 ? facet_by_software(response.response.aggregations.software.buckets) : nil
-      certificates = total > 0 ? facet_by_key(response.response.aggregations.certificates.buckets) : nil
-      client_types = total > 0 ? facet_by_key(response.response.aggregations.client_types.buckets) : nil
-      repository_types = total > 0 ? facet_by_key(response.response.aggregations.repository_types.buckets) : nil
+      years = total > 0 ? facet_by_year(response.aggregations.years.buckets) : nil
+      providers = total > 0 ? facet_by_combined_key(response.aggregations.providers.buckets) : nil
+      software = total > 0 ? facet_by_software(response.aggregations.software.buckets) : nil
+      certificates = total > 0 ? facet_by_key(response.aggregations.certificates.buckets) : nil
+      client_types = total > 0 ? facet_by_key(response.aggregations.client_types.buckets) : nil
+      repository_types = total > 0 ? facet_by_key(response.aggregations.repository_types.buckets) : nil
 
       respond_to do |format|
         format.json do
@@ -155,10 +155,17 @@ class RepositoriesController < ApplicationController
   end
 
   def update
-    if @client.update_attributes(safe_params)
-      options = {}
-      options[:is_collection] = false
-      options[:params] = { current_ability: current_ability }
+    options = {}
+    options[:is_collection] = false
+    options[:params] = { current_ability: current_ability }
+
+    if params.dig(:data, :attributes, :mode) == "transfer"
+      # only update provider_id
+      authorize! :transfer, @client
+
+      @client.transfer(safe_params.slice(:target_id))
+      render json: RepositorySerializer.new(@client, options).serialized_json, status: :ok
+    elsif @client.update(safe_params)
 
       render json: RepositorySerializer.new(@client, options).serialized_json, status: :ok
     else
@@ -194,7 +201,7 @@ class RepositoriesController < ApplicationController
 
     state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
     response = Doi.query(nil, provider_id: params[:provider_id], state: state, page: page, totals_agg: "client")
-    registrant = response.results.total.positive? ? clients_totals(response.response.aggregations.clients_totals.buckets) : []
+    registrant = response.results.total.positive? ? clients_totals(response.aggregations.clients_totals.buckets) : []
 
     render json: registrant, status: :ok
   end

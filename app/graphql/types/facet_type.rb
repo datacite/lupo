@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Types::FacetType < Types::BaseObject
+class FacetType < BaseObject
   description "Summary information"
 
   field :id, String, null: true, description: "ID"

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Types::TextRestrictionType < Types::BaseObject
+class TextRestrictionType < BaseObject
   description "Information"
   
   field :text, String, null: false, description: "Information"

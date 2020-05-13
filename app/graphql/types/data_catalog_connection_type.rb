@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class Types::DataCatalogConnectionType < Types::BaseConnection
-  edge_type(Types::DataCatalogEdgeType)
+class DataCatalogConnectionType < BaseConnection
+  edge_type(DataCatalogEdgeType)
   field_class GraphQL::Cache::Field
 
   field :total_count, Integer, null: true, cache: true

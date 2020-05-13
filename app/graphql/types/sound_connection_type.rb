@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-class Types::SoundConnectionType < Types::BaseConnection
-  edge_type(Types::SoundEdgeType)
+class SoundConnectionType < BaseConnection
+  edge_type(SoundEdgeType)
   field_class GraphQL::Cache::Field
 
   field :total_count, Integer, null: false, cache: true
-  field :years, [Types::FacetType], null: true, cache: true
-  field :registration_agencies, [Types::FacetType], null: true, cache: true
-  field :repositories, [Types::FacetType], null: true, cache: true
-  field :affiliations, [Types::FacetType], null: true, cache: true
+  field :years, [FacetType], null: true, cache: true
+  field :registration_agencies, [FacetType], null: true, cache: true
+  field :repositories, [FacetType], null: true, cache: true
+  field :affiliations, [FacetType], null: true, cache: true
 
   def total_count
     args = prepare_args(object.arguments)

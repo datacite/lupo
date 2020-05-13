@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Types::SubjectType < Types::BaseObject
+class SubjectType < BaseObject
   description "Subject information"
 
   field :subject, String, null: true, description: "Subject, keyword, classification code, or key phrase describing the resource"

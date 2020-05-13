@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-class Types::WorkConnectionType < Types::BaseConnection
-  edge_type(Types::WorkEdgeType)
+class WorkConnectionType < BaseConnection
+  edge_type(WorkEdgeType)
   field_class GraphQL::Cache::Field
 
   field :total_count, Integer, null: false, cache: true
-  field :years, [Types::FacetType], null: true, cache: true
-  field :resource_types, [Types::FacetType], null: true, cache: true
-  field :registration_agencies, [Types::FacetType], null: true, cache: true
-  field :repositories, [Types::FacetType], null: true, cache: true
-  field :affiliations, [Types::FacetType], null: true, cache: true
+  field :years, [FacetType], null: true, cache: true
+  field :resource_types, [FacetType], null: true, cache: true
+  field :registration_agencies, [FacetType], null: true, cache: true
+  field :repositories, [FacetType], null: true, cache: true
+  field :affiliations, [FacetType], null: true, cache: true
   
   def total_count
     args = prepare_args(object.arguments)

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::AudiovisualType do
+describe AudiovisualType do
   describe "fields" do
     subject { described_class }
 

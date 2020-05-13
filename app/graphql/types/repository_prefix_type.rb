@@ -1,4 +1,6 @@
-class Types::RepositoryPrefixType < Types::BaseObject
+# frozen_string_literal: true
+
+class RepositoryPrefixType < BaseObject
   description "Information about repository prefixes"
 
   field :id, ID, null: false, hash_key: "uid", description: "Unique identifier for each repository prefix"

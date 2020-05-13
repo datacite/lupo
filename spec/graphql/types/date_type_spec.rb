@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::DateType do
+describe DateType do
   describe "fields" do
     subject { described_class }
 

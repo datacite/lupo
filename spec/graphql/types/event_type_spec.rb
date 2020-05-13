@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe Types::EventType do
+describe EventType do
   describe "fields" do
     subject { described_class }
 

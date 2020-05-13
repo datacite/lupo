@@ -28,7 +28,11 @@ module Indexable
     after_commit on: [:destroy] do
       begin
         __elasticsearch__.delete_document
-        Rails.logger.warn "#{self.class.name} #{uid} deleted from Elasticsearch index."
+        if self.class.name == "Event"
+          Rails.logger.warn "#{self.class.name} #{uuid} deleted from Elasticsearch index."
+        else
+          Rails.logger.warn "#{self.class.name} #{uid} deleted from Elasticsearch index."
+        end
         # send_delete_message(self.to_jsonapi) if self.class.name == "Doi" && !Rails.env.test?
 
         # reindex prefix
@@ -120,17 +124,6 @@ module Indexable
       })
     end
 
-    def get_aggregations_hash(options={})
-      aggregations = options[:aggregations] || ""
-      return send(:query_aggregations) if aggregations.blank?
-      aggs = {}
-      aggregations.split(",").each do |agg|
-        agg = :query_aggregations if agg.blank? || !respond_to?(agg)
-        aggs.merge! send(agg)
-      end
-      aggs
-    end
-
     def query(query, options={})
       # support scroll api
       # map function is small performance hit
@@ -164,7 +157,7 @@ module Indexable
       elsif options[:totals_agg] == "prefix"
         aggregations = prefix_aggregations
       else
-        aggregations = get_aggregations_hash(options)
+        aggregations = query_aggregations
       end
 
       options[:page] ||= {}
@@ -212,21 +205,26 @@ module Indexable
         query = query.gsub("/", '\/')
       end
 
-      must = []
       must_not = []
+      filter = []
 
       # filters for some classes
       if self.name == "Provider"
-        must << { query_string: { query: query, fields: query_fields, default_operator: "AND" }} if query.present?
-        must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
-        must << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
-        must << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
-        must << { term: { region: options[:region].upcase }} if options[:region].present?
-        must << { term: { "consortium_id.raw" => options[:consortium_id] }} if options[:consortium_id].present?
-        must << { term: { member_type: options[:member_type] }} if options[:member_type].present?
-        must << { term: { organization_type: options[:organization_type] }} if options[:organization_type].present?
-        must << { term: { non_profit_status: options[:non_profit_status] }} if options[:non_profit_status].present?
-        must << { term: { focus_area: options[:focus_area] }} if options[:focus_area].present?
+        if query.present?
+          must = [{ query_string: { query: query, fields: query_fields, default_operator: "AND", phrase_slop: 1 } }]
+        else
+          must = [{ match_all: {} }]
+        end
+
+        filter << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        filter << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
+        filter << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
+        filter << { term: { region: options[:region].upcase }} if options[:region].present?
+        filter << { term: { "consortium_id.raw" => options[:consortium_id] }} if options[:consortium_id].present?
+        filter << { term: { member_type: options[:member_type] }} if options[:member_type].present?
+        filter << { term: { organization_type: options[:organization_type] }} if options[:organization_type].present?
+        filter << { term: { non_profit_status: options[:non_profit_status] }} if options[:non_profit_status].present?
+        filter << { term: { focus_area: options[:focus_area] }} if options[:focus_area].present?
 
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
         if options[:exclude_registration_agencies]
@@ -235,62 +233,88 @@ module Indexable
           must_not << { term: { role_name: "ROLE_ADMIN" }}
         end
       elsif self.name == "Client"
-        must << { query_string: { query: query, fields: query_fields, default_operator: "AND" }} if query.present?
-        must << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
-        must << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
-        must << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
-        must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
-        must << { terms: { "software.raw" => options[:software].split(",") }} if options[:software].present?
-        must << { terms: { certificate: options[:certificate].split(",") }} if options[:certificate].present?
-        must << { terms: { repository_type: options[:repository_type].split(",") }} if options[:repository_type].present?
-        must << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
-        must << { term: { re3data_id: options[:re3data_id].gsub("/", '\/').upcase }} if options[:re3data_id].present?
-        must << { term: { opendoar_id: options[:opendoar_id] }} if options[:opendoar_id].present?
-        must << { term: { client_type: options[:client_type] }} if options[:client_type].present?
+        if query.present?
+          must = [{ query_string: { query: query, fields: query_fields, default_operator: "AND", phrase_slop: 1 } }]
+        else
+          must = [{ match_all: {} }]
+        end
+
+        filter << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        filter << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
+        filter << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
+        filter << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
+        filter << { terms: { "software.raw" => options[:software].split(",") }} if options[:software].present?
+        filter << { terms: { certificate: options[:certificate].split(",") }} if options[:certificate].present?
+        filter << { terms: { repository_type: options[:repository_type].split(",") }} if options[:repository_type].present?
+        filter << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
+        filter << { term: { re3data_id: options[:re3data_id].gsub("/", '\/').upcase }} if options[:re3data_id].present?
+        filter << { term: { opendoar_id: options[:opendoar_id] }} if options[:opendoar_id].present?
+        filter << { term: { client_type: options[:client_type] }} if options[:client_type].present?
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
         must_not << { terms: { uid: %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations) }} if options[:exclude_registration_agencies]
       elsif self.name == "Event"
-        must << { query_string: { query: query, fields: query_fields, default_operator: "AND" }} if query.present?
-        must << { term: { subj_id: URI.decode(options[:subj_id]) }} if options[:subj_id].present?
-        must << { term: { obj_id: URI.decode(options[:obj_id]) }} if options[:obj_id].present?
-        must << { term: { citation_type: options[:citation_type] }} if options[:citation_type].present?
-        must << { term: { year_month: options[:year_month] }} if options[:year_month].present?
-        must << { range: { "subj.datePublished" => { gte: "#{options[:publication_year].split("-").min}||/y", lte: "#{options[:publication_year].split("-").max}||/y", format: "yyyy" }}} if options[:publication_year].present?
-        must << { range: { occurred_at: { gte: "#{options[:occurred_at].split("-").min}||/y", lte: "#{options[:occurred_at].split("-").max}||/y", format: "yyyy" }}} if options[:occurred_at].present?
-        must << { terms: { prefix: options[:prefix].split(",") }} if options[:prefix].present?
-        must << { terms: { doi: options[:doi].downcase.split(",") }} if options[:doi].present?
-        must << { terms: { source_doi: options[:source_doi].downcase.split(",") }} if options[:source_doi].present?
-        must << { terms: { target_doi: options[:target_doi].downcase.split(",") }} if options[:target_doi].present?
-        must << { terms: { orcid: options[:orcid].split(",") }} if options[:orcid].present?
-        must << { terms: { isni: options[:isni].split(",") }} if options[:isni].present?
-        must << { terms: { subtype: options[:subtype].split(",") }} if options[:subtype].present?
-        must << { terms: { source_id: options[:source_id].split(",") }} if options[:source_id].present?
-        must << { terms: { relation_type_id: options[:relation_type_id].split(",") }} if options[:relation_type_id].present?
-        must << { terms: { source_relation_type_id: options[:source_relation_type_id].split(",") }} if options[:source_relation_type_id].present?
-        must << { terms: { target_relation_type_id: options[:target_relation_type_id].split(",") }} if options[:target_relation_type_id].present?
-        must << { terms: { registrant_id: options[:registrant_id].split(",") }} if options[:registrant_id].present?
-        must << { terms: { registrant_id: options[:provider_id].split(",") }} if options[:provider_id].present?
-        must << { terms: { issn: options[:issn].split(",") }} if options[:issn].present?
+        if query.present?
+          must = [{ query_string: { query: query, fields: query_fields, default_operator: "AND", phrase_slop: 1 } }]
+        else
+          must = [{ match_all: {} }]
+        end
+
+        filter << { term: { subj_id: URI.decode(options[:subj_id]) }} if options[:subj_id].present?
+        filter << { term: { obj_id: URI.decode(options[:obj_id]) }} if options[:obj_id].present?
+        filter << { term: { citation_type: options[:citation_type] }} if options[:citation_type].present?
+        filter << { term: { year_month: options[:year_month] }} if options[:year_month].present?
+        filter << { range: { "subj.datePublished" => { gte: "#{options[:publication_year].split("-").min}||/y", lte: "#{options[:publication_year].split("-").max}||/y", format: "yyyy" }}} if options[:publication_year].present?
+        filter << { range: { occurred_at: { gte: "#{options[:occurred_at].split("-").min}||/y", lte: "#{options[:occurred_at].split("-").max}||/y", format: "yyyy" }}} if options[:occurred_at].present?
+        filter << { terms: { prefix: options[:prefix].split(",") }} if options[:prefix].present?
+        filter << { terms: { doi: options[:doi].downcase.split(",") }} if options[:doi].present?
+        filter << { terms: { source_doi: options[:source_doi].downcase.split(",") }} if options[:source_doi].present?
+        filter << { terms: { target_doi: options[:target_doi].downcase.split(",") }} if options[:target_doi].present?
+        filter << { terms: { orcid: options[:orcid].split(",") }} if options[:orcid].present?
+        filter << { terms: { isni: options[:isni].split(",") }} if options[:isni].present?
+        filter << { terms: { subtype: options[:subtype].split(",") }} if options[:subtype].present?
+        filter << { terms: { source_id: options[:source_id].split(",") }} if options[:source_id].present?
+        filter << { terms: { relation_type_id: options[:relation_type_id].split(",") }} if options[:relation_type_id].present?
+        filter << { terms: { source_relation_type_id: options[:source_relation_type_id].split(",") }} if options[:source_relation_type_id].present?
+        filter << { terms: { target_relation_type_id: options[:target_relation_type_id].split(",") }} if options[:target_relation_type_id].present?
+        filter << { terms: { registrant_id: options[:registrant_id].split(",") }} if options[:registrant_id].present?
+        filter << { terms: { registrant_id: options[:provider_id].split(",") }} if options[:provider_id].present?
+        filter << { terms: { issn: options[:issn].split(",") }} if options[:issn].present?
       elsif self.name == "Prefix"
-        must << { prefix: { prefix: query }} if query.present?
-        must << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
-        must << { terms: { provider_ids: options[:provider_id].split(",") }} if options[:provider_id].present?
-        must << { terms: { client_ids: options[:client_id].to_s.split(",") }} if options[:client_id].present?
-        must << { terms: { state: options[:state].to_s.split(",") }} if options[:state].present?
+        if query.present?
+          must = [{ prefix: { prefix: query }}]
+        else
+          must = [{ match_all: {} }]
+        end
+
+        filter << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        filter << { terms: { provider_ids: options[:provider_id].split(",") }} if options[:provider_id].present?
+        filter << { terms: { client_ids: options[:client_id].to_s.split(",") }} if options[:client_id].present?
+        filter << { terms: { state: options[:state].to_s.split(",") }} if options[:state].present?
       elsif self.name == "ProviderPrefix"
-        must << { prefix: { "prefix.prefix" => query }} if query.present?
-        must << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
-        must << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
-        must << { terms: { provider_id: options[:consortium_organization_id].split(",") }} if options[:consortium_organization_id].present?
-        must << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
-        must << { term: { prefix_id: options[:prefix_id] }} if options[:prefix_id].present?
-        must << { terms: { uid: options[:uid].to_s.split(",") }} if options[:uid].present?
-        must << { terms: { state: options[:state].to_s.split(",") }} if options[:state].present?
+        Rails.logger.warn query.inspect
+        if query.present?
+          must = [{ prefix: { prefix_id: query }}]
+        else
+          must = [{ match_all: {} }]
+        end
+        
+        filter << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        filter << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
+        filter << { terms: { provider_id: options[:consortium_organization_id].split(",") }} if options[:consortium_organization_id].present?
+        filter << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
+        filter << { term: { prefix_id: options[:prefix_id] }} if options[:prefix_id].present?
+        filter << { terms: { uid: options[:uid].to_s.split(",") }} if options[:uid].present?
+        filter << { terms: { state: options[:state].to_s.split(",") }} if options[:state].present?
       elsif self.name == "ClientPrefix"
-        must << { prefix: { "prefix.prefix" => query }} if query.present?
-        must << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
-        must << { terms: { client_id: options[:client_id].split(",") }} if options[:client_id].present?
-        must << { term: { prefix_id: options[:prefix_id] }} if options[:prefix_id].present?
+        if query.present?
+          must = [{ prefix: { prefix_id: query }}]
+        else
+          must = [{ match_all: {} }]
+        end
+        
+        filter << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        filter << { terms: { client_id: options[:client_id].split(",") }} if options[:client_id].present?
+        filter << { term: { prefix_id: options[:prefix_id] }} if options[:prefix_id].present?
       end
 
       # ES query can be optionally defined in different ways
@@ -301,7 +325,8 @@ module Indexable
       # The main bool query with filters
       bool_query = {
         must: must,
-        must_not: must_not
+        must_not: must_not,
+        filter: filter
       }
 
       # Function score is used to provide varying score to return different values
@@ -342,16 +367,6 @@ module Indexable
         }
       end
 
-      # Collap results list by unique citations
-      unique = options[:unique].blank? ? nil : {
-        field: "citation_id",
-        inner_hits: {
-          name: "first_unique_event",
-          size: 1
-        },
-        "max_concurrent_group_searches": 1
-      }
-
       # three options for going through results are scroll, cursor and pagination
       # the default is pagination
       # scroll is triggered by the page[scroll] query parameter
@@ -367,7 +382,6 @@ module Indexable
             size: options.dig(:page, :size),
             sort: sort,
             query: es_query,
-            collapse: unique,
             aggregations: aggregations,
             track_total_hits: true
           }.compact)
@@ -382,7 +396,6 @@ module Indexable
           search_after: search_after,
           sort: sort,
           query: es_query,
-          collapse: unique,
           aggregations: aggregations,
           track_total_hits: true
         }.compact)
@@ -392,7 +405,6 @@ module Indexable
           from: from,
           sort: sort,
           query: es_query,
-          collapse: unique,
           aggregations: aggregations,
           track_total_hits: true
         }.compact)

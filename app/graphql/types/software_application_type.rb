@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Types::SoftwareApplicationType < Types::BaseObject
+class SoftwareApplicationType < BaseObject
   description "A software application."
 
   field :name, String, null: true, description: "The name of the item."

@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class Types::OtherEdgeType < GraphQL::Types::Relay::BaseEdge
-  node_type(Types::OtherType)
+class OtherEdgeType < GraphQL::Types::Relay::BaseEdge
+  node_type(OtherType)
 end
