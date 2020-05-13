@@ -1798,7 +1798,7 @@ class Doi < ActiveRecord::Base
   # +job_name+:: Acive Job class name of the Job that would be executed on every matched results 
   def self.loop_through_dois(options)
     size = (options[:size] || 1000).to_i
-    cursor = [options[:from_id], options[:until_id]]
+    cursor = [options[:from_id] || Doi.minimum(:id).to_i, options[:until_id] || Doi.maximum(:id).to_i]
     filter = options[:filter] || {}  
     label = options[:label] || "" 
     job_name = options[:job_name] || "" 
@@ -1820,7 +1820,7 @@ class Doi < ActiveRecord::Base
 
         ids = response.results.results.map(&:uid)
         ids.each do |id|
-          Object.const_get(job_name).perform_later(id, filter)
+          Object.const_get(job_name).perform_later(id, options)
         end
       end
     end
