@@ -218,6 +218,47 @@ describe 'Clients', type: :request, elasticsearch: true do
       end
     end
 
+    context "transfer repository" do
+      let(:new_provider) { create(:provider, symbol: "QUECHUA", password_input: "12345") }
+      let!(:prefixes) { create_list(:prefix, 3) }
+      let!(:prefix) { prefixes.first }
+      let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
+      let!(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
+      let!(:provider_prefix_more) { create(:provider_prefix, provider: provider, prefix: prefixes.last) }
+      let(:doi) { create_list(:doi, 10, client: client) }
+
+
+      let(:params) do
+        {
+          "data" => {
+            "type" => "clients",
+            "attributes" => {
+              "mode" => "transfer",
+              "targetId" => new_provider.symbol,
+            },
+          },
+        }
+      end
+
+      it "updates the record" do
+        put "/clients/#{client.symbol}", params, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "name")).to eq("My data center")
+        expect(json.dig("data", "relationships", "provider", "data", "id")).to eq("quechua")
+        expect(json.dig("data", "relationships", "prefixes", "data").first.dig("id")).to eq(prefix.uid)
+
+        get "/providers/#{provider.symbol}"
+
+        expect(json.dig("data", "relationships", "prefixes", "data").length).to eq(1)
+        expect(json.dig("data", "relationships", "prefixes", "data").first.dig("id")).to eq(prefixes.last.uid)
+
+        get "/providers/#{new_provider.symbol}"
+
+        expect(json.dig("data", "relationships", "prefixes", "data").first.dig("id")).to eq(prefix.uid)
+      end
+    end
+
     context 'invalid globus_uuid' do
       let(:params) do
         { "data" => { "type" => "clients",
