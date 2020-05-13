@@ -4,7 +4,7 @@ class Funder
 
   def self.find_by_id(id)
     doi = doi_from_url(id)
-    return [] unless doi.present?
+    return {} unless doi.present?
 
     url = "https://api.crossref.org/funders/#{doi}"
     response = Maremma.get(url, host: true)

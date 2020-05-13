@@ -8,5 +8,18 @@ module Modelable
         uri.path.gsub(/^\//, '').downcase
       end
     end
+
+    def orcid_as_url(orcid)
+      return nil unless orcid.present?
+  
+      "https://orcid.org/#{orcid}"
+    end
+  
+    def orcid_from_url(url)
+      if /\A(?:(http|https):\/\/(orcid.org)\/)(.+)\z/.match?(url)
+        uri = Addressable::URI.parse(url)
+        uri.path.gsub(/^\//, "").upcase
+      end
+    end
   end
 end
