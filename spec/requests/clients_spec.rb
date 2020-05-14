@@ -222,12 +222,10 @@ describe 'Clients', type: :request, elasticsearch: true do
       let(:new_provider) { create(:provider, symbol: "QUECHUA", password_input: "12345") }
       let!(:prefixes) { create_list(:prefix, 3) }
       let!(:prefix) { prefixes.first }
-      let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
-      let!(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
       let!(:provider_prefix_more) { create(:provider_prefix, provider: provider, prefix: prefixes.last) }
+      let!(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
+      let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix, provider_prefix_id: provider_prefix.uid) }
       let(:doi) { create_list(:doi, 10, client: client) }
-
-
       let(:params) do
         {
           "data" => {
@@ -254,8 +252,10 @@ describe 'Clients', type: :request, elasticsearch: true do
         expect(json.dig("data", "relationships", "prefixes", "data").first.dig("id")).to eq(prefixes.last.uid)
 
         get "/providers/#{new_provider.symbol}"
-
         expect(json.dig("data", "relationships", "prefixes", "data").first.dig("id")).to eq(prefix.uid)
+
+        get "/prefixes/#{prefix.uid}"
+        expect(json.dig("data", "relationships", "clients", "data").first.dig("id")).to eq(client.symbol.downcase)
       end
     end
 

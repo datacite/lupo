@@ -3,7 +3,7 @@
 class QueryType < BaseObject
   extend_type
 
-  field :members, MemberConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :members, MemberConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
@@ -20,7 +20,7 @@ class QueryType < BaseObject
     Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: id).first
   end
 
-  field :repositories, RepositoryConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :repositories, RepositoryConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :year, String, required: false
     argument :software, String, required: false
@@ -56,7 +56,7 @@ class QueryType < BaseObject
     Prefix.where(prefix: id).first
   end
 
-  field :funders, FunderConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :funders, FunderConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
@@ -87,7 +87,7 @@ class QueryType < BaseObject
     result
   end
 
-  field :data_catalogs, DataCatalogConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :data_catalogs, DataCatalogConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
@@ -96,7 +96,7 @@ class QueryType < BaseObject
     DataCatalog.query(args[:query], limit: args[:first]).fetch(:data, [])
   end
 
-  field :organizations, OrganizationConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :organizations, OrganizationConnectionType, null: false, connection: true do
     argument :query, String, required: false
   end
 
@@ -126,7 +126,7 @@ class QueryType < BaseObject
     result
   end
 
-  field :people, PersonConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :people, PersonConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
   end
@@ -135,7 +135,37 @@ class QueryType < BaseObject
     Person.query(args[:query], rows: args[:first]).fetch(:data, [])
   end
 
-  field :works, WorkConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :actors, ActorConnectionType, null: false, connection: true do
+    argument :query, String, required: false
+  end
+
+  def actors(**args)
+    Organization.query(args[:query]).fetch(:data, []) +
+    Funder.query(args[:query]).fetch(:data, []) +
+    Person.query(args[:query]).fetch(:data, [])
+  end
+
+  field :actor, ActorItem, null: false do
+    argument :id, ID, required: true
+  end
+
+  def actor(id:)
+    if orcid_from_url(id)
+      result = Person.find_by_id(id).fetch(:data, []).first
+    elsif ror_id_from_url(id)
+      result = Organization.find_by_id(id).fetch(:data, []).first
+    elsif doi_from_url(id).to_s.starts_with?("10.13039")
+      result = Funder.find_by_id(id).fetch(:data, []).first
+    else
+      result = nil
+    end
+    
+    fail ActiveRecord::RecordNotFound if result.nil?
+
+    result
+  end
+
+  field :works, WorkConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -165,7 +195,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :datasets, DatasetConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :datasets, DatasetConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -195,7 +225,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :publications, PublicationConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :publications, PublicationConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -225,7 +255,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :audiovisuals, AudiovisualConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :audiovisuals, AudiovisualConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -255,7 +285,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :collections, CollectionConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :collections, CollectionConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -285,7 +315,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :data_papers, DataPaperConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :data_papers, DataPaperConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -315,7 +345,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :events, EventConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :events, EventConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -345,7 +375,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :images, ImageConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :images, ImageConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -375,7 +405,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :interactive_resources, InteractiveResourceConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :interactive_resources, InteractiveResourceConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -405,7 +435,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :models, ModelConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :models, ModelConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -465,7 +495,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :services, ServiceConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :services, ServiceConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -495,7 +525,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :softwares, SoftwareConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :softwares, SoftwareConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -525,7 +555,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :sounds, SoundConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :sounds, SoundConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -555,7 +585,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :workflows, WorkflowConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :workflows, WorkflowConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -585,7 +615,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :dissertations, DissertationConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :dissertations, DissertationConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -616,7 +646,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :preprints, PreprintConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :preprints, PreprintConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -647,7 +677,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :peer_reviews, PeerReviewConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :peer_reviews, PeerReviewConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -678,7 +708,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :conference_papers, ConferencePaperConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :conference_papers, ConferencePaperConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -709,7 +739,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :book_chapters, BookChapterConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :book_chapters, BookChapterConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -740,7 +770,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :books, BookConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :books, BookConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -771,7 +801,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :journal_articles, JournalArticleConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :journal_articles, JournalArticleConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -802,7 +832,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :instruments, InstrumentConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :instruments, InstrumentConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -834,7 +864,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :others, OtherConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :others, OtherConnectionType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -864,7 +894,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :usage_reports, UsageReportConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :usage_reports, UsageReportConnectionType, null: false, connection: true do
     argument :first, Int, required: false, default_value: 25
   end
 

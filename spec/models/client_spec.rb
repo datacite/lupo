@@ -27,9 +27,11 @@ describe Client, type: :model do
     let!(:prefixes) { create_list(:prefix, 3) }
     let!(:prefix) { prefixes.first }
 
-    let!(:client_prefix)  { create(:client_prefix, client: client, prefix: prefix) }
+    ### Order is important in creating prefixes relations
     let!(:provider_prefix)  { create(:provider_prefix, provider: provider, prefix: prefix) }
     let!(:provider_prefix_more) { create(:provider_prefix, provider: provider, prefix: prefixes.last) }
+    let!(:client_prefix)  { create(:client_prefix, client: client, prefix: prefix, provider_prefix_id: provider_prefix.uid) }
+
     let(:new_provider) { create(:provider, symbol: "QUECHUA", member_type: "direct_member") }
     let(:options) { { target_id: new_provider.symbol } }
     let(:bad_options) { { target_id: "SALS" } }
@@ -44,6 +46,8 @@ describe Client, type: :model do
 
         expect(new_provider.prefix_ids).to include(prefix.uid)
         expect(provider.prefix_ids).not_to include(prefix.uid)
+
+        expect(client.prefix_ids).to include(prefix.uid)
       end
 
       it "it doesn't transfer" do
@@ -101,9 +105,10 @@ describe Client, type: :model do
   describe "Client prefixes transfer" do
     let!(:prefixes) { create_list(:prefix, 3) }
     let!(:prefix) { prefixes.first }
-    let!(:client_prefix)  { create(:client_prefix, client: client, prefix: prefix) }
-    let!(:provider_prefix)  { create(:provider_prefix, provider: provider, prefix: prefix) }
+     ### Order is important in creating prefixes relations
+    let!(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
     let!(:provider_prefix_more) { create(:provider_prefix, provider: provider, prefix: prefixes.last) }
+    let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix , provider_prefix_id: provider_prefix.uid) }
     let(:new_provider) { create(:provider, symbol: "QUECHUA") }
 
     it "works" do
@@ -114,9 +119,9 @@ describe Client, type: :model do
 
       expect(new_provider.prefix_ids).to include(prefix.uid)
       expect(provider.prefix_ids).not_to include(prefix.uid)
+      expect(client.prefix_ids).to include(prefix.uid)
     end
   end
-
 
   describe "methods" do
     it "should not update the symbol" do

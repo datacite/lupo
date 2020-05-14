@@ -54,7 +54,7 @@ class Person
     orcid = message.fetch("orcid-id", nil)
     given_name = message.fetch("given-names", nil)
     family_name = message.fetch("family-names", nil)
-    other_names = Array.wrap(message.fetch("other-name", nil))
+    alternate_name = Array.wrap(message.fetch("other-name", nil))
     if message.fetch("credit-name", nil).present?
       name = message.fetch("credit-name")
     elsif given_name.present? || family_name.present?
@@ -62,6 +62,7 @@ class Person
     else
       name = orcid
     end
+    # TODO affiliation for find_by_id
     affiliation = Array.wrap(message.fetch("institution-name", nil)).map { |a| { name: a } }.compact
 
     Hashie::Mash.new({
@@ -70,21 +71,8 @@ class Person
       orcid: orcid,
       given_name: given_name,
       family_name: family_name,
-      other_names: other_names,
+      alternate_name: alternate_name,
       name: name,
       affiliation: affiliation }.compact)
-  end
-
-  def self.orcid_as_url(orcid)
-    return nil unless orcid.present?
-
-    "https://orcid.org/#{orcid}"
-  end
-
-  def self.orcid_from_url(url)
-    if /\A(?:(http|https):\/\/(orcid.org)\/)(.+)\z/.match?(url)
-      uri = Addressable::URI.parse(url)
-      uri.path.gsub(/^\//, "").downcase
-    end
   end
 end

@@ -8,7 +8,7 @@ provider = Provider.where(symbol: "DATACITE").first || FactoryBot.create(:provid
 client = Client.where(symbol: "DATACITE.TEST").first || FactoryBot.create(:client, provider: provider, symbol: ENV["MDS_USERNAME"], password: ENV["MDS_PASSWORD"]) 
 if Prefix.where(uid: "10.14454").blank?
   prefix = FactoryBot.create(:prefix, uid: "10.14454") 
-  FactoryBot.create(:provider_prefix, provider_id: provider.symbol, prefix_id: prefix.uid) 
+  ### This creates both the client_prefix and the pprovider association
   FactoryBot.create(:client_prefix, client_id: client.symbol, prefix_id: prefix.uid) 
 end
 dois = FactoryBot.create_list(:doi, 10, client: client, state: "findable")
