@@ -688,11 +688,11 @@ class Doi < ActiveRecord::Base
       }            
     }
     
-    # es_query = query
-
-    aggregations = {created: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
-                    aggs: { bucket_truncate: { bucket_sort: { size: 11 } } } },
-                   }
+    aggregations = {aggs: 
+                      {created: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+                      aggs: { bucket_truncate: { bucket_sort: { size: 11 } } } },
+                    }
+                  }
 
     __elasticsearch__.search({
       size: options.dig(:page, :size),
