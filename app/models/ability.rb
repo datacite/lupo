@@ -30,6 +30,7 @@ class Ability
       can [:manage], Client do |client|
         client.provider && user.provider_id.casecmp(client.provider.consortium_id)
       end
+      cannot [:transfer], Client
       can [:manage], ClientPrefix #, :client_id => user.provider_id
 
       # if Flipper[:delete_doi].enabled?(user)
@@ -51,6 +52,7 @@ class Ability
       can [:update, :read, :read_billing_information], Provider, symbol: user.provider_id.upcase
       can [:manage], ProviderPrefix, provider_id: user.provider_id
       can [:manage], Client, provider_id: user.provider_id
+      cannot [:transfer], Client
       can [:manage], ClientPrefix #, :client_id => user.provider_id
 
       # if Flipper[:delete_doi].enabled?(user)

@@ -173,6 +173,7 @@ module Helpable
 
         Rails.logger.error "[Handle] " + text
         User.send_notification_to_slack(text, title: "Error #{response.status.to_s}", level: "danger") unless Rails.env.test?
+        OpenStruct.new(status: 400, body: { "errors" => [{ "status" => 400, "title" => response.body["errors"].inspect }] })
       end
     end
 

@@ -38,6 +38,7 @@ describe User, type: :model do
       it { is_expected.not_to be_able_to(:create, client) }
       it { is_expected.not_to be_able_to(:update, client) }
       it { is_expected.not_to be_able_to(:destroy, client) }
+      it { is_expected.not_to be_able_to(:transfer, client) }
 
       it { is_expected.not_to be_able_to(:read, prefix) }
       it { is_expected.not_to be_able_to(:create, prefix) }
@@ -65,6 +66,7 @@ describe User, type: :model do
       it { is_expected.not_to be_able_to(:create, client) }
       it { is_expected.to be_able_to(:update, client) }
       it { is_expected.not_to be_able_to(:destroy, client) }
+      it { is_expected.not_to be_able_to(:transfer, client) }
 
       it { is_expected.not_to be_able_to(:read, prefix) }
       it { is_expected.not_to be_able_to(:create, prefix) }
@@ -97,6 +99,7 @@ describe User, type: :model do
       it { is_expected.not_to be_able_to(:create, client) }
       it { is_expected.not_to be_able_to(:update, client) }
       it { is_expected.not_to be_able_to(:destroy, client) }
+      it { is_expected.not_to be_able_to(:transfer, client) }
 
       it { is_expected.not_to be_able_to(:read, prefix) }
       it { is_expected.not_to be_able_to(:create, prefix) }
@@ -129,6 +132,7 @@ describe User, type: :model do
       it { is_expected.to be_able_to(:create, client) }
       it { is_expected.to be_able_to(:update, client) }
       it { is_expected.to be_able_to(:destroy, client) }
+      it { is_expected.not_to be_able_to(:transfer, client) }
 
       it { is_expected.not_to be_able_to(:read, prefix) }
       it { is_expected.not_to be_able_to(:create, prefix) }
@@ -161,6 +165,7 @@ describe User, type: :model do
       it { is_expected.to be_able_to(:create, provider) }
       it { is_expected.to be_able_to(:update, provider) }
       it { is_expected.to be_able_to(:destroy, provider) }
+      it { is_expected.not_to be_able_to(:transfer, client) }
 
       it { is_expected.to be_able_to(:read, client) }
       it { is_expected.to be_able_to(:create, client) }
@@ -198,6 +203,7 @@ describe User, type: :model do
       it { is_expected.not_to be_able_to(:create, client) }
       it { is_expected.not_to be_able_to(:update, client) }
       it { is_expected.not_to be_able_to(:destroy, client) }
+      it { is_expected.not_to be_able_to(:transfer, client) }
 
       it { is_expected.not_to be_able_to(:read, prefix) }
       it { is_expected.not_to be_able_to(:create, prefix) }
@@ -223,6 +229,7 @@ describe User, type: :model do
       it { is_expected.to be_able_to(:create, provider) }
       it { is_expected.to be_able_to(:update, provider) }
       it { is_expected.to be_able_to(:destroy, provider) }
+      it { is_expected.to be_able_to(:transfer, client) }
 
       it { is_expected.to be_able_to(:read, client) }
       it { is_expected.to be_able_to(:create, client) }
@@ -250,6 +257,7 @@ describe User, type: :model do
       it { is_expected.not_to be_able_to(:create, client) }
       it { is_expected.not_to be_able_to(:update, client) }
       it { is_expected.not_to be_able_to(:destroy, client) }
+      it { is_expected.not_to be_able_to(:transfer, client) }
 
       it { is_expected.to be_able_to(:read, doi) }
       it { is_expected.not_to be_able_to(:transfer, doi) }
@@ -269,6 +277,7 @@ describe User, type: :model do
       it { is_expected.not_to be_able_to(:create, client) }
       it { is_expected.not_to be_able_to(:update, client) }
       it { is_expected.not_to be_able_to(:destroy, client) }
+      it { is_expected.not_to be_able_to(:transfer, client) }
 
       it { is_expected.to be_able_to(:read, doi) }
       it { is_expected.not_to be_able_to(:transfer, doi) }
