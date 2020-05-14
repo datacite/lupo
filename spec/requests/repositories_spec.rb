@@ -287,8 +287,8 @@ describe 'Repositories', type: :request, elasticsearch: true do
 
       let(:new_provider) { create(:provider, symbol: "QUECHUA", password_input: "12345") }
       let!(:prefix) { create(:prefix) }
-      let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
       let!(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
+      let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix, provider_prefix_id: provider_prefix.uid) }
       let(:doi) { create_list(:doi, 10, client: client) }
 
       let(:params) do
@@ -318,6 +318,9 @@ describe 'Repositories', type: :request, elasticsearch: true do
         get "/providers/#{new_provider.symbol}"
 
         expect(json.dig("data", "relationships", "prefixes", "data").first.dig("id")).to eq(prefix.uid)
+
+        get "/prefixes/#{prefix.uid}"
+        expect(json.dig("data", "relationships", "clients", "data").first.dig("id")).to eq(client.symbol.downcase)
       end
     end
 
