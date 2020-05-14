@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
 class OrganizationType < BaseObject
+  implements ActorItem
+
   description "Information about organizations"
 
-  field :id, ID, null: true, description: "ROR ID"
-  field :type, String, null: false, description: "The type of the item."
-  field :name, String, null: false, description: "The name of the organization."
-  field :alternate_name, [String], null: true, description: "An alias for the organization."
   field :identifiers, [IdentifierType], null: true, description: "The identifier(s) for the organization."
-  field :url, [String], null: true, hash_key: "links", description: "URL of the organization."
+  field :url, [Url], null: true, hash_key: "links", description: "URL of the organization."
   field :address, AddressType, null: true, description: "Physical address of the organization."
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."

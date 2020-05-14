@@ -15,8 +15,12 @@ class BaseObject < GraphQL::Schema::Object
   def orcid_from_url(url)
     if /\A(?:(http|https):\/\/(orcid.org)\/)(.+)\z/.match?(url)
       uri = Addressable::URI.parse(url)
-      uri.path.gsub(/^\//, "").downcase
+      uri.path.gsub(/^\//, "").upcase
     end
+  end
+
+  def ror_id_from_url(url)
+    Array(/\A(http|https):\/\/(ror\.org\/0\w{6}\d{2})\z/.match(url)).last
   end
 
   def facet_by_year(arr)
