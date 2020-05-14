@@ -327,6 +327,55 @@ class Client < ActiveRecord::Base
     Doi.transfer(client_id: symbol.downcase, target_id: target.id)
   end
 
+  def transfer(options = {})
+    if options[:target_id].blank?
+      Rails.logger.error "[Transfer] No target provider provided."
+      return nil
+    end
+
+    target_provider = Provider.where(symbol: options[:target_id]).first
+
+    if target_provider.blank?
+      Rails.logger.error "[Transfer] Provider doesn't exist."
+      return nil
+    end
+
+    unless ["direct_member", "consortium_organization"].include?(target_provider.member_type)
+      Rails.logger.error "[Transfer] Consortiums and Members-only cannot have repositories."
+      return nil
+    end
+
+    # Transfer client
+    update_attribute(:allocator, target_provider.id)
+
+    # transfer prefixes
+    transfer_prefixes(target_provider.symbol)
+
+    # Update DOIs
+    TransferClientJob.perform_later(self, target_id: options[:target_id])
+  end
+
+  def transfer_prefixes(target_id)
+    # These prefixes are used by multiple clients
+    prefixes_to_keep = ["10.4124", "10.4225", "10.4226", "10.4227"]
+
+    # delete all associated prefixes
+    associated_prefixes = prefixes.reject{ |prefix| prefixes_to_keep.include?(prefix.uid)}
+    prefix_ids = associated_prefixes.pluck(:id)
+    prefixes_names = associated_prefixes.pluck(:uid)
+
+    if prefix_ids.present?
+      response = ProviderPrefix.where("prefix_id IN (?)", prefix_ids).destroy_all
+      puts "#{response.count} provider prefixes deleted."
+    end
+
+    # Assign prefix(es) to provider
+    prefixes_names.each do |prefix|
+      ProviderPrefix.create(provider_id: target_id, prefix_id: prefix)
+      puts "Provider prefix for provider #{target_id} and prefix #{prefix} created."
+    end
+  end
+
   def service_contact_email
     service_contact.fetch("email",nil) if service_contact.present?
   end
