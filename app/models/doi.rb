@@ -675,32 +675,27 @@ class Doi < ActiveRecord::Base
     )
   end
 
-  def self.stats_query(query, options={})
+  def self.stats_query(options={})
     filter = []
-    filter << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
-    filter << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
-
-    es_query = { 
-      query: {
-        bool: {
-          filter: filter
-        }
-      }            
-    }
+    filter << { term: { provider_id: options[:provider_id] } } if options[:provider_id].present?
+    filter << { term: { client_id: options[:client_id] } } if options[:client_id].present?
+    filter << { term: { consortium_id: options[:consortium_id].upcase }} if options[:consortium_id].present?
+    filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
     
-    aggregations = {aggs: 
-                      {created: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
-                      aggs: { bucket_truncate: { bucket_sort: { size: 11 } } } },
-                    }
-                  }
+    aggregations = {
+      created: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+                 aggs: { bucket_truncate: { bucket_sort: { size: 12 } } } },
+    }
 
     __elasticsearch__.search({
-      size: options.dig(:page, :size),
-      from: 0,
-      query: es_query,
+      query: {
+        bool: {
+          must: [{ match_all: {} }],
+          filter: filter,
+        }
+      },
       aggregations: aggregations,
-      track_total_hits: true
-    }.compact)
+    })
   end
 
   def self.query(query, options={})
