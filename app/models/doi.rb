@@ -676,18 +676,28 @@ class Doi < ActiveRecord::Base
   end
 
   def self.stats_query(query, options={})
-    aggregations = {created: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
-                    aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-                   }
+    filter = []
+    filter << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
+    filter << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
 
-    from = 0
-    sort = [{ created: "asc", uid: "asc" }]
+    es_query = { 
+      query: {
+        bool: {
+          filter: filter
+        }
+      }            
+    }
+    
+    # es_query = query
+
+    aggregations = {created: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+                    aggs: { bucket_truncate: { bucket_sort: { size: 11 } } } },
+                   }
 
     __elasticsearch__.search({
       size: options.dig(:page, :size),
-      from: from,
-      sort: sort,
-      query: query,
+      from: 0,
+      query: es_query,
       aggregations: aggregations,
       track_total_hits: true
     }.compact)
