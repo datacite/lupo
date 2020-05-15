@@ -236,7 +236,7 @@ class ExportController < ApplicationController
       response = Doi.query(nil, state: "registered,findable", page: { size: 0, number: 1 }, totals_agg: "client_export")
 
       client_totals = {}
-      totals_buckets = response.response.aggregations.clients_totals.buckets
+      totals_buckets = response.aggregations.clients_totals.buckets
       totals_buckets.each do |totals|
         client_totals[totals["key"]] = {
           "count" => totals["doc_count"],

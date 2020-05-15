@@ -7,8 +7,8 @@ class ProviderPrefixesController < ApplicationController
 
   def index
     sort = case params[:sort]
-           when "name" then { "prefix_id" => { order: 'asc' }}
-           when "-name" then { "prefix_id" => { order: 'desc' }}
+           when "name" then { "prefix_id" => { order: 'asc', unmapped_type: "keyword" }}
+           when "-name" then { "prefix_id" => { order: 'desc', unmapped_type: "keyword" }}
            when "created" then { created_at: { order: 'asc' }}
            when "-created" then { created_at: { order: 'desc' }}
            else { created_at: { order: 'desc' }}
@@ -33,9 +33,9 @@ class ProviderPrefixesController < ApplicationController
     begin
       total = response.results.total
       total_pages = page[:size].positive? ? (total.to_f / page[:size]).ceil : 0
-      years = total.positive? ? facet_by_year(response.response.aggregations.years.buckets) : nil
-      states = total.positive? ? facet_by_key(response.response.aggregations.states.buckets) : nil
-      providers = total.positive? ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+      years = total.positive? ? facet_by_year(response.aggregations.years.buckets) : nil
+      states = total.positive? ? facet_by_key(response.aggregations.states.buckets) : nil
+      providers = total.positive? ? facet_by_combined_key(response.aggregations.providers.buckets) : nil
 
       provider_prefixes = response.results
 
@@ -117,10 +117,9 @@ class ProviderPrefixesController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:provider, :prefix, :clients]
+      @include = @include & [:provider, :prefix, :clients, :client_prefixes]
     else
-      # always include because Ember pagination doesn't (yet) understand include parameter
-      @include = [:provider, :prefix, :clients]
+      @include = []
     end
   end
 

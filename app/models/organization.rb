@@ -52,6 +52,7 @@ class Organization
     
     Hashie::Mash.new({
       id: id,
+      type: "Organization",
       name: message["name"],
       aliases: message["aliases"],
       acronyms: message["acronyms"],

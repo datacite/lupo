@@ -5,5 +5,5 @@ class TitleType < BaseObject
 
   field :title, String, null: true, description: "Title"
   field :title_type, String, null: true, hash_key: "titleType", description: "Title type"
-  field :lang, String, null: true, description: "Language"
+  field :lang, ID, null: true, description: "Language"
 end

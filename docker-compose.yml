@@ -49,12 +49,19 @@ services:
       xpack.security.enabled: "false"
       http.cors.enabled: "true"
       http.cors.allow-origin: "*"
+    volumes:
+      - data:/usr/share/elasticsearch/data
     networks:
       - public
     healthcheck:
       test: curl -f http://elastic:changeme@elasticsearch:9200
       interval: 10s
       timeout: 1s
+
+volumes:
+  data:
+    driver: local
+
 networks:
   public:
     driver: bridge

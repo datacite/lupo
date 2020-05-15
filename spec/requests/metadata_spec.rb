@@ -10,20 +10,20 @@ describe "Metadata", type: :request  do
   let(:bearer) { User.generate_token(role_id: "client_admin", provider_id: provider.symbol.downcase, client_id: client.symbol.downcase) }
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer}}
 
-  describe 'GET /dois/DOI/metadata' do
-    it 'returns Metadata' do
-      get "/dois/#{doi.doi}/metadata", nil, headers
+  # describe 'GET /dois/DOI/metadata' do
+  #   it 'returns Metadata' do
+  #     get "/dois/#{doi.doi}/metadata", nil, headers
 
-      expect(json).not_to be_empty
-      expect(json['data'].size).to eq(7)
-    end
+  #     expect(json).not_to be_empty
+  #     expect(json['data'].size).to eq(7)
+  #   end
 
-    it 'returns status code 200' do
-      get "/dois/#{doi.doi}/metadata", nil, headers
+  #   it 'returns status code 200' do
+  #     get "/dois/#{doi.doi}/metadata", nil, headers
 
-      expect(last_response.status).to eq(200)
-    end
-  end
+  #     expect(last_response.status).to eq(200)
+  #   end
+  # end
 
   describe 'GET /dois/DOI/metadata/:id' do
     context 'when the record exists' do

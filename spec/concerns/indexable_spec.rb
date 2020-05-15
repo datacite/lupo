@@ -136,32 +136,76 @@ describe "Indexable class methods", elasticsearch: true do
       expect(response.results.to_a.length).to eq(2)
     end
 
-    context "aggregations" do
-      it 'returns query_aggregation when filters aggregation with empty' do
-        aggregations = Doi.get_aggregations_hash({aggregations:""})
-        expect(aggregations[:resource_types]).not_to be_nil
-        expect(aggregations[:states]).not_to be_nil
-        expect(aggregations[:created]).not_to be_nil
-        expect(aggregations[:schema_versions]).not_to be_nil
+    context "doi_from_url" do
+      subject { Doi }
+
+      it "as id" do
+        doi = "10.13039/501100009053"
+        expect(subject.doi_from_url(doi)).to eq("10.13039/501100009053")
       end
-  
-      it 'returns multiple aggregations when filters aggregations with multiple' do
-        aggregations = Doi.get_aggregations_hash({aggregations:""})
-        expect(aggregations[:resource_types]).not_to be_nil
-        expect(aggregations[:states]).not_to be_nil
-        expect(aggregations[:created]).not_to be_nil
-        expect(aggregations[:schema_versions]).not_to be_nil
+
+      it "as url" do
+        doi = "https://doi.org/10.13039/501100009053"
+        expect(subject.doi_from_url(doi)).to eq("10.13039/501100009053")
+      end
+
+      it "as http url" do
+        doi = "http://doi.org/10.13039/501100009053"
+        expect(subject.doi_from_url(doi)).to eq("10.13039/501100009053")
       end
     end
-  end
 
-  context "when event" do
-    let!(:event) { create(:event) }
-    let!(:events) { create_list(:event, 3) }
+    context "orcid_from_url" do
+      subject { Doi }
 
-    before do
-      Event.import
-      sleep 2
+      it "as id" do
+        orcid = "orcid.org/0000-0003-3484-6875"
+        expect(subject.orcid_from_url(orcid)).to eq("0000-0003-3484-6875")
+      end
+
+      it "as short id" do
+        orcid = "0000-0003-3484-6875"
+        expect(subject.orcid_from_url(orcid)).to eq("0000-0003-3484-6875")
+      end
+
+      it "as url" do
+        orcid = "https://orcid.org/0000-0003-3484-6875"
+        expect(subject.orcid_from_url(orcid)).to eq("0000-0003-3484-6875")
+      end
+
+      it "as http url" do
+        orcid = "http://orcid.org/0000-0003-3484-6875"
+        expect(subject.orcid_from_url(orcid)).to eq("0000-0003-3484-6875")
+      end
+    end
+
+    context "ror_from_url" do
+      subject { Doi }
+
+      it "as id" do
+        ror_id = "ror.org/046ak2485"
+        expect(subject.ror_from_url(ror_id)).to eq("ror.org/046ak2485")
+      end
+
+      it "as short id" do
+        ror_id = "046ak2485"
+        expect(subject.ror_from_url(ror_id)).to eq("ror.org/046ak2485")
+      end
+
+      it "as url" do
+        ror_id = "https://ror.org/046ak2485"
+        expect(subject.ror_from_url(ror_id)).to eq("ror.org/046ak2485")
+      end
+
+      it "as http url" do
+        ror_id = "http://ror.org/046ak2485"
+        expect(subject.ror_from_url(ror_id)).to eq("ror.org/046ak2485")
+      end
+
+      it "nil" do
+        ror_id = nil
+        expect(subject.ror_from_url(ror_id)).to be_nil
+      end
     end
   end
 end

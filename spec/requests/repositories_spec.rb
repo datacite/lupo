@@ -44,6 +44,8 @@ describe 'Repositories', type: :request, elasticsearch: true do
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(4)
       expect(json.dig('meta', 'total')).to eq(4)
+      expect(json.dig('meta', 'providers').length).to eq(4)
+      expect(json.dig('meta', 'providers').first).to eq("count"=>1, "id"=>provider.symbol.downcase, "title"=>"My provider")
     end
   end
 
@@ -85,7 +87,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
         expect(json.dig('data', 'attributes', 'globusUuid')).to eq("bc7d0274-3472-4a79-b631-e4c7baccc667")
-        expect(json["meta"]).to eq("doiCount"=>0)
+        expect(json["meta"]).to eq("doiCount"=>0, "prefixCount"=>0)
       end
     end
 
@@ -122,11 +124,13 @@ describe 'Repositories', type: :request, elasticsearch: true do
   describe 'GET /repositories/:id meta' do
     let(:provider)  { create(:provider) }
     let(:client)  { create(:client) }
+    let!(:client_prefix) { create(:client_prefix, client: client) }
     let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
 
     before do
       Provider.import
       Client.import
+      ClientPrefix.import
       Doi.import
       sleep 2
     end
@@ -136,7 +140,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'name')).to eq(client.name)
-      expect(json["meta"]).to eq("doiCount"=>3)
+      expect(json["meta"]).to eq("doiCount"=>3, "prefixCount"=>1)
     end
   end
 
@@ -274,6 +278,49 @@ describe 'Repositories', type: :request, elasticsearch: true do
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'name')).to eq("My data center")
         expect(json.dig('data', 'attributes', 'globusUuid')).to be_nil
+      end
+    end
+
+    context "transfer repository" do
+      let(:bearer) { User.generate_token }
+      let(:staff_headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer}}
+
+      let(:new_provider) { create(:provider, symbol: "QUECHUA", password_input: "12345") }
+      let!(:prefix) { create(:prefix) }
+      let!(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
+      let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix, provider_prefix_id: provider_prefix.uid) }
+      let(:doi) { create_list(:doi, 10, client: client) }
+
+      let(:params) do
+        {
+          "data" => {
+            "type" => "clients",
+            "attributes" => {
+              "mode" => "transfer",
+              "targetId" => new_provider.symbol,
+            },
+          },
+        }
+      end
+
+      it "updates the record" do
+        put "/repositories/#{client.symbol}", params, staff_headers
+
+        expect(last_response.status).to eq(200)
+        expect(json.dig("data", "attributes", "name")).to eq("My data center")
+        expect(json.dig("data", "relationships", "provider", "data", "id")).to eq("quechua")
+        expect(json.dig("data", "relationships", "prefixes", "data").first.dig("id")).to eq(prefix.uid)
+
+        get "/providers/#{provider.symbol}"
+
+        expect(json.dig("data", "relationships", "prefixes", "data")).to be_empty
+
+        get "/providers/#{new_provider.symbol}"
+
+        expect(json.dig("data", "relationships", "prefixes", "data").first.dig("id")).to eq(prefix.uid)
+
+        get "/prefixes/#{prefix.uid}"
+        expect(json.dig("data", "relationships", "clients", "data").first.dig("id")).to eq(client.symbol.downcase)
       end
     end
 

@@ -32,7 +32,7 @@ class DataCentersController < ApplicationController
       total = response.results.total
       total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
       years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
-      providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+      providers = total > 0 ? facet_by_combined_key(response.response.aggregations.providers.buckets) : nil
 
       @clients = response.results
 

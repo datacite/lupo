@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe "Prefixes", type: :request, elasticsearch: true do
-  let!(:prefixes)  { create_list(:prefix, 10) }
+  let!(:prefixes) { create_list(:prefix, 10) }
   let(:bearer) { User.generate_token }
   let(:prefix_id) { prefixes.first.uid }
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
@@ -14,6 +14,20 @@ describe "Prefixes", type: :request, elasticsearch: true do
 
     it 'returns prefixes' do
       get '/prefixes', nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(10)
+    end
+
+    it "returns prefixes by id" do
+      get "/prefixes?id=#{prefixes.first.uid}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(1)
+    end
+
+    it "returns prefixes by query" do
+      get "/prefixes?query=10.508", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(10)

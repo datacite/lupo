@@ -7,8 +7,8 @@ class ProviderPrefix < ActiveRecord::Base
 
   include Elasticsearch::Model
 
-  belongs_to :provider
-  belongs_to :prefix
+  belongs_to :provider, touch: true
+  belongs_to :prefix, touch: true
   has_many :client_prefixes, dependent: :destroy
   has_many :clients, through: :client_prefixes
 
@@ -20,20 +20,31 @@ class ProviderPrefix < ActiveRecord::Base
   index_name Rails.env.test? ? "provider-prefixes-test" : "provider-prefixes"
 
   mapping dynamic: "false" do
-    indexes :id,            type: :keyword
-    indexes :uid,           type: :keyword
-    indexes :state,         type: :keyword
-    indexes :provider_id,   type: :keyword
-    indexes :consortium_id, type: :keyword
-    indexes :prefix_id,     type: :keyword
-    indexes :client_ids,    type: :keyword
-    indexes :created_at,    type: :date
-    indexes :updated_at,    type: :date
+    indexes :id,                type: :keyword
+    indexes :uid,               type: :keyword
+    indexes :state,             type: :keyword
+    indexes :provider_id,       type: :keyword
+    indexes :provider_id_and_name, type: :keyword
+    indexes :consortium_id,     type: :keyword
+    indexes :prefix_id,         type: :keyword
+    indexes :client_ids,        type: :keyword
+    indexes :client_prefix_ids, type: :keyword
+    indexes :created_at,        type: :date
+    indexes :updated_at,        type: :date
 
     # index associations
     indexes :provider,           type: :object
-    indexes :prefix,             type: :object
+    indexes :prefix,             type: :object, properties: {
+      id: { type: :keyword },
+      uid: { type: :keyword },
+      provider_ids: { type: :keyword },
+      client_ids: { type: :keyword },
+      state: { type: :keyword },
+      prefix: { type: :text },
+      created_at: { type: :date },
+    }
     indexes :clients,            type: :object
+    indexes :client_prefixes,    type: :object
   end
 
   def as_indexed_json(options={})
@@ -41,28 +52,28 @@ class ProviderPrefix < ActiveRecord::Base
       "id" => uid,
       "uid" => uid,
       "provider_id" => provider_id,
+      "provider_id_and_name" => provider_id_and_name,
       "consortium_id" => consortium_id,
       "prefix_id" => prefix_id,
       "client_ids" => client_ids,
+      "client_prefix_ids" => client_prefix_ids,
       "state" => state,
       "created_at" => created_at,
       "updated_at" => updated_at,
-      "provider" => provider.try(:as_indexed_json),
-      "prefix" => prefix.try(:as_indexed_json),
-      "clients" => clients.map { |m| m.try(:as_indexed_json) },
+      "provider" => provider.try(:as_indexed_json, exclude_associations: true),
+      "prefix" => options[:exclude_associations] ? nil : prefix.try(:as_indexed_json, exclude_associations: true),
+      "clients" => options[:exclude_associations] ? nil : clients.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
+      "client_prefixes" => options[:exclude_associations] ? nil : client_prefixes.map { |m| m.try(:as_indexed_json, exclude_associations: true) },
     }
   end
 
   def self.query_aggregations
     {
       states: { terms: { field: 'state', size: 2, min_doc_count: 1 } },
-      years: { date_histogram: { field: 'created_at', interval: 'year', min_doc_count: 1 } },
-      providers: { terms: { field: 'provider_id', size: 15, min_doc_count: 1 } },
+      years: { date_histogram: { field: 'created_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+               aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
+      providers: { terms: { field: 'provider_id_and_name', size: 10, min_doc_count: 1 } },
     }
-  end
-
-  def self.query_fields
-    ["uid^10", "provider_id", "consortium_id", "prefix_id", "_all"]
   end
 
   def consortium_id
@@ -72,6 +83,10 @@ class ProviderPrefix < ActiveRecord::Base
   # convert external id / internal id
   def provider_id
     provider.symbol.downcase
+  end
+
+  def provider_id_and_name
+    "#{provider_id}:#{provider.name}" if provider.present?
   end
 
   # convert external id / internal id
@@ -99,8 +114,12 @@ class ProviderPrefix < ActiveRecord::Base
     clients.pluck(:symbol).map(&:downcase)
   end
 
+  def client_prefix_ids
+    client_prefixes.pluck(:uid)
+  end
+
   def state
-    if client_ids.present?
+    if client_prefix_ids.present?
       "with-repository"
     else
       "without-repository"

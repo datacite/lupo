@@ -2,17 +2,17 @@
 
 class LupoSchema < GraphQL::Schema
   include ApolloFederation::Schema
-  
+
+  use GraphQL::Tracing::DataDogTracing, service: 'graphql'
   use ApolloFederation::Tracing
+  use GraphQL::Batch
+  use GraphQL::Cache
 
   default_max_page_size 1000
   max_depth 10
 
   # mutation(Types::MutationType)
   query(QueryType)
-
-  use GraphQL::Batch
-  use GraphQL::Cache
 end
 
 GraphQL::Errors.configure(LupoSchema) do

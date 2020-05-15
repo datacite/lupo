@@ -130,7 +130,7 @@ namespace :client do
     end
 
     if client.update_attributes(is_active: nil, deleted_at: Time.zone.now)
-      client.send_delete_email unless Rails.env.test?
+      client.send_delete_email(responsible_id: "admin") unless Rails.env.test?
       puts "Client with client ID #{ENV['CLIENT_ID']} deleted."
     else
       puts client.errors.inspect

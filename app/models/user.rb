@@ -17,7 +17,7 @@ class User
     if credentials.present? && options.fetch(:type, "").downcase == "basic"
       username, password = ::Base64.decode64(credentials).split(":", 2)
       payload = decode_auth_param(username: username, password: password)
-      @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30))
+      @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30, aud: Rails.env))
     elsif credentials.present? && options.fetch(:type, "").downcase == "oidc"
       payload = decode_alb_token(credentials)
 
@@ -32,7 +32,7 @@ class User
           "email" => payload["email"],
         }
 
-        @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30))
+        @jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24 * 30, aud: Rails.env))
       end
     elsif credentials.present?
       payload = decode_token(credentials)
@@ -110,18 +110,20 @@ class User
       "provider_id" => provider_id,
     }.compact
 
-    jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24))
+    jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24, aud: Rails.env))
     url = ENV['BRACCO_URL'] + "?jwt=" + jwt
     reset_url = ENV['BRACCO_URL'] + "/reset"
     title = Rails.env.stage? ? "DataCite Fabrica Test" : "DataCite Fabrica"
     subject = "#{title}: Password Reset Request"
+    account_type = user.class.name == "Provider" ? user.member_type.humanize : user.client_type.humanize  
     text = User.format_message_text(template: "users/reset.text.erb", title: title, contact_name: user.name, name: user.symbol, url: url, reset_url: reset_url)
     html = User.format_message_html(template: "users/reset.html.erb", title: title, contact_name: user.name, name: user.symbol, url: url, reset_url: reset_url)
     response = self.send_message(name: user.name, email: user.system_email, subject: subject, text: text, html: html)
 
     fields = [
-      { title: "Account ID", value: uid.upcase},
-      { title: "Name", value: user.name, short: true },
+      { title: "Account ID", value: uid.upcase, short: true },
+      { title: "Account type", value: account_type, short: true },
+      { title: "Account name", value: user.name, short: true },
       { title: "System email", value: user.system_email, short: true }
     ]
     slack_title = subject + (response[:status] == 200 ? " Sent" : " Failed")

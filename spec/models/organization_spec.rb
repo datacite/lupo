@@ -8,7 +8,7 @@ describe Organization, type: :model, vcr: true do
       expect(organizations[:data].size).to eq(1)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/0521rfb23")
-      expect(organization.name).to eq("Lincoln University")
+      expect(organization.name).to eq("Lincoln University - Pennsylvania")
       expect(organization.labels).to eq([{"code"=>"ES", "name"=>"Universidad Lincoln"}])
       expect(organization.links).to eq(["http://www.lincoln.edu/"])
     end
@@ -25,19 +25,19 @@ describe Organization, type: :model, vcr: true do
     it "all" do
       query = nil
       organizations = Organization.query(query)
-      expect(organizations.dig(:meta, "total")).to eq(91625)
+      expect(organizations.dig(:meta, "total")).to eq(97819)
       expect(organizations[:data].size).to eq(20)
       organization = organizations[:data].first
-      expect(organization.id).to eq("https://ror.org/00xqf8t64")
-      expect(organization.name).to eq("Padjadjaran University")
-      expect(organization.labels).to eq([{"code"=>"ID", "name"=>"Universitas Padjadjaran"}])
-      expect(organization.links).to eq(["http://www.unpad.ac.id/en/"])
+      expect(organization.id).to eq("https://ror.org/02x66tk73")
+      expect(organization.name).to eq("Egypt-Japan University of Science and Technology")
+      expect(organization.labels).to eq([{"code"=>"AR", "name"=>"الجامعة المصرية اليابانية للعلوم والتكنولوجيا‎"}])
+      expect(organization.links).to eq(["https://ejust.edu.eg"])
     end
 
     it "found" do
       query = "lincoln university"
       organizations = Organization.query(query)
-      expect(organizations.dig(:meta, "total")).to eq(10475)
+      expect(organizations.dig(:meta, "total")).to eq(10718)
       expect(organizations[:data].size).to eq(20)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/04ps1r162")

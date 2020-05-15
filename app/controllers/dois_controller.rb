@@ -56,17 +56,27 @@ class DoisController < ApplicationController
                           consortium_id: params[:consortium_id],
                           client_id: params[:client_id],
                           affiliation_id: params[:affiliation_id],
+                          funder_id: params[:funder_id],
                           re3data_id: params[:re3data_id],
                           opendoar_id: params[:opendoar_id],
                           certificate: params[:certificate],
                           prefix: params[:prefix],
                           user_id: params[:user_id],
                           resource_type_id: params[:resource_type_id],
+                          resource_type: params[:resource_type],
                           schema_version: params[:schema_version],
                           subject: params[:subject],
                           has_citations: params[:has_citations],
+                          has_references: params[:has_references],
+                          has_parts: params[:has_parts],
+                          has_part_of: params[:has_part_of],
+                          has_versions: params[:has_versions],
+                          has_version_of: params[:has_version_of],
                           has_views: params[:has_views],
                           has_downloads: params[:has_downloads],
+                          has_person: params[:has_person],
+                          has_affiliation: params[:has_affiliation],
+                          has_funder: params[:has_funder],
                           link_check_status: params[:link_check_status],
                           link_check_has_schema_org: params[:link_check_has_schema_org],
                           link_check_body_has_pid: params[:link_check_body_has_pid],
@@ -143,26 +153,26 @@ class DoisController < ApplicationController
         end
       else
         states = total.positive? ? facet_by_key(response.aggregations.states.buckets) : nil
-        resource_types = total.positive? ? facet_by_resource_type(response.aggregations.resource_types.buckets) : nil
-        years = total.positive? ? facet_by_year(response.aggregations.years.buckets) : nil
-        created = total.positive? ? facet_by_year(response.aggregations.created.buckets) : nil
-        registered = total.positive? ? facet_by_year(response.aggregations.registered.buckets) : nil
-        providers = total.positive? ? facet_by_provider(response.aggregations.providers.buckets) : nil
-        clients = total.positive? ? facet_by_client(response.aggregations.clients.buckets) : nil
+        resource_types = total.positive? ? facet_by_combined_key(response.aggregations.resource_types.buckets) : nil
+        years = total.positive? ? facet_by_key_as_string(response.aggregations.years.buckets) : nil
+        created = total.positive? ? facet_by_key_as_string(response.aggregations.created.buckets) : nil
+        registered = total.positive? ? facet_by_key_as_string(response.aggregations.registered.buckets) : nil
+        providers = total.positive? ? facet_by_combined_key(response.aggregations.providers.buckets) : nil
+        clients = total.positive? ? facet_by_combined_key(response.aggregations.clients.buckets) : nil
         prefixes = total.positive? ? facet_by_key(response.aggregations.prefixes.buckets) : nil
         schema_versions = total.positive? ? facet_by_schema(response.aggregations.schema_versions.buckets) : nil
 
-        affiliations = total.positive? ? facet_by_affiliation(response.aggregations.affiliations.buckets) : nil
-        sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
-        subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
+        affiliations = total.positive? ? facet_by_combined_key(response.aggregations.affiliations.buckets) : nil
+        # sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
+        # subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
         certificates = total.positive? ? facet_by_key(response.aggregations.certificates.buckets) : nil
 
         link_checks_status = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
-        links_with_schema_org = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
-        link_checks_schema_org_id = total.positive? ? response.aggregations.link_checks_schema_org_id.value : nil
-        link_checks_dc_identifier = total.positive? ? response.aggregations.link_checks_dc_identifier.value : nil
-        link_checks_citation_doi = total.positive? ? response.aggregations.link_checks_citation_doi.value : nil
-        links_checked = total.positive? ? response.aggregations.links_checked.value : nil
+        # links_with_schema_org = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
+        # link_checks_schema_org_id = total.positive? ? response.aggregations.link_checks_schema_org_id.value : nil
+        # link_checks_dc_identifier = total.positive? ? response.aggregations.link_checks_dc_identifier.value : nil
+        # link_checks_citation_doi = total.positive? ? response.aggregations.link_checks_citation_doi.value : nil
+        # links_checked = total.positive? ? response.aggregations.links_checked.value : nil
 
         citations = total.positive? ? metric_facet_by_year(response.aggregations.citations.buckets) : nil
         views = total.positive? ? metric_facet_by_year(response.aggregations.views.buckets) : nil
@@ -186,14 +196,14 @@ class DoisController < ApplicationController
               prefixes: prefixes,
               certificates: certificates,
               "schemaVersions" => schema_versions,
-              sources: sources,
+              # sources: sources,
               "linkChecksStatus" => link_checks_status,
-              "linksChecked" => links_checked,
-              "linksWithSchemaOrg" => links_with_schema_org,
-              "linkChecksSchemaOrgId" => link_checks_schema_org_id,
-              "linkChecksDcIdentifier" => link_checks_dc_identifier,
-              "linkChecksCitationDoi" => link_checks_citation_doi,
-              subjects: subjects,
+              # "linksChecked" => links_checked,
+              # "linksWithSchemaOrg" => links_with_schema_org,
+              # "linkChecksSchemaOrgId" => link_checks_schema_org_id,
+              # "linkChecksDcIdentifier" => link_checks_dc_identifier,
+              # "linkChecksCitationDoi" => link_checks_citation_doi,
+              # subjects: subjects,
               citations: citations,
               views: views,
               downloads: downloads,
@@ -203,10 +213,31 @@ class DoisController < ApplicationController
               self: request.original_url,
               next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/dois?" + {
                 query: params[:query],
+                "exclude-registration-agencies" => params[:exclude_registration_agencies],
                 "provider-id" => params[:provider_id],
                 "consortium-id" => params[:consortium_id],
                 "client-id" => params[:client_id],
+                "funder-id" => params[:funder_id],
+                "affiliation-id" => params[:affiliation_id],
+                "resource-type-id" => params[:resource_type_id],
+                prefix: params[:prefix],
                 certificate: params[:certificate],
+                created: params[:created],
+                registered: params[:registered],
+                "has-citations" => params[:has_citations],
+                "has-references" => params[:has_references],
+                "has-parts" => params[:has_parts],
+                "has-part-of" => params[:has_part_of],
+                "has-versions" => params[:has_versions],
+                "has-version-of" => params[:has_version_of],
+                "has-views" => params[:has_views],
+                "has-downloads" => params[:has_downloads],
+                "has-person" => params[:has_person],
+                "has-affiliation" => params[:has_affiliation],
+                "has-funder" => params[:has_funder],
+                detail: params[:detail],
+                composite: params[:composite],
+                affiliation: params[:affiliation],
                 # The cursor link should be an array of values, but we want to encode it into a single string for the URL
                 "page[cursor]" => page[:cursor] ? make_cursor(results) : nil,
                 "page[number]" => page[:cursor].nil? && page[:number].present? ? page[:number] + 1 : nil,
@@ -217,6 +248,7 @@ class DoisController < ApplicationController
             options[:params] = {
               current_ability: current_ability,
               detail: params[:detail],
+              composite: params[:composite],
               affiliation: params[:affiliation],
               is_collection: options[:is_collection],
             }
@@ -265,6 +297,7 @@ class DoisController < ApplicationController
         options[:params] = {
           current_ability: current_ability,
           detail: true,
+          composite: nil,
           affiliation: params[:affiliation],
         }
 
@@ -306,7 +339,6 @@ class DoisController < ApplicationController
 
   def create
     fail CanCan::AuthorizationNotPerformed if current_user.blank?
-
     @doi = Doi.new(safe_params)
 
     # capture username and password for reuse in the handle system
@@ -324,6 +356,7 @@ class DoisController < ApplicationController
         affiliation: params[:affiliation]
       }
 
+      logger.warn "Created DOI #{@doi.doi}"
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :created, location: @doi
     else
       logger.error @doi.errors.inspect
@@ -346,7 +379,11 @@ class DoisController < ApplicationController
         @doi.assign_attributes(safe_params.slice(:client_id))
       else
         authorize! :update, @doi
-        @doi.assign_attributes(safe_params.except(:doi, :client_id))
+        if safe_params[:schema_version].blank?
+          @doi.assign_attributes(safe_params.except(:doi, :client_id).merge(schema_version: @doi[:schema_version] || LAST_SCHEMA_VERSION))
+        else
+          @doi.assign_attributes(safe_params.except(:doi, :client_id))
+        end
       end
     else
       doi_id = validate_doi(params[:id])
@@ -369,6 +406,7 @@ class DoisController < ApplicationController
         affiliation: params[:affiliation],
       }
 
+      logger.warn exists ? "Updated DOI #{@doi.doi}" : "Created DOI #{@doi.doi}"
       render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
     else
       logger.error @doi.errors.messages
@@ -489,9 +527,9 @@ class DoisController < ApplicationController
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
 
-      @include = @include & [:client, :media, :reference_events, :citation_events]
+      @include = @include & [:client, :media, :references, :citations, :parts, :part_of, :versions, :version_of]
     else
-      @include = [:client, :media]
+      @include = []
     end
   end
 
@@ -568,6 +606,8 @@ class DoisController < ApplicationController
       { contributors: [:nameType, { nameIdentifiers: [:nameIdentifier, :nameIdentifierScheme, :schemeUri] }, :name, :givenName, :familyName, { affiliation: [:name, :affiliationIdentifier, :affiliationIdentifierScheme, :schemeUri] }, :contributorType, :lang] },
       :identifiers,
       { identifiers: [:identifier, :identifierType] },
+      :alternateIdentifiers,
+      { alternateIdentifiers: [:alternateIdentifier, :alternateIdentifierType] },
       :relatedIdentifiers,
       { relatedIdentifiers: [:relatedIdentifier, :relatedIdentifierType, :relationType, :relatedMetadataScheme, :schemeUri, :schemeType, :resourceTypeGeneral, :relatedMetadataScheme, :schemeUri, :schemeType] },
       :fundingReferences,
@@ -615,7 +655,7 @@ class DoisController < ApplicationController
     meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
     p[:schemaVersion] = METADATA_FORMATS.include?(meta["from"]) ? LAST_SCHEMA_VERSION : p[:schemaVersion]
     xml = meta["string"]
-
+  
     # if metadata for DOIs from other registration agencies are not found
     fail ActiveRecord::RecordNotFound if meta["state"] == "not_found"
 
@@ -642,7 +682,7 @@ class DoisController < ApplicationController
 
     read_attrs_keys = [:url, :creators, :contributors, :titles, :publisher,
       :publicationYear, :types, :descriptions, :container, :sizes,
-      :formats, :language, :dates, :identifiers, :relatedIdentifiers,
+      :formats, :language, :dates, :identifiers, :alternateIdentifiers, :relatedIdentifiers,
       :fundingReferences, :geoLocations, :rightsList, :agency,
       :subjects, :contentUrl, :schemaVersion]
 
@@ -651,15 +691,23 @@ class DoisController < ApplicationController
     read_attrs_keys.each do |attr|
       p.merge!(attr.to_s.underscore => p[attr] || meta[attr.to_s.underscore] || p[attr]) if p.has_key?(attr) || meta.has_key?(attr.to_s.underscore)
     end
-    p.merge!(version_info: p[:version] || meta["version_info"]) if p.has_key?(:version_info) || meta["version_info"].present?
 
+    # handle alternate_identifiers
+    p[:identifiers] = Array.wrap(p[:alternate_identifiers]).map do |a|
+      { "identifierType" => a["alternateIdentifierType"], "identifier" => a["alternateIdentifier"] }
+    end.compact
+
+    # handle version metadata
+    p[:version_info] = p[:version] || meta["version_info"] if p.has_key?(:version) || meta["version_info"].present?
+    
     # only update landing_page info if something is received via API to not overwrite existing data
     p.merge!(landing_page: p[:landingPage]) if p[:landingPage].present?
-
+    
     p.merge(
       regenerate: p[:regenerate] || regenerate
     ).except(
-      :confirmDoi, :prefix, :suffix, :publicationYear,
+      # ignore camelCase keys, read-only keys and alternate_identifiers
+      :confirmDoi, :prefix, :suffix, :publicationYear, :alternateIdentifiers, :alternate_identifiers,
       :rightsList, :relatedIdentifiers, :fundingReferences, :geoLocations,
       :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage,
       :created, :registered, :updated, :published, :lastLandingPage, :version,

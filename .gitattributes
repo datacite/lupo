@@ -1,0 +1,3 @@
+* text=auto
+
+spec/fixtures/vcr_cassettes/**/* -diff

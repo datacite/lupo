@@ -42,7 +42,8 @@ class ProvidersController < ApplicationController
     begin
       total = response.results.total
       total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
-      years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
+      
+      years = total > 0 ? facet_by_key_as_string(response.response.aggregations.years.buckets) : nil
       regions = total > 0 ? facet_by_region(response.response.aggregations.regions.buckets) : nil
       member_types = total > 0 ? facet_by_key(response.response.aggregations.member_types.buckets) : nil
       organization_types = total > 0 ? facet_by_key(response.response.aggregations.organization_types.buckets) : nil
@@ -170,6 +171,7 @@ class ProvidersController < ApplicationController
     authorize! :create, @provider
 
     if @provider.save
+      @provider.send_welcome_email(responsible_id: current_user.uid) unless Rails.env.test?
       options = {}
       options[:include] = @include
       options[:is_collection] = false
@@ -205,7 +207,7 @@ class ProvidersController < ApplicationController
       Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @provider.update_attributes(is_active: nil, deleted_at: Time.zone.now)
-      @provider.send_delete_email unless Rails.env.test?
+      @provider.send_delete_email(responsible_id: current_user.uid) unless Rails.env.test?
       head :no_content
     else
       Rails.logger.error @provider.errors.inspect
@@ -233,7 +235,7 @@ class ProvidersController < ApplicationController
       providers = provider_count(consortium_id: nil)
       clients = client_count(provider_id: nil)
       dois = doi_count(provider_id: nil)
-      resource_types = resource_type_count(provider_id: nil)
+      # resource_types = resource_type_count(provider_id: nil)
       # citations = nil # citation_count(provider_id: nil)
       # views = nil # view_count(provider_id: nil)
       # downloads = nil # download_count(provider_id: nil)
@@ -241,7 +243,7 @@ class ProvidersController < ApplicationController
       providers = provider_count(consortium_id: params[:id])
       clients = client_count(consortium_id: params[:id])
       dois = doi_count(consortium_id: params[:id])
-      resource_types = resource_type_count(consortium_id: params[:id])
+      # resource_types = resource_type_count(consortium_id: params[:id])
       # citations = citation_count(consortium_id: params[:id])
       # views = view_count(consortium_id: params[:id])
       # downloads = download_count(consortium_id: params[:id])
@@ -249,7 +251,7 @@ class ProvidersController < ApplicationController
       providers = nil
       clients = client_count(provider_id: params[:id])
       dois = doi_count(provider_id: params[:id])
-      resource_types = resource_type_count(provider_id: params[:id])
+      # resource_types = resource_type_count(provider_id: params[:id])
       # citations = citation_count(provider_id: params[:id])
       # views = view_count(provider_id: params[:id])
       # downloads = download_count(provider_id: params[:id])
@@ -259,7 +261,7 @@ class ProvidersController < ApplicationController
       providers: providers,
       clients: clients,
       dois: dois,
-      "resourceTypes" => resource_types,
+      # "resourceTypes" => resource_types,
       # citations: citations,
       # views: views,
       # downloads: downloads,

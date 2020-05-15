@@ -6,7 +6,7 @@ describe "dois", type: :request do
   let(:admin_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer} }
 
   let(:provider) { create(:provider, symbol: "DATACITE") }
-  let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
+  let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD'], re3data_id: "10.17616/r3xs37") }
   let!(:prefix) { create(:prefix, uid: "10.14454") }
   let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix) }
 
@@ -50,6 +50,124 @@ describe "dois", type: :request do
       end
     end
   end
+  
+  describe "GET /dois with query", elasticsearch: true do
+    let!(:doi) { create(:doi, client: client, aasm_state: "findable", creators:
+      [{
+        "familyName" => "Garza",
+        "givenName" => "Kristian J.",
+        "name" => "Garza, Kristian J.",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameType" => "Personal",
+        "affiliation": [
+          {
+            "name": "Freie Universität Berlin",
+            "affiliationIdentifier": "https://ror.org/046ak2485",
+            "affiliationIdentifierScheme": "ROR"
+          },
+        ]
+      }], funding_references:
+      [{
+        "funderIdentifier" => "https://doi.org/10.13039/501100009053",
+        "funderIdentifierType" => "Crossref Funder ID",
+        "funderName" => "The Wellcome Trust DBT India Alliance"
+      }])
+    }
+    let!(:dois) { create_list(:doi, 3, aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    it 'returns dois with short orcid id', vcr: true do
+      get "/dois?user-id=0000-0003-3484-6875", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with orcid id', vcr: true do
+      get "/dois?user-id=orcid.org/0000-0003-3484-6875", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with orcid id as url', vcr: true do
+      get "/dois?user-id=https://orcid.org/0000-0003-3484-6875", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with crossref funder id', vcr: true do
+      get "/dois?funder-id=10.13039/501100009053", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'fundingReferences')).to eq([{"funderIdentifier"=>"https://doi.org/10.13039/501100009053", "funderIdentifierType"=>"Crossref Funder ID", "funderName"=>"The Wellcome Trust DBT India Alliance"}])
+    end
+
+    it 'returns dois with crossref funder id as url', vcr: true do
+      get "/dois?funder-id=https://doi.org/10.13039/501100009053", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'fundingReferences')).to eq([{"funderIdentifier"=>"https://doi.org/10.13039/501100009053", "funderIdentifierType"=>"Crossref Funder ID", "funderName"=>"The Wellcome Trust DBT India Alliance"}])
+    end
+
+    it 'returns dois with short ror id', vcr: true do
+      get "/dois?affiliation-id=046ak2485&affiliation=true", nil, headers
+      
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with ror id', vcr: true do
+      get "/dois?affiliation-id=ror.org/046ak2485&affiliation=true", nil, headers
+      
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with ror id as url', vcr: true do
+      get "/dois?affiliation-id=https://ror.org/046ak2485&affiliation=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with re3data id', vcr: true do
+      get "/dois?re3data-id=10.17616/R3XS37&include=client", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('included', 0, 'attributes', "re3data")).to eq("https://doi.org/10.17616/r3xs37")
+    end
+
+    it 'returns dois with re3data id as url', vcr: true do
+      get "/dois?re3data-id=https://doi.org/10.17616/R3XS37&include=client", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('included', 0, 'attributes', "re3data")).to eq("https://doi.org/10.17616/r3xs37")
+    end
+
+    it 'returns dois with full name', vcr: true do
+      get "/dois?query=Kristian%20Garza&affiliation=true", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+  end
 
   describe 'GET /dois/:id', elasticsearch: true do
     let!(:doi) { create(:doi, client: client) }
@@ -68,7 +186,9 @@ describe "dois", type: :request do
 
         expect(result.dig('attributes', 'doi')).to eq(doi.doi.downcase)
         expect(result.dig('attributes', 'titles')).to eq(doi.titles)
-        expect(result.dig('relationships','citationEvents')).to eq("data"=>[])
+        expect(result.dig('attributes', 'identifiers')).to eq([{"identifier"=>"Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446.", "identifierType"=>"citation"}])
+        expect(result.dig('attributes', 'alternateIdentifiers')).to eq([{"alternateIdentifier"=>"Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446.", "alternateIdentifierType"=>"citation"}])
+        # expect(result.dig('relationships','citations', 'data')).to be_empty
       end
     end
 
@@ -84,7 +204,6 @@ describe "dois", type: :request do
     context 'provider_admin' do
       let(:provider_bearer) { Client.generate_token(role_id: "provider_admin", uid: provider.symbol, provider_id: provider.symbol.downcase, password: provider.password) }
       let(:provider_headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + provider_bearer }}
-
 
       it 'returns the Doi' do
         get "/dois/#{doi.doi}", nil, provider_headers
@@ -121,6 +240,84 @@ describe "dois", type: :request do
     end
   end
 
+  describe 'GET /dois for dissertations', elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, client: client, aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 3
+    end
+
+    it 'filter for dissertations' do
+      get "/dois?resource-type=Dissertation", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(3)
+      expect(json.dig('meta', 'total')).to eq(3)
+      expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Dissertation", "resourceTypeGeneral"=>"Text")
+    end
+  end
+
+  describe 'GET /dois for instruments', elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Other", "resourceType" => "Instrument" }, client: client, aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 3
+    end
+
+    it 'filter for instruments' do
+      get "/dois?resource-type=Instrument", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(3)
+      expect(json.dig('meta', 'total')).to eq(3)
+      expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Instrument", "resourceTypeGeneral"=>"Other")
+    end
+  end
+
+  describe 'GET /dois for interactive resources', elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "InteractiveResource", "resourceType" => "Presentation" }, client: client, aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 3
+    end
+
+    it 'filter for interactive resources' do
+      get "/dois?resource-type-id=interactive-resource", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(3)
+      expect(json.dig('meta', 'total')).to eq(3)
+      expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Presentation", "resourceTypeGeneral"=>"InteractiveResource")
+      expect(json.dig('meta', 'resourceTypes')).to eq([{"count"=>3, "id"=>"interactive-resource", "title"=>"Interactive Resource"}])
+    end
+  end
+
+  describe 'GET /dois for fake resources', elasticsearch: true, vcr: true do
+    let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Fake", "resourceType" => "Presentation" }, client: client) }
+
+    before do
+      Doi.import
+      sleep 3
+    end
+
+    it 'filter for fake resources' do
+      get "/dois?resource-type-id=fake", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(3)
+      expect(json.dig('meta', 'total')).to eq(3)
+      expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Presentation", "resourceTypeGeneral"=>"Fake")
+      expect(json.dig('meta', 'resourceTypes')).to eq([])
+    end
+  end
+  
   describe 'GET /dois with views and downloads', elasticsearch: true, vcr: true do
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:views) { create_list(:event_for_datacite_investigations, 2, obj_id: doi.doi) }
@@ -129,24 +326,24 @@ describe "dois", type: :request do
     before do
       Event.import
       Doi.import
-      sleep 2
+      sleep 3
     end
 
     # TODO aggregations in meta should not be by publication year
-    # it 'includes events' do
-    #   get "/dois", nil, headers
+    it 'includes events' do
+      get "/dois", nil, headers
 
-    #   expect(last_response.status).to eq(200)
-    #   expect(json['data'].size).to eq(1)
-    #   expect(json.dig('meta', 'total')).to eq(1)
-    #   expect(json.dig('meta', 'views')).to eq([{"count"=>50, "id"=>"2011", "title"=>"2011"}])
-    #   expect(json.dig('meta', 'downloads')).to eq([{"count"=>20, "id"=>"2011", "title"=>"2011"}])
-    #   expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
-    #   expect(json.dig('data', 0, 'attributes', 'doi')).to eq(doi.doi.downcase)
-    #   expect(json.dig('data', 0, 'attributes', 'titles')).to eq(doi.titles)
-    #   expect(json.dig('data', 0, 'attributes', 'viewCount')).to eq(50)
-    #   expect(json.dig('data', 0, 'attributes', 'downloadCount')).to eq(20)
-    # end
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(1)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('meta', 'views')).to eq([{"count"=>50, "id"=>"2011", "title"=>"2011"}])
+      expect(json.dig('meta', 'downloads')).to eq([{"count"=>20, "id"=>"2011", "title"=>"2011"}])
+      expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
+      expect(json.dig('data', 0, 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 0, 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 0, 'attributes', 'viewCount')).to eq(50)
+      expect(json.dig('data', 0, 'attributes', 'downloadCount')).to eq(20)
+    end
   end
 
   describe "views", elasticsearch: true, vcr: true do
@@ -159,23 +356,23 @@ describe "dois", type: :request do
       sleep 2
     end
 
-    # it "has views" do
-    #   get "/dois/#{doi.doi}", nil, headers
+    it "has views" do
+      get "/dois/#{doi.doi}", nil, headers
 
-    #   expect(last_response.status).to eq(200)
-    #   expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
-    #   expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-    #   expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-    #   expect(json.dig('data', 'attributes', 'viewCount')).to eq(75)
-    #   expect(json.dig('data', 'attributes', 'viewsOverTime')).to eq([{"total"=>25, "yearMonth"=>"2015-06"}, {"total"=>25, "yearMonth"=>"2015-06"}, {"total"=>25, "yearMonth"=>"2015-06"}])
-    # end
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'viewCount')).to eq(75)
+      expect(json.dig('data', 'attributes', 'viewsOverTime')).to eq([{"total"=>25, "yearMonth"=>"2015-06"}, {"total"=>25, "yearMonth"=>"2015-06"}, {"total"=>25, "yearMonth"=>"2015-06"}])
+    end
 
-    # it "has views meta" do
-    #   get "/dois", nil, headers
+    it "has views meta" do
+      get "/dois", nil, headers
 
-    #   expect(last_response.status).to eq(200)
-    #   expect(json.dig('meta', 'views')).to eq([{"count"=>75, "id"=>"2011", "title"=>"2011"}])
-    # end
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'views')).to eq([{"count"=>75, "id"=>"2011", "title"=>"2011"}])
+    end
   end
 
   describe "downloads", elasticsearch: true, vcr: true do
@@ -188,23 +385,23 @@ describe "dois", type: :request do
       sleep 2
     end
 
-    # it "has downloads" do
-    #   get "/dois/#{doi.doi}", nil, headers
+    it "has downloads" do
+      get "/dois/#{doi.doi}", nil, headers
 
-    #   expect(last_response.status).to eq(200)
-    #   expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
-    #   expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-    #   expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-    #   expect(json.dig('data', 'attributes', 'downloadCount')).to eq(30)
-    #   expect(json.dig('data', 'attributes', 'downloadsOverTime')).to eq([{"total"=>10, "yearMonth"=>"2015-06"}, {"total"=>10, "yearMonth"=>"2015-06"}, {"total"=>10, "yearMonth"=>"2015-06"}])
-    # end
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'downloadCount')).to eq(30)
+      expect(json.dig('data', 'attributes', 'downloadsOverTime')).to eq([{"total"=>10, "yearMonth"=>"2015-06"}, {"total"=>10, "yearMonth"=>"2015-06"}, {"total"=>10, "yearMonth"=>"2015-06"}])
+    end
 
-    # it "has downloads meta" do
-    #   get "/dois", nil, headers
+    it "has downloads meta" do
+      get "/dois", nil, headers
 
-    #   expect(last_response.status).to eq(200)
-    #   expect(json.dig('meta', 'downloads')).to eq([{"count"=>30, "id"=>"2011", "title"=>"2011"}])
-    # end
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'downloads')).to eq([{"count"=>30, "id"=>"2011", "title"=>"2011"}])
+    end
   end
 
   describe "references", elasticsearch: true, vcr: true do
@@ -218,18 +415,18 @@ describe "dois", type: :request do
       sleep 2
     end
 
-    # it "has references" do
-    #   get "/dois/#{doi.doi}?include=reference-events", nil, headers
+    it "has references" do
+      get "/dois/#{doi.doi}?include=references", nil, headers
 
-    #   expect(last_response.status).to eq(200)
-    #   expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
-    #   expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-    #   expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-    #   expect(json.dig('data', 'attributes', 'referenceCount')).to eq(1)
-    #   expect(json.dig('data', 'relationships', 'referenceEvents', 'data')).to eq([{"id" => reference_event.uuid, "type" => "events"}])
-    #   expect(json.dig('included').length).to eq(1)
-    #   expect(json.dig('included', 0, 'attributes', 'relationTypeId')).to eq("references")
-    # end
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'referenceCount')).to eq(1)
+      expect(json.dig('data', 'relationships', 'references', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
+    end
   end
 
   describe "citations", elasticsearch: true, vcr: true do
@@ -243,26 +440,26 @@ describe "dois", type: :request do
       sleep 2
     end
 
-    # it "has citations" do
-    #   get "/dois/#{doi.doi}?include=citation-events,client", nil, headers
+    it "has citations" do
+      get "/dois/#{doi.doi}?include=citations", nil, headers
 
-    #   expect(last_response.status).to eq(200)
-    #   expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
-    #   expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-    #   expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-    #   expect(json.dig('data', 'attributes', 'citationCount')).to eq(1)
-    #   expect(json.dig('data', 'attributes', 'citationsOverTime')).to eq([{"total"=>1, "year"=>"2020"}])
-    #   expect(json.dig('data', 'relationships', 'citationEvents', 'data')).to eq([{"id" => citation_event.uuid, "type"=>"events"}])
-    #   expect(json.dig('included').length).to eq(2)
-    #   expect(json.dig('included', 0, 'attributes', 'relationTypeId')).to eq("is-referenced-by")
-    # end
+      expect(last_response.status).to eq(200)
+      expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
+      expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+      expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
+      expect(json.dig('data', 'attributes', 'citationCount')).to eq(1)
+      expect(json.dig('data', 'attributes', 'citationsOverTime')).to eq([{"total"=>1, "year"=>"2020"}])
+      expect(json.dig('data', 'relationships', 'citations', 'data')).to eq([{"id"=>source_doi.doi.downcase, "type"=>"dois"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'doi')).to eq(source_doi.doi.downcase)
+    end
 
-    # it "has citations meta" do
-    #   get "/dois", nil, headers
+    it "has citations meta" do
+      get "/dois", nil, headers
 
-    #   expect(last_response.status).to eq(200)
-    #   expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
-    # end
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'citations')).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
+    end
   end
 
   describe "parts", elasticsearch: true, vcr: true do
@@ -277,16 +474,16 @@ describe "dois", type: :request do
     end
 
     it "has parts" do
-      get "/dois/#{doi.doi}", nil, headers
+      get "/dois/#{doi.doi}?include=parts", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-      # expect(json.dig('data', 'attributes', 'partCount')).to eq(1)
-      # expect(json.dig('data', 'relationships', 'parts', 'data')).to eq(1)
-      # expect(json.dig('included').length).to eq(2)
-      # expect(json.dig('included', 1, 'attributes', 'doi')).to eq(target_doi.doi)
+      expect(json.dig('data', 'attributes', 'partCount')).to eq(1)
+      expect(json.dig('data', 'relationships', 'parts', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
     end
   end
 
@@ -302,16 +499,16 @@ describe "dois", type: :request do
     end
 
     it "has versions" do
-      get "/dois/#{doi.doi}", nil, headers
+      get "/dois/#{doi.doi}?include=versions", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
       expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
       expect(json.dig('data', 'attributes', 'titles')).to eq(doi.titles)
-      # expect(json.dig('data', 'attributes', 'versionCount')).to eq(1)
-      # expect(json.dig('data', 'relationships', 'versions', 'data')).to eq(1)
-      # expect(json.dig('included').length).to eq(2)
-      # expect(json.dig('included', 1, 'attributes', 'doi')).to eq(target_doi.doi)
+      expect(json.dig('data', 'attributes', 'versionCount')).to eq(1)
+      expect(json.dig('data', 'relationships', 'versions', 'data')).to eq([{"id"=>target_doi.doi.downcase, "type"=>"dois"}])
+      expect(json.dig('included').length).to eq(1)
+      expect(json.dig('included', 0, 'attributes', 'doi')).to eq(target_doi.doi.downcase)
     end
   end
 
@@ -833,7 +1030,7 @@ describe "dois", type: :request do
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'dates')).to eq("date"=>":tba", "dateType"=>"Issued")
+        expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>":tba", "dateType"=>"Issued"}])
       end
 
       it 'sets state to findable' do
@@ -1235,8 +1432,7 @@ describe "dois", type: :request do
           "nameIdentifiers"=>
             [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405",
               "nameIdentifierScheme"=>"ORCID",
-              "schemeUri"=>"https://orcid.org"}],
-          "nameType"=>"Personal"}])
+              "schemeUri"=>"https://orcid.org"}]}])
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
         expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
@@ -1271,6 +1467,30 @@ describe "dois", type: :request do
       end
     end
 
+    context 'when providing version' do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              # "xml" => xml,
+              "source" => "test",
+              "version" => 45
+            }
+          }
+        }
+      end
+
+      it 'create a draft Doi with version' do
+        post '/dois', valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig('data', 'attributes', 'version')).to eq("45")
+      end
+    end
+
     context 'when the request is valid random doi' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
@@ -1301,8 +1521,7 @@ describe "dois", type: :request do
           "nameIdentifiers"=>
             [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405",
               "nameIdentifierScheme"=>"ORCID",
-              "schemeUri"=>"https://orcid.org"}],
-          "nameType"=>"Personal"}])
+              "schemeUri"=>"https://orcid.org"}]}])
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'source')).to eq("test")
         expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
@@ -1350,6 +1569,154 @@ describe "dois", type: :request do
 
         doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
         expect(doc.at_css("identifier").content).to eq("10.14454/10703")
+      end
+    end
+
+    context 'when the request is valid with recommended properties' do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "types" => { "bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle" },
+              "titles" => [{"title"=>"Eating your own Dog Food"}],
+              "publisher" => "DataCite",
+              "publicationYear" => 2016,
+              "creators" => [{"familyName"=>"Fenner", "givenName"=>"Martin", "nameIdentifiers"=>[{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri"=>"https://orcid.org" }], "name"=>"Fenner, Martin", "nameType"=>"Personal"}],
+              "subjects" => [{ "subject" => "80505 Web Technologies (excl. Web Search)",
+                "schemeUri" => "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
+                "subjectScheme" => "FOR",
+                "lang" => "en" }],
+              "contributors" => [{"contributorType"=>"DataManager", "familyName"=>"Fenner", "givenName"=>"Kurt", "nameIdentifiers"=>[{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2401", "nameIdentifierScheme" => "ORCID", "schemeUri"=>"https://orcid.org" }], "name"=>"Fenner, Kurt", "nameType"=>"Personal"}],
+              "dates" => [{"date"=>"2017-02-24", "dateType"=>"Issued"}, {"date"=>"2015-11-28", "dateType"=>"Created"}, {"date"=>"2017-02-24", "dateType"=>"Updated"}],
+              "relatedIdentifiers" => [{ "relatedIdentifier"=>"10.5438/55e5-t5c0", "relatedIdentifierType"=>"DOI", "relationType"=>"References" }],
+              "descriptions" => [
+                {
+                  "lang" => "en",
+                  "description" => "Diet and physical activity are two modifiable factors that can curtail the development of osteoporosis in the aging population. One purpose of this study was to assess the differences in dietary intake and bone mineral density (BMD) in a Masters athlete population (n=87, n=49 female; 41.06 ± 5.00 years of age) and examine sex- and sport-related differences in dietary and total calcium and vitamin K intake and BMD of the total body, lumbar spine, and dual femoral neck (TBBMD, LSBMD and DFBMD, respectively). Total calcium is defined as calcium intake from diet and supplements. Athletes were categorized as participating in an endurance or interval sport. BMD was measured using dual-energy X-ray absorptiometry (DXA). Data on dietary intake was collected from Block 2005 Food Frequency Questionnaires (FFQs). Dietary calcium, total calcium, or vitamin K intake did not differ between the female endurance and interval athletes. All three BMD sites were significantly different among the female endurance and interval athletes, with female interval athletes having higher BMD at each site (TBBMD: 1.26 ± 0.10 g/cm2, p<0.05; LSBMD: 1.37 ± 0.14 g/cm2, p<0.01; DFBMD: 1.11 ± 0.12 g/cm2, p<0.05, for female interval athletes; TBBMD: 1.19 ± 0.09 g/cm2; LSBMD: 1.23 ± 0.16 g/cm2; DFBMD: 1.04 ± 0.10 g/cm2, for female endurance athletes). Male interval athletes had higher BMD at all three sites (TBBMD 1.44 ± 0.11 g/cm2, p<0.05; LSBMD 1.42 ± 0.15 g/cm2, p=0.179; DFBMD 1.26 ± 0.14 g/cm2, p<0.01, for male interval athletes; TBBMD 1.33 ± 0.11 g/cm2; LSBMD 1.33 ± 0.17 g/cm2; DFBMD 1.10 ± 0.12 g/cm2 for male endurance athletes). Dietary calcium, total daily calcium and vitamin K intake did not differ between the male endurance and interval athletes. This study evaluated the relationship between calcium intake and BMD. No relationship between dietary or total calcium intake and BMD was evident in all female athletes, female endurance athletes or female interval athletes. In all male athletes, there was no significant correlation between dietary or total calcium intake and BMD at any of the measured sites. However, the male interval athlete group had a negative relationship between dietary calcium intake and TBBMD (r=-0.738, p<0.05) and LSBMD (r=-0.738, p<0.05). The negative relationship persisted between total calcium intake and LSBMD (r=-0.714, p<0.05), but not TBBMD, when calcium from supplements was included. The third purpose of this study was to evaluate the relationship between vitamin K intake (as phylloquinone) and BMD. In all female athletes, there was no significant correlation between vitamin K intake and BMD at any of the measured sites. No relationship between vitamin K and BMD was evident in female interval or female endurance athletes. Similarly, there was no relationship between vitamin K intake and BMD in the male endurance and interval groups. The final purpose of this study was to assess the relationship between the Calcium-to-Vitamin K (Ca:K) ratio and BMD. A linear regression model established that the ratio predicted TBBMD in female athletes, F(1,47) = 4.652, p <0.05, and the ratio accounted for 9% of the variability in TBBMD. The regression equation was: predicted TBBMD in a female athlete = 1.250 - 0.008 x (Ca:K). In conclusion, Masters interval athletes have higher BMD than Masters endurance athletes; however, neither dietary or supplemental calcium nor vitamin K were related to BMD in skeletal sites prone to fracture in older adulthood. We found that a Ca:K ratio could predict TBBMD in female athletes. Further research should consider the calcium-to-vitamin K relationship in conjunction with other modifiable, lifestyle factors associated with bone health in the investigation of methods to minimize the development and effect of osteoporosis in the older athlete population.",
+                  "descriptionType" => "Abstract"
+                }
+              ],
+              "geoLocations" => [
+                {
+                  "geoLocationPoint" => {
+                    "pointLatitude" => "49.0850736",
+                    "pointLongitude" => "-123.3300992"
+                  }
+                }
+              ],
+              "source" => "test",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      it 'creates a Doi' do
+        post '/dois', valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+        expect(json.dig('data', 'attributes', 'creators')).to eq([{"affiliation"=>[],"familyName"=>"Fenner", "givenName"=>"Martin", "nameIdentifiers"=>[{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405","nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}], "name"=>"Fenner, Martin", "nameType"=>"Personal"}])
+        expect(json.dig('data', 'attributes', 'publisher')).to eq("DataCite")
+        expect(json.dig('data', 'attributes', 'publicationYear')).to eq(2016)
+        # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig('data', 'attributes', 'subjects')).to eq([{"lang"=>"en",
+          "schemeUri"=>
+          "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
+          "subject"=>"80505 Web Technologies (excl. Web Search)",
+          "subjectScheme"=>"FOR"}])
+        expect(json.dig('data', 'attributes', 'contributors')).to eq([{"affiliation"=>[],
+          "contributorType"=>"DataManager",
+          "familyName"=>"Fenner",
+          "givenName"=>"Kurt",
+          "name"=>"Fenner, Kurt",
+          "nameIdentifiers"=>
+            [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2401",
+              "nameIdentifierScheme"=>"ORCID",
+              "schemeUri"=>"https://orcid.org"}],
+          "nameType"=>"Personal"}])
+        expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2017-02-24", "dateType"=>"Issued"}, {"date"=>"2015-11-28", "dateType"=>"Created"}, {"date"=>"2017-02-24", "dateType"=>"Updated"}])
+        expect(json.dig('data', 'attributes', 'relatedIdentifiers')).to eq([{"relatedIdentifier"=>"10.5438/55e5-t5c0", "relatedIdentifierType"=>"DOI", "relationType"=>"References"}])
+        expect(json.dig('data', 'attributes', 'descriptions', 0, 'description')).to start_with("Diet and physical activity")
+        expect(json.dig('data', 'attributes', 'geoLocations')).to eq([{"geoLocationPoint"=>{"pointLatitude"=>"49.0850736", "pointLongitude"=>"-123.3300992"}}])
+        expect(json.dig('data', 'attributes', 'source')).to eq("test")
+        expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
+        expect(doc.at_css("identifier").content).to eq("10.14454/10703")
+        expect(doc.at_css("subjects").content).to eq("80505 Web Technologies (excl. Web Search)")
+        expect(doc.at_css("contributors").content).to eq("Fenner, KurtKurtFennerhttps://orcid.org/0000-0003-1419-2401")
+        expect(doc.at_css("dates").content).to eq("2017-02-242015-11-282017-02-24")
+        expect(doc.at_css("relatedIdentifiers").content).to eq("10.5438/55e5-t5c0")
+        expect(doc.at_css("descriptions").content).to start_with("Diet and physical activity")
+        expect(doc.at_css("geoLocations").content).to eq("49.0850736-123.3300992")
+      end
+    end
+
+    context 'when the request is valid with optional properties' do
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "types" => { "bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle" },
+              "titles" => [{"title"=>"Eating your own Dog Food"}],
+              "publisher" => "DataCite",
+              "publicationYear" => 2016,
+              "creators" => [{"familyName"=>"Fenner", "givenName"=>"Martin", "nameIdentifiers"=>[{ "nameIdentifier" => "https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme" => "ORCID", "schemeUri"=>"https://orcid.org" }], "name"=>"Fenner, Martin", "nameType"=>"Personal"}],
+              "language" => "en",
+              "alternateIdentifiers" => [{ "alternateIdentifier" => "123", "alternateIdentifierType" => "Repository ID" }],
+              "rightsList" => [{ "rights" => "Creative Commons Attribution 3.0", "rightsUri" => "http://creativecommons.org/licenses/by/3.0/", "lang" => "en"}],
+              "sizes" => ["4 kB", "12.6 MB"],
+              "formats" => ["application/pdf", "text/csv"],
+              "version" => "1.1",
+              "fundingReferences" => [{"funderIdentifier"=>"https://doi.org/10.13039/501100009053", "funderIdentifierType"=>"Crossref Funder ID", "funderName"=>"The Wellcome Trust DBT India Alliance"}],
+              "source" => "test",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      it 'creates a Doi' do
+        post '/dois', valid_attributes, headers
+
+        expect(last_response.status).to eq(201)
+        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
+        expect(json.dig('data', 'attributes', 'creators')).to eq([{"affiliation"=>[],"familyName"=>"Fenner", "givenName"=>"Martin", "nameIdentifiers"=>[{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405","nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}], "name"=>"Fenner, Martin", "nameType"=>"Personal"}])
+        expect(json.dig('data', 'attributes', 'publisher')).to eq("DataCite")
+        expect(json.dig('data', 'attributes', 'publicationYear')).to eq(2016)
+        # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
+        expect(json.dig('data', 'attributes', 'language')).to eq("en")
+        expect(json.dig('data', 'attributes', 'alternateIdentifiers')).to eq([{"alternateIdentifier"=>"123", "alternateIdentifierType"=>"Repository ID"}])
+        expect(json.dig('data', 'attributes', 'rightsList')).to eq([{"lang"=>"en", "rights"=>"Creative Commons Attribution 3.0", "rightsUri"=>"http://creativecommons.org/licenses/by/3.0/"}])
+        expect(json.dig('data', 'attributes', 'sizes')).to eq(["4 kB", "12.6 MB"])
+        expect(json.dig('data', 'attributes', 'formats')).to eq(["application/pdf", "text/csv"])
+        expect(json.dig('data', 'attributes', 'version')).to eq("1.1")
+        expect(json.dig('data', 'attributes', 'fundingReferences')).to eq([{"funderIdentifier"=>"https://doi.org/10.13039/501100009053", "funderIdentifierType"=>"Crossref Funder ID", "funderName"=>"The Wellcome Trust DBT India Alliance"}])
+        expect(json.dig('data', 'attributes', 'source')).to eq("test")
+        expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"Text", "ris"=>"RPRT", "schemaOrg"=>"ScholarlyArticle")
+        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+
+        doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
+        expect(doc.at_css("identifier").content).to eq("10.14454/10703")
+        expect(doc.at_css("language").content).to eq("en")
+        expect(doc.at_css("alternateIdentifiers").content).to eq("123")
+        expect(doc.at_css("rightsList").content).to eq("Creative Commons Attribution 3.0")
+        expect(doc.at_css("sizes").content).to eq("4 kB12.6 MB")
+        expect(doc.at_css("formats").content).to eq("application/pdftext/csv")
+        expect(doc.at_css("version").content).to eq("1.1")
+        expect(doc.at_css("fundingReferences").content).to eq("The Wellcome Trust DBT India Alliancehttps://doi.org/10.13039/501100009053")
       end
     end
 
@@ -1599,39 +1966,39 @@ describe "dois", type: :request do
       end
     end
 
-    context 'crossref url not found', vcr: true do
-      let(:provider) { create(:provider, name: "Crossref", symbol: "CROSSREF", role_name: "ROLE_REGISTRATION_AGENCY") }
-      let(:client) { create(:client, provider: provider, name: "Crossref Citations", symbol: "CROSSREF.CITATIONS") }
+    # context 'crossref url not found', vcr: true do
+    #   let(:provider) { create(:provider, name: "Crossref", symbol: "CROSSREF", role_name: "ROLE_REGISTRATION_AGENCY") }
+    #   let(:client) { create(:client, provider: provider, name: "Crossref Citations", symbol: "CROSSREF.CITATIONS") }
 
-      let(:xml) { Base64.strict_encode64("https://doi.org/10.3389/fmicb.2019.01425") }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "xml" => xml,
-              "source" => "test",
-              "event" => "publish"
-            },
-            "relationships" => {
-              "client" =>  {
-                "data" => {
-                  "type" => "clients",
-                  "id" => client.symbol.downcase
-                }
-              }
-            }
-          }
-        }
-      end
+    #   let(:xml) { Base64.strict_encode64("https://doi.org/10.3389/fmicb.2019.01425") }
+    #   let(:valid_attributes) do
+    #     {
+    #       "data" => {
+    #         "type" => "dois",
+    #         "attributes" => {
+    #           "xml" => xml,
+    #           "source" => "test",
+    #           "event" => "publish"
+    #         },
+    #         "relationships" => {
+    #           "client" =>  {
+    #             "data" => {
+    #               "type" => "clients",
+    #               "id" => client.symbol.downcase
+    #             }
+    #           }
+    #         }
+    #       }
+    #     }
+    #   end
 
-      it 'not found on updating the record' do
-        patch "/dois/10.3389/fmicb.2019.01425", valid_attributes, headers
+    #   it 'not found on updating the record' do
+    #     patch "/dois/10.3389/fmicb.2019.01425", valid_attributes, headers
 
-        expect(last_response.status).to eq(404)
-        expect(json['errors']).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
-      end
-    end
+    #     expect(last_response.status).to eq(404)
+    #     expect(json['errors']).to eq([{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
+    #   end
+    # end
 
     context 'medra url', vcr: true do
       let(:provider) { create(:provider, name: "mEDRA", symbol: "MEDRA", role_name: "ROLE_REGISTRATION_AGENCY") }
@@ -2490,7 +2857,7 @@ describe "dois", type: :request do
           expect(last_response.status).to eq(200)
           expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
           expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Analysis Tools for Crossover Experiment of UI using Choice Architecture"}])
-          expect(json.dig('data', 'attributes', 'dates')).to eq("date"=>"2016-03-27", "dateType"=>"Issued")
+          expect(json.dig('data', 'attributes', 'dates')).to eq([{"date"=>"2016-03-27", "dateType"=>"Issued"}])
         end
       end
 
@@ -2639,6 +3006,51 @@ describe "dois", type: :request do
       #   doc = Nokogiri::XML(Base64.decode64(json.dig('data', 'attributes', 'xml')), nil, 'UTF-8', &:noblanks)
       #   expect(doc.collect_namespaces).to eq("xmlns"=>"http://datacite.org/schema/kernel-4", "xmlns:xsi"=>"http://www.w3.org/2001/XMLSchema-instance")
       # end
+    end
+
+    context 'mds doi' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite_schema_3.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "should_validate" => "true",
+              "source" => "mds",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "should_validate" => "true",
+              "xml" => xml,
+              "source" => "mds",
+              "event" => "show"
+            }
+          }
+        }
+      end
+
+      it 'add metadata' do
+        put "/dois/10.14454/10703", update_attributes, headers
+
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
+
+        put '/dois/10.14454/10703', valid_attributes, headers
+       
+        expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
+        expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
+        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
+      end
     end
 
     context 'update rightsList' do
@@ -3419,6 +3831,24 @@ describe "dois", type: :request do
     context "application/vnd.schemaorg.ld+json link" do
       it 'returns the Doi' do
         get "/dois/application/vnd.schemaorg.ld+json/#{doi.doi}"
+
+        expect(last_response.status).to eq(200)
+        expect(json["@type"]).to eq("Dataset")
+      end
+    end
+
+    context "application/ld+json" do
+      it 'returns the Doi' do
+        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/ld+json", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+
+        expect(last_response.status).to eq(200)
+        expect(json["@type"]).to eq("Dataset")
+      end
+    end
+
+    context "application/ld+json link" do
+      it 'returns the Doi' do
+        get "/dois/application/ld+json/#{doi.doi}"
 
         expect(last_response.status).to eq(200)
         expect(json["@type"]).to eq("Dataset")

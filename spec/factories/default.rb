@@ -1,8 +1,8 @@
-require 'faker'
+require "faker"
 
 FactoryBot.define do
   factory :user do
-    sequence(:name) { |n| "Josiah Carberry{n}" }
+    sequence(:name) { |_n| "Josiah Carberry{n}" }
     provider { "globus" }
     role_id { "user" }
     sequence(:uid) { |n| "0000-0002-1825-000#{n}" }
@@ -23,12 +23,12 @@ FactoryBot.define do
     end
 
     factory :valid_user do
-      uid { '0000-0001-6528-2027' }
-      orcid_token { ENV['ACCESS_TOKEN'] }
+      uid { "0000-0001-6528-2027" }
+      orcid_token { ENV["ACCESS_TOKEN"] }
     end
 
     factory :invalid_user do
-      uid { '0000-0001-6528-2027' }
+      uid { "0000-0001-6528-2027" }
       orcid_token { nil }
     end
 
@@ -39,11 +39,13 @@ FactoryBot.define do
     provider
 
     system_email { "josiah@example.org" }
-    service_contact {{
-      "email": "martin@example.com",
-      "given_name": "Martin",
-      "family_name": "Fenner"
-    }}
+    service_contact do
+      {
+        "email": "martin@example.com",
+        "given_name": "Martin",
+        "family_name": "Fenner",
+      }
+    end
     globus_uuid { "bc7d0274-3472-4a79-b631-e4c7baccc667" }
     sequence(:symbol) { |n| provider.symbol + ".TEST#{n}" }
     name { "My data center" }
@@ -65,123 +67,139 @@ FactoryBot.define do
 
     doi { ("10.14454/" + Faker::Internet.password(8)).downcase }
     url { Faker::Internet.url }
-    types { {
-      "resourceTypeGeneral": "Dataset",
-      "resourceType": "DataPackage",
-      "schemaOrg": "Dataset",
-      "citeproc": "dataset",
-      "bibtex": "misc",
-      "ris": "DATA"
-    }}
-    creators { [
+    types do
       {
-        "nameType": "Personal",
-        "name": "Ollomo, Benjamin",
-        "givenName": "Benjamin",
-        "familyName": "Ollomo"
-      },
-      {
-        "nameType": "Personal",
-        "name": "Durand, Patrick",
-        "givenName": "Patrick",
-        "familyName": "Durand"
-      },
-      {
-        "nameType": "Personal",
-        "name": "Prugnolle, Franck",
-        "givenName": "Franck",
-        "familyName": "Prugnolle"
-      },
-      {
-        "nameType": "Personal",
-        "name": "Douzery, Emmanuel J. P.",
-        "givenName": "Emmanuel J. P.",
-        "familyName": "Douzery"
-      },
-      {
-        "nameType": "Personal",
-        "name": "Arnathau, Céline",
-        "givenName": "Céline",
-        "familyName": "Arnathau"
-      },
-      {
-        "nameType": "Personal",
-        "name": "Nkoghe, Dieudonné",
-        "givenName": "Dieudonné",
-        "familyName": "Nkoghe"
-      },
-      {
-        "nameType": "Personal",
-        "name": "Leroy, Eric",
-        "givenName": "Eric",
-        "familyName": "Leroy"
-      },
-      {
-        "nameType": "Personal",
-        "name": "Renaud, François",
-        "givenName": "François",
-        "familyName": "Renaud",
-        "nameIdentifiers": [
-          {
-            "nameIdentifier": "https://orcid.org/0000-0003-1419-2405",
-            "nameIdentifierScheme": "ORCID",
-            "schemeUri": "https://orcid.org"
-          },
-        ],
-        "affiliation": [
-          {
-            "name": "DataCite",
-            "affiliationIdentifier": "https://ror.org/04wxnsj81",
-            "affiliationIdentifierScheme": "ROR"
-          },
-        ]
+        "resourceTypeGeneral": "Dataset",
+        "resourceType": "DataPackage",
+        "schemaOrg": "Dataset",
+        "citeproc": "dataset",
+        "bibtex": "misc",
+        "ris": "DATA",
       }
-    ] }
-    titles {[
+    end
+    creators do
+      [
         {
-          "title": "Data from: A new malaria agent in African hominids."
-        }] }
-    descriptions {[
-      {
-        "description": "Data from: A new malaria agent in African hominids."
-      }] }
-    publisher {"Dryad Digital Repository" }
-    subjects {[
-        {
-          "subject": "Phylogeny"
+          "nameType": "Personal",
+          "name": "Ollomo, Benjamin",
+          "givenName": "Benjamin",
+          "familyName": "Ollomo",
         },
         {
-          "subject": "Malaria"
+          "nameType": "Personal",
+          "name": "Durand, Patrick",
+          "givenName": "Patrick",
+          "familyName": "Durand",
         },
         {
-          "subject": "Parasites"
+          "nameType": "Personal",
+          "name": "Prugnolle, Franck",
+          "givenName": "Franck",
+          "familyName": "Prugnolle",
         },
         {
-          "subject": "Taxonomy"
+          "nameType": "Personal",
+          "name": "Douzery, Emmanuel J. P.",
+          "givenName": "Emmanuel J. P.",
+          "familyName": "Douzery",
         },
         {
-          "subject": "Mitochondrial genome"
+          "nameType": "Personal",
+          "name": "Arnathau, Céline",
+          "givenName": "Céline",
+          "familyName": "Arnathau",
         },
         {
-          "subject": "Africa"
+          "nameType": "Personal",
+          "name": "Nkoghe, Dieudonné",
+          "givenName": "Dieudonné",
+          "familyName": "Nkoghe",
         },
         {
-          "subject": "Plasmodium"
-        }
-    ]}
-    dates { [
-      {
-        "date": "2011",
-        "dateType": "Issued"
-      }
-    ]}
+          "nameType": "Personal",
+          "name": "Leroy, Eric",
+          "givenName": "Eric",
+          "familyName": "Leroy",
+        },
+        {
+          "nameType": "Personal",
+          "name": "Renaud, François",
+          "givenName": "François",
+          "familyName": "Renaud",
+          "nameIdentifiers": [
+            {
+              "nameIdentifier": "https://orcid.org/0000-0003-1419-2405",
+              "nameIdentifierScheme": "ORCID",
+              "schemeUri": "https://orcid.org",
+            },
+          ],
+          "affiliation": [
+            {
+              "name": "DataCite",
+              "affiliationIdentifier": "https://ror.org/04wxnsj81",
+              "affiliationIdentifierScheme": "ROR",
+            },
+          ],
+        },
+      ]
+    end
+    titles do
+      [
+        {
+          "title": "Data from: A new malaria agent in African hominids.",
+        },
+      ]
+    end
+    descriptions do
+      [
+        {
+          "description": "Data from: A new malaria agent in African hominids.",
+        },
+      ]
+    end
+    publisher { "Dryad Digital Repository" }
+    subjects do
+      [
+        {
+          "subject": "Phylogeny",
+        },
+        {
+          "subject": "Malaria",
+        },
+        {
+          "subject": "Parasites",
+        },
+        {
+          "subject": "Taxonomy",
+        },
+        {
+          "subject": "Mitochondrial genome",
+        },
+        {
+          "subject": "Africa",
+        },
+        {
+          "subject": "Plasmodium",
+        },
+      ]
+    end
+    dates do
+      [
+        {
+          "date": "2011",
+          "dateType": "Issued",
+        },
+      ]
+    end
     publication_year { 2011 }
-    identifiers { [
-      {
-        "identifierType": "citation",
-        "identifier": "Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446."
-      }
-    ]}
+    identifiers do
+      [
+        {
+          "identifierType": "citation",
+          "identifier": "Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446.",
+        },
+      ]
+    end
     version { "1" }
     rights_list {[
       {
@@ -248,6 +266,7 @@ FactoryBot.define do
   factory :provider do
     system_email { "josiah@example.org" }
     sequence(:symbol, 'A') { |n| "TEST#{n}" }
+    role_name { "ROLE_ALLOCATOR" }
     globus_uuid { "53d8d984-450d-4b1d-970b-67faff28db1c" }
     name { "My provider" }
     display_name { "My provider" }
@@ -256,50 +275,66 @@ FactoryBot.define do
     password_input { "12345" }
     twitter_handle { "@egaTwitterlac" }
     ror_id { "https://ror.org/05njkjr15" }
-    billing_information {{
-      "city": "barcelona",
-      "state": "cataluyna",
-      "department": "sales",
-      "country": "CN",
-      "organization": "testing org",
-      "address": Faker::Address.street_address,
-      "postCode": "10777"
-     }}
-    technical_contact {{
-      "email": "kristian@example.com",
-      "given_name": "Kristian",
-      "family_name": "Garza"
-    }}
-    secondary_technical_contact {{
-      "email": "kristian@example.com",
-      "given_name": "Kristian",
-      "family_name": "Garza"
-    }}
-    billing_contact {{
-      "email": "trisha@example.com",
-      "given_name": "Trisha",
-      "family_name": "Cruse"
-    }}
-    secondary_billing_contact {{
-      "email": "trisha@example.com",
-      "given_name": "Trisha",
-      "family_name": "Cruse"
-    }}
-    service_contact {{
-      "email": "martin@example.com",
-      "given_name": "Martin",
-      "family_name": "Fenner"
-    }}
-    secondary_service_contact {{
-      "email": "martin@example.com",
-      "given_name": "Martin",
-      "family_name": "Fenner"
-    }}
-    voting_contact {{
-      "email": "robin@example.com",
-      "given_name": "Robin",
-      "family_name": "Dasler"
-    }}
+    billing_information do
+      {
+        "city": "barcelona",
+        "state": "cataluyna",
+        "department": "sales",
+        "country": "CN",
+        "organization": "testing org",
+        "address": Faker::Address.street_address,
+        "postCode": "10777",
+      }
+    end
+    technical_contact do
+      {
+        "email": "kristian@example.com",
+        "given_name": "Kristian",
+        "family_name": "Garza",
+      }
+    end
+    secondary_technical_contact do
+      {
+        "email": "kristian@example.com",
+        "given_name": "Kristian",
+        "family_name": "Garza",
+      }
+    end
+    billing_contact do
+      {
+        "email": "trisha@example.com",
+        "given_name": "Trisha",
+        "family_name": "Cruse",
+      }
+    end
+    secondary_billing_contact do
+      {
+        "email": "trisha@example.com",
+        "given_name": "Trisha",
+        "family_name": "Cruse",
+      }
+    end
+    service_contact do
+      {
+        "email": "martin@example.com",
+        "given_name": "Martin",
+        "family_name": "Fenner",
+      }
+    end
+    secondary_service_contact do
+      {
+        "email": "martin@example.com",
+        "given_name": "Martin",
+        "family_name": "Fenner",
+      }
+    end
+    voting_contact do
+      {
+        "email": "robin@example.com",
+        "given_name": "Robin",
+        "family_name": "Dasler",
+      }
+    end
     is_active { true }
 
     initialize_with { Provider.where(symbol: symbol).first_or_initialize }
@@ -310,7 +345,7 @@ FactoryBot.define do
     association :provider, factory: :provider, strategy: :create
   end
 
-  factory :activity do  
+  factory :activity do
     association :auditable, factory: :doi, strategy: :create
   end
 
@@ -320,14 +355,16 @@ FactoryBot.define do
     source_token { "citeulike_123" }
     sequence(:subj_id) { |n| "http://www.citeulike.org/user/dbogartoit/#{n}" }
     obj_id { "http://doi.org/10.1371/journal.pmed.0030186" }
-    subj {{ "@id" => "http://www.citeulike.org/user/dbogartoit",
-            "@type" => "CreativeWork",
-            "uid" => "http://www.citeulike.org/user/dbogartoit",
-            "author" => [{ "given" => "dbogartoit" }],
-            "name" => "CiteULike bookmarks for user dbogartoit",
-            "publisher" => "CiteULike",
-            "datePublished" => "2006-06-13T16:14:19Z",
-            "url" => "http://www.citeulike.org/user/dbogartoit" }}
+    subj do
+      { "@id" => "http://www.citeulike.org/user/dbogartoit",
+        "@type" => "CreativeWork",
+        "uid" => "http://www.citeulike.org/user/dbogartoit",
+        "author" => [{ "given" => "dbogartoit" }],
+        "name" => "CiteULike bookmarks for user dbogartoit",
+        "publisher" => "CiteULike",
+        "datePublished" => "2006-06-13T16:14:19Z",
+        "url" => "http://www.citeulike.org/user/dbogartoit" }
+    end
     obj {}
     relation_type_id { "bookmarks" }
     updated_at { Time.zone.now }
@@ -360,6 +397,24 @@ FactoryBot.define do
       relation_type_id { "is-part-of" }
     end
 
+    factory :event_for_datacite_versions do
+      source_id { "datacite_related" }
+      source_token { "datacite_related_123" }
+      subj_id { "http://doi.org/10.5061/DRYAD.47SD5" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      sequence(:obj_id) { |n| "http://doi.org/10.5061/DRYAD.47SD5/#{n}" }
+      relation_type_id { "has-version" }
+    end
+
+    factory :event_for_datacite_version_of do
+      source_id { "datacite_related" }
+      source_token { "datacite_related_123" }
+      subj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      obj_id { "http://doi.org/10.5061/DRYAD.47SD5" }
+      relation_type_id { "is-version-of" }
+    end
+
     factory :event_for_datacite_crossref do
       source_id { "datacite_crossref" }
       source_token { "datacite_crossref_123" }
@@ -381,7 +436,7 @@ FactoryBot.define do
       source_id { "datacite-usage" }
       source_token { "5348967fhdjksr3wyui325" }
       total { 25 }
-      sequence(:subj_id) { |n| "https://api.test.datacite.org/report/#{SecureRandom.uuid}" }
+      sequence(:subj_id) { |_n| "https://api.test.datacite.org/report/#{SecureRandom.uuid}" }
       subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
       obj { { "date_published" => "2007-06-13T16:14:19Z" } }
       obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
@@ -393,7 +448,7 @@ FactoryBot.define do
       source_id { "datacite-usage" }
       source_token { "5348967fhdjksr3wyui325" }
       total { 10 }
-      sequence(:subj_id) { |n| "https://api.test.datacite.org/report/#{SecureRandom.uuid}" }
+      sequence(:subj_id) { |_n| "https://api.test.datacite.org/report/#{SecureRandom.uuid}" }
       subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
       obj { { "date_published" => "2007-06-13T16:14:19Z" } }
       obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
@@ -405,9 +460,21 @@ FactoryBot.define do
       source_id { "datacite-usage" }
       source_token { "5348967fhdjksr3wyui325" }
       total { rand(1..100).to_int }
-      sequence(:subj_id) { |n| "https://api.test.datacite.org/report/#{SecureRandom.uuid}" }
+      sequence(:subj_id) { |_n| "https://api.test.datacite.org/report/#{SecureRandom.uuid}" }
       subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
       obj {}
+      obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
+      relation_type_id { "unique-dataset-investigations-regular" }
+      occurred_at { "2015-06-13T16:14:19Z" }
+    end
+
+    factory :event_for_datacite_usage do
+      source_id { "datacite-usage" }
+      source_token { "5348967fhdjksr3wyui325" }
+      total { rand(1..100).to_int }
+      sequence(:subj_id) { |_n| "https://api.test.datacite.org/report/#{SecureRandom.uuid}" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      obj { { "date_published" => "2007-06-13T16:14:19Z" } }
       obj_id { "http://doi.org/10.5061/DRYAD.47SD5/1" }
       relation_type_id { "unique-dataset-investigations-regular" }
       occurred_at { "2015-06-13T16:14:19Z" }

@@ -111,7 +111,7 @@ class MediaController < ApplicationController
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
       @include = @include & [:doi]
     else
-      @include = [:doi]
+      @include = []
     end
   end
 

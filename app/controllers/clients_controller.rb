@@ -23,7 +23,8 @@ class ClientsController < ApplicationController
     elsif params[:ids].present?
       response = Client.find_by_id(params[:ids], page: page, sort: sort)
     else
-      response = Client.query(params[:query], 
+      response = Client.query(
+        params[:query],
         year: params[:year],
         from_date: params[:from_date],
         until_date: params[:until_date],
@@ -33,16 +34,17 @@ class ClientsController < ApplicationController
         software: params[:software],
         certificate: params[:certificate],
         repository_type: params[:repository_type],
-        client_type: params[:client_type], 
-        page: page, 
-        sort: sort)
+        client_type: params[:client_type],
+        page: page,
+        sort: sort,
+      )
     end
 
     begin
       total = response.results.total
       total_pages = page[:size] > 0 ? (total.to_f / page[:size]).ceil : 0
-      years = total > 0 ? facet_by_year(response.response.aggregations.years.buckets) : nil
-      providers = total > 0 ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
+      years = total > 0 ? facet_by_key_as_string(response.response.aggregations.years.buckets) : nil
+      providers = total > 0 ? facet_by_combined_key(response.response.aggregations.providers.buckets) : nil
       software = total > 0 ? facet_by_software(response.response.aggregations.software.buckets) : nil
       client_types = total > 0 ? facet_by_key(response.response.aggregations.client_types.buckets) : nil
       certificates = total > 0 ? facet_by_key(response.response.aggregations.certificates.buckets) : nil
@@ -110,6 +112,7 @@ class ClientsController < ApplicationController
     authorize! :create, @client
 
     if @client.save
+      @client.send_welcome_email(responsible_id: current_user.uid) unless Rails.env.test?
       options = {}
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability }
@@ -122,11 +125,18 @@ class ClientsController < ApplicationController
   end
 
   def update
-    if @client.update(safe_params)
-      options = {}
-      options[:is_collection] = false
-      options[:params] = { current_ability: current_ability }
-  
+    options = {}
+    options[:is_collection] = false
+    options[:params] = { current_ability: current_ability }
+
+    if params.dig(:data, :attributes, :mode) == "transfer"
+      # only update provider_id
+      authorize! :transfer, @client
+
+      @client.transfer(safe_params.slice(:target_id))
+      render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
+    elsif @client.update(safe_params)
+
       render json: ClientSerializer.new(@client, options).serialized_json, status: :ok
     else
       Rails.logger.error @client.errors.inspect
@@ -143,7 +153,7 @@ class ClientsController < ApplicationController
       Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
     elsif @client.update(is_active: nil, deleted_at: Time.zone.now)
-      @client.send_delete_email unless Rails.env.test?
+      @client.send_delete_email(responsible_id: current_user.uid) unless Rails.env.test?
       head :no_content
     else
       Rails.logger.error @client.errors.inspect
@@ -155,7 +165,7 @@ class ClientsController < ApplicationController
     page = { size: 0, number: 1 }
     state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
     response = Doi.query(nil, provider_id: params[:provider_id], state: state, page: page, totals_agg: "client")
-    registrant = response.results.total.positive? ? clients_totals(response.response.aggregations.clients_totals.buckets) : []
+    registrant = response.results.total.positive? ? clients_totals(response.aggregations.clients_totals.buckets) : []
     
     render json: registrant, status: :ok
   end
@@ -179,7 +189,7 @@ class ClientsController < ApplicationController
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
       @include = @include & [:provider, :repository]
     else
-      @include = [:provider, :repository]
+      @include = []
     end
   end
 

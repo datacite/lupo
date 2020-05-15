@@ -79,8 +79,6 @@ class Provider < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
   before_save { self.updated = Time.zone.now.utc.iso8601 }
 
-  after_create :send_welcome_email, unless: Proc.new { Rails.env.test? }
-
   accepts_nested_attributes_for :prefixes
 
   # use different index for testing
@@ -189,8 +187,8 @@ class Provider < ActiveRecord::Base
       "uid" => uid,
       "name" => name,
       "display_name" => display_name,
-      "client_ids" => client_ids,
-      "prefix_ids" => prefix_ids,
+      "client_ids" => options[:exclude_associations] ? nil : client_ids,
+      "prefix_ids" => options[:exclude_associations] ? nil : prefix_ids,
       "symbol" => symbol,
       "year" => year,
       "system_email" => system_email,
@@ -206,7 +204,7 @@ class Provider < ActiveRecord::Base
       "member_type" => member_type,
       "non_profit_status" => non_profit_status,
       "consortium_id" => consortium_id,
-      "consortium_organization_ids" => consortium_organization_ids,
+      "consortium_organization_ids" => options[:exclude_associations] ? nil : consortium_organization_ids,
       "role_name" => role_name,
       "password" => password,
       "cache_key" => cache_key,
@@ -245,8 +243,9 @@ class Provider < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      years: { date_histogram: { field: 'created', interval: 'year', min_doc_count: 1 } },
-      cumulative_years: { terms: { field: 'cumulative_years', size: 15, min_doc_count: 1, order: { _count: "asc" } } },
+      years: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+               aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
+      cumulative_years: { terms: { field: 'cumulative_years', size: 10, min_doc_count: 1, order: { _count: "asc" } } },
       regions: { terms: { field: 'region', size: 10, min_doc_count: 1 } },
       member_types: { terms: { field: 'member_type', size: 10, min_doc_count: 1 } },
       organization_types: { terms: { field: 'organization_type', size: 10, min_doc_count: 1 } },

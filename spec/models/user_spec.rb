@@ -89,7 +89,7 @@ describe User, type: :model do
       end
 
       it "has provider_id" do
-        expect(user.provider_id).to eq(client.symbol.downcase.split(".").first)
+        expect(user.provider_id).to eq(client.provider_id)
       end
 
       it "has client" do

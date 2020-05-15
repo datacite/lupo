@@ -2,60 +2,52 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.datacite.org/users/0000-0003-1519-3661
+    uri: https://pub.orcid.org/v3.0/0000-0003-2706-4082/person
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.4; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
       Accept:
-      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      - application/json;charset=UTF-8
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
       code: 200
       message: OK
     headers:
-      Date:
-      - Fri, 11 Oct 2019 11:25:19 GMT
-      Content-Type:
-      - application/json; charset=utf-8
-      Connection:
-      - keep-alive
-      Status:
-      - 200 OK
-      X-Anonymous-Consumer:
-      - 'true'
+      Server:
+      - nginx/1.16.1
       Cache-Control:
-      - max-age=0, private, must-revalidate
-      Vary:
-      - Accept-Encoding, Origin
-      Referrer-Policy:
-      - strict-origin-when-cross-origin
-      X-Permitted-Cross-Domain-Policies:
-      - none
+      - no-cache, no-store, max-age=0, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Content-Encoding:
+      - gzip
+      Date:
+      - Wed, 08 Apr 2020 16:57:50 GMT
+      Expires:
+      - '0'
+      Pragma:
+      - no-cache
       X-Xss-Protection:
       - 1; mode=block
-      X-Request-Id:
-      - 9f93a16e-94f7-4a98-9c11-51b3653c3bc2
-      X-Download-Options:
-      - noopen
-      Etag:
-      - W/"e3944200402255344af4d6f93eb13365"
-      X-Frame-Options:
-      - SAMEORIGIN
-      X-Runtime:
-      - '0.005520'
+      Access-Control-Allow-Origin:
+      - "*"
       X-Content-Type-Options:
       - nosniff
-      X-Powered-By:
-      - Phusion Passenger 6.0.4
-      Server:
-      - nginx/1.17.3 + Phusion Passenger 6.0.4
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - X-Mapping-fjhppofk=EDEB8B375DA428655747278237992826; path=/
+      X-Frame-Options:
+      - DENY
     body:
       encoding: ASCII-8BIT
-      string: '{"data":{"id":"0000-0003-1519-3661","type":"users","attributes":{"givenNames":"Peter","familyName":"Godfrey-Smith","name":"Peter
-        Godfrey-Smith","orcid":"https://orcid.org/0000-0003-1519-3661","github":null,"roleId":"user","isActive":false,"created":"2017-12-15T12:30:56.000Z","updated":"2017-12-15T12:30:56.000Z"},"relationships":{}}}'
-    http_version: 
-  recorded_at: Fri, 11 Oct 2019 11:25:19 GMT
-recorded_with: VCR 3.0.3
+      string: !binary |-
+        H4sIAAAAAAAAA+1UwY6bMBD9FeRzDCzrQpRTq7aHPa1UqaeqBwcMWGtsZJs0KMq/d5wECA2JW6m9FQkJM2/em/E8+4AENRY3quAlZwUuqGVoc0A7Kjr4eCIkJe/WcULIc3ZcIUmbUzjXDIAL8DTOUkLWSUyeAO7hnoMrvmMSOwVzhUIfKgk/IF7ShoseDyUM8c9bJrdMV0w7EBRWcHsByU6IFTKq0/m42nHDt1xw20Nu220Fz9EKtdTWsI7hwfA+4ySLU0zideJIla2Znipb6upMPgHR5tv3kTZa4I2uSUFjy1WlaVv3A5dmhlGdO1CnhUd4DvaL/0oOBbCG8vsydx1xSgPBB56YElK/J+bgYXaHyxdWOufFfLI4F5xJi93/A+o0h6Zra1uziaITPFS6is6gcTMSTEic4Swjye3458FaGQvBkQqNdd148fXLx5dPwYu0DGZpuZIBtQHMOfgqwdzagOsCVQav+1LpwvFQY5h2QGiMV1zO+7uJXnV6BzEZf5oNou4IhWw8KO9Ny0O1D2kedm9j+4/OBxR/mhfalFQYBimaN1T307qzOFfFqP1bdsj+xA7Zfzv8MztQaf+WH6zubu3guY3Ohbn+iwJuJuO7Zi8w/zU3AIH6jfU/YJc9zBeUn3mkc/u6t0xLKmAQMA5Hqj0yCxl+yUWZ4+OcFjBKouNPWyW3POcHAAA=
+    http_version: null
+  recorded_at: Wed, 08 Apr 2020 16:57:50 GMT
+recorded_with: VCR 5.1.0

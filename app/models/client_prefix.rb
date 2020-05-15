@@ -7,9 +7,9 @@ class ClientPrefix < ActiveRecord::Base
 
   include Elasticsearch::Model
 
-  belongs_to :client
-  belongs_to :prefix
-  belongs_to :provider_prefix
+  belongs_to :client, touch: true
+  belongs_to :prefix, touch: true
+  belongs_to :provider_prefix, touch: true
 
   before_create :set_uid
 
@@ -31,7 +31,15 @@ class ClientPrefix < ActiveRecord::Base
     # index associations
     indexes :client,             type: :object
     indexes :provider,           type: :object
-    indexes :prefix,             type: :object
+    indexes :prefix,             type: :object, properties: {
+      id: { type: :keyword },
+      uid: { type: :keyword },
+      provider_ids: { type: :keyword },
+      client_ids: { type: :keyword },
+      state: { type: :keyword },
+      prefix: { type: :text },
+      created_at: { type: :date },
+    }
     indexes :provider_prefix,    type: :object
   end
 
@@ -45,28 +53,29 @@ class ClientPrefix < ActiveRecord::Base
       "provider_prefix_id" => provider_prefix_id,
       "created_at" => created_at,
       "updated_at" => updated_at,
-      "client" => client.try(:as_indexed_json),
-      "provider" => provider.try(:as_indexed_json),
-      "prefix" => prefix.try(:as_indexed_json),
-      "provider_prefix" => provider_prefix.try(:as_indexed_json),
+      "client" => options[:exclude_associations] ? nil : client.try(:as_indexed_json, exclude_associations: true),
+      "provider" => options[:exclude_associations] ? nil : provider.try(:as_indexed_json, exclude_associations: true),
+      "prefix" => options[:exclude_associations] ? nil : prefix.try(:as_indexed_json, exclude_associations: true),
+      "provider_prefix" => options[:exclude_associations] ? nil : provider_prefix.try(:as_indexed_json, exclude_associations: true),
     }
   end
 
   def self.query_aggregations
     {
-      years: { date_histogram: { field: "created_at", interval: "year", min_doc_count: 1 } },
-      providers: { terms: { field: "provider_id", size: 15, min_doc_count: 1 } },
-      clients: { terms: { field: "client_id", size: 15, min_doc_count: 1 } },
+      years: { date_histogram: { field: 'created_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+               aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
+      providers: { terms: { field: "provider_id_and_name", size: 10, min_doc_count: 1 } },
+      clients: { terms: { field: "client_id_and_name", size: 10, min_doc_count: 1 } },
     }
-  end
-
-  def self.query_fields
-    ["client_id^10", "prefix_id^10", "provider_id^10", "_all"]
   end
 
   # convert external id / internal id
   def client_id
     client.symbol.downcase
+  end
+
+  def client_id_and_name
+    "#{client_id}:#{client.name}" if client.present?
   end
 
   # convert external id / internal id
@@ -93,6 +102,10 @@ class ClientPrefix < ActiveRecord::Base
 
   def provider_id
     client.provider_id if client.present?
+  end
+
+  def provider_id_and_name
+    "#{client.provider_id}:#{client.provider.name}" if client.present?
   end
 
   def provider

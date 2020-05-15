@@ -1,0 +1,127 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.datacite.org/users?page%5Bnumber%5D=1&page%5Bsize%5D=25&query=Fenner
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 28 Mar 2020 07:11:16 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Anonymous-Consumer:
+      - 'true'
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Accept-Encoding, Origin
+      Content-Encoding:
+      - gzip
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Request-Id:
+      - 2f18abef-1fd0-48ec-8a8e-f3bcb48ce40a
+      X-Download-Options:
+      - noopen
+      Etag:
+      - W/"9ddb29686b07d5fe298d5dbf9c965a01"
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Runtime:
+      - '0.053297'
+      X-Content-Type-Options:
+      - nosniff
+      X-Powered-By:
+      - Phusion Passenger 6.0.4
+      Server:
+      - nginx/1.14.0 + Phusion Passenger 6.0.4
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAJT4fl4AA6yWa2vbMBSG/0oRrJ+sRJIvsgVldHSFftgow7CxMYYaK4mYL5ksl3Uh/33HTtq6qVtHywwGWefV8esHHR+tUSatROLbGukMCUTgwnBTHIYkxgnxE+Qhe7dSEGxqZWp4lNYafdNYVSOxRgt9q8qPsmgV52VmtMpP3t9KGFWgnctC53e78KUqS2VgthyUnzzEKzPr7CytXdViOu2eJ5VZTIcNLrRdNjdIlE2ee8hUubrKdoYhquvzmQWXSMxlXisPzYySVrUKRmiMCcckSGkoSCBINIHsX2FVs8r6IsowiVNGRJAI39+KNvAulUurq7Je6lWLY7PxnqHkQcjBbhy6oLyWVS4fibzKsa91g9i3dgREBukYpjQloQgjQfkQxBdEB0FkOGB+gnnIAxeIqVG31Si+rcoF3FM7x4MjKfVFuwHpK+D2RQeCSxhnmFH6xQXcJz1bSpONkdvJ3ND1DR1TuAkgwSRJSSwCLggZLNw9kSM6AlUfc5+6oLtUpoTfmRxjd69zhNez9J8KlnHBwrGC7YkOgudjGgB8FhCnv94Haawux9BtVS7gntq5B/ewYDsxmVXFtJjfZ30AWls5n/+QWdE5e+RqTbO/JyPAhRlPGRPEF8FgM2mxgh9oJlSE0Exc9qQPezniOI4S7oL1QpbQZ8ewblVuWPt2juzCFFOekgT2GWB5oQsPiQ4sZp/HPo6oT1zAXRlVqn1un5VeKWPxPr9OfPIsekhZ980dgxFOMhEUbUoDAUcVMljWL4gGMX73UKHaA+Ia2crKHInY246u5aLFRT20ghEMYH2uy58dwlrl894Xy5WetOfMmbaq+/AO/Nt24ZvwXdkUN8q8CS/O6OluqtZ/VDvBwtNfjTJ3Z4+o1W/7D5nZWObN5i8AAAD//wMASgbsXQsLAAA=
+    http_version: null
+  recorded_at: Sat, 28 Mar 2020 07:11:16 GMT
+- request:
+    method: get
+    uri: https://api.datacite.org/users?page%5Bnumber%5D=1&page%5Bsize%5D=25&query=Fenner
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 28 Mar 2020 07:11:16 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Connection:
+      - keep-alive
+      Status:
+      - 200 OK
+      X-Anonymous-Consumer:
+      - 'true'
+      Cache-Control:
+      - max-age=0, private, must-revalidate
+      Vary:
+      - Accept-Encoding, Origin
+      Content-Encoding:
+      - gzip
+      Referrer-Policy:
+      - strict-origin-when-cross-origin
+      X-Permitted-Cross-Domain-Policies:
+      - none
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Request-Id:
+      - 2a643f16-9665-4a59-90e4-9dfd4eacdc0b
+      X-Download-Options:
+      - noopen
+      Etag:
+      - W/"9ddb29686b07d5fe298d5dbf9c965a01"
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Runtime:
+      - '0.060661'
+      X-Content-Type-Options:
+      - nosniff
+      X-Powered-By:
+      - Phusion Passenger 6.0.4
+      Server:
+      - nginx/1.14.0 + Phusion Passenger 6.0.4
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        H4sIAJT4fl4AA6yWa2vbMBSG/0oRrJ+sRJIvsgVldHSFftgow7CxMYYaK4mYL5ksl3Uh/33HTtq6qVtHywwGWefV8esHHR+tUSatROLbGukMCUTgwnBTHIYkxgnxE+Qhe7dSEGxqZWp4lNYafdNYVSOxRgt9q8qPsmgV52VmtMpP3t9KGFWgnctC53e78KUqS2VgthyUnzzEKzPr7CytXdViOu2eJ5VZTIcNLrRdNjdIlE2ee8hUubrKdoYhquvzmQWXSMxlXisPzYySVrUKRmiMCcckSGkoSCBINIHsX2FVs8r6IsowiVNGRJAI39+KNvAulUurq7Je6lWLY7PxnqHkQcjBbhy6oLyWVS4fibzKsa91g9i3dgREBukYpjQloQgjQfkQxBdEB0FkOGB+gnnIAxeIqVG31Si+rcoF3FM7x4MjKfVFuwHpK+D2RQeCSxhnmFH6xQXcJz1bSpONkdvJ3ND1DR1TuAkgwSRJSSwCLggZLNw9kSM6AlUfc5+6oLtUpoTfmRxjd69zhNez9J8KlnHBwrGC7YkOgudjGgB8FhCnv94Haawux9BtVS7gntq5B/ewYDsxmVXFtJjfZ30AWls5n/+QWdE5e+RqTbO/JyPAhRlPGRPEF8FgM2mxgh9oJlSE0Exc9qQPezniOI4S7oL1QpbQZ8ewblVuWPt2juzCFFOekgT2GWB5oQsPiQ4sZp/HPo6oT1zAXRlVqn1un5VeKWPxPr9OfPIsekhZ980dgxFOMhEUbUoDAUcVMljWL4gGMX73UKHaA+Ia2crKHInY246u5aLFRT20ghEMYH2uy58dwlrl894Xy5WetOfMmbaq+/AO/Nt24ZvwXdkUN8q8CS/O6OluqtZ/VDvBwtNfjTJ3Z4+o1W/7D5nZWObN5i8AAAD//wMASgbsXQsLAAA=
+    http_version: null
+  recorded_at: Sat, 28 Mar 2020 07:11:16 GMT
+recorded_with: VCR 5.1.0

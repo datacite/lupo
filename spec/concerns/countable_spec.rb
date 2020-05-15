@@ -64,4 +64,65 @@ describe "Providers", type: :controller, elasticsearch: true do
         {"count"=>2, "id"=>"2017", "title"=>"2017"}])
     end
   end
+
+  describe "doi_count" do
+    before do
+      allow(Time.zone).to receive(:now).and_return(Time.mktime(2015, 4, 8))
+    end
+
+    let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM", symbol: "DC") }
+    let(:provider) { create(:provider, consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION", symbol: "DATACITE") }
+    let(:client) { create(:client, provider: provider, symbol: "DATACITE.TEST") }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+    let!(:doi) { create(:doi) }
+
+    it "counts all dois" do
+      Doi.import
+      sleep 2
+
+      expect(subject.doi_count).to eq([{"count"=>4, "id"=>"2015", "title"=>"2015"}])
+    end
+
+    it "counts all consortium dois" do
+      Doi.import
+      sleep 2
+
+      expect(subject.doi_count(consortium_id: "dc")).to eq([{"count"=>3, "id"=>"2015", "title"=>"2015"}])
+    end
+
+    it "counts all consortium dois no dois" do
+      Doi.import
+      sleep 2
+
+      expect(subject.doi_count(consortium_id: "abc")).to eq([])
+    end
+
+    it "counts all provider dois" do
+      Doi.import
+      sleep 2
+
+      expect(subject.doi_count(provider_id: "datacite")).to eq([{"count"=>3, "id"=>"2015", "title"=>"2015"}])
+    end
+
+    it "counts all provider dois no dois" do
+      Doi.import
+      sleep 2
+
+      expect(subject.doi_count(provider_id: "abc")).to eq([])
+    end
+
+    it "counts all client dois" do
+      Doi.import
+      sleep 2
+
+      expect(subject.doi_count(client_id: "datacite.test")).to eq([{"count"=>3, "id"=>"2015", "title"=>"2015"}])
+    end
+
+    it "counts all client dois no dois" do
+      Doi.import
+      sleep 2
+
+      expect(subject.doi_count(client_id: "abc")).to eq([])
+    end
+  end
 end

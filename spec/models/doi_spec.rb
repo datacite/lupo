@@ -540,70 +540,55 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
-  describe "views", elasticsearch: true do
+  describe "views" do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:views) { create_list(:event_for_datacite_investigations, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-investigations-regular", total: 25) }
 
-    before do
-      Doi.import
-      sleep 2
+    it "has views" do
+      expect(doi.view_events.count).to eq(3)
+      expect(doi.view_count).to eq(75)
+      expect(doi.views_over_time.first).to eq("total"=>25, "yearMonth"=>"2015-06")
+
+      view = doi.view_events.first
+      expect(view.target_doi).to eq(doi.doi)
+      expect(view.total).to eq(25)
     end
-
-    # it "has views" do
-    #   expect(doi.view_events.count).to eq(3)
-    #   expect(doi.view_count).to eq(75)
-    #   expect(doi.views_over_time.first).to eq("total"=>25, "yearMonth"=>"2015-06")
-
-    #   view = doi.view_events.first
-    #   expect(view.target_doi).to eq(doi.uid)
-    #   expect(view.total).to eq(25)
-    # end
   end
 
-  describe "downloads", elasticsearch: true do
+  describe "downloads" do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:downloads) { create_list(:event_for_datacite_investigations, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-requests-regular", total: 10) }
 
-    before do
-      Doi.import
-      sleep 2
+    it "has downloads" do
+      expect(doi.download_events.count).to eq(3)
+      expect(doi.download_count).to eq(30)
+      expect(doi.downloads_over_time.first).to eq("total" => 10, "yearMonth" => "2015-06")
+
+      download = doi.download_events.first
+      expect(download.target_doi).to eq(doi.doi)
+      expect(download.total).to eq(10)
     end
-
-    # it "has downloads" do
-    #   expect(doi.download_events.count).to eq(3)
-    #   expect(doi.download_count).to eq(30)
-    #   expect(doi.downloads_over_time.first).to eq("total" => 10, "yearMonth" => "2015-06")
-
-    #   download = doi.download_events.first
-    #   expect(download.target_doi).to eq(doi.uid)
-    #   expect(download.total).to eq(10)
-    # end
   end
 
-  describe "references", elasticsearch: true do
+  describe "references" do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:reference_events) { create(:event_for_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "references") }
 
-    before do
-      Doi.import
-      sleep 2
+    it "has references" do
+      expect(doi.references.count).to eq(1)
+      expect(doi.reference_ids.count).to eq(1)
+      expect(doi.reference_count).to eq(1)
+
+      reference_id = doi.reference_ids.first
+      expect(reference_id).to eq(target_doi.doi.downcase)
     end
-
-    # it "has references" do
-    #   expect(doi.reference_events.count).to eq(1)
-    #   expect(doi.reference_event_ids.count).to eq(1)
-    #   expect(doi.reference_count).to eq(1)
-
-    #   reference_event = doi.reference_events.first
-    #   expect(reference_event.target_doi.downcase).to eq(target_doi.uid)
-    # end
   end
 
-  describe "citations", elasticsearch: true do
+  describe "citations" do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -612,105 +597,80 @@ describe Doi, type: :model, vcr: true do
     let!(:citation_event2) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-referenced-by", occurred_at: "2016-06-13T16:14:19Z") }
     let!(:citation_event3) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-cited-by", occurred_at: "2016-06-13T16:14:19Z") }
 
-    before do
-      Doi.import
-      sleep 2
+    # removing duplicate dois in citation_ids, citation_count and citations_over_time (different relation_type_id)
+    it "has citations" do
+      expect(doi.citations.count).to eq(3)
+      expect(doi.citation_ids.count).to eq(2)
+      expect(doi.citation_count).to eq(2)
+      expect(doi.citations_over_time).to eq([{"total"=>1, "year"=>"2015"}, {"total"=>1, "year"=>"2016"}])
+
+      citation_id = doi.citation_ids.first
+      expect(citation_id).to eq(source_doi.doi.downcase)
     end
-
-    # removing duplicate dois in citation_count and citations_over_time (different relation_type_id)
-    # it "has citations" do
-    #   expect(doi.citation_events.count).to eq(3)
-    #   expect(doi.citation_event_ids.count).to eq(3)
-    #   expect(doi.citation_count).to eq(2)
-    #   expect(doi.citations_over_time).to eq([{"total"=>1, "year"=>"2015"}, {"total"=>1, "year"=>"2016"}])
-
-    #   citation_event = doi.citation_events.first
-    #   expect(citation_event.source_doi.downcase).to eq(source_doi.uid)
-    # end
   end
 
-  describe "parts", elasticsearch: true do
+  describe "parts" do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:part_events) { create(:event_for_datacite_parts, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "has-part") }
 
-    before do
-      Doi.import
-      sleep 2
+    it "has parts" do
+      expect(doi.parts.count).to eq(1)
+      expect(doi.part_ids.count).to eq(1)
+      expect(doi.part_count).to eq(1)
+
+      part_id = doi.part_ids.first
+      expect(part_id).to eq(target_doi.doi.downcase)
     end
-
-    # it "has parts" do
-    #   expect(doi.parts.count).to eq(1)
-    #   expect(doi.part_ids.count).to eq(1)
-    #   expect(doi.part_count).to eq(1)
-
-    #   part = doi.parts.first
-    #   expect(part.doi.downcase).to eq(target_doi.uid)
-    # end
   end
 
-  describe "part of", elasticsearch: true do
+  describe "part of" do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:part_of_events) { create(:event_for_datacite_part_of, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-part-of") }
 
-    before do
-      Doi.import
-      sleep 2
+    it "has part of" do
+      expect(doi.part_of.count).to eq(1)
+      expect(doi.part_of_ids.count).to eq(1)
+      expect(doi.part_of_count).to eq(1)
+
+      part_of_id = doi.part_of_ids.first
+      expect(part_of_id).to eq(source_doi.doi.downcase)
     end
-
-    # it "has part of" do
-    #   expect(doi.part_of.count).to eq(1)
-    #   expect(doi.part_of_ids.count).to eq(1)
-    #   expect(doi.part_of_count).to eq(1)
-
-    #   part_of = doi.part_of.first
-    #   expect(part_of.doi.downcase).to eq(source_doi.uid)
-    # end
   end
 
-  describe "versions", elasticsearch: true do
+  describe "versions" do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:version_events) { create(:event_for_datacite_parts, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "has-version") }
+    let!(:version_event) { create(:event_for_datacite_versions, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}") }
 
-    before do
-      Doi.import
-      sleep 2
+    it "has versions" do
+      expect(doi.versions.count).to eq(1)
+      expect(doi.version_ids.count).to eq(1)
+      expect(doi.version_count).to eq(1)
+
+      version_id = doi.version_ids.first
+      expect(version_id).to eq(target_doi.doi.downcase)
     end
-
-    # it "has versions" do
-    #   expect(doi.versions.count).to eq(1)
-    #   expect(doi.version_ids.count).to eq(1)
-    #   expect(doi.version_count).to eq(1)
-
-    #   version = doi.versions.first
-    #   expect(version.doi.downcase).to eq(target_doi.uid)
-    # end
   end
 
-  describe "version of", elasticsearch: true do
+  describe "version of" do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:part_of_events) { create(:event_for_datacite_part_of, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-version-of") }
+    let!(:part_of_events) { create(:event_for_datacite_version_of, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}") }
 
-    before do
-      Doi.import
-      sleep 2
+    it "has version of" do
+      expect(doi.version_of.count).to eq(1)
+      expect(doi.version_of_ids.count).to eq(1)
+      expect(doi.version_of_count).to eq(1)
+
+      version_of_id = doi.version_of_ids.first
+      expect(version_of_id).to eq(source_doi.doi.downcase)
     end
-
-    # it "has version of" do
-    #   expect(doi.version_of.count).to eq(1)
-    #   expect(doi.version_of_ids.count).to eq(1)
-    #   expect(doi.version_of_count).to eq(1)
-
-    #   version_of = doi.version_of.first
-    #   expect(version_of.doi.downcase).to eq(source_doi.uid)
-    # end
   end
 
   describe "convert_affiliations" do
@@ -910,6 +870,83 @@ describe Doi, type: :model, vcr: true do
       changed_doi = Doi.find(doi.id)
 
       expect(changed_doi.landing_page).to eq(landing_page)
+    end
+  end
+
+  describe "stats_query", elasticsearch: true do
+    subject { Doi }
+
+    before do
+      allow(Time.zone).to receive(:now).and_return(Time.mktime(2015, 4, 8))
+    end
+
+    let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM", symbol: "DC") }
+    let(:provider) { create(:provider, consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION", symbol: "DATACITE") }
+    let(:client) { create(:client, provider: provider, symbol: "DATACITE.TEST") }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+    let!(:doi) { create(:doi) }
+
+    it "counts all dois" do
+      Doi.import
+      sleep 2
+
+      response = subject.stats_query
+      expect(response.results.total).to eq(4)
+      expect(response.aggregations.created.buckets).to eq([{"doc_count"=>4, "key"=>1420070400000, "key_as_string"=>"2015"}])
+    end
+
+    it "counts all consortia dois" do
+      Doi.import
+      sleep 2
+
+      response = subject.stats_query(consortium_id: "dc")
+      expect(response.results.total).to eq(3)
+      expect(response.aggregations.created.buckets).to eq([{"doc_count"=>3, "key"=>1420070400000, "key_as_string"=>"2015"}])
+    end
+
+    it "counts all consortia dois no dois" do
+      Doi.import
+      sleep 2
+
+      response = subject.stats_query(consortium_id: "abc")
+      expect(response.results.total).to eq(0)
+      expect(response.aggregations.created.buckets).to eq([])
+    end
+
+    it "counts all provider dois" do
+      Doi.import
+      sleep 2
+
+      response = subject.stats_query(provider_id: "datacite")
+      expect(response.results.total).to eq(3)
+      expect(response.aggregations.created.buckets).to eq([{"doc_count"=>3, "key"=>1420070400000, "key_as_string"=>"2015"}])
+    end
+
+    it "counts all provider dois no dois" do
+      Doi.import
+      sleep 2
+
+      response = subject.stats_query(provider_id: "abc")
+      expect(response.results.total).to eq(0)
+      expect(response.aggregations.created.buckets).to eq([])
+    end
+
+    it "counts all client dois" do
+      Doi.import
+      sleep 2
+
+      response = subject.stats_query(client_id: "datacite.test")
+      expect(response.results.total).to eq(3)
+      expect(response.aggregations.created.buckets).to eq([{"doc_count"=>3, "key"=>1420070400000, "key_as_string"=>"2015"}])
+    end
+
+    it "counts all client dois no dois" do
+      Doi.import
+      sleep 2
+
+      response = subject.stats_query(client_id: "datacite.abc")
+      expect(response.results.total).to eq(0)
+      expect(response.aggregations.created.buckets).to eq([])
     end
   end
 end

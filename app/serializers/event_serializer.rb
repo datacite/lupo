@@ -7,10 +7,15 @@ class EventSerializer
   set_type :events
   set_id :uuid
   
-  attributes :subj_id, :obj_id, :source_id, :source_doi, :target_doi, :relation_type_id, :source_relation_type_id, :target_relation_type_id, :total, :message_action, :source_token, :license, :occurred_at, :timestamp
+  attributes :subj_id, :obj_id, :source_id, :target_doi, :relation_type_id, :source_relation_type_id, :target_relation_type_id, :total, :message_action, :source_token, :license, :occurred_at, :timestamp
 
   attribute :timestamp, &:updated_at
 
-  belongs_to :doi_for_source, record_type: :doi, id_method_name: :source_doi, serializer: DoiSerializer
-  belongs_to :doi_for_target, record_type: :doi, id_method_name: :target_doi, serializer: DoiSerializer
+  attribute :source_doi do |object|
+    object.source_doi.downcase if object.source_doi.present?
+  end
+
+  attribute :target_doi do |object|
+    object.target_doi.downcase if object.target_doi.present?
+  end
 end

@@ -65,8 +65,6 @@ module Lupo
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
 
-    config.middleware.use Rack::CrawlerDetect
-
     # include graphql
     config.paths.add Rails.root.join('app', 'graphql', 'types').to_s, eager_load: true
     config.paths.add Rails.root.join('app', 'graphql', 'mutations').to_s, eager_load: true
@@ -83,6 +81,18 @@ module Lupo
     # secret_key_base is not used by Rails API, as there are no sessions
     config.secret_key_base = "blipblapblup"
 
+    # enable datadog tracing here so that we can inject tracing 
+    # information into logs
+    Datadog.configure do |c|
+      c.tracer hostname: "datadog.local", enabled: Rails.env.production?, env: Rails.env
+      c.use :rails, service_name: "client-api"
+      c.use :elasticsearch
+      c.use :active_record, analytics_enabled: false
+      # define graphql integration in app/graphql/lupo_schema.rb
+      # c.use :graphql, schemas: [LupoSchema]
+      c.analytics_enabled = true
+    end
+
     config.lograge.enabled = true
     config.lograge.formatter = Lograge::Formatters::Logstash.new
     config.lograge.logger = LogStashLogger.new(type: :stdout)
@@ -96,8 +106,18 @@ module Lupo
     config.lograge.base_controller_class = "ActionController::API"
 
     config.lograge.custom_options = lambda do |event|
+      # Retrieves trace information for current thread
+      correlation = Datadog.tracer.active_correlation
+
       exceptions = %w(controller action format id)
+      
       {
+        # Adds IDs as tags to log output
+        dd: {
+          trace_id: correlation.trace_id,
+          span_id: correlation.span_id
+        },
+        ddsource: ["ruby"],
         params: event.payload[:params].except(*exceptions),
         uid: event.payload[:uid],
       }
@@ -107,13 +127,16 @@ module Lupo
     config.cache_store = :dalli_store, nil, { :namespace => ENV['APPLICATION'] }
 
     # raise error with unpermitted parameters
-    config.action_controller.action_on_unpermitted_parameters = :raise
+    config.action_controller.action_on_unpermitted_parameters = :log
 
     config.action_view.sanitized_allowed_tags = %w(strong em b i code pre sub sup br)
     config.action_view.sanitized_allowed_attributes = []
 
     # make sure all input is UTF-8
     config.middleware.insert 0, Rack::UTF8Sanitizer, additional_content_types: ['application/vnd.api+json', 'application/xml']
+
+    # detect bots and crawlers
+    config.middleware.use Rack::CrawlerDetect
 
     # compress responses with deflate or gzip
     config.middleware.use Rack::Deflater

@@ -151,8 +151,7 @@ describe Doi, vcr: true do
       expect(meta["creators"]).to eq([{"familyName"=>"Fenner", "givenName"=>"Martin","name"=>"Fenner, Martin",
         "nameIdentifiers"=>
           [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405",
-            "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
-        "nameType"=>"Personal"}])
+            "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}]}])
       expect(meta["titles"]).to eq([{"title"=>"Eating your own Dog Food"}])
       expect(meta["publication_year"]).to eq("2016")
       expect(meta["publisher"]).to eq("DataCite")
@@ -251,8 +250,7 @@ describe Doi, vcr: true do
       expect(meta["from"]).to eq("datacite")
       expect(meta["doi"]).to eq("10.14454/1x4x-9056")
       expect(meta["creators"].length).to eq(1)
-      expect(meta["creators"].first).to eq("affiliation" => [{"affiliationIdentifier"=>"https://ror.org/04wxnsj81", "affiliationIdentifierScheme"=>"ROR", "name"=>"DataCite"}],
-        "familyName" => "Fenner",
+      expect(meta["creators"].first).to eq("familyName" => "Fenner",
         "givenName" => "Martin",
         "name" => "Fenner, Martin",
         "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],

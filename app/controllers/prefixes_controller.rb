@@ -4,15 +4,15 @@ class PrefixesController < ApplicationController
   before_action :set_include
   load_and_authorize_resource :except => [:index, :show, :totals]
   around_action :skip_bullet, only: [:index], if: -> { defined?(Bullet) }
-  
+
   def index
     sort = case params[:sort]
            when "relevance" then { "_score" => { order: 'desc' }}
-           when "name" then { "uid" => { order: 'asc' }}
-           when "-name" then { "uid" => { order: 'desc' }}
+           when "name" then { "uid" => { order: 'asc', unmapped_type: "keyword" }}
+           when "-name" then { "uid" => { order: 'desc', unmapped_type: "keyword" }}
            when "created" then { created_at: { order: 'asc' }}
            when "-created" then { created_at: { order: 'desc' }}
-           else { "uid" => { order: 'asc' }}
+           else { "uid" => { order: 'asc', unmapped_type: "keyword" }}
            end
 
     page = page_from_params(params)
@@ -20,14 +20,13 @@ class PrefixesController < ApplicationController
     if params[:id].present?
       response = Prefix.find_by_id(params[:id]) 
     else
-      response = Prefix.query(params[:query], 
-        prefix: params[:prefix],
-        year: params[:year],
-        state: params[:state],
-        provider_id: params[:provider_id],
-        client_id: params[:client_id],
-        page: page, 
-        sort: sort)
+      response = Prefix.query(params[:query],
+                              year: params[:year],
+                              state: params[:state],
+                              provider_id: params[:provider_id],
+                              client_id: params[:client_id],
+                              page: page,
+                              sort: sort)
     end
 
     begin
@@ -35,9 +34,9 @@ class PrefixesController < ApplicationController
       total_pages = page[:size].positive? ? (total.to_f / page[:size]).ceil : 0
       years = total.positive? ? facet_by_year(response.response.aggregations.years.buckets) : nil
       states = total.positive? ? facet_by_key(response.response.aggregations.states.buckets) : nil
-      providers = total.positive? ? facet_by_provider(response.response.aggregations.providers.buckets) : nil
-      clients = total.positive? ? facet_by_client(response.response.aggregations.clients.buckets) : nil
-      
+      providers = total.positive? ? facet_by_combined_key(response.response.aggregations.providers.buckets) : nil
+      clients = total.positive? ? facet_by_combined_key(response.response.aggregations.clients.buckets) : nil
+
       prefixes = response.results
 
       options = {}
@@ -131,10 +130,9 @@ class PrefixesController < ApplicationController
   def set_include
     if params[:include].present?
       @include = params[:include].split(",").map { |i| i.downcase.underscore.to_sym }
-      @include = @include & [:clients, :providers]
+      @include = @include & [:clients, :providers, :client_prefixes, :provider_prefixes]
     else
-      # always include because Ember pagination doesn't (yet) understand include parameter
-      @include = [:clients, :providers]
+      @include = []
     end
   end
 

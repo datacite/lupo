@@ -8,16 +8,18 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.4; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Fri, 11 Oct 2019 08:28:07 GMT
+      - Sat, 28 Mar 2020 05:01:36 GMT
       Content-Type:
       - application/json; charset=utf-8
       Connection:
@@ -31,16 +33,19 @@ http_interactions:
       Etag:
       - W/"8a2e50dd71ab95eba00f90776adb367e"
       X-Runtime:
-      - '0.072491'
+      - '0.086447'
       X-Request-Id:
-      - cf725bef-2018-45d3-afa6-2ab8a1fe4f40
+      - e8504b31-fe8a-442e-a1ae-a77f9b08ce35
       X-Powered-By:
       - Phusion Passenger 5.2.3
       Server:
       - nginx/1.12.2 + Phusion Passenger 5.2.3
+      Content-Encoding:
+      - gzip
     body:
       encoding: ASCII-8BIT
-      string: '{"data":[],"meta":{"total":0,"totalPages":0,"page":1},"links":{"self":"https://api.datacite.org/re3data?page%5Bnumber%5D=1\u0026page%5Bsize%5D=25\u0026query=xxx"}}'
-    http_version: 
-  recorded_at: Fri, 11 Oct 2019 08:28:07 GMT
-recorded_with: VCR 3.0.3
+      string: !binary |-
+        H4sIAAAAAAAAAyyMyw7CIBRE/+Um3ZFCa3BBQkxMP8C9ukC9ViJ9CDRBCf8uWHdnzmQmwk15BeJ4JjBgoQh+8sqAYGSlg+rR/eKcCUSTCBg9PrOL4NDcQcDD+9kJStWs63J41R7ryfbU4qbkXZlWfD8uwwVtxTvZnBbG2u3fO/3JdSdbvurXgvYtQwiQ0hcAAP//AwDS6eBxowAAAA==
+    http_version: null
+  recorded_at: Sat, 28 Mar 2020 05:01:36 GMT
+recorded_with: VCR 5.1.0

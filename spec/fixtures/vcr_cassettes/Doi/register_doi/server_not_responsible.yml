@@ -5,23 +5,25 @@ http_interactions:
     uri: https://handle.test.datacite.org/api/handles/10.1371/JOURNAL.PBIO.2001414
     body:
       encoding: UTF-8
-      string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"TEST/ADMIN","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"http://frami.biz/lorilee"}}]'
+      string: '[{"index":100,"type":"HS_ADMIN","data":{"format":"admin","value":{"handle":"TEST/ADMIN","index":300,"permissions":"111111111111"}}},{"index":1,"type":"URL","data":{"format":"string","value":"https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.2001414"}}]'
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.2.6; mailto:info@datacite.org)
-      Content-Type:
-      - application/json;charset=UTF-8
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Content-Type:
+      - application/json;charset=UTF-8
       Authorization:
       - Basic <HANDLE_TOKEN>
+      Accept-Encoding:
+      - gzip,deflate
   response:
     status:
       code: 400
       message: Bad Request
     headers:
       Date:
-      - Sat, 20 Jul 2019 08:59:55 GMT
+      - Sat, 28 Mar 2020 05:59:58 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Content-Length:
@@ -31,6 +33,6 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"responseCode":301,"message":"That prefix doesn''t live here","handle":"10.1371/JOURNAL.PBIO.2001414"}'
-    http_version: 
-  recorded_at: Sat, 20 Jul 2019 08:59:55 GMT
-recorded_with: VCR 3.0.3
+    http_version: null
+  recorded_at: Sat, 28 Mar 2020 05:59:58 GMT
+recorded_with: VCR 5.1.0

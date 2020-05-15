@@ -159,7 +159,7 @@ module Authenticable
       # we only need password for clients registering DOIs in the handle system
       if uid.include? "."
         payload.merge!(
-          "provider_id" => uid.split(".", 2).first,
+          "provider_id" => user.provider_id,
           "client_id" => uid,
           "password" => password,
         )
@@ -251,6 +251,8 @@ module Authenticable
         client_id: attributes.fetch(:client_id, nil),
         role_id: attributes.fetch(:role_id, "staff_admin"),
         password: attributes.fetch(:password, nil),
+        beta_tester: attributes.fetch(:beta_tester, nil),
+        aud: Rails.env,
         iat: Time.now.to_i,
         exp: Time.now.to_i + attributes.fetch(:exp, 30)
       }.compact
@@ -270,6 +272,7 @@ module Authenticable
         client_id: attributes.fetch(:client_id, nil),
         role_id: attributes.fetch(:role_id, "user"),
         password: attributes.fetch(:password, nil),
+        aud: Rails.env,
         iat: Time.now.to_i,
         exp: Time.now.to_i + attributes.fetch(:exp, 30)
       }.compact
@@ -295,15 +298,15 @@ module Authenticable
 
       # we only need password for clients registering DOIs in the handle system
       if uid.include? "."
-        payload.merge!({
-          "provider_id" => uid.split(".", 2).first,
+        payload.merge!(
+          "provider_id" => user.provider_id,
           "client_id" => uid,
-          "password" => password
-        })
+          "password" => password,
+        )
       elsif uid != "admin"
-        payload.merge!({
+        payload.merge!(
           "provider_id" => uid
-        })
+        )
       end
 
       payload

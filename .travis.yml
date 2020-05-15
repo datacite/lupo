@@ -8,10 +8,6 @@ services:
   - docker
   - memcached
 
-addons:
-  code_climate:
-    repo_token: $CODECLIMATE_REPO_TOKEN
-
 before_install:
   - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.1.1-amd64.deb
   - sudo dpkg -i --force-confnew elasticsearch-7.1.1-amd64.deb

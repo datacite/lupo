@@ -4,7 +4,7 @@ describe "Repository Prefixes", type: :request, elasticsearch: true do
   let(:prefix) { create(:prefix) }
   let(:provider) { create(:provider) }
   let(:client) { create(:client, provider: provider) }
-  let(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }    
+  let(:provider_prefix) { create(:provider_prefix, provider: provider, prefix: prefix) }
   let!(:client_prefixes) { create_list(:client_prefix, 5) }
   let(:client_prefix) { create(:client_prefix, client: client, prefix: prefix, provider_prefix: provider_prefix) }
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
@@ -24,8 +24,36 @@ describe "Repository Prefixes", type: :request, elasticsearch: true do
       expect(json['data'].size).to eq(5)
     end
 
-    it 'returns repository-prefixes by repository_id and prefix-id' do
+    it 'returns repository-prefixes by repository-id' do
+      get "/repository-prefixes?repository-id=#{client_prefixes.first.client_id}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(1)
+    end
+
+    it 'returns repository-prefixes by prefix-id' do
+      get "/repository-prefixes?prefix-id=#{client_prefixes.first.prefix_id}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(1)
+    end
+
+    it 'returns repository-prefixes by partial prefix' do
+      get "/repository-prefixes?query=10.508", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(5)
+    end
+
+    it 'returns repository-prefixes by repository-id and prefix-id' do
       get "/repository-prefixes?repository-id=#{client_prefixes.first.client_id}&#{client_prefixes.first.prefix_id}", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(1)
+    end
+
+    it 'returns prefixes by client-id' do
+      get "/prefixes?client-id=#{client_prefixes.first.client_id}", nil, headers
 
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(1)
@@ -67,6 +95,23 @@ describe "Repository Prefixes", type: :request, elasticsearch: true do
     end
   end
 
+  describe 'DELETE /repository-prefixes/:uid' do
+    let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix, provider_prefix: provider_prefix) }
+
+    before do
+      ProviderPrefix.import
+      Prefix.import
+      ClientPrefix.import
+      sleep 2
+    end
+
+    it 'deletes a repository-prefix' do
+      delete "/repository-prefixes/#{client_prefix.uid}", nil, headers
+
+      expect(last_response.status).to eq(204)
+    end
+  end
+
   describe 'POST /repository-prefixes' do
     context 'when the request is valid' do
       let(:valid_attributes) do
@@ -80,7 +125,7 @@ describe "Repository Prefixes", type: :request, elasticsearch: true do
                   "id": client.symbol.downcase,
                 }
               },
-              "providerPrefix": {
+              "provider-prefix": {
                 "data": {
                   "type": "provider-prefix",
                   "id": provider_prefix.uid,
