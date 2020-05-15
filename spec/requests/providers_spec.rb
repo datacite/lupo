@@ -145,7 +145,7 @@ describe "Providers", type: :request, elasticsearch: true  do
 
       expect(last_response.status).to eq(200)
       expect(json["clients"]).to eq([{"count"=>1, "id"=>"2020", "title"=>"2020"}])
-      expect(json["resourceTypes"]).to eq([{"count"=>3, "id"=>"dataset", "title"=>"Dataset"}])
+      # expect(json["resourceTypes"]).to eq([{"count"=>3, "id"=>"dataset", "title"=>"Dataset"}])
       expect(json["dois"]).to eq([{"count"=>3, "id"=>"2020", "title"=>"2020"}])
     end
   end

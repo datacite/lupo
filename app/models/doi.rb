@@ -675,6 +675,29 @@ class Doi < ActiveRecord::Base
     )
   end
 
+  def self.stats_query(options={})
+    filter = []
+    filter << { term: { provider_id: options[:provider_id] } } if options[:provider_id].present?
+    filter << { term: { client_id: options[:client_id] } } if options[:client_id].present?
+    filter << { term: { consortium_id: options[:consortium_id].upcase }} if options[:consortium_id].present?
+    filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
+    
+    aggregations = {
+      created: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+                 aggs: { bucket_truncate: { bucket_sort: { size: 12 } } } },
+    }
+
+    __elasticsearch__.search({
+      query: {
+        bool: {
+          must: [{ match_all: {} }],
+          filter: filter,
+        }
+      },
+      aggregations: aggregations,
+    })
+  end
+
   def self.query(query, options={})
     # support scroll api
     # map function is small performance hit
