@@ -188,8 +188,8 @@ class ExportController < ApplicationController
           billingCountryCode: provider.billing_information.country,
           twitter: provider.twitter_handle,
           rorId: provider.ror_id,
-          created: export_date(provider.created),
-          modified: export_date(provider.updated),
+          created: export_date(provider.created_at),
+          modified: export_date(provider.updated_at),
           deleted: provider.deleted_at.present? ? export_date(provider.deleted_at) : nil,
         }.values
 
@@ -283,8 +283,8 @@ class ExportController < ApplicationController
           serviceContactEmail: client.service_contact.present? ? client.service_contact.email : nil,
           serviceContactGivenName: client.service_contact.present? ? client.service_contact.given_name : nil,
           serviceContactFamilyName: client.service_contact.present? ? client.service_contact.family_name : nil,
-          created: export_date(client.created),
-          modified: export_date(client.updated),
+          created: export_date(client.created_at),
+          modified: export_date(client.updated_at),
           deleted: client.deleted_at.present? ? export_date(client.deleted_at) : nil,
           doisCountCurrentYear: client_totals[client.uid] ? client_totals[client.uid]["this_year"] : 0,
           doisCountPreviousYear: client_totals[client.uid] ? client_totals[client.uid]["last_year"] : 0,

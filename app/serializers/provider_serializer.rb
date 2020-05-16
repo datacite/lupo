@@ -12,12 +12,16 @@ class ProviderSerializer
   belongs_to :consortium, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |provider| provider.consortium_id }
   has_many :consortium_organizations, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |provider| provider.member_type == "consortium" }
 
-  attribute :country do |object|
-    object.country_code
+  attribute :created do |object|
+    object.created_at
   end
 
-  attribute :is_active do |object|
-    object.is_active.getbyte(0) == 1 ? true : false
+  attribute :updated do |object|
+    object.updated_at
+  end
+
+  attribute :country do |object|
+    object.country_code
   end
 
   attribute :has_password do |object|
