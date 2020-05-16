@@ -2,7 +2,7 @@
 
 class LandingPageUrlAsText < ActiveRecord::Migration[5.1]
   def up
-    change_column :dataset, :last_landing_page, :text, limit: 65535
+    safety_assured { change_column :dataset, :last_landing_page, :text, limit: 65535 }
     add_index :dataset, :last_landing_page_status, name: "index_dataset_on_last_landing_page_status"
     add_index :dataset, :last_landing_page_content_type, name: "index_dataset_on_last_landing_page_content_type"
   end
