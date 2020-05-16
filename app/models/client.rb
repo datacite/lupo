@@ -21,9 +21,7 @@ class Client < ActiveRecord::Base
 
   include Elasticsearch::Model
 
-  # define table and attribute names
-  # uid is used as unique identifier, mapped to id in serializer
-  self.table_name = "datacentre"
+  # define table name
   self.table_name = "repositories"
 
   alias_attribute :flipper_id, :symbol
