@@ -51,23 +51,25 @@ class ExportController < ApplicationController
       csv = headers.to_csv
 
       # Use a hashmap for the contacts to avoid duplicated
-      contacts = Hash.new
+      contacts = {}
 
       add_contact = Proc.new { |contacts, email, id, firstname, lastname, type|
         if email
-          unless contacts.has_key?(email)
-            contacts[email] = {
+          fabrica_id = id + "-" + email
+          unless contacts.has_key?(fabrica_id)
+            contacts[fabrica_id] = {
               'fabricaAccountId' => id,
-              'fabricaId' => id + "-" + email,
+              'fabricaId' => fabrica_id,
+              'email' => email,
               'firstName' => firstname,
               'lastName' => lastname.present? ? lastname : email,
             }
           end
 
-          if contacts[email].has_key?('type')
-            contacts[email]['type'] += ";" + type
+          if contacts[fabrica_id].has_key?('type')
+            contacts[fabrica_id]['type'] += ";" + type
           else
-            contacts[email]['type'] = type
+            contacts[fabrica_id]['type'] = type
           end
         end
       }
@@ -90,11 +92,11 @@ class ExportController < ApplicationController
         end
       end
 
-      contacts.each do |email, contact|
+      contacts.each do |_, contact|
         csv += CSV.generate_line [
           contact['fabricaAccountId'],
           contact['fabricaId'],
-          email,
+          contact['email'],
           contact['firstName'],
           contact['lastName'],
           contact['type'],
