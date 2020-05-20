@@ -6,12 +6,12 @@ class WorksController < ApplicationController
     sort = case params[:sort]
           when "name" then { "doi" => { order: 'asc' }}
           when "-name" then { "doi" => { order: 'desc' }}
-          when "created" then { created: { order: 'asc' }}
-          when "-created" then { created: { order: 'desc' }}
-          when "updated" then { updated: { order: 'asc' }}
-          when "-updated" then { updated: { order: 'desc' }}
+          when "created" then { created_at: { order: 'asc' }}
+          when "-created" then { created_at: { order: 'desc' }}
+          when "updated" then { updated_at: { order: 'asc' }}
+          when "-updated" then { updated_at: { order: 'desc' }}
           when "relevance" then { "_score": { "order": "desc" }}
-          else { updated: { order: 'desc' }}
+          else { updated_at: { order: 'desc' }}
           end
 
     page = page_from_params(params)

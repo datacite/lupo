@@ -81,7 +81,7 @@ module Crosscitable
       end
 
       # generate new xml if attributes have been set directly and/or from metadata that are not DataCite XML
-      read_attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url schema_version).map do |a|
+      read_attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats version language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url schema_version).map do |a|
         [a.to_sym, send(a.to_s)]
       end.to_h.compact
 

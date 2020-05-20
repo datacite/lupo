@@ -2,7 +2,7 @@ require 'maremma'
 require 'benchmark'
 
 class Doi < ActiveRecord::Base
-  audited only: [:doi, :url, :creators, :contributors, :titles, :publisher, :publication_year, :types, :descriptions, :container, :sizes, :formats, :version_info, :language, :dates, :identifiers, :related_identifiers, :funding_references, :geo_locations, :rights_list, :subjects, :schema_version, :content_url, :landing_page, :aasm_state, :source, :reason]
+  audited only: [:doi, :url, :creators, :contributors, :titles, :publisher, :publication_year, :types, :descriptions, :container, :sizes, :formats, :version, :language, :dates, :identifiers, :related_identifiers, :funding_references, :geo_locations, :rights_list, :subjects, :schema_version, :content_url, :landing_page, :aasm_state, :source, :reason]
 
   include Metadatable
   include Cacheable
@@ -57,9 +57,6 @@ class Doi < ActiveRecord::Base
     end
   end
 
-  self.table_name = "dataset"
-  alias_attribute :created_at, :created
-  alias_attribute :updated_at, :updated
   alias_attribute :registered, :minted
   alias_attribute :state, :aasm_state
 
@@ -69,7 +66,7 @@ class Doi < ActiveRecord::Base
   attribute :only_validate, :boolean, default: false
   attribute :should_validate, :boolean, default: false
 
-  belongs_to :client, foreign_key: :datacentre
+  belongs_to :client, foreign_key: :repository_id
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy, inverse_of: :doi
   has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy, inverse_of: :doi
   has_many :view_events, -> { where target_relation_type_id: "views" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
@@ -123,7 +120,6 @@ class Doi < ActiveRecord::Base
 
   before_validation :update_xml, if: :regenerate
   before_save :set_defaults, :save_metadata
-  before_create { self.created = Time.zone.now.utc.iso8601 }
 
   scope :q, ->(query) { where("dataset.doi = ?", query) }
 
@@ -280,11 +276,11 @@ class Doi < ActiveRecord::Base
 
       indexes :xml,                            type: :text, index: "false"
       indexes :content_url,                    type: :keyword
-      indexes :version_info,                   type: :keyword
+      indexes :version,                        type: :keyword
       indexes :formats,                        type: :keyword
       indexes :sizes,                          type: :keyword
       indexes :language,                       type: :keyword
-      indexes :is_active,                      type: :keyword
+      indexes :is_active,                      type: :boolean
       indexes :aasm_state,                     type: :keyword
       indexes :schema_version,                 type: :keyword
       indexes :metadata_version,               type: :keyword
@@ -311,8 +307,8 @@ class Doi < ActiveRecord::Base
       indexes :cache_key,                      type: :keyword
       indexes :registered,                     type: :date, ignore_malformed: true
       indexes :published,                      type: :date, ignore_malformed: true
-      indexes :created,                        type: :date, ignore_malformed: true
-      indexes :updated,                        type: :date, ignore_malformed: true
+      indexes :created_at,                     type: :date, ignore_malformed: true
+      indexes :updated_at,                     type: :date, ignore_malformed: true
 
       # include parent objects
       indexes :client,                         type: :object, properties: {
@@ -332,15 +328,14 @@ class Doi < ActiveRecord::Base
         repository_type: { type: :keyword },
         certificate: { type: :keyword },
         system_email: { type: :text, fields: { keyword: { type: "keyword" }} },
-        version: { type: :integer },
-        is_active: { type: :keyword },
+        is_active: { type: :boolean },
         domains: { type: :text },
         year: { type: :integer },
         url: { type: :text, fields: { keyword: { type: "keyword" }} },
         software: { type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }} },
         cache_key: { type: :keyword },
-        created: { type: :date },
-        updated: { type: :date },
+        created_at: { type: :date },
+        updated_at: { type: :date },
         deleted_at: { type: :date },
         cumulative_years: { type: :integer, index: "false" }
       }
@@ -354,8 +349,7 @@ class Doi < ActiveRecord::Base
         display_name: { type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }} },
         system_email: { type: :text, fields: { keyword: { type: "keyword" }} },
         group_email: { type: :text, fields: { keyword: { type: "keyword" }} },
-        version: { type: :integer },
-        is_active: { type: :keyword },
+        is_active: { type: :boolean },
         year: { type: :integer },
         description: { type: :text },
         website: { type: :text, fields: { keyword: { type: "keyword" }} },
@@ -417,8 +411,8 @@ class Doi < ActiveRecord::Base
           given_name: { type: :text },
           family_name: { type: :text },
         } },
-        created: { type: :date },
-        updated: { type: :date },
+        created_at: { type: :date },
+        updated_at: { type: :date },
         deleted_at: { type: :date },
         cumulative_years: { type: :integer, index: "false" },
         consortium: { type: :object },
@@ -491,7 +485,7 @@ class Doi < ActiveRecord::Base
       "rights_list" => Array.wrap(rights_list),
       "container" => container,
       "content_url" => content_url,
-      "version_info" => version_info,
+      "version" => version,
       "formats" => Array.wrap(formats),
       "sizes" => Array.wrap(sizes),
       "language" => language,
@@ -507,8 +501,8 @@ class Doi < ActiveRecord::Base
       "source" => source,
       "cache_key" => cache_key,
       "registered" => registered,
-      "created" => created,
-      "updated" => updated,
+      "created_at" => created_at,
+      "updated_at" => updated_at,
       "published" => published,
       "client" => client.try(:as_indexed_json, exclude_associations: true),
       "provider" => provider.try(:as_indexed_json, exclude_associations: true),
@@ -557,7 +551,7 @@ class Doi < ActiveRecord::Base
         # }
       },
       registration_agencies: { terms: { field: 'agency', size: 10, min_doc_count: 1 } },
-      created: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+      created: { date_histogram: { field: 'created_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                  aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
       registered: { date_histogram: { field: 'registered', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                  aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
@@ -618,18 +612,18 @@ class Doi < ActiveRecord::Base
   def self.sub_aggregations
     {
       states: { terms: { field: 'aasm_state', size: 4, min_doc_count: 1 } },
-      this_month: { date_range: { field: 'created', ranges: { from: "now/M", to: "now/d" } } },
-      this_year: { date_range: { field: 'created', ranges: { from: "now/y", to: "now/d" } } },
-      last_year: { date_range: { field: 'created', ranges: { from: "now-1y/y", to: "now/y-1d" } } },
-      two_years_ago: { date_range: { field: 'created', ranges: { from: "now-2y/y", to: "now-1y/y-1d" } } }
+      this_month: { date_range: { field: 'created_at', ranges: { from: "now/M", to: "now/d" } } },
+      this_year: { date_range: { field: 'created_at', ranges: { from: "now/y", to: "now/d" } } },
+      last_year: { date_range: { field: 'created_at', ranges: { from: "now-1y/y", to: "now/y-1d" } } },
+      two_years_ago: { date_range: { field: 'created_at', ranges: { from: "now-2y/y", to: "now-1y/y-1d" } } }
     }
   end
 
   def self.export_sub_aggregations
     {
-      this_year: { date_range: { field: 'created', ranges: { from: "now/y", to: "now/d" } } },
-      last_year: { date_range: { field: 'created', ranges: { from: "now-1y/y", to: "now/y-1d" } } },
-      two_years_ago: { date_range: { field: 'created', ranges: { from: "now-2y/y", to: "now-1y/y-1d" } } }
+      this_year: { date_range: { field: 'created_at', ranges: { from: "now/y", to: "now/d" } } },
+      last_year: { date_range: { field: 'created_at', ranges: { from: "now-1y/y", to: "now/y-1d" } } },
+      two_years_ago: { date_range: { field: 'created_at', ranges: { from: "now-2y/y", to: "now-1y/y-1d" } } }
     }
   end
 
@@ -644,7 +638,7 @@ class Doi < ActiveRecord::Base
     options[:page] ||= {}
     options[:page][:number] ||= 1
     options[:page][:size] ||= 1000
-    options[:sort] ||= { created: { order: "asc" }}
+    options[:sort] ||= { created_at: { order: "asc" }}
 
     must = [{ terms: { doi: ids.map(&:upcase) }}]
     must << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
@@ -683,7 +677,7 @@ class Doi < ActiveRecord::Base
     filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
     
     aggregations = {
-      created: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+      created: { date_histogram: { field: 'created_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                  aggs: { bucket_truncate: { bucket_sort: { size: 12 } } } },
     }
 
@@ -744,7 +738,7 @@ class Doi < ActiveRecord::Base
 
       # make sure we have a valid cursor
       search_after = options.dig(:page, :cursor).presence || [1, "1"]
-      sort = [{ created: "asc", uid: "asc" }]
+      sort = [{ created_at: "asc", uid: "asc" }]
     else
       from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)
       search_after = nil
@@ -783,7 +777,7 @@ class Doi < ActiveRecord::Base
     filter << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
     filter << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
     filter << { term: { uid: options[:uid] }} if options[:uid].present?
-    filter << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
+    filter << { range: { created_at: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
     filter << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
     filter << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
     filter << { term: { source: options[:source] } } if options[:source].present?
@@ -943,7 +937,7 @@ class Doi < ActiveRecord::Base
     meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
     attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
       [a.to_sym, meta[a]]
-    end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
+    end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version: meta["version"], xml: string)
 
     # update_attributes will trigger validations and Elasticsearch indexing
     doi.update_attributes(attrs)
@@ -1453,7 +1447,7 @@ class Doi < ActiveRecord::Base
     r = ::Client.where(symbol: value).first
     fail ActiveRecord::RecordNotFound unless r.present?
 
-    write_attribute(:datacentre, r.id)
+    write_attribute(:repository_id, r.id)
   end
 
   def provider_id
@@ -1535,8 +1529,8 @@ class Doi < ActiveRecord::Base
     attributes = {
       "doi" => doi,
       "state" => aasm_state,
-      "created" => created,
-      "updated" => date_updated }
+      "created" => created_at,
+      "updated" => updated_at }
 
     { "id" => doi, "type" => "dois", "attributes" => attributes }
   end
@@ -1562,7 +1556,7 @@ class Doi < ActiveRecord::Base
   end
 
   def date_updated
-    updated
+    updated_at
   end
 
   def published
@@ -1570,7 +1564,7 @@ class Doi < ActiveRecord::Base
   end
 
   def cache_key
-    timestamp = updated || Time.zone.now
+    timestamp = updated_at || Time.zone.now
     "dois/#{uid}-#{timestamp.iso8601}"
   end
 
@@ -1838,9 +1832,7 @@ class Doi < ActiveRecord::Base
   end
 
   def set_defaults
-    self.is_active = (aasm_state == "findable") ? "\x01" : "\x00"
-    self.version = version.present? ? version + 1 : 1
-    self.updated = Time.zone.now.utc.iso8601
+    self.is_active = (aasm_state == "findable") ? true : false
   end
 
   def self.migrate_landing_page(options={})
