@@ -10,10 +10,14 @@ class ClientSerializer
   belongs_to :consortium, record_type: :providers, serializer: ProviderSerializer, if: Proc.new { |client| client.consortium_id }
   has_many :prefixes, record_type: :prefixes
 
-  attribute :is_active do |object|
-    object.is_active.getbyte(0) == 1 ? true : false
+  attribute :created do |object|
+    object.created_at
   end
 
+  attribute :updated do |object|
+    object.updated_at
+  end
+  
   attribute :has_password do |object|
     object.password.present?
   end

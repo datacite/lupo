@@ -6,12 +6,13 @@ describe "Providers", type: :controller, elasticsearch: true do
   describe "provider_count" do
     before do
       allow(Time.zone).to receive(:now).and_return(Time.mktime(2015, 4, 8))
-      @providers = create_list(:provider, 3)
+      @providers = create_list(:provider, 3, created_at: Time.zone.now)
     end
   
     it "counts all providers" do
       Provider.import
       sleep 2
+
       expect(subject.provider_count).to eq([{"count"=>3, "id"=>"2015", "title"=>"2015"},
         {"count"=>3, "id"=>"2016", "title"=>"2016"},
         {"count"=>3, "id"=>"2017", "title"=>"2017"},
@@ -37,7 +38,7 @@ describe "Providers", type: :controller, elasticsearch: true do
   describe "client_count" do
     before do
       allow(Time.zone).to receive(:now).and_return(Time.mktime(2015, 4, 8))
-      @clients = create_list(:client, 3)
+      @clients = create_list(:client, 3, created_at: Time.zone.now)
     end
   
     it "counts all clients" do

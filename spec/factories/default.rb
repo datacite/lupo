@@ -241,9 +241,8 @@ FactoryBot.define do
     schema_version { "http://datacite.org/schema/kernel-4" }
     source { "test" }
     regenerate { true }
-    created { Faker::Time.backward(14, :evening) }
+    created_at { Time.zone.now }
     minted { Faker::Time.backward(15, :evening) }
-    updated { Faker::Time.backward(5, :evening) }
 
     initialize_with { Doi.where(doi: doi).first_or_initialize }
   end

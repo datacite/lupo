@@ -13,10 +13,10 @@ class DoisController < ApplicationController
     sort = case params[:sort]
            when "name" then { "doi" => { order: 'asc' }}
            when "-name" then { "doi" => { order: 'desc' }}
-           when "created" then { created: { order: 'asc' }}
-           when "-created" then { created: { order: 'desc' }}
-           when "updated" then { updated: { order: 'asc' }}
-           when "-updated" then { updated: { order: 'desc' }}
+           when "created" then { created_at: { order: 'asc' }}
+           when "-created" then { created_at: { order: 'desc' }}
+           when "updated" then { updated_at: { order: 'asc' }}
+           when "-updated" then { updated_at: { order: 'desc' }}
            when "published" then { published: { order: 'asc' }}
            when "-published" then { published: { order: 'desc' }}
            when "view-count" then { view_count: { order: 'asc' }}
@@ -26,7 +26,7 @@ class DoisController < ApplicationController
            when "citation-count" then { citation_count: { order: 'asc' }}
            when "-citation-count" then { citation_count: { order: 'desc' }}
            when "relevance" then { "_score": { "order": "desc" }}
-           else { updated: { order: 'desc' }}
+           else { updated_at: { order: 'desc' }}
            end
 
     page = page_from_params(params)
@@ -497,7 +497,7 @@ class DoisController < ApplicationController
   def get_dois
     authorize! :get_urls, Doi
 
-    client = Client.where("datacentre.symbol = ?", current_user.uid.upcase).first
+    client = Client.where("repositories.symbol = ?", current_user.uid.upcase).first
     client_prefix = client.prefixes.first
     head :no_content && return if client_prefix.blank?
 
@@ -682,7 +682,7 @@ class DoisController < ApplicationController
 
     read_attrs_keys = [:url, :creators, :contributors, :titles, :publisher,
       :publicationYear, :types, :descriptions, :container, :sizes,
-      :formats, :language, :dates, :identifiers, :alternateIdentifiers, :relatedIdentifiers,
+      :formats, :version, :language, :dates, :identifiers, :alternateIdentifiers, :relatedIdentifiers,
       :fundingReferences, :geoLocations, :rightsList, :agency,
       :subjects, :contentUrl, :schemaVersion]
 
@@ -698,7 +698,7 @@ class DoisController < ApplicationController
     end.compact
 
     # handle version metadata
-    p[:version_info] = p[:version] || meta["version_info"] if p.has_key?(:version) || meta["version_info"].present?
+    # p[:version] = p[:version] || meta["version"] if p.has_key?(:version) || meta["version"].present?
     
     # only update landing_page info if something is received via API to not overwrite existing data
     p.merge!(landing_page: p[:landingPage]) if p[:landingPage].present?
@@ -710,7 +710,7 @@ class DoisController < ApplicationController
       :confirmDoi, :prefix, :suffix, :publicationYear, :alternateIdentifiers, :alternate_identifiers,
       :rightsList, :relatedIdentifiers, :fundingReferences, :geoLocations,
       :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage,
-      :created, :registered, :updated, :published, :lastLandingPage, :version,
+      :created, :registered, :updated, :published, :lastLandingPage,
       :lastLandingPageStatus, :lastLandingPageStatusCheck,
       :lastLandingPageStatusResult, :lastLandingPageContentType, :contentUrl,
       :viewsOverTime, :downloadsOverTime, :citationsOverTime, :citationCount, :downloadCount,

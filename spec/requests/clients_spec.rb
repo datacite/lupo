@@ -313,7 +313,7 @@ describe 'Clients', type: :request, elasticsearch: true do
   describe 'DELETE /clients/:id' do
     it 'returns status code 204' do
       delete "/clients/#{client.uid}", nil, headers
-
+      puts last_response.body
       expect(last_response.status).to eq(204)
     end
 

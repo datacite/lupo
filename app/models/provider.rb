@@ -1,7 +1,7 @@
 require "countries"
 
 class Provider < ActiveRecord::Base
-  audited except: [:globus_uuid, :salesforce_id, :password, :updated, :experiments, :comments, :logo, :version, :doi_quota_allowed, :doi_quota_used]
+  audited except: [:globus_uuid, :salesforce_id, :password, :updated_at, :logo]
 
   # include helper module for caching infrequently changing resources
   include Cacheable
@@ -30,12 +30,10 @@ class Provider < ActiveRecord::Base
 
   validates_attachment :logo, content_type: { content_type: ["image/jpg", "image/jpeg", "image/png"] }
 
-  # define table and attribute names
-  # uid is used as unique identifier, mapped to id in serializer
-  self.table_name = "allocator"
+  # define table name
+  self.table_name = "members"
+
   alias_attribute :flipper_id, :symbol
-  alias_attribute :created_at, :created
-  alias_attribute :updated_at, :updated
   attr_readonly :symbol
 
   validates_presence_of :symbol, :name, :display_name, :system_email
@@ -67,7 +65,7 @@ class Provider < ActiveRecord::Base
 
   strip_attributes
 
-  has_many :clients, foreign_key: :allocator
+  has_many :clients, foreign_key: :member_id
   has_many :dois, through: :clients
   has_many :provider_prefixes, dependent: :destroy
   has_many :prefixes, through: :provider_prefixes
@@ -76,8 +74,6 @@ class Provider < ActiveRecord::Base
   has_many :activities, as: :auditable, dependent: :destroy
 
   before_validation :set_region, :set_defaults
-  before_create { self.created = Time.zone.now.utc.iso8601 }
-  before_save { self.updated = Time.zone.now.utc.iso8601 }
 
   accepts_nested_attributes_for :prefixes
 
@@ -106,8 +102,7 @@ class Provider < ActiveRecord::Base
       indexes :display_name,  type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", "analyzer": "string_lowercase", "fielddata": true }}
       indexes :system_email,  type: :text, fields: { keyword: { type: "keyword" }}
       indexes :group_email,   type: :text, fields: { keyword: { type: "keyword" }}
-      indexes :version,       type: :integer
-      indexes :is_active,     type: :keyword
+      indexes :is_active,     type: :boolean
       indexes :year,          type: :integer
       indexes :description,   type: :text
       indexes :website,       type: :text, fields: { keyword: { type: "keyword" }}
@@ -170,8 +165,8 @@ class Provider < ActiveRecord::Base
         given_name: { type: :text},
         family_name: { type: :text }
       }
-      indexes :created,       type: :date
-      indexes :updated,       type: :date
+      indexes :created_at,    type: :date
+      indexes :updated_at,    type: :date
       indexes :deleted_at,    type: :date
       indexes :cumulative_years, type: :integer, index: "false"
 
@@ -229,8 +224,8 @@ class Provider < ActiveRecord::Base
       "service_contact" => service_contact,
       "secondary_service_contact" => secondary_service_contact,
       "voting_contact" => voting_contact,
-      "created" => created,
-      "updated" => updated,
+      "created_at" => created_at,
+      "updated_at" => updated_at,
       "deleted_at" => deleted_at,
       "cumulative_years" => cumulative_years,
       "consortium" => consortium.try(:as_indexed_json),
@@ -243,7 +238,7 @@ class Provider < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      years: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+      years: { date_histogram: { field: 'created_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
       cumulative_years: { terms: { field: 'cumulative_years', size: 10, min_doc_count: 1, order: { _count: "asc" } } },
       regions: { terms: { field: 'region', size: 10, min_doc_count: 1 } },
@@ -262,7 +257,7 @@ class Provider < ActiveRecord::Base
       salesforce_id: salesforce_id,
       consortium_salesforce_id: consortium.present? ? consortium.salesforce_id : '',
       role_name: role_name,
-      is_active: is_active == "\x01",
+      is_active: is_active,
       description: description,
       website: website,
       region: region_human_name,
@@ -303,8 +298,8 @@ class Provider < ActiveRecord::Base
       secondary_billing_contact_family_name: secondary_billing_contact_family_name,
       twitter_handle: twitter_handle,
       ror_id: ror_id,
-      created: created,
-      updated: updated,
+      created_at: created_at,
+      updated_at: updated_at,
       deleted_at: deleted_at,
     }.values
 
@@ -320,7 +315,7 @@ class Provider < ActiveRecord::Base
   end
 
   def cache_key
-    "providers/#{uid}-#{updated.iso8601}"
+    "providers/#{uid}-#{updated_at.iso8601}"
   end
 
   def year
@@ -564,13 +559,12 @@ class Provider < ActiveRecord::Base
       "country-code" => country_code,
       "role_name" => role_name,
       "description" => description,
-      "is-active" => is_active == "\x01",
-      "version" => version,
+      "is-active" => is_active,
       "joined" => joined && joined.iso8601,
       "twitter_handle" => twitter_handle,
       "ror_id" => ror_id,
-      "created" => created.iso8601,
-      "updated" => updated.iso8601,
+      "created_at" => created_at.iso8601,
+      "updated_at" => updated_at.iso8601,
       "deleted_at" => deleted_at ? deleted_at.iso8601 : nil }
 
     { "id" => symbol.downcase, "type" => "providers", "attributes" => attributes }
@@ -589,11 +583,7 @@ class Provider < ActiveRecord::Base
 
   def set_defaults
     self.symbol = symbol.upcase if symbol.present?
-    self.is_active = is_active ? "\x01" : "\x00"
-    self.version = version.present? ? version + 1 : 0
     self.role_name = "ROLE_ALLOCATOR" unless role_name.present?
-    self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
-    self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
     self.billing_information = {} unless billing_information.present?
     self.consortium_id = nil unless member_type == "consortium_organization"
     self.non_profit_status = "non-profit" unless non_profit_status.present?
