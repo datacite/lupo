@@ -206,7 +206,7 @@ class ProvidersController < ApplicationController
       status = 400
       Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
-    elsif @provider.update_attributes(is_active: nil, deleted_at: Time.zone.now)
+    elsif @provider.update_attributes(is_active: false, deleted_at: Time.zone.now)
       @provider.send_delete_email(responsible_id: current_user.uid) unless Rails.env.test?
       head :no_content
     else
