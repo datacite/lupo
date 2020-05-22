@@ -451,8 +451,8 @@ describe Doi, type: :model, vcr: true do
       params = doi.to_jsonapi
       expect(params.dig("id")).to eq(doi.doi)
       expect(params.dig("attributes","state")).to eq("draft")
-      expect(params.dig("attributes","created")).to eq(doi.created_at)
-      expect(params.dig("attributes","updated")).to eq(doi.updated_at)
+      expect(params.dig("attributes","created")).to eq(doi.created)
+      expect(params.dig("attributes","updated")).to eq(doi.updated)
     end
   end
 

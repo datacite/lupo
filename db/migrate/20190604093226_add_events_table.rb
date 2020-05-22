@@ -2,7 +2,7 @@
 
 class AddEventsTable < ActiveRecord::Migration[5.2]
   def change
-    create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+    create_table "events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
       t.text "uuid", null: false
       t.text "subj_id", null: false
       t.text "obj_id"

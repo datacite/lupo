@@ -22,12 +22,4 @@ class MemberSerializer
   attribute :country do |object|
     object.country_code
   end
-
-  attribute :created do |object|
-    object.created_at
-  end
-
-  attribute :updated do |object|
-    object.updated_at
-  end
 end

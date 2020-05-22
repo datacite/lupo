@@ -2,7 +2,7 @@
 
 class RemoveGeneralContact < ActiveRecord::Migration[5.2]
   def up
-    safety_assured { remove_column :allocator, :general_contact }
+    remove_column :allocator, :general_contact
   end
 
   def down

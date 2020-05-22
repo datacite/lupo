@@ -2,7 +2,7 @@
 
 class AddFocusArea < ActiveRecord::Migration[5.2]
   def up
-    safety_assured { remove_column :allocator, :institution_type, :string, limit: 191 }
+    remove_column :allocator, :institution_type, :string, limit: 191
 
     add_column :allocator, :focus_area, :string, limit: 191
     add_column :allocator, :organization_type, :string, limit: 191

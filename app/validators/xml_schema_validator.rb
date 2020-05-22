@@ -9,6 +9,7 @@ class XmlSchemaValidator < ActiveModel::EachValidator
       "geoLocations" => "geo_locations",
       "rightsList" => "rights_list",
       "fundingReferences" => "funding_references",
+      "version" => "version_info",
       "resource" => "xml"
     }
 

@@ -2,7 +2,7 @@
 
 class ChangeMediaUrlColumnType < ActiveRecord::Migration[5.2]
   def up
-    safety_assured { change_column :media, :url, :text, limit: 65535 }
+    change_column :media, :url, :text, limit: 65535
     add_index :media, :url, name: "index_media_on_url", length: 100
   end
 

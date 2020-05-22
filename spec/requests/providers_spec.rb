@@ -98,7 +98,7 @@ describe "Providers", type: :request, elasticsearch: true  do
 
     it "returns provider" do
       get "/providers/#{provider.symbol.downcase}", nil, headers
-      puts last_response.body
+
       expect(last_response.status).to eq(200)
       expect(json.dig('data', 'id')).to eq(provider.symbol.downcase)
       expect(json["meta"]).to eq("consortiumOrganizationCount"=>0, "repositoryCount"=>1)

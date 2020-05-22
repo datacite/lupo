@@ -10,7 +10,7 @@ class TransferJob < ActiveJob::Base
     doi = Doi.where(doi: doi_id).first
 
     if doi.present? && options[:target_id].present?
-      doi.update_attributes(repository_id: options[:target_id])
+      doi.update_attributes(datacentre: options[:target_id])
 
       doi.__elasticsearch__.index_document
 

@@ -11,8 +11,8 @@ class ClientsController < ApplicationController
            when "relevance" then { "_score" => { order: 'desc' }}
            when "name" then { "name.raw" => { order: 'asc' }}
            when "-name" then { "name.raw" => { order: 'desc' }}
-           when "created" then { created_at: { order: 'asc' }}
-           when "-created" then { created_at: { order: 'desc' }}
+           when "created" then { created: { order: 'asc' }}
+           when "-created" then { created: { order: 'desc' }}
            else { "name.raw" => { order: 'asc' }}
            end
 
