@@ -66,7 +66,7 @@ class Client < ActiveRecord::Base
   attr_accessor :target_id
 
   # use different index for testing
-  index_name Rails.env.test? ? "clients-test" : "clients"
+  index_name Rails.env.test? ? "clients-test" : "clients-#{ENV["ES_PREFIX"]}"
 
   settings index: {
     analysis: {

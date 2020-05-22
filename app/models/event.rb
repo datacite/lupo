@@ -106,7 +106,7 @@ class Event < ActiveRecord::Base
   attr_accessor :container_title, :url
 
   # use different index for testing
-  index_name Rails.env.test? ? "events-test" : "events"
+  index_name Rails.env.test? ? "events-test" : "events-#{ENV["ES_PREFIX"]}"
 
   mapping dynamic: "false" do
     indexes :uuid,             type: :keyword

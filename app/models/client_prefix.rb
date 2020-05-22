@@ -16,7 +16,7 @@ class ClientPrefix < ActiveRecord::Base
   validates_presence_of :client, :prefix, :provider_prefix
 
   # use different index for testing
-  index_name Rails.env.test? ? "client-prefixes-test" : "client-prefixes"
+  index_name Rails.env.test? ? "client-prefixes-test" : "client-prefixes-#{ENV["ES_PREFIX"]}"
 
   mapping dynamic: "false" do
     indexes :id,                 type: :keyword

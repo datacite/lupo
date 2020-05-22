@@ -82,7 +82,7 @@ class Provider < ActiveRecord::Base
   accepts_nested_attributes_for :prefixes
 
   # use different index for testing
-  index_name Rails.env.test? ? "providers-test" : "providers"
+  index_name Rails.env.test? ? "providers-test" : "providers-#{ENV["ES_PREFIX"]}"
 
   settings index: {
     analysis: {
