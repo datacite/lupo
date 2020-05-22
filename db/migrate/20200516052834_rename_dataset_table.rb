@@ -7,14 +7,11 @@ class RenameDatasetTable < ActiveRecord::Migration[5.2]
     Lhm.change_table :dataset do |m|
       m.remove_column :is_ref_quality
       m.remove_column :version
+      m.rename_column :version_info, :version
       m.rename_column :datacentre, :repository_id
       m.rename_column :created, :created_at
       m.rename_column :updated, :updated_at
       m.change_column :is_active, "BOOLEAN DEFAULT TRUE" 
-    end
-
-    Lhm.change_table :dataset do |m|
-      m.rename_column :version_info, :version
     end
 
     safety_assured { rename_table :dataset, :dois }
