@@ -55,7 +55,7 @@ module Helpable
 
       if [200, 201].include?(response.status)
         # update minted column after first successful registration in handle system
-        self.update_attributes(minted: Time.zone.now, updated_at: Time.zone.now) if minted.blank?
+        self.update_attributes(minted: Time.zone.now, updated: Time.zone.now) if minted.blank?
         Rails.logger.info "[Handle] URL for DOI " + doi + " updated to " + url + "." unless Rails.env.test?
 
         self.__elasticsearch__.index_document

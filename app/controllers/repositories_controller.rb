@@ -182,7 +182,7 @@ class RepositoriesController < ApplicationController
       status = 400
       Rails.logger.warn message
       render json: { errors: [{ status: status.to_s, title: message }] }.to_json, status: status
-    elsif @client.update_attributes(is_active: false, deleted_at: Time.zone.now)
+    elsif @client.update_attributes(is_active: nil, deleted_at: Time.zone.now)
       @client.send_delete_email unless Rails.env.test?
       head :no_content
     else
