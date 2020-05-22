@@ -109,24 +109,19 @@ describe Doi, vcr: true do
       end
     end
 
-    it 'should register on save' do
-      url = "https://blog.datacite.org/"
-      subject = create(:doi, doi: "10.4124/shxthpwryv", url: url, client: client, aasm_state: "findable")
+    # it 'should register on save' do
+    #   url = "https://blog.datacite.org/"
+    #   subject = create(:doi, doi: "10.5438/hpc4-5t22", url: url, client: client, aasm_state: "findable")
 
-      expect(subject.url).to eq(url)
-      expect(subject.minted.iso8601).to be_present
+    #   expect(subject.url).to eq(url)
+    #   expect(subject.minted.iso8601).to be_present
 
-      sleep 1
-      response = subject.get_url
-      expect(response.body.dig("data", "responseCode")).to eq(1)
-      expect(response.body.dig("data", "values")).to eq([{"data"=>
-        {"format"=>"string",
-        "value"=>"https://staging-data.mendeley.com/datasets/shxthpwryv"},
-        "index"=>1,
-        "timestamp"=>"2020-05-21T08:56:38Z",
-        "ttl"=>86400,
-        "type"=>"URL"}])
-    end
+    #   sleep 1
+    #   response = subject.get_url
+
+    #   expect(response.body.dig("data", "responseCode")).to eq(1)
+    #   expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/"}, "ttl"=>86400, "timestamp"=>"2018-07-24T10:43:28Z"}])
+    # end
 
     it 'should change url' do
       subject.url = "https://blog.datacite.org/re3data-science-europe/"
