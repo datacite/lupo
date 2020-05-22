@@ -76,6 +76,7 @@ after_success:
 
       if [ "${TRAVIS_TAG?}" ]; then
         ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/prod-eu-west/services/client-api/_lupo.auto.tfvars;
+        ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/test/services/client-api/_lupo.auto.tfvars;
         sentry-cli releases deploys lupo:${GIT_TAG} new -e production;
       else
         sentry-cli releases deploys lupo:${GIT_TAG} new -e stage;
