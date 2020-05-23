@@ -69,10 +69,9 @@ module DoiItem
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
-    argument :last, Int, required: false, default_value: 25
     argument :after, String, required: false
-    argument :before, String, required: false
   end
+
   field :citations, WorkConnectionWithTotalType, null: true, connection: true, max_page_size: 100, description: "Citations for this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
@@ -90,10 +89,9 @@ module DoiItem
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
-    argument :last, Int, required: false, default_value: 25
     argument :after, String, required: false
-    argument :before, String, required: false
   end
+
   field :parts, WorkConnectionWithTotalType, null: true, connection: true, max_page_size: 100, description: "Parts of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
@@ -111,10 +109,9 @@ module DoiItem
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
-    argument :last, Int, required: false, default_value: 25
     argument :after, String, required: false
-    argument :before, String, required: false
   end
+
   field :part_of, WorkConnectionWithTotalType, null: true, connection: true, max_page_size: 100, description: "The DOI is a part of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
@@ -132,10 +129,9 @@ module DoiItem
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
-    argument :last, Int, required: false, default_value: 25
     argument :after, String, required: false
-    argument :before, String, required: false
   end
+
   field :versions, WorkConnectionWithTotalType, null: true, connection: true, max_page_size: 100, description: "Versions of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
@@ -153,10 +149,9 @@ module DoiItem
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
-    argument :last, Int, required: false, default_value: 25
     argument :after, String, required: false
-    argument :before, String, required: false
   end
+
   field :version_of, WorkConnectionWithTotalType, null: true, connection: true, max_page_size: 100, description: "The DOI is a version of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
@@ -174,9 +169,7 @@ module DoiItem
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
-    argument :last, Int, required: false, default_value: 25
     argument :after, String, required: false
-    argument :before, String, required: false
   end
 
   def type

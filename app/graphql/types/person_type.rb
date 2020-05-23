@@ -27,9 +27,7 @@ class PersonType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
-    argument :last, Int, required: false, default_value: 25
     argument :after, String, required: false
-    argument :before, String, required: false
   end
 
   field :publications, PublicationConnectionWithTotalType, null: true, connection: true, description: "Authored publications"  do
@@ -45,9 +43,7 @@ class PersonType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
-    argument :last, Int, required: false, default_value: 25
     argument :after, String, required: false
-    argument :before, String, required: false
   end
 
   field :softwares, SoftwareConnectionWithTotalType, null: true, connection: true, description: "Authored software"  do
@@ -63,9 +59,7 @@ class PersonType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
-    argument :last, Int, required: false, default_value: 25
     argument :after, String, required: false
-    argument :before, String, required: false
   end
 
   field :works, WorkConnectionWithTotalType, null: true, connection: true, description: "Authored works" do
@@ -82,9 +76,7 @@ class PersonType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
-    argument :last, Int, required: false, default_value: 25
     argument :after, String, required: false
-    argument :before, String, required: false
   end
 
   def publications(**args)

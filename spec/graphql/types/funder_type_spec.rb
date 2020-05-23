@@ -168,7 +168,7 @@ describe FunderType do
       response = LupoSchema.execute(query).as_json
       puts response
       expect(response.dig("data", "funders", "totalCount")).to eq(1028)
-      expect(response.dig("data", "funders", "pageInfo", "endCursor")).to eq(1028)
+      expect(response.dig("data", "funders", "pageInfo", "endCursor")).to eq("MQ")
       expect(response.dig("data", "funders", "pageInfo", "hasNextPage")).to eq(true)
       expect(response.dig("data", "funders", "nodes").length).to eq(4)
       funder = response.dig("data", "funders", "nodes", 0)

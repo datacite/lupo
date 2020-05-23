@@ -34,16 +34,7 @@
     attr_reader :total_count
 
     # Raw access to client-provided values. (`max_page_size` not applied to first or last.)
-    attr_accessor :before_value, :after_value, :first_value, :last_value
-
-    # @return [String, nil] the client-provided cursor. `""` is treated as `nil`.
-    def before
-      if defined?(@before)
-        @before
-      else
-        @before = @before_value == "" ? nil : @before_value
-      end
-    end
+    attr_accessor :after_value, :first_value
 
     # @return [String, nil] the client-provided cursor. `""` is treated as `nil`.
     def after
@@ -58,8 +49,6 @@
     # @param context [Query::Context]
     # @param first [Integer, nil] The limit parameter from the client, if it provided one
     # @param after [String, nil] A cursor for pagination, if the client provided one
-    # @param last [Integer, nil] Limit parameter from the client, if provided
-    # @param before [String, nil] A cursor for pagination, if the client provided one.
     # @param max_page_size [Integer, nil] A configured value to cap the result size. Applied as `first` if neither first or last are given.
     def initialize(items, context: nil, first: nil, after: nil, max_page_size: :not_given, last: nil, before: nil)
       @items = items.results
@@ -69,8 +58,6 @@
 
       @first_value = first
       @after_value = after
-      @last_value = last
-      @before_value = before
 
       @total_count = items.results.total
 
@@ -119,12 +106,6 @@
       end
     end
 
-    attr_writer :last
-    # @return [Integer, nil] A clamped `last` value. (The underlying instance variable doesn't have limits on it)
-    def last
-      @last ||= limit_pagination_argument(@last_value, max_page_size)
-    end
-
     # @return [Array<Edge>] {nodes}, but wrapped with Edge instances
     def edges
       @edges ||= nodes.map { |n| self.class.edge_class.new(n, self) }
@@ -144,11 +125,6 @@
     # @return [Boolean] True if there are more items after this page
     def has_next_page
       nodes.length < total_count && !(nodes.length < first.to_i)
-    end
-
-    # @return [Boolean] True if there were items before these items
-    def has_previous_page
-      nodes.length < total_count && !(nodes.length < last.to_i)
     end
 
     # @return [String] The cursor of the first item in {nodes}

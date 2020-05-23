@@ -27,9 +27,7 @@ class OrganizationType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
-    argument :last, Int, required: false, default_value: 25
     argument :after, String, required: false
-    argument :before, String, required: false
   end
 
   field :publications, PublicationConnectionWithTotalType, null: true, description: "Publications from this organization", connection: true do
@@ -45,9 +43,7 @@ class OrganizationType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
-    argument :last, Int, required: false, default_value: 25
     argument :after, String, required: false
-    argument :before, String, required: false
   end
 
   field :softwares, SoftwareConnectionWithTotalType, null: true, description: "Software from this organization", connection: true do
@@ -63,9 +59,7 @@ class OrganizationType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
-    argument :last, Int, required: false, default_value: 25
     argument :after, String, required: false
-    argument :before, String, required: false
   end
 
   field :works, WorkConnectionWithTotalType, null: true, description: "Works from this organization", connection: true do
@@ -81,9 +75,7 @@ class OrganizationType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
-    argument :last, Int, required: false, default_value: 25
     argument :after, String, required: false
-    argument :before, String, required: false
   end
 
   def alternate_name

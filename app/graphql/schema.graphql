@@ -64,10 +64,6 @@ type Audiovisual implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -176,10 +172,6 @@ type Audiovisual implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -218,10 +210,6 @@ type Audiovisual implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -270,10 +258,6 @@ type Audiovisual implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -367,10 +351,6 @@ type Audiovisual implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -409,10 +389,6 @@ type Audiovisual implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -509,10 +485,6 @@ type Book implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -621,10 +593,6 @@ type Book implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -663,10 +631,6 @@ type Book implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -715,10 +679,6 @@ type Book implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -812,10 +772,6 @@ type Book implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -854,10 +810,6 @@ type Book implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -913,10 +865,6 @@ type BookChapter implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -1025,10 +973,6 @@ type BookChapter implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -1067,10 +1011,6 @@ type BookChapter implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -1119,10 +1059,6 @@ type BookChapter implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -1216,10 +1152,6 @@ type BookChapter implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -1258,10 +1190,6 @@ type BookChapter implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -1399,10 +1327,6 @@ type Collection implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -1511,10 +1435,6 @@ type Collection implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -1553,10 +1473,6 @@ type Collection implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -1605,10 +1521,6 @@ type Collection implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -1702,10 +1614,6 @@ type Collection implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -1744,10 +1652,6 @@ type Collection implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -1843,10 +1747,6 @@ type ConferencePaper implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -1955,10 +1855,6 @@ type ConferencePaper implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -1997,10 +1893,6 @@ type ConferencePaper implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -2049,10 +1941,6 @@ type ConferencePaper implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -2146,10 +2034,6 @@ type ConferencePaper implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -2188,10 +2072,6 @@ type ConferencePaper implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -2512,10 +2392,6 @@ type DataPaper implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -2624,10 +2500,6 @@ type DataPaper implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -2666,10 +2538,6 @@ type DataPaper implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -2718,10 +2586,6 @@ type DataPaper implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -2815,10 +2679,6 @@ type DataPaper implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -2857,10 +2717,6 @@ type DataPaper implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -2957,10 +2813,6 @@ type Dataset implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -3069,10 +2921,6 @@ type Dataset implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -3111,10 +2959,6 @@ type Dataset implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -3163,10 +3007,6 @@ type Dataset implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -3281,10 +3121,6 @@ type Dataset implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -3323,10 +3159,6 @@ type Dataset implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -3512,10 +3344,6 @@ type Dissertation implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -3624,10 +3452,6 @@ type Dissertation implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -3666,10 +3490,6 @@ type Dissertation implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -3718,10 +3538,6 @@ type Dissertation implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -3815,10 +3631,6 @@ type Dissertation implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -3857,10 +3669,6 @@ type Dissertation implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -3960,10 +3768,6 @@ interface DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4072,10 +3876,6 @@ interface DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4114,10 +3914,6 @@ interface DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4166,10 +3962,6 @@ interface DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4263,10 +4055,6 @@ interface DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4305,10 +4093,6 @@ interface DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4364,10 +4148,6 @@ type Event implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4476,10 +4256,6 @@ type Event implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4518,10 +4294,6 @@ type Event implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4570,10 +4342,6 @@ type Event implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4667,10 +4435,6 @@ type Event implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4709,10 +4473,6 @@ type Event implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4794,10 +4554,6 @@ type EventData implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4906,10 +4662,6 @@ type EventData implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4948,10 +4700,6 @@ type EventData implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -5000,10 +4748,6 @@ type EventData implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -5097,10 +4841,6 @@ type EventData implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -5139,10 +4879,6 @@ type EventData implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -5280,9 +5016,6 @@ type Funder {
   Funded datasets
   """
   datasets(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -5328,9 +5061,6 @@ type Funder {
   Funded publications
   """
   publications(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -5361,9 +5091,6 @@ type Funder {
   Funded software
   """
   softwares(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -5405,10 +5132,6 @@ type Funder {
   """
   works(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -5548,10 +5271,6 @@ type Image implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -5660,10 +5379,6 @@ type Image implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -5702,10 +5417,6 @@ type Image implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -5754,10 +5465,6 @@ type Image implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -5851,10 +5558,6 @@ type Image implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -5893,10 +5596,6 @@ type Image implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -5993,10 +5692,6 @@ type Instrument implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -6105,10 +5800,6 @@ type Instrument implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -6147,10 +5838,6 @@ type Instrument implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -6199,10 +5886,6 @@ type Instrument implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -6296,10 +5979,6 @@ type Instrument implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -6338,10 +6017,6 @@ type Instrument implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -6438,10 +6113,6 @@ type InteractiveResource implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -6550,10 +6221,6 @@ type InteractiveResource implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -6592,10 +6259,6 @@ type InteractiveResource implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -6644,10 +6307,6 @@ type InteractiveResource implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -6741,10 +6400,6 @@ type InteractiveResource implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -6783,10 +6438,6 @@ type InteractiveResource implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -6903,10 +6554,6 @@ type JournalArticle implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -7015,10 +6662,6 @@ type JournalArticle implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -7057,10 +6700,6 @@ type JournalArticle implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -7109,10 +6748,6 @@ type JournalArticle implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -7206,10 +6841,6 @@ type JournalArticle implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -7248,10 +6879,6 @@ type JournalArticle implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -7729,10 +7356,6 @@ type Model implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -7841,10 +7464,6 @@ type Model implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -7883,10 +7502,6 @@ type Model implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -7935,10 +7550,6 @@ type Model implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -8032,10 +7643,6 @@ type Model implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -8074,10 +7681,6 @@ type Model implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -8181,9 +7784,6 @@ type Organization {
   Datasets from this organization
   """
   datasets(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -8233,9 +7833,6 @@ type Organization {
   Publications from this organization
   """
   publications(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -8265,9 +7862,6 @@ type Organization {
   Software from this organization
   """
   softwares(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -8312,9 +7906,6 @@ type Organization {
   Works from this organization
   """
   works(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -8397,10 +7988,6 @@ type Other implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -8509,10 +8096,6 @@ type Other implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -8551,10 +8134,6 @@ type Other implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -8603,10 +8182,6 @@ type Other implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -8700,10 +8275,6 @@ type Other implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -8742,10 +8313,6 @@ type Other implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -8867,10 +8434,6 @@ type PeerReview implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -8979,10 +8542,6 @@ type PeerReview implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -9021,10 +8580,6 @@ type PeerReview implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -9073,10 +8628,6 @@ type PeerReview implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -9170,10 +8721,6 @@ type PeerReview implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -9212,10 +8759,6 @@ type PeerReview implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -9314,9 +8857,6 @@ type Person {
   Authored datasets
   """
   datasets(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -9376,9 +8916,6 @@ type Person {
   Authored publications
   """
   publications(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -9408,9 +8945,6 @@ type Person {
   Authored software
   """
   softwares(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -9451,10 +8985,6 @@ type Person {
   """
   works(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -9538,10 +9068,6 @@ type PhysicalObject implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -9650,10 +9176,6 @@ type PhysicalObject implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -9692,10 +9214,6 @@ type PhysicalObject implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -9744,10 +9262,6 @@ type PhysicalObject implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -9841,10 +9355,6 @@ type PhysicalObject implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -9883,10 +9393,6 @@ type PhysicalObject implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10036,10 +9542,6 @@ type Preprint implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10148,10 +9650,6 @@ type Preprint implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10190,10 +9688,6 @@ type Preprint implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10242,10 +9736,6 @@ type Preprint implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10339,10 +9829,6 @@ type Preprint implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10381,10 +9867,6 @@ type Preprint implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10481,10 +9963,6 @@ type Publication implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10593,10 +10071,6 @@ type Publication implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10635,10 +10109,6 @@ type Publication implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10687,10 +10157,6 @@ type Publication implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10784,10 +10250,6 @@ type Publication implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10826,10 +10288,6 @@ type Publication implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10920,9 +10378,6 @@ type Query {
   _service: _Service!
   audiovisual(id: ID!): Audiovisual!
   audiovisuals(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10952,9 +10407,6 @@ type Query {
   book(id: ID!): Book!
   bookChapter(id: ID!): BookChapter!
   bookChapters(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10982,9 +10434,6 @@ type Query {
     userId: String
   ): BookChapterConnectionWithTotal!
   books(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11013,9 +10462,6 @@ type Query {
   ): BookConnectionWithTotal!
   collection(id: ID!): Collection!
   collections(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11044,9 +10490,6 @@ type Query {
   ): CollectionConnectionWithTotal!
   conferencePaper(id: ID!): ConferencePaper!
   conferencePapers(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11075,9 +10518,6 @@ type Query {
   ): ConferencePaperConnectionWithTotal!
   dataCatalog(id: ID!): DataCatalog!
   dataCatalogs(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11094,9 +10534,6 @@ type Query {
   ): DataCatalogConnectionWithTotal!
   dataPaper(id: ID!): DataPaper!
   dataPapers(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11125,9 +10562,6 @@ type Query {
   ): DataPaperConnectionWithTotal!
   dataset(id: ID!): Dataset!
   datasets(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11156,9 +10590,6 @@ type Query {
   ): DatasetConnectionWithTotal!
   dissertation(id: ID!): Dissertation!
   dissertations(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11187,9 +10618,6 @@ type Query {
   ): DissertationConnectionWithTotal!
   event(id: ID!): Event!
   events(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11218,9 +10646,6 @@ type Query {
   ): EventConnectionWithTotal!
   funder(id: ID!): Funder!
   funders(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11237,9 +10662,6 @@ type Query {
   ): FunderConnectionWithTotal!
   image(id: ID!): Image!
   images(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11268,9 +10690,6 @@ type Query {
   ): ImageConnectionWithTotal!
   instrument(id: ID!): Instrument!
   instruments(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11299,9 +10718,6 @@ type Query {
   ): InstrumentConnectionWithTotal!
   interactiveResource(id: ID!): InteractiveResource!
   interactiveResources(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11330,9 +10746,6 @@ type Query {
   ): InteractiveResourceConnectionWithTotal!
   journalArticle(id: ID!): JournalArticle!
   journalArticles(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11361,9 +10774,6 @@ type Query {
   ): JournalArticleConnectionWithTotal!
   member(id: ID!): Member!
   members(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11380,9 +10790,6 @@ type Query {
   ): MemberConnectionWithTotal!
   model(id: ID!): Model!
   models(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11411,9 +10818,6 @@ type Query {
   ): ModelConnectionWithTotal!
   organization(id: ID!): Organization!
   organizations(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11434,9 +10838,6 @@ type Query {
   ): OrganizationConnectionWithTotal!
   other(id: ID!): Other!
   others(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11465,9 +10866,6 @@ type Query {
   ): OtherConnectionWithTotal!
   peerReview(id: ID!): PeerReview!
   peerReviews(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11495,9 +10893,6 @@ type Query {
     userId: String
   ): PeerReviewConnectionWithTotal!
   people(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11515,9 +10910,6 @@ type Query {
   person(id: ID!): Person!
   physicalObject(id: ID!): PhysicalObject!
   physicalObjects(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11546,9 +10938,6 @@ type Query {
   ): PhysicalObjectConnectionWithTotal!
   prefix(id: ID!): Prefix!
   prefixes(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11565,9 +10954,6 @@ type Query {
   ): PrefixConnectionWithTotal!
   preprint(id: ID!): Preprint!
   preprints(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11596,9 +10982,6 @@ type Query {
   ): PreprintConnectionWithTotal!
   publication(id: ID!): Publication!
   publications(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11626,9 +11009,6 @@ type Query {
     userId: String
   ): PublicationConnectionWithTotal!
   repositories(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11648,9 +11028,6 @@ type Query {
   repository(id: ID!): Repository!
   service(id: ID!): Service!
   services(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11679,9 +11056,6 @@ type Query {
   ): ServiceConnectionWithTotal!
   software(id: ID!): Software!
   softwares(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11710,9 +11084,6 @@ type Query {
   ): SoftwareConnectionWithTotal!
   sound(id: ID!): Sound!
   sounds(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11760,9 +11131,6 @@ type Query {
   work(id: ID!): Work!
   workflow(id: ID!): Workflow!
   workflows(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11790,9 +11158,6 @@ type Query {
     userId: String
   ): WorkflowConnectionWithTotal!
   works(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -12305,10 +11670,6 @@ type Service implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -12417,10 +11778,6 @@ type Service implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -12459,10 +11816,6 @@ type Service implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -12511,10 +11864,6 @@ type Service implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -12608,10 +11957,6 @@ type Service implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -12650,10 +11995,6 @@ type Service implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -12750,10 +12091,6 @@ type Software implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -12862,10 +12199,6 @@ type Software implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -12904,10 +12237,6 @@ type Software implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -12956,10 +12285,6 @@ type Software implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -13053,10 +12378,6 @@ type Software implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -13095,10 +12416,6 @@ type Software implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -13226,10 +12543,6 @@ type Sound implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -13338,10 +12651,6 @@ type Sound implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -13380,10 +12689,6 @@ type Sound implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -13432,10 +12737,6 @@ type Sound implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -13529,10 +12830,6 @@ type Sound implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -13571,10 +12868,6 @@ type Sound implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -13854,10 +13147,6 @@ type Work implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -13966,10 +13255,6 @@ type Work implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -14008,10 +13293,6 @@ type Work implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -14060,10 +13341,6 @@ type Work implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -14157,10 +13434,6 @@ type Work implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -14199,10 +13472,6 @@ type Work implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -14300,10 +13569,6 @@ type Workflow implements DoiItem {
   """
   citations(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -14412,10 +13677,6 @@ type Workflow implements DoiItem {
   """
   partOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -14454,10 +13715,6 @@ type Workflow implements DoiItem {
   """
   parts(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -14506,10 +13763,6 @@ type Workflow implements DoiItem {
   """
   references(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -14603,10 +13856,6 @@ type Workflow implements DoiItem {
   """
   versionOf(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -14645,10 +13894,6 @@ type Workflow implements DoiItem {
   """
   versions(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
