@@ -2240,9 +2240,6 @@ type DataCatalog {
   Funded datasets
   """
   datasets(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -10618,13 +10615,20 @@ type Query {
   ): DissertationConnectionWithTotal!
   event(id: ID!): Event!
   events(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
     after: String
 
     """
     Returns the elements in the list that come before the specified cursor.
     """
     before: String
-    first: Int = 25
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
     hasCitations: Int
     hasDownloads: Int
     hasFunder: Boolean
@@ -10787,6 +10791,7 @@ type Query {
     """
     last: Int
     query: String
+    year: String
   ): MemberConnectionWithTotal!
   model(id: ID!): Model!
   models(
@@ -11158,7 +11163,7 @@ type Query {
     userId: String
   ): WorkflowConnectionWithTotal!
   works(
-    after: String
+    after: String = "WzEsICIxIl0"
 
     """
     Returns the elements in the list that come before the specified cursor.
@@ -11271,10 +11276,6 @@ type Repository {
   """
   datasets(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11362,10 +11363,6 @@ type Repository {
   """
   publications(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11414,10 +11411,6 @@ type Repository {
   """
   softwares(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -11466,10 +11459,6 @@ type Repository {
   """
   works(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """

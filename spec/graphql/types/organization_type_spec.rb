@@ -122,8 +122,12 @@ describe OrganizationType do
 
     let(:query) do
       %(query {
-        organizations(query: "Cambridge University") {
+        organizations(query: "Cambridge University", after: "MQ") {
           totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
           types {
             title
             count
@@ -156,6 +160,9 @@ describe OrganizationType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "organizations", "totalCount")).to eq(10763)
+      expect(response.dig("data", "organizations", "pageInfo", "endCursor")).to eq("MQ")
+      expect(response.dig("data", "organizations", "pageInfo", "hasNextPage")).to be true
+      
       expect(response.dig("data", "organizations", "types").length).to eq(8)
       expect(response.dig("data", "organizations", "types").first).to eq("count"=>9611, "title"=>"Education")
       expect(response.dig("data", "organizations", "countries").length).to eq(10)

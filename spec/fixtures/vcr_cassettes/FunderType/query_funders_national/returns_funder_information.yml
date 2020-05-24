@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://api.crossref.org/funders?offset=0&query=national&rows=25
+    uri: https://api.crossref.org/funders?offset=8&query=national&rows=10
     body:
       encoding: US-ASCII
       string: ''
@@ -27,11 +27,11 @@ http_interactions:
       Access-Control-Allow-Headers:
       - X-Requested-With
       Content-Length:
-      - '8845'
+      - '3458'
       Server:
       - http-kit
       Date:
-      - Tue, 12 May 2020 05:00:12 GMT
+      - Sun, 24 May 2020 11:34:38 GMT
       X-Rate-Limit-Limit:
       - '50'
       X-Rate-Limit-Interval:
@@ -40,48 +40,22 @@ http_interactions:
       - close
     body:
       encoding: ASCII-8BIT
-      string: '{"status":"ok","message-type":"funder-list","message-version":"1.0.0","message":{"items-per-page":25,"query":{"start-index":0,"search-terms":"national"},"total-results":1028,"items":[{"id":"501100007868","location":null,"name":"Secretar\u00eda
-        de Ciencia y T\u00e9cnica, Universidad Nacional de R\u00edo Cuarto","alt-names":["UNRC
-        Secretar\u00eda de Ciencia y T\u00e9cnica","SECyT","SeCyt, UNRC","Secretary
-        Research and Technology, National University of R\u00edo Cuarto","Secretar\u00eda
-        de Ciencia y T\u00e9cnica UNRC"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100007868","replaces":[],"replaced-by":[],"tokens":["secretar\u00eda","de","ciencia","y","t\u00e9cnica","universidad","nacional","de","r\u00edo","cuarto","unrc","secretar\u00eda","de","ciencia","y","t\u00e9cnica","secyt","secyt","unrc","secretary","research","and","technology","national","university","of","r\u00edo","cuarto","secretar\u00eda","de","ciencia","y","t\u00e9cnica","unrc"]},{"id":"100003177","location":"United
-        States","name":"National Kidney Foundation Serving Ohio and Kentucky","alt-names":[],"uri":"http:\/\/dx.doi.org\/10.13039\/100003177","replaces":[],"replaced-by":[],"tokens":["national","kidney","foundation","serving","ohio","and","kentucky"]},{"id":"501100005319","location":null,"name":"National
-        Central University","alt-names":["NCU"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100005319","replaces":[],"replaced-by":[],"tokens":["national","central","university","ncu"]},{"id":"501100007532","location":null,"name":"National
-        Space Organization","alt-names":["NSPO"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100007532","replaces":[],"replaced-by":[],"tokens":["national","space","organization","nspo"]},{"id":"100001260","location":"United
-        States","name":"National Organization for Rare Disorders","alt-names":["NORD","National
-        Organization for Rare Disorders, Inc."],"uri":"http:\/\/dx.doi.org\/10.13039\/100001260","replaces":[],"replaced-by":[],"tokens":["national","organization","for","rare","disorders","nord","national","organization","for","rare","disorders","inc"]},{"id":"501100013168","location":null,"name":"Istituto
-        Nazionale di Fisica Nucleare","alt-names":["National Institute for Nuclear
-        Physics","INFN"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100013168","replaces":[],"replaced-by":["501100004007"],"tokens":["istituto","nazionale","di","fisica","nucleare","national","institute","for","nuclear","physics","infn"]},{"id":"100003983","location":"United
-        States","name":"National Headache Foundation","alt-names":["NHF"],"uri":"http:\/\/dx.doi.org\/10.13039\/100003983","replaces":[],"replaced-by":[],"tokens":["national","headache","foundation","nhf"]},{"id":"501100013403","location":null,"name":"National
-        Museum of Marine Biology and Aquarium","alt-names":["National Museum of Marine
-        Biology & Aquarium","NMMBA"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100013403","replaces":[],"replaced-by":[],"tokens":["national","museum","of","marine","biology","and","aquarium","national","museum","of","marine","biology","&","and","aquarium","nmmba"]},{"id":"501100011230","location":"China","name":"State
-        Key Laboratory of Membrane Biology","alt-names":["State Key Laboratory of
-        Biomembrane and Membrane Biotechnology","LMB","National Key Laboratory of
-        Biomembranes and Membranes Technology"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100011230","replaces":[],"replaced-by":[],"tokens":["state","key","laboratory","of","membrane","biology","state","key","laboratory","of","biomembrane","and","membrane","biotechnology","lmb","national","key","laboratory","of","biomembranes","and","membranes","technology"]},{"id":"501100003642","location":null,"name":"Masan
-        National Hospital","alt-names":[],"uri":"http:\/\/dx.doi.org\/10.13039\/501100003642","replaces":[],"replaced-by":[],"tokens":["masan","national","hospital"]},{"id":"100012944","location":null,"name":"\u00c9cole
-        Nationale des Travaux Publics de l''\u00c9tat","alt-names":["National School
-        of Public Works of the State","ENTPE"],"uri":"http:\/\/dx.doi.org\/10.13039\/100012944","replaces":[],"replaced-by":[],"tokens":["\u00e9cole","nationale","des","travaux","publics","de","l\u00e9tat","national","school","of","public","works","of","the","state","entpe"]},{"id":"501100013042","location":null,"name":"Israel
-        National Research Center for Electrochemical Propulsion","alt-names":["INREP"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100013042","replaces":[],"replaced-by":[],"tokens":["israel","national","research","center","for","electrochemical","propulsion","inrep"]},{"id":"100005698","location":"United
-        States","name":"Truman Library Institute","alt-names":["Harry S. Truman Library
-        Institute for National and International Affairs","Harry S. Truman Library
-        Institute National and International Affairs"],"uri":"http:\/\/dx.doi.org\/10.13039\/100005698","replaces":[],"replaced-by":[],"tokens":["truman","library","institute","harry","s","truman","library","institute","for","national","and","international","affairs","harry","s","truman","library","institute","national","and","international","affairs"]},{"id":"501100006085","location":null,"name":"National
-        Root Crops Research Institute","alt-names":["National Root Crops Research
-        Institute, Umudike","NRCRI"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100006085","replaces":[],"replaced-by":[],"tokens":["national","root","crops","research","institute","national","root","crops","research","institute","umudike","nrcri"]},{"id":"100008905","location":null,"name":"National
-        Academy of Agricultural Science","alt-names":["NAAS"],"uri":"http:\/\/dx.doi.org\/10.13039\/100008905","replaces":[],"replaced-by":["501100007270"],"tokens":["national","academy","of","agricultural","science","naas"]},{"id":"100009041","location":null,"name":"National
-        Department of Health","alt-names":["National Department of Health, Republic
-        of South Africa","NDOH"],"uri":"http:\/\/dx.doi.org\/10.13039\/100009041","replaces":[],"replaced-by":[],"tokens":["national","department","of","health","national","department","of","health","republic","of","south","africa","ndoh"]},{"id":"501100000305","location":"United
-        Kingdom","name":"National Eye Research Centre","alt-names":["NERC"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100000305","replaces":[],"replaced-by":[],"tokens":["national","eye","research","centre","nerc"]},{"id":"501100005912","location":null,"name":"National
-        Bureau of Agriculturally Important Microorganisms","alt-names":["NBAIM"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100005912","replaces":[],"replaced-by":[],"tokens":["national","bureau","of","agriculturally","important","microorganisms","nbaim"]},{"id":"501100010318","location":null,"name":"Landelijke
-        Stichting voor Blinden en Slechtzienden","alt-names":["LSBS","National Society
-        for the Blind and Visually Impaired"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100010318","replaces":[],"replaced-by":[],"tokens":["landelijke","stichting","voor","blinden","en","slechtzienden","lsbs","national","society","for","the","blind","and","visually","impaired"]},{"id":"100001256","location":"United
-        States","name":"National Childhood Cancer Foundation","alt-names":["NCCF"],"uri":"http:\/\/dx.doi.org\/10.13039\/100001256","replaces":[],"replaced-by":[],"tokens":["national","childhood","cancer","foundation","nccf"]},{"id":"501100002562","location":null,"name":"Sunchon
-        National University","alt-names":["SCNU"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100002562","replaces":[],"replaced-by":[],"tokens":["sunchon","national","university","scnu"]},{"id":"100014363","location":"United
-        States","name":"National Association for Research in Science Teaching","alt-names":["NARST"],"uri":"http:\/\/dx.doi.org\/10.13039\/100014363","replaces":[],"replaced-by":[],"tokens":["national","association","for","research","in","science","teaching","narst"]},{"id":"100009020","location":null,"name":"Fenner
-        School of Environment and Society, Australian National University","alt-names":["Fenner
-        School, ANU"],"uri":"http:\/\/dx.doi.org\/10.13039\/100009020","replaces":[],"replaced-by":[],"tokens":["fenner","school","of","environment","and","society","australian","national","university","fenner","school","anu"]},{"id":"501100006370","location":null,"name":"National
-        Institute of Agricultural Biotechnology","alt-names":["NIAB"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100006370","replaces":[],"replaced-by":[],"tokens":["national","institute","of","agricultural","biotechnology","niab"]},{"id":"100012943","location":"Canada","name":"Institut
-        national de la recherche scientifique","alt-names":["National Institute of
-        Scientific Research","INRS","INRS University"],"uri":"http:\/\/dx.doi.org\/10.13039\/100012943","replaces":[],"replaced-by":[],"tokens":["institut","national","de","la","recherche","scientifique","national","institute","of","scientific","research","inrs","inrs","university"]}]}}'
+      string: '{"status":"ok","message-type":"funder-list","message-version":"1.0.0","message":{"items-per-page":10,"query":{"start-index":8,"search-terms":"national"},"total-results":1100,"items":[{"id":"100008725","location":"Uruguay","name":"Agencia
+        Nacional de Investigaci\u00f3n e Innovaci\u00f3n","alt-names":["ANII","Ag\u00eancia
+        Nacional para a Investiga\u00e7\u00e3o e Inova\u00e7\u00e3o","National Agency
+        for Research and Innovation"],"uri":"http:\/\/dx.doi.org\/10.13039\/100008725","replaces":[],"replaced-by":[],"tokens":["agencia","nacional","de","investigaci\u00f3n","e","innovaci\u00f3n","anii","ag\u00eancia","nacional","para","a","investiga\u00e7\u00e3o","e","inova\u00e7\u00e3o","national","agency","for","research","and","innovation"]},{"id":"100015322","location":"Japan","name":"National
+        Cancer Center Japan","alt-names":["NCC"],"uri":"http:\/\/dx.doi.org\/10.13039\/100015322","replaces":[],"replaced-by":[],"tokens":["national","cancer","center","japan","ncc"]},{"id":"501100008790","location":"India","name":"National
+        Institute of Technology Rourkela","alt-names":["NITR","NIT Rourkela"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100008790","replaces":[],"replaced-by":[],"tokens":["national","institute","of","technology","rourkela","nitr","nit","rourkela"]},{"id":"501100000850","location":"United
+        Kingdom","name":"National Heart and Lung Institute","alt-names":["National
+        Heart & Lung Institute","NHLI"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100000850","replaces":[],"replaced-by":[],"tokens":["national","heart","and","lung","institute","national","heart","&","and","lung","institute","nhli"]},{"id":"501100014594","location":"Brazil","name":"Biblioteca
+        Nacional","alt-names":["Brazilian National Library","BN"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100014594","replaces":[],"replaced-by":[],"tokens":["biblioteca","nacional","brazilian","national","library","bn"]},{"id":"100011991","location":"Canada","name":"National
+        Search and Rescue Secretariat","alt-names":["NSS","Secr\u00e9tariat National
+        Recherche et Sauvetage"],"uri":"http:\/\/dx.doi.org\/10.13039\/100011991","replaces":[],"replaced-by":[],"tokens":["national","search","and","rescue","secretariat","nss","secr\u00e9tariat","national","recherche","et","sauvetage"]},{"id":"501100001634","location":"Ireland","name":"National
+        University of Ireland, Galway","alt-names":["NUI Galway","O\u00c9 Gaillimh","Ollscoil
+        na h\u00c9ireann, Gaillimh"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100001634","replaces":[],"replaced-by":[],"tokens":["national","university","of","ireland","galway","nui","galway","o\u00e9","gaillimh","ollscoil","na","h\u00e9ireann","gaillimh"]},{"id":"100007846","location":"Egypt","name":"National
+        Telecommunication Regulatory Authority","alt-names":["NTRA"],"uri":"http:\/\/dx.doi.org\/10.13039\/100007846","replaces":[],"replaced-by":[],"tokens":["national","telecommunication","regulatory","authority","ntra"]},{"id":"501100012335","location":"China","name":"National
+        Defense Basic Scientific Research Program of China","alt-names":[],"uri":"http:\/\/dx.doi.org\/10.13039\/501100012335","replaces":[],"replaced-by":[],"tokens":["national","defense","basic","scientific","research","program","of","china"]},{"id":"100003987","location":"United
+        States","name":"National Kidney Foundation of Georgia","alt-names":[],"uri":"http:\/\/dx.doi.org\/10.13039\/100003987","replaces":[],"replaced-by":[],"tokens":["national","kidney","foundation","of","georgia"]}]}}'
     http_version: null
-  recorded_at: Tue, 12 May 2020 05:00:12 GMT
+  recorded_at: Sun, 24 May 2020 11:34:38 GMT
 recorded_with: VCR 5.1.0

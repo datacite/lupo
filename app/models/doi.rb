@@ -715,12 +715,12 @@ class Doi < ActiveRecord::Base
       aggregations = query_aggregations
     end
 
-    # Cursor nav use the search after, this should always be an array of values that match the sort.
+    # Cursor nav uses search_after, this should always be an array of values that match the sort.
     if options.dig(:page, :cursor)
       from = 0
 
       # make sure we have a valid cursor
-      search_after = options.dig(:page, :cursor).presence || [1, "1"]
+      search_after = options.dig(:page, :cursor).is_a?(Array) || [1, "1"]
       sort = [{ created: "asc", uid: "asc" }]
     else
       from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)

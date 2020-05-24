@@ -25,15 +25,11 @@ class HashConnection
   attr_reader :total_count
 
   # Raw access to client-provided values. (`max_page_size` not applied to first or last.)
-  attr_accessor :before_value, :after_value, :first_value, :last_value
+  attr_accessor :after_value, :first_value
 
   # @return [String, nil] the client-provided cursor. `""` is treated as `nil`.
   def before
-    if defined?(@before)
-      @before
-    else
-      @before = @before_value == "" ? nil : @before_value
-    end
+    raise PaginationImplementationMissingError, "before is not implemented"
   end
 
   # @return [String, nil] the client-provided cursor. `""` is treated as `nil`.
@@ -57,9 +53,7 @@ class HashConnection
     @context = context
     @nodes = items[:data]
     @first_value = first
-    @after_value = after
-    @last_value = last
-    @before_value = before
+    @after_value = decode(after) if after.present?
 
     @total_count = items.dig(:meta, "total").to_i
     @meta = items[:meta]
@@ -99,7 +93,7 @@ class HashConnection
   def first
     @first ||= begin
       capped = limit_pagination_argument(@first_value, max_page_size)
-      if capped.nil? && last.nil?
+      if capped.nil?
         capped = max_page_size
       end
       capped
@@ -109,12 +103,7 @@ class HashConnection
   attr_writer :last
   # @return [Integer, nil] A clamped `last` value. (The underlying instance variable doesn't have limits on it)
   def last
-    @last ||= limit_pagination_argument(@last_value, max_page_size)
-  end
-
-  # @return [Array<Edge>] {nodes}, but wrapped with Edge instances
-  def edges
-    @edges ||= nodes.map { |n| self.class.edge_class.new(n, self) }
+    raise PaginationImplementationMissingError, "last is not implemented"
   end
 
   # A dynamic alias for compatibility with {Relay::BaseConnection}.
@@ -130,7 +119,7 @@ class HashConnection
 
   # @return [Boolean] True if there are more items after this page
   def has_next_page
-    first.to_i < total_count #|| first.to_i * after.to_i < total_count
+    first.to_i * after.to_i < total_count
   end
 
   # @return [Boolean] True if there were items before these items

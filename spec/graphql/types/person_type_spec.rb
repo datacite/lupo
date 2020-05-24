@@ -131,21 +131,21 @@ describe PersonType do
 
     it "returns people information" do
       response = LupoSchema.execute(query).as_json
-      puts response
-      expect(response.dig("data", "people", "totalCount")).to eq(245)
-      expect(response.dig("data", "people", "pageInfo", "endCursor")).to eq(241)
+
+      expect(response.dig("data", "people", "totalCount")).to eq(246)
+      expect(response.dig("data", "people", "pageInfo", "endCursor")).to eq("MQ")
       expect(response.dig("data", "people", "pageInfo", "hasNextPage")).to be true
+      expect(response.dig("data", "people", "nodes").length).to eq(50)
 
       person = response.dig("data", "people", "nodes", 0)
-      expect(person.fetch("id")).to eq("https://orcid.org/0000-0002-6028-9323")
-      expect(person.fetch("name")).to eq("Stephen A. Fenner")
-      expect(person.fetch("givenName")).to eq("Stephen")
-      expect(person.fetch("familyName")).to eq("Fenner")
-      expect(person.fetch("otherNames")).to eq([])
-      expect(person.fetch("affiliation")).to eq([{"name"=>"Harvard College"},
-        {"name"=>"University of Chicago"},
-        {"name"=>"University of South Carolina"},
-        {"name"=>"University of Southern Maine"}])
+      expect(person.fetch("id")).to eq("https://orcid.org/0000-0002-6953-062X")
+      expect(person.fetch("name")).to eq("Julio López-Fenner")
+      expect(person.fetch("givenName")).to eq("Julio")
+      expect(person.fetch("familyName")).to eq("López-Fenner")
+      expect(person.fetch("otherNames")).to eq(["The PumalalPiper"])
+      expect(person.fetch("affiliation")).to eq([{"name"=>"Technische Universität Clausthal"},
+        {"name"=>"Universidad de Chile"},
+        {"name"=>"Universidad de La Frontera"}])
     end
   end
 end

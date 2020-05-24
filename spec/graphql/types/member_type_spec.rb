@@ -26,7 +26,7 @@ describe MemberType do
   end
 
   describe "query members", elasticsearch: true do
-    let!(:providers) { create_list(:provider, 3) }
+    let!(:providers) { create_list(:provider, 6) }
 
     before do
       Provider.import
@@ -35,8 +35,12 @@ describe MemberType do
 
     let(:query) do
       %(query {
-        members {
+        members(first: 5) {
           totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
           years {
             title
             count
@@ -71,15 +75,18 @@ describe MemberType do
 
     it "returns all members" do
       response = LupoSchema.execute(query).as_json
-
-      expect(response.dig("data", "members", "totalCount")).to eq(3)
-      expect(response.dig("data", "members", "years")).to eq([{"count"=>3, "title"=>"2020"}])
-      expect(response.dig("data", "members", "regions")).to eq([{"count"=>3, "title"=>"Europe, Middle East and Africa"}])
-      expect(response.dig("data", "members", "memberTypes")).to eq([{"count"=>3, "title"=>"Direct Member"}])
+      puts response
+      expect(response.dig("data", "members", "totalCount")).to eq(6)
+      expect(Base64.urlsafe_decode64(response.dig("data", "members", "pageInfo", "endCursor")).split(",").last).to eq(providers[4].uid)
+      expect(response.dig("data", "members", "pageInfo", "hasNextPage")).to be true
+      
+      expect(response.dig("data", "members", "years")).to eq([{"count"=>6, "title"=>"2020"}])
+      expect(response.dig("data", "members", "regions")).to eq([{"count"=>6, "title"=>"Europe, Middle East and Africa"}])
+      expect(response.dig("data", "members", "memberTypes")).to eq([{"count"=>6, "title"=>"Direct Member"}])
       expect(response.dig("data", "members", "organizationTypes")).to eq([])
       expect(response.dig("data", "members", "focusAreas")).to eq([])
-      expect(response.dig("data", "members", "nonProfitStatuses")).to eq([{"count"=>3, "title"=>"Non Profit"}])
-      expect(response.dig("data", "members", "nodes").length).to eq(3)
+      expect(response.dig("data", "members", "nonProfitStatuses")).to eq([{"count"=>6, "title"=>"Non Profit"}])
+      expect(response.dig("data", "members", "nodes").length).to eq(5)
       expect(response.dig("data", "members", "nodes", 0, "id")).to eq(providers.first.uid)
       expect(response.dig("data", "members", "nodes", 0, "name")).to eq(providers.first.name)
     end

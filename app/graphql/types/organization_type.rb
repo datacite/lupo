@@ -26,8 +26,8 @@ class OrganizationType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   field :publications, PublicationConnectionWithTotalType, null: true, description: "Publications from this organization", connection: true do
@@ -42,8 +42,8 @@ class OrganizationType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   field :softwares, SoftwareConnectionWithTotalType, null: true, description: "Software from this organization", connection: true do
@@ -58,8 +58,8 @@ class OrganizationType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   field :works, WorkConnectionWithTotalType, null: true, description: "Works from this organization", connection: true do
@@ -74,8 +74,8 @@ class OrganizationType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def alternate_name
@@ -133,6 +133,6 @@ class OrganizationType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], ids: args[:ids], affiliation_id: object.id, user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], funder_id: args[:funder_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { cursor: args[:after], size: args[:first] })
+    Doi.query(args[:query], ids: args[:ids], affiliation_id: object.id, user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], funder_id: args[:funder_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
   end
 end

@@ -34,8 +34,12 @@ describe RepositoryType do
 
     let(:query) do
       %(query {
-        repositories {
+        repositories(first: 10) {
           totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
           years {
             title
             count

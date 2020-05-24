@@ -43,14 +43,14 @@ describe Funder, type: :model, vcr: true do
 
     it "found all paginate" do
       query = nil
-      funders = Funder.query(query, offset: 1)
-      expect(funders.dig(:meta, "total")).to eq(22357)
-      expect(funders.dig(:data).size).to eq(25)
+      funders = Funder.query(query, offset: 2, limit: 3)
+      expect(funders.dig(:meta, "total")).to eq(23411)
+      expect(funders.dig(:data).size).to eq(3)
       funder = funders[:data].first
-      expect(funder.id).to eq("https://doi.org/10.13039/501100006568")
-      expect(funder.name).to eq("Toagosei")
-      expect(funder.alternate_name).to eq(["Toagosei Co., Ltd.", "Toagosei Chemical Industry Company Limited", "Toagosei Company Limited"])
-      expect(funder.country).to eq("code"=>"JP", "name"=>"Japan")
+      expect(funder.id).to eq("https://doi.org/10.13039/501100004246")
+      expect(funder.name).to eq("Provita")
+      expect(funder.alternate_name).to eq([])
+      expect(funder.country).to eq("code"=>"VE", "name"=>"Venezuela")
     end
 
     it "found dfg" do

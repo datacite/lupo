@@ -169,20 +169,16 @@ module Indexable
         from = 0
 
         # make sure we have a valid cursor
-        search_after = options.dig(:page, :cursor).presence || [1, "1"]
+        search_after = options.dig(:page, :cursor).is_a?(Array) || [1, "1"]
 
-        if self.name == "Doi"
-          sort = [{ created: "asc", uid: "asc" }]
-        elsif self.name == "Event"
+        if self.name == "Event"
           sort = [{ created_at: "asc", uuid: "asc" }]
         elsif self.name == "Activity"
           sort = [{ created: "asc", request_uuid: "asc" }]
         elsif %w(Client Provider).include?(self.name)
           sort = [{ created: "asc", uid: "asc" }]
-        elsif self.name == "Researcher"
+        elsif %w(Prefix ProviderPrefix ClientPrefix).include?(self.name)
           sort = [{ created_at: "asc", uid: "asc" }]
-        elsif ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(self.name)
-          sort = [{ created_at: "asc" }]
         else
           sort = [{ created: "asc" }]
         end

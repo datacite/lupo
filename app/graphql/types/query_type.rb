@@ -5,12 +5,14 @@ class QueryType < BaseObject
 
   field :members, MemberConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :year, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def members(**args)
-    Provider.query(args[:query], year: args[:year], page: { cursor: args[:after], size: args[:first] })
+    Rails.logger.warn args
+    Provider.query(args[:query], year: args[:year], page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
   end
 
   field :member, MemberType, null: false do
@@ -25,12 +27,12 @@ class QueryType < BaseObject
     argument :query, String, required: false
     argument :year, String, required: false
     argument :software, String, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def repositories(**args)
-    Client.query(args[:query], year: args[:year], software: args[:software], page: { cursor: args[:after], size: args[:first] })
+    Client.query(args[:query], year: args[:year], software: args[:software], page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
   end
 
   field :repository, RepositoryType, null: false do
@@ -43,12 +45,12 @@ class QueryType < BaseObject
 
   field :prefixes, PrefixConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def prefixes(**args)
-    Prefix.query(args[:query], page: { cursor: args[:after], size: args[:first] })
+    Prefix.query(args[:query], page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
   end
 
   field :prefix, PrefixType, null: false do
@@ -61,14 +63,12 @@ class QueryType < BaseObject
 
   field :funders, FunderConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def funders(**args)
-    offset = args[:after].present? ? Base64.urlsafe_decode64("10") : nil
-    puts offset
-    Funder.query(args[:query], limit: args[:first], offset: offset)
+    Funder.query(args[:query], limit: args[:size], offset: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil)
   end
 
   field :funder, FunderType, null: false do
@@ -95,23 +95,21 @@ class QueryType < BaseObject
 
   field :data_catalogs, DataCatalogConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def data_catalogs(**args)
-    offset = args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil
-    DataCatalog.query(args[:query], limit: args[:first], offset: offset)
+    DataCatalog.query(args[:query], limit: args[:size], offset: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil)
   end
 
   field :organizations, OrganizationConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
-    argument :after, String, required: false
+    argument :after, String, required: false, as: :cursor
   end
 
   def organizations(**args)
-    offset = args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil
-    Organization.query(args[:query], offset: offset)
+    Organization.query(args[:query], offset: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil)
   end
 
   field :organization, OrganizationType, null: false do
@@ -138,13 +136,12 @@ class QueryType < BaseObject
 
   field :people, PersonConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def people(**args)
-    offset = args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil
-    Person.query(args[:query], rows: args[:first], offset: offset)
+    Person.query(args[:query], limit: args[:size], offset: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil)
   end
 
   field :works, WorkConnectionWithTotalType, null: false, connection: true do
@@ -162,8 +159,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, default_value: "WzEsICIxIl0", as: :cursor
   end
 
   def works(**args)
@@ -192,8 +189,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def datasets(**args)
@@ -223,8 +220,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def publications(**args)
@@ -254,8 +251,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def audiovisuals(**args)
@@ -285,8 +282,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def collections(**args)
@@ -316,8 +313,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def data_papers(**args)
@@ -347,8 +344,6 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
   end
 
   def events(**args)
@@ -378,8 +373,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def images(**args)
@@ -409,8 +404,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def interactive_resources(**args)
@@ -440,8 +435,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def models(**args)
@@ -471,8 +466,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def physical_objects(**args)
@@ -502,8 +497,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def services(**args)
@@ -533,8 +528,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def softwares(**args)
@@ -564,8 +559,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def sounds(**args)
@@ -595,8 +590,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def workflows(**args)
@@ -626,8 +621,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def dissertations(**args)
@@ -658,8 +653,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def preprints(**args)
@@ -690,8 +685,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def peer_reviews(**args)
@@ -722,8 +717,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def conference_papers(**args)
@@ -754,8 +749,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def book_chapters(**args)
@@ -786,8 +781,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def books(**args)
@@ -818,8 +813,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def journal_articles(**args)
@@ -850,8 +845,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def instruments(**args)
@@ -883,8 +878,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def others(**args)
@@ -920,7 +915,7 @@ class QueryType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { cursor: args[:after], size: args[:first] })
+    Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
   end
 
   def set_doi(id)

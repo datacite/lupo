@@ -88,8 +88,8 @@ module DoiItem
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   field :parts, WorkConnectionWithTotalType, null: true, connection: true, max_page_size: 100, description: "Parts of this DOI." do
@@ -108,8 +108,8 @@ module DoiItem
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   field :part_of, WorkConnectionWithTotalType, null: true, connection: true, max_page_size: 100, description: "The DOI is a part of this DOI." do
@@ -128,8 +128,8 @@ module DoiItem
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   field :versions, WorkConnectionWithTotalType, null: true, connection: true, max_page_size: 100, description: "Versions of this DOI." do
@@ -148,8 +148,8 @@ module DoiItem
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   field :version_of, WorkConnectionWithTotalType, null: true, connection: true, max_page_size: 100, description: "The DOI is a version of this DOI." do
@@ -168,8 +168,8 @@ module DoiItem
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
-    argument :after, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def type
@@ -264,9 +264,10 @@ module DoiItem
   end
 
   def response(**args)
-    return [] if args[:ids].blank?
+    # make sure no dois are returnded if there are no :ids
+    args[:ids] = "999" if args[:ids].blank?
 
-    Doi.query(args[:query], ids: args[:ids], funder_id: args[:funder_id], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], affiliation_id: args[:affiliation_id], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
+    Doi.query(args[:query], ids: args[:ids], funder_id: args[:funder_id], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], affiliation_id: args[:affiliation_id], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
   end
 
   def doi_link(url)

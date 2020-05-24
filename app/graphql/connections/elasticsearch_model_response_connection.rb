@@ -37,6 +37,11 @@
     attr_accessor :after_value, :first_value
 
     # @return [String, nil] the client-provided cursor. `""` is treated as `nil`.
+    def before
+      raise PaginationImplementationMissingError, "before is not implemented"
+    end
+
+    # @return [String, nil] the client-provided cursor. `""` is treated as `nil`.
     def after
       if defined?(@after)
         @after
@@ -57,7 +62,7 @@
       @nodes = items.results.to_a
 
       @first_value = first
-      @after_value = after
+      @after_value = decode(after) if after.present?
 
       @total_count = items.results.total
 
@@ -99,11 +104,17 @@
     def first
       @first ||= begin
         capped = limit_pagination_argument(@first_value, max_page_size)
-        if capped.nil? && last.nil?
+        if capped.nil?
           capped = max_page_size
         end
         capped
       end
+    end
+
+    attr_writer :last
+    # @return [Integer, nil] A clamped `last` value. (The underlying instance variable doesn't have limits on it)
+    def last
+      raise PaginationImplementationMissingError, "last is not implemented"
     end
 
     # @return [Array<Edge>] {nodes}, but wrapped with Edge instances
@@ -127,6 +138,11 @@
       nodes.length < total_count && !(nodes.length < first.to_i)
     end
 
+    # @return [Boolean] True if there were items before these items
+    def has_previous_page
+      raise PaginationImplementationMissingError, "Implement #{self.class}#has_previous_page to return the previous-page check"
+    end
+
     # @return [String] The cursor of the first item in {nodes}
     def start_cursor
       nodes.first && cursor_for(nodes.first)
@@ -147,8 +163,8 @@
         it = [item.created_at, item.uuid]
       elsif @model == "Activity"
         it = [item.created, item.request_uuid]
-      elsif ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(@model)
-        it = [item.created_at]
+      elsif %w(Prefix ProviderPrefix ClientPrefix).include?(@model)
+        it = [item.created_at, item.uid]
       end
       encode(it.join(","))
     end
