@@ -251,7 +251,7 @@ class Provider < ActiveRecord::Base
     {
       years: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-      cumulative_years: { terms: { field: 'cumulative_years', size: 10, min_doc_count: 1, order: { _count: "asc" } } },
+      cumulative_years: { terms: { field: 'cumulative_years', size: 20, min_doc_count: 1, order: { _count: "asc" } } },
       regions: { terms: { field: 'region', size: 10, min_doc_count: 1 } },
       member_types: { terms: { field: 'member_type', size: 10, min_doc_count: 1 } },
       organization_types: { terms: { field: 'organization_type', size: 10, min_doc_count: 1 } },
