@@ -145,12 +145,18 @@ class QueryType < BaseObject
 
   field :actors, ActorConnectionType, null: false, connection: true do
     argument :query, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def actors(**args)
-    Organization.query(args[:query]).fetch(:data, []) +
-    Funder.query(args[:query]).fetch(:data, []) +
-    Person.query(args[:query]).fetch(:data, [])
+    orgs = Organization.query(args[:query], offset: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil)
+    funders = Funder.query(args[:query], limit: args[:size], offset: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil)
+    people = Person.query(args[:query], limit: args[:size], offset: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil)
+
+    { 
+      data: Array.wrap(orgs[:data]) + Array.wrap(funders[:data]) + Array.wrap(people[:data]),
+      meta: { "total" => (orgs.dig(:meta, "total").to_i + funders.dig(:meta, "total").to_i + people.dig(:meta, "total").to_i) } }
   end
 
   field :actor, ActorItem, null: false do

@@ -60,7 +60,7 @@ describe Person, type: :model, vcr: true do
       expect(person.name).to eq("Mohammed Al-Dhahir")
       expect(person.given_name).to eq("Mohammed")
       expect(person.family_name).to eq("Al-Dhahir")
-      expect(person.other_names).to eq(["Mohammed Ali Al-Dhahir"])
+      expect(person.alternate_name).to eq(["Mohammed Ali Al-Dhahir"])
       expect(person.affiliation).to eq([{"name"=>"AOSpine International"},
         {"name"=>"Al-Ra'afa Medical Centre"},
         {"name"=>"Al-Thawra Modren General Hospital"},

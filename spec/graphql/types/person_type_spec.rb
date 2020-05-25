@@ -142,7 +142,7 @@ describe PersonType do
       expect(person.fetch("name")).to eq("Julio López-Fenner")
       expect(person.fetch("givenName")).to eq("Julio")
       expect(person.fetch("familyName")).to eq("López-Fenner")
-      expect(person.fetch("otherNames")).to eq(["The PumalalPiper"])
+      expect(person.fetch("alternateName")).to eq(["The PumalalPiper"])
       expect(person.fetch("affiliation")).to eq([{"name"=>"Technische Universität Clausthal"},
         {"name"=>"Universidad de Chile"},
         {"name"=>"Universidad de La Frontera"}])
