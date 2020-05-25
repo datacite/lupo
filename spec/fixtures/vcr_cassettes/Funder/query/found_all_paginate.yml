@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.crossref.org/funders?offset=2&rows=3
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - X-Requested-With
+      Content-Length:
+      - '1633'
+      Server:
+      - http-kit
+      Date:
+      - Mon, 25 May 2020 04:59:27 GMT
+      X-Rate-Limit-Limit:
+      - '50'
+      X-Rate-Limit-Interval:
+      - 1s
+      Connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"ok","message-type":"funder-list","message-version":"1.0.0","message":{"items-per-page":3,"query":{"start-index":2,"search-terms":null},"total-results":23411,"items":[{"id":"501100004246","location":"Venezuela","name":"Provita","alt-names":[],"uri":"http:\/\/dx.doi.org\/10.13039\/501100004246","replaces":[],"replaced-by":[],"tokens":["provita"]},{"id":"100015057","location":"Austria","name":"Servicestelle
+        f\u00fcr Mobilit\u00e4tsprogramme des \u00f6sterreichischen Bundesministeriums
+        f\u00fcr Bildung, Wissenschaft und Forschung, KulturKontakt Austria","alt-names":["Servicestelle
+        f\u00fcr Mobilit\u00e4tsprogramme","Servicestelle f\u00fcr Mobilit\u00e4tsprogramme
+        des BMBWF, Kulturkontakt Austria","Service Centre for International Mobility
+        Programmes of the Austrian Federal Ministry of Education, Science and Research"],"uri":"http:\/\/dx.doi.org\/10.13039\/100015057","replaces":[],"replaced-by":[],"tokens":["servicestelle","f\u00fcr","mobilit\u00e4tsprogramme","des","\u00f6sterreichischen","bundesministeriums","f\u00fcr","bildung","wissenschaft","und","forschung","kulturkontakt","austria","servicestelle","f\u00fcr","mobilit\u00e4tsprogramme","servicestelle","f\u00fcr","mobilit\u00e4tsprogramme","des","bmbwf","kulturkontakt","austria","service","centre","for","international","mobility","programmes","of","the","austrian","federal","ministry","of","education","science","and","research"]},{"id":"501100007416","location":"Sweden","name":"Swedish
+        Brain Power","alt-names":["SBP"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100007416","replaces":[],"replaced-by":[],"tokens":["swedish","brain","power","sbp"]}]}}'
+    http_version: null
+  recorded_at: Mon, 25 May 2020 04:59:27 GMT
+recorded_with: VCR 5.1.0
