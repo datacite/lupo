@@ -128,7 +128,13 @@ class Doi < ActiveRecord::Base
   scope :q, ->(query) { where("dataset.doi = ?", query) }
 
   # use different index for testing
-  index_name Rails.env.test? ? "dois-test" : "dois-#{ENV["ES_PREFIX"]}"
+  if Rails.env.test?
+    index_name "dois-test"
+  elsif ENV["ES_PREFIX"].present?
+    index_name"dois-#{ENV["ES_PREFIX"]}"
+  else
+    index_name "dois"
+  end
 
   settings index: {
     analysis: {

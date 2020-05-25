@@ -15,7 +15,13 @@ class Activity < Audited::Audit
   end
 
   # use different index for testing
-  index_name Rails.env.test? ? "activities-test" : "activities-#{ENV["ES_PREFIX"]}"
+  if Rails.env.test?
+    index_name "activities-test"
+  elsif ENV["ES_PREFIX"].present?
+    index_name"activities-#{ENV["ES_PREFIX"]}"
+  else
+    index_name "activities"
+  end
 
   mapping dynamic: 'false' do
     indexes :id,                             type: :keyword
