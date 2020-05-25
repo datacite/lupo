@@ -217,10 +217,10 @@ module Indexable
         filter << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
         filter << { term: { region: options[:region].upcase }} if options[:region].present?
         filter << { term: { "consortium_id.raw" => options[:consortium_id] }} if options[:consortium_id].present?
-        filter << { term: { member_type: options[:member_type] }} if options[:member_type].present?
-        filter << { term: { organization_type: options[:organization_type] }} if options[:organization_type].present?
+        filter << { terms: { member_type: options[:member_type].split(",") }} if options[:member_type].present?
+        filter << { terms: { organization_type: options[:organization_type].split(",") }} if options[:organization_type].present?
         filter << { term: { non_profit_status: options[:non_profit_status] }} if options[:non_profit_status].present?
-        filter << { term: { focus_area: options[:focus_area] }} if options[:focus_area].present?
+        filter << { terms: { focus_area: options[:focus_area].split(",") }} if options[:focus_area].present?
 
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
         if options[:exclude_registration_agencies]
