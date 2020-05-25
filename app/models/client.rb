@@ -333,21 +333,18 @@ class Client < ActiveRecord::Base
     Doi.transfer(client_id: symbol.downcase, target_id: target.id)
   end
 
-  def transfer(options = {})
-    if options[:target_id].blank?
+  # use keyword arguments consistently
+  def transfer(target_id: nil)
+    if target_id.blank?
       Rails.logger.error "[Transfer] No target provider provided."
       return nil
     end
 
-    target_provider = Provider.where(symbol: options[:target_id]).first
+    target_provider = Provider.where("role_name IN (?)", %w(ROLE_ALLOCATOR ROLE_CONSORTIUM_ORGANIZATION))
+                              .where(symbol: target_id).first
 
     if target_provider.blank?
       Rails.logger.error "[Transfer] Provider doesn't exist."
-      return nil
-    end
-
-    unless ["direct_member", "consortium_organization"].include?(target_provider.member_type)
-      Rails.logger.error "[Transfer] Consortium leads and member-only members cannot have repositories."
       return nil
     end
 
@@ -355,13 +352,14 @@ class Client < ActiveRecord::Base
     update_attribute(:allocator, target_provider.id)
 
     # transfer prefixes
-    transfer_prefixes(target_provider.symbol)
+    transfer_prefixes(target_id: target_provider.symbol)
 
     # Update DOIs
-    TransferClientJob.perform_later(self, target_id: options[:target_id])
+    TransferClientJob.perform_later(self, target_id: target_id)
   end
 
-  def transfer_prefixes(target_id)
+  # use keyword arguments consistently
+  def transfer_prefixes(target_id: nil)
     # These prefixes are used by multiple clients
     prefixes_to_keep = ["10.4124", "10.4225", "10.4226", "10.4227"]
 
