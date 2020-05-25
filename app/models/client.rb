@@ -347,7 +347,7 @@ class Client < ActiveRecord::Base
     end
 
     unless ["direct_member", "consortium_organization"].include?(target_provider.member_type)
-      Rails.logger.error "[Transfer] Consortiums and Members-only cannot have repositories."
+      Rails.logger.error "[Transfer] Consortium leads and member-only members cannot have repositories."
       return nil
     end
 

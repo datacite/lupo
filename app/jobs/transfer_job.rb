@@ -14,7 +14,7 @@ class TransferJob < ActiveJob::Base
 
       doi.__elasticsearch__.index_document
 
-      Rails.logger.info "[Transfer] Transferred DOI #{doi.doi}."
+      Rails.logger.warn "[Transfer] Transferred DOI #{doi.doi}."
     elsif doi.present?
       Rails.logger.error "[Transfer] Error transferring DOI " + doi_id + ": no target client"
     else

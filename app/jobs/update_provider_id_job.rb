@@ -12,7 +12,7 @@ class UpdateProviderIdJob < ActiveJob::Base
     if doi.present? && options[:target_id].present?
       doi.__elasticsearch__.index_document
 
-      Rails.logger.info "[Transfer] updated DOI #{doi.doi}."
+      Rails.logger.warn "[Transfer] updated DOI #{doi.doi}."
     elsif doi.present?
       Rails.logger.error "[Transfer] Error updateding DOI " + doi_id + ": no target client"
     else
