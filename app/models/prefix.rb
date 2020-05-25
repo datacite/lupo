@@ -17,7 +17,13 @@ class Prefix < ActiveRecord::Base
   has_many :providers, through: :provider_prefixes
 
   # use different index for testing
-  index_name Rails.env.test? ? "prefixes-test" : "prefixes"
+  if Rails.env.test?
+    index_name "prefixes-test"
+  elsif ENV["ES_PREFIX"].present?
+    index_name"prefixes-#{ENV["ES_PREFIX"]}"
+  else
+    index_name "prefixes"
+  end
 
   mapping dynamic: "false" do
     indexes :id,                  type: :keyword
