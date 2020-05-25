@@ -71,7 +71,8 @@ after_success:
 
       git clone "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git";
       ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/stage/services/client-api/_lupo.auto.tfvars;
-
+      ./dockerize -template vendor/docker/_lupo.auto.tfvars.tmpl:mastino/test/services/client-api/_lupo.auto.tfvars;
+        
       sentry-cli releases new lupo:${GIT_TAG} --finalize --project lupo;
 
       if [ "${TRAVIS_TAG?}" ]; then
@@ -93,6 +94,7 @@ after_success:
         git commit -m "Adding lupo git variables for commit tagged ${TRAVIS_TAG?}";
         git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" master;
       else
+        git add test/services/client-api/_lupo.auto.tfvars;
         git add stage/services/client-api/_lupo.auto.tfvars;
         git commit -m "Adding lupo git variables for latest commit";
         git push "https://${TRAVIS_SECURE_TOKEN}@github.com/datacite/mastino.git" master;
