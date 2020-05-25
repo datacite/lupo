@@ -1,0 +1,55 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.ror.org/organizations?page=2&query=lincoln%20university
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Connection:
+      - keep-alive
+      Date:
+      - Mon, 11 May 2020 16:51:36 GMT
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      Allow:
+      - GET, HEAD, OPTIONS
+      X-Powered-By:
+      - Phusion Passenger 6.0.4
+      Server:
+      - nginx/1.17.3 + Phusion Passenger 6.0.4
+      Content-Encoding:
+      - gzip
+      Vary:
+      - Accept-Encoding,Cookie,Origin
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 77d8cf253666facea1bbe67902fcbbc1.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - DUS51-C1
+      X-Amz-Cf-Id:
+      - y8YXRuJUHyW7x2GkgxoyOuX40I4Xbr3I8RDw7y7p8600iu0ZZCIKRg==
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        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
+    http_version: null
+  recorded_at: Mon, 11 May 2020 16:51:36 GMT
+recorded_with: VCR 5.1.0

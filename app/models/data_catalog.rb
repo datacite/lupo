@@ -20,8 +20,8 @@ class DataCatalog
   end
 
   def self.query(query, options={})
-    limit ||= 25
-    page ||= 1
+    limit = options[:limit] || 25
+    page = options[:offset] || 1
 
     params = {
       query: query,
@@ -46,7 +46,10 @@ class DataCatalog
     meta = { "total" => response.body.dig("meta", "total") }
     errors = response.body.fetch("errors", nil)
 
-    { data: data, meta: meta, errors: errors }
+    { 
+      data: data, 
+      meta: meta, 
+      errors: errors }
   end
 
   def self.parse_message(id: nil, message: nil)

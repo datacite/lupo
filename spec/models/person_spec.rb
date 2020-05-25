@@ -51,41 +51,43 @@ describe Person, type: :model, vcr: true do
 
   describe "query" do
     it "found all" do
-      query = "*"
+      query = nil
       people = Person.query(query)
-      expect(people.dig(:meta, "total")).to eq(8522184)
+      expect(people.dig(:meta, "total")).to eq(8827698)
       expect(people.dig(:data).size).to eq(25)
       person = people[:data].first
-      expect(person.id).to eq("https://orcid.org/0000-0003-3995-3004")
-      expect(person.name).to eq("Letícia Rodrigues Bueno")
-      expect(person.given_name).to eq("Letícia Rodrigues")
-      expect(person.family_name).to eq("Bueno")
-      expect(person.alternate_name).to eq([])
-      expect(person.affiliation).to eq([{"name"=>"Universidade Estadual de Maringá"},
-        {"name"=>"Universidade Federal do ABC"},
-        {"name"=>"Universidade Federal do Rio de Janeiro"}])
+      expect(person.id).to eq("https://orcid.org/0000-0002-5387-6407")
+      expect(person.name).to eq("Mohammed Al-Dhahir")
+      expect(person.given_name).to eq("Mohammed")
+      expect(person.family_name).to eq("Al-Dhahir")
+      expect(person.alternate_name).to eq(["Mohammed Ali Al-Dhahir"])
+      expect(person.affiliation).to eq([{"name"=>"AOSpine International"},
+        {"name"=>"Al-Ra'afa Medical Centre"},
+        {"name"=>"Al-Thawra Modren General Hospital"},
+        {"name"=>"Al-mustansiryia- college of Medicine"},
+        {"name"=>"Alsamawah General Hospital"},
+        {"name"=>"Arab Board of Health Specializations"},
+        {"name"=>"University of Rochester"},
+        {"name"=>"Yemeni German Hospital"}])
     end
 
     it "found miller" do
       query = "miller"
       people = Person.query(query)
-      expect(people.dig(:meta, "total")).to eq(7089)
+      expect(people.dig(:meta, "total")).to eq(7373)
       expect(people.dig(:data).size).to eq(25)
       person = people[:data].first
-      expect(person.id).to eq("https://orcid.org/0000-0002-2131-0054")
-      expect(person.name).to eq("Edmund Miller")
-      expect(person.given_name).to eq("Edmund")
-      expect(person.family_name).to eq("Miller")
-      expect(person.affiliation).to eq([{"name"=>"Feinstein Institute for Medical Research"},
-        {"name"=>"Hofstra Northwell School of Medicine at Hofstra University"},
-        {"name"=>"King's College London"},
-        {"name"=>"University of Texas Health Northeast"}])
+      expect(person.id).to eq("https://orcid.org/0000-0002-1360-1118")
+      expect(person.name).to eq("David Justin Miller")
+      expect(person.given_name).to eq("David")
+      expect(person.family_name).to eq("Justin Miller")
+      expect(person.affiliation).to eq([{"name"=>"Regents School of Austin"}])
     end
 
     it "found datacite" do
       query = "datacite"
       people = Person.query(query)
-      expect(people.dig(:meta, "total")).to eq(15163)
+      expect(people.dig(:meta, "total")).to eq(15414)
       expect(people.dig(:data).size).to eq(25)
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0002-9300-5278")

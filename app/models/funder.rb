@@ -4,11 +4,12 @@ class Funder
 
   def self.find_by_id(id)
     doi = doi_from_url(id)
-    return {} unless doi.present?
+    return { errors: [{ "status" => 422, "title" => "Not a valid DOI." }] } unless doi.present?
 
     url = "https://api.crossref.org/funders/#{doi}"
     response = Maremma.get(url, host: true)
 
+    return { errors: [{ "status" => 404, "title" => "Not found." }] } if response.status == 404
     return {} if response.status != 200
     
     message = response.body.dig("data", "message")
@@ -20,12 +21,13 @@ class Funder
   end
 
   def self.query(query, options={})
-    rows = options[:limit] || 100
+    rows = options[:limit] || 25
+    offset = options[:offset] || 0
 
     if query.present?
-      url = "https://api.crossref.org/funders?query=#{query}&rows=#{rows}"
+      url = "https://api.crossref.org/funders?query=#{query}&rows=#{rows}&offset=#{offset}"
     else
-      url = "https://api.crossref.org/funders?rows=#{rows}"
+      url = "https://api.crossref.org/funders?rows=#{rows}&offset=#{offset}"
     end
 
     response = Maremma.get(url, host: true)
@@ -38,7 +40,10 @@ class Funder
     meta = { "total" => response.body.dig("data", "message", "total-results") }
     errors = response.body.fetch("errors", nil)
 
-    { data: data, meta: meta, errors: errors }
+    { 
+      data: data, 
+      meta: meta, 
+      errors: errors }
   end
 
   def self.parse_message(id: nil, message: nil)

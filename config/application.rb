@@ -69,7 +69,8 @@ module Lupo
     # include graphql
     config.paths.add Rails.root.join('app', 'graphql', 'types').to_s, eager_load: true
     config.paths.add Rails.root.join('app', 'graphql', 'mutations').to_s, eager_load: true
-
+    config.paths.add Rails.root.join('app', 'graphql', 'connections').to_s, eager_load: true
+    
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.

@@ -23,7 +23,7 @@ http_interactions:
       Connection:
       - keep-alive
       Date:
-      - Wed, 13 May 2020 06:02:31 GMT
+      - Mon, 25 May 2020 16:08:16 GMT
       Status:
       - 200 OK
       X-Frame-Options:
@@ -39,19 +39,17 @@ http_interactions:
       Vary:
       - Accept-Encoding,Cookie,Origin
       X-Cache:
-      - Hit from cloudfront
+      - Miss from cloudfront
       Via:
-      - 1.1 0b9e85cfe8fe19b385db56d32b4ce802.cloudfront.net (CloudFront)
+      - 1.1 821feb380ab4aeca6ae9157aa1190ff2.cloudfront.net (CloudFront)
       X-Amz-Cf-Pop:
-      - FRA2-C1
+      - DUS51-C1
       X-Amz-Cf-Id:
-      - L70W-Vc3HeXFSBegwtVIPvO0HcdjOkQO9rVTr0pAZmxXzqBUfzPN8w==
-      Age:
-      - '2262'
+      - 3uHigDBTXtQZQIXh5vJ00rLz6dbJ85-NmqBENd3zXOVAyFhqCmfAOA==
     body:
       encoding: ASCII-8BIT
       string: !binary |-
         H4sIAAAAAAAAA3xUXU/jMBD8K5WfURp/233jOI5DSBwFIR5OqAqJWyzSpHKS61Wo//3WDrR2daIv9eyOZ3c2m7wjW6EZeu37TTebTl3rstatpjmma/MqCUFnqCnWBiiPjf1jXGf73aRdTi6K9Yuz1coAod9tTIdmv9FlNZRFb9sGPZ+h2jZvIeq1QXq73WZlsc6KMhvepp5R1LboxpsHucmxTKCUrm12a88B1PVFP8AZwj2woPTWvtmNqWyxGFz94QNqmSY7ZIIfj6ZH6UW7XMQO6uLF1L7I+3gEpTtnl7tu1dZg1biVK7ZND0zbtYJqyJc7tIeWynZoerdDs/fP4+I4r95UkxvbrKp2jQ7URdlWPn/1De3PkPnbG9cU9cJWnRe5fri99v8bZ5bGOQMPpxnq2g+r9oPKxx8mWCmuKUPPIPJjaKp7szy5h3iOcWBLytFB4ST6CSXnJIKKkRygP+OcMRylBNE6goyQ+CJjOpblWsRZIZiIYM5VnkKeQhlDkZMU0hjKPLkrcaxMdSLFOI0hlzrpSpKkLtdJk5LFbWBB0p41TpvUCSRplqSOGEuhSiBP/ApBEwtg3+/Cz8uH8y8XCONxaR4vzh++Il74JRuZN3f3t19RfQdSKhXYv9zqP7tIuJaKS3LcwyhCpKY0rB9WOSX+WVAiZbAvKQ7rhrEAurfMlJB+igQ+UsKnmFY4jJlAxzKQOSZCjrelzkUISaLCdS658HOmUMw/Ogk7Sj8w/ZALy0+oZNAFDzVz0AwxPb4ZREBE43HoT/B5qYq+OHU9p7Ba7Oj5gOc4V1pj4R3OCRPQZGh8jhVWmgTRq/vr76eCK/hiZRyGleWfqklsv9//AwAA//8DALZf1ADSBQAA
     http_version: null
-  recorded_at: Wed, 13 May 2020 06:40:13 GMT
+  recorded_at: Mon, 25 May 2020 16:08:16 GMT
 recorded_with: VCR 5.1.0

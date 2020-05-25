@@ -3,13 +3,15 @@
 class QueryType < BaseObject
   extend_type
 
-  field :members, MemberConnectionType, null: false, connection: true do
+  field :members, MemberConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :year, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
-  def members(query: nil, year: nil, first: nil)
-    Provider.query(query, year: year, page: { number: 1, size: first }).results.to_a
+  def members(**args)
+    Provider.query(args[:query], year: args[:year], page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
   end
 
   field :member, MemberType, null: false do
@@ -20,15 +22,16 @@ class QueryType < BaseObject
     Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: id).first
   end
 
-  field :repositories, RepositoryConnectionType, null: false, connection: true do
+  field :repositories, RepositoryConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :year, String, required: false
     argument :software, String, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def repositories(**args)
-    Client.query(args[:query], year: args[:year], software: args[:software], page: { number: 1, size: args[:first] }).results.to_a
+    Client.query(args[:query], year: args[:year], software: args[:software], page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
   end
 
   field :repository, RepositoryType, null: false do
@@ -39,13 +42,14 @@ class QueryType < BaseObject
     Client.where(symbol: id).where(deleted_at: nil).first
   end
 
-  field :prefixes, PrefixConnectionType, null: false do
+  field :prefixes, PrefixConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def prefixes(**args)
-    Prefix.query(args[:query], page: { number: 1, size: args[:first] }).results.to_a
+    Prefix.query(args[:query], page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
   end
 
   field :prefix, PrefixType, null: false do
@@ -56,13 +60,14 @@ class QueryType < BaseObject
     Prefix.where(prefix: id).first
   end
 
-  field :funders, FunderConnectionType, null: false, connection: true do
+  field :funders, FunderConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def funders(**args)
-    Funder.query(args[:query], limit: args[:first]).fetch(:data, [])
+    Funder.query(args[:query], limit: args[:size], offset: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil)
   end
 
   field :funder, FunderType, null: false do
@@ -87,21 +92,23 @@ class QueryType < BaseObject
     result
   end
 
-  field :data_catalogs, DataCatalogConnectionType, null: false, connection: true do
+  field :data_catalogs, DataCatalogConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def data_catalogs(**args)
-    DataCatalog.query(args[:query], limit: args[:first]).fetch(:data, [])
+    DataCatalog.query(args[:query], limit: args[:size], offset: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil)
   end
 
-  field :organizations, OrganizationConnectionType, null: false, connection: true do
+  field :organizations, OrganizationConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
+    argument :after, String, required: false, as: :cursor
   end
 
   def organizations(**args)
-    Organization.query(args[:query]).fetch(:data, [])
+    Organization.query(args[:query], offset: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil)
   end
 
   field :organization, OrganizationType, null: false do
@@ -126,23 +133,30 @@ class QueryType < BaseObject
     result
   end
 
-  field :people, PersonConnectionType, null: false, connection: true do
+  field :people, PersonConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def people(**args)
-    Person.query(args[:query], rows: args[:first]).fetch(:data, [])
+    Person.query(args[:query], limit: args[:size], offset: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil)
   end
 
   field :actors, ActorConnectionType, null: false, connection: true do
     argument :query, String, required: false
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def actors(**args)
-    Organization.query(args[:query]).fetch(:data, []) +
-    Funder.query(args[:query]).fetch(:data, []) +
-    Person.query(args[:query]).fetch(:data, [])
+    orgs = Organization.query(args[:query], offset: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil)
+    funders = Funder.query(args[:query], limit: args[:size], offset: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil)
+    people = Person.query(args[:query], limit: args[:size], offset: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil)
+
+    { 
+      data: Array.wrap(orgs[:data]) + Array.wrap(funders[:data]) + Array.wrap(people[:data]),
+      meta: { "total" => (orgs.dig(:meta, "total").to_i + funders.dig(:meta, "total").to_i + people.dig(:meta, "total").to_i) } }
   end
 
   field :actor, ActorItem, null: false do
@@ -165,7 +179,7 @@ class QueryType < BaseObject
     result
   end
 
-  field :works, WorkConnectionType, null: false, connection: true do
+  field :works, WorkConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -180,7 +194,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, default_value: "WzEsICIxIl0", as: :cursor
   end
 
   def works(**args)
@@ -195,7 +210,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :datasets, DatasetConnectionType, null: false, connection: true do
+  field :datasets, DatasetConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -209,7 +224,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def datasets(**args)
@@ -225,7 +241,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :publications, PublicationConnectionType, null: false, connection: true do
+  field :publications, PublicationConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -239,7 +255,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def publications(**args)
@@ -255,7 +272,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :audiovisuals, AudiovisualConnectionType, null: false, connection: true do
+  field :audiovisuals, AudiovisualConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -269,7 +286,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def audiovisuals(**args)
@@ -285,7 +303,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :collections, CollectionConnectionType, null: false, connection: true do
+  field :collections, CollectionConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -299,7 +317,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def collections(**args)
@@ -315,7 +334,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :data_papers, DataPaperConnectionType, null: false, connection: true do
+  field :data_papers, DataPaperConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -329,7 +348,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def data_papers(**args)
@@ -345,7 +365,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :events, EventConnectionType, null: false, connection: true do
+  field :events, EventConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -359,7 +379,6 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
   end
 
   def events(**args)
@@ -375,7 +394,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :images, ImageConnectionType, null: false, connection: true do
+  field :images, ImageConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -389,7 +408,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def images(**args)
@@ -405,7 +425,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :interactive_resources, InteractiveResourceConnectionType, null: false, connection: true do
+  field :interactive_resources, InteractiveResourceConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -419,7 +439,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def interactive_resources(**args)
@@ -435,7 +456,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :models, ModelConnectionType, null: false, connection: true do
+  field :models, ModelConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -449,7 +470,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def models(**args)
@@ -465,7 +487,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :physical_objects, PhysicalObjectConnectionType, null: false do
+  field :physical_objects, PhysicalObjectConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -479,7 +501,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def physical_objects(**args)
@@ -495,7 +518,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :services, ServiceConnectionType, null: false, connection: true do
+  field :services, ServiceConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -509,7 +532,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def services(**args)
@@ -525,7 +549,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :softwares, SoftwareConnectionType, null: false, connection: true do
+  field :softwares, SoftwareConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -539,7 +563,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def softwares(**args)
@@ -555,7 +580,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :sounds, SoundConnectionType, null: false, connection: true do
+  field :sounds, SoundConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -569,7 +594,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def sounds(**args)
@@ -585,7 +611,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :workflows, WorkflowConnectionType, null: false, connection: true do
+  field :workflows, WorkflowConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -599,7 +625,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def workflows(**args)
@@ -615,7 +642,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :dissertations, DissertationConnectionType, null: false, connection: true do
+  field :dissertations, DissertationConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -629,7 +656,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def dissertations(**args)
@@ -646,7 +674,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :preprints, PreprintConnectionType, null: false, connection: true do
+  field :preprints, PreprintConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -660,7 +688,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def preprints(**args)
@@ -677,7 +706,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :peer_reviews, PeerReviewConnectionType, null: false, connection: true do
+  field :peer_reviews, PeerReviewConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -691,7 +720,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def peer_reviews(**args)
@@ -708,7 +738,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :conference_papers, ConferencePaperConnectionType, null: false, connection: true do
+  field :conference_papers, ConferencePaperConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -722,7 +752,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def conference_papers(**args)
@@ -739,7 +770,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :book_chapters, BookChapterConnectionType, null: false, connection: true do
+  field :book_chapters, BookChapterConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -753,7 +784,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def book_chapters(**args)
@@ -770,7 +802,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :books, BookConnectionType, null: false, connection: true do
+  field :books, BookConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -784,7 +816,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def books(**args)
@@ -801,7 +834,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :journal_articles, JournalArticleConnectionType, null: false, connection: true do
+  field :journal_articles, JournalArticleConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -815,7 +848,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def journal_articles(**args)
@@ -832,7 +866,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :instruments, InstrumentConnectionType, null: false, connection: true do
+  field :instruments, InstrumentConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -846,7 +880,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def instruments(**args)
@@ -864,7 +899,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :others, OtherConnectionType, null: false, connection: true do
+  field :others, OtherConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -878,7 +913,8 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
   def others(**args)
@@ -894,7 +930,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :usage_reports, UsageReportConnectionType, null: false, connection: true do
+  field :usage_reports, UsageReportConnectionWithTotalType, null: false, connection: true do
     argument :first, Int, required: false, default_value: 25
   end
 
@@ -914,7 +950,7 @@ class QueryType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
   end
 
   def set_doi(id)

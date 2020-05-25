@@ -21,7 +21,7 @@ class RepositoryType < BaseObject
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :datasets, DatasetConnectionType, null: true, connection: true, description: "Datasets managed by the repository" do
+  field :datasets, DatasetConnectionWithTotalType, null: true, connection: true, description: "Datasets managed by the repository" do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -37,10 +37,11 @@ class RepositoryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
-  field :publications, PublicationConnectionType, null: true, connection: true, description: "Publications managed by the repository" do
+  field :publications, PublicationConnectionWithTotalType, null: true, connection: true, description: "Publications managed by the repository" do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -56,10 +57,11 @@ class RepositoryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
-  field :softwares, SoftwareConnectionType, null: true, connection: true, description: "Software managed by the repository" do
+  field :softwares, SoftwareConnectionWithTotalType, null: true, connection: true, description: "Software managed by the repository" do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -75,10 +77,11 @@ class RepositoryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
-  field :works, WorkConnectionType, null: true, connection: true, description: "Works managed by the repository" do
+  field :works, WorkConnectionWithTotalType, null: true, connection: true, description: "Works managed by the repository" do
     argument :query, String, required: false
     argument :ids, String, required: false
     argument :user_id, String, required: false
@@ -94,10 +97,11 @@ class RepositoryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 25, as: :size
+    argument :after, String, required: false, as: :cursor
   end
 
-  field :prefixes, RepositoryPrefixConnectionType, null: true, description: "Prefixes managed by the repository", connection: true do
+  field :prefixes, RepositoryPrefixConnectionWithTotalType, null: true, description: "Prefixes managed by the repository", connection: true do
     argument :query, String, required: false
     argument :state, String, required: false
     argument :year, String, required: false
@@ -110,33 +114,25 @@ class RepositoryType < BaseObject
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    r = response(args)
-
-    r.results.to_a
+    response(args)
   end
 
   def publications(**args)
     args[:resource_type_id] = "Text"
-    r = response(args)
-
-    r.results.to_a
+    response(args)
   end
 
   def softwares(**args)
     args[:resource_type_id] = "Software"
-    r = response(args)
-
-    r.results.to_a
+    response(args)
   end
 
   def works(**args)
-    r = response(args)
-
-    r.results.to_a
+    response(args)
   end
 
   def prefixes(**args)
-    ClientPrefix.query(args[:query], client_id: object.uid, state: args[:state], year: args[:year], page: { number: 1, size: args[:first] }).results.to_a
+    ClientPrefix.query(args[:query], client_id: object.uid, state: args[:state], year: args[:year], page: { number: 1, size: args[:first] })
   end
 
   def view_count
@@ -158,6 +154,6 @@ class RepositoryType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], funder_id: args[:funder_id], user_id: args[:user_id], client_id: object.uid, provider_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_organization: args[:has_organization], has_funder: args[:has_funder], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
+    Doi.query(args[:query], funder_id: args[:funder_id], user_id: args[:user_id], client_id: object.uid, provider_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_organization: args[:has_organization], has_funder: args[:has_funder], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
   end
 end

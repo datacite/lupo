@@ -11,10 +11,10 @@ describe OrganizationType do
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
     it { is_expected.to have_field(:downloadCount).of_type("Int") }
-    it { is_expected.to have_field(:datasets).of_type("DatasetConnection") }
-    it { is_expected.to have_field(:publications).of_type("PublicationConnection") }
-    it { is_expected.to have_field(:softwares).of_type("SoftwareConnection") }
-    it { is_expected.to have_field(:works).of_type("WorkConnection") }
+    it { is_expected.to have_field(:datasets).of_type("DatasetConnectionWithTotal") }
+    it { is_expected.to have_field(:publications).of_type("PublicationConnectionWithTotal") }
+    it { is_expected.to have_field(:softwares).of_type("SoftwareConnectionWithTotal") }
+    it { is_expected.to have_field(:works).of_type("WorkConnectionWithTotal") }
   end
 
   describe "find organization", elasticsearch: true, vcr: true do
@@ -122,8 +122,20 @@ describe OrganizationType do
 
     let(:query) do
       %(query {
-        organizations(query: "Cambridge University") {
+        organizations(query: "Cambridge University", after: "MQ") {
           totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          types {
+            title
+            count
+          }
+          countries {
+            title
+            count
+          }
           nodes {
             id
             name
@@ -148,6 +160,13 @@ describe OrganizationType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "organizations", "totalCount")).to eq(10763)
+      expect(response.dig("data", "organizations", "pageInfo", "endCursor")).to eq("MQ")
+      expect(response.dig("data", "organizations", "pageInfo", "hasNextPage")).to be true
+      
+      expect(response.dig("data", "organizations", "types").length).to eq(8)
+      expect(response.dig("data", "organizations", "types").first).to eq("count"=>9611, "title"=>"Education")
+      expect(response.dig("data", "organizations", "countries").length).to eq(10)
+      expect(response.dig("data", "organizations", "countries").first).to eq("count"=>1776, "title"=>"United States of America")
       expect(response.dig("data", "organizations", "nodes").length).to eq(20)
       organization = response.dig("data", "organizations", "nodes", 0)
       expect(organization.fetch("id")).to eq("https://ror.org/013meh722")

@@ -14,7 +14,7 @@ describe DataCatalogType do
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
     it { is_expected.to have_field(:downloadCount).of_type("Int") }
-    it { is_expected.to have_field(:datasets).of_type("DatasetConnection") }
+    it { is_expected.to have_field(:datasets).of_type("DatasetConnectionWithTotal") }
   end
 
   # describe "find data_catalog", elasticsearch: true, vcr: true do
@@ -117,8 +117,12 @@ describe DataCatalogType do
 
     let(:query) do
       %(query {
-        dataCatalogs(query: "Dataverse") {
+        dataCatalogs(query: "Dataverse", first: 10, after: "OA") {
           totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
           nodes {
             id
             name
@@ -141,14 +145,16 @@ describe DataCatalogType do
     it "returns data_catalog information" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(83)
-      expect(response.dig("data", "dataCatalogs", "nodes").length).to eq(25)
+      expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(85)
+      expect(response.dig("data", "dataCatalogs", "pageInfo", "endCursor")).to eq("MQ")
+      expect(response.dig("data", "dataCatalogs", "pageInfo", "hasNextPage")).to eq true
+      expect(response.dig("data", "dataCatalogs", "nodes").length).to eq(10)
       
       data_catalog = response.dig("data", "dataCatalogs", "nodes", 0)
-      expect(data_catalog.fetch("id")).to eq("https://doi.org/10.17616/r37h04")
-      expect(data_catalog.fetch("name")).to eq("AfricaRice Dataverse")
-      expect(data_catalog.fetch("alternateName")).to eq(["Rice science at the service of Africa", "la science rizicole au service de l'Afrique"])
-      expect(data_catalog.fetch("description")).to start_with("AfricaRice is a leading pan-African rice research organization")
+      expect(data_catalog.fetch("id")).to eq("https://doi.org/10.17616/r3bw5r")
+      expect(data_catalog.fetch("name")).to eq("UCLA Social Science Data Archive Dataverse")
+      expect(data_catalog.fetch("alternateName")).to eq(["SSDA Dataverse\r\nUCLA Library Data Science Center"])
+      expect(data_catalog.fetch("description")).to start_with("The Social Science Data Archive is still active and maintained as part of the UCLA Library")
       expect(data_catalog.fetch("certificates")).to be_empty
       expect(data_catalog.fetch("softwareApplication")).to eq([{"name"=>"DataVerse", "softwareVersion"=>nil, "url"=>nil}])
     end

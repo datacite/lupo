@@ -96,18 +96,31 @@ describe ActorItem do
     it "returns actor information" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "actors", "totalCount")).to eq(1796010)
-      expect(response.dig("data", "actors", "nodes").length).to eq(81)
+      expect(response.dig("data", "actors", "totalCount")).to eq(1813185)
+      expect(response.dig("data", "actors", "nodes").length).to eq(70)
       organization = response.dig("data", "actors", "nodes", 0)
       expect(organization.fetch("id")).to eq("https://ror.org/013meh722")
       expect(organization.fetch("name")).to eq("University of Cambridge")
       funder = response.dig("data", "actors", "nodes", 20)
-      expect(funder.fetch("id")).to eq("https://doi.org/10.13039/501100003987")
-      expect(funder.fetch("name")).to eq("James Baird Fund, University of Cambridge")
-      person = response.dig("data", "actors", "nodes", 74)
-      expect(person.fetch("id")).to eq("https://orcid.org/0000-0001-7701-701X")
-      expect(person.fetch("name")).to eq("Rory O'Bryen")
-      expect(person.fetch("affiliation")).to eq([{"name"=>"University of Cambridge"}, {"name"=>"University of Cambridge Trinity Hall"}])
+      expect(funder.fetch("id")).to eq("https://doi.org/10.13039/501100002927")
+      expect(funder.fetch("name")).to eq("Addenbrooke's Charitable Trust, Cambridge University Hospitals")
+      person = response.dig("data", "actors", "nodes", 53)
+      expect(person.fetch("id")).to eq("https://orcid.org/0000-0001-8961-8170")
+      expect(person.fetch("name")).to eq("Giulia Torino")
+      expect(person.fetch("affiliation")).to eq([{"name"=>"Global Challenges Initiative, University of Cambridge"},
+        {"name"=>"Illinois Institute of Technology"},
+        {"name"=>"King's College, University of Cambridge"},
+        {"name"=>"Latin American Geographies Research Network (LAG-UK)"},
+        {"name"=>"New York City Department of City Planning"},
+        {"name"=>"Pontificia Universidad Javeriana"},
+        {"name"=>"Royal Society"},
+        {"name"=>"Universidad Externado de Colombia"},
+        {"name"=>"Universidad de los Andes"},
+        {"name"=>"University College London"},
+        {"name"=>"University of Cambridge"},
+        {"name"=>"University of Sheffield"},
+        {"name"=>"Università Iuav di Venezia"},
+        {"name"=>"Urbanism in the Global South research group, University of Cambridge"}])
     end
   end
 end

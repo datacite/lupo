@@ -7,10 +7,6 @@ class ActorConnectionType < BaseConnection
   field :total_count, Integer, null: false, cache: true
   
   def total_count
-    args = object.arguments
-
-    Organization.query(args[:query], limit: 0).dig(:meta, "total").to_i + 
-    Funder.query(args[:query], limit: 0).dig(:meta, "total").to_i +
-    Person.query(args[:query], limit: 0).dig(:meta, "total").to_i
+    object.total_count 
   end
 end

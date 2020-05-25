@@ -13,13 +13,13 @@ describe PersonType do
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
     it { is_expected.to have_field(:downloadCount).of_type("Int") }
-    it { is_expected.to have_field(:datasets).of_type("DatasetConnection") }
-    it { is_expected.to have_field(:publications).of_type("PublicationConnection") }
-    it { is_expected.to have_field(:softwares).of_type("SoftwareConnection") }
-    it { is_expected.to have_field(:works).of_type("WorkConnection") }
+    it { is_expected.to have_field(:datasets).of_type("DatasetConnectionWithTotal") }
+    it { is_expected.to have_field(:publications).of_type("PublicationConnectionWithTotal") }
+    it { is_expected.to have_field(:softwares).of_type("SoftwareConnectionWithTotal") }
+    it { is_expected.to have_field(:works).of_type("WorkConnectionWithTotal") }
   end
 
-  describe "query person", elasticsearch: true, vcr: true do
+  describe "find person", elasticsearch: true, vcr: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable", creators:
       [{
@@ -102,8 +102,12 @@ describe PersonType do
   describe "query people", elasticsearch: true, vcr: true do
     let(:query) do
       %(query {
-        people(query: "Fenner") {
+        people(query: "Fenner", first: 50, after: "NA") {
           totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
           nodes {
             id
             name
@@ -128,18 +132,20 @@ describe PersonType do
     it "returns people information" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "people", "totalCount")).to eq(241)
+      expect(response.dig("data", "people", "totalCount")).to eq(246)
+      expect(response.dig("data", "people", "pageInfo", "endCursor")).to eq("MQ")
+      expect(response.dig("data", "people", "pageInfo", "hasNextPage")).to be true
+      expect(response.dig("data", "people", "nodes").length).to eq(50)
 
       person = response.dig("data", "people", "nodes", 0)
-      expect(person.fetch("id")).to eq("https://orcid.org/0000-0002-6028-9323")
-      expect(person.fetch("name")).to eq("Stephen A. Fenner")
-      expect(person.fetch("givenName")).to eq("Stephen")
-      expect(person.fetch("familyName")).to eq("Fenner")
-      expect(person.fetch("alternateName")).to eq([])
-      expect(person.fetch("affiliation")).to eq([{"name"=>"Harvard College"},
-        {"name"=>"University of Chicago"},
-        {"name"=>"University of South Carolina"},
-        {"name"=>"University of Southern Maine"}])
+      expect(person.fetch("id")).to eq("https://orcid.org/0000-0002-6953-062X")
+      expect(person.fetch("name")).to eq("Julio López-Fenner")
+      expect(person.fetch("givenName")).to eq("Julio")
+      expect(person.fetch("familyName")).to eq("López-Fenner")
+      expect(person.fetch("alternateName")).to eq(["The PumalalPiper"])
+      expect(person.fetch("affiliation")).to eq([{"name"=>"Technische Universität Clausthal"},
+        {"name"=>"Universidad de Chile"},
+        {"name"=>"Universidad de La Frontera"}])
     end
   end
 end
