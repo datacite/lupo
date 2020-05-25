@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 class FunderType < BaseObject
+  implements ActorItem
+
   description "Information about funders"
 
-  field :id, ID, null: false, description: "Crossref Funder ID"
-  field :type, String, null: false, description: "The type of the item."
-  field :name, String, null: false, description: "The name of the funder."
-  field :alternate_name, [String], null: true, description: "An alias for the funder."
   field :address, AddressType, null: true, description: "Physical address of the funder."
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."

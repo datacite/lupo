@@ -143,6 +143,36 @@ class QueryType < BaseObject
     Person.query(args[:query], limit: args[:size], offset: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil)
   end
 
+  field :actors, ActorConnectionType, null: false, connection: true do
+    argument :query, String, required: false
+  end
+
+  def actors(**args)
+    Organization.query(args[:query]).fetch(:data, []) +
+    Funder.query(args[:query]).fetch(:data, []) +
+    Person.query(args[:query]).fetch(:data, [])
+  end
+
+  field :actor, ActorItem, null: false do
+    argument :id, ID, required: true
+  end
+
+  def actor(id:)
+    if orcid_from_url(id)
+      result = Person.find_by_id(id).fetch(:data, []).first
+    elsif ror_id_from_url(id)
+      result = Organization.find_by_id(id).fetch(:data, []).first
+    elsif doi_from_url(id).to_s.starts_with?("10.13039")
+      result = Funder.find_by_id(id).fetch(:data, []).first
+    else
+      result = nil
+    end
+    
+    fail ActiveRecord::RecordNotFound if result.nil?
+
+    result
+  end
+
   field :works, WorkConnectionWithTotalType, null: false, connection: true do
     argument :query, String, required: false
     argument :ids, [String], required: false

@@ -1,4 +1,65 @@
 """
+The connection type for ActorItem.
+"""
+type ActorConnection {
+  """
+  A list of edges.
+  """
+  edges: [ActorEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [ActorItem]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type ActorEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: ActorItem
+}
+
+"""
+Information about people, research organizations and funders
+"""
+interface ActorItem {
+  """
+  An alias for the actor.
+  """
+  alternateName: [String!]
+
+  """
+  The persistent identifier for the actor.
+  """
+  id: ID!
+
+  """
+  The name of the actor.
+  """
+  name: String!
+
+  """
+  The type of the actor.
+  """
+  type: String!
+}
+
+"""
 Information about addresses
 """
 type Address {
@@ -4993,14 +5054,14 @@ type Facet {
 """
 Information about funders
 """
-type Funder {
+type Funder implements ActorItem {
   """
   Physical address of the funder.
   """
   address: Address
 
   """
-  An alias for the funder.
+  An alias for the actor.
   """
   alternateName: [String!]
 
@@ -5045,12 +5106,12 @@ type Funder {
   downloadCount: Int
 
   """
-  Crossref Funder ID
+  The persistent identifier for the actor.
   """
   id: ID!
 
   """
-  The name of the funder.
+  The name of the actor.
   """
   name: String!
 
@@ -5115,7 +5176,7 @@ type Funder {
   ): SoftwareConnectionWithTotal
 
   """
-  The type of the item.
+  The type of the actor.
   """
   type: String!
 
@@ -7761,14 +7822,14 @@ type ModelEdge {
 """
 Information about organizations
 """
-type Organization {
+type Organization implements ActorItem {
   """
   Physical address of the organization.
   """
   address: Address
 
   """
-  An alias for the organization.
+  An alias for the actor.
   """
   alternateName: [String!]
 
@@ -7812,9 +7873,9 @@ type Organization {
   downloadCount: Int
 
   """
-  ROR ID
+  The persistent identifier for the actor.
   """
-  id: ID
+  id: ID!
 
   """
   The identifier(s) for the organization.
@@ -7822,7 +7883,7 @@ type Organization {
   identifiers: [Identifier!]
 
   """
-  The name of the organization.
+  The name of the actor.
   """
   name: String!
 
@@ -7885,14 +7946,14 @@ type Organization {
   ): SoftwareConnectionWithTotal
 
   """
-  The type of the item.
+  The type of the actor.
   """
   type: String!
 
   """
   URL of the organization.
   """
-  url: [String!]
+  url: [Url!]
 
   """
   The number of views according to the Counter Code of Practice.
@@ -8839,11 +8900,16 @@ type PeerReviewEdge {
 """
 A person.
 """
-type Person {
+type Person implements ActorItem {
   """
   Affiliations(s) of the person.
   """
   affiliation: [Affiliation!]
+
+  """
+  An alias for the actor.
+  """
+  alternateName: [String!]
 
   """
   The number of citations.
@@ -8895,19 +8961,14 @@ type Person {
   givenName: String
 
   """
-  The ORCID ID of the person.
+  The persistent identifier for the actor.
   """
-  id: ID
+  id: ID!
 
   """
-  The name of the person.
+  The name of the actor.
   """
-  name: String
-
-  """
-  Other names.
-  """
-  otherNames: [String!]
+  name: String!
 
   """
   Authored publications
@@ -8968,7 +9029,7 @@ type Person {
   ): SoftwareConnectionWithTotal
 
   """
-  The type of the item.
+  The type of the actor.
   """
   type: String!
 
@@ -10373,6 +10434,29 @@ type PublicationEdge {
 
 type Query {
   _service: _Service!
+  actor(id: ID!): ActorItem!
+  actors(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+    query: String
+  ): ActorConnection!
   audiovisual(id: ID!): Audiovisual!
   audiovisuals(
     after: String

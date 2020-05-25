@@ -71,4 +71,13 @@ describe Event, type: :model, vcr: true do
     #   end
     # end
   end
+
+  describe "camelcase_nested_objects" do
+    subject { create(:event_for_datacite_related) }
+
+    it "should transform keys" do
+      Event.camelcase_nested_objects(subject.uuid)
+      expect(subject.subj.keys).to include("datePublished", "registrantId", "id")
+    end
+  end
 end

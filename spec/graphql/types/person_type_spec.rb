@@ -4,12 +4,12 @@ describe PersonType do
   describe "fields" do
     subject { described_class }
 
-    it { is_expected.to have_field(:id).of_type(types.ID) }
+    it { is_expected.to have_field(:id).of_type(!types.ID) }
     it { is_expected.to have_field(:type).of_type("String!") }
-    it { is_expected.to have_field(:name).of_type("String") }
+    it { is_expected.to have_field(:name).of_type("String!") }
     it { is_expected.to have_field(:givenName).of_type("String") }
     it { is_expected.to have_field(:familyName).of_type("String") }
-    it { is_expected.to have_field(:otherNames).of_type("[String!]") }
+    it { is_expected.to have_field(:alternateName).of_type("[String!]") }
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
     it { is_expected.to have_field(:downloadCount).of_type("Int") }
@@ -49,7 +49,7 @@ describe PersonType do
           name
           givenName
           familyName
-          otherNames
+          alternateName
           affiliation {
             name
           }
@@ -85,7 +85,7 @@ describe PersonType do
       expect(response.dig("data", "person", "name")).to eq("K. J. Garza")
       expect(response.dig("data", "person", "givenName")).to eq("Kristian")
       expect(response.dig("data", "person", "familyName")).to eq("Garza")
-      expect(response.dig("data", "person", "otherNames")).to eq([])
+      expect(response.dig("data", "person", "alternateName")).to eq([])
       expect(response.dig("data", "person", "affiliation")).to eq([])
       expect(response.dig("data", "person", "citationCount")).to eq(0)
       expect(response.dig("data", "person", "works", "totalCount")).to eq(1)
@@ -113,7 +113,7 @@ describe PersonType do
             name
             givenName
             familyName
-            otherNames
+            alternateName
             affiliation {
               name
             }

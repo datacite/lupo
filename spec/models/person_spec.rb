@@ -11,6 +11,8 @@ describe Person, type: :model, vcr: true do
       expect(person.name).to eq("Agnes Ebenberger")
       expect(person.given_name).to eq("Agnes")
       expect(person.family_name).to eq("Ebenberger")
+      expect(person.alternate_name).to eq([])
+      expect(person.affiliation).to eq([])
     end
 
     it "also found" do
@@ -22,6 +24,21 @@ describe Person, type: :model, vcr: true do
       expect(person.name).to eq("K. J. Garza")
       expect(person.given_name).to eq("Kristian")
       expect(person.family_name).to eq("Garza")
+      expect(person.alternate_name).to eq([])
+      expect(person.affiliation).to eq([])
+    end
+
+    it "found with X in ID" do
+      id = "https://orcid.org/0000-0001-7701-701X"
+      people = Person.find_by_id(id)
+      expect(people[:data].size).to eq(1)
+      person = people[:data].first
+      expect(person.id).to eq("https://orcid.org/0000-0001-7701-701X")
+      expect(person.name).to eq("Rory O'Bryen")
+      expect(person.given_name).to eq("Rory")
+      expect(person.family_name).to eq("O'Bryen")
+      expect(person.alternate_name).to eq([])
+      expect(person.affiliation).to eq([])
     end
 
     it "not found" do
@@ -77,7 +94,7 @@ describe Person, type: :model, vcr: true do
       expect(person.name).to eq("Patricia Cruse")
       expect(person.given_name).to eq("Patricia")
       expect(person.family_name).to eq("Cruse")
-      expect(person.other_names).to eq(["Trisha Cruse"])
+      expect(person.alternate_name).to eq(["Trisha Cruse"])
       expect(person.affiliation).to eq([{"name"=>"DataCite"}, {"name"=>"University of California Berkeley"}])
     end
   end

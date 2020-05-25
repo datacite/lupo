@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://pub.orcid.org/v3.0/XXXXX/person
+    uri: https://pub.orcid.org/v3.0/0000-0001-7701-701X/person
     body:
       encoding: US-ASCII
       string: ''
@@ -15,8 +15,8 @@ http_interactions:
       - gzip,deflate
   response:
     status:
-      code: 404
-      message: Not Found
+      code: 200
+      message: OK
     headers:
       Server:
       - nginx/1.16.1
@@ -27,7 +27,7 @@ http_interactions:
       Content-Encoding:
       - gzip
       Date:
-      - Sat, 23 May 2020 09:22:36 GMT
+      - Wed, 13 May 2020 08:14:53 GMT
       Expires:
       - '0'
       Pragma:
@@ -41,13 +41,13 @@ http_interactions:
       Connection:
       - keep-alive
       Set-Cookie:
-      - X-Mapping-fjhppofk=EDEB8B375DA428655747278237992826; path=/
+      - X-Mapping-fjhppofk=ED381B330E0E589099E2A39D5201DC2A; path=/
       X-Frame-Options:
       - DENY
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        H4sIAAAAAAAAA32OwQrCMAyGXyX0vFmFIbirInhREA9euzVuha4ZSTsP4rtbRREv5pBD/nxfclOMMlIQLFuyqOpqXhXK4oSeRuRyQBHT5bnKAewpwpZSsDWceoSMUuIW4WoEQs4uz2wG2+Q9TMY7a6KjAMhMXMPhuN5twG3g/KwvoAqV5OfWH3lefune767mi2WhBmIsXbhQZvsYR6m1HnBokGVG3Dqbe6fN6PTHKjoypcaj9ETRhU7dH308uiALAQAA
+        H4sIAAAAAAAAA42SwU6EMBCG36UXLzRLQ5R1j77AJp5MjIdCu8vE0pK2oA3Zd3fqArsqWklKWvrN908mjERx52lrBBxACiq4l2Sne6UyonmL+5HUVuLX+W4kA1c9btgtY9s7VrAi35anbFW0Ahf5PcJHGKSmMcFdUeTR2EDw+sBbUIHOHczX+5sHG6SOBDYlwE/EuV9nelsvpwEcVKDAByzs+kpBTTLScd/gOceH4mK0LOMrZ09Ranwj7aWr30dzAcnu+WXRbla8m2spZlRgjpZ3TZhdVjrJbR2h3qpE8Fc4Hf5djg3IlkMq5pNJ288YOrkQmORSY5uwtHgGUf0qw5uxImGeqLR50cVJvHtpNVcUhNQ+Sm1qLj8r/jGltZjT3zUdMgZ/9A+k7ow/oAMAAA==
     http_version: null
-  recorded_at: Sat, 23 May 2020 09:22:36 GMT
+  recorded_at: Wed, 13 May 2020 08:14:53 GMT
 recorded_with: VCR 5.1.0
