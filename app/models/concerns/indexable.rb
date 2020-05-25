@@ -86,7 +86,12 @@ module Indexable
       options[:page] ||= {}
       options[:page][:number] ||= 1
       options[:page][:size] ||= 2000
-      options[:sort] ||= { created_at: { order: "asc" }}
+    
+      if ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(self.name)
+        options[:sort] ||= { created_at: { order: "asc" }}
+      else
+        options[:sort] ||= { created: { order: "asc" }}
+      end
 
       __elasticsearch__.search({
         from: (options.dig(:page, :number) - 1) * options.dig(:page, :size),
@@ -166,12 +171,16 @@ module Indexable
         # make sure we have a valid cursor
         search_after = options.dig(:page, :cursor).presence || [1, "1"]
 
-        if %w(Doi Client Provider).include?(self.name)
-          sort = [{ created_at: "asc", uid: "asc" }]
+        if self.name == "Doi"
+          sort = [{ created: "asc", uid: "asc" }]
         elsif self.name == "Event"
           sort = [{ created_at: "asc", uuid: "asc" }]
         elsif self.name == "Activity"
           sort = [{ created: "asc", request_uuid: "asc" }]
+        elsif %w(Client Provider).include?(self.name)
+          sort = [{ created: "asc", uid: "asc" }]
+        elsif self.name == "Researcher"
+          sort = [{ created_at: "asc", uid: "asc" }]
         elsif ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(self.name)
           sort = [{ created_at: "asc" }]
         else
@@ -207,9 +216,9 @@ module Indexable
           must = [{ match_all: {} }]
         end
 
-        filter << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
-        filter << { range: { updated_at: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
-        filter << { range: { updated_at: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
+        filter << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        filter << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
+        filter << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
         filter << { term: { region: options[:region].upcase }} if options[:region].present?
         filter << { term: { "consortium_id.raw" => options[:consortium_id] }} if options[:consortium_id].present?
         filter << { term: { member_type: options[:member_type] }} if options[:member_type].present?
@@ -230,9 +239,9 @@ module Indexable
           must = [{ match_all: {} }]
         end
 
-        filter << { range: { created_at: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
-        filter << { range: { updated_at: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
-        filter << { range: { updated_at: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
+        filter << { range: { created: { gte: "#{options[:year].split(",").min}||/y", lte: "#{options[:year].split(",").max}||/y", format: "yyyy" }}} if options[:year].present?
+        filter << { range: { updated: { gte: "#{options[:from_date]}||/d" }}} if options[:from_date].present?
+        filter << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
         filter << { terms: { provider_id: options[:provider_id].split(",") }} if options[:provider_id].present?
         filter << { terms: { "software.raw" => options[:software].split(",") }} if options[:software].present?
         filter << { terms: { certificate: options[:certificate].split(",") }} if options[:certificate].present?
@@ -282,6 +291,7 @@ module Indexable
         filter << { terms: { client_ids: options[:client_id].to_s.split(",") }} if options[:client_id].present?
         filter << { terms: { state: options[:state].to_s.split(",") }} if options[:state].present?
       elsif self.name == "ProviderPrefix"
+        Rails.logger.warn query.inspect
         if query.present?
           must = [{ prefix: { prefix_id: query }}]
         else

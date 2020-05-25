@@ -17,12 +17,8 @@ class RepositorySerializer
     "https://v2.sherpa.ac.uk/id/repository/#{object.opendoar_id}" if object.opendoar_id.present?
   end
 
-  attribute :created do |object|
-    object.created_at
-  end
-
-  attribute :updated do |object|
-    object.updated_at
+  attribute :is_active do |object|
+    object.is_active.getbyte(0) == 1 ? true : false
   end
 
   attribute :has_password do |object|

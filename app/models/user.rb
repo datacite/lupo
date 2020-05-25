@@ -57,8 +57,8 @@ class User
   alias_attribute :orcid, :uid
   alias_attribute :id, :uid
   alias_attribute :flipper_id, :uid
-  alias_attribute :provider, :members
-  alias_attribute :client, :repositories
+  alias_attribute :provider, :allocator
+  alias_attribute :client, :datacentre
 
   # Helper method to check for admin user
   def is_admin?

@@ -22,14 +22,6 @@ class WorkSerializer
     end
   end
 
-  attribute :created do |object|
-    object.created_at
-  end
-
-  attribute :updated do |object|
-    object.updated_at
-  end
-
   attribute :doi do |object|
     object.doi.downcase
   end
@@ -65,6 +57,10 @@ class WorkSerializer
 
   attribute :member_id do |object|
     object.provider_id
+  end
+
+  attribute :version do |object|
+    object.version_info
   end
 
   attribute :schema_version do |object|

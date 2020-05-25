@@ -114,19 +114,19 @@ class DoiSerializer
     object.aasm_state
   end
 
+  attribute :version do |object|
+    object.version_info
+  end
+
   attribute :published do |object|
     object.respond_to?(:published) ? object.published : nil
   end
 
+  attribute :is_active do |object|
+    object.is_active.to_s.getbyte(0) == 1 ? true : false
+  end
+
   attribute :landing_page, if: Proc.new { |object, params| params[:current_ability] && params[:current_ability].can?(:read_landing_page_results, object) == true } do |object|
     object.landing_page
-  end
-
-  attribute :created do |object|
-    object.created_at
-  end
-
-  attribute :updated do |object|
-    object.updated_at
   end
 end

@@ -1,5 +1,5 @@
 class Client < ActiveRecord::Base
-  audited except: [:globus_uuid, :salesforce_id, :password, :updated_at]
+  audited except: [:globus_uuid, :salesforce_id, :password, :updated, :comments, :experiments, :version, :doi_quota_allowed, :doi_quota_used]
 
   # include helper module for caching infrequently changing resources
   include Cacheable
@@ -21,10 +21,13 @@ class Client < ActiveRecord::Base
 
   include Elasticsearch::Model
 
-  # define table name
-  self.table_name = "repositories"
+  # define table and attribute names
+  # uid is used as unique identifier, mapped to id in serializer
+  self.table_name = "datacentre"
 
   alias_attribute :flipper_id, :symbol
+  alias_attribute :created_at, :created
+  alias_attribute :updated_at, :updated
   alias_attribute :contact_email, :system_email
   attr_readonly :symbol
   delegate :symbol, to: :provider, prefix: true
@@ -49,19 +52,27 @@ class Client < ActiveRecord::Base
   validate :uuid_format, if: :globus_uuid?
   strip_attributes
 
-  belongs_to :provider, foreign_key: :member_id, touch: true
-  has_many :dois, foreign_key: :repository_id
+  belongs_to :provider, foreign_key: :allocator, touch: true
+  has_many :dois, foreign_key: :datacentre
   has_many :client_prefixes, dependent: :destroy
   has_many :prefixes, through: :client_prefixes
   has_many :provider_prefixes, through: :client_prefixes
   has_many :activities, as: :auditable, dependent: :destroy
 
   before_validation :set_defaults
+  before_create { self.created = Time.zone.now.utc.iso8601 }
+  before_save { self.updated = Time.zone.now.utc.iso8601 }
 
   attr_accessor :target_id
 
   # use different index for testing
-  index_name Rails.env.test? ? "clients-test" : "clients"
+  if Rails.env.test?
+    index_name "clients-test"
+  elsif ENV["ES_PREFIX"].present?
+    index_name"clients-#{ENV["ES_PREFIX"]}"
+  else
+    index_name "clients"
+  end
 
   settings index: {
     analysis: {
@@ -105,15 +116,15 @@ class Client < ActiveRecord::Base
       indexes :language,      type: :keyword
       indexes :repository_type, type: :keyword
       indexes :version,       type: :integer
-      indexes :is_active,     type: :boolean
+      indexes :is_active,     type: :keyword
       indexes :domains,       type: :text
       indexes :year,          type: :integer
       indexes :url,           type: :text, fields: { keyword: { type: "keyword" }}
       indexes :software,      type: :text, fields: { keyword: { type: "keyword" }, raw: { type: "text", analyzer: "string_lowercase", "fielddata": true }}
       indexes :cache_key,     type: :keyword
       indexes :client_type,   type: :keyword
-      indexes :created_at,    type: :date
-      indexes :updated_at,    type: :date
+      indexes :created,       type: :date
+      indexes :updated,       type: :date
       indexes :deleted_at,    type: :date
       indexes :cumulative_years, type: :integer, index: "false"
 
@@ -130,7 +141,7 @@ class Client < ActiveRecord::Base
         system_email: { type: :text, fields: { keyword: { type: "keyword" }} },
         group_email: { type: :text, fields: { keyword: { type: "keyword" }} },
         version: { type: :integer },
-        is_active: { type: :boolean },
+        is_active: { type: :keyword },
         year: { type: :integer },
         description: { type: :text },
         website: { type: :text, fields: { keyword: { type: "keyword" }} },
@@ -192,8 +203,8 @@ class Client < ActiveRecord::Base
           given_name: { type: :text},
           family_name: { type: :text }
         } },
-        created_at: { type: :date },
-        updated_at: { type: :date },
+        created: { type: :date },
+        updated: { type: :date },
         deleted_at: { type: :date },
         cumulative_years: { type: :integer, index: "false" },
         consortium: { type: :object },
@@ -232,8 +243,8 @@ class Client < ActiveRecord::Base
       "password" => password,
       "cache_key" => cache_key,
       "client_type" => client_type,
-      "created_at" => created_at,
-      "updated_at" => updated_at,
+      "created" => created,
+      "updated" => updated,
       "deleted_at" => deleted_at,
       "cumulative_years" => cumulative_years,
       "provider" => options[:exclude_associations] ? nil : provider.as_indexed_json(exclude_associations: true)
@@ -246,7 +257,7 @@ class Client < ActiveRecord::Base
 
   def self.query_aggregations
     {
-      years: { date_histogram: { field: 'created_at', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+      years: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
       cumulative_years: { terms: { field: 'cumulative_years', size: 10, min_doc_count: 1, order: { _count: "asc" } } },
       providers: { terms: { field: 'provider_id_and_name', size: 10, min_doc_count: 1 } },
@@ -264,9 +275,9 @@ class Client < ActiveRecord::Base
       provider_id: provider.present? ? provider.symbol : '',
       salesforce_id: salesforce_id,
       consortium_salesforce_id: provider.present? ? provider.salesforce_id : '',
-      is_active: is_active,
-      created: created_at,
-      updated: updated_at,
+      is_active: is_active == "\x01",
+      created: created,
+      updated: updated,
       re3data_id: re3data_id,
       client_type: client_type,
       alternate_name: alternate_name,
@@ -296,7 +307,7 @@ class Client < ActiveRecord::Base
     r = Provider.where(symbol: value).first
     return nil unless r.present?
 
-    write_attribute(:member_id, r.id)
+    write_attribute(:allocator, r.id)
   end
 
   def re3data=(value)
@@ -341,7 +352,7 @@ class Client < ActiveRecord::Base
     end
 
     # Transfer client
-    update_attribute(:member_id, target_provider.id)
+    update_attribute(:allocator, target_provider.id)
 
     # transfer prefixes
     transfer_prefixes(target_provider.symbol)
@@ -399,7 +410,7 @@ class Client < ActiveRecord::Base
   end
 
   def cache_key
-    "clients/#{uid}-#{updated_at.iso8601}"
+    "clients/#{uid}-#{updated.iso8601}"
   end
 
   def password_input=(value)
@@ -437,10 +448,10 @@ class Client < ActiveRecord::Base
       "domains" => domains,
       "provider-id" => provider_id,
       "prefixes" => prefixes.map { |p| p.prefix },
-      "is-active" => is_active,
+      "is-active" => is_active.getbyte(0) == 1,
       "version" => version,
-      "created_at" => created_at.iso8601,
-      "updated_at" => updated_at.iso8601,
+      "created" => created.iso8601,
+      "updated" => updated.iso8601,
       "deleted_at" => deleted_at ? deleted_at.iso8601 : nil }
 
     { "id" => symbol.downcase, "type" => "clients", "attributes" => attributes }
@@ -508,6 +519,10 @@ class Client < ActiveRecord::Base
     self.issn = {} if issn.blank? || client_type == "repository"
     self.certificate = [] if certificate.blank? || client_type == "periodical"
     self.repository_type = [] if repository_type.blank? || client_type == "periodical"
+    self.is_active = is_active ? "\x01" : "\x00"
+    self.version = version.present? ? version + 1 : 0
     self.role_name = "ROLE_DATACENTRE" unless role_name.present?
+    self.doi_quota_used = 0 unless doi_quota_used.to_i > 0
+    self.doi_quota_allowed = -1 unless doi_quota_allowed.to_i > 0
   end
 end

@@ -6,8 +6,8 @@ class MembersController < ApplicationController
            when "relevance" then { "_score" => { order: 'desc' }}
            when "name" then { "name.raw" => { order: 'asc' }}
            when "-name" then { "name.raw" => { order: 'desc' }}
-           when "created" then { created_at: { order: 'asc' }}
-           when "-created" then { created_at: { order: 'desc' }}
+           when "created" then { created: { order: 'asc' }}
+           when "-created" then { created: { order: 'desc' }}
            else { "name.raw" => { order: 'asc' }}
            end
 
@@ -88,7 +88,7 @@ class MembersController < ApplicationController
   protected
 
   def set_provider
-    @provider = Provider.unscoped.where("members.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: params[:id]).first
+    @provider = Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: params[:id]).first
     fail ActiveRecord::RecordNotFound unless @provider.present?
   end
 end

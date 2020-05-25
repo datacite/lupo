@@ -2,14 +2,14 @@
 
 class RemoveGeneralContactPhone < ActiveRecord::Migration[5.2]
   def up
-    safety_assured { remove_column :allocator, :contact_name }
-    safety_assured { remove_column :allocator, :phone }
+    remove_column :allocator, :contact_name
+    remove_column :allocator, :phone
 
     add_column :allocator, :display_name, :string
     add_column :allocator, :group_email, :string
     add_column :allocator, :secondary_service_contact, :json
     add_column :allocator, :secondary_technical_contact, :json
-    safety_assured { rename_column :allocator, :contact_email, :system_email }
+    rename_column :allocator, :contact_email, :system_email
   end
 
   def down
