@@ -55,7 +55,7 @@
     # @param first [Integer, nil] The limit parameter from the client, if it provided one
     # @param after [String, nil] A cursor for pagination, if the client provided one
     # @param max_page_size [Integer, nil] A configured value to cap the result size. Applied as `first` if neither first or last are given.
-    def initialize(items, context: nil, first: nil, after: nil, max_page_size: :not_given, last: nil, before: nil)
+    def initialize(items, context: nil, first: nil, after: nil, max_page_size: :nil, last: nil, before: nil)
       @items = items.results
       @context = context
       @model = items.klass.name
@@ -135,7 +135,7 @@
 
     # @return [Boolean] True if there are more items after this page
     def has_next_page
-      nodes.length < total_count && !(nodes.length < first.to_i)
+      nodes.length < total_count # && !(nodes.length < first.to_i)
     end
 
     # @return [Boolean] True if there were items before these items

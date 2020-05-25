@@ -11,7 +11,6 @@ class QueryType < BaseObject
   end
 
   def members(**args)
-    Rails.logger.warn args
     Provider.query(args[:query], year: args[:year], page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
   end
 

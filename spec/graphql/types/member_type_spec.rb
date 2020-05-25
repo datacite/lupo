@@ -75,7 +75,7 @@ describe MemberType do
 
     it "returns all members" do
       response = LupoSchema.execute(query).as_json
-      puts response
+
       expect(response.dig("data", "members", "totalCount")).to eq(6)
       expect(Base64.urlsafe_decode64(response.dig("data", "members", "pageInfo", "endCursor")).split(",").last).to eq(providers[4].uid)
       expect(response.dig("data", "members", "pageInfo", "hasNextPage")).to be true
