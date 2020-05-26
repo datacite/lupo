@@ -52,7 +52,7 @@ module DoiItem
   field :views_over_time, [YearMonthTotalType], null: true, description: "Views by month"
   field :downloads_over_time, [YearMonthTotalType], null: true, description: "Downloads by month"
   
-  field :references, WorkConnectionWithTotalType, null: true, connection: true, max_page_size: 100, description: "References for this DOI" do
+  field :references, WorkConnectionWithTotalType, null: true, max_page_size: 100, description: "References for this DOI" do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -72,7 +72,7 @@ module DoiItem
     argument :after, String, required: false
   end
 
-  field :citations, WorkConnectionWithTotalType, null: true, connection: true, max_page_size: 100, description: "Citations for this DOI." do
+  field :citations, WorkConnectionWithTotalType, null: true, max_page_size: 100, description: "Citations for this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -88,11 +88,11 @@ module DoiItem
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25, as: :size
-    argument :after, String, required: false, as: :cursor
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
-  field :parts, WorkConnectionWithTotalType, null: true, connection: true, max_page_size: 100, description: "Parts of this DOI." do
+  field :parts, WorkConnectionWithTotalType, null: true, max_page_size: 100, description: "Parts of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -108,11 +108,11 @@ module DoiItem
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25, as: :size
-    argument :after, String, required: false, as: :cursor
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
-  field :part_of, WorkConnectionWithTotalType, null: true, connection: true, max_page_size: 100, description: "The DOI is a part of this DOI." do
+  field :part_of, WorkConnectionWithTotalType, null: true, max_page_size: 100, description: "The DOI is a part of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -128,11 +128,11 @@ module DoiItem
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25, as: :size
-    argument :after, String, required: false, as: :cursor
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
-  field :versions, WorkConnectionWithTotalType, null: true, connection: true, max_page_size: 100, description: "Versions of this DOI." do
+  field :versions, WorkConnectionWithTotalType, null: true, max_page_size: 100, description: "Versions of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -148,11 +148,11 @@ module DoiItem
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25, as: :size
-    argument :after, String, required: false, as: :cursor
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
-  field :version_of, WorkConnectionWithTotalType, null: true, connection: true, max_page_size: 100, description: "The DOI is a version of this DOI." do
+  field :version_of, WorkConnectionWithTotalType, null: true, max_page_size: 100, description: "The DOI is a version of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -168,8 +168,8 @@ module DoiItem
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25, as: :size
-    argument :after, String, required: false, as: :cursor
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def type
@@ -235,39 +235,39 @@ module DoiItem
 
   def references(**args)
     args[:ids] = object.reference_ids
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
   
   def citations(**args)
     args[:ids] = object.citation_ids
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   def parts(**args)
     args[:ids] = object.part_ids
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   def part_of(**args)
     args[:ids] = object.part_of_ids
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   def versions(**args)
     args[:ids] = object.version_ids
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   def version_of(**args)
     args[:ids] = object.version_of_ids
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   def response(**args)
     # make sure no dois are returnded if there are no :ids
     args[:ids] = "999" if args[:ids].blank?
 
-    Doi.query(args[:query], ids: args[:ids], funder_id: args[:funder_id], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], affiliation_id: args[:affiliation_id], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
+    Doi.query(args[:query], ids: args[:ids], funder_id: args[:funder_id], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], affiliation_id: args[:affiliation_id], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
   end
 
   def doi_link(url)

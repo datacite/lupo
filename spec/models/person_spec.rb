@@ -53,7 +53,7 @@ describe Person, type: :model, vcr: true do
     it "found all" do
       query = nil
       people = Person.query(query)
-      expect(people.dig(:meta, "total")).to eq(8827698)
+      expect(people.dig(:meta, "total")).to eq(8844971)
       expect(people.dig(:data).size).to eq(25)
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0002-5387-6407")
@@ -74,7 +74,7 @@ describe Person, type: :model, vcr: true do
     it "found miller" do
       query = "miller"
       people = Person.query(query)
-      expect(people.dig(:meta, "total")).to eq(7373)
+      expect(people.dig(:meta, "total")).to eq(7389)
       expect(people.dig(:data).size).to eq(25)
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0002-1360-1118")
@@ -87,7 +87,7 @@ describe Person, type: :model, vcr: true do
     it "found datacite" do
       query = "datacite"
       people = Person.query(query)
-      expect(people.dig(:meta, "total")).to eq(15414)
+      expect(people.dig(:meta, "total")).to eq(15428)
       expect(people.dig(:data).size).to eq(25)
       person = people[:data].first
       expect(person.id).to eq("https://orcid.org/0000-0002-9300-5278")

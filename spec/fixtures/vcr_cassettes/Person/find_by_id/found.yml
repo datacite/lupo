@@ -27,7 +27,7 @@ http_interactions:
       Content-Encoding:
       - gzip
       Date:
-      - Sat, 23 May 2020 09:22:35 GMT
+      - Tue, 26 May 2020 10:08:38 GMT
       Expires:
       - '0'
       Pragma:
@@ -41,7 +41,7 @@ http_interactions:
       Connection:
       - keep-alive
       Set-Cookie:
-      - X-Mapping-fjhppofk=26484D0F5DA32D2D6AF64AA1C9DBBA16; path=/
+      - X-Mapping-fjhppofk=1F5FD8D0B8B1A8DD0F8680D854A2C10B; path=/
       X-Frame-Options:
       - DENY
     body:
@@ -49,5 +49,5 @@ http_interactions:
       string: !binary |-
         H4sIAAAAAAAAA+1UwY6bMBD9FeRzDCzrQpRTq7aHPa1UqaeqBwcMWGtsZJs0KMq/d5wECA2JW6m9FQkJM2/em/E8+4AENRY3quAlZwUuqGVoc0A7Kjr4eCIkJe/WcULIc3ZcIUmbUzjXDIAL8DTOUkLWSUyeAO7hnoMrvmMSOwVzhUIfKgk/IF7ShoseDyUM8c9bJrdMV0w7EBRWcHsByU6IFTKq0/m42nHDt1xw20Nu220Fz9EKtdTWsI7hwfA+4ySLU0zideJIla2Znipb6upMPgHR5tv3kTZa4I2uSUFjy1WlaVv3A5dmhlGdO1CnhUd4DvaL/0oOBbCG8vsydx1xSgPBB56YElK/J+bgYXaHyxdWOufFfLI4F5xJi93/A+o0h6Zra1uziaITPFS6is6gcTMSTEic4Swjye3458FaGQvBkQqNdd148fXLx5dPwYu0DGZpuZIBtQHMOfgqwdzagOsCVQav+1LpwvFQY5h2QGiMV1zO+7uJXnV6BzEZf5oNou4IhWw8KO9Ny0O1D2kedm9j+4/OBxR/mhfalFQYBimaN1T307qzOFfFqP1bdsj+xA7Zfzv8MztQaf+WH6zubu3guY3Ohbn+iwJuJuO7Zi8w/zU3AIH6jfU/YJc9zBeUn3mkc/u6t0xLKmAQMA5Hqj0yCxl+yUWZ4+OcFjBKouNPWyW3POcHAAA=
     http_version: null
-  recorded_at: Sat, 23 May 2020 09:22:35 GMT
+  recorded_at: Tue, 26 May 2020 10:08:38 GMT
 recorded_with: VCR 5.1.0

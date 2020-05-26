@@ -146,7 +146,7 @@ describe DataCatalogType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "dataCatalogs", "totalCount")).to eq(85)
-      expect(response.dig("data", "dataCatalogs", "pageInfo", "endCursor")).to eq("MQ")
+      expect(response.dig("data", "dataCatalogs", "pageInfo", "endCursor")).to eq("OQ")
       expect(response.dig("data", "dataCatalogs", "pageInfo", "hasNextPage")).to eq true
       expect(response.dig("data", "dataCatalogs", "nodes").length).to eq(10)
       

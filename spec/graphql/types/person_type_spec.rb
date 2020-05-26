@@ -132,20 +132,18 @@ describe PersonType do
     it "returns people information" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "people", "totalCount")).to eq(246)
-      expect(response.dig("data", "people", "pageInfo", "endCursor")).to eq("MQ")
-      expect(response.dig("data", "people", "pageInfo", "hasNextPage")).to be true
-      expect(response.dig("data", "people", "nodes").length).to eq(50)
+      expect(response.dig("data", "people", "totalCount")).to eq(247)
+      expect(response.dig("data", "people", "pageInfo", "endCursor")).to eq("NQ")
+      #expect(response.dig("data", "people", "pageInfo", "hasNextPage")).to be true
+      expect(response.dig("data", "people", "nodes").length).to eq(47)
 
       person = response.dig("data", "people", "nodes", 0)
-      expect(person.fetch("id")).to eq("https://orcid.org/0000-0002-6953-062X")
-      expect(person.fetch("name")).to eq("Julio López-Fenner")
-      expect(person.fetch("givenName")).to eq("Julio")
-      expect(person.fetch("familyName")).to eq("López-Fenner")
-      expect(person.fetch("alternateName")).to eq(["The PumalalPiper"])
-      expect(person.fetch("affiliation")).to eq([{"name"=>"Technische Universität Clausthal"},
-        {"name"=>"Universidad de Chile"},
-        {"name"=>"Universidad de La Frontera"}])
+      expect(person.fetch("id")).to eq("https://orcid.org/0000-0003-0854-2034")
+      expect(person.fetch("name")).to eq("Martin Westgate")
+      expect(person.fetch("givenName")).to eq("Martin")
+      expect(person.fetch("familyName")).to eq("Westgate")
+      expect(person.fetch("alternateName")).to eq([])
+      expect(person.fetch("affiliation")).to eq([{"name"=>"The Australian National University"}])
     end
   end
 end

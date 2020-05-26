@@ -33,7 +33,7 @@ class Person
     params = {
       q: query || "*",
       "rows" => options[:limit],
-      "start" => options[:offset] }.compact
+      "start" => options[:offset].to_i * options[:limit].to_i }.compact
 
     url = "https://pub.orcid.org/v3.0/expanded-search/?" + URI.encode_www_form(params)
 
