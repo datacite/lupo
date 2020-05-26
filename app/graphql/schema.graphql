@@ -4383,42 +4383,14 @@ type Member {
   citationCount: Int
 
   """
-  Country where the provmemberider is located
+  Country where the member is located
   """
   country: Country
 
   """
   Datasets by this provider.
   """
-  datasets(
-    affiliationId: String
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-    funderId: String
-    hasCitations: Int
-    hasDownloads: Int
-    hasFunder: Boolean
-    hasOrganization: Boolean
-    hasParts: Int
-    hasPerson: Boolean
-    hasVersions: Int
-    hasViews: Int
-    ids: String
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    query: String
-    repositoryId: String
-    resourceTypeId: String
-    userId: String
-  ): DatasetConnectionWithTotal
+  datasets(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): DatasetConnectionWithTotal
 
   """
   Description of the member
@@ -4441,7 +4413,7 @@ type Member {
   focusArea: String
 
   """
-  Unique identifier for each provider
+  Unique identifier for the member
   """
   id: ID!
 
@@ -4468,56 +4440,12 @@ type Member {
   """
   Prefixes managed by the member
   """
-  prefixes(
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    query: String
-    state: String
-    year: String
-  ): MemberPrefixConnectionWithTotal
+  prefixes(after: String, first: Int = 25, query: String, state: String, year: String): MemberPrefixConnectionWithTotal
 
   """
   Publications by this provider.
   """
-  publications(
-    affiliationId: String
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-    funderId: String
-    hasCitations: Int
-    hasDownloads: Int
-    hasFunder: Boolean
-    hasOrganization: Boolean
-    hasParts: Int
-    hasPerson: Boolean
-    hasVersions: Int
-    hasViews: Int
-    ids: String
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    query: String
-    repositoryId: String
-    resourceTypeId: String
-    userId: String
-  ): PublicationConnectionWithTotal
+  publications(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): PublicationConnectionWithTotal
 
   """
   Geographic region where the member is located
@@ -4527,23 +4455,7 @@ type Member {
   """
   Repositories associated with the member
   """
-  repositories(
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    query: String
-    software: String
-    year: String
-  ): RepositoryConnectionWithTotal
+  repositories(after: String, first: Int = 25, query: String, software: String, year: String): RepositoryConnectionWithTotal
 
   """
   Research Organization Registry (ROR) identifier
@@ -4553,35 +4465,7 @@ type Member {
   """
   Software by this provider.
   """
-  softwares(
-    affiliationId: String
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-    funderId: String
-    hasCitations: Int
-    hasDownloads: Int
-    hasFunder: Boolean
-    hasOrganization: Boolean
-    hasParts: Int
-    hasPerson: Boolean
-    hasVersions: Int
-    hasViews: Int
-    ids: [String!]
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    query: String
-    repositoryId: String
-    resourceTypeId: String
-    userId: String
-  ): SoftwareConnectionWithTotal
+  softwares(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], query: String, repositoryId: String, resourceTypeId: String, userId: String): SoftwareConnectionWithTotal
 
   """
   The type of the item.
@@ -4601,35 +4485,7 @@ type Member {
   """
   Works by this provider.
   """
-  works(
-    affiliationId: String
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-    funderId: String
-    hasCitations: Int
-    hasDownloads: Int
-    hasFunder: Boolean
-    hasOrganization: Boolean
-    hasParts: Int
-    hasPerson: Boolean
-    hasVersions: Int
-    hasViews: Int
-    ids: [String!]
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    query: String
-    repositoryId: String
-    resourceTypeId: String
-    userId: String
-  ): WorkConnectionWithTotal
+  works(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], query: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 }
 
 """
