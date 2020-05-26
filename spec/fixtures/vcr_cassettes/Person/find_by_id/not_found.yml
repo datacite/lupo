@@ -27,7 +27,7 @@ http_interactions:
       Content-Encoding:
       - gzip
       Date:
-      - Sat, 23 May 2020 09:22:36 GMT
+      - Tue, 26 May 2020 10:08:36 GMT
       Expires:
       - '0'
       Pragma:
@@ -41,7 +41,7 @@ http_interactions:
       Connection:
       - keep-alive
       Set-Cookie:
-      - X-Mapping-fjhppofk=EDEB8B375DA428655747278237992826; path=/
+      - X-Mapping-fjhppofk=ED381B330E0E589099E2A39D5201DC2A; path=/
       X-Frame-Options:
       - DENY
     body:
@@ -49,5 +49,5 @@ http_interactions:
       string: !binary |-
         H4sIAAAAAAAAA32OwQrCMAyGXyX0vFmFIbirInhREA9euzVuha4ZSTsP4rtbRREv5pBD/nxfclOMMlIQLFuyqOpqXhXK4oSeRuRyQBHT5bnKAewpwpZSsDWceoSMUuIW4WoEQs4uz2wG2+Q9TMY7a6KjAMhMXMPhuN5twG3g/KwvoAqV5OfWH3lefune767mi2WhBmIsXbhQZvsYR6m1HnBokGVG3Dqbe6fN6PTHKjoypcaj9ETRhU7dH308uiALAQAA
     http_version: null
-  recorded_at: Sat, 23 May 2020 09:22:36 GMT
+  recorded_at: Tue, 26 May 2020 10:08:36 GMT
 recorded_with: VCR 5.1.0

@@ -4374,7 +4374,7 @@ type JournalArticleEdge {
 }
 
 """
-Information about providers
+Information about members
 """
 type Member {
   """
@@ -4383,7 +4383,7 @@ type Member {
   citationCount: Int
 
   """
-  Country where the provider is located
+  Country where the provmemberider is located
   """
   country: Country
 
@@ -4392,10 +4392,6 @@ type Member {
   """
   datasets(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4425,12 +4421,12 @@ type Member {
   ): DatasetConnectionWithTotal
 
   """
-  Description of the provider
+  Description of the member
   """
   description: String
 
   """
-  Provider display name
+  Member display name
   """
   displayName: String!
 
@@ -4440,7 +4436,7 @@ type Member {
   downloadCount: Int
 
   """
-  Field of science covered by provider
+  Field of science covered by member
   """
   focusArea: String
 
@@ -4450,17 +4446,17 @@ type Member {
   id: ID!
 
   """
-  Date provider joined DataCite
+  Date member joined DataCite
   """
   joined: ISO8601Date
 
   """
-  URL for the provider logo
+  URL for the member logo
   """
   logoUrl: Url
 
   """
-  Provider name
+  Member name
   """
   name: String!
 
@@ -4473,9 +4469,6 @@ type Member {
   Prefixes managed by the member
   """
   prefixes(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4498,10 +4491,6 @@ type Member {
   """
   publications(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4531,7 +4520,7 @@ type Member {
   ): PublicationConnectionWithTotal
 
   """
-  Geographic region where the provider is located
+  Geographic region where the member is located
   """
   region: String
 
@@ -4539,9 +4528,6 @@ type Member {
   Repositories associated with the member
   """
   repositories(
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4569,10 +4555,6 @@ type Member {
   """
   softwares(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
@@ -4612,7 +4594,7 @@ type Member {
   viewCount: Int
 
   """
-  Website of the provider
+  Website of the member
   """
   website: Url
 
@@ -4621,10 +4603,6 @@ type Member {
   """
   works(
     affiliationId: String
-
-    """
-    Returns the elements in the list that come after the specified cursor.
-    """
     after: String
 
     """
