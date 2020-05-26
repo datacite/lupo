@@ -6590,21 +6590,7 @@ type PublicationEdge {
 type Query {
   _service: _Service!
   actor(id: ID!): ActorItem!
-  actors(
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-    first: Int = 25
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-    query: String
-  ): ActorConnection!
+  actors(after: String, first: Int = 25, query: String): ActorConnection!
   audiovisual(id: ID!): Audiovisual!
   audiovisuals(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): AudiovisualConnectionWithTotal!
   book(id: ID!): Book!
