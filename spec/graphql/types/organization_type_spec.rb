@@ -160,7 +160,7 @@ describe OrganizationType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "organizations", "totalCount")).to eq(10763)
-      expect(response.dig("data", "organizations", "pageInfo", "endCursor")).to eq("MQ")
+      expect(response.dig("data", "organizations", "pageInfo", "endCursor")).to eq("Mg")
       expect(response.dig("data", "organizations", "pageInfo", "hasNextPage")).to be true
       
       expect(response.dig("data", "organizations", "types").length).to eq(8)

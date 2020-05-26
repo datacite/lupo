@@ -132,8 +132,8 @@ describe PersonType do
     it "returns people information" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "people", "totalCount")).to eq(246)
-      expect(response.dig("data", "people", "pageInfo", "endCursor")).to eq("MQ")
+      expect(response.dig("data", "people", "totalCount")).to eq(247)
+      expect(response.dig("data", "people", "pageInfo", "endCursor")).to eq("NQ")
       expect(response.dig("data", "people", "pageInfo", "hasNextPage")).to be true
       expect(response.dig("data", "people", "nodes").length).to eq(50)
 

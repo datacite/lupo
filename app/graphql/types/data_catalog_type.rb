@@ -27,7 +27,7 @@ class DataCatalogType < BaseObject
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :datasets, DatasetConnectionWithTotalType, null: true, description: "Funded datasets", connection: true do
+  field :datasets, DatasetConnectionWithTotalType, null: true, description: "Funded datasets" do
     argument :query, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
@@ -37,8 +37,8 @@ class DataCatalogType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25, as: :size
-    argument :after, String, required: false, as: :cursor
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def identifier
