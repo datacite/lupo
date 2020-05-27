@@ -379,26 +379,23 @@ class Event < ActiveRecord::Base
     response.results.total
   end
 
-  def self.update_target_doi(options = {})
-    size = (options[:size] || 1000).to_i
-    cursor = (options[:cursor] || [])
-    target_relation_type_id = options[:target_relation_type_id]
-
-    response = Event.query(nil, target_relation_type_id: target_relation_type_id, page: { size: 1, cursor: [] })
-    Rails.logger.info "[Update] #{response.results.total} events with target_relation_type_id #{target_relation_type_id.to_s}."
+  def self.update_target_doi(cursor: nil)
+    cursor ||= []
+    
+    response = Event.query(nil, update_target_doi: true, page: { size: 1, number: 1 })
+    Rails.logger.warn "[Update] #{response.results.total} events will be updated with a target_doi."
 
     # walk through results using cursor
     if response.results.total > 0
       while response.results.results.length > 0 do
-        response = Event.query(nil, target_relation_type_id: target_relation_type_id, page: { size: size, cursor: cursor })
+        response = Event.query(nil, update_target_doi: true, page: { size: 1000, cursor: cursor })
         break unless response.results.results.length.positive?
 
-        Rails.logger.info "[Update] Updating #{response.results.results.length} events with target_relation_type_id #{target_relation_type_id.to_s} starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Update] Updating #{response.results.results.length} events with no target_doi starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         ids = response.results.results.map(&:uuid).uniq
-
-        TargetDoiJob.perform_later(ids, options)
+        ids.each { |id| TargetDoiByIdJob.perform_later(id) }
       end
     end
 

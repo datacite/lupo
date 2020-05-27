@@ -5,7 +5,7 @@ class TargetDoiByIdJob < ActiveJob::Base
     Rails.logger.error error.message
   end
 
-  def perform(id, options={})
+  def perform(id)
     item = Event.where(uuid: id).first
     return false if item.blank?
 

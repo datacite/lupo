@@ -63,9 +63,8 @@ namespace :event do
 
   desc 'update target doi'
   task :update_target_doi => :environment do
-    cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id), Event.minimum(:id)]
-
-    Event.update_target_doi(cursor: cursor, target_relation_type_id: ENV['TARGET_RELATION_TYPE_ID'], size: ENV['SIZE'])
+    cursor = ENV['CURSOR'].present? ? Base64.urlsafe_decode64(ENV['CURSOR']).split(",", 2) : []
+    Event.update_target_doi(cursor: cursor)
   end
 end
 
