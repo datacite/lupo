@@ -996,8 +996,9 @@ class Doi < ActiveRecord::Base
         body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
 
       # try to handle errors
-      response['items'].select { |k, v| k.values.first['error'].present? }.each do |item|
-        errors += 1
+      errors_in_response = response['items'].select { |k, v| k.values.first['error'].present? }
+      errors += errors_in_response.length
+      errors_in_response.each do |item|
         Rails.logger.error "[Elasticsearch] " + item.inspect
         doi_id = item.dig("index", "_id").to_i
         import_one(doi_id: doi_id) if doi_id > 0
@@ -1039,7 +1040,9 @@ class Doi < ActiveRecord::Base
         body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
 
       # try to handle errors
-      errors += response['items'].select { |k, v| k.values.first['error'].present? }.each do |item|
+      errors_in_response = response['items'].select { |k, v| k.values.first['error'].present? }
+      errors += errors_in_response.length
+      errors_in_response.each do |item|
         Rails.logger.error "[Elasticsearch] " + item.inspect
         doi_id = item.dig("index", "_id").to_i
         import_one(doi_id: doi_id) if doi_id > 0
