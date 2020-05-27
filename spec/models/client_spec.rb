@@ -33,12 +33,12 @@ describe Client, type: :model do
     let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix, provider_prefix_id: provider_prefix.uid) }
 
     let(:new_provider) { create(:provider, symbol: "QUECHUA", member_type: "direct_member") }
-    let(:target_id) { new_provider.symbol }
-    let(:bad_target_id) { "SALS" }
+    let(:provider_target_id) { new_provider.symbol }
+    let(:bad_provider_target_id) { "SALS" }
 
     context "to direct_member" do
       it "works" do
-        client.transfer(target_id: target_id)
+        client.transfer(provider_target_id: provider_target_id)
 
         expect(client.provider_id).to eq(new_provider.symbol.downcase)
         expect(new_provider.prefixes.length).to eq(1)
@@ -51,7 +51,7 @@ describe Client, type: :model do
       end
 
       it "it doesn't transfer" do
-        client.transfer(target_id: bad_target_id)
+        client.transfer(provider_target_id: bad_provider_target_id)
 
         expect(client.provider_id).to eq(provider.symbol.downcase)
         expect(provider.prefixes.length).to eq(2)
@@ -61,10 +61,10 @@ describe Client, type: :model do
 
     context "to member_only" do
       let(:new_provider) { create(:provider, symbol: "QUECHUA", member_type: "member_only") }
-      let(:target_id) { new_provider.symbol }
+      let(:provider_target_id) { new_provider.symbol }
 
       it "it doesn't transfer" do
-        client.transfer(target_id: target_id)
+        client.transfer(provider_target_id: provider_target_id)
 
         expect(client.provider_id).to eq(provider.symbol.downcase)
         expect(provider.prefixes.length).to eq(2)
@@ -74,10 +74,10 @@ describe Client, type: :model do
 
     context "to consortium_organization" do
       let(:new_provider) { create(:provider, symbol: "QUECHUA", member_type: "consortium_organization") }
-      let(:target_id) { new_provider.symbol }
+      let(:provider_target_id) { new_provider.symbol }
 
       it "works" do
-        client.transfer(target_id: target_id)
+        client.transfer(provider_target_id: provider_target_id)
 
         expect(client.provider_id).to eq(new_provider.symbol.downcase)
         expect(new_provider.prefixes.length).to eq(1)
@@ -90,10 +90,10 @@ describe Client, type: :model do
 
     context "to consortium" do
       let(:new_provider) { create(:provider, symbol: "QUECHUA", role_name: "ROLE_CONSORTIUM") }
-      let(:target_id) { new_provider.symbol }
+      let(:provider_target_id) { new_provider.symbol }
 
       it "it doesn't transfer" do
-        client.transfer(target_id: target_id)
+        client.transfer(provider_target_id: provider_target_id)
 
         expect(client.provider_id).to eq(provider.symbol.downcase)
         expect(provider.prefixes.length).to eq(2)
@@ -112,7 +112,7 @@ describe Client, type: :model do
     let(:new_provider) { create(:provider, symbol: "QUECHUA") }
 
     it "works" do
-      client.transfer_prefixes(target_id: new_provider.symbol)
+      client.transfer_prefixes(provider_target_id: new_provider.symbol)
 
       expect(new_provider.prefixes.length).to eq(1)
       expect(provider.prefixes.length).to eq(1)
