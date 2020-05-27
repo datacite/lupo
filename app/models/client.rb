@@ -328,20 +328,20 @@ class Client < ActiveRecord::Base
     c = self.class.find_by_id(value)
     return nil unless c.present?
 
-    target = c.records.first
+    client_target = c.records.first
 
-    Doi.transfer(client_id: symbol.downcase, target_id: target.id)
+    Doi.transfer(client_id: symbol.downcase, client_target_id: client_target.id)
   end
 
   # use keyword arguments consistently
-  def transfer(target_id: nil)
-    if target_id.blank?
+  def transfer(provider_target_id: nil)
+    if provider_target_id.blank?
       Rails.logger.error "[Transfer] No target provider provided."
       return nil
     end
 
     target_provider = Provider.where("role_name IN (?)", %w(ROLE_ALLOCATOR ROLE_CONSORTIUM_ORGANIZATION))
-                              .where(symbol: target_id).first
+                              .where(symbol: provider_target_id).first
 
     if target_provider.blank?
       Rails.logger.error "[Transfer] Provider doesn't exist."
@@ -352,14 +352,14 @@ class Client < ActiveRecord::Base
     update_attribute(:allocator, target_provider.id)
 
     # transfer prefixes
-    transfer_prefixes(target_id: target_provider.symbol)
+    transfer_prefixes(provider_target_id: target_provider.symbol)
 
     # Update DOIs
-    TransferClientJob.perform_later(self, target_id: target_id)
+    TransferClientJob.perform_later(self, provider_target_id: provider_target_id)
   end
 
   # use keyword arguments consistently
-  def transfer_prefixes(target_id: nil)
+  def transfer_prefixes(provider_target_id: nil)
     # These prefixes are used by multiple clients
     prefixes_to_keep = ["10.4124", "10.4225", "10.4226", "10.4227"]
 
@@ -375,8 +375,8 @@ class Client < ActiveRecord::Base
 
     # Assign prefix(es) to provider and client
     prefixes_names.each do |prefix|
-      provider_prefix = ProviderPrefix.create(provider_id: target_id, prefix_id: prefix)
-      Rails.logger.info "[Transfer] Provider prefix for provider #{target_id} and prefix #{prefix} created."
+      provider_prefix = ProviderPrefix.create(provider_id: provider_target_id, prefix_id: prefix)
+      Rails.logger.info "[Transfer] Provider prefix for provider #{provider_target_id} and prefix #{prefix} created."
 
       ClientPrefix.create(client_id: symbol, provider_prefix_id: provider_prefix.uid, prefix_id: prefix)
       Rails.logger.info "Client prefix for client #{symbol} and prefix #{prefix} created."

@@ -9,8 +9,8 @@ class TransferJob < ActiveJob::Base
   def perform(doi_id, options={})
     doi = Doi.where(doi: doi_id).first
 
-    if doi.present? && options[:target_id].present?
-      doi.update_attributes(datacentre: options[:target_id])
+    if doi.present? && options[:client_target_id].present?
+      doi.update_attributes(datacentre: options[:client_target_id])
 
       doi.__elasticsearch__.index_document
 

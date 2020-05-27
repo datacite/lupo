@@ -177,7 +177,7 @@ namespace :client do
     end
 
     # update dois
-    Doi.transfer(from_date: "2011-01-01", client_id: client.symbol, target_id: target.symbol)
+    Doi.transfer(from_date: "2011-01-01", client_id: client.symbol, client_target_id: target.symbol)
 
     prefixes.each do |prefix|
       provider_prefix = ProviderPrefix.create(provider: target.provider, prefix: prefix)
