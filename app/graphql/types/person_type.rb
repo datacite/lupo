@@ -1,20 +1,18 @@
 # frozen_string_literal: true
 
 class PersonType < BaseObject
+  implements ActorItem
+
   description "A person."
 
-  field :id, ID, null: true, description: "The ORCID ID of the person."
-  field :type, String, null: false, description: "The type of the item."
-  field :name, String, null: true, description: "The name of the person."
   field :given_name, String, null: true, description: "Given name. In the U.S., the first name of a Person."
   field :family_name, String, null: true, description: "Family name. In the U.S., the last name of an Person."
-  field :other_names, [String], null: true, description: "Other names."
   field :affiliation, [AffiliationType], null: true, description: "Affiliations(s) of the person."
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :datasets, DatasetConnectionType, null: true, connection: true, max_page_size: 1000, description: "Authored datasets" do
+  field :datasets, DatasetConnectionWithTotalType, null: true, description: "Authored datasets" do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :repository_id, String, required: false
@@ -27,9 +25,10 @@ class PersonType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
-  field :publications, PublicationConnectionType, null: true, connection: true, max_page_size: 1000, description: "Authored publications"  do
+  field :publications, PublicationConnectionWithTotalType, null: true, description: "Authored publications"  do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :repository_id, String, required: false
@@ -42,9 +41,10 @@ class PersonType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
-  field :softwares, SoftwareConnectionType, null: true, connection: true, max_page_size: 1000, description: "Authored software"  do
+  field :softwares, SoftwareConnectionWithTotalType, null: true, description: "Authored software"  do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :repository_id, String, required: false
@@ -57,9 +57,10 @@ class PersonType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
-  field :works, WorkConnectionType, null: true, connection: true, max_page_size: 1000, description: "Authored works" do
+  field :works, WorkConnectionWithTotalType, null: true, description: "Authored works" do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :repository_id, String, required: false
@@ -73,33 +74,26 @@ class PersonType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def publications(**args)
     args[:resource_type_id] = "Text"
-    r = response(args)
-
-    r.results.to_a
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    r = response(args)
-
-    r.results.to_a
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   def softwares(**args)
     args[:resource_type_id] = "Software"
-    r = response(args)
-
-    r.results.to_a
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   def works(**args)
-    r = response(args)
-
-    r.results.to_a
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   def view_count
@@ -121,6 +115,6 @@ class PersonType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], ids: args[:ids], user_id: object[:id], client_id: args[:repository_id], provider_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_funder: args[:has_funder], has_affiliation: args[:has_affiliation], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
+    Doi.query(args[:query], ids: args[:ids], user_id: object[:id], client_id: args[:repository_id], provider_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_funder: args[:has_funder], has_affiliation: args[:has_affiliation], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
   end
 end

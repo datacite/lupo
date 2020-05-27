@@ -27,13 +27,13 @@ class Person
   end
 
   def self.query(query, options={})
-    options[:rows] ||= 25
-    options[:start] ||= 1
+    options[:limit] ||= 25
+    options[:offset] ||= 0
 
     params = {
-      q: query,
-      "rows" => options[:rows],
-      "start" => options[:start] }.compact
+      q: query || "*",
+      "rows" => options[:limit],
+      "start" => options[:offset].to_i * options[:limit].to_i }.compact
 
     url = "https://pub.orcid.org/v3.0/expanded-search/?" + URI.encode_www_form(params)
 
@@ -47,14 +47,17 @@ class Person
     meta = { "total" => response.body.dig("data", "num-found").to_i }
     errors = response.body.fetch("errors", nil)
 
-    { data: data, meta: meta, errors: errors }
+    { 
+      data: data, 
+      meta: meta, 
+      errors: errors }
   end
 
   def self.parse_message(message: nil)
     orcid = message.fetch("orcid-id", nil)
     given_name = message.fetch("given-names", nil)
     family_name = message.fetch("family-names", nil)
-    other_names = Array.wrap(message.fetch("other-name", nil))
+    alternate_name = Array.wrap(message.fetch("other-name", nil))
     if message.fetch("credit-name", nil).present?
       name = message.fetch("credit-name")
     elsif given_name.present? || family_name.present?
@@ -62,6 +65,7 @@ class Person
     else
       name = orcid
     end
+    # TODO affiliation for find_by_id
     affiliation = Array.wrap(message.fetch("institution-name", nil)).map { |a| { name: a } }.compact
 
     Hashie::Mash.new({
@@ -70,21 +74,8 @@ class Person
       orcid: orcid,
       given_name: given_name,
       family_name: family_name,
-      other_names: other_names,
+      alternate_name: alternate_name,
       name: name,
       affiliation: affiliation }.compact)
-  end
-
-  def self.orcid_as_url(orcid)
-    return nil unless orcid.present?
-
-    "https://orcid.org/#{orcid}"
-  end
-
-  def self.orcid_from_url(url)
-    if /\A(?:(http|https):\/\/(orcid.org)\/)(.+)\z/.match?(url)
-      uri = Addressable::URI.parse(url)
-      uri.path.gsub(/^\//, "").downcase
-    end
   end
 end

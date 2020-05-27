@@ -3,13 +3,16 @@
 class QueryType < BaseObject
   extend_type
 
-  field :members, MemberConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :members, MemberConnectionWithTotalType, null: false do
     argument :query, String, required: false
+    argument :year, String, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
-  def members(query: nil, year: nil, first: nil)
-    Provider.query(query, year: year, page: { number: 1, size: first }).results.to_a
+  def members(**args)
+    response = Provider.query(args[:query], year: args[:year], page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
+    ElasticsearchModelResponseConnection.new(response, context: self.context, first: args[:first], after: args[:after])
   end
 
   field :member, MemberType, null: false do
@@ -20,15 +23,17 @@ class QueryType < BaseObject
     Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: id).first
   end
 
-  field :repositories, RepositoryConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :repositories, RepositoryConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :year, String, required: false
     argument :software, String, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def repositories(**args)
-    Client.query(args[:query], year: args[:year], software: args[:software], page: { number: 1, size: args[:first] }).results.to_a
+    response = Client.query(args[:query], year: args[:year], software: args[:software], page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
+    ElasticsearchModelResponseConnection.new(response, context: self.context, first: args[:first], after: args[:after])
   end
 
   field :repository, RepositoryType, null: false do
@@ -39,13 +44,15 @@ class QueryType < BaseObject
     Client.where(symbol: id).where(deleted_at: nil).first
   end
 
-  field :prefixes, PrefixConnectionType, null: false do
+  field :prefixes, PrefixConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def prefixes(**args)
-    Prefix.query(args[:query], page: { number: 1, size: args[:first] }).results.to_a
+    response = Prefix.query(args[:query], page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
+    ElasticsearchModelResponseConnection.new(response, context: self.context, first: args[:first], after: args[:after])
   end
 
   field :prefix, PrefixType, null: false do
@@ -56,13 +63,15 @@ class QueryType < BaseObject
     Prefix.where(prefix: id).first
   end
 
-  field :funders, FunderConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :funders, FunderConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def funders(**args)
-    Funder.query(args[:query], limit: args[:first]).fetch(:data, [])
+    response = Funder.query(args[:query], limit: args[:first], offset: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil)
+    HashConnection.new(response, context: self.context, first: args[:first], after: args[:after])
   end
 
   field :funder, FunderType, null: false do
@@ -87,21 +96,25 @@ class QueryType < BaseObject
     result
   end
 
-  field :data_catalogs, DataCatalogConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :data_catalogs, DataCatalogConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def data_catalogs(**args)
-    DataCatalog.query(args[:query], limit: args[:first]).fetch(:data, [])
+    response = DataCatalog.query(args[:query], limit: args[:first], offset: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil)
+    HashConnection.new(response, context: self.context, first: args[:first], after: args[:after])
   end
 
-  field :organizations, OrganizationConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :organizations, OrganizationConnectionWithTotalType, null: false do
     argument :query, String, required: false
+    argument :after, String, required: false
   end
 
   def organizations(**args)
-    Organization.query(args[:query]).fetch(:data, [])
+    response = Organization.query(args[:query], offset: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil)
+    HashConnection.new(response, context: self.context, after: args[:after])
   end
 
   field :organization, OrganizationType, null: false do
@@ -126,16 +139,55 @@ class QueryType < BaseObject
     result
   end
 
-  field :people, PersonConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :people, PersonConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def people(**args)
-    Person.query(args[:query], rows: args[:first]).fetch(:data, [])
+    response = Person.query(args[:query], limit: args[:first], offset: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil)
+    HashConnection.new(response, context: self.context, first: args[:first], after: args[:after])
   end
 
-  field :works, WorkConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :actors, ActorConnectionType, null: false, connection: false do
+    argument :query, String, required: false
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
+  end
+
+  def actors(**args)
+    orgs = Organization.query(args[:query], offset: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil)
+    funders = Funder.query(args[:query], limit: args[:first], offset: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil)
+    people = Person.query(args[:query], limit: args[:first], offset: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil)
+
+    response = { 
+      data: Array.wrap(orgs[:data]) + Array.wrap(funders[:data]) + Array.wrap(people[:data]),
+      meta: { "total" => (orgs.dig(:meta, "total").to_i + funders.dig(:meta, "total").to_i + people.dig(:meta, "total").to_i) } }
+    HashConnection.new(response, context: self.context, first: args[:first], after: args[:after])
+  end
+
+  field :actor, ActorItem, null: false do
+    argument :id, ID, required: true
+  end
+
+  def actor(id:)
+    if orcid_from_url(id)
+      result = Person.find_by_id(id).fetch(:data, []).first
+    elsif ror_id_from_url(id)
+      result = Organization.find_by_id(id).fetch(:data, []).first
+    elsif doi_from_url(id).to_s.starts_with?("10.13039")
+      result = Funder.find_by_id(id).fetch(:data, []).first
+    else
+      result = nil
+    end
+    
+    fail ActiveRecord::RecordNotFound if result.nil?
+
+    result
+  end
+
+  field :works, WorkConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -151,10 +203,11 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def works(**args)
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :work, WorkType, null: false do
@@ -165,7 +218,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :datasets, DatasetConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :datasets, DatasetConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -180,11 +233,12 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :dataset, DatasetType, null: false do
@@ -195,7 +249,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :publications, PublicationConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :publications, PublicationConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -210,11 +264,12 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def publications(**args)
     args[:resource_type_id] = "Text"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :publication, PublicationType, null: false do
@@ -225,7 +280,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :audiovisuals, AudiovisualConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :audiovisuals, AudiovisualConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -240,11 +295,12 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def audiovisuals(**args)
     args[:resource_type_id] = "Audiovisual"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :audiovisual, AudiovisualType, null: false do
@@ -255,7 +311,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :collections, CollectionConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :collections, CollectionConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -270,11 +326,12 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def collections(**args)
     args[:resource_type_id] = "Collection"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :collection, CollectionType, null: false do
@@ -285,7 +342,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :data_papers, DataPaperConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :data_papers, DataPaperConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -300,11 +357,12 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def data_papers(**args)
     args[:resource_type_id] = "DataPaper"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :data_paper, DataPaperType, null: false do
@@ -315,7 +373,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :events, EventConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :events, EventConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -330,11 +388,12 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def events(**args)
     args[:resource_type_id] = "Event"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :event, EventType, null: false do
@@ -345,7 +404,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :images, ImageConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :images, ImageConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -360,11 +419,12 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def images(**args)
     args[:resource_type_id] = "Image"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :image, ImageType, null: false do
@@ -375,7 +435,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :interactive_resources, InteractiveResourceConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :interactive_resources, InteractiveResourceConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -390,11 +450,12 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def interactive_resources(**args)
     args[:resource_type_id] = "InteractiveResource"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :interactive_resource, InteractiveResourceType, null: false do
@@ -405,7 +466,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :models, ModelConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :models, ModelConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -420,11 +481,12 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def models(**args)
     args[:resource_type_id] = "Model"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :model, ModelType, null: false do
@@ -435,7 +497,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :physical_objects, PhysicalObjectConnectionType, null: false do
+  field :physical_objects, PhysicalObjectConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -450,11 +512,12 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def physical_objects(**args)
     args[:resource_type_id] = "PhysicalObject"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :physical_object, PhysicalObjectType, null: false do
@@ -465,7 +528,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :services, ServiceConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :services, ServiceConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -480,11 +543,12 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def services(**args)
     args[:resource_type_id] = "Service"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :service, ServiceType, null: false do
@@ -495,7 +559,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :softwares, SoftwareConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :softwares, SoftwareConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -510,11 +574,12 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def softwares(**args)
     args[:resource_type_id] = "Software"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :software, SoftwareType, null: false do
@@ -525,7 +590,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :sounds, SoundConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :sounds, SoundConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -540,11 +605,12 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def sounds(**args)
     args[:resource_type_id] = "Sound"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :sound, SoundType, null: false do
@@ -555,7 +621,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :workflows, WorkflowConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :workflows, WorkflowConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -570,11 +636,12 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def workflows(**args)
     args[:resource_type_id] = "Workflow"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :workflow, WorkflowType, null: false do
@@ -585,7 +652,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :dissertations, DissertationConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :dissertations, DissertationConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -600,12 +667,13 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def dissertations(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "Dissertation,Thesis"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :dissertation, DissertationType, null: false do
@@ -616,7 +684,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :preprints, PreprintConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :preprints, PreprintConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -631,12 +699,13 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def preprints(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "PostedContent,Preprint"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :preprint, PreprintType, null: false do
@@ -647,7 +716,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :peer_reviews, PeerReviewConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :peer_reviews, PeerReviewConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -662,12 +731,13 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def peer_reviews(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "\"Peer review\""
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :peer_review, PeerReviewType, null: false do
@@ -678,7 +748,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :conference_papers, ConferencePaperConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :conference_papers, ConferencePaperConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -693,12 +763,13 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def conference_papers(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "\"Conference paper\""
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :conference_paper, ConferencePaperType, null: false do
@@ -709,7 +780,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :book_chapters, BookChapterConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :book_chapters, BookChapterConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -724,12 +795,13 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def book_chapters(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "BookChapter"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :book_chapter, BookChapterType, null: false do
@@ -740,7 +812,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :books, BookConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :books, BookConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -755,12 +827,13 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def books(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "Book"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :book, BookType, null: false do
@@ -771,7 +844,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :journal_articles, JournalArticleConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :journal_articles, JournalArticleConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -786,12 +859,13 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def journal_articles(**args)
     args[:resource_type_id] = "Text"
     args[:resource_type] = "JournalArticle"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :journal_article, JournalArticleType, null: false do
@@ -802,7 +876,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :instruments, InstrumentConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :instruments, InstrumentConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -817,13 +891,13 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def instruments(**args)
     args[:resource_type_id] = "Other"
     args[:resource_type] = "Instrument"
-
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :instrument, InstrumentType, null: false do
@@ -834,7 +908,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :others, OtherConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :others, OtherConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -849,11 +923,12 @@ class QueryType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def others(**args)
     args[:resource_type_id] = "Other"
-    response(args)
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   field :other, OtherType, null: false do
@@ -864,7 +939,7 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
-  field :usage_reports, UsageReportConnectionType, null: false, connection: true, max_page_size: 1000 do
+  field :usage_reports, UsageReportConnectionWithTotalType, null: false, connection: true do
     argument :first, Int, required: false, default_value: 25
   end
 
@@ -884,7 +959,7 @@ class QueryType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
   end
 
   def set_doi(id)

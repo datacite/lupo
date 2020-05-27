@@ -82,7 +82,13 @@ class Provider < ActiveRecord::Base
   accepts_nested_attributes_for :prefixes
 
   # use different index for testing
-  index_name Rails.env.test? ? "providers-test" : "providers"
+  if Rails.env.test?
+    index_name "providers-test"
+  elsif ENV["ES_PREFIX"].present?
+    index_name"providers-#{ENV["ES_PREFIX"]}"
+  else
+    index_name "providers"
+  end
 
   settings index: {
     analysis: {
@@ -245,7 +251,7 @@ class Provider < ActiveRecord::Base
     {
       years: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-      cumulative_years: { terms: { field: 'cumulative_years', size: 10, min_doc_count: 1, order: { _count: "asc" } } },
+      cumulative_years: { terms: { field: 'cumulative_years', size: 20, min_doc_count: 1, order: { _count: "asc" } } },
       regions: { terms: { field: 'region', size: 10, min_doc_count: 1 } },
       member_types: { terms: { field: 'member_type', size: 10, min_doc_count: 1 } },
       organization_types: { terms: { field: 'organization_type', size: 10, min_doc_count: 1 } },

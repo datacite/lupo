@@ -1,20 +1,18 @@
 # frozen_string_literal: true
 
 class OrganizationType < BaseObject
+  implements ActorItem
+
   description "Information about organizations"
 
-  field :id, ID, null: true, description: "ROR ID"
-  field :type, String, null: false, description: "The type of the item."
-  field :name, String, null: false, description: "The name of the organization."
-  field :alternate_name, [String], null: true, description: "An alias for the organization."
   field :identifiers, [IdentifierType], null: true, description: "The identifier(s) for the organization."
-  field :url, [String], null: true, hash_key: "links", description: "URL of the organization."
+  field :url, [Url], null: true, hash_key: "links", description: "URL of the organization."
   field :address, AddressType, null: true, description: "Physical address of the organization."
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :datasets, DatasetConnectionType, null: true, description: "Datasets from this organization", connection: true do
+  field :datasets, DatasetConnectionWithTotalType, null: true, description: "Datasets from this organization" do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -27,9 +25,10 @@ class OrganizationType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
-  field :publications, PublicationConnectionType, null: true, description: "Publications from this organization", connection: true do
+  field :publications, PublicationConnectionWithTotalType, null: true, description: "Publications from this organization" do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -42,9 +41,10 @@ class OrganizationType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
-  field :softwares, SoftwareConnectionType, null: true, description: "Software from this organization", connection: true do
+  field :softwares, SoftwareConnectionWithTotalType, null: true, description: "Software from this organization" do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -57,9 +57,10 @@ class OrganizationType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
-  field :works, WorkConnectionType, null: true, description: "Works from this organization", connection: true do
+  field :works, WorkConnectionWithTotalType, null: true, description: "Works from this organization" do
     argument :query, String, required: false
     argument :ids, [String], required: false
     argument :user_id, String, required: false
@@ -71,7 +72,8 @@ class OrganizationType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
-    argument :first, Int, required: false, default_value: 25
+    argument :first, Int, required: false, default_value: 2
+    argument :after, String, required: false
   end
 
   def alternate_name
@@ -93,29 +95,21 @@ class OrganizationType < BaseObject
 
   def publications(**args)
     args[:resource_type_id] = "Text"
-    r = response(args)
-
-    r.results.to_a
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   def datasets(**args)
     args[:resource_type_id] = "Dataset"
-    r = response(args)
-
-    r.results.to_a
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   def softwares(**args)
     args[:resource_type_id] = "Software"
-    r = response(args)
-
-    r.results.to_a
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   def works(**args)
-    r = response(args)
-
-    r.results.to_a
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
   def view_count
@@ -137,6 +131,6 @@ class OrganizationType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], ids: args[:ids], affiliation_id: object[:id], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], funder_id: args[:funder_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { number: 1, size: args[:first] })
+    Doi.query(args[:query], ids: args[:ids], affiliation_id: object.id, user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], funder_id: args[:funder_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
   end
 end

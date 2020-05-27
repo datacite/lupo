@@ -128,7 +128,13 @@ class Doi < ActiveRecord::Base
   scope :q, ->(query) { where("dataset.doi = ?", query) }
 
   # use different index for testing
-  index_name Rails.env.test? ? "dois-test" : "dois"
+  if Rails.env.test?
+    index_name "dois-test"
+  elsif ENV["ES_PREFIX"].present?
+    index_name"dois-#{ENV["ES_PREFIX"]}"
+  else
+    index_name "dois"
+  end
 
   settings index: {
     analysis: {
@@ -573,7 +579,7 @@ class Doi < ActiveRecord::Base
       # link_checks_citation_doi: { value_count: { field: "landing_page.citationDoi" } },
       # links_checked: { value_count: { field: "landing_page.checked" } },
       # sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
-      # subjects: { terms: { field: 'subjects.subject', size: 15, min_doc_count: 1 } },
+      subjects: { terms: { field: 'subjects.subject', size: 15, min_doc_count: 1 } },
       certificates: { terms: { field: 'client.certificate', size: 10, min_doc_count: 1 } },
       views: {
         date_histogram: { field: 'publication_year', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
@@ -675,6 +681,29 @@ class Doi < ActiveRecord::Base
     )
   end
 
+  def self.stats_query(options={})
+    filter = []
+    filter << { term: { provider_id: options[:provider_id] } } if options[:provider_id].present?
+    filter << { term: { client_id: options[:client_id] } } if options[:client_id].present?
+    filter << { term: { consortium_id: options[:consortium_id].upcase }} if options[:consortium_id].present?
+    filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
+    
+    aggregations = {
+      created: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+                 aggs: { bucket_truncate: { bucket_sort: { size: 12 } } } },
+    }
+
+    __elasticsearch__.search({
+      query: {
+        bool: {
+          must: [{ match_all: {} }],
+          filter: filter,
+        }
+      },
+      aggregations: aggregations,
+    })
+  end
+
   def self.query(query, options={})
     # support scroll api
     # map function is small performance hit
@@ -715,12 +744,12 @@ class Doi < ActiveRecord::Base
       aggregations = query_aggregations
     end
 
-    # Cursor nav use the search after, this should always be an array of values that match the sort.
+    # Cursor nav uses search_after, this should always be an array of values that match the sort.
     if options.dig(:page, :cursor)
       from = 0
 
       # make sure we have a valid cursor
-      search_after = options.dig(:page, :cursor).presence || [1, "1"]
+      search_after = options.dig(:page, :cursor).is_a?(Array) || [1, "1"]
       sort = [{ created: "asc", uid: "asc" }]
     else
       from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)
@@ -948,6 +977,48 @@ class Doi < ActiveRecord::Base
     (from_id..until_id).to_a.length
   end
 
+  def self.import_by_client(client_id: nil)
+    client = ::Client.where(symbol: client_id).first
+    return nil if client.blank?
+
+    index = if Rails.env.test?
+      "dois-test"
+    else
+      self.active_index
+    end
+    errors = 0
+    count = 0
+
+    Doi.where(datacentre: client.id).find_in_batches(batch_size: 500) do |dois|
+      response = Doi.__elasticsearch__.client.bulk \
+        index:   index,
+        type:    Doi.document_type,
+        body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
+
+      # try to handle errors
+      errors_in_response = response['items'].select { |k, v| k.values.first['error'].present? }
+      errors += errors_in_response.length
+      errors_in_response.each do |item|
+        Rails.logger.error "[Elasticsearch] " + item.inspect
+        doi_id = item.dig("index", "_id").to_i
+        import_one(doi_id: doi_id) if doi_id > 0
+      end
+
+      count += dois.length
+    end
+
+    if errors > 1
+      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs for client #{client_id}."
+    elsif count > 0
+      Rails.logger.warn "[Elasticsearch] Imported #{count} DOIs for client #{client_id}."
+    end
+
+    count
+
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
+    Rails.logger.error "[Elasticsearch] Error #{error.message} importing DOIs for client #{client_id}."
+  end
+
   def self.import_by_id(options={})
     return nil if options[:id].blank?
 
@@ -969,17 +1040,13 @@ class Doi < ActiveRecord::Base
         body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
 
       # try to handle errors
-      response['items'].select { |k, v| k.values.first['error'].present? }.each do |item|
+      errors_in_response = response['items'].select { |k, v| k.values.first['error'].present? }
+      errors += errors_in_response.length
+      errors_in_response.each do |item|
         Rails.logger.error "[Elasticsearch] " + item.inspect
         doi_id = item.dig("index", "_id").to_i
         import_one(doi_id: doi_id) if doi_id > 0
       end
-
-      # log errors
-      # errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
-      # response['items'].select { |k, v| k.values.first['error'].present? }.each do |err|
-      #   Rails.logger.error "[Elasticsearch] " + err.inspect
-      # end
 
       count += dois.length
     end

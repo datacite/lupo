@@ -66,7 +66,13 @@ class Client < ActiveRecord::Base
   attr_accessor :target_id
 
   # use different index for testing
-  index_name Rails.env.test? ? "clients-test" : "clients"
+  if Rails.env.test?
+    index_name "clients-test"
+  elsif ENV["ES_PREFIX"].present?
+    index_name"clients-#{ENV["ES_PREFIX"]}"
+  else
+    index_name "clients"
+  end
 
   settings index: {
     analysis: {
@@ -253,7 +259,7 @@ class Client < ActiveRecord::Base
     {
       years: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
-      cumulative_years: { terms: { field: 'cumulative_years', size: 10, min_doc_count: 1, order: { _count: "asc" } } },
+      cumulative_years: { terms: { field: 'cumulative_years', size: 20, min_doc_count: 1, order: { _count: "asc" } } },
       providers: { terms: { field: 'provider_id_and_name', size: 10, min_doc_count: 1 } },
       software: { terms: { field: 'software.keyword', size: 10, min_doc_count: 1 } },
       client_types: { terms: { field: 'client_type', size: 10, min_doc_count: 1 } },
@@ -341,7 +347,7 @@ class Client < ActiveRecord::Base
     end
 
     unless ["direct_member", "consortium_organization"].include?(target_provider.member_type)
-      Rails.logger.error "[Transfer] Consortiums and Members-only cannot have repositories."
+      Rails.logger.error "[Transfer] Consortium leads and member-only members cannot have repositories."
       return nil
     end
 
@@ -366,13 +372,16 @@ class Client < ActiveRecord::Base
 
     if prefix_ids.present?
       response = ProviderPrefix.where("prefix_id IN (?)", prefix_ids).destroy_all
-      puts "#{response.count} provider prefixes deleted."
+      Rails.logger.info "[Transfer] #{response.count} provider prefixes deleted."
     end
 
-    # Assign prefix(es) to provider
+    # Assign prefix(es) to provider and client
     prefixes_names.each do |prefix|
-      ProviderPrefix.create(provider_id: target_id, prefix_id: prefix)
-      puts "Provider prefix for provider #{target_id} and prefix #{prefix} created."
+      provider_prefix = ProviderPrefix.create(provider_id: target_id, prefix_id: prefix)
+      Rails.logger.info "[Transfer] Provider prefix for provider #{target_id} and prefix #{prefix} created."
+
+      ClientPrefix.create(client_id: symbol, provider_prefix_id: provider_prefix.uid, prefix_id: prefix)
+      Rails.logger.info "Client prefix for client #{symbol} and prefix #{prefix} created."
     end
   end
 

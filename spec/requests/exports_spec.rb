@@ -82,12 +82,16 @@ describe "exports", type: :request do
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
-      expect(csv.length).to eq(5)
+      expect(csv.length).to eq(9)
       expect(csv[0]).to eq("fabricaAccountId,fabricaId,email,firstName,lastName,type\n")
       expect(csv[1]).to start_with("VIVA,VIVA-kristian@example.com,kristian@example.com,Kristian,Garza,technical;secondaryTechnical")
       expect(csv[2]).to start_with("VIVA,VIVA-martin@example.com,martin@example.com,Martin,Fenner,service;secondaryService")
       expect(csv[3]).to start_with("VIVA,VIVA-robin@example.com,robin@example.com,Robin,Dasler,voting")
       expect(csv[4]).to start_with("VIVA,VIVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling")
+      expect(csv[5]).to start_with("UVA,UVA-kristian@example.com,kristian@example.com,Kristian,Garza,technical;secondaryTechnical")
+      expect(csv[6]).to start_with("UVA,UVA-martin@example.com,martin@example.com,Martin,Fenner,service;secondaryService")
+      expect(csv[7]).to start_with("UVA,UVA-robin@example.com,robin@example.com,Robin,Dasler,voting")
+      expect(csv[8]).to start_with("UVA,UVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling")
     end
 
     it 'returns all contacts from date', vcr: false do
@@ -95,12 +99,16 @@ describe "exports", type: :request do
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
-      expect(csv.length).to eq(5)
+      expect(csv.length).to eq(9)
       expect(csv[0]).to eq("fabricaAccountId,fabricaId,email,firstName,lastName,type\n")
       expect(csv[1]).to start_with("VIVA,VIVA-kristian@example.com,kristian@example.com,Kristian,Garza,technical;secondaryTechnical")
       expect(csv[2]).to start_with("VIVA,VIVA-martin@example.com,martin@example.com,Martin,Fenner,service;secondaryService")
       expect(csv[3]).to start_with("VIVA,VIVA-robin@example.com,robin@example.com,Robin,Dasler,voting")
       expect(csv[4]).to start_with("VIVA,VIVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling")
+      expect(csv[5]).to start_with("UVA,UVA-kristian@example.com,kristian@example.com,Kristian,Garza,technical;secondaryTechnical")
+      expect(csv[6]).to start_with("UVA,UVA-martin@example.com,martin@example.com,Martin,Fenner,service;secondaryService")
+      expect(csv[7]).to start_with("UVA,UVA-robin@example.com,robin@example.com,Robin,Dasler,voting")
+      expect(csv[8]).to start_with("UVA,UVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling")
     end
 
     it 'returns voting contacts', vcr: false do
@@ -108,9 +116,10 @@ describe "exports", type: :request do
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
-      expect(csv.length).to eq(2)
+      expect(csv.length).to eq(3)
       expect(csv[0]).to eq("fabricaAccountId,fabricaId,email,firstName,lastName,type\n")
       expect(csv[1]).to start_with("VIVA,VIVA-robin@example.com,robin@example.com,Robin,Dasler,voting")
+      expect(csv[2]).to start_with("UVA,UVA-robin@example.com,robin@example.com,Robin,Dasler,voting")
     end
 
     it 'returns billing contacts', vcr: false do
@@ -118,9 +127,10 @@ describe "exports", type: :request do
 
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
-      expect(csv.length).to eq(2)
+      expect(csv.length).to eq(3)
       expect(csv[0]).to eq("fabricaAccountId,fabricaId,email,firstName,lastName,type\n")
       expect(csv[1]).to start_with("VIVA,VIVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling")
+      expect(csv[2]).to start_with("UVA,UVA-trisha@example.com,trisha@example.com,Trisha,Cruse,billing;secondaryBilling")
     end
   end
 end

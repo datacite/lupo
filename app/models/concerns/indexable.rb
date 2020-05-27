@@ -169,20 +169,16 @@ module Indexable
         from = 0
 
         # make sure we have a valid cursor
-        search_after = options.dig(:page, :cursor).presence || [1, "1"]
+        search_after = options.dig(:page, :cursor).is_a?(Array) || [1, "1"]
 
-        if self.name == "Doi"
-          sort = [{ created: "asc", uid: "asc" }]
-        elsif self.name == "Event"
+        if self.name == "Event"
           sort = [{ created_at: "asc", uuid: "asc" }]
         elsif self.name == "Activity"
           sort = [{ created: "asc", request_uuid: "asc" }]
         elsif %w(Client Provider).include?(self.name)
           sort = [{ created: "asc", uid: "asc" }]
-        elsif self.name == "Researcher"
+        elsif %w(Prefix ProviderPrefix ClientPrefix).include?(self.name)
           sort = [{ created_at: "asc", uid: "asc" }]
-        elsif ["Prefix", "ProviderPrefix", "ClientPrefix"].include?(self.name)
-          sort = [{ created_at: "asc" }]
         else
           sort = [{ created: "asc" }]
         end
@@ -221,10 +217,10 @@ module Indexable
         filter << { range: { updated: { lte: "#{options[:until_date]}||/d" }}} if options[:until_date].present?
         filter << { term: { region: options[:region].upcase }} if options[:region].present?
         filter << { term: { "consortium_id.raw" => options[:consortium_id] }} if options[:consortium_id].present?
-        filter << { term: { member_type: options[:member_type] }} if options[:member_type].present?
-        filter << { term: { organization_type: options[:organization_type] }} if options[:organization_type].present?
+        filter << { terms: { member_type: options[:member_type].split(",") }} if options[:member_type].present?
+        filter << { terms: { organization_type: options[:organization_type].split(",") }} if options[:organization_type].present?
         filter << { term: { non_profit_status: options[:non_profit_status] }} if options[:non_profit_status].present?
-        filter << { term: { focus_area: options[:focus_area] }} if options[:focus_area].present?
+        filter << { terms: { focus_area: options[:focus_area].split(",") }} if options[:focus_area].present?
 
         must_not << { exists: { field: "deleted_at" }} unless options[:include_deleted]
         if options[:exclude_registration_agencies]

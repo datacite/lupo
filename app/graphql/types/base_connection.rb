@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 class BaseConnection < GraphQL::Types::Relay::BaseConnection
+  REGIONS = {
+    "APAC" => "Asia and Pacific",
+    "EMEA" => "Europe, Middle East and Africa",
+    "AMER" => "Americas"
+  }
+  
   def doi_from_url(url)
     if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match?(url)
       uri = Addressable::URI.parse(url)
@@ -13,16 +19,6 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
       uri = Addressable::URI.parse(url)
       uri.path.gsub(/^\//, "").downcase
     end
-  end
-
-  def prepare_args(args)
-    args[:user_id] ||= object.parent.try(:type) == "Person" ? object.parent.orcid : nil
-    args[:repository_id] ||= object.parent.try(:client_type).present? ? object.parent.symbol.downcase : nil
-    args[:member_id] ||= object.parent.try(:region).present? ? object.parent.symbol.downcase : nil
-    args[:affiliation_id] ||= object.parent.try(:type) == "Organization" ? object.parent[:id] : nil
-    args[:funder_id] ||= object.parent.try(:type) == "Funder" ? object.parent[:id] : nil
-    args[:re3data_id] ||= object.parent.try(:type) == "DataCatalog" ? object.parent[:id] : nil
-    args.compact
   end
 
   def facet_by_year(arr)
@@ -63,6 +59,14 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
 
       { "id" => id,
         "title" => title,
+        "count" => hsh["doc_count"] }
+    end
+  end
+
+  def facet_by_region(arr)
+    arr.map do |hsh|
+      { "id" => hsh["key"].downcase,
+        "title" => REGIONS[hsh["key"]] || hsh["key"],
         "count" => hsh["doc_count"] }
     end
   end

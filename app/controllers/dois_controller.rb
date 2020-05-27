@@ -164,7 +164,7 @@ class DoisController < ApplicationController
 
         affiliations = total.positive? ? facet_by_combined_key(response.aggregations.affiliations.buckets) : nil
         # sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
-        # subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
+        subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
         certificates = total.positive? ? facet_by_key(response.aggregations.certificates.buckets) : nil
 
         link_checks_status = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
@@ -203,7 +203,7 @@ class DoisController < ApplicationController
               # "linkChecksSchemaOrgId" => link_checks_schema_org_id,
               # "linkChecksDcIdentifier" => link_checks_dc_identifier,
               # "linkChecksCitationDoi" => link_checks_citation_doi,
-              # subjects: subjects,
+              subjects: subjects,
               citations: citations,
               views: views,
               downloads: downloads,

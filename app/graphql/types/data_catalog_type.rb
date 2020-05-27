@@ -27,7 +27,7 @@ class DataCatalogType < BaseObject
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
 
-  field :datasets, DatasetConnectionType, null: true, description: "Funded datasets", connection: true do
+  field :datasets, DatasetConnectionWithTotalType, null: true, description: "Funded datasets" do
     argument :query, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
@@ -38,6 +38,7 @@ class DataCatalogType < BaseObject
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
     argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
   end
 
   def identifier
@@ -76,7 +77,7 @@ class DataCatalogType < BaseObject
   end
 
   def datasets(**args)
-    Doi.query(args[:query], re3data_id: object[:id], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Dataset", state: "findable", page: { number: 1, size: args[:first] }).results.to_a
+    Doi.query(args[:query], re3data_id: object[:id], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Dataset", state: "findable", page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
   end
 
   def view_count

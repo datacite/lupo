@@ -19,7 +19,7 @@ class EventRegistrantUpdateByIdJob < ActiveJob::Base
         registrant_id = get_crossref_member_id(item.obj_id)
       end
 
-      obj = item.obj.merge("registrant_id" => registrant_id) unless registrant_id.nil?
+      obj = item.obj.merge("registrantId" => registrant_id) unless registrant_id.nil?
       Rails.logger.info obj.inspect
       item.update_attributes(obj: obj) if obj.present?
     when "crossref"

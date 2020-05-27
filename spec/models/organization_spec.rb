@@ -25,25 +25,37 @@ describe Organization, type: :model, vcr: true do
     it "all" do
       query = nil
       organizations = Organization.query(query)
-      expect(organizations.dig(:meta, "total")).to eq(97819)
+      expect(organizations.dig(:meta, "total")).to eq(97795)
       expect(organizations[:data].size).to eq(20)
       organization = organizations[:data].first
-      expect(organization.id).to eq("https://ror.org/02x66tk73")
-      expect(organization.name).to eq("Egypt-Japan University of Science and Technology")
-      expect(organization.labels).to eq([{"code"=>"AR", "name"=>"الجامعة المصرية اليابانية للعلوم والتكنولوجيا‎"}])
-      expect(organization.links).to eq(["https://ejust.edu.eg"])
+      expect(organization.id).to eq("https://ror.org/01m1pv723")
+      expect(organization.name).to eq("University Hospital of Geneva")
+      expect(organization.labels).to eq([{"code"=>"FR", "name"=>"Hôpitaux universitaires de Genève"}])
+      expect(organization.links).to eq(["http://www.hug-ge.ch/"])
     end
 
     it "found" do
       query = "lincoln university"
       organizations = Organization.query(query)
-      expect(organizations.dig(:meta, "total")).to eq(10718)
+      expect(organizations.dig(:meta, "total")).to eq(10737)
       expect(organizations[:data].size).to eq(20)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/04ps1r162")
       expect(organization.name).to eq("Lincoln University")
       expect(organization.labels).to eq([{"code"=>"MI", "name"=>"Te Whare Wanaka o Aoraki"}])
       expect(organization.links).to eq(["http://www.lincoln.ac.nz/"])
+    end
+
+    it "found page 2" do
+      query = "lincoln university"
+      organizations = Organization.query(query, offset: 2)
+      expect(organizations.dig(:meta, "total")).to eq(10737)
+      expect(organizations[:data].size).to eq(20)
+      organization = organizations[:data].first
+      expect(organization.id).to eq("https://ror.org/01qb09m39")
+      expect(organization.name).to eq("Lincoln Agritech (New Zealand)")
+      expect(organization.labels).to eq([])
+      expect(organization.links).to eq(["https://www.lincolnagritech.co.nz/"])
     end
 
     it "not found" do
@@ -53,7 +65,7 @@ describe Organization, type: :model, vcr: true do
     end
 
     it "status code not 200" do
-      url = "https://api.ror.org/organizations?query=lincoln%20university"
+      url = "https://api.ror.org/organizations?query=lincoln%20university&page=1"
       stub = stub_request(:get, url).and_return(status: [408])
       
       query = "lincoln university"

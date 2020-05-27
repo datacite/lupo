@@ -1,0 +1,76 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.crossref.org/funders/10.13039/501100003987
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+      Accept-Encoding:
+      - gzip,deflate
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Vary:
+      - Accept
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - X-Requested-With
+      Content-Length:
+      - '3400'
+      Server:
+      - http-kit
+      Date:
+      - Mon, 25 May 2020 16:08:15 GMT
+      X-Rate-Limit-Limit:
+      - '50'
+      X-Rate-Limit-Interval:
+      - 1s
+      Connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: '{"status":"ok","message-type":"funder","message-version":"1.0.0","message":{"hierarchy-names":{"501100000621":"Girton
+        College, University of Cambridge","501100007552":"School of Clinical Medicine,
+        University of Cambridge","501100000609":"Emmanuel College, University of Cambridge","501100000705":"School
+        of the Biological Sciences, University of Cambridge","501100000602":"Department
+        of Anglo-Saxon, Norse and Celtic, Faculty of English, University of Cambridge","501100008101":"St\u00a0Catharine''s
+        College, University of Cambridge","501100000622":"Gonville and Caius College,
+        University of Cambridge","501100003987":"James Baird Fund, University of Cambridge","501100000663":"Newnham
+        College, University of Cambridge","501100000742":"Churchill College, University
+        of Cambridge","501100005705":"St. Edmund\u2019s College, University of Cambridge","501100009163":"Centre
+        of Latin American Studies, University of Cambridge","501100000653":"Magdalene
+        College, University of Cambridge","501100004537":"Institute for Aviation and
+        the Environment, University of Cambridge","501100004222":"Pembroke College,
+        University of Cambridge","501100004495":"Sir Arthur Marshall Institute for
+        Aeronautics, University of Cambridge","501100000591":"Corpus Christi College,
+        University of Cambridge","501100000595":"Darwin College, University of Cambridge","501100008420":"Homerton
+        College, University of Cambridge","501100000585":"Centre for Entrepreneurial
+        Learning, University of Cambridge","501100000644":"Jesus College, University
+        of Cambridge","501100000727":"Trinity College, University of Cambridge","501100000603":"Department
+        of Clinical Veterinary Medicine, University of Cambridge","501100000735":"University
+        of Cambridge","501100006299":"Department of Materials Science and Metallurgy,
+        University of Cambridge","501100014816":"Faculty of History, University of
+        Cambridge","501100000587":"Centre for Research in the Arts, Social Sciences
+        and Humanities, University of Cambridge","501100005796":"Department of Biochemistry,
+        University of Cambridge","more":null,"501100000590":"Christ''s College, University
+        of Cambridge","501100001625":"Clare College, University of Cambridge","501100000648":"King''s
+        College Cambridge, University of Cambridge","501100000580":"Cambridge Institute
+        for Medical Research, University of Cambridge","501100008931":"Sidney Sussex
+        College, University of Cambridge","501100000710":"Smuts Memorial Fund, University
+        of Cambridge"},"replaced-by":[],"work-count":12,"name":"James Baird Fund,
+        University of Cambridge","descendants":[],"descendant-work-count":12,"id":"501100003987","tokens":["james","baird","fund","university","of","cambridge"],"replaces":[],"uri":"http:\/\/dx.doi.org\/10.13039\/501100003987","hierarchy":{"501100000735":{"501100000621":{},"501100007552":{},"501100000609":{},"501100000705":{},"501100000602":{},"501100008101":{},"501100000622":{},"501100003987":{},"501100000663":{},"501100000742":{},"501100005705":{"more":true},"501100009163":{},"501100000653":{},"501100004537":{},"501100004222":{},"501100004495":{},"501100000591":{},"501100000595":{},"501100008420":{},"501100000585":{},"501100000644":{},"501100000727":{},"501100000603":{},"501100006299":{},"501100014816":{},"501100000587":{},"501100005796":{},"501100000590":{},"501100001625":{},"501100000648":{},"501100000580":{},"501100008931":{},"501100000710":{}}},"alt-names":[],"location":"United
+        Kingdom"}}'
+    http_version: null
+  recorded_at: Mon, 25 May 2020 16:08:15 GMT
+recorded_with: VCR 5.1.0
