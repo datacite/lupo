@@ -977,6 +977,47 @@ class Doi < ActiveRecord::Base
     (from_id..until_id).to_a.length
   end
 
+  def self.import_by_client(client_id: nil)
+    client = ::Client.where(symbol: client_id).first
+    return nil if client.blank?
+
+    index = if Rails.env.test?
+      "dois-test"
+    else
+      self.active_index
+    end
+    errors = 0
+    count = 0
+
+    Doi.where(datacentre: client.id).find_in_batches(batch_size: 500) do |dois|
+      response = Doi.__elasticsearch__.client.bulk \
+        index:   index,
+        type:    Doi.document_type,
+        body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
+
+      # try to handle errors
+      response['items'].select { |k, v| k.values.first['error'].present? }.each do |item|
+        errors += 1
+        Rails.logger.error "[Elasticsearch] " + item.inspect
+        doi_id = item.dig("index", "_id").to_i
+        import_one(doi_id: doi_id) if doi_id > 0
+      end
+
+      count += dois.length
+    end
+
+    if errors > 1
+      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs for client #{client_id}."
+    elsif count > 0
+      Rails.logger.warn "[Elasticsearch] Imported #{count} DOIs for client #{client_id}."
+    end
+
+    count
+
+  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
+    Rails.logger.error "[Elasticsearch] Error #{error.message} importing DOIs for client #{client_id}."
+  end
+
   def self.import_by_id(options={})
     return nil if options[:id].blank?
 
@@ -998,17 +1039,11 @@ class Doi < ActiveRecord::Base
         body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
 
       # try to handle errors
-      response['items'].select { |k, v| k.values.first['error'].present? }.each do |item|
+      errors += response['items'].select { |k, v| k.values.first['error'].present? }.each do |item|
         Rails.logger.error "[Elasticsearch] " + item.inspect
         doi_id = item.dig("index", "_id").to_i
         import_one(doi_id: doi_id) if doi_id > 0
       end
-
-      # log errors
-      # errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
-      # response['items'].select { |k, v| k.values.first['error'].present? }.each do |err|
-      #   Rails.logger.error "[Elasticsearch] " + err.inspect
-      # end
 
       count += dois.length
     end
