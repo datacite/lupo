@@ -379,32 +379,6 @@ class Event < ActiveRecord::Base
     response.results.total
   end
 
-  def self.update_target_doi(options = {})
-    size = (options[:size] || 1000).to_i
-    cursor = (options[:cursor] || [])
-    target_relation_type_id = options[:target_relation_type_id]
-
-    response = Event.query(nil, target_relation_type_id: target_relation_type_id, page: { size: 1, cursor: [] })
-    Rails.logger.info "[Update] #{response.results.total} events with target_relation_type_id #{target_relation_type_id.to_s}."
-
-    # walk through results using cursor
-    if response.results.total > 0
-      while response.results.results.length > 0 do
-        response = Event.query(nil, target_relation_type_id: target_relation_type_id, page: { size: size, cursor: cursor })
-        break unless response.results.results.length.positive?
-
-        Rails.logger.info "[Update] Updating #{response.results.results.length} events with target_relation_type_id #{target_relation_type_id.to_s} starting with _id #{response.results.to_a.first[:_id]}."
-        cursor = response.results.to_a.last[:sort]
-
-        ids = response.results.results.map(&:uuid).uniq
-
-        TargetDoiJob.perform_later(ids, options)
-      end
-    end
-
-    response.results.total
-  end
-
   def self.update_datacite_crossref(options = {})
     update_datacite_ra(options.merge(ra: "crossref"))
   end
@@ -601,7 +575,7 @@ class Event < ActiveRecord::Base
   # +job_name+:: Acive Job class name of the Job that would be executed on every matched results 
   def self.loop_through_events(options)
     size = (options[:size] || 1000).to_i
-    cursor = [options[:from_id] || Doi.minimum(:id).to_i, options[:until_id] || Doi.maximum(:id).to_i]
+    cursor = options[:cursor] || [options[:from_id] || Event.minimum(:id).to_i, options[:until_id] || Event.maximum(:id).to_i]
     filter = options[:filter] || {}
     label = options[:label] || ""
     job_name = options[:job_name] || ""
@@ -620,7 +594,7 @@ class Event < ActiveRecord::Base
         cursor = response.results.to_a.last[:sort]
         Rails.logger.info "#{label} Cursor: #{cursor} "
 
-        ids = response.results.results.map(&:uuid)
+        ids = response.results.results.map(&:uuid).uniq
         ids.each do |id|
           Object.const_get(job_name).perform_later(id, filter)
         end

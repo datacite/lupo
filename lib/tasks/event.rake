@@ -61,11 +61,15 @@ namespace :event do
     Event.update_registrant(cursor: cursor, size: ENV['SIZE'])
   end
 
-  desc 'update target doi'
-  task :update_target_doi => :environment do
-    cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id), Event.minimum(:id)]
-
-    Event.update_target_doi(cursor: cursor, target_relation_type_id: ENV['TARGET_RELATION_TYPE_ID'], size: ENV['SIZE'])
+  desc "update target doi"
+  task update_target_doi: :environment do
+    options = {
+      cursor: ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : [],
+      filter: { update_target_doi: true },
+      label: "[UpdateTargetDoi] Updating",
+      job_name: "TargetDoiByIdJob",
+    }
+    Event.loop_through_events(options)
   end
 end
 

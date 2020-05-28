@@ -275,6 +275,8 @@ module Indexable
         filter << { terms: { registrant_id: options[:registrant_id].split(",") }} if options[:registrant_id].present?
         filter << { terms: { registrant_id: options[:provider_id].split(",") }} if options[:provider_id].present?
         filter << { terms: { issn: options[:issn].split(",") }} if options[:issn].present?
+
+        must_not << { exists: { field: "target_doi" }} if options[:update_target_doi].present?
       elsif self.name == "Prefix"
         if query.present?
           must = [{ prefix: { prefix: query }}]
