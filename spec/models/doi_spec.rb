@@ -536,7 +536,7 @@ describe Doi, type: :model, vcr: true do
   #   end
 
   #   it "transfer all dois" do
-  #     response = Doi.transfer(client_id: client.symbol.downcase, target_id: target.symbol.downcase, size: 3)
+  #     response = Doi.transfer(client_id: client.symbol.downcase, client_target_id: target.symbol.downcase, size: 3)
   #     expect(response).to eq(5)
   #   end
   # end

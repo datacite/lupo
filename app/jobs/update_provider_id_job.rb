@@ -9,7 +9,7 @@ class UpdateProviderIdJob < ActiveJob::Base
   def perform(doi_id, options = {})
     doi = Doi.where(doi: doi_id).first
 
-    if doi.present? && options[:target_id].present?
+    if doi.present? && options[:provider_target_id].present?
       doi.__elasticsearch__.index_document
 
       Rails.logger.warn "[Transfer] updated DOI #{doi.doi}."

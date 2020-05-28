@@ -163,7 +163,7 @@ class RepositoriesController < ApplicationController
       # only update provider_id
       authorize! :transfer, @client
 
-      @client.transfer(safe_params.slice(:target_id))
+      @client.transfer(provider_target_id: safe_params[:target_id])
       render json: RepositorySerializer.new(@client, options).serialized_json, status: :ok
     elsif @client.update(safe_params)
 
