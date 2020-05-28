@@ -594,7 +594,7 @@ class Event < ActiveRecord::Base
         cursor = response.results.to_a.last[:sort]
         Rails.logger.info "#{label} Cursor: #{cursor} "
 
-        ids = response.results.results.map(&:uuid)
+        ids = response.results.results.map(&:uuid).uniq
         ids.each do |id|
           Object.const_get(job_name).perform_later(id, filter)
         end
