@@ -63,8 +63,13 @@ namespace :event do
 
   desc 'update target doi'
   task :update_target_doi => :environment do
-    cursor = ENV['CURSOR'].present? ? Base64.urlsafe_decode64(ENV['CURSOR']).split(",", 2) : []
-    Event.update_target_doi(cursor: cursor)
+    options = {
+      cursor: ENV['CURSOR'].present? ? Base64.urlsafe_decode64(ENV['CURSOR']).split(",", 2) : [],
+      filter: { update_target_doi: true },
+      label: "[UpdateTargetDoi] Updating",
+      job_name: "TargetDoiByIdJob",
+    }
+    Event.loop_through_events(options)
   end
 end
 
