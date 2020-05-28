@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource
+    xmlns="http://datacite.org/schema/kernel-3"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+    <dates>
+        <date dateType="Copyrighted">2017</date>
+    </dates>
+    <descriptions>
+        <description descriptionType="SeriesInformation">International journal of engine research, (2017). doi:10.1177/1468087417731043</description>
+        <description descriptionType="Other">Published by Sage Publ., London</description>
+    </descriptions>
+    <identifier identifierType="DOI">10.18154/RWTH-2017-08354</identifier>
+    <language>en</language>
+    <publicationYear>2017</publicationYear>
+    <publisher>RWTH Aachen University</publisher>
+    <relatedIdentifiers>
+        <relatedIdentifier relationType="IsPartOf" relatedIdentifierType="ISSN">1468-0874</relatedIdentifier>
+        <relatedIdentifier relationType="IsPartOf" relatedIdentifierType="ISSN">2041-3149</relatedIdentifier>
+        <relatedIdentifier relationType="IsVariantFormOf" relatedIdentifierType="DOI">10.1177/1468087417731043</relatedIdentifier>
+    </relatedIdentifiers>
+    <resourceType resourceTypeGeneral="Text">Journal article</resourceType>
+    <subjects>
+        <subject subjectScheme="dewey" schemeURI="http://dewey.info/">620</subject>
+    </subjects>
+    <titles>
+        <title>Autoregressive modeling of cycle-to-cycle correlations in homogeneous charge compression ignition combustion</title>
+    </titles>
+    <creators>
+        <creator>
+            <creatorName>Andert, Jakob</creatorName>
+            <nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org">0000-0002-6754-1907</nameIdentifier>
+            <affiliation>RWTH Aachen</affiliation>
+        </creator>
+        <creator>
+            <creatorName>Wick, Maximilian</creatorName>
+            <affiliation>RWTH Aachen</affiliation>
+        </creator>
+        <creator>
+            <creatorName>Lehrheuer, Bastian</creatorName>
+            <affiliation>RWTH Aachen</affiliation>
+        </creator>
+        <creator>
+            <creatorName>Sohn, Christian</creatorName>
+            <affiliation>RWTH Aachen</affiliation>
+        </creator>
+        <creator>
+            <creatorName>Albin Rajasingham, Thivaharan</creatorName>
+            <nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org">0000-0002-6765-7010</nameIdentifier>
+            <affiliation>RWTH Aachen</affiliation>
+        </creator>
+        <creator>
+            <creatorName>Pischinger, Stefan</creatorName>
+            <nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org">0000-0002-0222-3457</nameIdentifier>
+            <affiliation>RWTH Aachen</affiliation>
+        </creator>
+    </creators>
+</resource>

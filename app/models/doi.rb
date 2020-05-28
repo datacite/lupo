@@ -1511,7 +1511,7 @@ class Doi < ActiveRecord::Base
   def affiliation_id
     Array.wrap(creators).reduce([]) do |sum, creator|
       Array.wrap(creator.fetch("affiliation", nil)).each do |affiliation|
-        sum << ror_from_url(affiliation.fetch("affiliationIdentifier", nil)) if affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
+        sum << ror_from_url(affiliation.fetch("affiliationIdentifier", nil)) if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
 
       sum
@@ -1521,7 +1521,7 @@ class Doi < ActiveRecord::Base
   def affiliation_id_and_name
     Array.wrap(creators).reduce([]) do |sum, creator|
       Array.wrap(creator.fetch("affiliation", nil)).each do |affiliation|
-        sum << "#{ror_from_url(affiliation.fetch("affiliationIdentifier", nil)).to_s}:#{affiliation.fetch("name", nil).to_s}" if affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
+        sum << "#{ror_from_url(affiliation.fetch("affiliationIdentifier", nil)).to_s}:#{affiliation.fetch("name", nil).to_s}" if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
       
       sum
