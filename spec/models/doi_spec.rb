@@ -523,23 +523,22 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
-  # TODO issue with search_after
-  # describe "transfer", elasticsearch: true do
-  #   let(:provider)  { create(:provider) }
-  #   let(:client)  { create(:client, provider: provider) }
-  #   let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
-  #   let!(:dois) { create_list(:doi, 5, client: client, aasm_state: "findable") }
+  describe "transfer", elasticsearch: true do
+    let(:provider)  { create(:provider) }
+    let(:client)  { create(:client, provider: provider) }
+    let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
+    let!(:dois) { create_list(:doi, 5, client: client, aasm_state: "findable") }
 
-  #   before do
-  #     Doi.import
-  #     sleep 2
-  #   end
+    before do
+      Doi.import
+      sleep 2
+    end
 
-  #   it "transfer all dois" do
-  #     response = Doi.transfer(client_id: client.symbol.downcase, client_target_id: target.symbol.downcase, size: 3)
-  #     expect(response).to eq(5)
-  #   end
-  # end
+    it "transfer all dois" do
+      response = Doi.transfer(client_id: client.symbol.downcase, client_target_id: target.symbol.downcase, size: 3)
+      expect(response).to eq(5)
+    end
+  end
 
   describe "views" do
     let(:client) { create(:client) }
