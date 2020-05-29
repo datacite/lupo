@@ -6478,7 +6478,7 @@ type Query {
   repositories(after: String, first: Int = 25, query: String, software: String, year: String): RepositoryConnectionWithTotal!
   repository(id: ID!): Repository!
   service(id: ID!): Service!
-  services(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): ServiceConnectionWithTotal!
+  services(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, pidEntity: String, query: String, repositoryId: String, userId: String): ServiceConnectionWithTotal!
   software(id: ID!): Software!
   softwares(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal!
   sound(id: ID!): Sound!
@@ -7059,6 +7059,7 @@ type ServiceConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  pidEntities: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!

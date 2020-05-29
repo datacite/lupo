@@ -542,6 +542,7 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
+    argument :pid_entity, String, required: false
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
   end
@@ -959,7 +960,7 @@ class QueryType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
+    Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], pid_entity: args[:pid_entity], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
   end
 
   def set_doi(id)

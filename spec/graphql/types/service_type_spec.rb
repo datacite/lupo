@@ -12,7 +12,17 @@ describe ServiceType do
     let(:provider) { create(:provider, symbol: "DATACITE") }
     let(:client) { create(:client, symbol: "DATACITE.SERVICES", provider: provider) }
     let!(:services) { create_list(:doi, 3, aasm_state: "findable", client: client, 
-      types: { "resourceTypeGeneral" => "Service" }, titles: [{ "title" => "Test Service"}])
+      types: { "resourceTypeGeneral" => "Service" }, titles: [{ "title" => "Test Service"}], subjects:
+      [{
+        "subject": "Computer and information sciences",
+        "valueUri": "http://www.oecd.org/science/inno/38235147.pdf",
+        "schemeUri": "http://www.oecd.org/science/inno",
+        "subjectScheme": "OECD"
+      },
+      {
+        "subject": "Instrument",
+        "subjectScheme": "pidEntity"
+      }])
     }
 
     before do
@@ -24,13 +34,17 @@ describe ServiceType do
 
     let(:query) do
       %(query {
-        services(repositoryId: "datacite.services") {
+        services(pidEntity: "Instrument") {
           totalCount
           pageInfo {
             endCursor
             hasNextPage
           }
           years {
+            id
+            count
+          }
+          pidEntities {
             id
             count
           }
@@ -60,6 +74,8 @@ describe ServiceType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "services", "totalCount")).to eq(3)
+      # TODO correctly filter out other subjects
+      # expect(response.dig("data", "services", "pidEntities")).to eq([{"id"=>"Instrument", "count"=>3}])
       expect(Base64.urlsafe_decode64(response.dig("data", "services", "pageInfo", "endCursor")).split(",", 2).last).to eq(services.last.uid)
       expect(response.dig("data", "services", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "services", "years")).to eq([{"count"=>3, "id"=>"2011"}])

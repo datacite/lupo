@@ -580,6 +580,12 @@ class Doi < ActiveRecord::Base
       # links_checked: { value_count: { field: "landing_page.checked" } },
       # sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
       subjects: { terms: { field: 'subjects.subject', size: 15, min_doc_count: 1 } },
+      pid_entities: {
+        filter: { term: { "subjects.subjectScheme": "pidEntity" } },
+        aggs: {
+          subject: { terms: { field: 'subjects.subject', size: 10, min_doc_count: 1 } },
+        },
+      },
       certificates: { terms: { field: 'client.certificate', size: 10, min_doc_count: 1 } },
       views: {
         date_histogram: { field: 'publication_year', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
@@ -792,6 +798,10 @@ class Doi < ActiveRecord::Base
     filter << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
     filter << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
     filter << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
+    if options[:pid_entity].present?
+      filter << { term: { "subjects.subjectScheme": "pidEntity" } }
+      filter << { terms: { "subjects.subject": options[:pid_entity].split(",") } }
+    end
     filter << { term: { source: options[:source] } } if options[:source].present?
     filter << { range: { reference_count: { "gte": options[:has_references].to_i } } } if options[:has_references].present?
     filter << { range: { citation_count: { "gte": options[:has_citations].to_i } } } if options[:has_citations].present?
