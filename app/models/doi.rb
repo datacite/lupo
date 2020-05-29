@@ -755,7 +755,7 @@ class Doi < ActiveRecord::Base
       from = 0
 
       # make sure we have a valid cursor
-      search_after = options.dig(:page, :cursor).is_a?(Array) || [1, "1"]
+      search_after = options.dig(:page, :cursor).is_a?(Array) ? options.dig(:page, :cursor) : [1, "1"]
       sort = [{ created: "asc", uid: "asc" }]
     else
       from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)

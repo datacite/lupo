@@ -169,7 +169,7 @@ module Indexable
         from = 0
 
         # make sure we have a valid cursor
-        search_after = options.dig(:page, :cursor).is_a?(Array) || [1, "1"]
+        search_after = options.dig(:page, :cursor).is_a?(Array) ? options.dig(:page, :cursor) : [1, "1"]
 
         if self.name == "Event"
           sort = [{ created_at: "asc", uuid: "asc" }]
