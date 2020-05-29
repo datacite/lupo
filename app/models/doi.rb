@@ -566,7 +566,7 @@ class Doi < ActiveRecord::Base
       created: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                  aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
       registered: { date_histogram: { field: 'registered', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
-                 aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
+                    aggs: { bucket_truncate: { bucket_sort: { size: 10 } } } },
       providers: { terms: { field: 'provider_id_and_name', size: 10, min_doc_count: 1} },
       clients: { terms: { field: 'client_id_and_name', size: 10, min_doc_count: 1 } },
       affiliations: { terms: { field: 'affiliation_id_and_name', size: 10, min_doc_count: 1 } },
@@ -579,7 +579,13 @@ class Doi < ActiveRecord::Base
       # link_checks_citation_doi: { value_count: { field: "landing_page.citationDoi" } },
       # links_checked: { value_count: { field: "landing_page.checked" } },
       # sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
-      subjects: { terms: { field: 'subjects.subject', size: 15, min_doc_count: 1 } },
+      subjects: { terms: { field: 'subjects.subject', size: 10, min_doc_count: 1 } },
+      fields_of_science: {
+        filter: { term: { "subjects.subjectScheme": "OECD" } },
+        aggs: {
+          subject: { terms: { field: 'subjects.subject', size: 10, min_doc_count: 1 } },
+        },
+      },
       certificates: { terms: { field: 'client.certificate', size: 10, min_doc_count: 1 } },
       views: {
         date_histogram: { field: 'publication_year', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
@@ -749,7 +755,7 @@ class Doi < ActiveRecord::Base
       from = 0
 
       # make sure we have a valid cursor
-      search_after = options.dig(:page, :cursor).is_a?(Array) || [1, "1"]
+      search_after = options.dig(:page, :cursor).is_a?(Array) ? options.dig(:page, :cursor) : [1, "1"]
       sort = [{ created: "asc", uid: "asc" }]
     else
       from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)
@@ -792,6 +798,10 @@ class Doi < ActiveRecord::Base
     filter << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
     filter << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
     filter << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
+    if options[:field_of_science].present?
+      filter << { term: { "subjects.subjectScheme": "OECD" } }
+      filter << { terms: { "subjects.subject": options[:field_of_science].split(",") } }
+    end
     filter << { term: { source: options[:source] } } if options[:source].present?
     filter << { range: { reference_count: { "gte": options[:has_references].to_i } } } if options[:has_references].present?
     filter << { range: { citation_count: { "gte": options[:has_citations].to_i } } } if options[:has_citations].present?
