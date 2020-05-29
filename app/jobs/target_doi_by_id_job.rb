@@ -5,12 +5,11 @@ class TargetDoiByIdJob < ActiveJob::Base
     Rails.logger.error error.message
   end
 
-  def perform(id, options={})
+  def perform(id, options = nil)
     item = Event.where(uuid: id).first
     return false if item.blank?
 
     item.set_source_and_target_doi
-    
     if item.save
       Rails.logger.info "Target doi for #{item.uuid} updated."
     else

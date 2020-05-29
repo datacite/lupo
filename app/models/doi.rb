@@ -1511,7 +1511,7 @@ class Doi < ActiveRecord::Base
   def affiliation_id
     Array.wrap(creators).reduce([]) do |sum, creator|
       Array.wrap(creator.fetch("affiliation", nil)).each do |affiliation|
-        sum << ror_from_url(affiliation.fetch("affiliationIdentifier", nil)) if affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
+        sum << ror_from_url(affiliation.fetch("affiliationIdentifier", nil)) if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
 
       sum
@@ -1521,7 +1521,7 @@ class Doi < ActiveRecord::Base
   def affiliation_id_and_name
     Array.wrap(creators).reduce([]) do |sum, creator|
       Array.wrap(creator.fetch("affiliation", nil)).each do |affiliation|
-        sum << "#{ror_from_url(affiliation.fetch("affiliationIdentifier", nil)).to_s}:#{affiliation.fetch("name", nil).to_s}" if affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
+        sum << "#{ror_from_url(affiliation.fetch("affiliationIdentifier", nil)).to_s}:#{affiliation.fetch("name", nil).to_s}" if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
       
       sum
@@ -1808,7 +1808,7 @@ class Doi < ActiveRecord::Base
       return nil
     end
 
-    if options[:target_id].blank?
+    if options[:client_target_id].blank?
       Rails.logger.error "[Transfer] No target client provided."
       return nil
     end
@@ -1819,7 +1819,7 @@ class Doi < ActiveRecord::Base
     response = Doi.query(nil, client_id: options[:client_id], page: { size: 1, cursor: [] })
     Rails.logger.info "[Transfer] #{response.results.total} DOIs found for client #{options[:client_id]}."
 
-    if options[:client_id] && options[:target_id] && response.results.total > 0
+    if options[:client_id] && options[:client_target_id] && response.results.total > 0
       # walk through results using cursor
       cursor = []
 
@@ -1831,7 +1831,7 @@ class Doi < ActiveRecord::Base
         cursor = response.results.to_a.last[:sort]
 
         response.results.results.each do |d|
-          TransferJob.perform_later(d.doi, target_id: options[:target_id])
+          TransferJob.perform_later(d.doi, client_target_id: options[:client_target_id])
         end
       end
     end
