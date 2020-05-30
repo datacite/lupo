@@ -946,13 +946,13 @@ class Doi < ActiveRecord::Base
   def self.import_one(doi_id: nil)
     doi = Doi.where(doi: doi_id).first
     if doi.nil?
-      Rails.logger.error "[MySQL] DOI " + doi_id + " not found."
+      Rails.logger.error "[MySQL] DOI #{doi_id} not found."
       return nil
     end
 
     string = doi.current_metadata.present? ? doi.clean_xml(doi.current_metadata.xml) : nil
     if string.blank?
-      Rails.logger.error "[MySQL] No metadata for DOI " + doi.doi + " found: " + doi.current_metadata.inspect
+      Rails.logger.error "[MySQL] No metadata for DOI #{doi.doi} found: " + doi.current_metadata.inspect
       return nil
     end
 
