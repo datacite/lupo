@@ -10,6 +10,7 @@ class ServiceConnectionWithTotalType < BaseConnection
   field :repositories, [FacetType], null: true, cache: true
   field :affiliations, [FacetType], null: true, cache: true
   field :pid_entities, [FacetType], null: true, cache: true
+  field :fields_of_science, [FacetType], null: true, cache: true
 
   def total_count
     object.total_count
@@ -33,5 +34,9 @@ class ServiceConnectionWithTotalType < BaseConnection
 
   def pid_entities
     object.total_count.positive? ? facet_by_combined_key(object.aggregations.pid_entities.subject.buckets) : []
+  end
+  
+  def fields_of_science
+    object.total_count.positive? ? facet_by_combined_key(object.aggregations.fields_of_science.subject.buckets) : []
   end
 end

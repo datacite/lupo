@@ -56,7 +56,7 @@ namespace :event do
 
   desc 'update registrant metadata'
   task :update_registrant => :environment do
-    cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id), Event.minimum(:id)]
+    cursor = ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : []
 
     Event.update_registrant(cursor: cursor, size: ENV['SIZE'])
   end
