@@ -585,6 +585,8 @@ class Doi < ActiveRecord::Base
         aggs: {
           subject: { terms: { field: 'subjects.subject', size: 10, min_doc_count: 1, 
             include: %w(Dataset Publication Software Organization Funder Person Grant Sample Instrument) } },
+        },
+      },
       fields_of_science: {
         filter: { term: { "subjects.subjectScheme": "OECD" } },
         aggs: {
