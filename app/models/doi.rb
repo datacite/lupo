@@ -267,11 +267,11 @@ class Doi < ActiveRecord::Base
         lang: { type: :keyword }
       }
       indexes :subjects,                       type: :object, properties: {
-        subject: { type: :keyword },
         subjectScheme: { type: :keyword },
+        subject: { type: :keyword },
         schemeUri: { type: :keyword },
         valueUri: { type: :keyword },
-        lang: { type: :keyword }
+        lang: { type: :keyword },
       }
       indexes :container,                     type: :object, properties: {
         type: { type: :keyword },
@@ -580,6 +580,13 @@ class Doi < ActiveRecord::Base
       # links_checked: { value_count: { field: "landing_page.checked" } },
       # sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
       subjects: { terms: { field: 'subjects.subject', size: 10, min_doc_count: 1 } },
+      pid_entities: {
+        filter: { term: { "subjects.subjectScheme": "PidEntity" } },
+        aggs: {
+          subject: { terms: { field: 'subjects.subject', size: 10, min_doc_count: 1, 
+            include: %w(Dataset Publication Software Organization Funder Person Grant Sample Instrument Repository Project) } },
+        },
+      },
       fields_of_science: {
         filter: { term: { "subjects.subjectScheme": "OECD" } },
         aggs: {
@@ -798,6 +805,10 @@ class Doi < ActiveRecord::Base
     filter << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
     filter << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
     filter << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
+    if options[:pid_entity].present?
+      filter << { term: { "subjects.subjectScheme": "PidEntity" } }
+      filter << { terms: { "subjects.subject": options[:pid_entity].split(",") } }
+    end
     if options[:field_of_science].present?
       filter << { term: { "subjects.subjectScheme": "OECD" } }
       filter << { terms: { "subjects.subject": options[:field_of_science].split(",") } }
