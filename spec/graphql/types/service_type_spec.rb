@@ -21,7 +21,7 @@ describe ServiceType do
       },
       {
         "subject": "Instrument",
-        "subjectScheme": "pidEntity"
+        "subjectScheme": "PidEntity"
       }])
     }
 
@@ -74,8 +74,7 @@ describe ServiceType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "services", "totalCount")).to eq(3)
-      # TODO correctly filter out other subjects
-      # expect(response.dig("data", "services", "pidEntities")).to eq([{"id"=>"Instrument", "count"=>3}])
+      expect(response.dig("data", "services", "pidEntities")).to eq([{"id"=>"Instrument", "count"=>3}])
       expect(Base64.urlsafe_decode64(response.dig("data", "services", "pageInfo", "endCursor")).split(",", 2).last).to eq(services.last.uid)
       expect(response.dig("data", "services", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "services", "years")).to eq([{"count"=>3, "id"=>"2011"}])
