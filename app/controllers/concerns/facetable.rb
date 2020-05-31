@@ -272,7 +272,7 @@ module Facetable
 
     def facet_by_fos(arr)
       arr.map do |hsh|
-        title = hsh["key"].gsub("FOS:", "")
+        title = hsh["key"].gsub("FOS: ", "")
         { "id" => title.parameterize(separator: '_'),
           "title" => title,
           "count" => hsh["doc_count"] }
