@@ -93,10 +93,9 @@ describe DatasetType do
     let!(:datasets) { create_list(:doi, 3, aasm_state: "findable") }
     let!(:dataset) { create(:doi, aasm_state: "findable", subjects:
       [{
-        "subject": "Computer and information sciences",
-        "valueUri": "http://www.oecd.org/science/inno/38235147.pdf",
-        "schemeUri": "http://www.oecd.org/science/inno",
-        "subjectScheme": "OECD"
+        "subject": "FOS: Computer and information sciences",
+        "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+        "subjectScheme": "Fields of Science and Technology (FOS)"
       }])
     }
     before do
@@ -106,7 +105,7 @@ describe DatasetType do
 
     let(:query) do
       %(query {
-        datasets(fieldOfScience: "Computer and information sciences") {
+        datasets(fieldOfScience: "computer_and_information_sciences") {
           totalCount
           years {
             id
@@ -132,7 +131,7 @@ describe DatasetType do
 
       expect(response.dig("data", "datasets", "totalCount")).to eq(1)
       expect(response.dig("data", "datasets", "years")).to eq([{"count"=>1, "id"=>"2011"}])
-      expect(response.dig("data", "datasets", "fieldsOfScience")).to eq([{"count"=>1, "id"=>"Computer and information sciences"}])
+      expect(response.dig("data", "datasets", "fieldsOfScience")).to eq([{"count"=>1, "id"=>"computer_and_information_sciences"}])
       expect(Base64.urlsafe_decode64(response.dig("data", "datasets", "pageInfo", "endCursor")).split(",", 2).last).to eq(dataset.uid)
       expect(response.dig("data", "datasets", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(1)
