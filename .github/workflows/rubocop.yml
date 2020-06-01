@@ -1,2 +1,0 @@
-- name: Rubocop checks
-  uses: gimenete/rubocop-action@1.0
