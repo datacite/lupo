@@ -5,7 +5,7 @@ class RepositoryType < BaseObject
 
   field :id, ID, null: false, hash_key: "uid", description: "Unique identifier for each repository"
   field :type, String, null: false, description: "The type of the item."
-  field :re3data, ID, null: true, description: "The re3data identifier for the repository"
+  field :re3data_id, ID, null: true, description: "The re3data identifier for the repository"
   field :name, String, null: false, description: "Repository name"
   field :alternate_name, String, null: true, description: "Repository alternate name"
   field :description, String, null: true, description: "Description of the repository"

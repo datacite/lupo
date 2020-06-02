@@ -14,10 +14,9 @@ describe ServiceType do
     let!(:services) { create_list(:doi, 3, aasm_state: "findable", client: client, 
       types: { "resourceTypeGeneral" => "Service" }, titles: [{ "title" => "Test Service"}], subjects:
       [{
-        "subject": "Computer and information sciences",
-        "valueUri": "http://www.oecd.org/science/inno/38235147.pdf",
-        "schemeUri": "http://www.oecd.org/science/inno",
-        "subjectScheme": "OECD"
+        "subject": "FOS: Computer and information sciences",
+        "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+        "subjectScheme": "Fields of Science and Technology (FOS)"
       },
       {
         "subject": "Instrument",
@@ -48,6 +47,10 @@ describe ServiceType do
             id
             count
           }
+          fieldsOfScience {
+            id
+            count
+          }
           nodes {
             id
             doi
@@ -75,6 +78,7 @@ describe ServiceType do
 
       expect(response.dig("data", "services", "totalCount")).to eq(3)
       expect(response.dig("data", "services", "pidEntities")).to eq([{"id"=>"Instrument", "count"=>3}])
+      expect(response.dig("data", "services", "fieldsOfScience")).to eq([{"count"=>3, "id"=>"computer_and_information_sciences"}])
       expect(Base64.urlsafe_decode64(response.dig("data", "services", "pageInfo", "endCursor")).split(",", 2).last).to eq(services.last.uid)
       expect(response.dig("data", "services", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "services", "years")).to eq([{"count"=>3, "id"=>"2011"}])

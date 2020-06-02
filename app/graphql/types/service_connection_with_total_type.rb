@@ -37,6 +37,6 @@ class ServiceConnectionWithTotalType < BaseConnection
   end
   
   def fields_of_science
-    object.total_count.positive? ? facet_by_combined_key(object.aggregations.fields_of_science.subject.buckets) : []
+    object.total_count.positive? ? facet_by_fos(object.aggregations.fields_of_science.subject.buckets) : []
   end
 end

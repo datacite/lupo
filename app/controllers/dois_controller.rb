@@ -166,7 +166,7 @@ class DoisController < ApplicationController
         affiliations = total.positive? ? facet_by_combined_key(response.aggregations.affiliations.buckets) : nil
         # sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
         subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
-        fields_of_science = total.positive? ? facet_by_key(response.aggregations.fields_of_science.subject.buckets) : nil
+        fields_of_science = total.positive? ? facet_by_fos(response.aggregations.fields_of_science.subject.buckets) : nil
         certificates = total.positive? ? facet_by_key(response.aggregations.certificates.buckets) : nil
 
         link_checks_status = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil

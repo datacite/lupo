@@ -588,9 +588,10 @@ class Doi < ActiveRecord::Base
         },
       },
       fields_of_science: {
-        filter: { term: { "subjects.subjectScheme": "OECD" } },
+        filter: { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
         aggs: {
-          subject: { terms: { field: 'subjects.subject', size: 10, min_doc_count: 1 } },
+          subject: { terms: { field: 'subjects.subject', size: 10, min_doc_count: 1,
+            include: "FOS:.*" } },
         },
       },
       certificates: { terms: { field: 'client.certificate', size: 10, min_doc_count: 1 } },
@@ -810,8 +811,8 @@ class Doi < ActiveRecord::Base
       filter << { terms: { "subjects.subject": options[:pid_entity].split(",") } }
     end
     if options[:field_of_science].present?
-      filter << { term: { "subjects.subjectScheme": "OECD" } }
-      filter << { terms: { "subjects.subject": options[:field_of_science].split(",") } }
+      filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
+      filter << { term: { "subjects.subject": "FOS: " + options[:field_of_science].humanize } }
     end
     filter << { term: { source: options[:source] } } if options[:source].present?
     filter << { range: { reference_count: { "gte": options[:has_references].to_i } } } if options[:has_references].present?
