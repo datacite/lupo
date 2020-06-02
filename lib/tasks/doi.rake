@@ -122,6 +122,16 @@ namespace :doi do
     Doi.migrate_landing_page
   end
 
+  desc 'Perform repairs on landing page data for specific DOI'
+  task :repair_landing_page => :environment do
+    if ENV['DOI'].nil?
+      puts "ENV['DOI'] is required"
+      exit
+    end
+
+    Doi.repair_landing_page(doi: ENV['DOI'])
+  end
+
   desc 'Delete dois by a prefix'
   task :delete_by_prefix => :environment do
     if ENV['PREFIX'].nil?
