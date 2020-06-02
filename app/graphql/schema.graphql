@@ -6640,7 +6640,7 @@ type Repository {
   """
   The re3data identifier for the repository
   """
-  re3data: ID
+  re3dataId: ID
 
   """
   The repository type(s)
