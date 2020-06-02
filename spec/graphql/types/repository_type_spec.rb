@@ -6,7 +6,7 @@ describe RepositoryType do
 
     it { is_expected.to have_field(:id).of_type(!types.ID) }
     it { is_expected.to have_field(:type).of_type("String!") }
-    it { is_expected.to have_field(:re3data).of_type(types.ID) }
+    it { is_expected.to have_field(:re3dataId).of_type(types.ID) }
     it { is_expected.to have_field(:name).of_type("String!") }
     it { is_expected.to have_field(:alternateName).of_type("String") }
     it { is_expected.to have_field(:description).of_type("String") }
@@ -26,7 +26,7 @@ describe RepositoryType do
 
   describe "query repositories", elasticsearch: true do
     let!(:clients) { create_list(:client, 3, software: "Dataverse") }
-
+    let!(:client) { create(:client, software: "Dataverse", re3data_id: "10.17616/R3XS37") }
     before do
       Client.import
       sleep 2
@@ -68,6 +68,7 @@ describe RepositoryType do
             id
             name
             alternateName
+            re3dataId
           }
         }
       })
@@ -76,19 +77,20 @@ describe RepositoryType do
     it "returns repositories" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "repositories", "totalCount")).to eq(3)
-      expect(response.dig("data", "repositories", "years")).to eq([{"count"=>3, "title"=>"2020"}])
-      expect(response.dig("data", "repositories", "members")).to eq([{"count"=>1, "title"=>"My provider"}, {"count"=>1, "title"=>"My provider"}, {"count"=>1, "title"=>"My provider"}])
-      expect(response.dig("data", "repositories", "software")).to eq([{"count"=>3, "title"=>"Dataverse"}])
+      expect(response.dig("data", "repositories", "totalCount")).to eq(4)
+      expect(response.dig("data", "repositories", "years")).to eq([{"count"=>4, "title"=>"2020"}])
+      expect(response.dig("data", "repositories", "members")).to eq([{"count"=>1, "title"=>"My provider"}, {"count"=>1, "title"=>"My provider"}, {"count"=>1, "title"=>"My provider"}, {"count"=>1, "title"=>"My provider"}])
+      expect(response.dig("data", "repositories", "software")).to eq([{"count"=>4, "title"=>"Dataverse"}])
       expect(response.dig("data", "repositories", "certificates")).to be_empty
-      expect(response.dig("data", "repositories", "clientTypes")).to eq([{"count"=>3, "title"=>"Repository"}])
+      expect(response.dig("data", "repositories", "clientTypes")).to eq([{"count"=>4, "title"=>"Repository"}])
       expect(response.dig("data", "repositories", "repositoryTypes")).to be_empty
-      expect(response.dig("data", "repositories", "nodes").length).to eq(3)
+      expect(response.dig("data", "repositories", "nodes").length).to eq(4)
 
-      client1 = response.dig("data", "repositories", "nodes", 0)
-      expect(client1.fetch("id")).to eq(clients.first.uid)
-      expect(client1.fetch("name")).to eq(clients.first.name)
-      expect(client1.fetch("alternateName")).to eq(clients.first.alternate_name)
+      client1 = response.dig("data", "repositories", "nodes", 3)
+      expect(client1.fetch("id")).to eq(client.uid)
+      expect(client1.fetch("name")).to eq(client.name)
+      expect(client1.fetch("alternateName")).to eq(client.alternate_name)
+      expect(client1.fetch("re3dataId")).to eq("10.17616/R3XS37")
     end
   end
 
