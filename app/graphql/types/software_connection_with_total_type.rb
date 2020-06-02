@@ -9,6 +9,7 @@ class SoftwareConnectionWithTotalType < BaseConnection
   field :registration_agencies, [FacetType], null: true, cache: true  
   field :repositories, [FacetType], null: true, cache: true
   field :affiliations, [FacetType], null: true, cache: true
+  field :fields_of_science, [FacetType], null: true, cache: true
 
   field :software_connection_count, Integer, null: false, cache: true
   field :publication_connection_count, Integer, null: false, cache: true
@@ -59,5 +60,9 @@ class SoftwareConnectionWithTotalType < BaseConnection
 
   def organization_connection_count
     Event.query(nil, citation_type: "Organization-SoftwareSourceCode", page: { number: 1, size: 0 }).results.total
+  end
+
+  def fields_of_science
+    object.total_count.positive? ? facet_by_fos(object.aggregations.fields_of_science.subject.buckets) : []
   end
 end

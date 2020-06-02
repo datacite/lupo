@@ -71,6 +71,11 @@ describe "dois", type: :request do
         "funderIdentifier" => "https://doi.org/10.13039/501100009053",
         "funderIdentifierType" => "Crossref Funder ID",
         "funderName" => "The Wellcome Trust DBT India Alliance"
+      }], subjects:
+      [{
+        "subject": "FOS: Computer and information sciences",
+        "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+        "subjectScheme": "Fields of Science and Technology (FOS)"
       }])
     }
     let!(:dois) { create_list(:doi, 3, aasm_state: "findable") }
@@ -166,6 +171,15 @@ describe "dois", type: :request do
       expect(last_response.status).to eq(200)
       expect(json.dig('meta', 'total')).to eq(1)
       expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>[{"name"=>"Freie Universität Berlin", "affiliationIdentifier"=>"https://ror.org/046ak2485", "affiliationIdentifierScheme"=>"ROR"}], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
+    end
+
+    it 'returns dois with field of science', vcr: true do
+      get "/dois?field-of-science=computer_and_information_sciences", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('meta', 'fieldsOfScience')).to eq([{"count"=>1, "id"=>"computer_and_information_sciences", "title"=>"Computer and information sciences"}])
+      expect(json.dig('data', 0, 'attributes', 'creators')).to eq([{"name"=>"Garza, Kristian J.", "nameType"=>"Personal", "givenName"=>"Kristian J.", "familyName"=>"Garza", "affiliation"=>["Freie Universität Berlin"], "nameIdentifiers"=>[{"schemeUri"=>"https://orcid.org", "nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID"}]}])
     end
   end
 

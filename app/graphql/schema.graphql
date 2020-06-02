@@ -123,7 +123,7 @@ type Audiovisual implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -203,7 +203,7 @@ type Audiovisual implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -213,7 +213,7 @@ type Audiovisual implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -233,7 +233,7 @@ type Audiovisual implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -298,7 +298,7 @@ type Audiovisual implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -308,7 +308,7 @@ type Audiovisual implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -376,7 +376,7 @@ type Book implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -456,7 +456,7 @@ type Book implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -466,7 +466,7 @@ type Book implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -486,7 +486,7 @@ type Book implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -551,7 +551,7 @@ type Book implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -561,7 +561,7 @@ type Book implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -588,7 +588,7 @@ type BookChapter implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -668,7 +668,7 @@ type BookChapter implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -678,7 +678,7 @@ type BookChapter implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -698,7 +698,7 @@ type BookChapter implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -763,7 +763,7 @@ type BookChapter implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -773,7 +773,7 @@ type BookChapter implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -882,7 +882,7 @@ type Collection implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -962,7 +962,7 @@ type Collection implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -972,7 +972,7 @@ type Collection implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -992,7 +992,7 @@ type Collection implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -1057,7 +1057,7 @@ type Collection implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -1067,7 +1067,7 @@ type Collection implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -1134,7 +1134,7 @@ type ConferencePaper implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -1214,7 +1214,7 @@ type ConferencePaper implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -1224,7 +1224,7 @@ type ConferencePaper implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -1244,7 +1244,7 @@ type ConferencePaper implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -1309,7 +1309,7 @@ type ConferencePaper implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -1319,7 +1319,7 @@ type ConferencePaper implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -1342,6 +1342,7 @@ type ConferencePaperConnectionWithTotal {
   A list of edges.
   """
   edges: [ConferencePaperEdge]
+  fieldsOfScience: [Facet!]
 
   """
   A list of nodes.
@@ -1586,7 +1587,7 @@ type DataPaper implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -1666,7 +1667,7 @@ type DataPaper implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -1676,7 +1677,7 @@ type DataPaper implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -1696,7 +1697,7 @@ type DataPaper implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -1761,7 +1762,7 @@ type DataPaper implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -1771,7 +1772,7 @@ type DataPaper implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -1839,7 +1840,7 @@ type Dataset implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -1919,7 +1920,7 @@ type Dataset implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -1929,7 +1930,7 @@ type Dataset implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -1949,7 +1950,7 @@ type Dataset implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -2035,7 +2036,7 @@ type Dataset implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -2045,7 +2046,7 @@ type Dataset implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -2069,6 +2070,7 @@ type DatasetConnectionWithTotal {
   A list of edges.
   """
   edges: [DatasetEdge]
+  fieldsOfScience: [Facet!]
   funderConnectionCount: Int!
 
   """
@@ -2202,7 +2204,7 @@ type Dissertation implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -2282,7 +2284,7 @@ type Dissertation implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -2292,7 +2294,7 @@ type Dissertation implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -2312,7 +2314,7 @@ type Dissertation implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -2377,7 +2379,7 @@ type Dissertation implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -2387,7 +2389,7 @@ type Dissertation implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -2410,6 +2412,7 @@ type DissertationConnectionWithTotal {
   A list of edges.
   """
   edges: [DissertationEdge]
+  fieldsOfScience: [Facet!]
 
   """
   A list of nodes.
@@ -2458,7 +2461,7 @@ interface DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -2538,7 +2541,7 @@ interface DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -2548,7 +2551,7 @@ interface DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -2568,7 +2571,7 @@ interface DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -2633,7 +2636,7 @@ interface DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -2643,7 +2646,7 @@ interface DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -2670,7 +2673,7 @@ type Event implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -2750,7 +2753,7 @@ type Event implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -2760,7 +2763,7 @@ type Event implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -2780,7 +2783,7 @@ type Event implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -2845,7 +2848,7 @@ type Event implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -2855,7 +2858,7 @@ type Event implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -2908,7 +2911,7 @@ type EventData implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -2988,7 +2991,7 @@ type EventData implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -2998,7 +3001,7 @@ type EventData implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -3018,7 +3021,7 @@ type EventData implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -3083,7 +3086,7 @@ type EventData implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -3093,7 +3096,7 @@ type EventData implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -3203,7 +3206,7 @@ type Funder implements ActorItem {
   """
   Funded datasets
   """
-  datasets(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
+  datasets(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -3223,12 +3226,12 @@ type Funder implements ActorItem {
   """
   Funded publications
   """
-  publications(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PublicationConnectionWithTotal
+  publications(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PublicationConnectionWithTotal
 
   """
   Funded software
   """
-  softwares(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal
+  softwares(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal
 
   """
   The type of the actor.
@@ -3243,7 +3246,7 @@ type Funder implements ActorItem {
   """
   Funded works
   """
-  works(affiliationId: String, after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 }
 
 """
@@ -3355,7 +3358,7 @@ type Image implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -3435,7 +3438,7 @@ type Image implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -3445,7 +3448,7 @@ type Image implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -3465,7 +3468,7 @@ type Image implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -3530,7 +3533,7 @@ type Image implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -3540,7 +3543,7 @@ type Image implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -3608,7 +3611,7 @@ type Instrument implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -3688,7 +3691,7 @@ type Instrument implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -3698,7 +3701,7 @@ type Instrument implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -3718,7 +3721,7 @@ type Instrument implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -3783,7 +3786,7 @@ type Instrument implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -3793,7 +3796,7 @@ type Instrument implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -3861,7 +3864,7 @@ type InteractiveResource implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -3941,7 +3944,7 @@ type InteractiveResource implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -3951,7 +3954,7 @@ type InteractiveResource implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -3971,7 +3974,7 @@ type InteractiveResource implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -4036,7 +4039,7 @@ type InteractiveResource implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -4046,7 +4049,7 @@ type InteractiveResource implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -4134,7 +4137,7 @@ type JournalArticle implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -4214,7 +4217,7 @@ type JournalArticle implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -4224,7 +4227,7 @@ type JournalArticle implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -4244,7 +4247,7 @@ type JournalArticle implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -4309,7 +4312,7 @@ type JournalArticle implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -4319,7 +4322,7 @@ type JournalArticle implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -4342,6 +4345,7 @@ type JournalArticleConnectionWithTotal {
   A list of edges.
   """
   edges: [JournalArticleEdge]
+  fieldsOfScience: [Facet!]
 
   """
   A list of nodes.
@@ -4390,7 +4394,7 @@ type Member {
   """
   Datasets by this provider.
   """
-  datasets(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): DatasetConnectionWithTotal
+  datasets(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): DatasetConnectionWithTotal
 
   """
   Description of the member
@@ -4445,7 +4449,7 @@ type Member {
   """
   Publications by this provider.
   """
-  publications(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): PublicationConnectionWithTotal
+  publications(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): PublicationConnectionWithTotal
 
   """
   Geographic region where the member is located
@@ -4465,7 +4469,7 @@ type Member {
   """
   Software by this provider.
   """
-  softwares(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], query: String, repositoryId: String, resourceTypeId: String, userId: String): SoftwareConnectionWithTotal
+  softwares(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], query: String, repositoryId: String, resourceTypeId: String, userId: String): SoftwareConnectionWithTotal
 
   """
   The type of the item.
@@ -4485,7 +4489,7 @@ type Member {
   """
   Works by this provider.
   """
-  works(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], query: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], query: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 }
 
 """
@@ -4602,7 +4606,7 @@ type Model implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -4682,7 +4686,7 @@ type Model implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -4692,7 +4696,7 @@ type Model implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -4712,7 +4716,7 @@ type Model implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -4777,7 +4781,7 @@ type Model implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -4787,7 +4791,7 @@ type Model implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -4863,7 +4867,7 @@ type Organization implements ActorItem {
   """
   Datasets from this organization
   """
-  datasets(after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
+  datasets(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -4888,12 +4892,12 @@ type Organization implements ActorItem {
   """
   Publications from this organization
   """
-  publications(after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PublicationConnectionWithTotal
+  publications(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PublicationConnectionWithTotal
 
   """
   Software from this organization
   """
-  softwares(after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal
+  softwares(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal
 
   """
   The type of the actor.
@@ -4913,7 +4917,7 @@ type Organization implements ActorItem {
   """
   Works from this organization
   """
-  works(after: String, first: Int = 2, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  works(after: String, fieldOfScience: String, first: Int = 2, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 }
 
 """
@@ -4970,7 +4974,7 @@ type Other implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -5050,7 +5054,7 @@ type Other implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -5060,7 +5064,7 @@ type Other implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -5080,7 +5084,7 @@ type Other implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -5145,7 +5149,7 @@ type Other implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -5155,7 +5159,7 @@ type Other implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -5248,7 +5252,7 @@ type PeerReview implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -5328,7 +5332,7 @@ type PeerReview implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -5338,7 +5342,7 @@ type PeerReview implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -5358,7 +5362,7 @@ type PeerReview implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -5423,7 +5427,7 @@ type PeerReview implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -5433,7 +5437,7 @@ type PeerReview implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -5509,7 +5513,7 @@ type Person implements ActorItem {
   """
   Authored datasets
   """
-  datasets(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String): DatasetConnectionWithTotal
+  datasets(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String): DatasetConnectionWithTotal
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -5539,12 +5543,12 @@ type Person implements ActorItem {
   """
   Authored publications
   """
-  publications(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String): PublicationConnectionWithTotal
+  publications(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String): PublicationConnectionWithTotal
 
   """
   Authored software
   """
-  softwares(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String): SoftwareConnectionWithTotal
+  softwares(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String): SoftwareConnectionWithTotal
 
   """
   The type of the actor.
@@ -5559,7 +5563,7 @@ type Person implements ActorItem {
   """
   Authored works
   """
-  works(affiliationId: String, after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String): WorkConnectionWithTotal
+  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String): WorkConnectionWithTotal
 }
 
 """
@@ -5617,7 +5621,7 @@ type PhysicalObject implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -5697,7 +5701,7 @@ type PhysicalObject implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -5707,7 +5711,7 @@ type PhysicalObject implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -5727,7 +5731,7 @@ type PhysicalObject implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -5792,7 +5796,7 @@ type PhysicalObject implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -5802,7 +5806,7 @@ type PhysicalObject implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -5923,7 +5927,7 @@ type Preprint implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -6003,7 +6007,7 @@ type Preprint implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -6013,7 +6017,7 @@ type Preprint implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -6033,7 +6037,7 @@ type Preprint implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -6098,7 +6102,7 @@ type Preprint implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -6108,7 +6112,7 @@ type Preprint implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -6131,6 +6135,7 @@ type PreprintConnectionWithTotal {
   A list of edges.
   """
   edges: [PreprintEdge]
+  fieldsOfScience: [Facet!]
 
   """
   A list of nodes.
@@ -6176,7 +6181,7 @@ type Publication implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -6256,7 +6261,7 @@ type Publication implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -6266,7 +6271,7 @@ type Publication implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -6286,7 +6291,7 @@ type Publication implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -6351,7 +6356,7 @@ type Publication implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -6361,7 +6366,7 @@ type Publication implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -6385,6 +6390,7 @@ type PublicationConnectionWithTotal {
   A list of edges.
   """
   edges: [PublicationEdge]
+  fieldsOfScience: [Facet!]
   funderConnectionCount: Int!
 
   """
@@ -6426,63 +6432,63 @@ type Query {
   actor(id: ID!): ActorItem!
   actors(after: String, first: Int = 25, query: String): ActorConnection!
   audiovisual(id: ID!): Audiovisual!
-  audiovisuals(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): AudiovisualConnectionWithTotal!
+  audiovisuals(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): AudiovisualConnectionWithTotal!
   book(id: ID!): Book!
   bookChapter(id: ID!): BookChapter!
-  bookChapters(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): BookChapterConnectionWithTotal!
-  books(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): BookConnectionWithTotal!
+  bookChapters(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): BookChapterConnectionWithTotal!
+  books(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): BookConnectionWithTotal!
   collection(id: ID!): Collection!
-  collections(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): CollectionConnectionWithTotal!
+  collections(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): CollectionConnectionWithTotal!
   conferencePaper(id: ID!): ConferencePaper!
-  conferencePapers(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): ConferencePaperConnectionWithTotal!
+  conferencePapers(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): ConferencePaperConnectionWithTotal!
   dataCatalog(id: ID!): DataCatalog!
   dataCatalogs(after: String, first: Int = 25, query: String): DataCatalogConnectionWithTotal!
   dataPaper(id: ID!): DataPaper!
-  dataPapers(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): DataPaperConnectionWithTotal!
+  dataPapers(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): DataPaperConnectionWithTotal!
   dataset(id: ID!): Dataset!
-  datasets(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): DatasetConnectionWithTotal!
+  datasets(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): DatasetConnectionWithTotal!
   dissertation(id: ID!): Dissertation!
-  dissertations(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): DissertationConnectionWithTotal!
+  dissertations(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): DissertationConnectionWithTotal!
   event(id: ID!): Event!
-  events(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): EventConnectionWithTotal!
+  events(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): EventConnectionWithTotal!
   funder(id: ID!): Funder!
   funders(after: String, first: Int = 25, query: String): FunderConnectionWithTotal!
   image(id: ID!): Image!
-  images(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): ImageConnectionWithTotal!
+  images(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): ImageConnectionWithTotal!
   instrument(id: ID!): Instrument!
-  instruments(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): InstrumentConnectionWithTotal!
+  instruments(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): InstrumentConnectionWithTotal!
   interactiveResource(id: ID!): InteractiveResource!
-  interactiveResources(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): InteractiveResourceConnectionWithTotal!
+  interactiveResources(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): InteractiveResourceConnectionWithTotal!
   journalArticle(id: ID!): JournalArticle!
-  journalArticles(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): JournalArticleConnectionWithTotal!
+  journalArticles(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): JournalArticleConnectionWithTotal!
   member(id: ID!): Member!
   members(after: String, first: Int = 25, query: String, year: String): MemberConnectionWithTotal!
   model(id: ID!): Model!
-  models(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): ModelConnectionWithTotal!
+  models(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): ModelConnectionWithTotal!
   organization(id: ID!): Organization!
   organizations(after: String, query: String): OrganizationConnectionWithTotal!
   other(id: ID!): Other!
-  others(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): OtherConnectionWithTotal!
+  others(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): OtherConnectionWithTotal!
   peerReview(id: ID!): PeerReview!
-  peerReviews(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PeerReviewConnectionWithTotal!
+  peerReviews(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PeerReviewConnectionWithTotal!
   people(after: String, first: Int = 25, query: String): PersonConnectionWithTotal!
   person(id: ID!): Person!
   physicalObject(id: ID!): PhysicalObject!
-  physicalObjects(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PhysicalObjectConnectionWithTotal!
+  physicalObjects(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PhysicalObjectConnectionWithTotal!
   prefix(id: ID!): Prefix!
   prefixes(after: String, first: Int = 25, query: String): PrefixConnectionWithTotal!
   preprint(id: ID!): Preprint!
-  preprints(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PreprintConnectionWithTotal!
+  preprints(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PreprintConnectionWithTotal!
   publication(id: ID!): Publication!
-  publications(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PublicationConnectionWithTotal!
+  publications(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PublicationConnectionWithTotal!
   repositories(after: String, first: Int = 25, query: String, software: String, year: String): RepositoryConnectionWithTotal!
   repository(id: ID!): Repository!
   service(id: ID!): Service!
-  services(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): ServiceConnectionWithTotal!
+  services(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, pidEntity: String, query: String, repositoryId: String, userId: String): ServiceConnectionWithTotal!
   software(id: ID!): Software!
-  softwares(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal!
+  softwares(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal!
   sound(id: ID!): Sound!
-  sounds(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): SoundConnectionWithTotal!
+  sounds(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): SoundConnectionWithTotal!
   usageReport(id: ID!): UsageReport!
   usageReports(
     """
@@ -6503,8 +6509,8 @@ type Query {
   ): UsageReportConnectionWithTotal!
   work(id: ID!): Work!
   workflow(id: ID!): Workflow!
-  workflows(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkflowConnectionWithTotal!
-  works(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
+  workflows(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkflowConnectionWithTotal!
+  works(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
 }
 
 """
@@ -6589,7 +6595,7 @@ type Repository {
   """
   Datasets managed by the repository
   """
-  datasets(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, query: String, resourceTypeId: String, userId: String): DatasetConnectionWithTotal
+  datasets(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, query: String, resourceTypeId: String, userId: String): DatasetConnectionWithTotal
 
   """
   Description of the repository
@@ -6629,12 +6635,12 @@ type Repository {
   """
   Publications managed by the repository
   """
-  publications(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, query: String, resourceTypeId: String, userId: String): PublicationConnectionWithTotal
+  publications(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, query: String, resourceTypeId: String, userId: String): PublicationConnectionWithTotal
 
   """
   The re3data identifier for the repository
   """
-  re3data: ID
+  re3dataId: ID
 
   """
   The repository type(s)
@@ -6649,7 +6655,7 @@ type Repository {
   """
   Software managed by the repository
   """
-  softwares(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, query: String, resourceTypeId: String, userId: String): SoftwareConnectionWithTotal
+  softwares(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, query: String, resourceTypeId: String, userId: String): SoftwareConnectionWithTotal
 
   """
   The type of the item.
@@ -6669,7 +6675,7 @@ type Repository {
   """
   Works managed by the repository
   """
-  works(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, query: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, query: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 }
 
 """
@@ -6841,7 +6847,7 @@ type Service implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -6921,7 +6927,7 @@ type Service implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -6931,7 +6937,7 @@ type Service implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -6951,7 +6957,7 @@ type Service implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -7016,7 +7022,7 @@ type Service implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -7026,7 +7032,7 @@ type Service implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -7049,6 +7055,7 @@ type ServiceConnectionWithTotal {
   A list of edges.
   """
   edges: [ServiceEdge]
+  fieldsOfScience: [Facet!]
 
   """
   A list of nodes.
@@ -7059,6 +7066,7 @@ type ServiceConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  pidEntities: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
@@ -7094,7 +7102,7 @@ type Software implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -7174,7 +7182,7 @@ type Software implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -7184,7 +7192,7 @@ type Software implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -7204,7 +7212,7 @@ type Software implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -7269,7 +7277,7 @@ type Software implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -7279,7 +7287,7 @@ type Software implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -7328,6 +7336,7 @@ type SoftwareConnectionWithTotal {
   A list of edges.
   """
   edges: [SoftwareEdge]
+  fieldsOfScience: [Facet!]
   funderConnectionCount: Int!
 
   """
@@ -7378,7 +7387,7 @@ type Sound implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -7458,7 +7467,7 @@ type Sound implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -7468,7 +7477,7 @@ type Sound implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -7488,7 +7497,7 @@ type Sound implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -7553,7 +7562,7 @@ type Sound implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -7563,7 +7572,7 @@ type Sound implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -7814,7 +7823,7 @@ type Work implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -7894,7 +7903,7 @@ type Work implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -7904,7 +7913,7 @@ type Work implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -7924,7 +7933,7 @@ type Work implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -7989,7 +7998,7 @@ type Work implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -7999,7 +8008,7 @@ type Work implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views
@@ -8022,6 +8031,7 @@ type WorkConnectionWithTotal {
   A list of edges.
   """
   edges: [WorkEdge]
+  fieldsOfScience: [Facet!]
 
   """
   A list of nodes.
@@ -8068,7 +8078,7 @@ type Workflow implements DoiItem {
   """
   Citations for this DOI.
   """
-  citations(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Citations by year
@@ -8148,7 +8158,7 @@ type Workflow implements DoiItem {
   """
   The DOI is a part of this DOI.
   """
-  partOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a part of
@@ -8158,7 +8168,7 @@ type Workflow implements DoiItem {
   """
   Parts of this DOI.
   """
-  parts(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The year when the data was or will be made publicly available
@@ -8178,7 +8188,7 @@ type Workflow implements DoiItem {
   """
   References for this DOI
   """
-  references(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   The DOI registration agency for the resource
@@ -8243,7 +8253,7 @@ type Workflow implements DoiItem {
   """
   The DOI is a version of this DOI.
   """
-  versionOf(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of DOIs the resource is a version of
@@ -8253,7 +8263,7 @@ type Workflow implements DoiItem {
   """
   Versions of this DOI.
   """
-  versions(affiliationId: String, after: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
   Total number of views

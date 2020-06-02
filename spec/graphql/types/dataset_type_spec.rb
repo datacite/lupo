@@ -89,6 +89,56 @@ describe DatasetType do
     end
   end
 
+  describe "query datasets by field of science", elasticsearch: true do
+    let!(:datasets) { create_list(:doi, 3, aasm_state: "findable") }
+    let!(:dataset) { create(:doi, aasm_state: "findable", subjects:
+      [{
+        "subject": "FOS: Computer and information sciences",
+        "schemeUri": "http://www.oecd.org/science/inno/38235147.pdf",
+        "subjectScheme": "Fields of Science and Technology (FOS)"
+      }])
+    }
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query) do
+      %(query {
+        datasets(fieldOfScience: "computer_and_information_sciences") {
+          totalCount
+          years {
+            id
+            count
+          }
+          fieldsOfScience {
+            id
+            count
+          }
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          nodes {
+            id
+          }
+        }
+      })
+    end
+
+    it "returns datasets" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "datasets", "totalCount")).to eq(1)
+      expect(response.dig("data", "datasets", "years")).to eq([{"count"=>1, "id"=>"2011"}])
+      expect(response.dig("data", "datasets", "fieldsOfScience")).to eq([{"count"=>1, "id"=>"computer_and_information_sciences"}])
+      expect(Base64.urlsafe_decode64(response.dig("data", "datasets", "pageInfo", "endCursor")).split(",", 2).last).to eq(dataset.uid)
+      expect(response.dig("data", "datasets", "pageInfo", "hasNextPage")).to be false
+      expect(response.dig("data", "datasets", "nodes").length).to eq(1)
+      expect(response.dig("data", "datasets", "nodes", 0, "id")).to eq(dataset.identifier)
+    end
+  end
+
   describe "query with citations", elasticsearch: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }

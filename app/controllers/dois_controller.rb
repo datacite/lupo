@@ -66,6 +66,7 @@ class DoisController < ApplicationController
                           resource_type: params[:resource_type],
                           schema_version: params[:schema_version],
                           subject: params[:subject],
+                          field_of_science: params[:field_of_science],
                           has_citations: params[:has_citations],
                           has_references: params[:has_references],
                           has_parts: params[:has_parts],
@@ -165,6 +166,7 @@ class DoisController < ApplicationController
         affiliations = total.positive? ? facet_by_combined_key(response.aggregations.affiliations.buckets) : nil
         # sources = total.positive? ? facet_by_key(response.aggregations.sources.buckets) : nil
         subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
+        fields_of_science = total.positive? ? facet_by_fos(response.aggregations.fields_of_science.subject.buckets) : nil
         certificates = total.positive? ? facet_by_key(response.aggregations.certificates.buckets) : nil
 
         link_checks_status = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
@@ -204,6 +206,7 @@ class DoisController < ApplicationController
               # "linkChecksDcIdentifier" => link_checks_dc_identifier,
               # "linkChecksCitationDoi" => link_checks_citation_doi,
               subjects: subjects,
+              "fieldsOfScience" => fields_of_science,
               citations: citations,
               views: views,
               downloads: downloads,
