@@ -1027,12 +1027,13 @@ class Doi < ActiveRecord::Base
       end
 
       count += dois.length
+      Rails.logger.info "[Elasticsearch] Imported #{count} DOIs for client #{client_id}."
     end
 
     if errors > 1
       Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs for client #{client_id}."
     elsif count > 0
-      Rails.logger.warn "[Elasticsearch] Imported #{count} DOIs for client #{client_id}."
+      Rails.logger.info "[Elasticsearch] Imported a total of #{count} DOIs for client #{client_id}."
     end
 
     count
@@ -1851,7 +1852,7 @@ class Doi < ActiveRecord::Base
 
         Rails.logger.info "[Transfer] Transferring #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
-
+        Rails.logger.info cursor
         response.results.results.each do |d|
           TransferJob.perform_later(d.doi, client_target_id: options[:client_target_id])
         end
