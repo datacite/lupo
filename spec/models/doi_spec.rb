@@ -374,9 +374,9 @@ describe Doi, type: :model, vcr: true do
     let(:types) { { "resourceTypeGeneral" => "Software", "resourceType" => "BlogPosting", "schemaOrg" => "BlogPosting" } }
     let(:description) { "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for..." }
 
-    subject  { create(:doi, 
-      xml: xml, 
-      titles: [{ "title" => title }], 
+    subject  { create(:doi,
+      xml: xml,
+      titles: [{ "title" => title }],
       creators: creators,
       publisher: publisher,
       publication_year: publication_year,
@@ -781,13 +781,13 @@ describe Doi, type: :model, vcr: true do
 
     context "container hash with strings" do
       let(:container) { {
-        "type": "Journal", 
-        "issue": "6", 
-        "title": "Journal of Crustacean Biology", 
-        "volume": "32", 
-        "lastPage": "961", 
-        "firstPage": "949", 
-        "identifier": "1937-240X", 
+        "type": "Journal",
+        "issue": "6",
+        "title": "Journal of Crustacean Biology",
+        "volume": "32",
+        "lastPage": "961",
+        "firstPage": "949",
+        "identifier": "1937-240X",
         "identifierType": "ISSN"
       } }
       let(:doi) { create(:doi, container: container)}
@@ -799,13 +799,13 @@ describe Doi, type: :model, vcr: true do
 
     context "container hash with hashes" do
       let(:container) { {
-        "type": "Journal", 
-        "issue": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "6"}, 
-        "title": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "Journal of Crustacean Biology"}, 
-        "volume": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "32"}, 
-        "lastPage": "961", 
-        "firstPage": "949", 
-        "identifier": "1937-240X", 
+        "type": "Journal",
+        "issue": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "6"},
+        "title": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "Journal of Crustacean Biology"},
+        "volume": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "32"},
+        "lastPage": "961",
+        "firstPage": "949",
+        "identifier": "1937-240X",
         "identifierType": "ISSN"
       } }
       let(:doi) { create(:doi, container: container)}
@@ -813,6 +813,68 @@ describe Doi, type: :model, vcr: true do
       it "convert" do
         expect(Doi.convert_container_by_id(id: doi.id)).to eq(1)
       end
+    end
+  end
+
+  describe "repair landing page" do
+    let(:provider)  { create(:provider, symbol: "ADMIN") }
+    let(:client)  { create(:client, provider: provider) }
+    let(:timeNow) { Time.zone.now.iso8601 }
+
+    let(:landing_page) { {
+      "checked" => timeNow,
+      "status" => 200,
+      "url" => "http://example.com",
+      "contentType" => "text/html",
+      "error" => nil,
+      "redirectCount" => 0,
+      "redirectUrls" => ["http://example.com", "https://example.com"],
+      "downloadLatency" => 200,
+      "hasSchemaOrg" => true,
+      "schemaOrgId" => [
+        {
+            "@type": "PropertyValue",
+            "propertyID": "URL",
+            "value": "http://dx.doi.org/10.4225/06/565BCE14467D0"
+        }
+      ],
+      "dcIdentifier" => nil,
+      "citationDoi" => nil,
+      "bodyHasPid" => true
+    } }
+
+    let(:doi) {
+      create(
+        :doi,
+        client: client,
+        landing_page: landing_page
+        )
+    }
+
+    before { doi.save }
+
+    let(:fixed_landing_page) { {
+      "checked" => timeNow,
+      "status" => 200,
+      "url" => "http://example.com",
+      "contentType" => "text/html",
+      "error" => nil,
+      "redirectCount" => 0,
+      "redirectUrls" => ["http://example.com", "https://example.com"],
+      "downloadLatency" => 200,
+      "hasSchemaOrg" => true,
+      "schemaOrgId" => "http://dx.doi.org/10.4225/06/565BCE14467D0",
+      "dcIdentifier" => nil,
+      "citationDoi" => nil,
+      "bodyHasPid" => true
+    } }
+
+    it "repairs data" do
+      Doi.repair_landing_page(doi.doi)
+
+      changed_doi = Doi.find(doi.id)
+
+      expect(changed_doi.landing_page).to eq(fixed_landing_page)
     end
   end
 
