@@ -66,16 +66,16 @@ namespace :prefix do
       exit
     end
 
-    prefix = Prefix.where(prefix: ENV['PREFIX']).first
+    prefix = Prefix.where(uid: ENV['PREFIX']).first
     if prefix.nil?
       puts "Prefix #{ENV['PREFIX']} not found."
       exit
     end
 
-    PrefixPrefix.where('prefixes = ?', prefix.id).destroy_all
-    puts "Prefix prefix deleted."
+    ClientPrefix.where('prefix_id = ?', prefix.id).destroy_all
+    puts "Client prefix deleted."
 
-    ProviderPrefix.where('prefixes = ?', prefix.id).destroy_all
+    ProviderPrefix.where('prefix_id = ?', prefix.id).destroy_all
     puts "Provider prefix deleted."
 
     prefix.destroy

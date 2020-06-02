@@ -104,7 +104,7 @@ namespace :client do
     prefixes_to_keep = %w(10.4124 10.4225 10.4226 10.4227)
 
     # delete all associated prefixes and DOIs
-    prefixes = client.prefixes.where.not('prefix IN (?)', prefixes_to_keep).pluck(:prefix)
+    prefixes = client.prefixes.where.not('prefixes.uid IN (?)', prefixes_to_keep).pluck(:uid)
     prefixes.each do |prefix|
       ENV['PREFIX'] = prefix
       Rake::Task["prefix:delete"].reenable
@@ -147,8 +147,8 @@ namespace :client do
     prefixes_to_keep = %w(10.4124 10.4225 10.4226 10.4227)
 
     # delete all associated prefixes
-    prefixes = client.prefixes.where.not('prefix IN (?)', prefixes_to_keep).pluck(:prefix)
-    prefix_ids = client.prefixes.where.not('prefix IN (?)', prefixes_to_keep).pluck(:id)
+    prefixes = client.prefixes.where.not('prefixes.uid IN (?)', prefixes_to_keep).pluck(:uid)
+    prefix_ids = client.prefixes.where.not('prefixes.uid IN (?)', prefixes_to_keep).pluck(:id)
 
     response = client.client_prefixes.destroy_all
     puts "#{response.count} client prefixes deleted."
