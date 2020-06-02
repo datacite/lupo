@@ -359,7 +359,6 @@ class DoisController < ApplicationController
         affiliation: params[:affiliation]
       }
 
-      logger.warn "Created DOI #{@doi.doi}"
       render json: DoiSerializer.new(@doi, options).serialized_json, status: :created, location: @doi
     else
       logger.error @doi.errors.inspect
@@ -409,7 +408,6 @@ class DoisController < ApplicationController
         affiliation: params[:affiliation],
       }
 
-      logger.warn exists ? "Updated DOI #{@doi.doi}" : "Created DOI #{@doi.doi}"
       render json: DoiSerializer.new(@doi, options).serialized_json, status: exists ? :ok : :created
     else
       logger.error @doi.errors.messages
