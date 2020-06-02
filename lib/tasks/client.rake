@@ -154,7 +154,7 @@ namespace :client do
     puts "#{response.count} client prefixes deleted."
 
     if prefix_ids.present?
-      response = ProviderPrefix.where('prefixes IN (?)', prefix_ids).destroy_all
+      response = ProviderPrefix.where('prefix_id IN (?)', prefix_ids).destroy_all
       puts "#{response.count} provider prefixes deleted."
     end
 
@@ -162,6 +162,7 @@ namespace :client do
     Doi.transfer(from_date: "2011-01-01", client_id: client.symbol, client_target_id: target.symbol)
 
     prefixes.each do |prefix|
+      puts prefix
       provider_prefix = ProviderPrefix.create(provider: target.provider, prefix: prefix)
       puts "Provider prefix for provider #{target.provider.symbol} and prefix #{prefix} created."
       client_prefix = ClientPrefix.create(client: target, prefix: prefix, provider_prefix: provider_prefix.id)
