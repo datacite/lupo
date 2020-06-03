@@ -938,9 +938,9 @@ describe Doi, type: :model, vcr: true do
     } }
 
     it "repairs data" do
-      Doi.repair_landing_page(doi.doi)
+      Doi.repair_landing_page(id: doi.id)
 
-      changed_doi = Doi.find(doi.id)
+      changed_doi = Doi.where(id: doi.id).first
 
       expect(changed_doi.landing_page).to eq(fixed_landing_page)
     end
