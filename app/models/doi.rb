@@ -101,7 +101,7 @@ class Doi < ActiveRecord::Base
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, on: :create
   validates_format_of :url, with: /\A(ftp|http|https):\/\/[\S]+/, if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
-  validates_inclusion_of :agency, :in => %w( DataCite Crossref KISTI mEDRA ISTIC JaLC Airiti CNKI OP)
+  validates_inclusion_of :agency, :in => %w( DataCite Crossref KISTI mEDRA ISTIC JaLC Airiti CNKI OP), allow_blank: true
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
   validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
   validate :check_dates, if: :dates?
