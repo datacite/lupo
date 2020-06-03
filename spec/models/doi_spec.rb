@@ -27,6 +27,74 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
+  describe "validate agency" do
+    it "DataCite" do
+      subject = build(:doi, agency: "DataCite")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("DataCite")
+    end
+
+    it "Crossref" do
+      subject = build(:doi, agency: "Crossref")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("Crossref")
+    end
+
+    it "KISTI" do
+      subject = build(:doi, agency: "KISTI")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("KISTI")
+    end
+
+    it "mEDRA" do
+      subject = build(:doi, agency: "mEDRA")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("mEDRA")
+    end
+
+    it "ISTIC" do
+      subject = build(:doi, agency: "ISTIC")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("ISTIC")
+    end
+
+    it "JaLC" do
+      subject = build(:doi, agency: "JaLC")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("JaLC")
+    end
+
+    it "Airiti" do
+      subject = build(:doi, agency: "Airiti")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("Airiti")
+    end
+
+    it "CNKI" do
+      subject = build(:doi, agency: "CNKI")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("CNKI")
+    end
+
+    it "OP" do
+      subject = build(:doi, agency: "OP")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("OP")
+    end
+
+    it "XXX" do
+      subject = build(:doi, agency: "XXX")
+      expect(subject).to_not be_valid
+      expect(subject.errors.messages).to eq(:agency=>["is not included in the list"])
+    end
+
+    it "default" do
+      subject = build(:doi)
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("DataCite")
+    end
+  end
+
   describe "state" do
     subject { create(:doi) }
 
