@@ -1840,7 +1840,7 @@ class Doi < ActiveRecord::Base
     query = options[:query] || "*"
     size = (options[:size] || 1000).to_i
 
-    response = Doi.query(nil, client_id: options[:client_id], page: { size: 1, cursor: [] })
+    response = Doi.query(nil, client_id: options[:client_id].downcase, page: { size: 1, cursor: [] })
     Rails.logger.info "[Transfer] #{response.results.total} DOIs found for client #{options[:client_id]}."
 
     if options[:client_id] && options[:client_target_id] && response.results.total > 0
@@ -1848,12 +1848,12 @@ class Doi < ActiveRecord::Base
       cursor = []
 
       while response.results.results.length.positive? do
-        response = Doi.query(nil, client_id: options[:client_id], page: { size: size, cursor: cursor })
+        response = Doi.query(nil, client_id: options[:client_id].downcase, page: { size: size, cursor: cursor })
         break unless response.results.results.length.positive?
 
         Rails.logger.info "[Transfer] Transferring #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
-        Rails.logger.info cursor
+        Rails.logger.info "[Transfer] Next cursor for transfer is #{cursor.inspect}."
         response.results.results.each do |d|
           TransferJob.perform_later(d.doi, client_target_id: options[:client_target_id])
         end
