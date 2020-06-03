@@ -95,6 +95,9 @@ module Lupo
       c.analytics_enabled = true
     end
 
+    # disable ActiveJob logging, as it is very verbose at log level INFO
+    config.active_job.logger = Logger.new(nil)
+
     config.lograge.enabled = true
     config.lograge.formatter = Lograge::Formatters::Logstash.new
     config.lograge.logger = LogStashLogger.new(type: :stdout)
