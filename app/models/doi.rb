@@ -1853,7 +1853,7 @@ class Doi < ActiveRecord::Base
 
         Rails.logger.info "[Transfer] Transferring #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
-        Rails.logger.info "[Transfer] Next cursor for transfer is #{cursor.inspect}."
+
         response.results.results.each do |d|
           TransferJob.perform_later(d.doi, client_target_id: options[:client_target_id])
         end
@@ -1911,15 +1911,15 @@ class Doi < ActiveRecord::Base
     self.updated = Time.zone.now.utc.iso8601
   end
 
-  def self.repair_landing_page(doi_id)
-    if doi_id.blank?
-      Rails.logger.error "[Error] No DOI provided."
+  def self.repair_landing_page(id: nil)
+    if id.blank?
+      Rails.logger.error "[Error] No id provided."
       return nil
     end
 
-    doi = Doi.where(doi: doi_id).first
+    doi = Doi.where(id: id).first
     if doi.nil?
-      Rails.logger.error "[Error] DOI " + doi_id + " not found."
+      Rails.logger.error "[Error] DOI with #{id} not found."
       return nil
     end
 
@@ -1938,10 +1938,9 @@ class Doi < ActiveRecord::Base
       # Update with changes
       doi.update_columns("landing_page": landing_page)
 
-      Rails.logger.info "Updated landing page data for DOI: " + doi.doi
-
+      Rails.logger.info "Updated landing page data for DOI " + doi.doi
     rescue TypeError, NoMethodError => error
-      Rails.logger.error "Error updating landing page data: " + doi.doi + " - " + error.message
+      Rails.logger.error "Error updating landing page data for DOI " + doi.doi + " - " + error.message
     end
   end
 

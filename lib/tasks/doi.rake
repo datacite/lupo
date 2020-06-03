@@ -124,12 +124,12 @@ namespace :doi do
 
   desc 'Perform repairs on landing page data for specific DOI'
   task :repair_landing_page => :environment do
-    if ENV['DOI'].nil?
-      puts "ENV['DOI'] is required"
+    if ENV['ID'].nil?
+      puts "ENV['ID'] is required"
       exit
     end
 
-    Doi.repair_landing_page(doi: ENV['DOI'])
+    Doi.repair_landing_page(id: ENV['ID'])
   end
 
   desc 'Delete dois by a prefix'
