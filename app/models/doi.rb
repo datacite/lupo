@@ -101,7 +101,7 @@ class Doi < ActiveRecord::Base
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, on: :create
   validates_format_of :url, with: /\A(ftp|http|https):\/\/[\S]+/, if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
-  validates_inclusion_of :agency, :in => %w( DataCite Crossref KISTI mEDRA ISTIC JaLC Airiti CNKI OP)
+  validates_inclusion_of :agency, :in => %w( DataCite Crossref KISTI mEDRA ISTIC JaLC Airiti CNKI OP), allow_blank: true
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
   validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
   validate :check_dates, if: :dates?
@@ -1840,7 +1840,7 @@ class Doi < ActiveRecord::Base
     query = options[:query] || "*"
     size = (options[:size] || 1000).to_i
 
-    response = Doi.query(nil, client_id: options[:client_id], page: { size: 1, cursor: [] })
+    response = Doi.query(nil, client_id: options[:client_id].downcase, page: { size: 1, cursor: [] })
     Rails.logger.info "[Transfer] #{response.results.total} DOIs found for client #{options[:client_id]}."
 
     if options[:client_id] && options[:client_target_id] && response.results.total > 0
@@ -1848,12 +1848,12 @@ class Doi < ActiveRecord::Base
       cursor = []
 
       while response.results.results.length.positive? do
-        response = Doi.query(nil, client_id: options[:client_id], page: { size: size, cursor: cursor })
+        response = Doi.query(nil, client_id: options[:client_id].downcase, page: { size: size, cursor: cursor })
         break unless response.results.results.length.positive?
 
         Rails.logger.info "[Transfer] Transferring #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
-        Rails.logger.info cursor
+        Rails.logger.info "[Transfer] Next cursor for transfer is #{cursor.inspect}."
         response.results.results.each do |d|
           TransferJob.perform_later(d.doi, client_target_id: options[:client_target_id])
         end
