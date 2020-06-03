@@ -329,6 +329,7 @@ class Client < ActiveRecord::Base
     return nil unless c.present?
 
     client_target = c.records.first
+    Rails.logger.info "[Transfer] with target client #{client_target.symbol}"
 
     Doi.transfer(client_id: symbol.downcase, client_target_id: client_target.id)
   end
