@@ -147,7 +147,7 @@ namespace :client do
     prefixes_to_keep = %w(10.4124 10.4225 10.4226 10.4227)
 
     # delete all associated prefixes
-    prefixes = client.prefixes.where.not('prefixes.uid IN (?)', prefixes_to_keep).pluck(:uid)
+    prefixes = client.prefixes.where.not('prefixes.uid IN (?)', prefixes_to_keep)
     prefix_ids = client.prefixes.where.not('prefixes.uid IN (?)', prefixes_to_keep).pluck(:id)
 
     response = client.client_prefixes.destroy_all
@@ -162,7 +162,6 @@ namespace :client do
     Doi.transfer(from_date: "2011-01-01", client_id: client.symbol, client_target_id: target.symbol)
 
     prefixes.each do |prefix|
-      puts prefix
       provider_prefix = ProviderPrefix.create(provider: target.provider, prefix: prefix)
       puts "Provider prefix for provider #{target.provider.symbol} and prefix #{prefix} created."
       client_prefix = ClientPrefix.create(client: target, prefix: prefix, provider_prefix: provider_prefix.id)
