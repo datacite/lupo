@@ -265,6 +265,9 @@ class Doi < ActiveRecord::Base
       indexes :rights_list,                    type: :object, properties: {
         rights: { type: :keyword },
         rightsUri: { type: :keyword },
+        rightsIdentifier: { type: :keyword },
+        rightsIdentifierScheme: { type: :keyword },
+        schemeUri: { type: :keyword },
         lang: { type: :keyword }
       }
       indexes :subjects,                       type: :object, properties: {
@@ -595,6 +598,7 @@ class Doi < ActiveRecord::Base
             include: "FOS:.*" } },
         },
       },
+      licenses: { terms: { field: 'rights_list.rightsIdentifier', size: 10, min_doc_count: 1 } },
       certificates: { terms: { field: 'client.certificate', size: 10, min_doc_count: 1 } },
       views: {
         date_histogram: { field: 'publication_year', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
@@ -815,6 +819,7 @@ class Doi < ActiveRecord::Base
       filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
       filter << { term: { "subjects.subject": "FOS: " + options[:field_of_science].humanize } }
     end
+    filter << { terms: { "right_list.rightsIdentifier" => options[:license].split(",") } } if options[:license].present?
     filter << { term: { source: options[:source] } } if options[:source].present?
     filter << { range: { reference_count: { "gte": options[:has_references].to_i } } } if options[:has_references].present?
     filter << { range: { citation_count: { "gte": options[:has_citations].to_i } } } if options[:has_citations].present?

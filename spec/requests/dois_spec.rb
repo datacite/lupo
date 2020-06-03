@@ -3067,8 +3067,14 @@ describe "dois", type: :request do
       end
     end
 
-    context 'update rightsList' do
-      let(:rights_list) { [{ "rights" => "Creative Commons Attribution 3.0", "rightsUri" => "http://creativecommons.org/licenses/by/3.0/", "lang" => "en"}] }
+    context 'update rightsList', elasticsearch: true do
+      let(:rights_list) { [{
+        "rights"=>"Creative Commons Zero v1.0 Universal",
+        "rightsIdentifier"=>"CC0-1.0",
+        "rightsIdentifierScheme"=>"SPDX",
+        "rightsUri"=>"https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+        "schemeUri"=>"https://spdx.org/licenses/",
+        "lang" => "en" }] }
       let(:update_attributes) do
         {
           "data" => {
@@ -3081,9 +3087,19 @@ describe "dois", type: :request do
       end
 
       it 'updates the Doi' do
-        patch "/dois/#{doi.doi}", update_attributes, headers
+        patch "/dois/#{doi.doi}?license=CC0-1.0", update_attributes, headers
 
-        expect(json.dig('data', 'attributes', 'rightsList')).to eq(rights_list)
+        Doi.import
+        sleep 2
+
+        get "/dois", nil, headers
+
+        expect(last_response.status).to eq(200)
+        expect(json['data'].size).to eq(1)
+        expect(json.dig('data', 0, 'attributes', 'rightsList')).to eq(rights_list)
+        expect(json.dig('meta', 'total')).to eq(1)
+        expect(json.dig('meta', 'affiliations')).to eq([{"count"=>1, "id"=>"ror.org/04wxnsj81", "title"=>"DataCite"}])
+        expect(json.dig('meta', 'licenses')).to eq([{"count"=>1, "id"=>"CC0-1.0", "title"=>"CC0-1.0"}])
       end
     end
 
