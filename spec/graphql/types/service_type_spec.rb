@@ -86,7 +86,7 @@ describe ServiceType do
         "title"=>"Computer and information sciences"}])
       expect(Base64.urlsafe_decode64(response.dig("data", "services", "pageInfo", "endCursor")).split(",", 2).last).to eq(services.last.uid)
       expect(response.dig("data", "services", "pageInfo", "hasNextPage")).to be false
-      expect(response.dig("data", "services", "published")).to eq([{"count"=>3, "id"=>"2011"}])
+      expect(response.dig("data", "services", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
       expect(response.dig("data", "services", "nodes").length).to eq(3)
 
       service = response.dig("data", "services", "nodes", 0)
