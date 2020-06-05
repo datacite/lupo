@@ -155,7 +155,7 @@ class DoisController < ApplicationController
       else
         states = total.positive? ? facet_by_key(response.aggregations.states.buckets) : nil
         resource_types = total.positive? ? facet_by_combined_key(response.aggregations.resource_types.buckets) : nil
-        years = total.positive? ? facet_by_key_as_string(response.aggregations.years.buckets) : nil
+        years = total.positive? ? facet_by_range(response.aggregations.years.buckets) : nil
         created = total.positive? ? facet_by_key_as_string(response.aggregations.created.buckets) : nil
         registered = total.positive? ? facet_by_key_as_string(response.aggregations.registered.buckets) : nil
         providers = total.positive? ? facet_by_combined_key(response.aggregations.providers.buckets) : nil

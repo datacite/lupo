@@ -79,4 +79,16 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
         "count" => hsh["doc_count"] }
     end
   end
+
+  def facet_by_range(arr)
+    arr.reduce([]) do |sum, hsh|
+      if hsh["doc_count"] > 0
+        sum << { "id" => hsh["from_as_string"],
+                  "title" => hsh["from_as_string"],
+                  "count" => hsh["doc_count"] }
+      end
+
+      sum
+    end
+  end
 end
