@@ -792,11 +792,11 @@ class Doi < ActiveRecord::Base
     filter << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
     if options[:pid_entity].present?
       filter << { term: { "subjects.subjectScheme": "PidEntity" } }
-      filter << { terms: { "subjects.subject": options[:pid_entity].split(",") } }
+      filter << { terms: { "subjects.subject": options[:pid_entity].split(",").map(&:humanize) } }
     end
     if options[:field_of_science].present?
       filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
-      filter << { term: { "subjects.subject": "FOS: " + options[:field_of_science].humanize } }
+      filter << { terms: { "subjects.subject": "FOS: " + options[:field_of_science].split(",").map(&:humanize) } }
     end
     filter << { term: { source: options[:source] } } if options[:source].present?
     filter << { range: { reference_count: { "gte": options[:has_references].to_i } } } if options[:has_references].present?

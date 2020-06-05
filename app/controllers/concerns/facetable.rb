@@ -98,7 +98,7 @@ module Facetable
 
     def facet_by_software(arr)
       arr.map do |hsh|
-        { "id" => hsh["key"].downcase,
+        { "id" => hsh["key"].parameterize(separator: '_'),
           "title" => hsh["key"],
           "count" => hsh["doc_count"] }
       end
