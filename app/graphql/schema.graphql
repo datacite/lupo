@@ -51,7 +51,7 @@ interface ActorItem {
   """
   The name of the actor.
   """
-  name: String!
+  name: String
 
   """
   The type of the actor.
@@ -1416,7 +1416,7 @@ type Creator {
   """
   The name of the creator.
   """
-  name: String!
+  name: String
 
   """
   The type of the item.
@@ -3221,7 +3221,7 @@ type Funder implements ActorItem {
   """
   The name of the actor.
   """
-  name: String!
+  name: String
 
   """
   Funded publications
@@ -4887,7 +4887,7 @@ type Organization implements ActorItem {
   """
   The name of the actor.
   """
-  name: String!
+  name: String
 
   """
   Publications from this organization
@@ -5538,7 +5538,7 @@ type Person implements ActorItem {
   """
   The name of the actor.
   """
-  name: String!
+  name: String
 
   """
   Authored publications
