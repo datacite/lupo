@@ -79,4 +79,12 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
         "count" => hsh["doc_count"] }
     end
   end
+
+  def facet_by_range(arr)
+    arr.map do |hsh|
+      { "id" => hsh["from_as_string"],
+        "title" => hsh["from_as_string"],
+        "count" => hsh["doc_count"] }
+    end
+  end
 end

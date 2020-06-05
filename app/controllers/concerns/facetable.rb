@@ -41,6 +41,14 @@ module Facetable
       end
     end
 
+    def facet_by_range(arr)
+      arr.map do |hsh|
+        { "id" => hsh["from_as_string"],
+          "title" => hsh["from_as_string"],
+          "count" => hsh["doc_count"] }
+      end
+    end
+
     def metric_facet_by_year(arr)
       arr.reduce([]) do |sum, hsh|
         if hsh.dig("metric_count", "value").to_i > 0
