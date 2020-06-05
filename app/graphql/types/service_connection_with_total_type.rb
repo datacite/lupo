@@ -33,7 +33,7 @@ class ServiceConnectionWithTotalType < BaseConnection
   end
 
   def pid_entities
-    object.total_count.positive? ? facet_by_combined_key(object.aggregations.pid_entities.subject.buckets) : []
+    object.total_count.positive? ? facet_by_software(object.aggregations.pid_entities.subject.buckets) : []
   end
   
   def fields_of_science
