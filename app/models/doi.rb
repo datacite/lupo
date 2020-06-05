@@ -796,7 +796,7 @@ class Doi < ActiveRecord::Base
     end
     if options[:field_of_science].present?
       filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
-      filter << { terms: { "subjects.subject": "FOS: " + options[:field_of_science].split(",").map(&:humanize) } }
+      filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
     end
     filter << { term: { source: options[:source] } } if options[:source].present?
     filter << { range: { reference_count: { "gte": options[:has_references].to_i } } } if options[:has_references].present?
