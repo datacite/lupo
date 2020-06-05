@@ -16,7 +16,7 @@ class JournalArticleConnectionWithTotalType < BaseConnection
   end
 
   def years
-    object.total_count.positive? ? facet_by_year(object.aggregations.years.buckets) : []
+    object.total_count.positive? ? facet_by_range(object.aggregations.years.buckets) : []
   end
 
   def registration_agencies
