@@ -41,15 +41,12 @@ module Facetable
       end
     end
 
+    # remove years in the future and only keep 10 most recent years
     def facet_by_range(arr)
-      arr.reduce([]) do |sum, hsh|
-        if hsh["doc_count"] > 0
-          sum << { "id" => hsh["from_as_string"],
-                    "title" => hsh["from_as_string"],
-                    "count" => hsh["doc_count"] }
-        end
-
-        sum
+      arr.select { |a| a["key_as_string"].to_i <= 2020 }[0..9].map do |hsh|
+        { "id" => hsh["key_as_string"],
+          "title" => hsh["key_as_string"],
+          "count" => hsh["doc_count"] }
       end
     end
 

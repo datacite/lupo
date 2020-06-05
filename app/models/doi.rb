@@ -535,21 +535,14 @@ class Doi < ActiveRecord::Base
       resource_types: { terms: { field: 'resource_type_id_and_name', size: 16, min_doc_count: 1 } },
       states: { terms: { field: 'aasm_state', size: 3, min_doc_count: 1 } },
       years: {
-        date_range: {
+        date_histogram: {
           field: 'publication_year',
+          interval: 'year',
           format: 'year',
-          ranges: [
-            { from: "2011", to: "2012" },
-            { from: "2012", to: "2013" },
-            { from: "2013", to: "2014" },
-            { from: "2014", to: "2015" },
-            { from: "2015", to: "2016" },
-            { from: "2016", to: "2017" },
-            { from: "2017", to: "2018" },
-            { from: "2018", to: "2019" },
-            { from: "2019", to: "2020" },
-            { from: "2020", to: "2021" },
-          ]
+          order: {
+            _key: "desc"
+          },
+          min_doc_count: 1
         },
       },
       registration_agencies: { terms: { field: 'agency', size: 10, min_doc_count: 1 } },
