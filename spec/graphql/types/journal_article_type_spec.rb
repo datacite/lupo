@@ -56,8 +56,9 @@ describe JournalArticleType do
       %(query {
         journalArticles(userId: "https://orcid.org/0000-0003-1419-2405") {
           totalCount
-          years {
+          published {
             id
+            title
             count
           }
           nodes {
@@ -71,7 +72,7 @@ describe JournalArticleType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "journalArticles", "totalCount")).to eq(3)
-      expect(response.dig("data", "journalArticles", "years")).to eq([{"count"=>3, "id"=>"2011"}])
+      expect(response.dig("data", "journalArticles", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
       expect(response.dig("data", "journalArticles", "nodes").length).to eq(3)
       expect(response.dig("data", "journalArticles", "nodes", 0, "id")).to eq(journal_articles.first.identifier)
     end

@@ -58,7 +58,8 @@ describe OrganizationType do
           downloadCount
           works {
             totalCount
-            years {
+            published {
+              id
               title
               count
             }
@@ -86,7 +87,7 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
       expect(response.dig("data", "organization", "works", "totalCount")).to eq(1)
-      expect(response.dig("data", "organization", "works", "years")).to eq([{"count"=>1, "title"=>"2011"}])
+      expect(response.dig("data", "organization", "works", "published")).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
       expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{"count"=>1, "title"=>"Dataset"}])
       expect(response.dig("data", "organization", "works", "nodes").length).to eq(1)
 
@@ -129,10 +130,12 @@ describe OrganizationType do
             hasNextPage
           }
           types {
+            id
             title
             count
           }
           countries {
+            id
             title
             count
           }
@@ -146,7 +149,8 @@ describe OrganizationType do
             }
             works {
               totalCount
-              years {
+              published {
+                id
                 title
                 count
               }
@@ -164,9 +168,9 @@ describe OrganizationType do
       expect(response.dig("data", "organizations", "pageInfo", "hasNextPage")).to be true
       
       expect(response.dig("data", "organizations", "types").length).to eq(8)
-      expect(response.dig("data", "organizations", "types").first).to eq("count"=>9611, "title"=>"Education")
+      expect(response.dig("data", "organizations", "types").first).to eq("count"=>9611, "id"=>"education", "title"=>"Education")
       expect(response.dig("data", "organizations", "countries").length).to eq(10)
-      expect(response.dig("data", "organizations", "countries").first).to eq("count"=>1776, "title"=>"United States of America")
+      expect(response.dig("data", "organizations", "countries").first).to eq("count"=>1776, "id" => "us", "title"=>"United States of America")
       expect(response.dig("data", "organizations", "nodes").length).to eq(20)
       organization = response.dig("data", "organizations", "nodes", 0)
       expect(organization.fetch("id")).to eq("https://ror.org/013meh722")
@@ -176,7 +180,7 @@ describe OrganizationType do
       expect(organization.fetch("identifiers").last).to eq("identifier"=>"http://en.wikipedia.org/wiki/University_of_Cambridge", "identifierType"=>"wikipedia")
 
       expect(organization.dig("works", "totalCount")).to eq(1)
-      expect(organization.dig("works", "years")).to eq([{"count"=>1, "title"=>"2011"}])
+      expect(organization.dig("works", "published")).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
     end
   end
 end

@@ -5,7 +5,7 @@ class WorkConnectionWithTotalType < BaseConnection
   field_class GraphQL::Cache::Field
 
   field :total_count, Integer, null: false, cache: true
-  field :years, [FacetType], null: true, cache: true
+  field :published, [FacetType], null: true, cache: true
   field :resource_types, [FacetType], null: true, cache: true
   field :registration_agencies, [FacetType], null: true, cache: true
   field :repositories, [FacetType], null: true, cache: true
@@ -16,8 +16,8 @@ class WorkConnectionWithTotalType < BaseConnection
     object.total_count 
   end
 
-  def years
-    object.total_count.positive? ? facet_by_range(object.aggregations.years.buckets) : []
+  def published
+    object.total_count.positive? ? facet_by_range(object.aggregations.published.buckets) : []
   end
 
   def resource_types

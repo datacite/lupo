@@ -56,8 +56,9 @@ describe BookChapterType do
       %(query {
         bookChapters(userId: "https://orcid.org/0000-0003-1419-2405") {
           totalCount
-          years {
+          published {
             id
+            title
             count
           }
           nodes {
@@ -71,7 +72,7 @@ describe BookChapterType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "bookChapters", "totalCount")).to eq(3)
-      expect(response.dig("data", "bookChapters", "years")).to eq([{"count"=>3, "id"=>"2011"}])
+      expect(response.dig("data", "bookChapters", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
       expect(response.dig("data", "bookChapters", "nodes").length).to eq(3)
       expect(response.dig("data", "bookChapters", "nodes", 0, "id")).to eq(book_chapters.first.identifier)
     end

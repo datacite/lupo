@@ -56,8 +56,9 @@ describe PeerReviewType do
       %(query {
         peerReviews(userId: "https://orcid.org/0000-0003-1419-2405") {
           totalCount
-          years {
+          published {
             id
+            title
             count
           }
           nodes {
@@ -71,7 +72,7 @@ describe PeerReviewType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "peerReviews", "totalCount")).to eq(3)
-      expect(response.dig("data", "peerReviews", "years")).to eq([{"count"=>3, "id"=>"2011"}])
+      expect(response.dig("data", "peerReviews", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
       expect(response.dig("data", "peerReviews", "nodes").length).to eq(3)
       expect(response.dig("data", "peerReviews", "nodes", 0, "id")).to eq(peer_reviews.first.identifier)
     end

@@ -534,7 +534,7 @@ class Doi < ActiveRecord::Base
     {
       resource_types: { terms: { field: 'resource_type_id_and_name', size: 16, min_doc_count: 1 } },
       states: { terms: { field: 'aasm_state', size: 3, min_doc_count: 1 } },
-      years: {
+      published: {
         date_histogram: {
           field: 'publication_year',
           interval: 'year',
@@ -787,6 +787,7 @@ class Doi < ActiveRecord::Base
     filter << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
     filter << { term: { uid: options[:uid] }} if options[:uid].present?
     filter << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
+    filter << { range: { publication_year: { gte: "#{options[:published].split(",").min}||/y", lte: "#{options[:published].split(",").max}||/y", format: "yyyy" }}} if options[:published].present?
     filter << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
     filter << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
     if options[:pid_entity].present?

@@ -39,16 +39,19 @@ describe ServiceType do
             endCursor
             hasNextPage
           }
-          years {
+          published {
             id
+            title
             count
           }
           pidEntities {
             id
+            title
             count
           }
           fieldsOfScience {
             id
+            title
             count
           }
           nodes {
@@ -81,7 +84,7 @@ describe ServiceType do
       expect(response.dig("data", "services", "fieldsOfScience")).to eq([{"count"=>3, "id"=>"computer_and_information_sciences"}])
       expect(Base64.urlsafe_decode64(response.dig("data", "services", "pageInfo", "endCursor")).split(",", 2).last).to eq(services.last.uid)
       expect(response.dig("data", "services", "pageInfo", "hasNextPage")).to be false
-      expect(response.dig("data", "services", "years")).to eq([{"count"=>3, "id"=>"2011"}])
+      expect(response.dig("data", "services", "published")).to eq([{"count"=>3, "id"=>"2011"}])
       expect(response.dig("data", "services", "nodes").length).to eq(3)
 
       service = response.dig("data", "services", "nodes", 0)

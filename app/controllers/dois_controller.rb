@@ -50,6 +50,7 @@ class DoisController < ApplicationController
       response = Doi.query(params[:query],
                           state: params[:state],
                           exclude_registration_agencies: params[:exclude_registration_agencies],
+                          published: params[:published],
                           created: params[:created],
                           registered: params[:registered],
                           provider_id: params[:provider_id],
@@ -155,7 +156,7 @@ class DoisController < ApplicationController
       else
         states = total.positive? ? facet_by_key(response.aggregations.states.buckets) : nil
         resource_types = total.positive? ? facet_by_combined_key(response.aggregations.resource_types.buckets) : nil
-        years = total.positive? ? facet_by_range(response.aggregations.years.buckets) : nil
+        published = total.positive? ? facet_by_range(response.aggregations.published.buckets) : nil
         created = total.positive? ? facet_by_key_as_string(response.aggregations.created.buckets) : nil
         registered = total.positive? ? facet_by_key_as_string(response.aggregations.registered.buckets) : nil
         providers = total.positive? ? facet_by_combined_key(response.aggregations.providers.buckets) : nil
@@ -190,7 +191,7 @@ class DoisController < ApplicationController
               states: states,
               "resourceTypes" => resource_types,
               created: created,
-              published: years,
+              published: published,
               registered: registered,
               providers: providers,
               clients: clients,
@@ -225,6 +226,7 @@ class DoisController < ApplicationController
                 "resource-type-id" => params[:resource_type_id],
                 prefix: params[:prefix],
                 certificate: params[:certificate],
+                published: params[:published],
                 created: params[:created],
                 registered: params[:registered],
                 "has-citations" => params[:has_citations],

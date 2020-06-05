@@ -64,8 +64,9 @@ describe DissertationType do
       %(query {
         dissertations(userId: "https://orcid.org/0000-0003-1419-2405") {
           totalCount
-          years {
+          published {
             id
+            title
             count
           }
           nodes {
@@ -79,7 +80,7 @@ describe DissertationType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "dissertations", "totalCount")).to eq(3)
-      expect(response.dig("data", "dissertations", "years")).to eq([{"count"=>3, "id"=>"2011"}])
+      expect(response.dig("data", "dissertations", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
       expect(response.dig("data", "dissertations", "nodes").length).to eq(3)
       expect(response.dig("data", "dissertations", "nodes", 0, "id")).to eq(dissertations.first.identifier)
     end
