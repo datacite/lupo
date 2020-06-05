@@ -33,7 +33,7 @@ describe ServiceType do
 
     let(:query) do
       %(query {
-        services(pidEntity: "Instrument") {
+        services(pidEntity: "instrument") {
           totalCount
           pageInfo {
             endCursor
