@@ -6,6 +6,18 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     "EMEA" => "Europe, Middle East and Africa",
     "AMER" => "Americas"
   }
+
+  REGISTRATION_AGENCIES {
+    "airiti"   "Airiti",
+    "cnki"     "CNKI",
+    "crossref" => "Crossref",
+    "datacite" => "DataCite",
+    "istic"    "ISTIC",
+    "jalc"     "JaLC",
+    "kisti"    "KISTI",
+    "medra"    "mEDRA",
+    "op"       "OP"
+  }
   
   def doi_from_url(url)
     if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match?(url)
@@ -76,6 +88,14 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
       title = hsh["key"].gsub("FOS: ", "")
       { "id" => title.parameterize(separator: '_'),
         "title" => title,
+        "count" => hsh["doc_count"] }
+    end
+  end
+
+  def facet_by_registration_agency(arr)
+    arr.map do |hsh|
+      { "id" => hsh["key"],
+        "title" => REGISTRATION_AGENCIES[hsh["key"]] || hsh["key"],
         "count" => hsh["doc_count"] }
     end
   end
