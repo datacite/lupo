@@ -29,9 +29,21 @@ describe Doi, type: :model, vcr: true do
 
   describe "validate agency" do
     it "DataCite" do
+      subject = build(:doi, agency: "DataCite")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("datacite")
+    end
+
+    it "datacite" do
       subject = build(:doi, agency: "Datacite")
       expect(subject).to be_valid
-      expect(subject.agency).to eq("Datacite")
+      expect(subject.agency).to eq("datacite")
+    end
+
+    it "Crossref" do
+      subject = build(:doi, agency: "Crossref")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("crossref")
     end
 
     it "Crossref" do
@@ -82,11 +94,11 @@ describe Doi, type: :model, vcr: true do
       expect(subject.agency).to eq("op")
     end
 
-    it "XXX" do
-      subject = build(:doi, agency: "xxx")
-      expect(subject).to_not be_valid
-      expect(subject.errors.messages).to eq(:agency=>["is not included in the list"])
-    end
+    # it "XXX" do
+    #   subject = build(:doi, agency: "xxx")
+    #   expect(subject).to_not be_valid
+    #   expect(subject.errors.messages).to eq(:agency=>["is not included in the list"])
+    # end
 
     it "default" do
       subject = build(:doi)

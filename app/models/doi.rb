@@ -101,7 +101,7 @@ class Doi < ActiveRecord::Base
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, on: :create
   validates_format_of :url, with: /\A(ftp|http|https):\/\/[\S]+/, if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
-  validates_inclusion_of :agency, :in => %w(datacite crossref kisti medra istic jalc airiti cnki op), allow_blank: true
+  # validates_inclusion_of :agency, :in => %w(datacite crossref kisti medra istic jalc airiti cnki op), allow_blank: true
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
   validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
   validate :check_dates, if: :dates?
@@ -1754,7 +1754,7 @@ class Doi < ActiveRecord::Base
       cursor = []
 
       while response.results.results.length > 0 do
-        response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:Crossref", page: { size: 1000, cursor: cursor })
+        response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:crossref", page: { size: 1000, cursor: cursor })
         break unless response.results.results.length > 0
 
         Rails.logger.info "[Handle] Register #{response.results.results.length} DOIs in the handle system starting with _id #{response.results.to_a.first[:_id]}."
@@ -1897,10 +1897,10 @@ class Doi < ActiveRecord::Base
   end
 
   def update_agency
-    if agency == "Crossref"
+    if agency.casecmp?("datacite") || agency.blank?
+      self.agency = "datacite"
+    elsif agency.casecmp? ("crossref")
       self.agency = "crossref"
-    elsif agency == "DataCite" || agency.blank?
-      self.agency = "dataCite"
     end
   end
 

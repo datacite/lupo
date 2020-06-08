@@ -7,7 +7,7 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     "AMER" => "Americas"
   }
 
-  REGISTRATION_AGENCIES {
+  REGISTRATION_AGENCIES = {
     "airiti" =>   "Airiti",
     "cnki" =>     "CNKI",
     "crossref" => "Crossref",
