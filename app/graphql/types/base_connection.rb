@@ -8,15 +8,15 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
   }
 
   REGISTRATION_AGENCIES {
-    "airiti"   "Airiti",
-    "cnki"     "CNKI",
+    "airiti" =>   "Airiti",
+    "cnki" =>     "CNKI",
     "crossref" => "Crossref",
     "datacite" => "DataCite",
-    "istic"    "ISTIC",
-    "jalc"     "JaLC",
-    "kisti"    "KISTI",
-    "medra"    "mEDRA",
-    "op"       "OP"
+    "istic" =>    "ISTIC",
+    "jalc" =>     "JaLC",
+    "kisti" =>    "KISTI",
+    "medra" =>    "mEDRA",
+    "op" =>       "OP"
   }
   
   def doi_from_url(url)
