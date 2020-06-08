@@ -19,7 +19,7 @@ describe DissertationType do
 
     let(:query) do
       %(query {
-        dissertations {
+        dissertations(registrationAgency: "datacite") {
           totalCount
           registrationAgencies {
             title
