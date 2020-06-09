@@ -793,7 +793,7 @@ class Doi < ActiveRecord::Base
     filter << { terms: { "types.resourceType": options[:resource_type].split(",") }} if options[:resource_type].present?
     filter << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
     filter << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
-    filter << { terms: { agency: options[:registration_agency].split(",").map(&:humanize) } } if options[:registration_agency].present?
+    filter << { terms: { agency: options[:registration_agency].split(",").map(&:downcase) } } if options[:registration_agency].present?
     filter << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
     filter << { term: { uid: options[:uid] }} if options[:uid].present?
     filter << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
