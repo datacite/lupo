@@ -19,9 +19,10 @@ describe DissertationType do
 
     let(:query) do
       %(query {
-        dissertations {
+        dissertations(registrationAgency: "datacite") {
           totalCount
           registrationAgencies {
+            id
             title
             count
           }
@@ -37,10 +38,10 @@ describe DissertationType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "dissertations", "totalCount")).to eq(4)
-      expect(response.dig("data", "dissertations", "registrationAgencies")).to eq([{"count"=>2, "title"=>"Crossref"}, {"count"=>2, "title"=>"DataCite"}])
+      expect(response.dig("data", "dissertations", "registrationAgencies")).to eq([{"count"=>2, "id"=>"crossref", "title"=>"Crossref"}, {"count"=>2, "id"=>"datacite", "title"=>"DataCite"}])
       expect(response.dig("data", "dissertations", "nodes").length).to eq(4)
       expect(response.dig("data", "dissertations", "nodes", 0, "id")).to eq(datacite_dissertations.first.identifier)
-      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("DataCite")
+      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("datacite")
     end
   end
 

@@ -9,8 +9,8 @@ describe PreprintType do
   end
 
   describe "query preprints", elasticsearch: true do
-    let!(:preprints) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Preprint" }, aasm_state: "findable") }
-    let!(:posted_contents) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "PostedContent" }, agency: "Crossref", aasm_state: "findable") }
+    let!(:preprints) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Preprint" }, agency: "datacite", aasm_state: "findable") }
+    let!(:posted_contents) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "PostedContent" }, agency: "crossref", aasm_state: "findable") }
 
     before do
       Doi.import
@@ -29,6 +29,7 @@ describe PreprintType do
           nodes {
             id
             type
+            registrationAgency
           }
         }
       })
@@ -43,6 +44,7 @@ describe PreprintType do
       expect(response.dig("data", "preprints", "nodes").length).to eq(4)
       expect(response.dig("data", "preprints", "nodes", 0, "id")).to eq(preprints.first.identifier)
       expect(response.dig("data", "preprints", "nodes", 0, "type")).to eq("Preprint")
+      expect(response.dig("data", "preprints", "nodes", 0, "registrationAgency")).to eq("datacite")
     end
   end
 
