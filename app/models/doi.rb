@@ -743,11 +743,19 @@ class Doi < ActiveRecord::Base
     end
 
     # Cursor nav uses search_after, this should always be an array of values that match the sort.
-    if options.dig(:page, :cursor)
-      from = 0
-
+    if options.fetch(:page, {}).key?(:cursor)
       # make sure we have a valid cursor
-      search_after = options.dig(:page, :cursor).is_a?(Array) ? options.dig(:page, :cursor) : [1, "1"]
+      cursor = [0, ""]
+      if options.dig(:page, :cursor).is_a?(Array)
+        timestamp, uid = options.dig(:page, :cursor)
+        cursor = [timestamp.to_i, uid.to_s]
+      elsif options.dig(:page, :cursor).is_a?(String)
+        timestamp, uid = options.dig(:page, :cursor).split(",")
+        cursor = [timestamp.to_i, uid.to_s]
+      end
+
+      from = 0
+      search_after = cursor
       sort = [{ created: "asc", uid: "asc" }]
     else
       from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)
@@ -906,7 +914,7 @@ class Doi < ActiveRecord::Base
         results: response.dig("hits", "hits").map { |r| r["_source"] },
         scroll_id: response["_scroll_id"]
       })
-    elsif options.dig(:page, :cursor).present?
+    elsif options.fetch(:page, {}).key?(:cursor)
       __elasticsearch__.search({
         size: options.dig(:page, :size),
         search_after: search_after,

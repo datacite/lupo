@@ -15,6 +15,7 @@ describe PreprintType do
     before do
       Doi.import
       sleep 2
+      @dois = Doi.query(nil, page: { cursor: [], size: 4 }).results.to_a
     end
 
     let(:query) do
@@ -42,7 +43,7 @@ describe PreprintType do
       expect(response.dig("data", "preprints", "registrationAgencies")).to eq([{"count"=>2, "id"=>"crossref", "title"=>"Crossref"},
         {"count"=>2, "id"=>"datacite", "title"=>"DataCite"}])
       expect(response.dig("data", "preprints", "nodes").length).to eq(4)
-      expect(response.dig("data", "preprints", "nodes", 0, "id")).to eq(preprints.first.identifier)
+      expect(response.dig("data", "preprints", "nodes", 0, "id")).to eq(@dois.first.identifier)
       expect(response.dig("data", "preprints", "nodes", 0, "type")).to eq("Preprint")
       expect(response.dig("data", "preprints", "nodes", 0, "registrationAgency")).to eq("datacite")
     end
@@ -62,6 +63,7 @@ describe PreprintType do
     before do
       Doi.import
       sleep 2
+      @dois = Doi.query(nil, page: { cursor: [], size: 4 }).results.to_a
     end
 
     let(:query) do
@@ -86,7 +88,7 @@ describe PreprintType do
       expect(response.dig("data", "preprints", "totalCount")).to eq(3)
       expect(response.dig("data", "preprints", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
       expect(response.dig("data", "preprints", "nodes").length).to eq(3)
-      expect(response.dig("data", "preprints", "nodes", 0, "id")).to eq(preprints.first.identifier)
+      expect(response.dig("data", "preprints", "nodes", 0, "id")).to eq(@dois.first.identifier)
     end
   end
 end

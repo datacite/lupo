@@ -165,12 +165,19 @@ module Indexable
       options[:page][:size] ||= 25
 
       # Cursor nav use the search after, this should always be an array of values that match the sort.
-      if options.dig(:page, :cursor)
-        from = 0
-
+      if options.fetch(:page, {}).key?(:cursor)
         # make sure we have a valid cursor
-        search_after = options.dig(:page, :cursor).is_a?(Array) ? options.dig(:page, :cursor) : [1, "1"]
+        cursor = [0, ""]
+        if options.dig(:page, :cursor).is_a?(Array)
+          timestamp, uid = options.dig(:page, :cursor)
+          cursor = [timestamp.to_i, uid.to_s]
+        elsif options.dig(:page, :cursor).is_a?(String)
+          timestamp, uid = options.dig(:page, :cursor).split(",")
+          cursor = [timestamp.to_i, uid.to_s]
+        end
 
+        search_after = cursor
+        from = 0
         if self.name == "Event"
           sort = [{ created_at: "asc", uuid: "asc" }]
         elsif self.name == "Activity"
@@ -388,7 +395,7 @@ module Indexable
           results: response.dig("hits", "hits").map { |r| r["_source"] },
           scroll_id: response["_scroll_id"]
         })
-      elsif options.dig(:page, :cursor).present?
+      elsif options.fetch(:page, {}).key?(:cursor)
         __elasticsearch__.search({
           size: options.dig(:page, :size),
           search_after: search_after,

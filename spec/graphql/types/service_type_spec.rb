@@ -29,6 +29,7 @@ describe ServiceType do
       Client.import
       Doi.import
       sleep 3
+      @dois = Doi.query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
     let(:query) do
@@ -84,14 +85,14 @@ describe ServiceType do
       expect(response.dig("data", "services", "fieldsOfScience")).to eq([{"count"=>3,
         "id"=>"computer_and_information_sciences",
         "title"=>"Computer and information sciences"}])
-      expect(Base64.urlsafe_decode64(response.dig("data", "services", "pageInfo", "endCursor")).split(",", 2).last).to eq(services.last.uid)
+      expect(Base64.urlsafe_decode64(response.dig("data", "services", "pageInfo", "endCursor")).split(",", 2).last).to eq(@dois.last.uid)
       expect(response.dig("data", "services", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "services", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
       expect(response.dig("data", "services", "nodes").length).to eq(3)
 
       service = response.dig("data", "services", "nodes", 0)
-      expect(service.fetch("id")).to eq(services.first.identifier)
-      expect(service.fetch("doi")).to eq(services.first.doi)
+      expect(service.fetch("id")).to eq(@dois.first.identifier)
+      expect(service.fetch("doi")).to eq(@dois.first.uid)
       expect(service.fetch("identifiers")).to eq([{"identifier"=>
         "Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446.",
         "identifierType"=>nil}])
