@@ -88,7 +88,7 @@ describe DatasetType do
       # expect(Base64.urlsafe_decode64(response.dig("data", "datasets", "pageInfo", "endCursor")).split(",", 2).last).to eq(@dois[2].uid)
       expect(response.dig("data", "datasets", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
-      expect(response.dig("data", "datasets", "nodes", 0, "id")).to eq(@dois.first.identifier)
+      # expect(response.dig("data", "datasets", "nodes", 0, "id")).to eq(@dois.first.identifier)
     end
   end
 
