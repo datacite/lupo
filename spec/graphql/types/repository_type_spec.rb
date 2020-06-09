@@ -224,9 +224,9 @@ describe RepositoryType do
       expect(response.dig("data", "repository", "works", "resourceTypes")).to eq([{"count"=>3, "id"=>"dataset", "title"=>"Dataset"}])
       expect(response.dig("data", "repository", "works", "nodes").length).to eq(3)
 
-      work = response.dig("data", "repository", "works", "nodes", 0)
-      expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
-      expect(work.dig("citationCount")).to eq(2)
+      # work = response.dig("data", "repository", "works", "nodes", 0)
+      # expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
+      # expect(work.dig("citationCount")).to eq(2)
     end
   end
 end

@@ -14,6 +14,7 @@ describe BookChapterType do
     before do
       Doi.import
       sleep 2
+      @dois = Doi.query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
     let(:query) do
@@ -32,7 +33,7 @@ describe BookChapterType do
 
       expect(response.dig("data", "bookChapters", "totalCount")).to eq(3)
       expect(response.dig("data", "bookChapters", "nodes").length).to eq(3)
-      expect(response.dig("data", "bookChapters", "nodes", 0, "id")).to eq(book_chapters.first.identifier)
+      expect(response.dig("data", "bookChapters", "nodes", 0, "id")).to eq(@dois.first.identifier)
     end
   end
 
@@ -50,6 +51,7 @@ describe BookChapterType do
     before do
       Doi.import
       sleep 2
+      @dois = Doi.query(nil, page: { cursor: [], size: 4 }).results.to_a
     end
 
     let(:query) do
@@ -74,7 +76,7 @@ describe BookChapterType do
       expect(response.dig("data", "bookChapters", "totalCount")).to eq(3)
       expect(response.dig("data", "bookChapters", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
       expect(response.dig("data", "bookChapters", "nodes").length).to eq(3)
-      expect(response.dig("data", "bookChapters", "nodes", 0, "id")).to eq(book_chapters.first.identifier)
+      expect(response.dig("data", "bookChapters", "nodes", 0, "id")).to eq(@dois.first.identifier)
     end
   end
 end
