@@ -27,6 +27,7 @@ class RepositoryType < BaseObject
     argument :published, String, required: false
     argument :user_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :funder_id, String, required: false
     argument :affiliation_id, String, required: false
     argument :resource_type_id, String, required: false
@@ -49,6 +50,7 @@ class RepositoryType < BaseObject
     argument :published, String, required: false
     argument :user_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :funder_id, String, required: false
     argument :affiliation_id, String, required: false
     argument :resource_type_id, String, required: false
@@ -71,6 +73,7 @@ class RepositoryType < BaseObject
     argument :published, String, required: false
     argument :user_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :funder_id, String, required: false
     argument :affiliation_id, String, required: false
     argument :resource_type_id, String, required: false
@@ -93,6 +96,7 @@ class RepositoryType < BaseObject
     argument :published, String, required: false
     argument :user_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :funder_id, String, required: false
     argument :affiliation_id, String, required: false
     argument :resource_type_id, String, required: false
@@ -164,6 +168,6 @@ class RepositoryType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], funder_id: args[:funder_id], user_id: args[:user_id], client_id: object.uid, provider_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_organization: args[:has_organization], has_funder: args[:has_funder], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], published: args[:published], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
+    Doi.query(args[:query], funder_id: args[:funder_id], user_id: args[:user_id], client_id: object.uid, provider_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], agency: args[:registration_agency], has_person: args[:has_person], has_organization: args[:has_organization], has_funder: args[:has_funder], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], published: args[:published], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
   end
 end
