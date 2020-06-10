@@ -179,7 +179,7 @@ module DoiItem
   end
 
   def type
-    object.types["resourceTypeGeneral"]
+    object.types["resourceTypeGeneral"] || "Work"
   end
 
   def creators(**args)
