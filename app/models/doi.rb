@@ -1905,9 +1905,9 @@ class Doi < ActiveRecord::Base
   end
 
   def update_agency
-    if agency.to_s.casecmp?("datacite") || agency.blank?
+    if agency.blank? || agency.casecmp?("datacite") 
       self.agency = "datacite"
-    elsif agency.to_s.casecmp? ("crossref")
+    elsif agency.casecmp? ("crossref")
       self.agency = "crossref"
     end
   end
