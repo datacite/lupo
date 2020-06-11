@@ -5,6 +5,8 @@ require "elasticsearch/rails/tasks/import"
 namespace :elasticsearch do
   desc "create all indexes"
   task create_all_indexes: :environment do
+    fail "These tasks can only be used in the development enviroment" if Rails.env.production?
+
     Rake::Task["provider:create_index"].invoke
     Rake::Task["client:create_index"].invoke
     Rake::Task["prefix:create_index"].invoke
@@ -17,6 +19,8 @@ namespace :elasticsearch do
 
   desc "delete all indexes"
   task delete_all_indexes: :environment do
+    fail "These tasks can only be used in the development enviroment" if Rails.env.production?
+
     Rake::Task["provider:delete_index"].invoke
     Rake::Task["client:delete_index"].invoke
     Rake::Task["prefix:delete_index"].invoke

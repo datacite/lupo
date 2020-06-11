@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-namespace :api do
+namespace :data_layer do
   desc "Sets all data services for the api"
-  task up: :environment do
+  task create_all: :environment do
     fail "Seed tasks can only be used in the development enviroment" if Rails.env.production?
 
     STDOUT.puts "Your are trying to recreate all indexes and the database. Are you sure? (y/n)"
@@ -18,7 +18,7 @@ namespace :api do
   end
 
   desc "removes all data services for the api"
-  task delete_all_data: :environment do
+  task delete_all: :environment do
     fail "Seed tasks can only be used in the development enviroment" if Rails.env.production?
 
     STDOUT.puts "Your are trying to delete all indexes and the database. Are you sure? (y/n)"
