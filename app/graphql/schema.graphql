@@ -176,6 +176,11 @@ type Audiovisual implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -429,6 +434,11 @@ type Book implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -639,6 +649,11 @@ type BookChapter implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -935,6 +950,11 @@ type Collection implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -1185,6 +1205,11 @@ type ConferencePaper implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -1640,6 +1665,11 @@ type DataPaper implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -1891,6 +1921,11 @@ type Dataset implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -2257,6 +2292,11 @@ type Dissertation implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -2514,6 +2554,11 @@ interface DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -2724,6 +2769,11 @@ type Event implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -2962,6 +3012,11 @@ type EventData implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -3325,6 +3380,66 @@ type Funding {
 }
 
 """
+Spatial region or named place where the data was gathered or about which the data is focused.
+"""
+type Geolocation {
+  """
+  The spatial limits of a box.
+  """
+  geolocationBox: GeolocationBox
+
+  """
+  Description of a geographic location.
+  """
+  geolocationPlace: String
+
+  """
+  A point location in space.
+  """
+  geolocationPoint: GeolocationPoint
+}
+
+"""
+A box is defined by two geographic points. Left low corner and right upper corner.
+"""
+type GeolocationBox {
+  """
+  Eastern longitudinal dimension of box.
+  """
+  eastBoundLongitude: Float!
+
+  """
+  Northern latitudinal dimension of box.
+  """
+  northBoundLatitude: Float!
+
+  """
+  Southern latitudinal dimension of box.
+  """
+  southBoundLatitude: Float!
+
+  """
+  Western longitudinal dimension of box.
+  """
+  westBoundLongitude: Float!
+}
+
+"""
+A point contains a single longitude-latitude pair.
+"""
+type GeolocationPoint {
+  """
+  Latitudinal dimension of point.
+  """
+  pointLatitude: Float!
+
+  """
+  Longitudinal dimension of point.
+  """
+  pointLongitude: Float!
+}
+
+"""
 An ISO 8601-encoded date
 """
 scalar ISO8601Date
@@ -3409,6 +3524,11 @@ type Image implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -3664,6 +3784,11 @@ type Instrument implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -3915,6 +4040,11 @@ type InteractiveResource implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -4188,6 +4318,11 @@ type JournalArticle implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -4659,6 +4794,11 @@ type Model implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -5027,6 +5167,11 @@ type Other implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -5303,6 +5448,11 @@ type PeerReview implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -5674,6 +5824,11 @@ type PhysicalObject implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -5980,6 +6135,11 @@ type Preprint implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -6232,6 +6392,11 @@ type Publication implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -6900,6 +7065,11 @@ type Service implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -7153,6 +7323,11 @@ type Software implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -7438,6 +7613,11 @@ type Sound implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -7876,6 +8056,11 @@ type Work implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -8129,6 +8314,11 @@ type Workflow implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
