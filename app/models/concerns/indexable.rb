@@ -56,7 +56,12 @@ module Indexable
     # we use the AWS SQS client directly as there is no consumer in this app
     def send_message(body, options={})
       sqs = Aws::SQS::Client.new
-      queue_url = sqs.get_queue_url(queue_name: "#{Rails.env}_doi").queue_url
+      if Rails.env == "stage" 
+        queue_name_prefix = ENV['ES_PREFIX'].present? ? "stage" : "test"
+      else
+        queue_name_prefix = Rails.env
+      end
+      queue_url = sqs.get_queue_url(queue_name: "#{queue_name_prefix}_doi").queue_url
       options[:shoryuken_class] ||= "DoiImportWorker"
 
       options = {
