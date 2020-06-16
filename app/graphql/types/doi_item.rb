@@ -185,7 +185,7 @@ module DoiItem
   def creators(**args)
     Array.wrap(object.creators[0...args[:first]]).map do |c|
       Hashie::Mash.new(
-        "id" => c.fetch("nameIdentifiers", []).find { |n| n.fetch("nameIdentifierScheme", nil) == "ORCID" }.to_h.fetch("nameIdentifier", nil),
+        "id" => c.fetch("nameIdentifiers", []).find { |n| %w(ORCID ROR).include?(n.fetch("nameIdentifierScheme", nil)) }.to_h.fetch("nameIdentifier", nil),
         "name_type" => c.fetch("nameType", nil),
         "name" => c.fetch("name", nil),
         "given_name" => c.fetch("givenName", nil),
