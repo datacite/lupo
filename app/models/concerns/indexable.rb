@@ -296,7 +296,6 @@ module Indexable
         filter << { terms: { client_ids: options[:client_id].to_s.split(",") }} if options[:client_id].present?
         filter << { terms: { state: options[:state].to_s.split(",") }} if options[:state].present?
       elsif self.name == "ProviderPrefix"
-        Rails.logger.warn query.inspect
         if query.present?
           must = [{ prefix: { prefix_id: query }}]
         else
