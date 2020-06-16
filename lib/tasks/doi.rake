@@ -101,6 +101,18 @@ namespace :doi do
     Doi.loop_through_dois(options)
   end
 
+  desc "Set registration agency"
+  task set_registration_agency: :environment do
+    options = {
+      from_id: (ENV["FROM_ID"] || Doi.minimum(:id)).to_i,
+      until_id: (ENV["UNTIL_ID"] || Doi.maximum(:id)).to_i,
+      query: "agency:DataCite OR agency:Crossref OR -agency:*",
+      label: "[SetRegistrationAgency]",
+      job_name: "UpdateDoiJob",
+    }
+    Doi.loop_through_dois(options)
+  end
+
   desc 'Convert affiliations to new format'
   task :convert_affiliations => :environment do
     from_id = (ENV['FROM_ID'] || Doi.minimum(:id)).to_i
