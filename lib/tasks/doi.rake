@@ -106,7 +106,7 @@ namespace :doi do
     options = {
       from_id: (ENV["FROM_ID"] || Doi.minimum(:id)).to_i,
       until_id: (ENV["UNTIL_ID"] || Doi.maximum(:id)).to_i,
-      query: "agency:DataCite OR agency:Crossref",
+      query: "agency:DataCite OR agency:Crossref OR -agency:*",
       label: "[SetRegistrationAgency]",
       job_name: "UpdateDoiJob",
     }
