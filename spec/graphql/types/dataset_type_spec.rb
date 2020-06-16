@@ -44,7 +44,34 @@ describe DatasetType do
   end
 
   describe "query datasets by person", elasticsearch: true do
-    let!(:datasets) { create_list(:doi, 3, aasm_state: "findable") }
+    let!(:datasets) { create_list(:doi, 3, aasm_state: "findable", creators:
+      [{
+        "nameType": "Personal",
+        "name": "Renaud, François",
+        "givenName": "François",
+        "familyName": "Renaud", "nameIdentifiers": 
+          [{
+            "nameIdentifier": "https://orcid.org/0000-0003-1419-2405",
+            "nameIdentifierScheme": "ORCID",
+            "schemeUri": "https://orcid.org",
+          }],
+        "affiliation": 
+          [{
+            "name": "DataCite",
+            "affiliationIdentifier": "https://ror.org/04wxnsj81",
+            "affiliationIdentifierScheme": "ROR",
+          }]
+      },
+      { 
+        "nameType": "Organizational",
+        "name": "Crossref",
+        "nameIdentifiers": 
+          [{
+            "nameIdentifier": "https://ror.org/02twcfp32",
+            "nameIdentifierScheme": "ROR",
+            "schemeUri": "https://ror.org",
+          }]
+      }]) }
     let!(:dataset) { create(:doi, aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
@@ -75,6 +102,11 @@ describe DatasetType do
           }
           nodes {
             id
+            creators {
+              id
+              type
+              name
+            }
           }
         }
       })
@@ -89,6 +121,7 @@ describe DatasetType do
       expect(response.dig("data", "datasets", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
       # expect(response.dig("data", "datasets", "nodes", 0, "id")).to eq(@dois.first.identifier)
+      expect(response.dig("data", "datasets", "nodes", 0, "creators")).to eq([{"id"=>"https://orcid.org/0000-0003-1419-2405", "name"=>"Renaud, François", "type"=>"Person"}, {"id"=>"https://ror.org/02twcfp32", "name"=>"Crossref", "type"=>"Organization"}])
     end
   end
 
