@@ -8519,7 +8519,7 @@ type YearMonthTotal {
   """
   Year-month
   """
-  yearMonth: String!
+  yearMonth: String
 }
 
 """
