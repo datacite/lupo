@@ -190,9 +190,11 @@ class QueryType < BaseObject
   field :works, WorkConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :resource_type_id, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
@@ -222,9 +224,11 @@ class QueryType < BaseObject
   field :datasets, DatasetConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -254,9 +258,11 @@ class QueryType < BaseObject
   field :publications, PublicationConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -286,9 +292,11 @@ class QueryType < BaseObject
   field :audiovisuals, AudiovisualConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -318,9 +326,11 @@ class QueryType < BaseObject
   field :collections, CollectionConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -350,9 +360,11 @@ class QueryType < BaseObject
   field :data_papers, DataPaperConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -382,9 +394,11 @@ class QueryType < BaseObject
   field :events, EventConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -414,9 +428,11 @@ class QueryType < BaseObject
   field :images, ImageConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -446,9 +462,11 @@ class QueryType < BaseObject
   field :interactive_resources, InteractiveResourceConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -478,9 +496,11 @@ class QueryType < BaseObject
   field :models, ModelConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -510,9 +530,11 @@ class QueryType < BaseObject
   field :physical_objects, PhysicalObjectConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -542,9 +564,11 @@ class QueryType < BaseObject
   field :services, ServiceConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -553,6 +577,7 @@ class QueryType < BaseObject
     argument :has_versions, Int, required: false
     argument :has_views, Int, required: false
     argument :has_downloads, Int, required: false
+    argument :pid_entity, String, required: false
     argument :field_of_science, String, required: false
     argument :first, Int, required: false, default_value: 25
     argument :after, String, required: false
@@ -574,9 +599,11 @@ class QueryType < BaseObject
   field :softwares, SoftwareConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -606,9 +633,11 @@ class QueryType < BaseObject
   field :sounds, SoundConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -638,9 +667,11 @@ class QueryType < BaseObject
   field :workflows, WorkflowConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -670,9 +701,11 @@ class QueryType < BaseObject
   field :dissertations, DissertationConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -703,9 +736,11 @@ class QueryType < BaseObject
   field :preprints, PreprintConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -736,9 +771,11 @@ class QueryType < BaseObject
   field :peer_reviews, PeerReviewConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -769,9 +806,11 @@ class QueryType < BaseObject
   field :conference_papers, ConferencePaperConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -802,9 +841,11 @@ class QueryType < BaseObject
   field :book_chapters, BookChapterConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -835,9 +876,11 @@ class QueryType < BaseObject
   field :books, BookConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -868,9 +911,11 @@ class QueryType < BaseObject
   field :journal_articles, JournalArticleConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -901,9 +946,11 @@ class QueryType < BaseObject
   field :instruments, InstrumentConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -937,6 +984,7 @@ class QueryType < BaseObject
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -983,7 +1031,7 @@ class QueryType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
+    Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], published: args[:published], agency: args[:registration_agency], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], pid_entity: args[:pid_entity], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
   end
 
   def set_doi(id)

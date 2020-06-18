@@ -21,6 +21,7 @@ describe DoiItem do
     it { is_expected.to have_field(:rights).of_type("[Rights!]") }
     it { is_expected.to have_field(:descriptions).of_type("[Description!]") }
     it { is_expected.to have_field(:fundingReferences).of_type("[Funding!]") }
+    it { is_expected.to have_field(:geolocations).of_type("[Geolocation!]") }
     it { is_expected.to have_field(:url).of_type("Url") }
     it { is_expected.to have_field(:repository).of_type("Repository") }
     it { is_expected.to have_field(:member).of_type("Member") }

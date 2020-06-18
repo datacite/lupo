@@ -6,7 +6,7 @@ describe PersonType do
 
     it { is_expected.to have_field(:id).of_type(!types.ID) }
     it { is_expected.to have_field(:type).of_type("String!") }
-    it { is_expected.to have_field(:name).of_type("String!") }
+    it { is_expected.to have_field(:name).of_type("String") }
     it { is_expected.to have_field(:givenName).of_type("String") }
     it { is_expected.to have_field(:familyName).of_type("String") }
     it { is_expected.to have_field(:alternateName).of_type("[String!]") }
@@ -58,11 +58,13 @@ describe PersonType do
           downloadCount
           works {
             totalCount
-            years {
+            published {
+              id
               title
               count
             }
             resourceTypes {
+              id
               title
               count
             }
@@ -89,8 +91,8 @@ describe PersonType do
       expect(response.dig("data", "person", "affiliation")).to eq([])
       expect(response.dig("data", "person", "citationCount")).to eq(0)
       expect(response.dig("data", "person", "works", "totalCount")).to eq(1)
-      expect(response.dig("data", "person", "works", "years")).to eq([{"count"=>1, "title"=>"2011"}])
-      expect(response.dig("data", "person", "works", "resourceTypes")).to eq([{"count"=>1, "title"=>"Dataset"}])
+      expect(response.dig("data", "person", "works", "published")).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
+      expect(response.dig("data", "person", "works", "resourceTypes")).to eq([{"count"=>1, "id"=>"dataset", "title"=>"Dataset"}])
       expect(response.dig("data", "person", "works", "nodes").length).to eq(1)
 
       work = response.dig("data", "person", "works", "nodes", 0)
@@ -119,7 +121,8 @@ describe PersonType do
             }
             works {
               totalCount
-              years {
+              published {
+                id
                 title
                 count
               }

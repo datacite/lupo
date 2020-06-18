@@ -27,6 +27,86 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
+  describe "validate agency" do
+    it "DataCite" do
+      subject = build(:doi, agency: "DataCite")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("datacite")
+    end
+
+    it "datacite" do
+      subject = build(:doi, agency: "Datacite")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("datacite")
+    end
+
+    it "Crossref" do
+      subject = build(:doi, agency: "Crossref")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("crossref")
+    end
+
+    it "Crossref" do
+      subject = build(:doi, agency: "crossref")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("crossref")
+    end
+
+    it "KISTI" do
+      subject = build(:doi, agency: "kisti")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("kisti")
+    end
+
+    it "mEDRA" do
+      subject = build(:doi, agency: "medra")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("medra")
+    end
+
+    it "ISTIC" do
+      subject = build(:doi, agency: "istic")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("istic")
+    end
+
+    it "JaLC" do
+      subject = build(:doi, agency: "jalc")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("jalc")
+    end
+
+    it "Airiti" do
+      subject = build(:doi, agency: "airiti")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("airiti")
+    end
+
+    it "CNKI" do
+      subject = build(:doi, agency: "cnki")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("cnki")
+    end
+
+    it "OP" do
+      subject = build(:doi, agency: "op")
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("op")
+    end
+
+    it "XXX" do
+      subject = build(:doi, agency: "xxx")
+      expect(subject).to_not be_valid
+      expect(subject.errors.messages).to eq(:agency=>["is not included in the list"])
+    end
+
+    it "default" do
+      subject = build(:doi)
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("datacite")
+    end
+  end
+
   describe "state" do
     subject { create(:doi) }
 
@@ -374,9 +454,9 @@ describe Doi, type: :model, vcr: true do
     let(:types) { { "resourceTypeGeneral" => "Software", "resourceType" => "BlogPosting", "schemaOrg" => "BlogPosting" } }
     let(:description) { "Eating your own dog food is a slang term to describe that an organization should itself use the products and services it provides. For DataCite this means that we should use DOIs with appropriate metadata and strategies for long-term preservation for..." }
 
-    subject  { create(:doi, 
-      xml: xml, 
-      titles: [{ "title" => title }], 
+    subject  { create(:doi,
+      xml: xml,
+      titles: [{ "title" => title }],
       creators: creators,
       publisher: publisher,
       publication_year: publication_year,
@@ -523,23 +603,22 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
-  # TODO issue with search_after
-  # describe "transfer", elasticsearch: true do
-  #   let(:provider)  { create(:provider) }
-  #   let(:client)  { create(:client, provider: provider) }
-  #   let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
-  #   let!(:dois) { create_list(:doi, 5, client: client, aasm_state: "findable") }
+  describe "transfer", elasticsearch: true do
+    let(:provider)  { create(:provider) }
+    let(:client)  { create(:client, provider: provider) }
+    let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
+    let!(:dois) { create_list(:doi, 5, client: client, aasm_state: "findable") }
 
-  #   before do
-  #     Doi.import
-  #     sleep 2
-  #   end
+    before do
+      Doi.import
+      sleep 2
+    end
 
-  #   it "transfer all dois" do
-  #     response = Doi.transfer(client_id: client.symbol.downcase, client_target_id: target.symbol.downcase, size: 3)
-  #     expect(response).to eq(5)
-  #   end
-  # end
+    it "transfer all dois" do
+      response = Doi.transfer(client_id: client.symbol.downcase, client_target_id: target.symbol.downcase, size: 3)
+      expect(response).to eq(5)
+    end
+  end
 
   describe "views" do
     let(:client) { create(:client) }
@@ -782,13 +861,13 @@ describe Doi, type: :model, vcr: true do
 
     context "container hash with strings" do
       let(:container) { {
-        "type": "Journal", 
-        "issue": "6", 
-        "title": "Journal of Crustacean Biology", 
-        "volume": "32", 
-        "lastPage": "961", 
-        "firstPage": "949", 
-        "identifier": "1937-240X", 
+        "type": "Journal",
+        "issue": "6",
+        "title": "Journal of Crustacean Biology",
+        "volume": "32",
+        "lastPage": "961",
+        "firstPage": "949",
+        "identifier": "1937-240X",
         "identifierType": "ISSN"
       } }
       let(:doi) { create(:doi, container: container)}
@@ -800,13 +879,13 @@ describe Doi, type: :model, vcr: true do
 
     context "container hash with hashes" do
       let(:container) { {
-        "type": "Journal", 
-        "issue": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "6"}, 
-        "title": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "Journal of Crustacean Biology"}, 
-        "volume": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "32"}, 
-        "lastPage": "961", 
-        "firstPage": "949", 
-        "identifier": "1937-240X", 
+        "type": "Journal",
+        "issue": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "6"},
+        "title": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "Journal of Crustacean Biology"},
+        "volume": { "xmlns:foaf": "http://xmlns.com/foaf/0.1/", "xmlns:rdfs": "http://www.w3.org/2000/01/rdf-schema#", "__content__": "32"},
+        "lastPage": "961",
+        "firstPage": "949",
+        "identifier": "1937-240X",
         "identifierType": "ISSN"
       } }
       let(:doi) { create(:doi, container: container)}
@@ -814,6 +893,68 @@ describe Doi, type: :model, vcr: true do
       it "convert" do
         expect(Doi.convert_container_by_id(id: doi.id)).to eq(1)
       end
+    end
+  end
+
+  describe "repair landing page" do
+    let(:provider)  { create(:provider, symbol: "ADMIN") }
+    let(:client)  { create(:client, provider: provider) }
+    let(:timeNow) { Time.zone.now.iso8601 }
+
+    let(:landing_page) { {
+      "checked" => timeNow,
+      "status" => 200,
+      "url" => "http://example.com",
+      "contentType" => "text/html",
+      "error" => nil,
+      "redirectCount" => 0,
+      "redirectUrls" => ["http://example.com", "https://example.com"],
+      "downloadLatency" => 200,
+      "hasSchemaOrg" => true,
+      "schemaOrgId" => [
+        {
+            "@type": "PropertyValue",
+            "propertyID": "URL",
+            "value": "http://dx.doi.org/10.4225/06/565BCE14467D0"
+        }
+      ],
+      "dcIdentifier" => nil,
+      "citationDoi" => nil,
+      "bodyHasPid" => true
+    } }
+
+    let(:doi) {
+      create(
+        :doi,
+        client: client,
+        landing_page: landing_page
+        )
+    }
+
+    before { doi.save }
+
+    let(:fixed_landing_page) { {
+      "checked" => timeNow,
+      "status" => 200,
+      "url" => "http://example.com",
+      "contentType" => "text/html",
+      "error" => nil,
+      "redirectCount" => 0,
+      "redirectUrls" => ["http://example.com", "https://example.com"],
+      "downloadLatency" => 200,
+      "hasSchemaOrg" => true,
+      "schemaOrgId" => "http://dx.doi.org/10.4225/06/565BCE14467D0",
+      "dcIdentifier" => nil,
+      "citationDoi" => nil,
+      "bodyHasPid" => true
+    } }
+
+    it "repairs data" do
+      Doi.repair_landing_page(id: doi.id)
+
+      changed_doi = Doi.where(id: doi.id).first
+
+      expect(changed_doi.landing_page).to eq(fixed_landing_page)
     end
   end
 

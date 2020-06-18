@@ -41,6 +41,15 @@ module Facetable
       end
     end
 
+    # remove years in the future and only keep 10 most recent years
+    def facet_by_range(arr)
+      arr.select { |a| a["key_as_string"].to_i <= 2020 }[0..9].map do |hsh|
+        { "id" => hsh["key_as_string"],
+          "title" => hsh["key_as_string"],
+          "count" => hsh["doc_count"] }
+      end
+    end
+
     def metric_facet_by_year(arr)
       arr.reduce([]) do |sum, hsh|
         if hsh.dig("metric_count", "value").to_i > 0
@@ -89,7 +98,7 @@ module Facetable
 
     def facet_by_software(arr)
       arr.map do |hsh|
-        { "id" => hsh["key"].downcase,
+        { "id" => hsh["key"].parameterize(separator: '_'),
           "title" => hsh["key"],
           "count" => hsh["doc_count"] }
       end
@@ -265,6 +274,15 @@ module Facetable
         id, title = hsh["key"].split(":", 2)
 
         { "id" => id,
+          "title" => title,
+          "count" => hsh["doc_count"] }
+      end
+    end
+
+    def facet_by_fos(arr)
+      arr.map do |hsh|
+        title = hsh["key"].gsub("FOS: ", "")
+        { "id" => title.parameterize(separator: '_'),
           "title" => title,
           "count" => hsh["doc_count"] }
       end

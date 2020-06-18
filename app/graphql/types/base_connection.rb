@@ -6,6 +6,18 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     "EMEA" => "Europe, Middle East and Africa",
     "AMER" => "Americas"
   }
+
+  REGISTRATION_AGENCIES = {
+    "airiti" =>   "Airiti",
+    "cnki" =>     "CNKI",
+    "crossref" => "Crossref",
+    "datacite" => "DataCite",
+    "istic" =>    "ISTIC",
+    "jalc" =>     "JaLC",
+    "kisti" =>    "KISTI",
+    "medra" =>    "mEDRA",
+    "op" =>       "OP"
+  }
   
   def doi_from_url(url)
     if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match?(url)
@@ -47,7 +59,7 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
 
   def facet_by_software(arr)
     arr.map do |hsh|
-      { "id" => hsh["key"].downcase,
+      { "id" => hsh["key"].parameterize(separator: '_'),
         "title" => hsh["key"],
         "count" => hsh["doc_count"] }
     end
@@ -67,6 +79,32 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     arr.map do |hsh|
       { "id" => hsh["key"].downcase,
         "title" => REGIONS[hsh["key"]] || hsh["key"],
+        "count" => hsh["doc_count"] }
+    end
+  end
+
+  def facet_by_fos(arr)
+    arr.map do |hsh|
+      title = hsh["key"].gsub("FOS: ", "")
+      { "id" => title.parameterize(separator: '_'),
+        "title" => title,
+        "count" => hsh["doc_count"] }
+    end
+  end
+
+  def facet_by_registration_agency(arr)
+    arr.map do |hsh|
+      { "id" => hsh["key"],
+        "title" => REGISTRATION_AGENCIES[hsh["key"]] || hsh["key"],
+        "count" => hsh["doc_count"] }
+    end
+  end
+
+  # remove years in the future and only keep 10 most recent years
+  def facet_by_range(arr)
+    arr.select { |a| a["key_as_string"].to_i <= 2020 }[0..9].map do |hsh|
+      { "id" => hsh["key_as_string"],
+        "title" => hsh["key_as_string"],
         "count" => hsh["doc_count"] }
     end
   end

@@ -104,7 +104,7 @@ namespace :client do
     prefixes_to_keep = %w(10.4124 10.4225 10.4226 10.4227)
 
     # delete all associated prefixes and DOIs
-    prefixes = client.prefixes.where.not('prefix IN (?)', prefixes_to_keep).pluck(:prefix)
+    prefixes = client.prefixes.where.not('prefixes.uid IN (?)', prefixes_to_keep).pluck(:uid)
     prefixes.each do |prefix|
       ENV['PREFIX'] = prefix
       Rake::Task["prefix:delete"].reenable
@@ -147,19 +147,19 @@ namespace :client do
     prefixes_to_keep = %w(10.4124 10.4225 10.4226 10.4227)
 
     # delete all associated prefixes
-    prefixes = client.prefixes.where.not('prefix IN (?)', prefixes_to_keep).pluck(:prefix)
-    prefix_ids = client.prefixes.where.not('prefix IN (?)', prefixes_to_keep).pluck(:id)
+    prefixes = client.prefixes.where.not('prefixes.uid IN (?)', prefixes_to_keep)
+    prefix_ids = client.prefixes.where.not('prefixes.uid IN (?)', prefixes_to_keep).pluck(:id)
 
     response = client.client_prefixes.destroy_all
     puts "#{response.count} client prefixes deleted."
 
     if prefix_ids.present?
-      response = ProviderPrefix.where('prefixes IN (?)', prefix_ids).destroy_all
+      response = ProviderPrefix.where('prefix_id IN (?)', prefix_ids).destroy_all
       puts "#{response.count} provider prefixes deleted."
     end
 
     # update dois
-    Doi.transfer(from_date: "2011-01-01", client_id: client.symbol, client_target_id: target.symbol)
+    Doi.transfer(from_date: "2011-01-01", client_id: client.symbol, client_target_id: target.id)
 
     prefixes.each do |prefix|
       provider_prefix = ProviderPrefix.create(provider: target.provider, prefix: prefix)

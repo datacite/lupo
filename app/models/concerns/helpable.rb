@@ -152,7 +152,7 @@ module Helpable
         end
       end
 
-      Rails.logger.info "#{total} DOIs found."
+      Rails.logger.info "#{total} DOIs found for prefix #{options[:prefix]}."
 
       dois
     end

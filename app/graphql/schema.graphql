@@ -51,7 +51,7 @@ interface ActorItem {
   """
   The name of the actor.
   """
-  name: String!
+  name: String
 
   """
   The type of the actor.
@@ -174,6 +174,11 @@ type Audiovisual implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -341,10 +346,10 @@ type AudiovisualConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -427,6 +432,11 @@ type Book implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -641,6 +651,11 @@ type BookChapter implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -806,10 +821,10 @@ type BookChapterConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -847,10 +862,10 @@ type BookConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -933,6 +948,11 @@ type Collection implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -1100,9 +1120,9 @@ type CollectionConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -1185,6 +1205,11 @@ type ConferencePaper implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -1353,10 +1378,10 @@ type ConferencePaperConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -1416,7 +1441,7 @@ type Creator {
   """
   The name of the creator.
   """
-  name: String!
+  name: String
 
   """
   The type of the item.
@@ -1461,7 +1486,7 @@ type DataCatalog {
   """
   Funded datasets
   """
-  datasets(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, memberId: String, query: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
+  datasets(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, memberId: String, published: String, query: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
 
   """
   A description of the data catalog.
@@ -1640,6 +1665,11 @@ type DataPaper implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -1805,10 +1835,10 @@ type DataPaperConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -1891,6 +1921,11 @@ type Dataset implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -2085,11 +2120,11 @@ type DatasetConnectionWithTotal {
   pageInfo: PageInfo!
   personConnectionCount: Int!
   publicationConnectionCount: Int!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   softwareConnectionCount: Int!
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -2255,6 +2290,11 @@ type Dissertation implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -2423,10 +2463,10 @@ type DissertationConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -2512,6 +2552,11 @@ interface DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -2726,6 +2771,11 @@ type Event implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -2891,10 +2941,10 @@ type EventConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 type EventData implements DoiItem {
@@ -2962,6 +3012,11 @@ type EventData implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -3206,7 +3261,7 @@ type Funder implements ActorItem {
   """
   Funded datasets
   """
-  datasets(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
+  datasets(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -3221,17 +3276,17 @@ type Funder implements ActorItem {
   """
   The name of the actor.
   """
-  name: String!
+  name: String
 
   """
   Funded publications
   """
-  publications(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PublicationConnectionWithTotal
+  publications(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, repositoryId: String, userId: String): PublicationConnectionWithTotal
 
   """
   Funded software
   """
-  softwares(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal
+  softwares(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal
 
   """
   The type of the actor.
@@ -3246,7 +3301,7 @@ type Funder implements ActorItem {
   """
   Funded works
   """
-  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 }
 
 """
@@ -3322,6 +3377,66 @@ type Funding {
   Funder name
   """
   funderName: String
+}
+
+"""
+Spatial region or named place where the data was gathered or about which the data is focused.
+"""
+type Geolocation {
+  """
+  The spatial limits of a box.
+  """
+  geolocationBox: GeolocationBox
+
+  """
+  Description of a geographic location.
+  """
+  geolocationPlace: String
+
+  """
+  A point location in space.
+  """
+  geolocationPoint: GeolocationPoint
+}
+
+"""
+A box is defined by two geographic points. Left low corner and right upper corner.
+"""
+type GeolocationBox {
+  """
+  Eastern longitudinal dimension of box.
+  """
+  eastBoundLongitude: Float!
+
+  """
+  Northern latitudinal dimension of box.
+  """
+  northBoundLatitude: Float!
+
+  """
+  Southern latitudinal dimension of box.
+  """
+  southBoundLatitude: Float!
+
+  """
+  Western longitudinal dimension of box.
+  """
+  westBoundLongitude: Float!
+}
+
+"""
+A point contains a single longitude-latitude pair.
+"""
+type GeolocationPoint {
+  """
+  Latitudinal dimension of point.
+  """
+  pointLatitude: Float!
+
+  """
+  Longitudinal dimension of point.
+  """
+  pointLongitude: Float!
 }
 
 """
@@ -3409,6 +3524,11 @@ type Image implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -3576,10 +3696,10 @@ type ImageConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -3662,6 +3782,11 @@ type Instrument implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -3829,10 +3954,10 @@ type InstrumentConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -3915,6 +4040,11 @@ type InteractiveResource implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -4082,10 +4212,10 @@ type InteractiveResourceConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -4188,6 +4318,11 @@ type JournalArticle implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -4356,10 +4491,10 @@ type JournalArticleConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -4394,7 +4529,7 @@ type Member {
   """
   Datasets by this provider.
   """
-  datasets(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): DatasetConnectionWithTotal
+  datasets(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, published: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): DatasetConnectionWithTotal
 
   """
   Description of the member
@@ -4449,7 +4584,7 @@ type Member {
   """
   Publications by this provider.
   """
-  publications(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): PublicationConnectionWithTotal
+  publications(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, published: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): PublicationConnectionWithTotal
 
   """
   Geographic region where the member is located
@@ -4469,7 +4604,7 @@ type Member {
   """
   Software by this provider.
   """
-  softwares(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], query: String, repositoryId: String, resourceTypeId: String, userId: String): SoftwareConnectionWithTotal
+  softwares(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], published: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): SoftwareConnectionWithTotal
 
   """
   The type of the item.
@@ -4489,7 +4624,7 @@ type Member {
   """
   Works by this provider.
   """
-  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], query: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], published: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 }
 
 """
@@ -4659,6 +4794,11 @@ type Model implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -4824,10 +4964,10 @@ type ModelConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -4867,7 +5007,7 @@ type Organization implements ActorItem {
   """
   Datasets from this organization
   """
-  datasets(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
+  datasets(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -4887,17 +5027,17 @@ type Organization implements ActorItem {
   """
   The name of the actor.
   """
-  name: String!
+  name: String
 
   """
   Publications from this organization
   """
-  publications(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PublicationConnectionWithTotal
+  publications(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PublicationConnectionWithTotal
 
   """
   Software from this organization
   """
-  softwares(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal
+  softwares(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal
 
   """
   The type of the actor.
@@ -4917,7 +5057,7 @@ type Organization implements ActorItem {
   """
   Works from this organization
   """
-  works(after: String, fieldOfScience: String, first: Int = 2, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  works(after: String, fieldOfScience: String, first: Int = 2, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 }
 
 """
@@ -5025,6 +5165,11 @@ type Other implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -5305,6 +5450,11 @@ type PeerReview implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -5470,10 +5620,10 @@ type PeerReviewConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -5513,7 +5663,7 @@ type Person implements ActorItem {
   """
   Authored datasets
   """
-  datasets(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String): DatasetConnectionWithTotal
+  datasets(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String): DatasetConnectionWithTotal
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -5538,17 +5688,17 @@ type Person implements ActorItem {
   """
   The name of the actor.
   """
-  name: String!
+  name: String
 
   """
   Authored publications
   """
-  publications(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String): PublicationConnectionWithTotal
+  publications(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String): PublicationConnectionWithTotal
 
   """
   Authored software
   """
-  softwares(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String): SoftwareConnectionWithTotal
+  softwares(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String): SoftwareConnectionWithTotal
 
   """
   The type of the actor.
@@ -5563,7 +5713,7 @@ type Person implements ActorItem {
   """
   Authored works
   """
-  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String): WorkConnectionWithTotal
+  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String): WorkConnectionWithTotal
 }
 
 """
@@ -5672,6 +5822,11 @@ type PhysicalObject implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -5839,10 +5994,10 @@ type PhysicalObjectConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -5978,6 +6133,11 @@ type Preprint implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -6146,10 +6306,10 @@ type PreprintConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -6232,6 +6392,11 @@ type Publication implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -6405,11 +6570,11 @@ type PublicationConnectionWithTotal {
   pageInfo: PageInfo!
   personConnectionCount: Int!
   publicationConnectionCount: Int!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   softwareConnectionCount: Int!
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -6432,63 +6597,63 @@ type Query {
   actor(id: ID!): ActorItem!
   actors(after: String, first: Int = 25, query: String): ActorConnection!
   audiovisual(id: ID!): Audiovisual!
-  audiovisuals(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): AudiovisualConnectionWithTotal!
+  audiovisuals(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): AudiovisualConnectionWithTotal!
   book(id: ID!): Book!
   bookChapter(id: ID!): BookChapter!
-  bookChapters(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): BookChapterConnectionWithTotal!
-  books(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): BookConnectionWithTotal!
+  bookChapters(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): BookChapterConnectionWithTotal!
+  books(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): BookConnectionWithTotal!
   collection(id: ID!): Collection!
-  collections(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): CollectionConnectionWithTotal!
+  collections(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): CollectionConnectionWithTotal!
   conferencePaper(id: ID!): ConferencePaper!
-  conferencePapers(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): ConferencePaperConnectionWithTotal!
+  conferencePapers(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ConferencePaperConnectionWithTotal!
   dataCatalog(id: ID!): DataCatalog!
   dataCatalogs(after: String, first: Int = 25, query: String): DataCatalogConnectionWithTotal!
   dataPaper(id: ID!): DataPaper!
-  dataPapers(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): DataPaperConnectionWithTotal!
+  dataPapers(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DataPaperConnectionWithTotal!
   dataset(id: ID!): Dataset!
-  datasets(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): DatasetConnectionWithTotal!
+  datasets(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DatasetConnectionWithTotal!
   dissertation(id: ID!): Dissertation!
-  dissertations(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): DissertationConnectionWithTotal!
+  dissertations(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DissertationConnectionWithTotal!
   event(id: ID!): Event!
-  events(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): EventConnectionWithTotal!
+  events(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): EventConnectionWithTotal!
   funder(id: ID!): Funder!
   funders(after: String, first: Int = 25, query: String): FunderConnectionWithTotal!
   image(id: ID!): Image!
-  images(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): ImageConnectionWithTotal!
+  images(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ImageConnectionWithTotal!
   instrument(id: ID!): Instrument!
-  instruments(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): InstrumentConnectionWithTotal!
+  instruments(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): InstrumentConnectionWithTotal!
   interactiveResource(id: ID!): InteractiveResource!
-  interactiveResources(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): InteractiveResourceConnectionWithTotal!
+  interactiveResources(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): InteractiveResourceConnectionWithTotal!
   journalArticle(id: ID!): JournalArticle!
-  journalArticles(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): JournalArticleConnectionWithTotal!
+  journalArticles(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): JournalArticleConnectionWithTotal!
   member(id: ID!): Member!
   members(after: String, first: Int = 25, query: String, year: String): MemberConnectionWithTotal!
   model(id: ID!): Model!
-  models(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): ModelConnectionWithTotal!
+  models(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ModelConnectionWithTotal!
   organization(id: ID!): Organization!
   organizations(after: String, query: String): OrganizationConnectionWithTotal!
   other(id: ID!): Other!
-  others(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): OtherConnectionWithTotal!
+  others(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, registrationAgency: String, repositoryId: String, userId: String): OtherConnectionWithTotal!
   peerReview(id: ID!): PeerReview!
-  peerReviews(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PeerReviewConnectionWithTotal!
+  peerReviews(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PeerReviewConnectionWithTotal!
   people(after: String, first: Int = 25, query: String): PersonConnectionWithTotal!
   person(id: ID!): Person!
   physicalObject(id: ID!): PhysicalObject!
-  physicalObjects(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PhysicalObjectConnectionWithTotal!
+  physicalObjects(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PhysicalObjectConnectionWithTotal!
   prefix(id: ID!): Prefix!
   prefixes(after: String, first: Int = 25, query: String): PrefixConnectionWithTotal!
   preprint(id: ID!): Preprint!
-  preprints(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PreprintConnectionWithTotal!
+  preprints(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PreprintConnectionWithTotal!
   publication(id: ID!): Publication!
-  publications(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): PublicationConnectionWithTotal!
+  publications(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PublicationConnectionWithTotal!
   repositories(after: String, first: Int = 25, query: String, software: String, year: String): RepositoryConnectionWithTotal!
   repository(id: ID!): Repository!
   service(id: ID!): Service!
-  services(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): ServiceConnectionWithTotal!
+  services(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, pidEntity: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ServiceConnectionWithTotal!
   software(id: ID!): Software!
-  softwares(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal!
+  softwares(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal!
   sound(id: ID!): Sound!
-  sounds(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): SoundConnectionWithTotal!
+  sounds(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): SoundConnectionWithTotal!
   usageReport(id: ID!): UsageReport!
   usageReports(
     """
@@ -6509,8 +6674,8 @@ type Query {
   ): UsageReportConnectionWithTotal!
   work(id: ID!): Work!
   workflow(id: ID!): Workflow!
-  workflows(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkflowConnectionWithTotal!
-  works(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
+  workflows(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): WorkflowConnectionWithTotal!
+  works(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
 }
 
 """
@@ -6595,7 +6760,7 @@ type Repository {
   """
   Datasets managed by the repository
   """
-  datasets(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, query: String, resourceTypeId: String, userId: String): DatasetConnectionWithTotal
+  datasets(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, published: String, query: String, registrationAgency: String, resourceTypeId: String, userId: String): DatasetConnectionWithTotal
 
   """
   Description of the repository
@@ -6635,12 +6800,12 @@ type Repository {
   """
   Publications managed by the repository
   """
-  publications(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, query: String, resourceTypeId: String, userId: String): PublicationConnectionWithTotal
+  publications(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, published: String, query: String, registrationAgency: String, resourceTypeId: String, userId: String): PublicationConnectionWithTotal
 
   """
   The re3data identifier for the repository
   """
-  re3data: ID
+  re3dataId: ID
 
   """
   The repository type(s)
@@ -6655,7 +6820,7 @@ type Repository {
   """
   Software managed by the repository
   """
-  softwares(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, query: String, resourceTypeId: String, userId: String): SoftwareConnectionWithTotal
+  softwares(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, published: String, query: String, registrationAgency: String, resourceTypeId: String, userId: String): SoftwareConnectionWithTotal
 
   """
   The type of the item.
@@ -6675,7 +6840,7 @@ type Repository {
   """
   Works managed by the repository
   """
-  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, query: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, published: String, query: String, registrationAgency: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 }
 
 """
@@ -6900,6 +7065,11 @@ type Service implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -7066,10 +7236,11 @@ type ServiceConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  pidEntities: [Facet!]
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -7152,6 +7323,11 @@ type Software implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -7350,11 +7526,11 @@ type SoftwareConnectionWithTotal {
   pageInfo: PageInfo!
   personConnectionCount: Int!
   publicationConnectionCount: Int!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   softwareConnectionCount: Int!
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -7437,6 +7613,11 @@ type Sound implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -7604,10 +7785,10 @@ type SoundConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -7875,6 +8056,11 @@ type Work implements DoiItem {
   fundingReferences: [Funding!]
 
   """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
   The persistent identifier for the resource
   """
   id: ID!
@@ -8041,11 +8227,11 @@ type WorkConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   resourceTypes: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -8128,6 +8314,11 @@ type Workflow implements DoiItem {
   Information about financial support (funding) for the resource being registered
   """
   fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
 
   """
   The persistent identifier for the resource
@@ -8295,10 +8486,10 @@ type WorkflowConnectionWithTotal {
   Information to aid in pagination.
   """
   pageInfo: PageInfo!
+  published: [Facet!]
   registrationAgencies: [Facet!]
   repositories: [Facet!]
   totalCount: Int!
-  years: [Facet!]
 }
 
 """
@@ -8328,7 +8519,7 @@ type YearMonthTotal {
   """
   Year-month
   """
-  yearMonth: Int
+  yearMonth: String
 }
 
 """

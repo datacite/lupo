@@ -83,7 +83,7 @@ class Doi < ActiveRecord::Base
   has_many :activities, as: :auditable, dependent: :destroy
   # has_many :source_events, class_name: "Event", primary_key: :doi, foreign_key: :source_doi, dependent: :destroy
   # has_many :target_events, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
-  
+
   has_many :references, class_name: "Doi", through: :reference_events, source: :doi_for_target
   has_many :citations, class_name: "Doi", through: :citation_events, source: :doi_for_source
   has_many :parts, class_name: "Doi", through: :part_events, source: :doi_for_target
@@ -101,6 +101,7 @@ class Doi < ActiveRecord::Base
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, on: :create
   validates_format_of :url, with: /\A(ftp|http|https):\/\/[\S]+/, if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
+  validates_inclusion_of :agency, :in => %w(datacite crossref kisti medra istic jalc airiti cnki op), allow_blank: true
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
   validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
   validate :check_dates, if: :dates?
@@ -122,6 +123,7 @@ class Doi < ActiveRecord::Base
   after_commit :update_media, on: [:create, :update]
 
   before_validation :update_xml, if: :regenerate
+  before_validation :update_agency
   before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
@@ -267,11 +269,11 @@ class Doi < ActiveRecord::Base
         lang: { type: :keyword }
       }
       indexes :subjects,                       type: :object, properties: {
-        subject: { type: :keyword },
         subjectScheme: { type: :keyword },
+        subject: { type: :keyword },
         schemeUri: { type: :keyword },
         valueUri: { type: :keyword },
-        lang: { type: :keyword }
+        lang: { type: :keyword },
       }
       indexes :container,                     type: :object, properties: {
         type: { type: :keyword },
@@ -533,34 +535,16 @@ class Doi < ActiveRecord::Base
     {
       resource_types: { terms: { field: 'resource_type_id_and_name', size: 16, min_doc_count: 1 } },
       states: { terms: { field: 'aasm_state', size: 3, min_doc_count: 1 } },
-      years: { 
-        # filter: { 
-        #   range: { 
-        #     "publication_year": { 
-        #       "gte": "2000"
-        #     }
-        #   }
-        # },
-        # aggs: {
-        #   published: {
-            date_histogram: {
-              field: 'publication_year', 
-              interval: 'year', 
-              format: 'year', 
-              order: { 
-                _key: "desc"
-              }, 
-              min_doc_count: 1
-            },
-            # aggs: {
-            #   bucket_truncate: {
-            #     bucket_sort: {
-            #       size: 10
-            #     }
-            #   }
-            # }
-        #   }
-        # }
+      published: {
+        date_histogram: {
+          field: 'publication_year',
+          interval: 'year',
+          format: 'year',
+          order: {
+            _key: "desc"
+          },
+          min_doc_count: 1
+        },
       },
       registration_agencies: { terms: { field: 'agency', size: 10, min_doc_count: 1 } },
       created: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
@@ -580,10 +564,18 @@ class Doi < ActiveRecord::Base
       # links_checked: { value_count: { field: "landing_page.checked" } },
       # sources: { terms: { field: 'source', size: 15, min_doc_count: 1 } },
       subjects: { terms: { field: 'subjects.subject', size: 10, min_doc_count: 1 } },
-      fields_of_science: {
-        filter: { term: { "subjects.subjectScheme": "OECD" } },
+      pid_entities: {
+        filter: { term: { "subjects.subjectScheme": "PidEntity" } },
         aggs: {
-          subject: { terms: { field: 'subjects.subject', size: 10, min_doc_count: 1 } },
+          subject: { terms: { field: 'subjects.subject', size: 10, min_doc_count: 1,
+            include: %w(Dataset Publication Software Organization Funder Person Grant Sample Instrument Repository Project) } },
+        },
+      },
+      fields_of_science: {
+        filter: { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
+        aggs: {
+          subject: { terms: { field: 'subjects.subject', size: 10, min_doc_count: 1,
+            include: "FOS:.*" } },
         },
       },
       certificates: { terms: { field: 'client.certificate', size: 10, min_doc_count: 1 } },
@@ -693,7 +685,7 @@ class Doi < ActiveRecord::Base
     filter << { term: { client_id: options[:client_id] } } if options[:client_id].present?
     filter << { term: { consortium_id: options[:consortium_id].upcase }} if options[:consortium_id].present?
     filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
-    
+
     aggregations = {
       created: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
                  aggs: { bucket_truncate: { bucket_sort: { size: 12 } } } },
@@ -715,7 +707,7 @@ class Doi < ActiveRecord::Base
     # map function is small performance hit
     if options[:scroll_id].present? && options.dig(:page, :scroll)
       begin
-        response = __elasticsearch__.client.scroll(body: 
+        response = __elasticsearch__.client.scroll(body:
           { scroll_id: options[:scroll_id],
             scroll: options.dig(:page, :scroll)
           })
@@ -751,11 +743,19 @@ class Doi < ActiveRecord::Base
     end
 
     # Cursor nav uses search_after, this should always be an array of values that match the sort.
-    if options.dig(:page, :cursor)
-      from = 0
-
+    if options.fetch(:page, {}).key?(:cursor)
       # make sure we have a valid cursor
-      search_after = options.dig(:page, :cursor).is_a?(Array) || [1, "1"]
+      cursor = [0, ""]
+      if options.dig(:page, :cursor).is_a?(Array)
+        timestamp, uid = options.dig(:page, :cursor)
+        cursor = [timestamp.to_i, uid.to_s]
+      elsif options.dig(:page, :cursor).is_a?(String)
+        timestamp, uid = options.dig(:page, :cursor).split(",")
+        cursor = [timestamp.to_i, uid.to_s]
+      end
+
+      from = 0
+      search_after = cursor
       sort = [{ created: "asc", uid: "asc" }]
     else
       from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)
@@ -788,19 +788,25 @@ class Doi < ActiveRecord::Base
     must_not = []
     filter = []
 
-    filter << { terms: { doi: options[:ids].map(&:upcase) }} if options[:ids].present? 
+    filter << { terms: { doi: options[:ids].map(&:upcase) }} if options[:ids].present?
     filter << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
     filter << { terms: { "types.resourceType": options[:resource_type].split(",") }} if options[:resource_type].present?
     filter << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
     filter << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
+    filter << { terms: { agency: options[:registration_agency].split(",").map(&:downcase) } } if options[:registration_agency].present?
     filter << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
     filter << { term: { uid: options[:uid] }} if options[:uid].present?
     filter << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
+    filter << { range: { publication_year: { gte: "#{options[:published].split(",").min}||/y", lte: "#{options[:published].split(",").max}||/y", format: "yyyy" }}} if options[:published].present?
     filter << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
     filter << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
+    if options[:pid_entity].present?
+      filter << { term: { "subjects.subjectScheme": "PidEntity" } }
+      filter << { terms: { "subjects.subject": options[:pid_entity].split(",").map(&:humanize) } }
+    end
     if options[:field_of_science].present?
-      filter << { term: { "subjects.subjectScheme": "OECD" } }
-      filter << { terms: { "subjects.subject": options[:field_of_science].split(",") } }
+      filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
+      filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
     end
     filter << { term: { source: options[:source] } } if options[:source].present?
     filter << { range: { reference_count: { "gte": options[:has_references].to_i } } } if options[:has_references].present?
@@ -828,11 +834,11 @@ class Doi < ActiveRecord::Base
     filter << { term: { "creators.affiliation.affiliationIdentifierScheme" => "ROR" }} if options[:has_organization].present?
     filter << { term: { "funding_references.funderIdentifierType" => "Crossref Funder ID" }} if options[:has_funder].present?
     filter << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
-    # TODO align PID parsing 
+    # TODO align PID parsing
     filter << { term: { "client.re3data_id" => doi_from_url(options[:re3data_id]) }} if options[:re3data_id].present?
     filter << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
     filter << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
-    
+
     must_not << { terms: { provider_id: ["crossref", "medra", "op"] }} if options[:exclude_registration_agencies]
 
     # ES query can be optionally defined in different ways
@@ -896,7 +902,7 @@ class Doi < ActiveRecord::Base
       response = __elasticsearch__.client.search(
         index: self.index_name,
         scroll: options.dig(:page, :scroll),
-        body: { 
+        body: {
           size: options.dig(:page, :size),
           sort: sort,
           query: es_query,
@@ -908,7 +914,7 @@ class Doi < ActiveRecord::Base
         results: response.dig("hits", "hits").map { |r| r["_source"] },
         scroll_id: response["_scroll_id"]
       })
-    elsif options.dig(:page, :cursor).present?
+    elsif options.fetch(:page, {}).key?(:cursor)
       __elasticsearch__.search({
         size: options.dig(:page, :size),
         search_after: search_after,
@@ -946,13 +952,13 @@ class Doi < ActiveRecord::Base
   def self.import_one(doi_id: nil)
     doi = Doi.where(doi: doi_id).first
     if doi.nil?
-      Rails.logger.error "[MySQL] DOI " + doi_id + " not found."
+      Rails.logger.error "[MySQL] DOI #{doi_id} not found."
       return nil
     end
 
     string = doi.current_metadata.present? ? doi.clean_xml(doi.current_metadata.xml) : nil
     if string.blank?
-      Rails.logger.error "[MySQL] No metadata for DOI " + doi.doi + " found: " + doi.current_metadata.inspect
+      Rails.logger.error "[MySQL] No metadata for DOI #{doi.doi} found: " + doi.current_metadata.inspect
       return nil
     end
 
@@ -1015,12 +1021,13 @@ class Doi < ActiveRecord::Base
       end
 
       count += dois.length
+      Rails.logger.info "[Elasticsearch] Imported #{count} DOIs for client #{client_id}."
     end
 
     if errors > 1
       Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs for client #{client_id}."
     elsif count > 0
-      Rails.logger.warn "[Elasticsearch] Imported #{count} DOIs for client #{client_id}."
+      Rails.logger.info "[Elasticsearch] Imported a total of #{count} DOIs for client #{client_id}."
     end
 
     count
@@ -1197,7 +1204,7 @@ class Doi < ActiveRecord::Base
     citation_events.pluck(:source_doi).uniq.length
   end
 
-  # remove duplicate citing source dois, 
+  # remove duplicate citing source dois,
   # then show distribution by year
   def citations_over_time
     citation_events.pluck(:occurred_at, :source_doi).uniq { |v| v[1] }
@@ -1305,7 +1312,7 @@ class Doi < ActiveRecord::Base
           c["affiliation"] = []
           should_update = true
         elsif c["affiliation"].is_a?(String)
-          c["affiliation"] = [{ "name" => c["affiliation"] }] 
+          c["affiliation"] = [{ "name" => c["affiliation"] }]
           should_update = true
         elsif c["affiliation"].is_a?(Hash)
           c["affiliation"] = Array.wrap(c["affiliation"])
@@ -1335,7 +1342,7 @@ class Doi < ActiveRecord::Base
           c["affiliation"] = []
           should_update = true
         elsif c["affiliation"].is_a?(String)
-          c["affiliation"] = [{ "name" => c["affiliation"] }] 
+          c["affiliation"] = [{ "name" => c["affiliation"] }]
           should_update = true
         elsif c["affiliation"].is_a?(Hash)
           c["affiliation"] = Array.wrap(c["affiliation"])
@@ -1366,13 +1373,13 @@ class Doi < ActiveRecord::Base
 
         count += 1
       end
- 
-      unless (Array.wrap(doi.creators).all? { |c| c.is_a?(Hash) && c["affiliation"].is_a?(Array) && c["affiliation"].all? { |a| a.is_a?(Hash) } } && Array.wrap(doi.contributors).all? { |c| c.is_a?(Hash) && c["affiliation"].is_a?(Array) && c["affiliation"].all? { |a| a.is_a?(Hash) } }) 
+
+      unless (Array.wrap(doi.creators).all? { |c| c.is_a?(Hash) && c["affiliation"].is_a?(Array) && c["affiliation"].all? { |a| a.is_a?(Hash) } } && Array.wrap(doi.contributors).all? { |c| c.is_a?(Hash) && c["affiliation"].is_a?(Array) && c["affiliation"].all? { |a| a.is_a?(Hash) } })
         Rails.logger.error "[MySQL] Error converting affiliations for doi #{doi.doi}: creators #{doi.creators.inspect} contributors #{doi.contributors.inspect}."
         fail TypeError, "Affiliation for doi #{doi.doi} is of wrong type" if Rails.env.test?
-      end    
+      end
     end
-        
+
     Rails.logger.info "[MySQL] Converted affiliations for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
 
     count
@@ -1410,7 +1417,7 @@ class Doi < ActiveRecord::Base
         Rails.logger.error "[MySQL] container for DOI #{doi.doi} should be a hash."
       elsif [doi.container["title"], doi.container["volume"], doi.container["issue"], doi.container["identifier"]].any? { |c| c.is_a?(Hash) }
         should_update = true
-        container = { 
+        container = {
           "type" => doi.container["type"],
           "identifier" => parse_attributes(doi.container["identifier"], first: true),
           "identifierType" => doi.container["identifierType"],
@@ -1424,9 +1431,9 @@ class Doi < ActiveRecord::Base
       if should_update
         doi.update_columns(container: container)
         count += 1
-      end   
+      end
     end
-        
+
     Rails.logger.info "[MySQL] Converted containers for #{count} DOIs with IDs #{id} - #{(id + 499)}." if count > 0
 
     count
@@ -1533,7 +1540,7 @@ class Doi < ActiveRecord::Base
       Array.wrap(creator.fetch("affiliation", nil)).each do |affiliation|
         sum << "#{ror_from_url(affiliation.fetch("affiliationIdentifier", nil)).to_s}:#{affiliation.fetch("name", nil).to_s}" if affiliation.is_a?(Hash) && affiliation.fetch("affiliationIdentifierScheme", nil) == "ROR" && affiliation.fetch("affiliationIdentifier", nil).present?
       end
-      
+
       sum
     end
   end
@@ -1747,7 +1754,7 @@ class Doi < ActiveRecord::Base
   # register DOIs in the handle system that have not been registered yet
   # provider europ registers their DOIs in the handle system themselves and are ignored
   def self.set_handle
-    response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:Crossref", page: { size: 1, cursor: [] })
+    response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:crossref", page: { size: 1, cursor: [] })
     Rails.logger.info "#{response.results.total} DOIs found that are not registered in the Handle system."
 
     if response.results.total > 0
@@ -1755,7 +1762,7 @@ class Doi < ActiveRecord::Base
       cursor = []
 
       while response.results.results.length > 0 do
-        response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:Crossref", page: { size: 1000, cursor: cursor })
+        response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:crossref", page: { size: 1000, cursor: cursor })
         break unless response.results.results.length > 0
 
         Rails.logger.info "[Handle] Register #{response.results.results.length} DOIs in the handle system starting with _id #{response.results.to_a.first[:_id]}."
@@ -1826,7 +1833,7 @@ class Doi < ActiveRecord::Base
     query = options[:query] || "*"
     size = (options[:size] || 1000).to_i
 
-    response = Doi.query(nil, client_id: options[:client_id], page: { size: 1, cursor: [] })
+    response = Doi.query(nil, client_id: options[:client_id].downcase, page: { size: 1, cursor: [] })
     Rails.logger.info "[Transfer] #{response.results.total} DOIs found for client #{options[:client_id]}."
 
     if options[:client_id] && options[:client_target_id] && response.results.total > 0
@@ -1834,7 +1841,7 @@ class Doi < ActiveRecord::Base
       cursor = []
 
       while response.results.results.length.positive? do
-        response = Doi.query(nil, client_id: options[:client_id], page: { size: size, cursor: cursor })
+        response = Doi.query(nil, client_id: options[:client_id].downcase, page: { size: size, cursor: cursor })
         break unless response.results.results.length.positive?
 
         Rails.logger.info "[Transfer] Transferring #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
@@ -1854,13 +1861,13 @@ class Doi < ActiveRecord::Base
   # +filter+:: paramaters to filter the index
   # +label+:: String to output in the logs printout
   # +query+:: ES query to filter the index
-  # +job_name+:: Acive Job class name of the Job that would be executed on every matched results 
+  # +job_name+:: Acive Job class name of the Job that would be executed on every matched results
   def self.loop_through_dois(options)
     size = (options[:size] || 1000).to_i
     cursor = [options[:from_id] || Doi.minimum(:id).to_i, options[:until_id] || Doi.maximum(:id).to_i]
-    filter = options[:filter] || {}  
-    label = options[:label] || "" 
-    job_name = options[:job_name] || "" 
+    filter = options[:filter] || {}
+    label = options[:label] || ""
+    job_name = options[:job_name] || ""
     query = options[:query] || nil
 
 
@@ -1895,6 +1902,47 @@ class Doi < ActiveRecord::Base
     self.is_active = (aasm_state == "findable") ? "\x01" : "\x00"
     self.version = version.present? ? version + 1 : 1
     self.updated = Time.zone.now.utc.iso8601
+  end
+
+  def update_agency
+    if agency.blank? || agency.casecmp?("datacite") 
+      self.agency = "datacite"
+    elsif agency.casecmp? ("crossref")
+      self.agency = "crossref"
+    end
+  end
+
+  def self.repair_landing_page(id: nil)
+    if id.blank?
+      Rails.logger.error "[Error] No id provided."
+      return nil
+    end
+
+    doi = Doi.where(id: id).first
+    if doi.nil?
+      Rails.logger.error "[Error] DOI with #{id} not found."
+      return nil
+    end
+
+    begin
+      landing_page = doi.landing_page
+
+      # Schema.org ID's can be an array, they must always be a single keyword, so extract where possible.
+      schema_org_id = landing_page['schemaOrgId']
+
+      if schema_org_id.kind_of?(Array)
+        # There shouldn't be anymore than a singular entry, but even if there are more, it's not something we can handle here
+        # Instead just try and grab the first value of the first entry.
+        landing_page['schemaOrgId'] = schema_org_id[0]["value"]
+      end
+
+      # Update with changes
+      doi.update_columns("landing_page": landing_page)
+
+      Rails.logger.info "Updated landing page data for DOI " + doi.doi
+    rescue TypeError, NoMethodError => error
+      Rails.logger.error "Error updating landing page data for DOI " + doi.doi + " - " + error.message
+    end
   end
 
   def self.migrate_landing_page(options={})

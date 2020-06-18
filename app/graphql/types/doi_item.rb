@@ -8,7 +8,7 @@ module DoiItem
 
   field :id, ID, null: false, hash_key: "identifier", description: "The persistent identifier for the resource"
   field :type, String, null: false, description: "The type of the item."
-  field :doi, String, null: false, description: "The DOI for the resource."
+  field :doi, String, null: false, hash_key: "uid", description: "The DOI for the resource."
   field :creators, [CreatorType], null: true, description: "The main researchers involved in producing the data, or the authors of the publication, in priority order" do
     argument :first, Int, required: false, default_value: 20
   end
@@ -30,6 +30,7 @@ module DoiItem
   field :descriptions, [DescriptionType], null: true, description: "All additional information that does not fit in any of the other categories" do
     argument :first, Int, required: false, default_value: 5
   end
+  field :geolocations, [GeolocationType], null: true, hash_key: "geo_locations", description: "Spatial region or named place where the data was gathered or about which the data is focused."
   field :funding_references, [FundingType], null: true, description: "Information about financial support (funding) for the resource being registered"
   field :url, Url, null: true, description: "The URL registered for the resource"
   field :repository, RepositoryType, null: true,  hash_key: "client", description: "The repository account managing this resource"
@@ -179,13 +180,13 @@ module DoiItem
   end
 
   def type
-    object.types["resourceTypeGeneral"]
+    object.types["resourceTypeGeneral"] || "Work"
   end
 
   def creators(**args)
     Array.wrap(object.creators[0...args[:first]]).map do |c|
       Hashie::Mash.new(
-        "id" => c.fetch("nameIdentifiers", []).find { |n| n.fetch("nameIdentifierScheme", nil) == "ORCID" }.to_h.fetch("nameIdentifier", nil),
+        "id" => c.fetch("nameIdentifiers", []).find { |n| %w(ORCID ROR).include?(n.fetch("nameIdentifierScheme", nil)) }.to_h.fetch("nameIdentifier", nil),
         "name_type" => c.fetch("nameType", nil),
         "name" => c.fetch("name", nil),
         "given_name" => c.fetch("givenName", nil),

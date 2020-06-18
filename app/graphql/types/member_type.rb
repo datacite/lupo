@@ -23,6 +23,7 @@ class MemberType < BaseObject
   field :datasets, DatasetConnectionWithTotalType, null: true, description: "Datasets by this provider." do
     argument :query, String, required: false
     argument :ids, String, required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :funder_id, String, required: false
@@ -44,6 +45,7 @@ class MemberType < BaseObject
   field :publications, PublicationConnectionWithTotalType, null: true, description: "Publications by this provider."  do
     argument :query, String, required: false
     argument :ids, String, required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :funder_id, String, required: false
@@ -65,6 +67,7 @@ class MemberType < BaseObject
   field :softwares, SoftwareConnectionWithTotalType, null: true, description: "Software by this provider."  do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :funder_id, String, required: false
@@ -86,6 +89,7 @@ class MemberType < BaseObject
   field :works, WorkConnectionWithTotalType, null: true, description: "Works by this provider." do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :funder_id, String, required: false
@@ -180,6 +184,6 @@ class MemberType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: object.member_type == "consortium" ? nil : object.uid, consortium_id: object.member_type == "consortium" ? object.uid : nil, funder_id: args[:funder_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_affiliation: args[:has_affiliation], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
+    Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: object.member_type == "consortium" ? nil : object.uid, consortium_id: object.member_type == "consortium" ? object.uid : nil, funder_id: args[:funder_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_affiliation: args[:has_affiliation], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], published: args[:published], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
   end
 end

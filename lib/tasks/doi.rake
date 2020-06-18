@@ -101,6 +101,18 @@ namespace :doi do
     Doi.loop_through_dois(options)
   end
 
+  desc "Set registration agency"
+  task set_registration_agency: :environment do
+    options = {
+      from_id: (ENV["FROM_ID"] || Doi.minimum(:id)).to_i,
+      until_id: (ENV["UNTIL_ID"] || Doi.maximum(:id)).to_i,
+      query: "agency:DataCite OR agency:Crossref",
+      label: "[SetRegistrationAgency]",
+      job_name: "UpdateDoiJob",
+    }
+    Doi.loop_through_dois(options)
+  end
+
   desc 'Convert affiliations to new format'
   task :convert_affiliations => :environment do
     from_id = (ENV['FROM_ID'] || Doi.minimum(:id)).to_i
@@ -120,6 +132,16 @@ namespace :doi do
   desc 'Migrates landing page data handling camelCase changes at same time'
   task :migrate_landing_page => :environment do
     Doi.migrate_landing_page
+  end
+
+  desc 'Perform repairs on landing page data for specific DOI'
+  task :repair_landing_page => :environment do
+    if ENV['ID'].nil?
+      puts "ENV['ID'] is required"
+      exit
+    end
+
+    Doi.repair_landing_page(id: ENV['ID'])
   end
 
   desc 'Delete dois by a prefix'

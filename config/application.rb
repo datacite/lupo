@@ -95,6 +95,9 @@ module Lupo
       c.analytics_enabled = true
     end
 
+    # disable ActiveJob logging, as it is very verbose at log level INFO
+    config.active_job.logger = Logger.new(nil)
+
     config.lograge.enabled = true
     config.lograge.formatter = Lograge::Formatters::Logstash.new
     config.lograge.logger = LogStashLogger.new(type: :stdout)
@@ -152,7 +155,13 @@ module Lupo
     else
       config.active_job.queue_adapter = :inline
     end
-    config.active_job.queue_name_prefix = Rails.env
+
+    # use SQS based on environment, use "test" prefix for test system
+    if Rails.env == "stage" 
+      config.active_job.queue_name_prefix = ENV['ES_PREFIX'].present? ? "stage" : "test"
+    else
+      config.active_job.queue_name_prefix = Rails.env
+    end
 
     config.generators do |g|
       g.fixture_replacement :factory_bot
