@@ -234,6 +234,60 @@ describe DatasetType do
     end
   end
 
+
+  describe "query with views", elasticsearch: true do
+    let(:client) { create(:client) }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:source_doi2) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:usage_event) { create(:event_for_datacite_usage, obj_id: "https://doi.org/#{source_doi.doi}", occurred_at: "2015-06-13T16:14:19Z") }
+    let!(:usage_event2) { create(:event_for_datacite_usage, obj_id: "https://doi.org/#{source_doi2.doi}", occurred_at: "2016-06-13T16:14:19Z") }
+
+    before do
+      Doi.import
+      Event.import
+      sleep 2
+      @dois = Doi.query(nil, page: { cursor: [], size: 3 }).results.to_a
+    end
+
+    let(:query) do
+      %(query {
+        datasets {
+          totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          nodes {
+            id
+            viewCount
+            viewsOverTime {
+              yearMonth
+              total
+            }
+          }
+        }
+      })
+    end
+
+    it "returns all datasets with counts" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "datasets", "totalCount")).to eq(2)
+      expect(Base64.urlsafe_decode64(response.dig("data", "datasets", "pageInfo", "endCursor")).split(",", 2).last).to eq(@dois.last.uid)
+      expect(response.dig("data", "datasets", "pageInfo", "hasNextPage")).to be false
+      expect(response.dig("data", "datasets", "nodes").length).to eq(2)
+      expect(response.dig("data", "datasets", "nodes", 0, "viewCount")).to be > 1
+      expect(response.dig("data", "datasets", "nodes", 0, "viewsOverTime").length).to be >= 1
+      puts "dfkhjfgdjhkfgdjhk"
+      puts response.dig("data", "datasets", "nodes", 0, "viewsOverTime")
+      expect(response.dig("data", "datasets", "nodes", 0, "viewsOverTime").first.dig('yearMonth')).not_to be_nil
+    #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "totalCount")).to eq(2)
+    #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes").length).to eq(2)
+    #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes", 0)).to eq("id"=>"https://handle.test.datacite.org/#{source_doi.uid}", "publicationYear"=>2011)
+    end
+  end
+
   describe "query with references", elasticsearch: true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
