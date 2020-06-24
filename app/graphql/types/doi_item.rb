@@ -289,8 +289,14 @@ module DoiItem
       author = to_citeproc(object.creators)
     end
 
+    if object.types["resourceTypeGeneral"] == "Software" && object.version_info.present?
+      citeproc_type = "book"
+    else
+      citeproc_type = object.types["citeproc"]
+    end
+
     {
-      "type" => object.types["citeproc"],
+      "type" => citeproc_type,
       "id" => normalize_doi(object.doi),
       "categories" => Array.wrap(object.subjects).map { |k| parse_attributes(k, content: "subject", first: true) }.presence,
       "language" => object.language,
