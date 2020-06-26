@@ -279,8 +279,6 @@ describe DatasetType do
       expect(response.dig("data", "datasets", "nodes").length).to eq(2)
       expect(response.dig("data", "datasets", "nodes", 0, "viewCount")).to be > 1
       expect(response.dig("data", "datasets", "nodes", 0, "viewsOverTime").length).to be >= 1
-      puts "dfkhjfgdjhkfgdjhk"
-      puts response.dig("data", "datasets", "nodes", 0, "viewsOverTime")
       expect(response.dig("data", "datasets", "nodes", 0, "viewsOverTime").first.dig('yearMonth')).not_to be_nil
     #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "totalCount")).to eq(2)
     #   expect(response.dig("data", "datasets", "nodes", 0, "citations", "nodes").length).to eq(2)

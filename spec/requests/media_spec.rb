@@ -15,7 +15,6 @@ describe "Media", type: :request, :order => :defined, elasticsearch: true do
     it 'returns media' do
       get "/dois/#{doi.doi}/media", nil, headers
 
-      puts last_response.body
       expect(last_response.status).to eq(200)
       expect(json).not_to be_empty
       expect(json['data'].size).to eq(6)

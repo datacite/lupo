@@ -284,11 +284,8 @@ describe "/events", type: :request, elasticsearch: true do
       it "are correctly stored" do
         post uri, params, headers
 
-
         expect(last_response.status).to eq(201)
-        puts json.dig("data", "id")
         event = Event.where(uuid: json.dig("data", "id")).first
-        puts event.inspect
         expect(event[:obj].has_key?('datePublished')).to be_truthy
         expect(event[:obj].has_key?('registrantId')).to be_truthy
         expect(event[:obj].has_key?('proxyIdentifiers')).to be_truthy

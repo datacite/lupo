@@ -34,7 +34,6 @@ module Mailable
       html = User.format_message_html(template: "users/welcome.html.erb", title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url)
 
       response = User.send_message(name: name, email: system_email, subject: subject, text: text, html: html)
-
       fields = [
         { title: "Account ID", value: symbol, short: true },
         { title: "Account type", value: account_type, short: true },

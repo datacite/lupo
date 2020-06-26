@@ -99,7 +99,7 @@ Information about affiliations
 """
 type Affiliation {
   """
-  Affiliation ROR identifier
+  Affiliation identifier
   """
   id: ID
 
@@ -1421,7 +1421,7 @@ type Creator {
   """
   The organizational or institutional affiliation of the creator.
   """
-  affiliation: [Organization!]
+  affiliation: [Affiliation!]
 
   """
   Family name. In the U.S., the last name of an Person.
