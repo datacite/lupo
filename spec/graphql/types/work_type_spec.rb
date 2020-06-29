@@ -122,6 +122,11 @@ describe WorkType do
             title
             count
           }
+          languages {
+            id
+            title
+            count
+          }
           nodes {
             id
             doi
@@ -130,8 +135,8 @@ describe WorkType do
       })
     end
     
-    let!(:works) { create_list(:doi, 10, aasm_state: "findable", agency: "datacite") }
-    let!(:work) { create(:doi, aasm_state: "findable", agency: "crossref") }
+    let!(:works) { create_list(:doi, 10, aasm_state: "findable", language: "fr", agency: "datacite") }
+    let!(:work) { create(:doi, aasm_state: "findable", language: "de", agency: "crossref") }
 
     before do
       Doi.import
@@ -144,6 +149,7 @@ describe WorkType do
 
       expect(response.dig("data", "works", "totalCount")).to eq(10)
       expect(response.dig("data", "works", "registrationAgencies")).to eq([{"count"=>10, "id"=>"datacite", "title"=>"DataCite"}])
+      expect(response.dig("data", "works", "languages")).to eq([{"count"=>10, "id"=>"fr", "title"=>"French"}])
       expect(Base64.urlsafe_decode64(response.dig("data", "works", "pageInfo", "endCursor")).split(",", 2).last).to eq(@works[3].uid)
       expect(response.dig("data", "works", "pageInfo", "hasNextPage")).to be true
       expect(response.dig("data", "works", "nodes").length).to eq(4)

@@ -10,6 +10,7 @@ class JournalArticleConnectionWithTotalType < BaseConnection
   field :repositories, [FacetType], null: true, cache: true
   field :affiliations, [FacetType], null: true, cache: true
   field :fields_of_science, [FacetType], null: true, cache: true
+  field :languages, [FacetType], null: true, cache: true
 
   def total_count
     object.total_count 
@@ -29,6 +30,10 @@ class JournalArticleConnectionWithTotalType < BaseConnection
 
   def affiliations
     object.total_count.positive? ? facet_by_combined_key(object.aggregations.affiliations.buckets) : []
+  end
+
+  def languages
+    object.total_count.positive? ? facet_by_language(object.aggregations.languages.buckets) : []
   end
 
   def fields_of_science

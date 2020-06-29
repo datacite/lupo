@@ -9,7 +9,7 @@ describe DissertationType do
   end
 
   describe "query dissertations", elasticsearch: true do
-    let!(:datacite_dissertations) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Thesis" }, aasm_state: "findable") }
+    let!(:datacite_dissertations) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Thesis" }, language: "de", aasm_state: "findable") }
     let!(:crossref_dissertations) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, agency: "Crossref", aasm_state: "findable") }
 
     before do
@@ -27,6 +27,11 @@ describe DissertationType do
             title
             count
           }
+          languages {
+            id
+            title
+            count
+          }
           nodes {
             id
             registrationAgency
@@ -40,6 +45,7 @@ describe DissertationType do
 
       expect(response.dig("data", "dissertations", "totalCount")).to eq(2)
       expect(response.dig("data", "dissertations", "registrationAgencies")).to eq([{"count"=>2, "id"=>"datacite", "title"=>"DataCite"}])
+      expect(response.dig("data", "dissertations", "languages")).to eq([{"count"=>2, "id"=>"de", "title"=>"German"}])
       expect(response.dig("data", "dissertations", "nodes").length).to eq(2)
       # expect(response.dig("data", "dissertations", "nodes", 0, "id")).to eq(@dois.first.identifier)
       # expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("DataCite")

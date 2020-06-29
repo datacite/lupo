@@ -579,6 +579,7 @@ class Doi < ActiveRecord::Base
             include: "FOS:.*" } },
         },
       },
+      languages: { terms: { field: 'language', size: 10, min_doc_count: 1 } },
       certificates: { terms: { field: 'client.certificate', size: 10, min_doc_count: 1 } },
       views: {
         date_histogram: { field: 'publication_year', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
@@ -796,6 +797,7 @@ class Doi < ActiveRecord::Base
     filter << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
     filter << { terms: { agency: options[:agency].split(",").map(&:downcase) } } if options[:agency].present?
     filter << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
+    filter << { terms: { language: options[:language].to_s.split(",").map(&:downcase) } } if options[:language].present?
     filter << { term: { uid: options[:uid] }} if options[:uid].present?
     filter << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
     filter << { range: { publication_year: { gte: "#{options[:published].split(",").min}||/y", lte: "#{options[:published].split(",").max}||/y", format: "yyyy" }}} if options[:published].present?

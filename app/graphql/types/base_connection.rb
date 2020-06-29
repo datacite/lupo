@@ -108,4 +108,13 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
         "count" => hsh["doc_count"] }
     end
   end
+
+  def facet_by_language(arr)
+    arr.map do |hsh|
+      la = ISO_639.find_by_code(hsh["key"])
+      { "id" => hsh["key"],
+        "title" => la.english_name,
+        "count" => hsh["doc_count"] }
+    end
+  end
 end
