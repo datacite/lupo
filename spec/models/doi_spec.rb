@@ -312,6 +312,44 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
+  describe "language" do
+    let(:doi) { build(:doi) }
+
+    it "iso 639-1" do
+      doi.language = "fr"
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.language).to eq("fr")
+    end
+
+    it "iso 639-2" do
+      doi.language = "fra"
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.language).to eq("fr")
+    end
+
+    it "human" do
+      doi.language = "french"
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.language).to eq("fr")
+    end
+
+    it "error" do
+      doi.language = "hhh"
+      expect(doi.save).to be false
+      expect(doi.errors.details).to eq(:language=>[{:error=>"Language hhh not found."}])
+      expect(doi.language).to be_nil
+    end
+
+    it "nil" do
+      doi.language = nil
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+    end
+  end
+
   describe "rights_list" do
     let(:doi) { build(:doi) }
 

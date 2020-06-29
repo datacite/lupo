@@ -118,6 +118,7 @@ class Doi < ActiveRecord::Base
   validate :check_related_identifiers, if: :related_identifiers?
   validate :check_funding_references, if: :funding_references?
   validate :check_geo_locations, if: :geo_locations?
+  validate :check_language, if: :language?
 
   after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
@@ -1716,6 +1717,16 @@ class Doi < ActiveRecord::Base
 
   def check_container
     errors.add(:container, "Container '#{container}' should be an object instead of a string.") unless container.is_a?(Hash)
+  end
+
+  def check_language
+    entry = ISO_639.find_by_code(language) || ISO_639.find_by_english_name(language.upcase_first)
+    if entry.present?
+      self.language = entry.alpha2
+    else
+      errors.add(:language, "Language #{language} not found.")
+      self.language = nil
+    end 
   end
 
   # to be used after DOIs were transferred to another DOI RA
