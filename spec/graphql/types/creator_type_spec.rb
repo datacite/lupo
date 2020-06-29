@@ -6,9 +6,9 @@ describe CreatorType do
 
     it { is_expected.to have_field(:id).of_type(types.ID) }
     it { is_expected.to have_field(:type).of_type("String!") }
-    it { is_expected.to have_field(:name).of_type("String!") }
+    it { is_expected.to have_field(:name).of_type("String") }
     it { is_expected.to have_field(:givenName).of_type("String") }
     it { is_expected.to have_field(:familyName).of_type("String") }
-    it { is_expected.to have_field(:affiliation).of_type("[Organization!]") }
+    it { is_expected.to have_field(:affiliation).of_type("[Affiliation!]") }
   end
 end

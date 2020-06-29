@@ -56,7 +56,12 @@ module Indexable
     # we use the AWS SQS client directly as there is no consumer in this app
     def send_message(body, options={})
       sqs = Aws::SQS::Client.new
-      queue_url = sqs.get_queue_url(queue_name: "#{Rails.env}_doi").queue_url
+      if Rails.env == "stage" 
+        queue_name_prefix = ENV['ES_PREFIX'].present? ? "stage" : "test"
+      else
+        queue_name_prefix = Rails.env
+      end
+      queue_url = sqs.get_queue_url(queue_name: "#{queue_name_prefix}_doi").queue_url
       options[:shoryuken_class] ||= "DoiImportWorker"
 
       options = {
@@ -165,12 +170,19 @@ module Indexable
       options[:page][:size] ||= 25
 
       # Cursor nav use the search after, this should always be an array of values that match the sort.
-      if options.dig(:page, :cursor)
-        from = 0
-
+      if options.fetch(:page, {}).key?(:cursor)
         # make sure we have a valid cursor
-        search_after = options.dig(:page, :cursor).is_a?(Array) ? options.dig(:page, :cursor) : [1, "1"]
+        cursor = [0, ""]
+        if options.dig(:page, :cursor).is_a?(Array)
+          timestamp, uid = options.dig(:page, :cursor)
+          cursor = [timestamp.to_i, uid.to_s]
+        elsif options.dig(:page, :cursor).is_a?(String)
+          timestamp, uid = options.dig(:page, :cursor).split(",")
+          cursor = [timestamp.to_i, uid.to_s]
+        end
 
+        search_after = cursor
+        from = 0
         if self.name == "Event"
           sort = [{ created_at: "asc", uuid: "asc" }]
         elsif self.name == "Activity"
@@ -289,7 +301,6 @@ module Indexable
         filter << { terms: { client_ids: options[:client_id].to_s.split(",") }} if options[:client_id].present?
         filter << { terms: { state: options[:state].to_s.split(",") }} if options[:state].present?
       elsif self.name == "ProviderPrefix"
-        Rails.logger.warn query.inspect
         if query.present?
           must = [{ prefix: { prefix_id: query }}]
         else
@@ -388,7 +399,7 @@ module Indexable
           results: response.dig("hits", "hits").map { |r| r["_source"] },
           scroll_id: response["_scroll_id"]
         })
-      elsif options.dig(:page, :cursor).present?
+      elsif options.fetch(:page, {}).key?(:cursor)
         __elasticsearch__.search({
           size: options.dig(:page, :size),
           search_after: search_after,

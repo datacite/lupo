@@ -15,28 +15,106 @@ describe "dois", type: :request do
   let(:headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + bearer }}
 
   describe "GET /dois", elasticsearch: true do
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+    let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable") }
 
     before do
       Doi.import
       sleep 2
+      @dois = Doi.query(nil, page: { cursor: [], size: 10 }).results.to_a
     end
 
     it 'returns dois', vcr: true do
       get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json['data'].size).to eq(3)
-      expect(json.dig('meta', 'total')).to eq(3)
+      expect(json['data'].size).to eq(10)
+      expect(json.dig('meta', 'total')).to eq(10)
     end
 
     it 'returns dois with scroll', vcr: true do
-      get '/dois?page[scroll]=1m', nil, headers
+      get "/dois?page[scroll]=1m&page[size]=4", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json['data'].size).to eq(3)
-      expect(json.dig('meta', 'total')).to eq(3)
+      expect(json['data'].size).to eq(4)
+      expect(json.dig('meta', 'total')).to eq(10)
       expect(json.dig('meta', 'scroll-id')).to be_present
+      next_link_absolute = Addressable::URI.parse(json.dig('links', 'next'))
+      next_link = next_link_absolute.path + "?" + next_link_absolute.query
+
+      get next_link, nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(4)
+      expect(json.dig('meta', 'total')).to eq(10)
+      expect(json.dig('meta', 'scroll-id')).to be_present
+      next_link_absolute = Addressable::URI.parse(json.dig('links', 'next'))
+      next_link = next_link_absolute.path + "?" + next_link_absolute.query
+
+      get next_link, nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(2)
+      expect(json.dig('meta', 'total')).to eq(10)
+      expect(json.dig('meta', 'scroll-id')).to be_present
+      expect(json.dig('links', 'next')).to be_nil
+    end
+
+    it 'returns dois with offset', vcr: true do
+      get '/dois?page[number]=1&page[size]=4', nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(4)
+      expect(json.dig('meta', 'total')).to eq(10)
+      next_link_absolute = Addressable::URI.parse(json.dig('links', 'next'))
+      next_link = next_link_absolute.path + "?" + next_link_absolute.query
+      expect(next_link).to eq("/dois?page%5Bnumber%5D=2&page%5Bsize%5D=4")
+
+      get next_link, nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(4)
+      expect(json.dig('meta', 'total')).to eq(10)
+      next_link_absolute = Addressable::URI.parse(json.dig('links', 'next'))
+      next_link = next_link_absolute.path + "?" + next_link_absolute.query
+      expect(next_link).to eq("/dois?page%5Bnumber%5D=3&page%5Bsize%5D=4")
+
+      get next_link, nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(2)
+      expect(json.dig('meta', 'total')).to eq(10)
+      expect(json.dig('links', 'next')).to be_nil
+    end
+
+    it 'returns dois with cursor' do
+      get "/dois?page[cursor]&page[size]=4", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(4)
+      expect(json.dig('data', 3, 'id')).to eq(@dois[3].uid)
+      expect(json.dig('meta', 'total')).to eq(10)
+      cursor = Rack::Utils.parse_query(json.dig('links', 'next').split("?", 2).last).fetch("page[cursor]", nil)
+      expect(Base64.urlsafe_decode64(cursor).split(",").last).to eq(@dois[3].uid)
+      next_link_absolute = Addressable::URI.parse(json.dig('links', 'next'))
+      next_link = next_link_absolute.path + "?" + next_link_absolute.query
+      
+      get next_link, nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(4)
+      expect(json.dig('data', 3, 'id')).to eq(@dois[7].uid)
+      expect(json.dig('meta', 'total')).to eq(10)
+      cursor = Rack::Utils.parse_query(json.dig('links', 'next').split("?", 2).last).fetch("page[cursor]", nil)
+      expect(Base64.urlsafe_decode64(cursor).split(",").last).to eq(@dois[7].uid)
+      next_link_absolute = Addressable::URI.parse(json.dig('links', 'next'))
+      next_link = next_link_absolute.path + "?" + next_link_absolute.query
+      
+      get next_link, nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json['data'].size).to eq(2)
+      expect(json.dig('data', 1, 'id')).to eq(@dois[9].uid)
+      expect(json.dig('meta', 'total')).to eq(10)
       expect(json.dig('links', 'next')).to be_nil
     end
 
@@ -44,7 +122,7 @@ describe "dois", type: :request do
       get '/dois?detail=true', nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json['data'].size).to eq(3)
+      expect(json['data'].size).to eq(10)
       json['data'].each do |doi|
         expect(doi.dig('attributes')).to include('xml')
       end

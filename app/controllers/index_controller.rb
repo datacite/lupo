@@ -8,9 +8,9 @@ class IndexController < ApplicationController
     render plain: ENV['SITE_TITLE']
   end
 
-  # def routing_error
-  #   fail ActionController::RoutingError
-  # end
+  def routing_error
+    fail ActiveRecord::RecordNotFound
+  end
 
   def method_not_allowed
     response.set_header('Allow', 'POST')

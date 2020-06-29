@@ -155,7 +155,13 @@ module Lupo
     else
       config.active_job.queue_adapter = :inline
     end
-    config.active_job.queue_name_prefix = Rails.env
+
+    # use SQS based on environment, use "test" prefix for test system
+    if Rails.env == "stage" 
+      config.active_job.queue_name_prefix = ENV['ES_PREFIX'].present? ? "stage" : "test"
+    else
+      config.active_job.queue_name_prefix = Rails.env
+    end
 
     config.generators do |g|
       g.fixture_replacement :factory_bot

@@ -15,11 +15,11 @@ class OtherConnectionWithTotalType < BaseConnection
   end
 
   def years
-    object.total_count.positive? ? facet_by_year(object.aggregations.years.buckets) : []
+    object.total_count.positive? ? facet_by_range(object.aggregations.years.buckets) : []
   end
 
   def registration_agencies
-    object.total_count.positive? ? facet_by_software(object_id.aggregations.registration_agencies.buckets) : []
+    object.total_count.positive? ? facet_by_registration_agency(object_id.aggregations.registration_agencies.buckets) : []
   end
 
   def repositories

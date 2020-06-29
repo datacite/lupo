@@ -6,7 +6,7 @@ describe FunderType do
 
     it { is_expected.to have_field(:id).of_type(!types.ID) }
     it { is_expected.to have_field(:type).of_type("String!") }
-    it { is_expected.to have_field(:name).of_type("String!") }
+    it { is_expected.to have_field(:name).of_type("String") }
     it { is_expected.to have_field(:alternateName).of_type("[String!]") }
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
@@ -53,11 +53,13 @@ describe FunderType do
               endCursor
               hasNextPage
             }
-            years {
+            published {
+              id
               title
               count
             }
             resourceTypes {
+              id
               title
               count
             }
@@ -83,8 +85,8 @@ describe FunderType do
       expect(response.dig("data", "funder", "works", "totalCount")).to eq(1)
       expect(Base64.urlsafe_decode64(response.dig("data", "funder", "works", "pageInfo", "endCursor")).split(",", 2).last).to eq(doi.uid)
       expect(response.dig("data", "funder", "works", "pageInfo", "hasNextPage")).to be false
-      expect(response.dig("data", "funder", "works", "years")).to eq([{"count"=>1, "title"=>"2011"}])
-      expect(response.dig("data", "funder", "works", "resourceTypes")).to eq([{"count"=>1, "title"=>"Dataset"}])
+      expect(response.dig("data", "funder", "works", "published")).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
+      expect(response.dig("data", "funder", "works", "resourceTypes")).to eq([{"count"=>1, "id"=>"dataset", "title"=>"Dataset"}])
       expect(response.dig("data", "funder", "works", "nodes").length).to eq(1)
 
       work = response.dig("data", "funder", "works", "nodes", 0)
@@ -120,7 +122,8 @@ describe FunderType do
             alternateName
             works {
               totalCount
-              years {
+              published {
+                id
                 title
                 count
               }

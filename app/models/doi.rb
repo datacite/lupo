@@ -101,7 +101,7 @@ class Doi < ActiveRecord::Base
   validates_format_of :doi, with: /\A10\.\d{4,5}\/[-\._;()\/:a-zA-Z0-9\*~\$\=]+\z/, on: :create
   validates_format_of :url, with: /\A(ftp|http|https):\/\/[\S]+/, if: :url?, message: "URL is not valid"
   validates_uniqueness_of :doi, message: "This DOI has already been taken", unless: :only_validate
-  validates_inclusion_of :agency, :in => %w( DataCite Crossref KISTI mEDRA ISTIC JaLC Airiti CNKI OP), allow_blank: true
+  validates_inclusion_of :agency, :in => %w(datacite crossref kisti medra istic jalc airiti cnki op), allow_blank: true
   validates :last_landing_page_status, numericality: { only_integer: true }, if: :last_landing_page_status?
   validates :xml, presence: true, xml_schema: true, if: Proc.new { |doi| doi.validatable? }
   validate :check_dates, if: :dates?
@@ -123,6 +123,7 @@ class Doi < ActiveRecord::Base
   after_commit :update_media, on: [:create, :update]
 
   before_validation :update_xml, if: :regenerate
+  before_validation :update_agency
   before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
@@ -537,34 +538,16 @@ class Doi < ActiveRecord::Base
     {
       resource_types: { terms: { field: 'resource_type_id_and_name', size: 16, min_doc_count: 1 } },
       states: { terms: { field: 'aasm_state', size: 3, min_doc_count: 1 } },
-      years: {
-        # filter: {
-        #   range: {
-        #     "publication_year": {
-        #       "gte": "2000"
-        #     }
-        #   }
-        # },
-        # aggs: {
-        #   published: {
-            date_histogram: {
-              field: 'publication_year',
-              interval: 'year',
-              format: 'year',
-              order: {
-                _key: "desc"
-              },
-              min_doc_count: 1
-            },
-            # aggs: {
-            #   bucket_truncate: {
-            #     bucket_sort: {
-            #       size: 10
-            #     }
-            #   }
-            # }
-        #   }
-        # }
+      published: {
+        date_histogram: {
+          field: 'publication_year',
+          interval: 'year',
+          format: 'year',
+          order: {
+            _key: "desc"
+          },
+          min_doc_count: 1
+        },
       },
       registration_agencies: { terms: { field: 'agency', size: 10, min_doc_count: 1 } },
       created: { date_histogram: { field: 'created', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
@@ -764,11 +747,19 @@ class Doi < ActiveRecord::Base
     end
 
     # Cursor nav uses search_after, this should always be an array of values that match the sort.
-    if options.dig(:page, :cursor)
-      from = 0
-
+    if options.fetch(:page, {}).key?(:cursor)
       # make sure we have a valid cursor
-      search_after = options.dig(:page, :cursor).is_a?(Array) ? options.dig(:page, :cursor) : [1, "1"]
+      cursor = [0, ""]
+      if options.dig(:page, :cursor).is_a?(Array)
+        timestamp, uid = options.dig(:page, :cursor)
+        cursor = [timestamp.to_i, uid.to_s]
+      elsif options.dig(:page, :cursor).is_a?(String)
+        timestamp, uid = options.dig(:page, :cursor).split(",")
+        cursor = [timestamp.to_i, uid.to_s]
+      end
+
+      from = 0
+      search_after = cursor
       sort = [{ created: "asc", uid: "asc" }]
     else
       from = ((options.dig(:page, :number) || 1) - 1) * (options.dig(:page, :size) || 25)
@@ -806,18 +797,20 @@ class Doi < ActiveRecord::Base
     filter << { terms: { "types.resourceType": options[:resource_type].split(",") }} if options[:resource_type].present?
     filter << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
     filter << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
+    filter << { terms: { agency: options[:agency].split(",").map(&:downcase) } } if options[:agency].present?
     filter << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
     filter << { term: { uid: options[:uid] }} if options[:uid].present?
     filter << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
+    filter << { range: { publication_year: { gte: "#{options[:published].split(",").min}||/y", lte: "#{options[:published].split(",").max}||/y", format: "yyyy" }}} if options[:published].present?
     filter << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
     filter << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
     if options[:pid_entity].present?
       filter << { term: { "subjects.subjectScheme": "PidEntity" } }
-      filter << { terms: { "subjects.subject": options[:pid_entity].split(",") } }
+      filter << { terms: { "subjects.subject": options[:pid_entity].split(",").map(&:humanize) } }
     end
     if options[:field_of_science].present?
       filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
-      filter << { term: { "subjects.subject": "FOS: " + options[:field_of_science].humanize } }
+      filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
     end
     filter << { terms: { "right_list.rightsIdentifier" => options[:license].split(",") } } if options[:license].present?
     filter << { term: { source: options[:source] } } if options[:source].present?
@@ -926,7 +919,7 @@ class Doi < ActiveRecord::Base
         results: response.dig("hits", "hits").map { |r| r["_source"] },
         scroll_id: response["_scroll_id"]
       })
-    elsif options.dig(:page, :cursor).present?
+    elsif options.fetch(:page, {}).key?(:cursor)
       __elasticsearch__.search({
         size: options.dig(:page, :size),
         search_after: search_after,
@@ -1775,7 +1768,7 @@ class Doi < ActiveRecord::Base
   # register DOIs in the handle system that have not been registered yet
   # provider europ registers their DOIs in the handle system themselves and are ignored
   def self.set_handle
-    response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:Crossref", page: { size: 1, cursor: [] })
+    response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:crossref", page: { size: 1, cursor: [] })
     Rails.logger.info "#{response.results.total} DOIs found that are not registered in the Handle system."
 
     if response.results.total > 0
@@ -1783,7 +1776,7 @@ class Doi < ActiveRecord::Base
       cursor = []
 
       while response.results.results.length > 0 do
-        response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:Crossref", page: { size: 1000, cursor: cursor })
+        response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:crossref", page: { size: 1000, cursor: cursor })
         break unless response.results.results.length > 0
 
         Rails.logger.info "[Handle] Register #{response.results.results.length} DOIs in the handle system starting with _id #{response.results.to_a.first[:_id]}."
@@ -1923,6 +1916,14 @@ class Doi < ActiveRecord::Base
     self.is_active = (aasm_state == "findable") ? "\x01" : "\x00"
     self.version = version.present? ? version + 1 : 1
     self.updated = Time.zone.now.utc.iso8601
+  end
+
+  def update_agency
+    if agency.blank? || agency.casecmp?("datacite") 
+      self.agency = "datacite"
+    elsif agency.casecmp? ("crossref")
+      self.agency = "crossref"
+    end
   end
 
   def self.repair_landing_page(id: nil)

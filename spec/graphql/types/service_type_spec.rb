@@ -21,6 +21,14 @@ describe ServiceType do
       {
         "subject": "Instrument",
         "subjectScheme": "PidEntity"
+      }],
+      geo_locations: 
+      [{
+        "geoLocationPoint" => {
+          "pointLatitude" => "49.0850736",
+          "pointLongitude" => "-123.3300992"
+        },
+        "geoLocationPlace" => "Munich, Germany"
       }])
     }
 
@@ -29,26 +37,30 @@ describe ServiceType do
       Client.import
       Doi.import
       sleep 3
+      @dois = Doi.query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
     let(:query) do
       %(query {
-        services(pidEntity: "Instrument") {
+        services(pidEntity: "instrument") {
           totalCount
           pageInfo {
             endCursor
             hasNextPage
           }
-          years {
+          published {
             id
+            title
             count
           }
           pidEntities {
             id
+            title
             count
           }
           fieldsOfScience {
             id
+            title
             count
           }
           nodes {
@@ -68,6 +80,13 @@ describe ServiceType do
               description
               descriptionType
             }
+            geolocations {
+              geolocationPlace
+              geolocationPoint {
+                pointLongitude
+                pointLatitude
+              }
+            }
           }
         }
       })
@@ -77,22 +96,26 @@ describe ServiceType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "services", "totalCount")).to eq(3)
-      expect(response.dig("data", "services", "pidEntities")).to eq([{"id"=>"Instrument", "count"=>3}])
-      expect(response.dig("data", "services", "fieldsOfScience")).to eq([{"count"=>3, "id"=>"computer_and_information_sciences"}])
-      expect(Base64.urlsafe_decode64(response.dig("data", "services", "pageInfo", "endCursor")).split(",", 2).last).to eq(services.last.uid)
+      expect(response.dig("data", "services", "pidEntities")).to eq([{"count"=>3, "id"=>"instrument", "title"=>"Instrument"}])
+      expect(response.dig("data", "services", "fieldsOfScience")).to eq([{"count"=>3,
+        "id"=>"computer_and_information_sciences",
+        "title"=>"Computer and information sciences"}])
+      expect(Base64.urlsafe_decode64(response.dig("data", "services", "pageInfo", "endCursor")).split(",", 2).last).to eq(@dois.last.uid)
       expect(response.dig("data", "services", "pageInfo", "hasNextPage")).to be false
-      expect(response.dig("data", "services", "years")).to eq([{"count"=>3, "id"=>"2011"}])
+      expect(response.dig("data", "services", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
       expect(response.dig("data", "services", "nodes").length).to eq(3)
 
       service = response.dig("data", "services", "nodes", 0)
-      expect(service.fetch("id")).to eq(services.first.identifier)
-      expect(service.fetch("doi")).to eq(services.first.doi)
+      expect(service.fetch("id")).to eq(@dois.first.identifier)
+      expect(service.fetch("doi")).to eq(@dois.first.uid)
       expect(service.fetch("identifiers")).to eq([{"identifier"=>
         "Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446.",
         "identifierType"=>nil}])
       expect(service.fetch("types")).to eq("resourceTypeGeneral"=>"Service")
       expect(service.dig("titles", 0, "title")).to eq("Test Service")
       expect(service.dig("descriptions", 0, "description")).to eq("Data from: A new malaria agent in African hominids.")
+      expect(service.dig("geolocations", 0, "geolocationPlace")).to eq("Munich, Germany")
+      expect(service.dig("geolocations", 0, "geolocationPoint")).to eq("pointLatitude"=>49.0850736, "pointLongitude"=>-123.3300992)
     end
   end
 end

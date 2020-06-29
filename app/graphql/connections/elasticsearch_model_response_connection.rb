@@ -153,20 +153,12 @@
       nodes.last && cursor_for(nodes.last)
     end
 
-    # Return a cursor for this item. Depends on default sorting of model
+    # Return a cursor for this item. Depends on default sorting of model.
+    # Taken from Elasticsearch for consistency
     # @param item [Object] one of the passed in {items}, taken from {nodes}
     # @return [String]
     def cursor_for(item)
-      if %w(Doi Client Provider).include?(@model)
-        it = [item.created, item.uid]
-      elsif @model == "Event"
-        it = [item.created_at, item.uuid]
-      elsif @model == "Activity"
-        it = [item.created, item.request_uuid]
-      elsif %w(Prefix ProviderPrefix ClientPrefix).include?(@model)
-        it = [item.created_at, item.uid]
-      end
-      encode(it.join(","))
+      encode(item[:sort].join(","))
     end
 
     private

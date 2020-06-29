@@ -14,6 +14,7 @@ describe InstrumentType do
     before do
       Doi.import
       sleep 2
+      @dois = Doi.query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
     let(:query) do
@@ -32,7 +33,7 @@ describe InstrumentType do
 
       expect(response.dig("data", "instruments", "totalCount")).to eq(3)
       expect(response.dig("data", "instruments", "nodes").length).to eq(3)
-      expect(response.dig("data", "instruments", "nodes", 0, "id")).to eq(instruments.first.identifier)
+      expect(response.dig("data", "instruments", "nodes", 0, "id")).to eq(@dois.first.identifier)
     end
   end
 end
