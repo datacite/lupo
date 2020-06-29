@@ -315,16 +315,39 @@ describe Doi, type: :model, vcr: true do
   describe "rights_list" do
     let(:doi) { build(:doi) }
 
-    it "hash" do
+    it "string" do
+      doi.rights_list = ["Creative Commons Attribution 4.0 International license (CC BY 4.0)"]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.rights_list).to eq([{"rights"=>"Creative Commons Attribution 4.0 International license (CC BY 4.0)"}])
+    end
+
+    it "hash rights" do
       doi.rights_list = [{ "rights" => "Creative Commons Attribution 4.0 International license (CC BY 4.0)" }]
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
+      expect(doi.rights_list).to eq([{"rights"=>"Creative Commons Attribution 4.0 International license (CC BY 4.0)"}])
     end
 
-    it "string" do
-      doi.rights_list = ["Creative Commons Attribution 4.0 International license (CC BY 4.0)"]
-      expect(doi.save).to be false
-      expect(doi.errors.details).to eq(:rights_list => [{:error=>"Rights 'Creative Commons Attribution 4.0 International license (CC BY 4.0)' should be an object instead of a string."}])
+    it "hash rightsIdentifier" do
+      doi.rights_list = [{ "rightsIdentifier" => "CC-BY-4.0" }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.rights_list).to eq([{"rights"=>"Creative Commons Attribution 4.0 International", "rightsUri"=>"https://creativecommons.org/licenses/by/4.0/legalcode", "rightsIdentifier"=>"CC-BY-4.0", "rightsIdentifierScheme"=>"SPDX", "schemeUri"=>"https://spdx.org/licenses/"}])
+    end
+
+    it "hash rightsUri" do
+      doi.rights_list = [{ "rightsURI"=>"https://creativecommons.org/licenses/by/4.0/legalcode" }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.rights_list).to eq([{"rights"=>"Creative Commons Attribution 4.0 International", "rightsUri"=>"https://creativecommons.org/licenses/by/4.0/legalcode", "rightsIdentifier"=>"CC-BY-4.0", "rightsIdentifierScheme"=>"SPDX", "schemeUri"=>"https://spdx.org/licenses/"}])
+    end
+
+    it "hash rightsUri http" do
+      doi.rights_list = [{ "rightsURI"=>"http://creativecommons.org/licenses/by/4.0/" }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.rights_list).to eq([{"rights"=>"Creative Commons Attribution 4.0 International", "rightsUri"=>"https://creativecommons.org/licenses/by/4.0/legalcode", "rightsIdentifier"=>"CC-BY-4.0", "rightsIdentifierScheme"=>"SPDX", "schemeUri"=>"https://spdx.org/licenses/"}])
     end
   end
 

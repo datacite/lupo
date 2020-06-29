@@ -60,6 +60,7 @@ class DoisController < ApplicationController
                           funder_id: params[:funder_id],
                           re3data_id: params[:re3data_id],
                           opendoar_id: params[:opendoar_id],
+                          license: params[:license],
                           certificate: params[:certificate],
                           prefix: params[:prefix],
                           user_id: params[:user_id],
@@ -169,7 +170,8 @@ class DoisController < ApplicationController
         subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
         fields_of_science = total.positive? ? facet_by_fos(response.aggregations.fields_of_science.subject.buckets) : nil
         certificates = total.positive? ? facet_by_key(response.aggregations.certificates.buckets) : nil
-
+        licenses = total.positive? ? facet_by_license(response.aggregations.licenses.buckets) : nil
+        
         link_checks_status = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
         # links_with_schema_org = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
         # link_checks_schema_org_id = total.positive? ? response.aggregations.link_checks_schema_org_id.value : nil
@@ -198,6 +200,7 @@ class DoisController < ApplicationController
               affiliations: affiliations,
               prefixes: prefixes,
               certificates: certificates,
+              licenses: licenses,
               "schemaVersions" => schema_versions,
               # sources: sources,
               "linkChecksStatus" => link_checks_status,
@@ -586,7 +589,7 @@ class DoisController < ApplicationController
       :descriptions,
       { descriptions: [:description, :descriptionType, :lang] },
       :rightsList,
-      { rightsList: [:rights, :rightsUri, :lang] },
+      { rightsList: [:rights, :rightsUri, :rightsIdentifier, :rightsIdentifierScheme, :schemeUri, :lang] },
       :xml,
       :regenerate,
       :source,
