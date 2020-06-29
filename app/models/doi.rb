@@ -1475,7 +1475,16 @@ class Doi < ActiveRecord::Base
   end
 
   def rights_list=(value)
-    write_attribute(:rights_list, Array.wrap(value))
+    rl = Array.wrap(value).map do |r|
+      if r.blank?
+        nil
+      elsif r.is_a?(String)
+        name_to_spdx(r)
+      elsif r.is_a?(Hash)
+        hsh_to_spdx(r)
+      end
+    end.compact
+    write_attribute(:rights_list, rl)
   end
 
   def identifiers=(value)
