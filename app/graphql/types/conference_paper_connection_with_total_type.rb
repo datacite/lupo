@@ -10,6 +10,7 @@ class ConferencePaperConnectionWithTotalType < BaseConnection
   field :repositories, [FacetType], null: true, cache: true
   field :affiliations, [FacetType], null: true, cache: true
   field :fields_of_science, [FacetType], null: true, cache: true
+  field :licenses, [FacetType], null: true, cache: true
 
   def total_count
     object.total_count 
@@ -33,5 +34,9 @@ class ConferencePaperConnectionWithTotalType < BaseConnection
   
   def fields_of_science
     object.total_count.positive? ? facet_by_fos(object.aggregations.fields_of_science.subject.buckets) : []
+  end
+
+  def licenses
+    object.total_count.positive? ? facet_by_software(object.aggregations.licenses.buckets) : []
   end
 end

@@ -203,7 +203,7 @@ FactoryBot.define do
     version { "1" }
     rights_list {[
       {
-        "rightsUri": "http://creativecommons.org/publicdomain/zero/1.0"
+        "rightsUri": "https://creativecommons.org/publicdomain/zero/1.0/legalcode"
       }
     ]}
     related_identifiers {[

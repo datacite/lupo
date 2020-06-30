@@ -6,7 +6,6 @@ class Doi < ActiveRecord::Base
 
   include Metadatable
   include Cacheable
-  include Licensable
   include Dateable
 
   # include helper module for generating random DOI suffixes
@@ -266,6 +265,9 @@ class Doi < ActiveRecord::Base
       indexes :rights_list,                    type: :object, properties: {
         rights: { type: :keyword },
         rightsUri: { type: :keyword },
+        rightsIdentifier: { type: :keyword },
+        rightsIdentifierScheme: { type: :keyword },
+        schemeUri: { type: :keyword },
         lang: { type: :keyword }
       }
       indexes :subjects,                       type: :object, properties: {
@@ -578,6 +580,7 @@ class Doi < ActiveRecord::Base
             include: "FOS:.*" } },
         },
       },
+      licenses: { terms: { field: 'rights_list.rightsIdentifier', size: 10, min_doc_count: 1 } },
       certificates: { terms: { field: 'client.certificate', size: 10, min_doc_count: 1 } },
       views: {
         date_histogram: { field: 'publication_year', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
