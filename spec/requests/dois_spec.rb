@@ -1716,12 +1716,14 @@ describe "dois", type: :request do
         expect(json.dig('data', 'attributes', 'creators')).to eq([{"affiliation"=>[],"familyName"=>"Fenner", "givenName"=>"Martin", "nameIdentifiers"=>[{"nameIdentifier"=>"https://orcid.org/0000-0003-1419-2405","nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}], "name"=>"Fenner, Martin", "nameType"=>"Personal"}])
         expect(json.dig('data', 'attributes', 'publisher')).to eq("DataCite")
         expect(json.dig('data', 'attributes', 'publicationYear')).to eq(2016)
-        # expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-4")
         expect(json.dig('data', 'attributes', 'subjects')).to eq([{"lang"=>"en",
-          "schemeUri"=>
-          "http://www.abs.gov.au/ausstats/abs@.nsf/0/6BB427AB9696C225CA2574180004463E",
           "subject"=>"80505 Web Technologies (excl. Web Search)",
-          "subjectScheme"=>"FOR"}])
+          "subjectScheme"=>"FOR"},
+         {"schemeUri"=>"http://www.oecd.org/science/inno/38235147.pdf",
+          "subject"=>"FOS: Computer and information sciences",
+          "subjectScheme"=>"Fields of Science and Technology (FOS)"},
+         {"subject"=>"FOS: Computer and information sciences",
+          "subjectScheme"=>"Fields of Science and Technology (FOS)"}])
         expect(json.dig('data', 'attributes', 'contributors')).to eq([{"affiliation"=>[],
           "contributorType"=>"DataManager",
           "familyName"=>"Fenner",
@@ -3229,7 +3231,14 @@ describe "dois", type: :request do
       it 'updates the Doi' do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
-        expect(json.dig('data', 'attributes', 'subjects')).to eq(subjects)
+        expect(json.dig('data', 'attributes', 'subjects')).to eq([{"lang" => "en",
+          "subject"=>"80505 Web Technologies (excl. Web Search)",
+          "subjectScheme"=>"FOR"},
+         {"schemeUri"=>"http://www.oecd.org/science/inno/38235147.pdf",
+          "subject"=>"FOS: Computer and information sciences",
+          "subjectScheme"=>"Fields of Science and Technology (FOS)"},
+         {"subject"=>"FOS: Computer and information sciences",
+          "subjectScheme"=>"Fields of Science and Technology (FOS)"}])
       end
     end
 
