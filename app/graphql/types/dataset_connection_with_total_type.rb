@@ -11,6 +11,7 @@ class DatasetConnectionWithTotalType < BaseConnection
   field :affiliations, [FacetType], null: true, cache: true
   field :fields_of_science, [FacetType], null: true, cache: true
   field :licenses, [FacetType], null: true, cache: true
+  field :languages, [FacetType], null: true, cache: true
 
   field :dataset_connection_count, Integer, null: false, cache: true
   field :publication_connection_count, Integer, null: false, cache: true
@@ -69,5 +70,9 @@ class DatasetConnectionWithTotalType < BaseConnection
 
   def fields_of_science
     object.total_count.positive? ? facet_by_fos(object.aggregations.fields_of_science.subject.buckets) : []
+  end
+
+  def languages
+    object.total_count.positive? ? facet_by_language(object.aggregations.languages.buckets) : []
   end
 end

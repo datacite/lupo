@@ -72,6 +72,7 @@ gem 'crawler_detect'
 gem 'lhm', '~> 2.2'
 gem 'kt-paperclip', '~> 6.2', '>= 6.2.2'
 gem 'kaminari', '~> 1.2'
+gem 'iso-639', '~> 0.3.5'
 
 group :development, :test do
   gem "rspec-rails", "~> 3.8", ">= 3.8.2"

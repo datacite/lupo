@@ -12,6 +12,7 @@ class WorkConnectionWithTotalType < BaseConnection
   field :affiliations, [FacetType], null: true, cache: true
   field :fields_of_science, [FacetType], null: true, cache: true
   field :licenses, [FacetType], null: true, cache: true
+  field :languages, [FacetType], null: true, cache: true
 
   def total_count
     object.total_count 
@@ -43,5 +44,9 @@ class WorkConnectionWithTotalType < BaseConnection
 
   def licenses
     object.total_count.positive? ? facet_by_license(object.aggregations.licenses.buckets) : []
+  end
+
+  def languages
+    object.total_count.positive? ? facet_by_language(object.aggregations.languages.buckets) : []
   end
 end

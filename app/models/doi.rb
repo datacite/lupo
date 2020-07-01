@@ -117,6 +117,7 @@ class Doi < ActiveRecord::Base
   validate :check_related_identifiers, if: :related_identifiers?
   validate :check_funding_references, if: :funding_references?
   validate :check_geo_locations, if: :geo_locations?
+  validate :check_language, if: :language?
 
   after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
@@ -582,6 +583,7 @@ class Doi < ActiveRecord::Base
         },
       },
       licenses: { terms: { field: 'rights_list.rightsIdentifier', size: 10, min_doc_count: 1 } },
+      languages: { terms: { field: 'language', size: 10, min_doc_count: 1 } },
       certificates: { terms: { field: 'client.certificate', size: 10, min_doc_count: 1 } },
       views: {
         date_histogram: { field: 'publication_year', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
@@ -799,6 +801,7 @@ class Doi < ActiveRecord::Base
     filter << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
     filter << { terms: { agency: options[:agency].split(",").map(&:downcase) } } if options[:agency].present?
     filter << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
+    filter << { terms: { language: options[:language].to_s.split(",").map(&:downcase) } } if options[:language].present?
     filter << { term: { uid: options[:uid] }} if options[:uid].present?
     filter << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
     filter << { range: { publication_year: { gte: "#{options[:published].split(",").min}||/y", lte: "#{options[:published].split(",").max}||/y", format: "yyyy" }}} if options[:published].present?
@@ -1721,6 +1724,16 @@ class Doi < ActiveRecord::Base
 
   def check_container
     errors.add(:container, "Container '#{container}' should be an object instead of a string.") unless container.is_a?(Hash)
+  end
+
+  def check_language
+    entry = ISO_639.find_by_code(language) || ISO_639.find_by_english_name(language.upcase_first)
+    if entry.present?
+      self.language = entry.alpha2
+    else
+      errors.add(:language, "Language #{language} not found.")
+      self.language = nil
+    end 
   end
 
   # to be used after DOIs were transferred to another DOI RA
