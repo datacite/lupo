@@ -124,7 +124,8 @@ class Doi < ActiveRecord::Base
 
   before_validation :update_xml, if: :regenerate
   before_validation :update_agency
-  before_validation :update_rights_list
+  before_validation :update_language, if: :language?
+  before_validation :update_rights_list, if: :rights_list?
   before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
@@ -1728,12 +1729,7 @@ class Doi < ActiveRecord::Base
 
   def check_language
     entry = ISO_639.find_by_code(language) || ISO_639.find_by_english_name(language.upcase_first)
-    if entry.present?
-      self.language = entry.alpha2
-    else
-      errors.add(:language, "Language #{language} not found.")
-      self.language = nil
-    end 
+    errors.add(:language, "Language #{language} not found.") unless entry.present?
   end
 
   # to be used after DOIs were transferred to another DOI RA
@@ -1927,6 +1923,15 @@ class Doi < ActiveRecord::Base
       self.agency = "datacite"
     elsif agency.casecmp? ("crossref")
       self.agency = "crossref"
+    end
+  end
+
+  def update_language
+    entry = ISO_639.find_by_code(language) || ISO_639.find_by_english_name(language.upcase_first)
+    if entry.present?
+      self.language = entry.alpha2
+    else
+      self.language = nil
     end
   end
 
