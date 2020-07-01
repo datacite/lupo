@@ -28,6 +28,7 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     "cc-by-4.0"       => "CC-BY-4.0",
     "cc-by-nc-4.0"    => "CC-BY-NC-4.0",
     "cc-by-nc-nd-4.0" => "CC-BY-NC-ND-4.0",
+    "cc-by-nc-sa-4.0" => "CC-BY-NC-SA-4.0",
     "cc-pddc"         => "CC-PDDC",
     "cc0-1.0"         => "CC0-1.0",
     "gpl-3.0"         => "GPL-3.0",
