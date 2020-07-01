@@ -34,7 +34,7 @@ class ServiceConnectionWithTotalType < BaseConnection
   end
 
   def pid_entities
-    object.total_count.positive? ? facet_by_license(object.aggregations.pid_entities.subject.buckets) : []
+    object.total_count.positive? ? facet_by_software(object.aggregations.pid_entities.subject.buckets) : []
   end
   
   def fields_of_science
@@ -42,6 +42,6 @@ class ServiceConnectionWithTotalType < BaseConnection
   end
 
   def licenses
-    object.total_count.positive? ? facet_by_software(object.aggregations.licenses.buckets) : []
+    object.total_count.positive? ? facet_by_license(object.aggregations.licenses.buckets) : []
   end
 end

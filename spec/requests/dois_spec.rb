@@ -3169,7 +3169,7 @@ describe "dois", type: :request do
         expect(last_response.status).to eq(200)
         expect(json['data'].size).to eq(1)
         expect(json.dig('data', 0, 'attributes', 'rightsList')).to eq([{"rights"=>"Creative Commons Zero v1.0 Universal",
-          "rightsIdentifier"=>"CC0-1.0",
+          "rightsIdentifier"=>"cc0-1.0",
           "rightsIdentifierScheme"=>"SPDX",
           "rightsUri"=>"https://creativecommons.org/publicdomain/zero/1.0/legalcode",
           "schemeUri"=>"https://spdx.org/licenses/"}])

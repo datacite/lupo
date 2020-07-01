@@ -45,7 +45,7 @@ describe DissertationType do
       puts response
       expect(response.dig("data", "dissertations", "totalCount")).to eq(2)
       expect(response.dig("data", "dissertations", "registrationAgencies")).to eq([{"count"=>2, "id"=>"datacite", "title"=>"DataCite"}])
-      expect(response.dig("data", "dissertations", "licenses")).to eq([{"count"=>2, "id"=>"cc0-1_0", "title"=>"CC0-1.0"}])
+      expect(response.dig("data", "dissertations", "licenses")).to eq([{"count"=>2, "id"=>"cc0-1.0", "title"=>"CC0-1.0"}])
       expect(response.dig("data", "dissertations", "nodes").length).to eq(2)
       # expect(response.dig("data", "dissertations", "nodes", 0, "id")).to eq(@dois.first.identifier)
       # expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("DataCite")
