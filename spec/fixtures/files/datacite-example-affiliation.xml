@@ -43,7 +43,7 @@
   <dates>
     <date dateType="Updated" dateInformation="Updated with 4.2 properties">2017-09-13</date>
   </dates>
-  <language>en-US</language>
+  <language>en</language>
   <resourceType resourceTypeGeneral="Software">XML</resourceType>
   <alternateIdentifiers>
     <alternateIdentifier alternateIdentifierType="URL">https://schema.datacite.org/meta/kernel-4.2/example/datacite-example-full-v4.2.xml</alternateIdentifier>
