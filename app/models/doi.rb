@@ -124,6 +124,7 @@ class Doi < ActiveRecord::Base
 
   before_validation :update_xml, if: :regenerate
   before_validation :update_agency
+  before_validation :update_field_of_science
   before_validation :update_language, if: :language?
   before_validation :update_rights_list, if: :rights_list?
   before_save :set_defaults, :save_metadata
@@ -1933,6 +1934,18 @@ class Doi < ActiveRecord::Base
     else
       self.language = nil
     end
+  end
+
+  def update_field_of_science
+    self.subjects = Array.wrap(subjects).reduce([]) do |sum, subject|
+      if subject.is_a?(String)
+        sum += name_to_fos(subject)
+      elsif subject.is_a?(Hash)
+        sum += hsh_to_fos(subject)
+      end
+
+      sum
+    end.uniq
   end
 
   def update_rights_list

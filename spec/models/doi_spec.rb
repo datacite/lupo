@@ -338,8 +338,8 @@ describe Doi, type: :model, vcr: true do
 
     it "error" do
       doi.language = "hhh"
-      expect(doi.save).to be false
-      expect(doi.errors.details).to eq(:language=>[{:error=>"Language hhh not found."}])
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
       expect(doi.language).to be_nil
     end
 
@@ -396,12 +396,14 @@ describe Doi, type: :model, vcr: true do
       doi.subjects = [{ "subject" => "Tree" }]
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
+      expect(doi.subjects).to eq([{"subject"=>"Tree"}])
     end
 
     it "string" do
       doi.subjects = ["Tree"]
-      expect(doi.save).to be false
-      expect(doi.errors.details).to eq(:subjects=>[{:error=>"Subject 'Tree' should be an object instead of a string."}])
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.subjects).to eq([{"subject"=>"Tree"}])
     end
   end
 
