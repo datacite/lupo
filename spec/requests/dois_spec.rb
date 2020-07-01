@@ -3175,7 +3175,7 @@ describe "dois", type: :request do
           "schemeUri"=>"https://spdx.org/licenses/"}])
         expect(json.dig('meta', 'total')).to eq(1)
         expect(json.dig('meta', 'affiliations')).to eq([{"count"=>1, "id"=>"ror.org/04wxnsj81", "title"=>"DataCite"}])
-        expect(json.dig('meta', 'licenses')).to eq([{"count"=>1, "id"=>"CC0-1.0", "title"=>"CC0-1.0"}])
+        expect(json.dig('meta', 'licenses')).to eq([{"count"=>1, "id"=>"cc0-1.0", "title"=>"CC0-1.0"}])
       end
     end
 

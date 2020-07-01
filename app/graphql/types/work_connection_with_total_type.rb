@@ -42,6 +42,6 @@ class WorkConnectionWithTotalType < BaseConnection
   end
 
   def licenses
-    object.total_count.positive? ? facet_by_software(object.aggregations.licenses.buckets) : []
+    object.total_count.positive? ? facet_by_license(object.aggregations.licenses.buckets) : []
   end
 end

@@ -24,6 +24,16 @@ module Facetable
     "AMER" => "Americas"
   }
 
+  LICENSES = {
+    "cc-by-1.0" => "CC-BY-1.0",
+    "cc-by-2.0" => "CC-BY-2.0",
+    "cc-by-2.5" => "CC-BY-2.5",
+    "cc-by-3.0" => "CC-BY-3.0",
+    "cc-by-4.0" => "CC-BY-4.0",
+    "cc-pddc"   => "CC-PDDC",
+    "cc0-1.0"   => "CC0-1.0"
+  }
+
   included do
     def facet_by_key_as_string(arr)
       arr.map do |hsh|
@@ -107,7 +117,7 @@ module Facetable
     def facet_by_license(arr)
       arr.map do |hsh|
         { "id" => hsh["key"],
-          "title" => hsh["key"],
+          "title" => LICENSES[hsh["key"]] || hsh["key"],
           "count" => hsh["doc_count"] }
       end
     end

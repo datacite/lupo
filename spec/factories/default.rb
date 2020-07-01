@@ -204,7 +204,7 @@ FactoryBot.define do
     rights_list {[
       {
         "rights"=>"Creative Commons Zero v1.0 Universal",
-        "rightsIdentifier"=>"CC0-1.0",
+        "rightsIdentifier"=>"cc0-1.0",
         "rightsIdentifierScheme"=>"SPDX",
         "rightsUri"=>"https://creativecommons.org/publicdomain/zero/1.0/legalcode",
         "schemeUri"=>"https://spdx.org/licenses/"

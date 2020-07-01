@@ -18,6 +18,16 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     "medra" =>    "mEDRA",
     "op" =>       "OP"
   }
+
+  LICENSES = {
+    "cc-by-1.0" => "CC-BY-1.0",
+    "cc-by-2.0" => "CC-BY-2.0",
+    "cc-by-2.5" => "CC-BY-2.5",
+    "cc-by-3.0" => "CC-BY-3.0",
+    "cc-by-4.0" => "CC-BY-4.0",
+    "cc-pddc"   => "CC-PDDC",
+    "cc0-1.0"   => "CC0-1.0"
+  }
   
   def doi_from_url(url)
     if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match?(url)
@@ -61,6 +71,14 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     arr.map do |hsh|
       { "id" => hsh["key"].parameterize(separator: '_'),
         "title" => hsh["key"],
+        "count" => hsh["doc_count"] }
+    end
+  end
+
+  def facet_by_license(arr)
+    arr.map do |hsh|
+      { "id" => hsh["key"],
+        "title" => LICENSES[hsh["key"]] || hsh["key"],
         "count" => hsh["doc_count"] }
     end
   end

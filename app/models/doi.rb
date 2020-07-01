@@ -123,6 +123,7 @@ class Doi < ActiveRecord::Base
 
   before_validation :update_xml, if: :regenerate
   before_validation :update_agency
+  before_validation :update_rights_list
   before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
@@ -265,7 +266,7 @@ class Doi < ActiveRecord::Base
       indexes :rights_list,                    type: :object, properties: {
         rights: { type: :keyword },
         rightsUri: { type: :keyword },
-        rightsIdentifier: { type: :keyword },
+        rightsIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
         rightsIdentifierScheme: { type: :keyword },
         schemeUri: { type: :keyword },
         lang: { type: :keyword }
@@ -811,7 +812,7 @@ class Doi < ActiveRecord::Base
       filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
       filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
     end
-    filter << { terms: { "right_list.rightsIdentifier" => options[:license].split(",") } } if options[:license].present?
+    filter << { terms: { "rights_list.rightsIdentifier" => options[:license].split(",") } } if options[:license].present?
     filter << { term: { source: options[:source] } } if options[:source].present?
     filter << { range: { reference_count: { "gte": options[:has_references].to_i } } } if options[:has_references].present?
     filter << { range: { citation_count: { "gte": options[:has_citations].to_i } } } if options[:has_citations].present?
@@ -1467,16 +1468,7 @@ class Doi < ActiveRecord::Base
   end
 
   def rights_list=(value)
-    rl = Array.wrap(value).map do |r|
-      if r.blank?
-        nil
-      elsif r.is_a?(String)
-        name_to_spdx(r)
-      elsif r.is_a?(Hash)
-        hsh_to_spdx(r)
-      end
-    end.compact
-    write_attribute(:rights_list, rl)
+    write_attribute(:rights_list, Array.wrap(value))
   end
 
   def identifiers=(value)
@@ -1923,6 +1915,18 @@ class Doi < ActiveRecord::Base
     elsif agency.casecmp? ("crossref")
       self.agency = "crossref"
     end
+  end
+
+  def update_rights_list
+    self.rights_list = Array.wrap(rights_list).map do |r|
+      if r.blank?
+        nil
+      elsif r.is_a?(String)
+        name_to_spdx(r)
+      elsif r.is_a?(Hash)
+        hsh_to_spdx(r)
+      end
+    end.compact
   end
 
   def self.repair_landing_page(id: nil)
