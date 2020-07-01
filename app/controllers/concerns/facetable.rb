@@ -25,13 +25,19 @@ module Facetable
   }
 
   LICENSES = {
-    "cc-by-1.0" => "CC-BY-1.0",
-    "cc-by-2.0" => "CC-BY-2.0",
-    "cc-by-2.5" => "CC-BY-2.5",
-    "cc-by-3.0" => "CC-BY-3.0",
-    "cc-by-4.0" => "CC-BY-4.0",
-    "cc-pddc"   => "CC-PDDC",
-    "cc0-1.0"   => "CC0-1.0"
+    "apache-2.0"      => "Apache-2.0",
+    "cc-by-1.0"       => "CC-BY-1.0",
+    "cc-by-2.0"       => "CC-BY-2.0",
+    "cc-by-2.5"       => "CC-BY-2.5",
+    "cc-by-3.0"       => "CC-BY-3.0",
+    "cc-by-4.0"       => "CC-BY-4.0",
+    "cc-by-nc-4.0"    => "CC-BY-NC-4.0",
+    "cc-by-nc-nd-4.0" => "CC-BY-NC-ND-4.0",
+    "cc-pddc"         => "CC-PDDC",
+    "cc0-1.0"         => "CC0-1.0",
+    "gpl-3.0"         => "GPL-3.0",
+    "mit"             => "MIT",
+    "ogl-canada-2.0"  => "OGL-Canada-2.0"
   }
 
   included do
