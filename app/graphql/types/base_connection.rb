@@ -20,6 +20,7 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
   }
 
   LICENSES = {
+    "afl-1.1"         => "AFL-1.1",
     "apache-2.0"      => "Apache-2.0",
     "cc-by-1.0"       => "CC-BY-1.0",
     "cc-by-2.0"       => "CC-BY-2.0",
@@ -32,7 +33,9 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     "cc-pddc"         => "CC-PDDC",
     "cc0-1.0"         => "CC0-1.0",
     "gpl-3.0"         => "GPL-3.0",
+    "isc"             => "ISC",
     "mit"             => "MIT",
+    "mpl-2.0"         => "MPL-2.0",
     "ogl-canada-2.0"  => "OGL-Canada-2.0"
   }
   

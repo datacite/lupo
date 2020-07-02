@@ -1930,7 +1930,7 @@ class Doi < ActiveRecord::Base
   def update_language
     lang = language.to_s.split("-").first
     entry = ISO_639.find_by_code(lang) || ISO_639.find_by_english_name(lang.upcase_first)
-    if entry.present?
+    if entry.present? && entry.alpha2.present?
       self.language = entry.alpha2
     else
       self.language = nil
