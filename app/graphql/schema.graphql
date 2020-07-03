@@ -7025,14 +7025,29 @@ type Rights {
   lang: String
 
   """
-  Any rights information for this resource
+  Any rights information for this resource.
   """
   rights: String
 
   """
-  The URI of the license
+  A short, standardized version of the license name.
+  """
+  rightsIdentifier: String
+
+  """
+  The name of the scheme.
+  """
+  rightsIdentifierScheme: String
+
+  """
+  The URI of the license.
   """
   rightsUri: String
+
+  """
+  The URI of the rightsIdentifierScheme.
+  """
+  schemeUri: String
 }
 
 type Service implements DoiItem {

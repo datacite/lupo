@@ -42,13 +42,13 @@ describe DissertationType do
 
     it "returns all dissertations" do
       response = LupoSchema.execute(query).as_json
-      puts response
+
       expect(response.dig("data", "dissertations", "totalCount")).to eq(2)
       expect(response.dig("data", "dissertations", "registrationAgencies")).to eq([{"count"=>2, "id"=>"datacite", "title"=>"DataCite"}])
       expect(response.dig("data", "dissertations", "licenses")).to eq([{"count"=>2, "id"=>"cc0-1.0", "title"=>"CC0-1.0"}])
       expect(response.dig("data", "dissertations", "nodes").length).to eq(2)
       # expect(response.dig("data", "dissertations", "nodes", 0, "id")).to eq(@dois.first.identifier)
-      # expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("DataCite")
+      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("datacite")
     end
   end
 
@@ -78,6 +78,11 @@ describe DissertationType do
           }
           nodes {
             id
+            rights {
+              rights
+              rightsUri
+              rightsIdentifier
+            }
             registrationAgency
           }
         }
@@ -92,7 +97,10 @@ describe DissertationType do
       expect(response.dig("data", "dissertations", "licenses")).to eq([{"count"=>2, "id"=>"cc0-1.0", "title"=>"CC0-1.0"}])
       expect(response.dig("data", "dissertations", "nodes").length).to eq(2)
       # expect(response.dig("data", "dissertations", "nodes", 0, "id")).to eq(@dois.first.identifier)
-      # expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("DataCite")
+      expect(response.dig("data", "dissertations", "nodes", 0, "rights")).to eq([{"rights"=>"Creative Commons Zero v1.0 Universal",
+        "rightsIdentifier"=>"cc0-1.0",
+        "rightsUri"=>"https://creativecommons.org/publicdomain/zero/1.0/legalcode"}])
+      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("datacite")
     end
   end
 
