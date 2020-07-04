@@ -203,7 +203,7 @@ module DoiItem
 
     { 
       id: object.language,
-      name: la.present? ? la.english_name.split.first : object.language
+      name: la.present? ? la.english_name.split(/\W+/).first : object.language
     }.compact
   end
 
