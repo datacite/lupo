@@ -130,7 +130,7 @@ namespace :doi do
     options = {
       from_id: (ENV["FROM_ID"] || Doi.minimum(:id)).to_i,
       until_id: (ENV["UNTIL_ID"] || Doi.maximum(:id)).to_i,
-      query: "language:* AND !language:??",
+      query: "language:*",
       label: "[SetLanguage]",
       job_name: "UpdateDoiJob",
     }

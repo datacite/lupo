@@ -38,6 +38,20 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     "mpl-2.0"         => "MPL-2.0",
     "ogl-canada-2.0"  => "OGL-Canada-2.0"
   }
+
+  # direct ISO639-1 mapping should be faster and avoids verbose labels
+  # for es, nl, el
+  LANGUAGES = {
+    "de" => "German",
+    "el" => "Greek",
+    "en" => "English",
+    "es" => "Spanish",
+    "fr" => "French",
+    "it" => "Italian",
+    "la" => "Latin",
+    "nl" => "Dutch",
+    "ru" => "Russian"
+  }
   
   def doi_from_url(url)
     if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match?(url)
@@ -139,10 +153,8 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
 
   def facet_by_language(arr)
     arr.map do |hsh|
-      la = ISO_639.find_by_code(hsh["key"])
-      title = la.present? ? la.english_name : hsh["key"]
       { "id" => hsh["key"],
-        "title" => title,
+        "title" => LANGUAGES[hsh["key"]] || hsh["key"],
         "count" => hsh["doc_count"] }
     end
   end
