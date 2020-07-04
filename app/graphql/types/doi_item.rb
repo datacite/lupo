@@ -31,6 +31,7 @@ module DoiItem
   field :publisher, String, null: true, description: "The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource"
   field :subjects, [SubjectType], null: true, description: "Subject, keyword, classification code, or key phrase describing the resource"
   field :dates, [DateType], null: true, description: "Different dates relevant to the work"
+  field :registered, GraphQL::Types::ISO8601DateTime, null: true, description: "DOI registration date"
   field :language, LanguageType, null: true, description: "The primary language of the resource"
   field :identifiers, [IdentifierType], null: true, description: "An identifier or identifiers applied to the resource being registered"
   field :related_identifiers, [RelatedIdentifierType], null: true, description: "Identifiers of related resources. These must be globally unique identifiers"
@@ -207,7 +208,7 @@ module DoiItem
 
   def registration_agency
     return {} unless object.agency.present?
-    
+
     { 
       id: object.agency,
       name: REGISTRATION_AGENCIES[object.agency]

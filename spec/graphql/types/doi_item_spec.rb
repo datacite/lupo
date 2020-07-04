@@ -12,6 +12,7 @@ describe DoiItem do
     it { is_expected.to have_field(:publisher).of_type("String") }
     it { is_expected.to have_field(:subjects).of_type("[Subject!]") }
     it { is_expected.to have_field(:dates).of_type("[Date!]") }
+    it { is_expected.to have_field(:registered).of_type("ISO8601DateTime") }
     it { is_expected.to have_field(:language).of_type("Language") }
     it { is_expected.to have_field(:identifiers).of_type("[Identifier!]") }
     it { is_expected.to have_field(:types).of_type("ResourceType!") }

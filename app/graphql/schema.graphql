@@ -241,6 +241,11 @@ type Audiovisual implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
   registrationAgency: RegistrationAgency
@@ -501,6 +506,11 @@ type Book implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
   registrationAgency: RegistrationAgency
@@ -716,6 +726,11 @@ type BookChapter implements DoiItem {
   References for this DOI
   """
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
 
   """
   The DOI registration agency for the resource
@@ -1021,6 +1036,11 @@ type Collection implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
   registrationAgency: RegistrationAgency
@@ -1278,6 +1298,11 @@ type ConferencePaper implements DoiItem {
   References for this DOI
   """
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
 
   """
   The DOI registration agency for the resource
@@ -1740,6 +1765,11 @@ type DataPaper implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
   registrationAgency: RegistrationAgency
@@ -1998,6 +2028,11 @@ type Dataset implements DoiItem {
   References for this DOI
   """
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
 
   """
   The DOI registration agency for the resource
@@ -2371,6 +2406,11 @@ type Dissertation implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
   registrationAgency: RegistrationAgency
@@ -2635,6 +2675,11 @@ interface DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
   registrationAgency: RegistrationAgency
@@ -2850,6 +2895,11 @@ type Event implements DoiItem {
   References for this DOI
   """
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
 
   """
   The DOI registration agency for the resource
@@ -3095,6 +3145,11 @@ type EventData implements DoiItem {
   References for this DOI
   """
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
 
   """
   The DOI registration agency for the resource
@@ -3463,6 +3518,11 @@ An ISO 8601-encoded date
 scalar ISO8601Date
 
 """
+An ISO 8601-encoded datetime
+"""
+scalar ISO8601DateTime
+
+"""
 Information about identifiers
 """
 type Identifier {
@@ -3607,6 +3667,11 @@ type Image implements DoiItem {
   References for this DOI
   """
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
 
   """
   The DOI registration agency for the resource
@@ -3869,6 +3934,11 @@ type Instrument implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
   registrationAgency: RegistrationAgency
@@ -4126,6 +4196,11 @@ type InteractiveResource implements DoiItem {
   References for this DOI
   """
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
 
   """
   The DOI registration agency for the resource
@@ -4406,6 +4481,11 @@ type JournalArticle implements DoiItem {
   References for this DOI
   """
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
 
   """
   The DOI registration agency for the resource
@@ -4899,6 +4979,11 @@ type Model implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
   registrationAgency: RegistrationAgency
@@ -5274,6 +5359,11 @@ type Other implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
   registrationAgency: RegistrationAgency
@@ -5557,6 +5647,11 @@ type PeerReview implements DoiItem {
   References for this DOI
   """
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
 
   """
   The DOI registration agency for the resource
@@ -5935,6 +6030,11 @@ type PhysicalObject implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
   registrationAgency: RegistrationAgency
@@ -6248,6 +6348,11 @@ type Preprint implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
   registrationAgency: RegistrationAgency
@@ -6507,6 +6612,11 @@ type Publication implements DoiItem {
   References for this DOI
   """
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
 
   """
   The DOI registration agency for the resource
@@ -7212,6 +7322,11 @@ type Service implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
   registrationAgency: RegistrationAgency
@@ -7472,6 +7587,11 @@ type Software implements DoiItem {
   References for this DOI
   """
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
 
   """
   The DOI registration agency for the resource
@@ -7764,6 +7884,11 @@ type Sound implements DoiItem {
   References for this DOI
   """
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
 
   """
   The DOI registration agency for the resource
@@ -8209,6 +8334,11 @@ type Work implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
   registrationAgency: RegistrationAgency
@@ -8469,6 +8599,11 @@ type Workflow implements DoiItem {
   References for this DOI
   """
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
 
   """
   The DOI registration agency for the resource

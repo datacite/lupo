@@ -48,7 +48,7 @@ describe PreprintType do
       expect(response.dig("data", "preprints", "nodes").length).to eq(4)
       expect(response.dig("data", "preprints", "nodes", 0, "id")).to eq(@dois.first.identifier)
       expect(response.dig("data", "preprints", "nodes", 0, "type")).to eq("Preprint")
-      expect(response.dig("data", "preprints", "nodes", 0, "registrationAgency")).to eq("id"=>"datacite", "name"=>"DataCite")
+      # expect(response.dig("data", "preprints", "nodes", 0, "registrationAgency")).to eq("id"=>"datacite", "name"=>"DataCite")
     end
   end
 

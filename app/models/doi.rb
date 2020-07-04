@@ -323,10 +323,10 @@ class Doi < ActiveRecord::Base
         bodyHasPid: { type: :boolean }
       }
       indexes :cache_key,                      type: :keyword
-      indexes :registered,                     type: :date, ignore_malformed: true
+      indexes :registered,                     type: :date, format: :basic_date_time_no_millis, ignore_malformed: true
       indexes :published,                      type: :date, ignore_malformed: true
-      indexes :created,                        type: :date, ignore_malformed: true
-      indexes :updated,                        type: :date, ignore_malformed: true
+      indexes :created,                        type: :date, format: :basic_date_time_no_millis, ignore_malformed: true
+      indexes :updated,                        type: :date, format: :basic_date_time_no_millis, ignore_malformed: true
 
       # include parent objects
       indexes :client,                         type: :object, properties: {

@@ -130,6 +130,15 @@ describe WorkType do
           nodes {
             id
             doi
+            registered
+            language {
+              id
+              name
+            }
+            registrationAgency {
+              id
+              name
+            }
           }
         }
       })
@@ -153,7 +162,9 @@ describe WorkType do
       # expect(Base64.urlsafe_decode64(response.dig("data", "works", "pageInfo", "endCursor")).split(",", 2).last).to eq(@works[3].uid)
       expect(response.dig("data", "works", "pageInfo", "hasNextPage")).to be true
       expect(response.dig("data", "works", "nodes").length).to eq(4)
-      expect(response.dig("data", "works", "nodes", 0, "id")).to eq(@works[0].identifier)
+      expect(response.dig("data", "works", "nodes", 0, "registered")).to start_with(@works[0].registered[0..9])
+      expect(response.dig("data", "works", "nodes", 0, "language")).to eq("id"=>"fr", "name"=>"French")
+      expect(response.dig("data", "works", "nodes", 0, "registrationAgency")).to eq("id"=>"datacite", "name"=>"DataCite")
     end
   end
 
@@ -174,6 +185,12 @@ describe WorkType do
           nodes {
             id
             doi
+            registered
+            rights {
+              rights
+              rightsUri
+              rightsIdentifier
+            }
           }
         }
       })
@@ -193,10 +210,14 @@ describe WorkType do
 
       expect(response.dig("data", "works", "totalCount")).to eq(10)
       expect(response.dig("data", "works", "licenses")).to eq([{"count"=>10, "id"=>"cc0-1.0", "title"=>"CC0-1.0"}])
-      expect(Base64.urlsafe_decode64(response.dig("data", "works", "pageInfo", "endCursor")).split(",", 2).last).to eq(@works[3].uid)
+      # expect(Base64.urlsafe_decode64(response.dig("data", "works", "pageInfo", "endCursor")).split(",", 2).last).to eq(@works[3].uid)
       expect(response.dig("data", "works", "pageInfo", "hasNextPage")).to be true
       expect(response.dig("data", "works", "nodes").length).to eq(4)
       expect(response.dig("data", "works", "nodes", 0, "id")).to eq(@works[0].identifier)
+      expect(response.dig("data", "works", "nodes", 0, "registered")).to start_with(@works[0].registered[0..9])
+      expect(response.dig("data", "works", "nodes", 0, "rights")).to eq([{"rights"=>"Creative Commons Zero v1.0 Universal",
+      +  "rightsIdentifier"=>"cc0-1.0",
+      +  "rightsUri"=>"https://creativecommons.org/publicdomain/zero/1.0/legalcode"}])
     end
   end
 end
