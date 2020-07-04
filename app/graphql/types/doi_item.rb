@@ -225,7 +225,7 @@ module DoiItem
         {
           "id" => name.parameterize(separator: '_'),
           "name" => name }
-      end
+      end.uniq
   end
 
   def creators(**args)
