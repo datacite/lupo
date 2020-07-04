@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe CountryType do
+describe LanguageType do
   describe "fields" do
     subject { described_class }
 

@@ -139,7 +139,7 @@ class MemberType < BaseObject
   def country
     return {} unless object.country_code.present?
     { 
-      code: object.country_code,
+      id: object.country_code,
       name: ISO3166::Country[object.country_code].name
     }.compact
   end

@@ -4,6 +4,18 @@ module DoiItem
   include BaseInterface
   include Bolognese::MetadataUtils
 
+  REGISTRATION_AGENCIES = {
+    "airiti" =>   "Airiti",
+    "cnki" =>     "CNKI",
+    "crossref" => "Crossref",
+    "datacite" => "DataCite",
+    "istic" =>    "ISTIC",
+    "jalc" =>     "JaLC",
+    "kisti" =>    "KISTI",
+    "medra" =>    "mEDRA",
+    "op" =>       "OP"
+  }
+
   description "Information about DOIs"
 
   field :id, ID, null: false, hash_key: "identifier", description: "The persistent identifier for the resource"
@@ -19,7 +31,7 @@ module DoiItem
   field :publisher, String, null: true, description: "The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource"
   field :subjects, [SubjectType], null: true, description: "Subject, keyword, classification code, or key phrase describing the resource"
   field :dates, [DateType], null: true, description: "Different dates relevant to the work"
-  field :language, String, null: true, description: "The primary language of the resource"
+  field :language, LanguageType, null: true, description: "The primary language of the resource"
   field :identifiers, [IdentifierType], null: true, description: "An identifier or identifiers applied to the resource being registered"
   field :related_identifiers, [RelatedIdentifierType], null: true, description: "Identifiers of related resources. These must be globally unique identifiers"
   field :types, ResourceTypeType, null: false, description: "The resource type"
@@ -35,7 +47,7 @@ module DoiItem
   field :url, Url, null: true, description: "The URL registered for the resource"
   field :repository, RepositoryType, null: true,  hash_key: "client", description: "The repository account managing this resource"
   field :member, MemberType, null: true, hash_key: "provider", description: "The member account managing this resource"
-  field :registration_agency, String, hash_key: "agency", null: true, description: "The DOI registration agency for the resource"
+  field :registration_agency, RegistrationAgencyType, hash_key: "agency", null: true, description: "The DOI registration agency for the resource"
   field :formatted_citation, String, null: true, description: "Metadata as formatted citation" do
     argument :style, String, required: false, default_value: "apa"
     argument :locale, String, required: false, default_value: "en-US"
@@ -181,6 +193,25 @@ module DoiItem
 
   def type
     object.types["resourceTypeGeneral"] || "Work"
+  end
+
+  def language
+    return {} unless object.language.present?
+    la = ISO_639.find_by_code(object.language)
+
+    { 
+      id: object.language,
+      name: la.present? ? la.english_name : nil
+    }.compact
+  end
+
+  def registration_agency
+    return {} unless object.agency.present?
+    
+    { 
+      id: object.agency,
+      name: REGISTRATION_AGENCIES[object.agency]
+    }.compact
   end
 
   def creators(**args)

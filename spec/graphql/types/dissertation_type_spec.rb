@@ -34,7 +34,10 @@ describe DissertationType do
           }
           nodes {
             id
-            registrationAgency
+            registrationAgency {
+              id
+              name
+            }
           }
         }
       })
@@ -48,7 +51,7 @@ describe DissertationType do
       expect(response.dig("data", "dissertations", "licenses")).to eq([{"count"=>2, "id"=>"cc0-1.0", "title"=>"CC0-1.0"}])
       expect(response.dig("data", "dissertations", "nodes").length).to eq(2)
       # expect(response.dig("data", "dissertations", "nodes", 0, "id")).to eq(@dois.first.identifier)
-      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("datacite")
+      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("id"=>"datacite", "name"=>"DataCite")
     end
   end
 
@@ -83,7 +86,10 @@ describe DissertationType do
               rightsUri
               rightsIdentifier
             }
-            registrationAgency
+            registrationAgency {
+              id
+              name
+            }
           }
         }
       })
@@ -100,7 +106,7 @@ describe DissertationType do
       expect(response.dig("data", "dissertations", "nodes", 0, "rights")).to eq([{"rights"=>"Creative Commons Zero v1.0 Universal",
         "rightsIdentifier"=>"cc0-1.0",
         "rightsUri"=>"https://creativecommons.org/publicdomain/zero/1.0/legalcode"}])
-      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("datacite")
+      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("id"=>"datacite", "name"=>"DataCite")
     end
   end
 
@@ -130,7 +136,14 @@ describe DissertationType do
           }
           nodes {
             id
-            registrationAgency
+            registrationAgency {
+              id
+              name
+            }
+            language {
+              id
+              name
+            }
           }
         }
       })
@@ -144,7 +157,7 @@ describe DissertationType do
       expect(response.dig("data", "dissertations", "languages")).to eq([{"count"=>2, "id"=>"de", "title"=>"German"}])
       expect(response.dig("data", "dissertations", "nodes").length).to eq(2)
       # expect(response.dig("data", "dissertations", "nodes", 0, "id")).to eq(@dois.first.identifier)
-      # expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("DataCite")
+      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("id"=>"datacite", "name"=>"DataCite")
     end
   end
 
