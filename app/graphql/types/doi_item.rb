@@ -30,6 +30,7 @@ module DoiItem
   field :publication_year, Int, null: true, description: "The year when the data was or will be made publicly available"
   field :publisher, String, null: true, description: "The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource"
   field :subjects, [SubjectType], null: true, description: "Subject, keyword, classification code, or key phrase describing the resource"
+  field :fields_of_science, [FieldOfScienceType], null: true, description: "OECD Fields of Science of the resource"
   field :dates, [DateType], null: true, description: "Different dates relevant to the work"
   field :registered, GraphQL::Types::ISO8601DateTime, null: true, description: "DOI registration date"
   field :language, LanguageType, null: true, description: "The primary language of the resource"
@@ -214,6 +215,17 @@ module DoiItem
       id: object.agency,
       name: REGISTRATION_AGENCIES[object.agency]
     }.compact
+  end
+
+  def fields_of_science
+    Array.wrap(object.subjects)
+      .select { |s| s.subjectScheme == "Fields of Science and Technology (FOS)" }
+      .map do |s|
+        name = s.subject.gsub("FOS: ", "")
+        {
+          "id" => name.parameterize(separator: '_'),
+          "name" => name }
+      end
   end
 
   def creators(**args)

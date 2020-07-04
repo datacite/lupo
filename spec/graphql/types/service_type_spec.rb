@@ -75,7 +75,11 @@ describe ServiceType do
             }
             titles {
               title
-            },
+            }
+            fieldsOfScience {
+              id
+              name
+            }
             descriptions {
               description
               descriptionType
@@ -114,6 +118,8 @@ describe ServiceType do
       expect(service.fetch("types")).to eq("resourceTypeGeneral"=>"Service")
       expect(service.dig("titles", 0, "title")).to eq("Test Service")
       expect(service.dig("descriptions", 0, "description")).to eq("Data from: A new malaria agent in African hominids.")
+      expect(service.dig("fieldsOfScience")).to eq([{"id"=>"computer_and_information_sciences",
+        "name"=>"Computer and information sciences"}])
       expect(service.dig("geolocations", 0, "geolocationPlace")).to eq("Munich, Germany")
       expect(service.dig("geolocations", 0, "geolocationPoint")).to eq("pointLatitude"=>49.0850736, "pointLongitude"=>-123.3300992)
     end

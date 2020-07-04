@@ -161,6 +161,11 @@ type Audiovisual implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -431,6 +436,11 @@ type Book implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -656,6 +666,11 @@ type BookChapter implements DoiItem {
   Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
+
+  """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -971,6 +986,11 @@ type Collection implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -1238,6 +1258,11 @@ type ConferencePaper implements DoiItem {
   Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
+
+  """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -1710,6 +1735,11 @@ type DataPaper implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -1978,6 +2008,11 @@ type Dataset implements DoiItem {
   Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
+
+  """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -2361,6 +2396,11 @@ type Dissertation implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -2635,6 +2675,11 @@ interface DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -2860,6 +2905,11 @@ type Event implements DoiItem {
   Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
+
+  """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -3117,6 +3167,11 @@ type EventData implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -3365,6 +3420,21 @@ type Facet {
   Title
   """
   title: String
+}
+
+"""
+Information about OECD Fields of Science
+"""
+type FieldOfScience {
+  """
+  Fields of Science id
+  """
+  id: ID
+
+  """
+  Fields of Science name
+  """
+  name: String
 }
 
 """
@@ -3644,6 +3714,11 @@ type Image implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -3914,6 +3989,11 @@ type Instrument implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -4181,6 +4261,11 @@ type InteractiveResource implements DoiItem {
   Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
+
+  """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -4476,6 +4561,11 @@ type JournalArticle implements DoiItem {
   Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
+
+  """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -4979,6 +5069,11 @@ type Model implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -5364,6 +5459,11 @@ type Other implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -5657,6 +5757,11 @@ type PeerReview implements DoiItem {
   Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
+
+  """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -6045,6 +6150,11 @@ type PhysicalObject implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -6368,6 +6478,11 @@ type Preprint implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -6637,6 +6752,11 @@ type Publication implements DoiItem {
   Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
+
+  """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -7352,6 +7472,11 @@ type Service implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -7622,6 +7747,11 @@ type Software implements DoiItem {
   Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
+
+  """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -7924,6 +8054,11 @@ type Sound implements DoiItem {
   Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
+
+  """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
 
   """
   Technical format of the resource
@@ -8379,6 +8514,11 @@ type Work implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -8649,6 +8789,11 @@ type Workflow implements DoiItem {
   Downloads by month
   """
   downloadsOverTime: [YearMonthTotal!]
+
+  """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
 
   """
   Technical format of the resource

@@ -162,6 +162,10 @@ describe DatasetType do
           }
           nodes {
             id
+            fieldsOfScience {
+              id
+              name
+            }
           }
         }
       })
@@ -177,6 +181,7 @@ describe DatasetType do
       expect(response.dig("data", "datasets", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(1)
       expect(response.dig("data", "datasets", "nodes", 0, "id")).to eq(dataset.identifier)
+      expect(response.dig("data", "datasets", "nodes", 0, "fieldsOfScience")).to eq([{"id"=>"computer_and_information_sciences", "name"=>"Computer and information sciences"}])
     end
   end
 
