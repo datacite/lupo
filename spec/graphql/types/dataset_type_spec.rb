@@ -27,6 +27,7 @@ describe DatasetType do
           }
           nodes {
             id
+            schemaOrg
           }
         }
       })
@@ -40,6 +41,8 @@ describe DatasetType do
       expect(response.dig("data", "datasets", "pageInfo", "hasNextPage")).to be false
       expect(response.dig("data", "datasets", "nodes").length).to eq(3)
       expect(response.dig("data", "datasets", "nodes", 0, "id")).to eq(@dois.first.identifier)
+      expect(JSON.parse(response.dig("data", "datasets", "nodes", 0, "schemaOrg"))["@context"]).to eq("http://schema.org")
+      expect(JSON.parse(response.dig("data", "datasets", "nodes", 0, "schemaOrg"))["@type"]).to eq("Dataset")
     end
   end
 

@@ -54,6 +54,7 @@ module DoiItem
     argument :locale, String, required: false, default_value: "en-US"
   end
   field :bibtex, String, null: true, description: "Metadata in bibtex format"
+  field :schema_org, GraphQL::Types::JSON, null: true, description: "Metadata in schema.org format"
   field :reference_count, Int, null: true, description: "Total number of references"
   field :citation_count, Int, null: true, description: "Total number of citations"
   field :view_count, Int, null: true, description: "Total number of views"
@@ -202,7 +203,7 @@ module DoiItem
 
     { 
       id: object.language,
-      name: la.present? ? la.english_name : nil
+      name: la.present? ? la.english_name.split.first : object.language
     }.compact
   end
 
@@ -258,6 +259,62 @@ module DoiItem
       year: object.publication_year
     }.compact
     BibTeX::Entry.new(bib).to_s
+  end
+
+  def schema_org
+    hsh = { 
+      "@context" => "http://schema.org",
+      "@type" => object.types.present? ? object.types["schemaOrg"] : nil,
+      "@id" => normalize_doi(object.doi),
+      "identifier" => to_schema_org_identifiers(object.identifiers),
+      "url" => object.url,
+      "additionalType" => object.types.present? ? object.types["resourceType"] : nil,
+      "name" => parse_attributes(object.titles, content: "title", first: true),
+      "author" => to_schema_org_creators(object.creators),
+      "editor" => to_schema_org_contributors(object.contributors),
+      "description" => parse_attributes(object.descriptions, content: "description", first: true),
+      "license" => Array.wrap(object.rights_list).map { |l| l["rightsUri"] }.compact.unwrap,
+      "version" => object.version_info,
+      "keywords" => object.subjects.present? ? Array.wrap(object.subjects).map { |k| parse_attributes(k, content: "subject", first: true) }.join(", ") : nil,
+      "inLanguage" => object.language,
+      "contentSize" => Array.wrap(object.sizes).unwrap,
+      "encodingFormat" => Array.wrap(object.formats).unwrap,
+      "dateCreated" => get_date(object.dates, "Created"),
+      "datePublished" => get_date(object.dates, "Issued"),
+      "dateModified" => get_date(object.dates, "Updated"),
+      "pageStart" => object.container.to_h["firstPage"],
+      "pageEnd" => object.container.to_h["lastPage"],
+      "spatialCoverage" => to_schema_org_spatial_coverage(object.geo_locations),
+      "sameAs" => to_schema_org_relation(related_identifiers: object.related_identifiers, relation_type: "IsIdenticalTo"),
+      "isPartOf" => to_schema_org_relation(related_identifiers: object.related_identifiers, relation_type: "IsPartOf"),
+      "hasPart" => to_schema_org_relation(related_identifiers: object.related_identifiers, relation_type: "HasPart"),
+      "predecessor_of" => to_schema_org_relation(related_identifiers: object.related_identifiers, relation_type: "IsPreviousVersionOf"),
+      "successor_of" => to_schema_org_relation(related_identifiers: object.related_identifiers, relation_type: "IsNewVersionOf"),
+      "citation" => to_schema_org_relation(related_identifiers: object.related_identifiers, relation_type: "References"),
+      "@reverse" => reverse.presence,
+      "contentUrl" => Array.wrap(object.content_url).unwrap,
+      "schemaVersion" => object.schema_version,
+      "periodical" => object.types.present? ? ((object.types["schemaOrg"] != "Dataset") && object.container.present? ? to_schema_org(object.container) : nil) : nil,
+      "includedInDataCatalog" => object.types.present? ? ((object.types["schemaOrg"] == "Dataset") && object.container.present? ? to_schema_org_container(object.container, type: "Dataset") : nil) : nil,
+      "publisher" => object.publisher.present? ? { "@type" => "Organization", "name" => object.publisher } : nil,
+      "funder" => to_schema_org_funder(object.funding_references),
+      "provider" => object.agency.present? ? { "@type" => "Organization", "name" => object.agency } : nil
+    }.compact
+
+    JSON.pretty_generate hsh
+  end
+
+  def reverse
+    { "citation" => Array.wrap(object.related_identifiers).select { |ri| ri["relationType"] == "IsReferencedBy" }.map do |r| 
+      { "@id" => normalize_doi(r["relatedIdentifier"]),
+        "@type" => r["resourceTypeGeneral"] || "ScholarlyArticle",
+        "identifier" => r["relatedIdentifierType"] == "DOI" ? nil : to_identifier(r) }.compact
+      end.unwrap,
+      "isBasedOn" => Array.wrap(object.related_identifiers).select { |ri| ri["relationType"] == "IsSupplementTo" }.map do |r| 
+        { "@id" => normalize_doi(r["relatedIdentifier"]),
+          "@type" => r["resourceTypeGeneral"] || "ScholarlyArticle",
+          "identifier" => r["relatedIdentifierType"] == "DOI" ? nil : to_identifier(r) }.compact
+      end.unwrap }.compact
   end
 
   # defaults to style: apa and locale: en-US

@@ -266,6 +266,11 @@ type Audiovisual implements DoiItem {
   rights: [Rights!]
 
   """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
+
+  """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
@@ -531,6 +536,11 @@ type Book implements DoiItem {
   rights: [Rights!]
 
   """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
+
+  """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
@@ -751,6 +761,11 @@ type BookChapter implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -1061,6 +1076,11 @@ type Collection implements DoiItem {
   rights: [Rights!]
 
   """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
+
+  """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
@@ -1323,6 +1343,11 @@ type ConferencePaper implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -1790,6 +1815,11 @@ type DataPaper implements DoiItem {
   rights: [Rights!]
 
   """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
+
+  """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
@@ -2053,6 +2083,11 @@ type Dataset implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -2431,6 +2466,11 @@ type Dissertation implements DoiItem {
   rights: [Rights!]
 
   """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
+
+  """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
@@ -2700,6 +2740,11 @@ interface DoiItem {
   rights: [Rights!]
 
   """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
+
+  """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
@@ -2920,6 +2965,11 @@ type Event implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -3170,6 +3220,11 @@ type EventData implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -3694,6 +3749,11 @@ type Image implements DoiItem {
   rights: [Rights!]
 
   """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
+
+  """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
@@ -3957,6 +4017,11 @@ type Instrument implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -4223,6 +4288,11 @@ type InteractiveResource implements DoiItem {
   rights: [Rights!]
 
   """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
+
+  """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
@@ -4350,6 +4420,11 @@ type Issn {
   """
   print: String
 }
+
+"""
+Represents untyped JSON
+"""
+scalar JSON
 
 type JournalArticle implements DoiItem {
   """
@@ -4506,6 +4581,11 @@ type JournalArticle implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -5004,6 +5084,11 @@ type Model implements DoiItem {
   rights: [Rights!]
 
   """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
+
+  """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
@@ -5384,6 +5469,11 @@ type Other implements DoiItem {
   rights: [Rights!]
 
   """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
+
+  """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
@@ -5672,6 +5762,11 @@ type PeerReview implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -6055,6 +6150,11 @@ type PhysicalObject implements DoiItem {
   rights: [Rights!]
 
   """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
+
+  """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
@@ -6373,6 +6473,11 @@ type Preprint implements DoiItem {
   rights: [Rights!]
 
   """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
+
+  """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
@@ -6637,6 +6742,11 @@ type Publication implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -7347,6 +7457,11 @@ type Service implements DoiItem {
   rights: [Rights!]
 
   """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
+
+  """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
@@ -7612,6 +7727,11 @@ type Software implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -7909,6 +8029,11 @@ type Sound implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -8359,6 +8484,11 @@ type Work implements DoiItem {
   rights: [Rights!]
 
   """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
+
+  """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
   """
   sizes: [String!]
@@ -8624,6 +8754,11 @@ type Workflow implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
