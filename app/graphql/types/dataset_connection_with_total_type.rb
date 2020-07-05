@@ -25,23 +25,31 @@ class DatasetConnectionWithTotalType < BaseConnection
   end
 
   def published
-    object.total_count.positive? ? facet_by_range(object.aggregations.published.buckets) : []
+    facet_by_range(object.aggregations.published.buckets)
   end
 
   def registration_agencies
-    object.total_count.positive? ? facet_by_registration_agency(object.aggregations.registration_agencies.buckets) : []
+    facet_by_registration_agency(object.aggregations.registration_agencies.buckets)
   end
 
   def repositories
-    object.total_count.positive? ? facet_by_combined_key(object.aggregations.clients.buckets) : []
+    facet_by_combined_key(object.aggregations.clients.buckets)
   end
 
   def affiliations
-    object.total_count.positive? ? facet_by_combined_key(object.aggregations.affiliations.buckets) : []
+    facet_by_combined_key(object.aggregations.affiliations.buckets)
   end
 
   def licenses
-    object.total_count.positive? ? facet_by_license(object.aggregations.licenses.buckets) : []
+    facet_by_license(object.aggregations.licenses.buckets)
+  end
+
+  def fields_of_science
+    facet_by_fos(object.aggregations.fields_of_science.subject.buckets)
+  end
+
+  def languages
+    facet_by_language(object.aggregations.languages.buckets)
   end
 
   def dataset_connection_count
@@ -66,13 +74,5 @@ class DatasetConnectionWithTotalType < BaseConnection
 
   def organization_connection_count
     @organization_connection_count ||= Event.query(nil, citation_type: "Dataset-Organization", page: { number: 1, size: 0 }).results.total
-  end
-
-  def fields_of_science
-    object.total_count.positive? ? facet_by_fos(object.aggregations.fields_of_science.subject.buckets) : []
-  end
-
-  def languages
-    object.total_count.positive? ? facet_by_language(object.aggregations.languages.buckets) : []
   end
 end

@@ -18,30 +18,30 @@ class DissertationConnectionWithTotalType < BaseConnection
   end
 
   def published
-    object.total_count.positive? ? facet_by_range(object.aggregations.published.buckets) : []
+    facet_by_range(object.aggregations.published.buckets)
   end
 
   def registration_agencies
-    object.total_count.positive? ? facet_by_registration_agency(object.aggregations.registration_agencies.buckets) : []
+    facet_by_registration_agency(object.aggregations.registration_agencies.buckets)
   end
 
   def repositories
-    object.total_count.positive? ? facet_by_combined_key(object.aggregations.clients.buckets) : []
+    facet_by_combined_key(object.aggregations.clients.buckets)
   end
 
   def affiliations
-    object.total_count.positive? ? facet_by_combined_key(object.aggregations.affiliations.buckets) : []
+    facet_by_combined_key(object.aggregations.affiliations.buckets)
   end
 
   def fields_of_science
-    object.total_count.positive? ? facet_by_fos(object.aggregations.fields_of_science.subject.buckets) : []
+    facet_by_fos(object.aggregations.fields_of_science.subject.buckets)
   end
 
   def licenses
-    object.total_count.positive? ? facet_by_license(object.aggregations.licenses.buckets) : []
+    facet_by_license(object.aggregations.licenses.buckets)
   end
 
   def languages
-    object.total_count.positive? ? facet_by_language(object.aggregations.languages.buckets) : []
+    facet_by_language(object.aggregations.languages.buckets)
   end
 end

@@ -17,26 +17,26 @@ class MemberConnectionWithTotalType < BaseConnection
   end
 
   def years
-    object.total_count.positive? ? facet_by_year(object.aggregations.years.buckets) : nil
+    facet_by_year(object.aggregations.years.buckets)
   end
 
   def regions
-    object.total_count.positive? ? facet_by_region(object.aggregations.regions.buckets) : nil
+    facet_by_region(object.aggregations.regions.buckets)
   end
 
   def member_types
-    object.total_count.positive? ? facet_by_key(object.aggregations.member_types.buckets) : nil
+    facet_by_key(object.aggregations.member_types.buckets)
   end
 
   def organization_types
-    object.total_count.positive? ? facet_by_key(object.aggregations.organization_types.buckets) : nil
+    facet_by_key(object.aggregations.organization_types.buckets)
   end
 
   def focus_areas
-    object.total_count.positive? ? facet_by_key(object.aggregations.focus_areas.buckets) : nil
+    facet_by_key(object.aggregations.focus_areas.buckets)
   end
 
   def non_profit_statuses
-    object.total_count.positive? ? facet_by_key(object.aggregations.non_profit_statuses.buckets) : nil
+    facet_by_key(object.aggregations.non_profit_statuses.buckets)
   end
 end
