@@ -143,6 +143,7 @@ class RepositoriesController < ApplicationController
     authorize! :create, @client
 
     if @client.save
+      @client.send_welcome_email(responsible_id: current_user.uid)
       options = {}
       options[:is_collection] = false
       options[:params] = { current_ability: current_ability }

@@ -29,11 +29,12 @@ module Mailable
       title = Rails.env.stage? ? "DataCite Fabrica Test" : "DataCite Fabrica"
       subject = "#{title}: New Account"
       account_type = self.class.name == "Provider" ? member_type.humanize : client_type.humanize
-      responsible_id ||= "ADMIN"
+      responsible_id = (responsible_id || "admin").upcase
       text = User.format_message_text(template: "users/welcome.text.erb", title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url)
       html = User.format_message_html(template: "users/welcome.html.erb", title: title, contact_name: name, name: symbol, url: url, reset_url: reset_url)
 
-      response = User.send_message(name: name, email: system_email, subject: subject, text: text, html: html)
+      response = User.send_email_message(name: name, email: system_email, subject: subject, text: text, html: html)
+      
       fields = [
         { title: "Account ID", value: symbol, short: true },
         { title: "Account type", value: account_type, short: true },
@@ -54,7 +55,7 @@ module Mailable
       text = User.format_message_text(template: "users/delete.text.erb", title: title, contact_name: name, name: symbol)
       html = User.format_message_html(template: "users/delete.html.erb", title: title, contact_name: name, name: symbol)
 
-      response = User.send_message(name: name, email: system_email, subject: subject, text: text, html: html)
+      response = User.send_email_message(name: name, email: system_email, subject: subject, text: text, html: html)
 
       fields = [
         { title: "Account ID", value: symbol, short: true },
@@ -73,9 +74,16 @@ module Mailable
     # icon for Slack messages
     SLACK_ICON_URL = "https://github.com/datacite/segugio/blob/master/source/images/fabrica.png"
 
+    class NoOpHTTPClient
+      def self.post uri, params={}
+        Rails.logger.info JSON.parse(params[:payload])
+        OpenStruct.new(body: "ok", status: 200)
+      end
+    end
+
     def format_message_text(template: nil, title: nil, contact_name: nil, name: nil, url: nil, reset_url: nil)
       ActionController::Base.render(
-        assigns: { title: title, contact_name: name, name: name, url: url, reset_url: reset_url },
+        assigns: { title: title, contact_name: contact_name, name: name, url: url, reset_url: reset_url },
         template: template,
         layout: false
       )
@@ -83,7 +91,7 @@ module Mailable
 
     def format_message_html(template: nil, title: nil, contact_name: nil, name: nil, url: nil, reset_url: nil)
       input = ActionController::Base.render(
-        assigns: { title: title, contact_name: name, name: name, url: url, reset_url: reset_url },
+        assigns: { title: title, contact_name: contact_name, name: name, url: url, reset_url: reset_url },
         template: template,
         layout: "application"
       )
@@ -92,8 +100,9 @@ module Mailable
       premailer.to_inline_css
     end
 
-    def send_message(name: nil, email: nil, subject: nil, text: nil, html: nil)
+    def send_email_message(name: nil, email: nil, subject: nil, text: nil, html: nil)
       mg_client = Mailgun::Client.new ENV['MAILGUN_API_KEY']
+      mg_client.enable_test_mode! if Rails.env.test?
       mb_obj = Mailgun::MessageBuilder.new
 
       mb_obj.from(ENV['MG_FROM'], "last" => "DataCite Support")
@@ -118,9 +127,19 @@ module Mailable
         fields: options[:fields]
       }.compact
 
-      notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'],
-                                     username: "Fabrica",
-                                     icon_url: SLACK_ICON_URL
+      # don't send message to Slack API in test and development environments
+      if Rails.env.test? || Rails.env.development?
+        notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'],
+                                       username: "Fabrica",
+                                       icon_url: SLACK_ICON_URL do
+                     http_client NoOpHTTPClient
+                   end
+      else
+        notifier = Slack::Notifier.new ENV['SLACK_WEBHOOK_URL'],
+                                       username: "Fabrica",
+                                       icon_url: SLACK_ICON_URL
+      end
+
       response = notifier.ping attachments: [attachment]
       response.first.body
     rescue Slack::Notifier::APIError => exception
