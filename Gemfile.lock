@@ -187,7 +187,7 @@ GEM
     docopt (0.6.1)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
-    dotenv (2.7.5)
+    dotenv (2.7.6)
     ebnf (1.2.0)
       rdf (~> 3.1)
       sxp (~> 1.1)
@@ -586,7 +586,7 @@ DEPENDENCIES
   bergamasco (~> 0.3.10)
   better_errors
   binding_of_caller
-  bolognese (~> 1.5)
+  bolognese (~> 1.6.12)
   bootsnap (~> 1.4, >= 1.4.4)
   bullet (~> 6.1)
   byebug
