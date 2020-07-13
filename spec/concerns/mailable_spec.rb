@@ -12,27 +12,43 @@ describe "Mailable", type: :model, vcr: true do
     expect(response[:message]).to eq("Queued. Thank you.")
   end
 
+  it "send_welcome_email provider" do
+    response = provider.send_welcome_email(responsible_id: "admin")
+    expect(response[:status]).to eq(200)
+    expect(response[:message]).to eq("Queued. Thank you.")
+  end
+
   it "send_delete_email" do
     response = client.send_delete_email(responsible_id: provider.symbol)
     expect(response[:status]).to eq(200)
     expect(response[:message]).to eq("Queued. Thank you.")
   end
 
-  # it "format_message_text" do
-  #   template = "users/reset.text.erb"
-  #   text = User.format_message_text(template: template, title: title, system_email: client.name, name: client.symbol, url: token)
-  #   line = text.split("\n").first
-  #   expect(line).to eq("Dear #{client.name},")
-  # end
+  it "send_delete_email provider" do
+    response = provider.send_delete_email(responsible_id: "admin")
+    expect(response[:status]).to eq(200)
+    expect(response[:message]).to eq("Queued. Thank you.")
+  end
 
-  # it "format_message_html" do
-  #   template = "users/reset.html.erb"
-  #   html = User.format_message_html(template: template, title: title, system_email: client.name, name: client.symbol, url: token)
-  #   line = html.split("\n")[41]
-  #   expect(line.strip).to eq("<h1 style=\"font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; box-sizing: border-box; margin-top: 0; color: #2F3133; font-size: 19px; font-weight: bold;\" align=\"left\">Dear #{client.name},</h1>")
-  # end
+  it "format_message_text welcome" do
+    template = "users/welcome.text.erb"
+    url = ENV['BRACCO_URL'] + "?jwt=" + token
+    reset_url = ENV['BRACCO_URL'] + "/reset"
+    text = User.format_message_text(template: template, title: title, contact_name: client.name, name: client.symbol, url: url, reset_url: reset_url)
+    line = text.split("\n").first
+    expect(line).to eq("Dear #{client.name},")
+  end
 
-  it "send message" do
+  it "format_message_html welcome" do
+    template = "users/welcome.html.erb"
+    url = ENV['BRACCO_URL'] + "?jwt=" + token
+    reset_url = ENV['BRACCO_URL'] + "/reset"
+    html = User.format_message_html(template: template, title: title, contact_name: client.name, name: client.symbol, url: url, reset_url: reset_url)
+    line = html.split("\n")[41]
+    expect(line.strip).to eq("<h1 style=\"font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; box-sizing: border-box; margin-top: 0; color: #2F3133; font-size: 19px; font-weight: bold;\" align=\"left\">Dear #{client.name},</h1>")
+  end
+
+  it "send email message" do
     text = <<~BODY
       Dear #{client.name},
 
@@ -49,7 +65,7 @@ describe "Mailable", type: :model, vcr: true do
       DataCite Support
     BODY
     subj = title + ": Password Reset Request"
-    response = User.send_message(name: client.name, email: client.system_email, subject: subj, text: text)
+    response = User.send_email_message(name: client.name, email: client.system_email, subject: subj, text: text)
     expect(response[:status]).to eq(200)
     expect(response[:message]).to eq("Queued. Thank you.")
   end
