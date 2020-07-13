@@ -3798,7 +3798,7 @@ describe "dois", type: :request do
       get "/dois/get-dois", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json["dois"].length).to eq(443)
+      expect(json["dois"].length).to eq(444)
       expect(json["dois"].first).to eq("10.5438/0000-00SS")
     end
   end

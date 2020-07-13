@@ -8,11 +8,9 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
       Accept:
       - application/json;charset=UTF-8
-      Accept-Encoding:
-      - gzip,deflate
   response:
     status:
       code: 200
@@ -24,10 +22,8 @@ http_interactions:
       - no-cache, no-store, max-age=0, must-revalidate
       Content-Type:
       - application/json;charset=UTF-8
-      Content-Encoding:
-      - gzip
       Date:
-      - Sun, 24 May 2020 12:31:07 GMT
+      - Mon, 13 Jul 2020 12:13:19 GMT
       Expires:
       - '0'
       Pragma:
@@ -41,13 +37,21 @@ http_interactions:
       Connection:
       - keep-alive
       Set-Cookie:
-      - X-Mapping-fjhppofk=26484D0F5DA32D2D6AF64AA1C9DBBA16; path=/
+      - X-Mapping-fjhppofk=EDEB8B375DA428655747278237992826; path=/
       X-Frame-Options:
       - DENY
     body:
       encoding: ASCII-8BIT
-      string: !binary |-
-        H4sIAAAAAAAAA+1Y227bOBD9FYPPlnUnKT8V2BZdtNgvWOwDLdEya1kSSMqpG/jfd6iLbdmyZKdInxIgQMQ5c+HMITmTV5Qxpa1dkYi14ImVMM3R8hXtWVbBH25IA+w4fuS5gXeco5ztanEsOQBv4QAmOIgil9bwcdtX4FTseW4ZD+oChb5LobRgOQLImu1EdrC6KDrIVyZ/MSOHsBKhb+TfF7Nvi9kJpYpKxrCeV1k2R3uhxEpkQh8AWVarTMRojkqmN/DtwI8Fv77lBzSwMCWhsVDoDZfnUCe26YSRS4jreNTp6aLlvyOZ7Gs95aLb4Gv7l1XIWCTmu5ICdrXRulRL266XF4VM7aF9jiZhjjaF0iA82Thn1oozwXNtGZdNjtv1ibowpbjUosghXpGKvAu7sXEjvfFyg2j8GaHhRpFrwF8wavaN7QWXTQCzr5WGD8l/oQlODCXLvmCE7XlhhKlRqLQVFwnE0CzNUSJUmbGDJfKE/0RL5/jfw2ZNhlaiSCUrN4duy5IrzmRsQJXMHiBjSH0HR57vBWF0vNYfJeSV5lNu7hGyx46Let4nagM65cq1cECo5WMnuOVrXzjC12tefskUr5lhzf7hUKmMH96fn5D/dgF1TmelLNYi46iWXkbYJebl5WWxa9GLuNjZrYayty3JrdQ2sT/P6Ctq2W5ECMZej9bt2vO8vuYtRMh3TDzG4N6LVKuN36TE81wvDCn16APENdY9gokffNykw0xtU462qfH3CVLIYqF5HXq31bG3dc9lnXy01LLioCHFjsnD6fNEr8bfSGVDGoUBjrCDvQcre+LNR2XHKvtj0dQ2NQvmYvm9wq4Z3KjPVNYnUFTXDYMo8CcrW4N9J4ITjt/w2Ayk/06u3iXXdaLTavspVosdyxcsXlTbP5zu9iBR7IQPtO01mLjQvZOPgzRxkNpzBIWFx05pLt+vvhNPbhOS2XmSwPOrHhldQhe7rh+BEeqeNcfbxL7KU/Y/qDQ4t1S5NlU/+//85W0tXVs/m5KAuk6vk2uWbho5d4pVHSUgni0/vBQyuUurZrMtCjg0Yflkzhynn3BycpZB0iB1xqh8ZPCOPEKo6f2IM2xkvG88qWMyfSn2fb3jwEOdKLJwRAcHnkvhEwPPZ2jh/oIW7g9cjOciWPpQ1v+9EfrvaoX6si6y7Y/6Ar2S3pmGUqE31aqegzq9K5eSZ8zEpjaiBEXFs/Wbxv0hQtow8EakP/c3S8/PR4OEP47rlIApcnT8H6WhxmzTEwAA
+      string: '{"last-modified-date":{"value":1584600392142},"name":{"created-date":{"value":1460764991842},"last-modified-date":{"value":1460764991842},"given-names":{"value":"Kristian"},"family-name":{"value":"Garza"},"credit-name":{"value":"K.
+        J. Garza"},"source":null,"visibility":"public","path":"0000-0003-3484-6875"},"other-names":{"last-modified-date":{"value":1405917710280},"other-name":[{"created-date":{"value":1405917710280},"last-modified-date":{"value":1405917710280},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-3484-6875","path":"0000-0003-3484-6875","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"K.
+        J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"content":"Kristian
+        Javier Garza Gutierrez","visibility":"public","path":"/0000-0003-3484-6875/other-names/225968","put-code":225968,"display-index":0}],"path":"/0000-0003-3484-6875/other-names"},"biography":null,"researcher-urls":{"last-modified-date":{"value":1583069232459},"researcher-url":[{"created-date":{"value":1583069232459},"last-modified-date":{"value":1583069232459},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0001-6478-3604","path":"0000-0001-6478-3604","host":"orcid.org"},"source-name":{"value":"Elsevier
+        - Mendeley"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"url-name":"Mendeley
+        profile","url":{"value":"https://www.mendeley.com/profiles/kristian-g/"},"visibility":"public","path":"/0000-0003-3484-6875/researcher-urls/1977662","put-code":1977662,"display-index":0}],"path":"/0000-0003-3484-6875/researcher-urls"},"emails":{"last-modified-date":{"value":1584600392142},"email":[{"created-date":{"value":1472212558828},"last-modified-date":{"value":1584600276734},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-3484-6875","path":"0000-0003-3484-6875","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"K.
+        J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"email":"kgarza@datacite.org","path":null,"visibility":"public","verified":true,"primary":true,"put-code":null},{"created-date":{"value":1458954696062},"last-modified-date":{"value":1584600392142},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-3484-6875","path":"0000-0003-3484-6875","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"K.
+        J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"email":"kj.garza@gmail.com","path":null,"visibility":"public","verified":true,"primary":false,"put-code":null},{"created-date":{"value":1379601154943},"last-modified-date":{"value":1379603095886},"source":{"source-orcid":null,"source-client-id":null,"source-name":null,"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"email":"garzaguk@cs.man.ac.uk","path":null,"visibility":"public","verified":true,"primary":false,"put-code":null},{"created-date":{"value":1458954686052},"last-modified-date":{"value":1458954716077},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-3484-6875","path":"0000-0003-3484-6875","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"K.
+        J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"email":"k.garza@manchester.ac.uk","path":null,"visibility":"public","verified":true,"primary":false,"put-code":null}],"path":"/0000-0003-3484-6875/email"},"addresses":{"last-modified-date":{"value":1516113934881},"address":[{"created-date":{"value":1516113934881},"last-modified-date":{"value":1516113934881},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-3484-6875","path":"0000-0003-3484-6875","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"K.
+        J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"country":{"value":"DE"},"visibility":"public","path":"/0000-0003-3484-6875/address/874810","put-code":874810,"display-index":1}],"path":"/0000-0003-3484-6875/address"},"keywords":{"last-modified-date":null,"keyword":[],"path":"/0000-0003-3484-6875/keywords"},"external-identifiers":{"last-modified-date":{"value":1492778212570},"external-identifier":[{"created-date":{"value":1492778212567},"last-modified-date":{"value":1492778212570},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0001-8099-6984","path":"0000-0001-8099-6984","host":"orcid.org"},"source-name":{"value":"DataCite"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"external-id-type":"GitHub","external-id-value":"kjgarza","external-id-url":{"value":"https://github.com/kjgarza"},"external-id-relationship":"self","visibility":"public","path":"/0000-0003-3484-6875/external-identifiers/692978","put-code":692978,"display-index":0}],"path":"/0000-0003-3484-6875/external-identifiers"},"path":"/0000-0003-3484-6875/person"}'
     http_version: null
-  recorded_at: Sun, 24 May 2020 12:31:07 GMT
+  recorded_at: Mon, 13 Jul 2020 12:13:19 GMT
 recorded_with: VCR 5.1.0

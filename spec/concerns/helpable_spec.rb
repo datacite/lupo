@@ -94,7 +94,7 @@ describe Doi, vcr: true do
       response = subject.get_url
 
       expect(response.body.dig("data", "responseCode")).to eq(1)
-      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/"}, "ttl"=>86400, "timestamp"=>"2020-03-28T05:08:49Z"}])
+      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/"}, "ttl"=>86400, "timestamp"=>"2020-07-13T12:30:17Z"}])
     end
 
     context "https to http" do
@@ -131,7 +131,7 @@ describe Doi, vcr: true do
       response = subject.get_url
 
       expect(response.body.dig("data", "responseCode")).to eq(1)
-      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-science-europe/"}, "ttl"=>86400, "timestamp"=>"2020-03-28T05:08:50Z"}])
+      expect(response.body.dig("data", "values")).to eq([{"index"=>1, "type"=>"URL", "data"=>{"format"=>"string", "value"=>"https://blog.datacite.org/re3data-science-europe/"}, "ttl"=>86400, "timestamp"=>"2020-07-13T12:30:17Z"}])
     end
 
     it 'draft doi' do
@@ -157,7 +157,7 @@ describe Doi, vcr: true do
     it 'should get dois' do
       options = { prefix: "10.5438", username: client.symbol, password: client.password, role_id: "client_admin" }
       dois = Doi.get_dois(options)
-      expect(dois.length).to eq(443)
+      expect(dois.length).to eq(444)
       expect(dois.first).to eq("10.5438/0000-00SS")
     end
 

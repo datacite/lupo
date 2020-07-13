@@ -142,9 +142,9 @@ describe FunderType do
       expect(response.dig("data", "funders", "nodes").length).to eq(2)
       
       funder = response.dig("data", "funders", "nodes", 0)
-      expect(funder.fetch("id")).to eq("https://doi.org/10.13039/501100009053")
-      expect(funder.fetch("name")).to eq("The Wellcome Trust DBT India Alliance")
-      expect(funder.fetch("alternateName")).to eq(["India Alliance", "WTDBT India Alliance", "Wellcome Trust/DBT India Alliance", "Wellcome Trust DBt India Alliance"])
+      expect(funder.fetch("id")).to eq("https://doi.org/10.13039/100010269")
+      expect(funder.fetch("name")).to eq("Wellcome Trust")
+      expect(funder.fetch("alternateName")).to eq(["The Wellcome Trust", "WT", "Wellcome"])
       # expect(funder.dig("works", "totalCount")).to eq(3)
       # expect(funder.dig("works", "years")).to eq([{"count"=>3, "title"=>"2011"}])
     end
@@ -174,16 +174,16 @@ describe FunderType do
     it "returns funder information" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "funders", "totalCount")).to eq(1100)
+      expect(response.dig("data", "funders", "totalCount")).to eq(1144)
       expect(response.dig("data", "funders", "pageInfo", "endCursor")).to eq("OQ")
       expect(response.dig("data", "funders", "pageInfo", "hasNextPage")).to eq(true)
       expect(response.dig("data", "funders", "nodes").length).to eq(10)
       
       funder = response.dig("data", "funders", "nodes", 0)
-      expect(funder.fetch("id")).to eq("https://doi.org/10.13039/100008725")
-      expect(funder.fetch("name")).to eq("Agencia Nacional de Investigación e Innovación")
-      expect(funder.fetch("alternateName")).to eq(["ANII", "Agência Nacional para a Investigação e Inovação", "National Agency for Research and Innovation"])
-      expect(funder.dig("address", "country")).to eq("Uruguay") 
+      expect(funder.fetch("id")).to eq("https://doi.org/10.13039/100014368")
+      expect(funder.fetch("name")).to eq("National Sporting Library and Museum")
+      expect(funder.fetch("alternateName")).to eq(["NSLM", "National Sporting Library & Museum"])
+      expect(funder.dig("address", "country")).to eq("United States") 
     end
   end
 end

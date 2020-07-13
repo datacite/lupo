@@ -32,7 +32,7 @@ describe Funder, type: :model, vcr: true do
     it "found all" do
       query = nil
       funders = Funder.query(query)
-      expect(funders.dig(:meta, "total")).to eq(22357)
+      expect(funders.dig(:meta, "total")).to eq(24413)
       expect(funders.dig(:data).size).to eq(25)
       funder = funders[:data].first
       expect(funder.id).to eq("https://doi.org/10.13039/501100010742")
@@ -44,7 +44,7 @@ describe Funder, type: :model, vcr: true do
     it "found all paginate" do
       query = nil
       funders = Funder.query(query, offset: 2, limit: 3)
-      expect(funders.dig(:meta, "total")).to eq(23411)
+      expect(funders.dig(:meta, "total")).to eq(24413)
       expect(funders.dig(:data).size).to eq(3)
       funder = funders[:data].first
       expect(funder.id).to eq("https://doi.org/10.13039/501100004246")
@@ -61,7 +61,7 @@ describe Funder, type: :model, vcr: true do
       funder = funders[:data].first
       expect(funder.id).to eq("https://doi.org/10.13039/100004875")
       expect(funder.name).to eq("Massachusetts Department of Fish and Game")
-      expect(funder.alternate_name).to eq(["Department of Fish and Game", "DFG", "MassDFG"])
+      expect(funder.alternate_name).to eq(["Massachusetts Fish & Game Department", "Department of Fish and Game", "DFG", "The Department of Fish and Game", "MassDFG"])
       expect(funder.country).to eq("code"=>"US", "name"=>"United States")
     end
 

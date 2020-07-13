@@ -8,11 +8,9 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-      Accept-Encoding:
-      - gzip,deflate
   response:
     status:
       code: 200
@@ -27,11 +25,11 @@ http_interactions:
       Access-Control-Allow-Headers:
       - X-Requested-With
       Content-Length:
-      - '1099'
+      - '1269'
       Server:
       - http-kit
       Date:
-      - Mon, 11 May 2020 07:42:14 GMT
+      - Mon, 13 Jul 2020 12:18:42 GMT
       X-Rate-Limit-Limit:
       - '50'
       X-Rate-Limit-Interval:
@@ -41,10 +39,11 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"status":"ok","message-type":"funder-list","message-version":"1.0.0","message":{"items-per-page":25,"query":{"start-index":0,"search-terms":"dfg"},"total-results":3,"items":[{"id":"100004875","location":"United
-        States","name":"Massachusetts Department of Fish and Game","alt-names":["Department
-        of Fish and Game","DFG","MassDFG"],"uri":"http:\/\/dx.doi.org\/10.13039\/100004875","replaces":[],"replaced-by":[],"tokens":["massachusetts","department","of","fish","and","game","department","of","fish","and","game","dfg","massdfg"]},{"id":"100004807","location":"United
+        States","name":"Massachusetts Department of Fish and Game","alt-names":["Massachusetts
+        Fish & Game Department","Department of Fish and Game","DFG","The Department
+        of Fish and Game","MassDFG"],"uri":"http:\/\/dx.doi.org\/10.13039\/100004875","replaces":[],"replaced-by":[],"tokens":["massachusetts","department","of","fish","and","game","massachusetts","fish","&","and","game","department","department","of","fish","and","game","dfg","the","department","of","fish","and","game","massdfg"]},{"id":"100004807","location":"United
         States","name":"California Department of Fish and Game","alt-names":["DFG"],"uri":"http:\/\/dx.doi.org\/10.13039\/100004807","replaces":[],"replaced-by":[],"tokens":["california","department","of","fish","and","game","dfg"]},{"id":"501100001659","location":"Germany","name":"Deutsche
         Forschungsgemeinschaft","alt-names":["German Research Association","DFG"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100001659","replaces":[],"replaced-by":[],"tokens":["deutsche","forschungsgemeinschaft","german","research","association","dfg"]}]}}'
     http_version: null
-  recorded_at: Mon, 11 May 2020 07:42:15 GMT
+  recorded_at: Mon, 13 Jul 2020 12:18:42 GMT
 recorded_with: VCR 5.1.0
