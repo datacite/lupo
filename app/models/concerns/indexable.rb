@@ -7,7 +7,7 @@ module Indexable
     after_commit on: [:create, :update] do
       # use index_document instead of update_document to also update virtual attributes
       IndexJob.perform_later(self)
-      if self.class.name == "Doi"
+      if self.class.name == "Doi" && (saved_change_to_attribute?("related_identifiers") || saved_change_to_attribute?("creators") || saved_change_to_attribute?("funding_references"))
         send_import_message(self.to_jsonapi) if aasm_state == "findable" && !Rails.env.test? && !%w(crossref.citations medra.citations jalc.citations kisti.citations op.citations).include?(client.symbol.downcase)
       # reindex prefix, not triggered by standard callbacks
       elsif ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
