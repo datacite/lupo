@@ -176,7 +176,7 @@ describe OrganizationType do
       expect(organization.fetch("id")).to eq("https://ror.org/013meh722")
       expect(organization.fetch("name")).to eq("University of Cambridge")
       expect(organization.fetch("alternateName")).to eq(["Cambridge University"])
-      expect(organization.fetch("identifiers").length).to eq(39)
+      expect(organization.fetch("identifiers").length).to eq(38)
       expect(organization.fetch("identifiers").last).to eq("identifier"=>"http://en.wikipedia.org/wiki/University_of_Cambridge", "identifierType"=>"wikipedia")
 
       expect(organization.dig("works", "totalCount")).to eq(1)

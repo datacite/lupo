@@ -17,7 +17,7 @@ gem "diffy", "~> 3.2", ">= 3.2.1"
 gem "commonmarker", "~> 0.17.9"
 gem "iso8601", "~> 0.9.0"
 gem "maremma", "~> 4.7.1"
-gem 'bolognese', '~> 1.6.12'
+gem 'bolognese', '~> 1.8'
 gem "dalli", "~> 2.7", ">= 2.7.6"
 gem "lograge", "~> 0.11.2"
 gem "logstash-event", "~> 1.2", ">= 1.2.02"

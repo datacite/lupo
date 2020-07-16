@@ -544,6 +544,13 @@ class DoisController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
 
+    # alternateIdentifiers as alias for identifiers
+    # easier before strong_parameters are checked
+    params[:data][:attributes][:identifiers] = Array.wrap(params.dig(:data, :attributes, :alternateIdentifiers)).map do |a|
+      { identifier: a[:alternateIdentifier],
+        identifierType: a[:alternateIdentifierType] }
+    end if params.dig(:data, :attributes).present? && params.dig(:data, :attributes, :identifiers).blank?
+
     attributes = [
       :doi,
       :confirmDoi,
@@ -688,7 +695,7 @@ class DoisController < ApplicationController
 
     read_attrs_keys = [:url, :creators, :contributors, :titles, :publisher,
       :publicationYear, :types, :descriptions, :container, :sizes,
-      :formats, :language, :dates, :identifiers, :alternateIdentifiers, :relatedIdentifiers,
+      :formats, :language, :dates, :identifiers, :relatedIdentifiers,
       :fundingReferences, :geoLocations, :rightsList, :agency,
       :subjects, :contentUrl, :schemaVersion]
 
@@ -697,11 +704,6 @@ class DoisController < ApplicationController
     read_attrs_keys.each do |attr|
       p.merge!(attr.to_s.underscore => p[attr] || meta[attr.to_s.underscore] || p[attr]) if p.has_key?(attr) || meta.has_key?(attr.to_s.underscore)
     end
-
-    # handle alternate_identifiers
-    p[:identifiers] = Array.wrap(p[:alternate_identifiers]).map do |a|
-      { "identifierType" => a["alternateIdentifierType"], "identifier" => a["alternateIdentifier"] }
-    end.compact
 
     # handle version metadata
     p[:version_info] = p[:version] || meta["version_info"] if p.has_key?(:version) || meta["version_info"].present?
@@ -712,8 +714,8 @@ class DoisController < ApplicationController
     p.merge(
       regenerate: p[:regenerate] || regenerate
     ).except(
-      # ignore camelCase keys, read-only keys and alternate_identifiers
-      :confirmDoi, :prefix, :suffix, :publicationYear, :alternateIdentifiers, :alternate_identifiers,
+      # ignore camelCase keys, and read-only keys
+      :confirmDoi, :prefix, :suffix, :publicationYear, :alternateIdentifiers,
       :rightsList, :relatedIdentifiers, :fundingReferences, :geoLocations,
       :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage,
       :created, :registered, :updated, :published, :lastLandingPage, :version,

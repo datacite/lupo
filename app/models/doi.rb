@@ -127,6 +127,7 @@ class Doi < ActiveRecord::Base
   before_validation :update_field_of_science
   before_validation :update_language, if: :language?
   before_validation :update_rights_list, if: :rights_list?
+  before_validation :update_identifiers
   before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
@@ -1695,6 +1696,7 @@ class Doi < ActiveRecord::Base
   def check_identifiers
     Array.wrap(identifiers).each do |i|
       errors.add(:identifiers, "Identifier '#{i}' should be an object instead of a string.") unless i.is_a?(Hash)
+      errors.add(:identifiers, "IdentifierType DOI not supported in identifiers property. Use id or related identifier.") if i["identifierType"] == "DOI"
     end
   end
 
@@ -1959,6 +1961,10 @@ class Doi < ActiveRecord::Base
         hsh_to_spdx(r)
       end
     end.compact
+  end
+
+  def update_identifiers
+    self.identifiers = Array.wrap(identifiers).select { |i| i["identifierType"] != "DOI" }
   end
 
   def self.repair_landing_page(id: nil)
