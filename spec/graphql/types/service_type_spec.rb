@@ -112,9 +112,7 @@ describe ServiceType do
       service = response.dig("data", "services", "nodes", 0)
       expect(service.fetch("id")).to eq(@dois.first.identifier)
       expect(service.fetch("doi")).to eq(@dois.first.uid)
-      expect(service.fetch("identifiers")).to eq([{"identifier"=>
-        "Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446.",
-        "identifierType"=>nil}])
+      expect(service.fetch("identifiers")).to eq([{"identifier"=>"pk-1234", "identifierType"=>"publisher ID"}])
       expect(service.fetch("types")).to eq("resourceTypeGeneral"=>"Service")
       expect(service.dig("titles", 0, "title")).to eq("Test Service")
       expect(service.dig("descriptions", 0, "description")).to eq("Data from: A new malaria agent in African hominids.")

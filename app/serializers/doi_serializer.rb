@@ -69,7 +69,7 @@ class DoiSerializer
   end
 
   attribute :identifiers do |object|
-    Array.wrap(object.identifiers)
+    Array.wrap(object.identifiers).select { |r| r["identifierType"] != "DOI" }
   end
 
   attribute :alternate_identifiers, if: Proc.new { |object, params| params && params[:detail] } do |object|

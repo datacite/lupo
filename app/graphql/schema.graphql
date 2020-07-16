@@ -3654,12 +3654,12 @@ type Identifier {
   """
   The value of the identifier.
   """
-  identifier: String
+  identifier: String!
 
   """
   The type of identifier.
   """
-  identifierType: String
+  identifierType: String!
 }
 
 type Image implements DoiItem {
@@ -7092,12 +7092,12 @@ type RelatedIdentifier {
   """
   Related identifier
   """
-  relatedIdentifier: String
+  relatedIdentifier: String!
 
   """
   Related identifier type
   """
-  relatedIdentifierType: String
+  relatedIdentifierType: String!
 
   """
   Related metadata scheme
@@ -7107,7 +7107,7 @@ type RelatedIdentifier {
   """
   Relation type
   """
-  relationType: String
+  relationType: String!
 
   """
   Resource type general

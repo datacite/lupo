@@ -465,6 +465,51 @@ describe Doi, type: :model, vcr: true do
     # end
   end
 
+  describe "identifiers" do
+    it "publisher id" do
+      subject = build(:doi, identifiers: [{
+        "identifierType": "publisher ID",
+        "identifier": "pk-1234",
+      }])
+      expect(subject).to be_valid
+      expect(subject.identifiers).to eq([{"identifier"=>"pk-1234", "identifierType"=>"publisher ID"}])
+    end
+
+    it "string" do
+      subject = build(:doi, identifiers: ["pk-1234"])
+      expect(subject).to_not be_valid
+      expect(subject.errors.messages).to eq(:identifiers=>["Identifier 'pk-1234' should be an object instead of a string."])
+    end
+
+    it "doi" do
+      subject = build(:doi, identifiers: [{
+        "identifierType": "DOI",
+        "identifier": "10.4224/abc",
+      }])
+      expect(subject).to be_valid
+      expect(subject.errors.messages).to be_empty
+      expect(subject.identifiers).to be_empty
+    end
+  end
+
+  # describe "related_identifiers" do
+  #   it "has part" do
+  #     subject = build(:doi, related_identifiers: [      {
+  #       "relatedIdentifier": "10.5061/dryad.8515/1",
+  #       "relatedIdentifierType": "DOI",
+  #       "relationType": "HasPart",
+  #     }])
+  #     expect(subject).to be_valid
+  #     expect(subject.related_identifiers).to eq([{"relatedIdentifier"=>"10.5061/dryad.8515/1", "relatedIdentifierType"=>"DOI", "relationType"=>"HasPart"}])
+  #   end
+
+  #   it "string" do
+  #     subject = build(:doi, related_identifiers: ["10.5061/dryad.8515/1"])
+  #     expect(subject).to_not be_valid
+  #     expect(subject.errors.messages).to eq(:related_identifiers=>["Related identifier '10.5061/dryad.8515/1' should be an object instead of a string."])
+  #   end
+  # end
+
   describe "metadata" do
     subject  { create(:doi) }
 

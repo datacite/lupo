@@ -98,7 +98,7 @@ describe FunderType do
   describe "query funders", elasticsearch: true, vcr: true do
     let!(:dois) { create_list(:doi, 3, funding_references:
       [{
-        "funderIdentifier" => "https://doi.org/10.13039/501100009053",
+        "funderIdentifier" => "https://doi.org/10.13039/100010269",
         "funderIdentifierType" => "DOI",
       }])
     }

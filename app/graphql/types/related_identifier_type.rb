@@ -3,9 +3,9 @@
 class RelatedIdentifierType < BaseObject
   description "Information about related identifiers"
 
-  field :related_identifier, String, null: true, hash_key: "relatedIdentifier", description: "Related identifier"
-  field :related_identifier_type, String, null: true, hash_key: "relatedIdentifierType", description: "Related identifier type"
-  field :relation_type, String, null: true, hash_key: "relationType", description: "Relation type"
+  field :related_identifier, String, null: false, hash_key: "relatedIdentifier", description: "Related identifier"
+  field :related_identifier_type, String, null: false, hash_key: "relatedIdentifierType", description: "Related identifier type"
+  field :relation_type, String, null: false, hash_key: "relationType", description: "Relation type"
   field :related_metadata_scheme, String, null: true, hash_key: "relatedMetadataScheme", description: "Related metadata scheme"
   field :scheme_uri, String, null: true, hash_key: "schemeUri", description: "Scheme URI"
   field :scheme_type, String, null: true, hash_key: "schemeType", description: "Scheme type"

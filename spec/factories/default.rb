@@ -195,8 +195,8 @@ FactoryBot.define do
     identifiers do
       [
         {
-          "identifierType": "citation",
-          "identifier": "Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446.",
+          "identifierType": "publisher ID",
+          "identifier": "pk-1234",
         },
       ]
     end
