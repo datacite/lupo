@@ -98,6 +98,10 @@ class DoiSerializer
     Array.wrap(object.sizes)
   end
 
+  attribute :descriptions do |object|
+    Array.wrap(object.descriptions)
+  end
+
   attribute :formats do |object|
     Array.wrap(object.formats)
   end
