@@ -1904,6 +1904,7 @@ class Doi < ActiveRecord::Base
         ids = response.results.results.map(&:uid)
         ids.each do |id|
           Object.const_get(job_name).perform_later(id, options)
+          sleep 0.1
         end
       end
     end
