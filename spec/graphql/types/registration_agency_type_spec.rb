@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe CountryType do
+describe RegistrationAgencyType do
   describe "fields" do
     subject { described_class }
 

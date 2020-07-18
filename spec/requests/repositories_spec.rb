@@ -3,7 +3,7 @@ require 'rails_helper'
 describe 'Repositories', type: :request, elasticsearch: true do
   let(:ids) { clients.map { |c| c.uid }.join(",") }
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
-  let(:provider) { create(:provider, consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION", password_input: "12345") }
+  let(:provider) { create(:provider, consortium: consortium, symbol: "ABC", role_name: "ROLE_CONSORTIUM_ORGANIZATION", password_input: "12345") }
   let!(:client) { create(:client, provider: provider, client_type: "repository") }
   let(:bearer) { User.generate_token(role_id: "provider_admin", provider_id: provider.symbol.downcase) }
   let(:consortium_bearer) { User.generate_token(role_id: "consortium_admin", provider_id: consortium.symbol.downcase) }

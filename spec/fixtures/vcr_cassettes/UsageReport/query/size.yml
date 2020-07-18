@@ -8,18 +8,16 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-      Accept-Encoding:
-      - gzip,deflate
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Sat, 28 Mar 2020 05:12:21 GMT
+      - Mon, 13 Jul 2020 12:12:41 GMT
       Content-Type:
       - application/json; charset=utf-8
       Connection:
@@ -32,22 +30,32 @@ http_interactions:
       - max-age=0, private, must-revalidate
       Vary:
       - Accept-Encoding, Origin
-      Content-Encoding:
-      - gzip
       Etag:
-      - W/"f0a1021edb8ce580fbcf6aa63a241742"
+      - W/"f881f1702223185fc9a7f5eca1ff9c1e"
       X-Runtime:
-      - '0.368581'
+      - '0.428730'
       X-Request-Id:
-      - 426b5070-8125-4af7-89a6-e2cee223094d
+      - 66b12c0d-f3e8-4e40-a35c-2df7cd10f571
       X-Powered-By:
       - Phusion Passenger 6.0.4
       Server:
       - nginx/1.17.3 + Phusion Passenger 6.0.4
     body:
       encoding: ASCII-8BIT
-      string: !binary |-
-        H4sIALXcfl4AA+SWS2/bOBDHv4qgs6chKVIkfUubxWKxryLtbdHD8GULcGSBkrvbNfzdd2QnTuE4cBZ2WiwW0IHkDF+/v2Y46zLHbpmHvpz+sS6bUE5LxqVRVZ3AJedBaq3A2cqDEjJaHpizqS4n9/NgHjHEXE7XDwMt3kVa5QYH7ONQ/Ir9EHNxuzU+TtvuFPq8HVlEcqV+Dpz6PkccYgD3hYZWuZ22yxCnP/5+/Wgjg2DcAlPAzX7Rpp1BF3OzDONxYhsgkPPOVwOzUDHydXHWtIcWxsvN/mypWdCRRyKf9mM4DLlxqyHeD8e/fOyGZtlu+5vN5AGe0Jqh48CMUyBV4uB8xSFJVNZoJ3wVvz2869t3H396dyY/BRU/zk9dkl9w0vNIe3kOMioHDoMh6bzhEr1SGk/zC/f88jFwNx9uT4G7yV8wHOKqgYsdgtO4Hn0PcW0t5+Fal55ELae1nWxvOird4ywWY6doYwx9MSwLF4tV65d3XY59H8fr3FGD/Mh/90cVTV88OhSrnq5UzP5uOvKdx0UHq7wg5/kwdP306mrWDPOVe0MzrsadfDPEqx77eXPX0IQ+fiYYw4jvT8wtLVVuvhZWco5OI+hKapCOUWC4UAOTCa1xTnmfXl/Y69zQ9qaST2OB811+OCkuI/0kfU/FvbdcLBakNUbXEUJQlEuEY+AE1mAUC4kxiSzK08hI3OViNS5/nNphHgmk+QG1B7XfPDSOZBIBQr8oNAxwdjw0tpb/Y2gog5aTuqOqILnXgIyyhEObonEBmX2Bzpd+M37+7e3xB8O+9MGQzz64lwySWssKA2VbQz+QDEh5JSDFDPeWXl/KLNK+fl55j+37HELA9pzEQlVDfZTZznI5Zg7rSqsE3loEWUUJxiUPTtdVCkIYzt2/YTY/Di2dorbPK3PMnzGH6hCe2VcdJ+FJ9lyFsrNcDB7n0dJbJihZUaBKXxmwtSSBKs0CV0mg+g7l8S8ff7g9M1y/SX3HBXKZqDS2lQhjrpNgWaCtk0gobMU1M68frs/Udy/+2b7yfVrfnY3rP/WIfRq3Hc+4LoflgLSesGaya0NHp6EbVWxSdtuD8c3mHwAAAP//AwCbvQZucg4AAA==
+      string: '{"reports":[{"id":"0148536f-bfbc-4775-b93c-524e91d0b9f6","report-header":{"report-name":"Dataset
+        Master Report","report-id":"dsr","release":"rd1","created-by":"urn:node:GOA","created":"2019-05-18","reporting-period":{"end-date":"2017-09-30","begin-date":"2017-09-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"02770ab1-08b5-45f1-bc31-f4a5987b2c3e","report-header":{"report-name":"Dataset
+        Master Report","report-id":"dsr","release":"rd1","created-by":"urn:node:ARCTIC","created":"2019-05-18","reporting-period":{"end-date":"2017-05-31","begin-date":"2017-05-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"02db4c1e-31c1-4e5b-bad8-30c814ac557a","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"rd1","created-by":"Dryad","created":"2016-12-31","reporting-period":{"end-date":"2016-12-31","begin-date":"2016-12-01"},"report-filters":[],"report-attributes":[],"exceptions":[{"code":69,"data":"usage
+        data needs to be uncompressed","message":"Report is compressed using gzip","help-url":"https://github.com/datacite/sashimi","severity":"warning"}]}},{"id":"0411ab7a-7347-4b01-bbd6-04fa98bb5ccf","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"rd1","created-by":"Ari347834","created":"2019-11-30","reporting-period":{"end-date":"2002-04-04","begin-date":"2002-04-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"0498876e-dd55-42b0-b2a6-850df004a0e4","report-header":{"report-name":"resolution
+        report","report-id":"dsr","release":"drl","created-by":"datacite.datacite","created":"2019-02-27","reporting-period":{"end-date":"2018-10-31","begin-date":"2018-10-01"},"report-filters":[],"report-attributes":[],"exceptions":[{"code":69,"data":"usage
+        data needs to be uncompressed","message":"Report is compressed using gzip","help-url":"https://github.com/datacite/sashimi","severity":"warning"}]}},{"id":"058a91b0-df00-41c7-a012-ba9fe8bda094","report-header":{"report-name":"Dataset
+        Master Report","report-id":"dsr","release":"rd1","created-by":"urn:node:KNB","created":"2019-05-19","reporting-period":{"end-date":"2017-04-30","begin-date":"2017-04-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"06743ad2-3818-4da1-bdae-d1c95f18bb49","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"rd1","created-by":"PanPrdddan","created":"2019-11-30","reporting-period":{"end-date":"2001-06-30","begin-date":"2001-06-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"0ba6375f-c99a-43e4-8bfc-b763fd22811b","report-header":{"report-name":"dataset
+        rehport","report-id":"DSRf","release":"rd1","created-by":"datacite.harvard3","created":"2018-05-31","reporting-period":{"end-date":"2040-05-31","begin-date":"2040-05-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"11e94112-10c7-4c38-9641-0370d15f2a56","report-header":{"report-name":"Dataset
+        Master Report","report-id":"dsr","release":"rd1","created-by":"urn:node:LTER","created":"2019-05-19","reporting-period":{"end-date":"2017-05-31","begin-date":"2017-05-01"},"report-filters":[],"report-attributes":[],"exceptions":[]}},{"id":"12a14fb5-932d-41c4-90d5-3f2fa2931708","report-header":{"report-name":"dataset
+        report","report-id":"DSR","release":"rd1","created-by":"Dryad","created":"2016-05-31","reporting-period":{"end-date":"2016-05-31","begin-date":"2016-05-01"},"report-filters":[],"report-attributes":[],"exceptions":[{"code":69,"data":"usage
+        data needs to be uncompressed","message":"Report is compressed using gzip","help-url":"https://github.com/datacite/sashimi","severity":"warning"}]}}],"meta":{"total":309,"total-pages":31,"page":1}}'
     http_version: null
-  recorded_at: Sat, 28 Mar 2020 05:12:21 GMT
+  recorded_at: Mon, 13 Jul 2020 12:12:41 GMT
 recorded_with: VCR 5.1.0

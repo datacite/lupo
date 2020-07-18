@@ -16,8 +16,8 @@ gem "nokogiri", ">= 1.10.4"
 gem "diffy", "~> 3.2", ">= 3.2.1"
 gem "commonmarker", "~> 0.17.9"
 gem "iso8601", "~> 0.9.0"
-gem "maremma", "~> 4.6.1"
-gem 'bolognese', '~> 1.5'
+gem "maremma", "~> 4.7.1"
+gem 'bolognese', '~> 1.8'
 gem "dalli", "~> 2.7", ">= 2.7.6"
 gem "lograge", "~> 0.11.2"
 gem "logstash-event", "~> 1.2", ">= 1.2.02"
@@ -52,7 +52,7 @@ gem "mini_magick", "~> 4.8"
 gem "elasticsearch", "~> 7.1.0"
 gem "elasticsearch-model", "~> 7.0", require: "elasticsearch/model"
 gem "elasticsearch-rails", "~> 7.0"
-gem "faraday", "0.17.0"
+gem "faraday", "~> 0.17.3"
 gem "faraday_middleware-aws-sigv4", "~> 0.3.0"
 gem "rack-utf8_sanitizer", "~> 1.6"
 gem "turnout", "~> 2.5"
@@ -72,6 +72,7 @@ gem 'crawler_detect'
 gem 'lhm', '~> 2.2'
 gem 'kt-paperclip', '~> 6.2', '>= 6.2.2'
 gem 'kaminari', '~> 1.2'
+gem 'iso-639', '~> 0.3.5'
 
 group :development, :test do
   gem "rspec-rails", "~> 3.8", ">= 3.8.2"

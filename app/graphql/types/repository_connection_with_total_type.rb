@@ -17,26 +17,26 @@ class RepositoryConnectionWithTotalType < BaseConnection
   end
 
   def years
-    object.total_count.positive? ? facet_by_year(object.aggregations.years.buckets) : nil
+    facet_by_year(object.aggregations.years.buckets)
   end
 
   def members
-    object.total_count.positive? ? facet_by_combined_key(object.aggregations.providers.buckets) : nil
+    facet_by_combined_key(object.aggregations.providers.buckets)
   end
 
   def software
-    object.total_count.positive? ? facet_by_software(object.aggregations.software.buckets) : nil
+    facet_by_software(object.aggregations.software.buckets)
   end
 
   def certificates
-    object.total_count.positive? ? facet_by_key(object.aggregations.certificates.buckets) : nil
+    facet_by_key(object.aggregations.certificates.buckets)
   end
 
   def client_types
-    object.total_count.positive? ? facet_by_key(object.aggregations.client_types.buckets) : nil
+    facet_by_key(object.aggregations.client_types.buckets)
   end
 
   def repository_types
-    object.total_count.positive? ? facet_by_key(object.aggregations.repository_types.buckets) : nil
+    facet_by_key(object.aggregations.repository_types.buckets)
   end
 end

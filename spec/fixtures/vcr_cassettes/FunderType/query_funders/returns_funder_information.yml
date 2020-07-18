@@ -8,11 +8,9 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-      Accept-Encoding:
-      - gzip,deflate
   response:
     status:
       code: 200
@@ -27,11 +25,11 @@ http_interactions:
       Access-Control-Allow-Headers:
       - X-Requested-With
       Content-Length:
-      - '968'
+      - '752'
       Server:
       - http-kit
       Date:
-      - Sun, 24 May 2020 11:34:22 GMT
+      - Mon, 13 Jul 2020 12:21:54 GMT
       X-Rate-Limit-Limit:
       - '50'
       X-Rate-Limit-Interval:
@@ -41,10 +39,9 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"status":"ok","message-type":"funder-list","message-version":"1.0.0","message":{"items-per-page":30,"query":{"start-index":2,"search-terms":"Wellcome
-        Trust"},"total-results":4,"items":[{"id":"501100009053","location":null,"name":"The
-        Wellcome Trust DBT India Alliance","alt-names":["India Alliance","WTDBT India
-        Alliance","Wellcome Trust\/DBT India Alliance","Wellcome Trust DBt India Alliance"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100009053","replaces":[],"replaced-by":[],"tokens":["the","wellcome","trust","dbt","india","alliance","india","alliance","wtdbt","india","alliance","wellcome","trust\/dbt","india","alliance","wellcome","trust","dbt","india","alliance"]},{"id":"501100013372","location":"United
+        Trust"},"total-results":4,"items":[{"id":"100010269","location":"United Kingdom","name":"Wellcome
+        Trust","alt-names":["The Wellcome Trust","WT","Wellcome"],"uri":"http:\/\/dx.doi.org\/10.13039\/100010269","replaces":[],"replaced-by":[],"tokens":["wellcome","trust","the","wellcome","trust","wt","wellcome"]},{"id":"501100013372","location":"United
         Kingdom","name":"Wellcome Trust Centre for Mitochondrial Research","alt-names":["WCMR"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100013372","replaces":[],"replaced-by":[],"tokens":["wellcome","trust","centre","for","mitochondrial","research","wcmr"]}]}}'
     http_version: null
-  recorded_at: Sun, 24 May 2020 11:34:22 GMT
+  recorded_at: Mon, 13 Jul 2020 12:21:54 GMT
 recorded_with: VCR 5.1.0

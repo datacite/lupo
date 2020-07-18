@@ -113,12 +113,16 @@ class User
     jwt = encode_token(payload.merge(iat: Time.now.to_i, exp: Time.now.to_i + 3600 * 24, aud: Rails.env))
     url = ENV['BRACCO_URL'] + "?jwt=" + jwt
     reset_url = ENV['BRACCO_URL'] + "/reset"
-    title = Rails.env.stage? ? "DataCite Fabrica Test" : "DataCite Fabrica"
+    if Rails.env == "stage" 
+      title = ENV['ES_PREFIX'].present? ? "DataCite Fabrica Stage" : "DataCite Fabrica Test"
+    else
+      title = "DataCite Fabrica"
+    end
     subject = "#{title}: Password Reset Request"
     account_type = user.class.name == "Provider" ? user.member_type.humanize : user.client_type.humanize  
     text = User.format_message_text(template: "users/reset.text.erb", title: title, contact_name: user.name, name: user.symbol, url: url, reset_url: reset_url)
     html = User.format_message_html(template: "users/reset.html.erb", title: title, contact_name: user.name, name: user.symbol, url: url, reset_url: reset_url)
-    response = self.send_message(name: user.name, email: user.system_email, subject: subject, text: text, html: html)
+    response = self.send_email_message(name: user.name, email: user.system_email, subject: subject, text: text, html: html)
 
     fields = [
       { title: "Account ID", value: uid.upcase, short: true },

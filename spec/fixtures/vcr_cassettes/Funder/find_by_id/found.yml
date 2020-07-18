@@ -8,11 +8,9 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-      Accept-Encoding:
-      - gzip,deflate
   response:
     status:
       code: 200
@@ -31,7 +29,7 @@ http_interactions:
       Server:
       - http-kit
       Date:
-      - Mon, 11 May 2020 07:55:09 GMT
+      - Mon, 13 Jul 2020 12:18:45 GMT
       X-Rate-Limit-Limit:
       - '50'
       X-Rate-Limit-Interval:
@@ -44,5 +42,5 @@ http_interactions:
         Co., Ltd.","Toagosei Chemical Industry Company Limited","Toagosei Company
         Limited"],"location":"Japan"}}'
     http_version: null
-  recorded_at: Mon, 11 May 2020 07:55:09 GMT
+  recorded_at: Mon, 13 Jul 2020 12:18:45 GMT
 recorded_with: VCR 5.1.0

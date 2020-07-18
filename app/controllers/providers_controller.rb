@@ -171,7 +171,7 @@ class ProvidersController < ApplicationController
     authorize! :create, @provider
 
     if @provider.save
-      @provider.send_welcome_email(responsible_id: current_user.uid) unless Rails.env.test?
+      @provider.send_welcome_email(responsible_id: current_user.uid)
       options = {}
       options[:include] = @include
       options[:is_collection] = false

@@ -60,6 +60,7 @@ class DoisController < ApplicationController
                           funder_id: params[:funder_id],
                           re3data_id: params[:re3data_id],
                           opendoar_id: params[:opendoar_id],
+                          license: params[:license],
                           certificate: params[:certificate],
                           prefix: params[:prefix],
                           user_id: params[:user_id],
@@ -169,7 +170,8 @@ class DoisController < ApplicationController
         subjects = total.positive? ? facet_by_key(response.aggregations.subjects.buckets) : nil
         fields_of_science = total.positive? ? facet_by_fos(response.aggregations.fields_of_science.subject.buckets) : nil
         certificates = total.positive? ? facet_by_key(response.aggregations.certificates.buckets) : nil
-
+        licenses = total.positive? ? facet_by_license(response.aggregations.licenses.buckets) : nil
+        
         link_checks_status = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_status.buckets) : nil
         # links_with_schema_org = total.positive? ? facet_by_cumulative_year(response.aggregations.link_checks_has_schema_org.buckets) : nil
         # link_checks_schema_org_id = total.positive? ? response.aggregations.link_checks_schema_org_id.value : nil
@@ -198,6 +200,7 @@ class DoisController < ApplicationController
               affiliations: affiliations,
               prefixes: prefixes,
               certificates: certificates,
+              licenses: licenses,
               "schemaVersions" => schema_versions,
               # sources: sources,
               "linkChecksStatus" => link_checks_status,
@@ -541,6 +544,13 @@ class DoisController < ApplicationController
   def safe_params
     fail JSON::ParserError, "You need to provide a payload following the JSONAPI spec" unless params[:data].present?
 
+    # alternateIdentifiers as alias for identifiers
+    # easier before strong_parameters are checked
+    params[:data][:attributes][:identifiers] = Array.wrap(params.dig(:data, :attributes, :alternateIdentifiers)).map do |a|
+      { identifier: a[:alternateIdentifier],
+        identifierType: a[:alternateIdentifierType] }
+    end if params.dig(:data, :attributes).present? && params.dig(:data, :attributes, :identifiers).blank?
+
     attributes = [
       :doi,
       :confirmDoi,
@@ -586,7 +596,7 @@ class DoisController < ApplicationController
       :descriptions,
       { descriptions: [:description, :descriptionType, :lang] },
       :rightsList,
-      { rightsList: [:rights, :rightsUri, :lang] },
+      { rightsList: [:rights, :rightsUri, :rightsIdentifier, :rightsIdentifierScheme, :schemeUri, :lang] },
       :xml,
       :regenerate,
       :source,
@@ -685,7 +695,7 @@ class DoisController < ApplicationController
 
     read_attrs_keys = [:url, :creators, :contributors, :titles, :publisher,
       :publicationYear, :types, :descriptions, :container, :sizes,
-      :formats, :language, :dates, :identifiers, :alternateIdentifiers, :relatedIdentifiers,
+      :formats, :language, :dates, :identifiers, :relatedIdentifiers,
       :fundingReferences, :geoLocations, :rightsList, :agency,
       :subjects, :contentUrl, :schemaVersion]
 
@@ -694,11 +704,6 @@ class DoisController < ApplicationController
     read_attrs_keys.each do |attr|
       p.merge!(attr.to_s.underscore => p[attr] || meta[attr.to_s.underscore] || p[attr]) if p.has_key?(attr) || meta.has_key?(attr.to_s.underscore)
     end
-
-    # handle alternate_identifiers
-    p[:identifiers] = Array.wrap(p[:alternate_identifiers]).map do |a|
-      { "identifierType" => a["alternateIdentifierType"], "identifier" => a["alternateIdentifier"] }
-    end.compact
 
     # handle version metadata
     p[:version_info] = p[:version] || meta["version_info"] if p.has_key?(:version) || meta["version_info"].present?
@@ -709,8 +714,8 @@ class DoisController < ApplicationController
     p.merge(
       regenerate: p[:regenerate] || regenerate
     ).except(
-      # ignore camelCase keys, read-only keys and alternate_identifiers
-      :confirmDoi, :prefix, :suffix, :publicationYear, :alternateIdentifiers, :alternate_identifiers,
+      # ignore camelCase keys, and read-only keys
+      :confirmDoi, :prefix, :suffix, :publicationYear, :alternateIdentifiers,
       :rightsList, :relatedIdentifiers, :fundingReferences, :geoLocations,
       :metadataVersion, :schemaVersion, :state, :mode, :isActive, :landingPage,
       :created, :registered, :updated, :published, :lastLandingPage, :version,

@@ -9,7 +9,7 @@ describe DissertationType do
   end
 
   describe "query dissertations", elasticsearch: true do
-    let!(:datacite_dissertations) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Thesis" }, aasm_state: "findable") }
+    let!(:datacite_dissertations) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Thesis" }, language: "de", aasm_state: "findable") }
     let!(:crossref_dissertations) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, agency: "Crossref", aasm_state: "findable") }
 
     before do
@@ -27,9 +27,17 @@ describe DissertationType do
             title
             count
           }
+          licenses {
+            id
+            title
+            count
+          }
           nodes {
             id
-            registrationAgency
+            registrationAgency {
+              id
+              name
+            }
           }
         }
       })
@@ -38,11 +46,118 @@ describe DissertationType do
     it "returns all dissertations" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "dissertations", "totalCount")).to eq(4)
-      expect(response.dig("data", "dissertations", "registrationAgencies")).to eq([{"count"=>2, "id"=>"crossref", "title"=>"Crossref"}, {"count"=>2, "id"=>"datacite", "title"=>"DataCite"}])
-      expect(response.dig("data", "dissertations", "nodes").length).to eq(4)
+      expect(response.dig("data", "dissertations", "totalCount")).to eq(2)
+      expect(response.dig("data", "dissertations", "registrationAgencies")).to eq([{"count"=>2, "id"=>"datacite", "title"=>"DataCite"}])
+      expect(response.dig("data", "dissertations", "licenses")).to eq([{"count"=>2, "id"=>"cc0-1.0", "title"=>"CC0-1.0"}])
+      expect(response.dig("data", "dissertations", "nodes").length).to eq(2)
       # expect(response.dig("data", "dissertations", "nodes", 0, "id")).to eq(@dois.first.identifier)
-      # expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("DataCite")
+      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("id"=>"datacite", "name"=>"DataCite")
+    end
+  end
+
+  describe "query dissertations by license", elasticsearch: true do
+    let!(:datacite_dissertations) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Thesis" }, aasm_state: "findable") }
+    let!(:crossref_dissertations) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, agency: "Crossref", rights_list: [], aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 2
+      @dois = Doi.query(nil, page: { cursor: [], size: 4 }).results.to_a
+    end
+
+    let(:query) do
+      %(query {
+        dissertations(license: "cc0-1.0") {
+          totalCount
+          registrationAgencies {
+            id
+            title
+            count
+          }
+          licenses {
+            id
+            title
+            count
+          }
+          nodes {
+            id
+            rights {
+              rights
+              rightsUri
+              rightsIdentifier
+            }
+            registrationAgency {
+              id
+              name
+            }
+          }
+        }
+      })
+    end
+
+    it "returns all dissertations" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "dissertations", "totalCount")).to eq(2)
+      expect(response.dig("data", "dissertations", "registrationAgencies")).to eq([{"count"=>2, "id"=>"datacite", "title"=>"DataCite"}])
+      expect(response.dig("data", "dissertations", "licenses")).to eq([{"count"=>2, "id"=>"cc0-1.0", "title"=>"CC0-1.0"}])
+      expect(response.dig("data", "dissertations", "nodes").length).to eq(2)
+      # expect(response.dig("data", "dissertations", "nodes", 0, "id")).to eq(@dois.first.identifier)
+      expect(response.dig("data", "dissertations", "nodes", 0, "rights")).to eq([{"rights"=>"Creative Commons Zero v1.0 Universal",
+        "rightsIdentifier"=>"cc0-1.0",
+        "rightsUri"=>"https://creativecommons.org/publicdomain/zero/1.0/legalcode"}])
+      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("id"=>"datacite", "name"=>"DataCite")
+    end
+  end
+
+  describe "query dissertations by license", elasticsearch: true do
+    let!(:datacite_dissertations) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Thesis" }, language: "de", aasm_state: "findable") }
+    let!(:crossref_dissertations) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, agency: "Crossref", rights_list: [], aasm_state: "findable") }
+
+    before do
+      Doi.import
+      sleep 2
+      @dois = Doi.query(nil, page: { cursor: [], size: 4 }).results.to_a
+    end
+
+    let(:query) do
+      %(query {
+        dissertations(language: "de") {
+          totalCount
+          registrationAgencies {
+            id
+            title
+            count
+          }
+          languages {
+            id
+            title
+            count
+          }
+          nodes {
+            id
+            registrationAgency {
+              id
+              name
+            }
+            language {
+              id
+              name
+            }
+          }
+        }
+      })
+    end
+
+    it "returns all dissertations" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "dissertations", "totalCount")).to eq(2)
+      expect(response.dig("data", "dissertations", "registrationAgencies")).to eq([{"count"=>2, "id"=>"datacite", "title"=>"DataCite"}])
+      expect(response.dig("data", "dissertations", "languages")).to eq([{"count"=>2, "id"=>"de", "title"=>"German"}])
+      expect(response.dig("data", "dissertations", "nodes").length).to eq(2)
+      # expect(response.dig("data", "dissertations", "nodes", 0, "id")).to eq(@dois.first.identifier)
+      expect(response.dig("data", "dissertations", "nodes", 0, "registrationAgency")).to eq("id"=>"datacite", "name"=>"DataCite")
     end
   end
 

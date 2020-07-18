@@ -75,7 +75,11 @@ describe ServiceType do
             }
             titles {
               title
-            },
+            }
+            fieldsOfScience {
+              id
+              name
+            }
             descriptions {
               description
               descriptionType
@@ -108,12 +112,12 @@ describe ServiceType do
       service = response.dig("data", "services", "nodes", 0)
       expect(service.fetch("id")).to eq(@dois.first.identifier)
       expect(service.fetch("doi")).to eq(@dois.first.uid)
-      expect(service.fetch("identifiers")).to eq([{"identifier"=>
-        "Ollomo B, Durand P, Prugnolle F, Douzery EJP, Arnathau C, Nkoghe D, Leroy E, Renaud F (2009) A new malaria agent in African hominids. PLoS Pathogens 5(5): e1000446.",
-        "identifierType"=>nil}])
+      expect(service.fetch("identifiers")).to eq([{"identifier"=>"pk-1234", "identifierType"=>"publisher ID"}])
       expect(service.fetch("types")).to eq("resourceTypeGeneral"=>"Service")
       expect(service.dig("titles", 0, "title")).to eq("Test Service")
       expect(service.dig("descriptions", 0, "description")).to eq("Data from: A new malaria agent in African hominids.")
+      expect(service.dig("fieldsOfScience")).to eq([{"id"=>"computer_and_information_sciences",
+        "name"=>"Computer and information sciences"}])
       expect(service.dig("geolocations", 0, "geolocationPlace")).to eq("Munich, Germany")
       expect(service.dig("geolocations", 0, "geolocationPoint")).to eq("pointLatitude"=>49.0850736, "pointLongitude"=>-123.3300992)
     end

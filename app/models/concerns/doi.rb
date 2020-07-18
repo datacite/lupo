@@ -6,7 +6,6 @@ class Doi < ActiveRecord::Base
 
   include Metadatable
   include Cacheable
-  include Licensable
   include Dateable
 
   # include helper module for generating random DOI suffixes
@@ -119,12 +118,17 @@ class Doi < ActiveRecord::Base
   validate :check_related_identifiers, if: :related_identifiers?
   validate :check_funding_references, if: :funding_references?
   validate :check_geo_locations, if: :geo_locations?
+  validate :check_language, if: :language?
 
   after_commit :update_url, on: [:create, :update]
   after_commit :update_media, on: [:create, :update]
 
   before_validation :update_xml, if: :regenerate
   before_validation :update_agency
+  before_validation :update_field_of_science
+  before_validation :update_language, if: :language?
+  before_validation :update_rights_list, if: :rights_list?
+  before_validation :update_identifiers
   before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
@@ -267,6 +271,9 @@ class Doi < ActiveRecord::Base
       indexes :rights_list,                    type: :object, properties: {
         rights: { type: :keyword },
         rightsUri: { type: :keyword },
+        rightsIdentifier: { type: :keyword, normalizer: "keyword_lowercase" },
+        rightsIdentifierScheme: { type: :keyword },
+        schemeUri: { type: :keyword },
         lang: { type: :keyword }
       }
       indexes :subjects,                       type: :object, properties: {
@@ -579,6 +586,8 @@ class Doi < ActiveRecord::Base
             include: "FOS:.*" } },
         },
       },
+      licenses: { terms: { field: 'rights_list.rightsIdentifier', size: 10, min_doc_count: 1 } },
+      languages: { terms: { field: 'language', size: 10, min_doc_count: 1 } },
       certificates: { terms: { field: 'client.certificate', size: 10, min_doc_count: 1 } },
       views: {
         date_histogram: { field: 'publication_year', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
@@ -794,8 +803,9 @@ class Doi < ActiveRecord::Base
     filter << { terms: { "types.resourceType": options[:resource_type].split(",") }} if options[:resource_type].present?
     filter << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
     filter << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
-    filter << { terms: { agency: options[:registration_agency].split(",").map(&:downcase) } } if options[:registration_agency].present?
+    filter << { terms: { agency: options[:agency].split(",").map(&:downcase) } } if options[:agency].present?
     filter << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
+    filter << { terms: { language: options[:language].to_s.split(",").map(&:downcase) } } if options[:language].present?
     filter << { term: { uid: options[:uid] }} if options[:uid].present?
     filter << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
     filter << { range: { publication_year: { gte: "#{options[:published].split(",").min}||/y", lte: "#{options[:published].split(",").max}||/y", format: "yyyy" }}} if options[:published].present?
@@ -809,6 +819,7 @@ class Doi < ActiveRecord::Base
       filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
       filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
     end
+    filter << { terms: { "rights_list.rightsIdentifier" => options[:license].split(",") } } if options[:license].present?
     filter << { term: { source: options[:source] } } if options[:source].present?
     filter << { range: { reference_count: { "gte": options[:has_references].to_i } } } if options[:has_references].present?
     filter << { range: { citation_count: { "gte": options[:has_citations].to_i } } } if options[:has_citations].present?
@@ -1686,6 +1697,7 @@ class Doi < ActiveRecord::Base
   def check_identifiers
     Array.wrap(identifiers).each do |i|
       errors.add(:identifiers, "Identifier '#{i}' should be an object instead of a string.") unless i.is_a?(Hash)
+      errors.add(:identifiers, "IdentifierType DOI not supported in identifiers property. Use id or related identifier.") if i["identifierType"] == "DOI"
     end
   end
 
@@ -1717,6 +1729,11 @@ class Doi < ActiveRecord::Base
 
   def check_container
     errors.add(:container, "Container '#{container}' should be an object instead of a string.") unless container.is_a?(Hash)
+  end
+
+  def check_language
+    entry = ISO_639.find_by_code(language) || ISO_639.find_by_english_name(language.upcase_first)
+    errors.add(:language, "Language #{language} not found.") unless entry.present?
   end
 
   # to be used after DOIs were transferred to another DOI RA
@@ -1888,6 +1905,7 @@ class Doi < ActiveRecord::Base
         ids = response.results.results.map(&:uid)
         ids.each do |id|
           Object.const_get(job_name).perform_later(id, options)
+          sleep 0.1
         end
       end
     end
@@ -1911,6 +1929,44 @@ class Doi < ActiveRecord::Base
     elsif agency.casecmp? ("crossref")
       self.agency = "crossref"
     end
+  end
+
+  def update_language
+    lang = language.to_s.split("-").first
+    entry = ISO_639.find_by_code(lang) || ISO_639.find_by_english_name(lang.upcase_first)
+    if entry.present? && entry.alpha2.present?
+      self.language = entry.alpha2
+    else
+      self.language = nil
+    end
+  end
+
+  def update_field_of_science
+    self.subjects = Array.wrap(subjects).reduce([]) do |sum, subject|
+      if subject.is_a?(String)
+        sum += name_to_fos(subject)
+      elsif subject.is_a?(Hash)
+        sum += hsh_to_fos(subject)
+      end
+
+      sum
+    end.uniq
+  end
+
+  def update_rights_list
+    self.rights_list = Array.wrap(rights_list).map do |r|
+      if r.blank?
+        nil
+      elsif r.is_a?(String)
+        name_to_spdx(r)
+      elsif r.is_a?(Hash)
+        hsh_to_spdx(r)
+      end
+    end.compact
+  end
+
+  def update_identifiers
+    self.identifiers = Array.wrap(identifiers).select { |i| i["identifierType"] != "DOI" }
   end
 
   def self.repair_landing_page(id: nil)

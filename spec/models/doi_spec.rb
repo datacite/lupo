@@ -312,19 +312,80 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
-  describe "rights_list" do
+  describe "language" do
     let(:doi) { build(:doi) }
 
-    it "hash" do
-      doi.rights_list = [{ "rights" => "Creative Commons Attribution 4.0 International license (CC BY 4.0)" }]
+    it "iso 639-1" do
+      doi.language = "fr"
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.language).to eq("fr")
+    end
+
+    it "iso 639-2" do
+      doi.language = "fra"
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.language).to eq("fr")
+    end
+
+    it "human" do
+      doi.language = "french"
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.language).to eq("fr")
+    end
+
+    it "error" do
+      doi.language = "hhh"
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.language).to be_nil
+    end
+
+    it "nil" do
+      doi.language = nil
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
     end
+  end
+
+  describe "rights_list" do
+    let(:doi) { build(:doi) }
 
     it "string" do
       doi.rights_list = ["Creative Commons Attribution 4.0 International license (CC BY 4.0)"]
-      expect(doi.save).to be false
-      expect(doi.errors.details).to eq(:rights_list => [{:error=>"Rights 'Creative Commons Attribution 4.0 International license (CC BY 4.0)' should be an object instead of a string."}])
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.rights_list).to eq([{"rights"=>"Creative Commons Attribution 4.0 International license (CC BY 4.0)"}])
+    end
+
+    it "hash rights" do
+      doi.rights_list = [{ "rights" => "Creative Commons Attribution 4.0 International license (CC BY 4.0)" }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.rights_list).to eq([{"rights"=>"Creative Commons Attribution 4.0 International license (CC BY 4.0)"}])
+    end
+
+    it "hash rightsIdentifier" do
+      doi.rights_list = [{ "rightsIdentifier" => "CC-BY-4.0" }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.rights_list).to eq([{"rights"=>"Creative Commons Attribution 4.0 International", "rightsUri"=>"https://creativecommons.org/licenses/by/4.0/legalcode", "rightsIdentifier"=>"cc-by-4.0", "rightsIdentifierScheme"=>"SPDX", "schemeUri"=>"https://spdx.org/licenses/"}])
+    end
+
+    it "hash rightsUri" do
+      doi.rights_list = [{ "rightsURI"=>"https://creativecommons.org/licenses/by/4.0/legalcode" }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.rights_list).to eq([{"rights"=>"Creative Commons Attribution 4.0 International", "rightsUri"=>"https://creativecommons.org/licenses/by/4.0/legalcode", "rightsIdentifier"=>"cc-by-4.0", "rightsIdentifierScheme"=>"SPDX", "schemeUri"=>"https://spdx.org/licenses/"}])
+    end
+
+    it "hash rightsUri http" do
+      doi.rights_list = [{ "rightsURI"=>"http://creativecommons.org/licenses/by/4.0/" }]
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.rights_list).to eq([{"rights"=>"Creative Commons Attribution 4.0 International", "rightsUri"=>"https://creativecommons.org/licenses/by/4.0/legalcode", "rightsIdentifier"=>"cc-by-4.0", "rightsIdentifierScheme"=>"SPDX", "schemeUri"=>"https://spdx.org/licenses/"}])
     end
   end
 
@@ -335,12 +396,14 @@ describe Doi, type: :model, vcr: true do
       doi.subjects = [{ "subject" => "Tree" }]
       expect(doi.save).to be true
       expect(doi.errors.details).to be_empty
+      expect(doi.subjects).to eq([{"subject"=>"Tree"}])
     end
 
     it "string" do
       doi.subjects = ["Tree"]
-      expect(doi.save).to be false
-      expect(doi.errors.details).to eq(:subjects=>[{:error=>"Subject 'Tree' should be an object instead of a string."}])
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.subjects).to eq([{"subject"=>"Tree"}])
     end
   end
 
@@ -401,6 +464,51 @@ describe Doi, type: :model, vcr: true do
     #   expect(doi.errors.details).to eq(:dates => [{:error=>"Date 2019-08-01 20:28:15 is not a valid date in ISO8601 format."}])
     # end
   end
+
+  describe "identifiers" do
+    it "publisher id" do
+      subject = build(:doi, identifiers: [{
+        "identifierType": "publisher ID",
+        "identifier": "pk-1234",
+      }])
+      expect(subject).to be_valid
+      expect(subject.identifiers).to eq([{"identifier"=>"pk-1234", "identifierType"=>"publisher ID"}])
+    end
+
+    it "string" do
+      subject = build(:doi, identifiers: ["pk-1234"])
+      expect(subject).to_not be_valid
+      expect(subject.errors.messages).to eq(:identifiers=>["Identifier 'pk-1234' should be an object instead of a string."])
+    end
+
+    it "doi" do
+      subject = build(:doi, identifiers: [{
+        "identifierType": "DOI",
+        "identifier": "10.4224/abc",
+      }])
+      expect(subject).to be_valid
+      expect(subject.errors.messages).to be_empty
+      expect(subject.identifiers).to be_empty
+    end
+  end
+
+  # describe "related_identifiers" do
+  #   it "has part" do
+  #     subject = build(:doi, related_identifiers: [      {
+  #       "relatedIdentifier": "10.5061/dryad.8515/1",
+  #       "relatedIdentifierType": "DOI",
+  #       "relationType": "HasPart",
+  #     }])
+  #     expect(subject).to be_valid
+  #     expect(subject.related_identifiers).to eq([{"relatedIdentifier"=>"10.5061/dryad.8515/1", "relatedIdentifierType"=>"DOI", "relationType"=>"HasPart"}])
+  #   end
+
+  #   it "string" do
+  #     subject = build(:doi, related_identifiers: ["10.5061/dryad.8515/1"])
+  #     expect(subject).to_not be_valid
+  #     expect(subject.errors.messages).to eq(:related_identifiers=>["Related identifier '10.5061/dryad.8515/1' should be an object instead of a string."])
+  #   end
+  # end
 
   describe "metadata" do
     subject  { create(:doi) }

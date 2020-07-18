@@ -4,6 +4,18 @@ module DoiItem
   include BaseInterface
   include Bolognese::MetadataUtils
 
+  REGISTRATION_AGENCIES = {
+    "airiti" =>   "Airiti",
+    "cnki" =>     "CNKI",
+    "crossref" => "Crossref",
+    "datacite" => "DataCite",
+    "istic" =>    "ISTIC",
+    "jalc" =>     "JaLC",
+    "kisti" =>    "KISTI",
+    "medra" =>    "mEDRA",
+    "op" =>       "OP"
+  }
+
   description "Information about DOIs"
 
   field :id, ID, null: false, hash_key: "identifier", description: "The persistent identifier for the resource"
@@ -18,8 +30,10 @@ module DoiItem
   field :publication_year, Int, null: true, description: "The year when the data was or will be made publicly available"
   field :publisher, String, null: true, description: "The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource"
   field :subjects, [SubjectType], null: true, description: "Subject, keyword, classification code, or key phrase describing the resource"
+  field :fields_of_science, [FieldOfScienceType], null: true, description: "OECD Fields of Science of the resource"
   field :dates, [DateType], null: true, description: "Different dates relevant to the work"
-  field :language, String, null: true, description: "The primary language of the resource"
+  field :registered, GraphQL::Types::ISO8601DateTime, null: true, description: "DOI registration date"
+  field :language, LanguageType, null: true, description: "The primary language of the resource"
   field :identifiers, [IdentifierType], null: true, description: "An identifier or identifiers applied to the resource being registered"
   field :related_identifiers, [RelatedIdentifierType], null: true, description: "Identifiers of related resources. These must be globally unique identifiers"
   field :types, ResourceTypeType, null: false, description: "The resource type"
@@ -35,12 +49,13 @@ module DoiItem
   field :url, Url, null: true, description: "The URL registered for the resource"
   field :repository, RepositoryType, null: true,  hash_key: "client", description: "The repository account managing this resource"
   field :member, MemberType, null: true, hash_key: "provider", description: "The member account managing this resource"
-  field :registration_agency, String, hash_key: "agency", null: true, description: "The DOI registration agency for the resource"
+  field :registration_agency, RegistrationAgencyType, hash_key: "agency", null: true, description: "The DOI registration agency for the resource"
   field :formatted_citation, String, null: true, description: "Metadata as formatted citation" do
     argument :style, String, required: false, default_value: "apa"
     argument :locale, String, required: false, default_value: "en-US"
   end
   field :bibtex, String, null: true, description: "Metadata in bibtex format"
+  field :schema_org, GraphQL::Types::JSON, null: true, description: "Metadata in schema.org format"
   field :reference_count, Int, null: true, description: "Total number of references"
   field :citation_count, Int, null: true, description: "Total number of citations"
   field :view_count, Int, null: true, description: "Total number of views"
@@ -183,6 +198,36 @@ module DoiItem
     object.types["resourceTypeGeneral"] || "Work"
   end
 
+  def language
+    return {} unless object.language.present?
+    la = ISO_639.find_by_code(object.language)
+
+    { 
+      id: object.language,
+      name: la.present? ? la.english_name.split(/\W+/).first : object.language
+    }.compact
+  end
+
+  def registration_agency
+    return {} unless object.agency.present?
+
+    { 
+      id: object.agency,
+      name: REGISTRATION_AGENCIES[object.agency]
+    }.compact
+  end
+
+  def fields_of_science
+    Array.wrap(object.subjects)
+      .select { |s| s.subjectScheme == "Fields of Science and Technology (FOS)" }
+      .map do |s|
+        name = s.subject.gsub("FOS: ", "")
+        {
+          "id" => name.parameterize(separator: '_'),
+          "name" => name }
+      end.uniq
+  end
+
   def creators(**args)
     Array.wrap(object.creators[0...args[:first]]).map do |c|
       Hashie::Mash.new(
@@ -226,6 +271,62 @@ module DoiItem
       year: object.publication_year
     }.compact
     BibTeX::Entry.new(bib).to_s
+  end
+
+  def schema_org
+    hsh = { 
+      "@context" => "http://schema.org",
+      "@type" => object.types.present? ? object.types["schemaOrg"] : nil,
+      "@id" => normalize_doi(object.doi),
+      "identifier" => to_schema_org_identifiers(object.identifiers),
+      "url" => object.url,
+      "additionalType" => object.types.present? ? object.types["resourceType"] : nil,
+      "name" => parse_attributes(object.titles, content: "title", first: true),
+      "author" => to_schema_org_creators(object.creators),
+      "editor" => to_schema_org_contributors(object.contributors),
+      "description" => parse_attributes(object.descriptions, content: "description", first: true),
+      "license" => Array.wrap(object.rights_list).map { |l| l["rightsUri"] }.compact.unwrap,
+      "version" => object.version_info,
+      "keywords" => object.subjects.present? ? Array.wrap(object.subjects).map { |k| parse_attributes(k, content: "subject", first: true) }.join(", ") : nil,
+      "inLanguage" => object.language,
+      "contentSize" => Array.wrap(object.sizes).unwrap,
+      "encodingFormat" => Array.wrap(object.formats).unwrap,
+      "dateCreated" => get_date(object.dates, "Created"),
+      "datePublished" => get_date(object.dates, "Issued"),
+      "dateModified" => get_date(object.dates, "Updated"),
+      "pageStart" => object.container.to_h["firstPage"],
+      "pageEnd" => object.container.to_h["lastPage"],
+      "spatialCoverage" => to_schema_org_spatial_coverage(object.geo_locations),
+      "sameAs" => to_schema_org_relation(related_identifiers: object.related_identifiers, relation_type: "IsIdenticalTo"),
+      "isPartOf" => to_schema_org_relation(related_identifiers: object.related_identifiers, relation_type: "IsPartOf"),
+      "hasPart" => to_schema_org_relation(related_identifiers: object.related_identifiers, relation_type: "HasPart"),
+      "predecessor_of" => to_schema_org_relation(related_identifiers: object.related_identifiers, relation_type: "IsPreviousVersionOf"),
+      "successor_of" => to_schema_org_relation(related_identifiers: object.related_identifiers, relation_type: "IsNewVersionOf"),
+      "citation" => to_schema_org_relation(related_identifiers: object.related_identifiers, relation_type: "References"),
+      "@reverse" => reverse.presence,
+      "contentUrl" => Array.wrap(object.content_url).unwrap,
+      "schemaVersion" => object.schema_version,
+      "periodical" => object.types.present? ? ((object.types["schemaOrg"] != "Dataset") && object.container.present? ? to_schema_org(object.container) : nil) : nil,
+      "includedInDataCatalog" => object.types.present? ? ((object.types["schemaOrg"] == "Dataset") && object.container.present? ? to_schema_org_container(object.container, type: "Dataset") : nil) : nil,
+      "publisher" => object.publisher.present? ? { "@type" => "Organization", "name" => object.publisher } : nil,
+      "funder" => to_schema_org_funder(object.funding_references),
+      "provider" => object.agency.present? ? { "@type" => "Organization", "name" => object.agency } : nil
+    }.compact
+
+    JSON.pretty_generate hsh
+  end
+
+  def reverse
+    { "citation" => Array.wrap(object.related_identifiers).select { |ri| ri["relationType"] == "IsReferencedBy" }.map do |r| 
+      { "@id" => normalize_doi(r["relatedIdentifier"]),
+        "@type" => r["resourceTypeGeneral"] || "ScholarlyArticle",
+        "identifier" => r["relatedIdentifierType"] == "DOI" ? nil : to_identifier(r) }.compact
+      end.unwrap,
+      "isBasedOn" => Array.wrap(object.related_identifiers).select { |ri| ri["relationType"] == "IsSupplementTo" }.map do |r| 
+        { "@id" => normalize_doi(r["relatedIdentifier"]),
+          "@type" => r["resourceTypeGeneral"] || "ScholarlyArticle",
+          "identifier" => r["relatedIdentifierType"] == "DOI" ? nil : to_identifier(r) }.compact
+      end.unwrap }.compact
   end
 
   # defaults to style: apa and locale: en-US
@@ -289,8 +390,14 @@ module DoiItem
       author = to_citeproc(object.creators)
     end
 
+    if object.types["resourceTypeGeneral"] == "Software" && object.version_info.present?
+      citeproc_type = "book"
+    else
+      citeproc_type = object.types["citeproc"]
+    end
+
     {
-      "type" => object.types["citeproc"],
+      "type" => citeproc_type,
       "id" => normalize_doi(object.doi),
       "categories" => Array.wrap(object.subjects).map { |k| parse_attributes(k, content: "subject", first: true) }.presence,
       "language" => object.language,

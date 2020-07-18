@@ -14,6 +14,6 @@ groups:
     queues:
       - lupo_transfer
   background:
-    concurrency: 5
+    concurrency: 3
     queues:
       - lupo_background

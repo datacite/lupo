@@ -12,6 +12,6 @@ class RepositoryPrefixConnectionWithTotalType < BaseConnection
   end
 
   def years
-    object.total_count.positive? ? facet_by_year(object.aggregations.years.buckets) : []
+    facet_by_year(object.aggregations.years.buckets)
   end
 end

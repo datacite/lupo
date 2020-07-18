@@ -26,7 +26,7 @@ describe DataCatalog, type: :model, vcr: true do
     it "all" do
       query = nil
       data_catalogs = DataCatalog.query(query)
-      expect(data_catalogs.dig(:meta, "total")).to eq(1695)
+      expect(data_catalogs.dig(:meta, "total")).to eq(1723)
       expect(data_catalogs[:data].size).to eq(25)
       data_catalog = data_catalogs[:data].first
       expect(data_catalog.id).to eq("https://doi.org/10.17616/r3w05r")
@@ -39,7 +39,7 @@ describe DataCatalog, type: :model, vcr: true do
     it "found" do
       query = "climate"
       data_catalogs = DataCatalog.query(query)
-      expect(data_catalogs.dig(:meta, "total")).to eq(176)
+      expect(data_catalogs.dig(:meta, "total")).to eq(177)
       expect(data_catalogs[:data].size).to eq(25)
       data_catalog = data_catalogs[:data].first
       expect(data_catalog.id).to eq("https://doi.org/10.17616/r3qd26")
@@ -52,7 +52,7 @@ describe DataCatalog, type: :model, vcr: true do
     it "found paginate" do
       query = "climate"
       data_catalogs = DataCatalog.query(query, offset: 2)
-      expect(data_catalogs.dig(:meta, "total")).to eq(176)
+      expect(data_catalogs.dig(:meta, "total")).to eq(177)
       expect(data_catalogs[:data].size).to eq(25)
       data_catalog = data_catalogs[:data].first
       expect(data_catalog.id).to eq("https://doi.org/10.17616/r3p32s")
@@ -64,7 +64,7 @@ describe DataCatalog, type: :model, vcr: true do
 
     it "pid" do
       data_catalogs = DataCatalog.query(nil, pid: true)
-      expect(data_catalogs.dig(:meta, "total")).to eq(740)
+      expect(data_catalogs.dig(:meta, "total")).to eq(751)
       expect(data_catalogs[:data].size).to eq(25)
       data_catalog = data_catalogs[:data].first
       expect(data_catalog.id).to eq("https://doi.org/10.17616/r3vg6n")
@@ -76,7 +76,7 @@ describe DataCatalog, type: :model, vcr: true do
 
     it "certified" do
       data_catalogs = DataCatalog.query(nil, certified: true)
-      expect(data_catalogs.dig(:meta, "total")).to eq(164)
+      expect(data_catalogs.dig(:meta, "total")).to eq(169)
       expect(data_catalogs[:data].size).to eq(25)
       data_catalog = data_catalogs[:data].first
       expect(data_catalog.id).to eq("https://doi.org/10.17616/r3vg6n")
@@ -88,7 +88,7 @@ describe DataCatalog, type: :model, vcr: true do
 
     it "open" do
       data_catalogs = DataCatalog.query(nil, open: true)
-      expect(data_catalogs.dig(:meta, "total")).to eq(1493)
+      expect(data_catalogs.dig(:meta, "total")).to eq(1516)
       expect(data_catalogs[:data].size).to eq(25)
       data_catalog = data_catalogs[:data].first
       expect(data_catalog.id).to eq("https://doi.org/10.17616/r3w05r")

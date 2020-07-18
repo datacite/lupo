@@ -99,7 +99,7 @@ Information about affiliations
 """
 type Affiliation {
   """
-  Affiliation ROR identifier
+  Affiliation identifier
   """
   id: ID
 
@@ -161,6 +161,11 @@ type Audiovisual implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -193,7 +198,7 @@ type Audiovisual implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -241,9 +246,14 @@ type Audiovisual implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -259,6 +269,11 @@ type Audiovisual implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -336,6 +351,8 @@ type AudiovisualConnectionWithTotal {
   A list of edges.
   """
   edges: [AudiovisualEdge]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -419,6 +436,11 @@ type Book implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -451,7 +473,7 @@ type Book implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -499,9 +521,14 @@ type Book implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -517,6 +544,11 @@ type Book implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -636,6 +668,11 @@ type BookChapter implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -668,7 +705,7 @@ type BookChapter implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -716,9 +753,14 @@ type BookChapter implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -734,6 +776,11 @@ type BookChapter implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -811,6 +858,8 @@ type BookChapterConnectionWithTotal {
   A list of edges.
   """
   edges: [BookChapterEdge]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -852,6 +901,8 @@ type BookConnectionWithTotal {
   A list of edges.
   """
   edges: [BookEdge]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -935,6 +986,11 @@ type Collection implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -967,7 +1023,7 @@ type Collection implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -1015,9 +1071,14 @@ type Collection implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -1033,6 +1094,11 @@ type Collection implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -1110,6 +1176,8 @@ type CollectionConnectionWithTotal {
   A list of edges.
   """
   edges: [CollectionEdge]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -1192,6 +1260,11 @@ type ConferencePaper implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -1224,7 +1297,7 @@ type ConferencePaper implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -1272,9 +1345,14 @@ type ConferencePaper implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -1290,6 +1368,11 @@ type ConferencePaper implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -1368,6 +1451,8 @@ type ConferencePaperConnectionWithTotal {
   """
   edges: [ConferencePaperEdge]
   fieldsOfScience: [Facet!]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -1406,7 +1491,7 @@ type Country {
   """
   Country ISO 3166-1 code
   """
-  code: String
+  id: ID
 
   """
   Country name
@@ -1421,7 +1506,7 @@ type Creator {
   """
   The organizational or institutional affiliation of the creator.
   """
-  affiliation: [Organization!]
+  affiliation: [Affiliation!]
 
   """
   Family name. In the U.S., the last name of an Person.
@@ -1486,7 +1571,7 @@ type DataCatalog {
   """
   Funded datasets
   """
-  datasets(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, memberId: String, published: String, query: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
+  datasets(after: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, license: String, memberId: String, published: String, query: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
 
   """
   A description of the data catalog.
@@ -1650,6 +1735,11 @@ type DataPaper implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -1682,7 +1772,7 @@ type DataPaper implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -1730,9 +1820,14 @@ type DataPaper implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -1748,6 +1843,11 @@ type DataPaper implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -1825,6 +1925,8 @@ type DataPaperConnectionWithTotal {
   A list of edges.
   """
   edges: [DataPaperEdge]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -1908,6 +2010,11 @@ type Dataset implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -1940,7 +2047,7 @@ type Dataset implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -1988,9 +2095,14 @@ type Dataset implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -2006,6 +2118,11 @@ type Dataset implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -2107,6 +2224,8 @@ type DatasetConnectionWithTotal {
   edges: [DatasetEdge]
   fieldsOfScience: [Facet!]
   funderConnectionCount: Int!
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -2277,6 +2396,11 @@ type Dissertation implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -2309,7 +2433,7 @@ type Dissertation implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -2357,9 +2481,14 @@ type Dissertation implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -2375,6 +2504,11 @@ type Dissertation implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -2453,6 +2587,8 @@ type DissertationConnectionWithTotal {
   """
   edges: [DissertationEdge]
   fieldsOfScience: [Facet!]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -2539,6 +2675,11 @@ interface DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -2571,7 +2712,7 @@ interface DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -2619,9 +2760,14 @@ interface DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -2637,6 +2783,11 @@ interface DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -2756,6 +2907,11 @@ type Event implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -2788,7 +2944,7 @@ type Event implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -2836,9 +2992,14 @@ type Event implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -2854,6 +3015,11 @@ type Event implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -2931,6 +3097,8 @@ type EventConnectionWithTotal {
   A list of edges.
   """
   edges: [EventEdge]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -2999,6 +3167,11 @@ type EventData implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -3031,7 +3204,7 @@ type EventData implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -3079,9 +3252,14 @@ type EventData implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -3097,6 +3275,11 @@ type EventData implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -3240,6 +3423,21 @@ type Facet {
 }
 
 """
+Information about OECD Fields of Science
+"""
+type FieldOfScience {
+  """
+  Fields of Science id
+  """
+  id: ID
+
+  """
+  Fields of Science name
+  """
+  name: String
+}
+
+"""
 Information about funders
 """
 type Funder implements ActorItem {
@@ -3261,7 +3459,7 @@ type Funder implements ActorItem {
   """
   Funded datasets
   """
-  datasets(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
+  datasets(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -3281,12 +3479,12 @@ type Funder implements ActorItem {
   """
   Funded publications
   """
-  publications(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, repositoryId: String, userId: String): PublicationConnectionWithTotal
+  publications(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PublicationConnectionWithTotal
 
   """
   Funded software
   """
-  softwares(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal
+  softwares(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal
 
   """
   The type of the actor.
@@ -3301,7 +3499,7 @@ type Funder implements ActorItem {
   """
   Funded works
   """
-  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 }
 
 """
@@ -3445,18 +3643,23 @@ An ISO 8601-encoded date
 scalar ISO8601Date
 
 """
+An ISO 8601-encoded datetime
+"""
+scalar ISO8601DateTime
+
+"""
 Information about identifiers
 """
 type Identifier {
   """
   The value of the identifier.
   """
-  identifier: String
+  identifier: String!
 
   """
   The type of identifier.
   """
-  identifierType: String
+  identifierType: String!
 }
 
 type Image implements DoiItem {
@@ -3511,6 +3714,11 @@ type Image implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -3543,7 +3751,7 @@ type Image implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -3591,9 +3799,14 @@ type Image implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -3609,6 +3822,11 @@ type Image implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -3686,6 +3904,8 @@ type ImageConnectionWithTotal {
   A list of edges.
   """
   edges: [ImageEdge]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -3769,6 +3989,11 @@ type Instrument implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -3801,7 +4026,7 @@ type Instrument implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -3849,9 +4074,14 @@ type Instrument implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -3867,6 +4097,11 @@ type Instrument implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -3944,6 +4179,7 @@ type InstrumentConnectionWithTotal {
   A list of edges.
   """
   edges: [InstrumentEdge]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -4027,6 +4263,11 @@ type InteractiveResource implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -4059,7 +4300,7 @@ type InteractiveResource implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -4107,9 +4348,14 @@ type InteractiveResource implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -4125,6 +4371,11 @@ type InteractiveResource implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -4202,6 +4453,8 @@ type InteractiveResourceConnectionWithTotal {
   A list of edges.
   """
   edges: [InteractiveResourceEdge]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -4252,6 +4505,11 @@ type Issn {
   """
   print: String
 }
+
+"""
+Represents untyped JSON
+"""
+scalar JSON
 
 type JournalArticle implements DoiItem {
   """
@@ -4305,6 +4563,11 @@ type JournalArticle implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -4337,7 +4600,7 @@ type JournalArticle implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -4385,9 +4648,14 @@ type JournalArticle implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -4403,6 +4671,11 @@ type JournalArticle implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -4481,6 +4754,8 @@ type JournalArticleConnectionWithTotal {
   """
   edges: [JournalArticleEdge]
   fieldsOfScience: [Facet!]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -4513,6 +4788,21 @@ type JournalArticleEdge {
 }
 
 """
+Information about languages
+"""
+type Language {
+  """
+  Language ISO 639-1 code
+  """
+  id: ID
+
+  """
+  Language name
+  """
+  name: String
+}
+
+"""
 Information about members
 """
 type Member {
@@ -4529,7 +4819,7 @@ type Member {
   """
   Datasets by this provider.
   """
-  datasets(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, published: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): DatasetConnectionWithTotal
+  datasets(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, language: String, license: String, published: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): DatasetConnectionWithTotal
 
   """
   Description of the member
@@ -4584,7 +4874,7 @@ type Member {
   """
   Publications by this provider.
   """
-  publications(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, published: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): PublicationConnectionWithTotal
+  publications(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, language: String, license: String, published: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): PublicationConnectionWithTotal
 
   """
   Geographic region where the member is located
@@ -4604,7 +4894,7 @@ type Member {
   """
   Software by this provider.
   """
-  softwares(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], published: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): SoftwareConnectionWithTotal
+  softwares(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, published: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): SoftwareConnectionWithTotal
 
   """
   The type of the item.
@@ -4624,7 +4914,7 @@ type Member {
   """
   Works by this provider.
   """
-  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], published: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, published: String, query: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 }
 
 """
@@ -4779,6 +5069,11 @@ type Model implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -4811,7 +5106,7 @@ type Model implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -4859,9 +5154,14 @@ type Model implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -4877,6 +5177,11 @@ type Model implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -4954,6 +5259,8 @@ type ModelConnectionWithTotal {
   A list of edges.
   """
   edges: [ModelEdge]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -5007,7 +5314,7 @@ type Organization implements ActorItem {
   """
   Datasets from this organization
   """
-  datasets(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
+  datasets(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -5032,12 +5339,12 @@ type Organization implements ActorItem {
   """
   Publications from this organization
   """
-  publications(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PublicationConnectionWithTotal
+  publications(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PublicationConnectionWithTotal
 
   """
   Software from this organization
   """
-  softwares(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal
+  softwares(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal
 
   """
   The type of the actor.
@@ -5057,7 +5364,7 @@ type Organization implements ActorItem {
   """
   Works from this organization
   """
-  works(after: String, fieldOfScience: String, first: Int = 2, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): WorkConnectionWithTotal
+  works(after: String, fieldOfScience: String, first: Int = 2, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 }
 
 """
@@ -5152,6 +5459,11 @@ type Other implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -5184,7 +5496,7 @@ type Other implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -5232,9 +5544,14 @@ type Other implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -5250,6 +5567,11 @@ type Other implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -5327,6 +5649,8 @@ type OtherConnectionWithTotal {
   A list of edges.
   """
   edges: [OtherEdge]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -5435,6 +5759,11 @@ type PeerReview implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -5467,7 +5796,7 @@ type PeerReview implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -5515,9 +5844,14 @@ type PeerReview implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -5533,6 +5867,11 @@ type PeerReview implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -5610,6 +5949,8 @@ type PeerReviewConnectionWithTotal {
   A list of edges.
   """
   edges: [PeerReviewEdge]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -5663,7 +6004,7 @@ type Person implements ActorItem {
   """
   Authored datasets
   """
-  datasets(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String): DatasetConnectionWithTotal
+  datasets(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String): DatasetConnectionWithTotal
 
   """
   The number of downloads according to the Counter Code of Practice.
@@ -5693,12 +6034,12 @@ type Person implements ActorItem {
   """
   Authored publications
   """
-  publications(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String): PublicationConnectionWithTotal
+  publications(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String): PublicationConnectionWithTotal
 
   """
   Authored software
   """
-  softwares(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String): SoftwareConnectionWithTotal
+  softwares(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String): SoftwareConnectionWithTotal
 
   """
   The type of the actor.
@@ -5713,7 +6054,7 @@ type Person implements ActorItem {
   """
   Authored works
   """
-  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String): WorkConnectionWithTotal
+  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String): WorkConnectionWithTotal
 }
 
 """
@@ -5809,6 +6150,11 @@ type PhysicalObject implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -5841,7 +6187,7 @@ type PhysicalObject implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -5889,9 +6235,14 @@ type PhysicalObject implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -5907,6 +6258,11 @@ type PhysicalObject implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -5984,6 +6340,8 @@ type PhysicalObjectConnectionWithTotal {
   A list of edges.
   """
   edges: [PhysicalObjectEdge]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -6120,6 +6478,11 @@ type Preprint implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -6152,7 +6515,7 @@ type Preprint implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -6200,9 +6563,14 @@ type Preprint implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -6218,6 +6586,11 @@ type Preprint implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -6296,6 +6669,8 @@ type PreprintConnectionWithTotal {
   """
   edges: [PreprintEdge]
   fieldsOfScience: [Facet!]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -6379,6 +6754,11 @@ type Publication implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -6411,7 +6791,7 @@ type Publication implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -6459,9 +6839,14 @@ type Publication implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -6477,6 +6862,11 @@ type Publication implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -6557,6 +6947,8 @@ type PublicationConnectionWithTotal {
   edges: [PublicationEdge]
   fieldsOfScience: [Facet!]
   funderConnectionCount: Int!
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -6597,63 +6989,63 @@ type Query {
   actor(id: ID!): ActorItem!
   actors(after: String, first: Int = 25, query: String): ActorConnection!
   audiovisual(id: ID!): Audiovisual!
-  audiovisuals(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): AudiovisualConnectionWithTotal!
+  audiovisuals(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): AudiovisualConnectionWithTotal!
   book(id: ID!): Book!
   bookChapter(id: ID!): BookChapter!
-  bookChapters(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): BookChapterConnectionWithTotal!
-  books(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): BookConnectionWithTotal!
+  bookChapters(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): BookChapterConnectionWithTotal!
+  books(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): BookConnectionWithTotal!
   collection(id: ID!): Collection!
-  collections(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): CollectionConnectionWithTotal!
+  collections(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): CollectionConnectionWithTotal!
   conferencePaper(id: ID!): ConferencePaper!
-  conferencePapers(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ConferencePaperConnectionWithTotal!
+  conferencePapers(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ConferencePaperConnectionWithTotal!
   dataCatalog(id: ID!): DataCatalog!
   dataCatalogs(after: String, first: Int = 25, query: String): DataCatalogConnectionWithTotal!
   dataPaper(id: ID!): DataPaper!
-  dataPapers(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DataPaperConnectionWithTotal!
+  dataPapers(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DataPaperConnectionWithTotal!
   dataset(id: ID!): Dataset!
-  datasets(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DatasetConnectionWithTotal!
+  datasets(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DatasetConnectionWithTotal!
   dissertation(id: ID!): Dissertation!
-  dissertations(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DissertationConnectionWithTotal!
+  dissertations(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DissertationConnectionWithTotal!
   event(id: ID!): Event!
-  events(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): EventConnectionWithTotal!
+  events(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): EventConnectionWithTotal!
   funder(id: ID!): Funder!
   funders(after: String, first: Int = 25, query: String): FunderConnectionWithTotal!
   image(id: ID!): Image!
-  images(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ImageConnectionWithTotal!
+  images(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ImageConnectionWithTotal!
   instrument(id: ID!): Instrument!
-  instruments(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): InstrumentConnectionWithTotal!
+  instruments(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): InstrumentConnectionWithTotal!
   interactiveResource(id: ID!): InteractiveResource!
-  interactiveResources(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): InteractiveResourceConnectionWithTotal!
+  interactiveResources(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): InteractiveResourceConnectionWithTotal!
   journalArticle(id: ID!): JournalArticle!
-  journalArticles(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): JournalArticleConnectionWithTotal!
+  journalArticles(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): JournalArticleConnectionWithTotal!
   member(id: ID!): Member!
   members(after: String, first: Int = 25, query: String, year: String): MemberConnectionWithTotal!
   model(id: ID!): Model!
-  models(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ModelConnectionWithTotal!
+  models(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ModelConnectionWithTotal!
   organization(id: ID!): Organization!
   organizations(after: String, query: String): OrganizationConnectionWithTotal!
   other(id: ID!): Other!
-  others(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, registrationAgency: String, repositoryId: String, userId: String): OtherConnectionWithTotal!
+  others(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, query: String, registrationAgency: String, repositoryId: String, userId: String): OtherConnectionWithTotal!
   peerReview(id: ID!): PeerReview!
-  peerReviews(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PeerReviewConnectionWithTotal!
+  peerReviews(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PeerReviewConnectionWithTotal!
   people(after: String, first: Int = 25, query: String): PersonConnectionWithTotal!
   person(id: ID!): Person!
   physicalObject(id: ID!): PhysicalObject!
-  physicalObjects(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PhysicalObjectConnectionWithTotal!
+  physicalObjects(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PhysicalObjectConnectionWithTotal!
   prefix(id: ID!): Prefix!
   prefixes(after: String, first: Int = 25, query: String): PrefixConnectionWithTotal!
   preprint(id: ID!): Preprint!
-  preprints(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PreprintConnectionWithTotal!
+  preprints(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PreprintConnectionWithTotal!
   publication(id: ID!): Publication!
-  publications(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PublicationConnectionWithTotal!
+  publications(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PublicationConnectionWithTotal!
   repositories(after: String, first: Int = 25, query: String, software: String, year: String): RepositoryConnectionWithTotal!
   repository(id: ID!): Repository!
   service(id: ID!): Service!
-  services(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, pidEntity: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ServiceConnectionWithTotal!
+  services(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, pidEntity: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ServiceConnectionWithTotal!
   software(id: ID!): Software!
-  softwares(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal!
+  softwares(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal!
   sound(id: ID!): Sound!
-  sounds(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): SoundConnectionWithTotal!
+  sounds(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): SoundConnectionWithTotal!
   usageReport(id: ID!): UsageReport!
   usageReports(
     """
@@ -6674,8 +7066,23 @@ type Query {
   ): UsageReportConnectionWithTotal!
   work(id: ID!): Work!
   workflow(id: ID!): Workflow!
-  workflows(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): WorkflowConnectionWithTotal!
-  works(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
+  workflows(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): WorkflowConnectionWithTotal!
+  works(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal!
+}
+
+"""
+Information about DOI registration agencies
+"""
+type RegistrationAgency {
+  """
+  DOI registration agency id
+  """
+  id: ID
+
+  """
+  DOI registration agency name
+  """
+  name: String
 }
 
 """
@@ -6685,12 +7092,12 @@ type RelatedIdentifier {
   """
   Related identifier
   """
-  relatedIdentifier: String
+  relatedIdentifier: String!
 
   """
   Related identifier type
   """
-  relatedIdentifierType: String
+  relatedIdentifierType: String!
 
   """
   Related metadata scheme
@@ -6700,7 +7107,7 @@ type RelatedIdentifier {
   """
   Relation type
   """
-  relationType: String
+  relationType: String!
 
   """
   Resource type general
@@ -6760,7 +7167,7 @@ type Repository {
   """
   Datasets managed by the repository
   """
-  datasets(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, published: String, query: String, registrationAgency: String, resourceTypeId: String, userId: String): DatasetConnectionWithTotal
+  datasets(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, resourceTypeId: String, userId: String): DatasetConnectionWithTotal
 
   """
   Description of the repository
@@ -6800,7 +7207,7 @@ type Repository {
   """
   Publications managed by the repository
   """
-  publications(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, published: String, query: String, registrationAgency: String, resourceTypeId: String, userId: String): PublicationConnectionWithTotal
+  publications(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, resourceTypeId: String, userId: String): PublicationConnectionWithTotal
 
   """
   The re3data identifier for the repository
@@ -6820,7 +7227,7 @@ type Repository {
   """
   Software managed by the repository
   """
-  softwares(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, published: String, query: String, registrationAgency: String, resourceTypeId: String, userId: String): SoftwareConnectionWithTotal
+  softwares(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, resourceTypeId: String, userId: String): SoftwareConnectionWithTotal
 
   """
   The type of the item.
@@ -6840,7 +7247,7 @@ type Repository {
   """
   Works managed by the repository
   """
-  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, memberId: String, published: String, query: String, registrationAgency: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+  works(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: String, language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
 }
 
 """
@@ -6988,14 +7395,29 @@ type Rights {
   lang: String
 
   """
-  Any rights information for this resource
+  Any rights information for this resource.
   """
   rights: String
 
   """
-  The URI of the license
+  A short, standardized version of the license name.
+  """
+  rightsIdentifier: String
+
+  """
+  The name of the scheme.
+  """
+  rightsIdentifierScheme: String
+
+  """
+  The URI of the license.
   """
   rightsUri: String
+
+  """
+  The URI of the rightsIdentifierScheme.
+  """
+  schemeUri: String
 }
 
 type Service implements DoiItem {
@@ -7050,6 +7472,11 @@ type Service implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -7082,7 +7509,7 @@ type Service implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -7130,9 +7557,14 @@ type Service implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -7148,6 +7580,11 @@ type Service implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -7226,6 +7663,8 @@ type ServiceConnectionWithTotal {
   """
   edges: [ServiceEdge]
   fieldsOfScience: [Facet!]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -7310,6 +7749,11 @@ type Software implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -7342,7 +7786,7 @@ type Software implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -7390,9 +7834,14 @@ type Software implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -7408,6 +7857,11 @@ type Software implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -7513,6 +7967,8 @@ type SoftwareConnectionWithTotal {
   edges: [SoftwareEdge]
   fieldsOfScience: [Facet!]
   funderConnectionCount: Int!
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -7600,6 +8056,11 @@ type Sound implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -7632,7 +8093,7 @@ type Sound implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -7680,9 +8141,14 @@ type Sound implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -7698,6 +8164,11 @@ type Sound implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -7775,6 +8246,8 @@ type SoundConnectionWithTotal {
   A list of edges.
   """
   edges: [SoundEdge]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -8041,6 +8514,11 @@ type Work implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -8073,7 +8551,7 @@ type Work implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -8121,9 +8599,14 @@ type Work implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -8139,6 +8622,11 @@ type Work implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -8217,6 +8705,8 @@ type WorkConnectionWithTotal {
   """
   edges: [WorkEdge]
   fieldsOfScience: [Facet!]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.
@@ -8301,6 +8791,11 @@ type Workflow implements DoiItem {
   downloadsOverTime: [YearMonthTotal!]
 
   """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
   Technical format of the resource
   """
   formats: [String!]
@@ -8333,7 +8828,7 @@ type Workflow implements DoiItem {
   """
   The primary language of the resource
   """
-  language: String
+  language: Language
 
   """
   The member account managing this resource
@@ -8381,9 +8876,14 @@ type Workflow implements DoiItem {
   references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], memberId: String, query: String, repositoryId: String, userId: String): WorkConnectionWithTotal
 
   """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
   The DOI registration agency for the resource
   """
-  registrationAgency: String
+  registrationAgency: RegistrationAgency
 
   """
   Identifiers of related resources. These must be globally unique identifiers
@@ -8399,6 +8899,11 @@ type Workflow implements DoiItem {
   Any rights information for this resource
   """
   rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -8476,6 +8981,8 @@ type WorkflowConnectionWithTotal {
   A list of edges.
   """
   edges: [WorkflowEdge]
+  languages: [Facet!]
+  licenses: [Facet!]
 
   """
   A list of nodes.

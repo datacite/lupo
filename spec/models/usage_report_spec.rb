@@ -22,7 +22,7 @@ describe UsageReport, type: :model, vcr: true do
     it "all" do
       query = nil
       usage_reports = UsageReport.query(query, page: { number: 1, size: 25})
-      expect(usage_reports.dig(:meta, "total")).to eq(298)
+      expect(usage_reports.dig(:meta, "total")).to eq(309)
       expect(usage_reports[:data].size).to eq(25)
       expect(usage_reports[:data].first).to eq(id: "https://api.test.datacite.org/reports/0148536f-bfbc-4775-b93c-524e91d0b9f6",
         reporting_period: { begin_date: "2017-09-01", end_date: "2017-09-30" })
@@ -31,7 +31,7 @@ describe UsageReport, type: :model, vcr: true do
     it "size" do
       query = nil
       usage_reports = UsageReport.query(query, page: { number: 1, size: 10})
-      expect(usage_reports.dig(:meta, "total")).to eq(298)
+      expect(usage_reports.dig(:meta, "total")).to eq(309)
       expect(usage_reports[:data].size).to eq(10)
       expect(usage_reports[:data].first).to eq(id: "https://api.test.datacite.org/reports/0148536f-bfbc-4775-b93c-524e91d0b9f6",
         reporting_period: { begin_date: "2017-09-01", end_date: "2017-09-30"})

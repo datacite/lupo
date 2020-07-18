@@ -25,19 +25,19 @@ describe Organization, type: :model, vcr: true do
     it "all" do
       query = nil
       organizations = Organization.query(query)
-      expect(organizations.dig(:meta, "total")).to eq(97795)
+      expect(organizations.dig(:meta, "total")).to eq(98332)
       expect(organizations[:data].size).to eq(20)
       organization = organizations[:data].first
-      expect(organization.id).to eq("https://ror.org/01m1pv723")
-      expect(organization.name).to eq("University Hospital of Geneva")
-      expect(organization.labels).to eq([{"code"=>"FR", "name"=>"Hôpitaux universitaires de Genève"}])
-      expect(organization.links).to eq(["http://www.hug-ge.ch/"])
+      expect(organization.id).to eq("https://ror.org/027bk5v43")
+      expect(organization.name).to eq("Illinois Department of Public Health")
+      expect(organization.labels).to eq([])
+      expect(organization.links).to eq(["http://www.dph.illinois.gov/"])
     end
 
     it "found" do
       query = "lincoln university"
       organizations = Organization.query(query)
-      expect(organizations.dig(:meta, "total")).to eq(10737)
+      expect(organizations.dig(:meta, "total")).to eq(10764)
       expect(organizations[:data].size).to eq(20)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/04ps1r162")
@@ -49,7 +49,7 @@ describe Organization, type: :model, vcr: true do
     it "found page 2" do
       query = "lincoln university"
       organizations = Organization.query(query, offset: 2)
-      expect(organizations.dig(:meta, "total")).to eq(10737)
+      expect(organizations.dig(:meta, "total")).to eq(10764)
       expect(organizations[:data].size).to eq(20)
       organization = organizations[:data].first
       expect(organization.id).to eq("https://ror.org/01qb09m39")

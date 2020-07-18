@@ -12,7 +12,8 @@ describe DoiItem do
     it { is_expected.to have_field(:publisher).of_type("String") }
     it { is_expected.to have_field(:subjects).of_type("[Subject!]") }
     it { is_expected.to have_field(:dates).of_type("[Date!]") }
-    it { is_expected.to have_field(:language).of_type("String") }
+    it { is_expected.to have_field(:registered).of_type("ISO8601DateTime") }
+    it { is_expected.to have_field(:language).of_type("Language") }
     it { is_expected.to have_field(:identifiers).of_type("[Identifier!]") }
     it { is_expected.to have_field(:types).of_type("ResourceType!") }
     it { is_expected.to have_field(:formats).of_type("[String!]") }
@@ -25,9 +26,10 @@ describe DoiItem do
     it { is_expected.to have_field(:url).of_type("Url") }
     it { is_expected.to have_field(:repository).of_type("Repository") }
     it { is_expected.to have_field(:member).of_type("Member") }
-    it { is_expected.to have_field(:registrationAgency).of_type("String") }
+    it { is_expected.to have_field(:registrationAgency).of_type("RegistrationAgency") }
     it { is_expected.to have_field(:formattedCitation).of_type("String") }
     it { is_expected.to have_field(:bibtex).of_type("String") }
+    it { is_expected.to have_field(:schemaOrg).of_type("JSON") }
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:referenceCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }

@@ -8,18 +8,16 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.6.1; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
       Accept:
       - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
-      Accept-Encoding:
-      - gzip,deflate
   response:
     status:
       code: 200
       message: OK
     headers:
       Date:
-      - Mon, 11 May 2020 17:39:46 GMT
+      - Mon, 13 Jul 2020 12:13:49 GMT
       Content-Type:
       - application/json; charset=utf-8
       Connection:
@@ -33,19 +31,16 @@ http_interactions:
       Etag:
       - W/"8a2e50dd71ab95eba00f90776adb367e"
       X-Runtime:
-      - '0.074505'
+      - '0.091345'
       X-Request-Id:
-      - ac1af058-79ab-4d92-97e6-7428623eaafd
+      - 28c239a1-d6e3-4055-ba41-268c6c1ea568
       X-Powered-By:
       - Phusion Passenger 5.2.3
       Server:
       - nginx/1.12.2 + Phusion Passenger 5.2.3
-      Content-Encoding:
-      - gzip
     body:
       encoding: ASCII-8BIT
-      string: !binary |-
-        H4sIAAAAAAAAAyyMyw7CIBRE/+Um3ZFCa3BBQkxMP8C9ukC9ViJ9CDRBCf8uWHdnzmQmwk15BeJ4JjBgoQh+8sqAYGSlg+rR/eKcCUSTCBg9PrOL4NDcQcDD+9kJStWs63J41R7ryfbU4qbkXZlWfD8uwwVtxTvZnBbG2u3fO/3JdSdbvurXgvYtQwiQ0hcAAP//AwDS6eBxowAAAA==
+      string: '{"data":[],"meta":{"total":0,"totalPages":0,"page":1},"links":{"self":"https://api.datacite.org/re3data?page%5Bnumber%5D=1\u0026page%5Bsize%5D=25\u0026query=xxx"}}'
     http_version: null
-  recorded_at: Mon, 11 May 2020 17:39:46 GMT
+  recorded_at: Mon, 13 Jul 2020 12:13:49 GMT
 recorded_with: VCR 5.1.0

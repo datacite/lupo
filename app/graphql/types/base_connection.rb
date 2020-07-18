@@ -18,6 +18,28 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     "medra" =>    "mEDRA",
     "op" =>       "OP"
   }
+
+  LICENSES = {
+    "afl-1.1"         => "AFL-1.1",
+    "apache-2.0"      => "Apache-2.0",
+    "cc-by-1.0"       => "CC-BY-1.0",
+    "cc-by-2.0"       => "CC-BY-2.0",
+    "cc-by-2.5"       => "CC-BY-2.5",
+    "cc-by-3.0"       => "CC-BY-3.0",
+    "cc-by-4.0"       => "CC-BY-4.0",
+    "cc-by-nc-2.5"    => "CC-BY-NC-2.5",
+    "cc-by-nc-3.0"    => "CC-BY-NC-3.0",
+    "cc-by-nc-4.0"    => "CC-BY-NC-4.0",
+    "cc-by-nc-nd-4.0" => "CC-BY-NC-ND-4.0",
+    "cc-by-nc-sa-4.0" => "CC-BY-NC-SA-4.0",
+    "cc-pddc"         => "CC-PDDC",
+    "cc0-1.0"         => "CC0-1.0",
+    "gpl-3.0"         => "GPL-3.0",
+    "isc"             => "ISC",
+    "mit"             => "MIT",
+    "mpl-2.0"         => "MPL-2.0",
+    "ogl-canada-2.0"  => "OGL-Canada-2.0"
+  }
   
   def doi_from_url(url)
     if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match?(url)
@@ -65,6 +87,14 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     end
   end
 
+  def facet_by_license(arr)
+    arr.map do |hsh|
+      { "id" => hsh["key"],
+        "title" => LICENSES[hsh["key"]] || hsh["key"],
+        "count" => hsh["doc_count"] }
+    end
+  end
+
   def facet_by_combined_key(arr)
     arr.map do |hsh|
       id, title = hsh["key"].split(":", 2)
@@ -105,6 +135,15 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     arr.select { |a| a["key_as_string"].to_i <= 2020 }[0..9].map do |hsh|
       { "id" => hsh["key_as_string"],
         "title" => hsh["key_as_string"],
+        "count" => hsh["doc_count"] }
+    end
+  end
+
+  def facet_by_language(arr)
+    arr.map do |hsh|
+      la = ISO_639.find_by_code(hsh["key"])
+      { "id" => hsh["key"],
+        "title" => la.present? ? la.english_name.split(/\W+/).first : hsh["key"],
         "count" => hsh["doc_count"] }
     end
   end

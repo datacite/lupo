@@ -107,4 +107,117 @@ describe WorkType do
       end_cursor = response.dig("data", "works", "pageInfo", "endCursor")
     end
   end
+
+  describe "query works by registration agency", elasticsearch: true do
+    let(:query) do
+      %(query($first: Int, $cursor: String, $registrationAgency: String) {
+        works(first: $first, after: $cursor, registrationAgency: $registrationAgency) {
+          totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          registrationAgencies {
+            id
+            title
+            count
+          }
+          languages {
+            id
+            title
+            count
+          }
+          nodes {
+            id
+            doi
+            registered
+            language {
+              id
+              name
+            }
+            registrationAgency {
+              id
+              name
+            }
+          }
+        }
+      })
+    end
+    
+    let!(:works) { create_list(:doi, 10, aasm_state: "findable", language: "nl", agency: "datacite") }
+    let!(:work) { create(:doi, aasm_state: "findable", language: "de", agency: "crossref") }
+
+    before do
+      Doi.import
+      sleep 2
+      @works = Doi.query(nil, page: { cursor: [], size: 11 }).results.to_a
+    end
+
+    it "returns all works" do
+      response = LupoSchema.execute(query, variables: { first: 4, cursor: nil, registrationAgency: "datacite" }).as_json
+
+      expect(response.dig("data", "works", "totalCount")).to eq(10)
+      expect(response.dig("data", "works", "registrationAgencies")).to eq([{"count"=>10, "id"=>"datacite", "title"=>"DataCite"}])
+      expect(response.dig("data", "works", "languages")).to eq([{"count"=>10, "id"=>"nl", "title"=>"Dutch"}])
+      # expect(Base64.urlsafe_decode64(response.dig("data", "works", "pageInfo", "endCursor")).split(",", 2).last).to eq(@works[3].uid)
+      expect(response.dig("data", "works", "pageInfo", "hasNextPage")).to be true
+      expect(response.dig("data", "works", "nodes").length).to eq(4)
+      expect(response.dig("data", "works", "nodes", 0, "registered")).to start_with(@works[0].registered[0..9])
+      expect(response.dig("data", "works", "nodes", 0, "language")).to eq("id"=>"nl", "name"=>"Dutch")
+      expect(response.dig("data", "works", "nodes", 0, "registrationAgency")).to eq("id"=>"datacite", "name"=>"DataCite")
+    end
+  end
+
+  describe "query works by license", elasticsearch: true do
+    let(:query) do
+      %(query($first: Int, $cursor: String, $license: String) {
+        works(first: $first, after: $cursor, license: $license) {
+          totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          licenses {
+            id
+            title
+            count
+          }
+          nodes {
+            id
+            doi
+            registered
+            rights {
+              rights
+              rightsUri
+              rightsIdentifier
+            }
+          }
+        }
+      })
+    end
+    
+    let!(:works) { create_list(:doi, 10, aasm_state: "findable", agency: "datacite") }
+    let!(:work) { create(:doi, aasm_state: "findable", agency: "crossref", rights_list: []) }
+
+    before do
+      Doi.import
+      sleep 2
+      @works = Doi.query(nil, page: { cursor: [], size: 11 }).results.to_a
+    end
+
+    it "returns all works" do
+      response = LupoSchema.execute(query, variables: { first: 4, cursor: nil, license: "cc0-1.0" }).as_json
+
+      expect(response.dig("data", "works", "totalCount")).to eq(10)
+      expect(response.dig("data", "works", "licenses")).to eq([{"count"=>10, "id"=>"cc0-1.0", "title"=>"CC0-1.0"}])
+      # expect(Base64.urlsafe_decode64(response.dig("data", "works", "pageInfo", "endCursor")).split(",", 2).last).to eq(@works[3].uid)
+      expect(response.dig("data", "works", "pageInfo", "hasNextPage")).to be true
+      expect(response.dig("data", "works", "nodes").length).to eq(4)
+      expect(response.dig("data", "works", "nodes", 0, "id")).to eq(@works[0].identifier)
+      expect(response.dig("data", "works", "nodes", 0, "registered")).to start_with(@works[0].registered[0..9])
+      expect(response.dig("data", "works", "nodes", 0, "rights")).to eq([{"rights"=>"Creative Commons Zero v1.0 Universal",
+      +  "rightsIdentifier"=>"cc0-1.0",
+      +  "rightsUri"=>"https://creativecommons.org/publicdomain/zero/1.0/legalcode"}])
+    end
+  end
 end
