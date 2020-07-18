@@ -58,6 +58,7 @@ class Doi < ActiveRecord::Base
   end
 
   self.table_name = "dataset"
+  self.inheritance_column = "agency"
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   alias_attribute :registered, :minted
