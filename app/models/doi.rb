@@ -1873,20 +1873,19 @@ class Doi < ActiveRecord::Base
     response.results.total
   end
 
-  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filer
+  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filter
   # Options:
   # +filter+:: paramaters to filter the index
   # +label+:: String to output in the logs printout
   # +query+:: ES query to filter the index
   # +job_name+:: Acive Job class name of the Job that would be executed on every matched results
-  def self.loop_through_dois(options)
+  def self.loop_through_dois(options={})
     size = (options[:size] || 1000).to_i
-    cursor = [options[:from_id] || Doi.minimum(:id).to_i, options[:until_id] || Doi.maximum(:id).to_i]
+    cursor = []
     filter = options[:filter] || {}
     label = options[:label] || ""
-    job_name = options[:job_name] || ""
+    options[:job_name] ||= ""
     query = options[:query] || nil
-
 
     response = Doi.query(query, filter.merge(page: { size: 1, cursor: [] }))
     Rails.logger.info "#{label} #{response.results.total} Dois with #{label}."
@@ -1902,14 +1901,10 @@ class Doi < ActiveRecord::Base
         Rails.logger.info "#{label} Cursor: #{cursor} "
 
         ids = response.results.results.map(&:uid)
-        ids.each do |id|
-          Object.const_get(job_name).perform_later(id, options)
-          sleep 0.1
-        end
+        LoopThroughDoisJob.perform_later(ids, options)
       end
     end
   end
-
 
   # save to metadata table when xml has changed
   def save_metadata
