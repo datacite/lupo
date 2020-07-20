@@ -92,8 +92,6 @@ namespace :doi do
   desc "Set schema version"
   task set_schema_version: :environment do
     options = {
-      from_id: (ENV["FROM_ID"] || Doi.minimum(:id)).to_i,
-      until_id: (ENV["UNTIL_ID"] || Doi.maximum(:id)).to_i,
       query: "+aasm_state:(findable OR registered) -schema_version:*",
       label: "[SetSchemaVersion]",
       job_name: "SchemaVersionJob",
@@ -104,8 +102,6 @@ namespace :doi do
   desc "Set registration agency"
   task set_registration_agency: :environment do
     options = {
-      from_id: (ENV["FROM_ID"] || Doi.minimum(:id)).to_i,
-      until_id: (ENV["UNTIL_ID"] || Doi.maximum(:id)).to_i,
       query: "agency:DataCite OR agency:Crossref",
       label: "[SetRegistrationAgency]",
       job_name: "UpdateDoiJob",
@@ -116,8 +112,6 @@ namespace :doi do
   desc "Set license"
   task set_license: :environment do
     options = {
-      from_id: (ENV["FROM_ID"] || Doi.minimum(:id)).to_i,
-      until_id: (ENV["UNTIL_ID"] || Doi.maximum(:id)).to_i,
       query: "rights_list:* AND !rights_list.rightsIdentifier",
       label: "[SetLicense]",
       job_name: "UpdateDoiJob",
@@ -128,8 +122,6 @@ namespace :doi do
   desc "Set language"
   task set_language: :environment do
     options = {
-      from_id: (ENV["FROM_ID"] || Doi.minimum(:id)).to_i,
-      until_id: (ENV["UNTIL_ID"] || Doi.maximum(:id)).to_i,
       query: "language:*",
       label: "[SetLanguage]",
       job_name: "UpdateDoiJob",
@@ -140,8 +132,6 @@ namespace :doi do
   desc "Set identifiers"
   task set_identifiers: :environment do
     options = {
-      from_id: (ENV["FROM_ID"] || Doi.minimum(:id)).to_i,
-      until_id: (ENV["UNTIL_ID"] || Doi.maximum(:id)).to_i,
       query: "identifiers.identifierType:DOI",
       label: "[SetIdentifiers]",
       job_name: "UpdateDoiJob",
@@ -152,8 +142,6 @@ namespace :doi do
   desc "Set field of science"
   task set_field_of_science: :environment do
     options = {
-      from_id: (ENV["FROM_ID"] || Doi.minimum(:id)).to_i,
-      until_id: (ENV["UNTIL_ID"] || Doi.maximum(:id)).to_i,
       query: "subjects.subjectScheme:FOR",
       label: "[SetFieldOfScience]",
       job_name: "UpdateDoiJob",
