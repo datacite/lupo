@@ -57,7 +57,7 @@ class Doi < ActiveRecord::Base
   end
 
   self.table_name = "dataset"
-  self.inheritance_column = "agency"
+
   alias_attribute :created_at, :created
   alias_attribute :updated_at, :updated
   alias_attribute :registered, :minted
@@ -133,15 +133,6 @@ class Doi < ActiveRecord::Base
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
   scope :q, ->(query) { where("dataset.doi = ?", query) }
-
-  # use different index for testing
-  if Rails.env.test?
-    index_name "dois-test"
-  elsif ENV["ES_PREFIX"].present?
-    index_name"dois-#{ENV["ES_PREFIX"]}"
-  else
-    index_name "dois"
-  end
 
   settings index: {
     analysis: {
@@ -959,6 +950,7 @@ class Doi < ActiveRecord::Base
     # sleep 1
 
     IndexJob.perform_later(doi)
+    "Started indexing DOI #{doi.doi}."
   end
 
   def self.import_one(doi_id: nil)
@@ -982,27 +974,14 @@ class Doi < ActiveRecord::Base
     # update_attributes will trigger validations and Elasticsearch indexing
     doi.update_attributes(attrs)
     Rails.logger.warn "[MySQL] Imported metadata for DOI " + doi.doi + "."
-    doi
+    "Imported DOI #{doi.doi}."
   rescue TypeError, NoMethodError, RuntimeError, ActiveRecord::StatementInvalid, ActiveRecord::LockWaitTimeout => e
     if doi.present?
       Rails.logger.error "[MySQL] Error importing metadata for " + doi.doi + ": " + e.message
-      doi
+      "Imported DOI #{doi.doi}."
     else
       Raven.capture_exception(e)
     end
-  end
-
-  def self.import_by_ids(options={})
-    from_id = (options[:from_id] || Doi.minimum(:id)).to_i
-    until_id = (options[:until_id] || Doi.maximum(:id)).to_i
-
-    # get every id between from_id and end_id
-    (from_id..until_id).step(500).each do |id|
-      DoiImportByIdJob.perform_later(options.merge(id: id))
-      Rails.logger.info "Queued importing for DOIs with IDs starting with #{id}." unless Rails.env.test?
-    end
-
-    (from_id..until_id).to_a.length
   end
 
   def self.import_by_client(client_id: nil)
@@ -1046,60 +1025,6 @@ class Doi < ActiveRecord::Base
 
   rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
     Rails.logger.error "[Elasticsearch] Error #{error.message} importing DOIs for client #{client_id}."
-  end
-
-  def self.import_by_id(options={})
-    return nil if options[:id].blank?
-
-    id = options[:id].to_i
-    index = if Rails.env.test?
-              "dois-test"
-            elsif options[:index].present?
-              options[:index]
-            else
-              self.inactive_index
-            end
-    errors = 0
-    count = 0
-
-    Doi.where(id: id..(id + 499)).find_in_batches(batch_size: 500) do |dois|
-      response = Doi.__elasticsearch__.client.bulk \
-        index:   index,
-        type:    Doi.document_type,
-        body:    dois.map { |doi| { index: { _id: doi.id, data: doi.as_indexed_json } } }
-
-      # try to handle errors
-      errors_in_response = response['items'].select { |k, v| k.values.first['error'].present? }
-      errors += errors_in_response.length
-      errors_in_response.each do |item|
-        Rails.logger.error "[Elasticsearch] " + item.inspect
-        doi_id = item.dig("index", "_id").to_i
-        import_one(doi_id: doi_id) if doi_id > 0
-      end
-
-      count += dois.length
-    end
-
-    if errors > 1
-      Rails.logger.error "[Elasticsearch] #{errors} errors importing #{count} DOIs with IDs #{id} - #{(id + 499)}."
-    elsif count > 0
-      Rails.logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
-    end
-
-    count
-  rescue Elasticsearch::Transport::Transport::Errors::RequestEntityTooLarge, Faraday::ConnectionFailed, ActiveRecord::LockWaitTimeout => error
-    Rails.logger.info "[Elasticsearch] Error #{error.message} importing DOIs with IDs #{id} - #{(id + 499)}."
-
-    count = 0
-
-    Doi.where(id: id..(id + 499)).find_each do |doi|
-      IndexJob.perform_later(doi)
-      count += 1
-    end
-
-    Rails.logger.info "[Elasticsearch] Imported #{count} DOIs with IDs #{id} - #{(id + 499)}."
-
-    count
   end
 
   def self.index_by_id(options={})
@@ -1306,7 +1231,7 @@ class Doi < ActiveRecord::Base
       Rails.logger.info "Queued converting affiliations for DOIs with IDs starting with #{id}." unless Rails.env.test?
     end
 
-    (from_id..until_id).to_a.length
+    "Queued converting #{(from_id..until_id).to_a.length} affiliations."
   end
 
   def self.convert_affiliation_by_id(options={})
@@ -1410,7 +1335,7 @@ class Doi < ActiveRecord::Base
       Rails.logger.info "Queued converting containers for DOIs with IDs starting with #{id}." unless Rails.env.test?
     end
 
-    (from_id..until_id).to_a.length
+    "Queued converting #{(from_id..until_id).to_a.length} containers."
   end
 
   def self.convert_container_by_id(options={})
@@ -1773,7 +1698,7 @@ class Doi < ActiveRecord::Base
   # provider europ registers their DOIs in the handle system themselves and are ignored
   def self.set_handle
     response = Doi.query("-registered:* +url:* -aasm_state:draft -provider_id:europ -agency:crossref", page: { size: 1, cursor: [] })
-    Rails.logger.info "#{response.results.total} DOIs found that are not registered in the Handle system."
+    message = "#{response.results.total} DOIs found that are not registered in the Handle system."
 
     if response.results.total > 0
       # walk through results using cursor
@@ -1791,18 +1716,20 @@ class Doi < ActiveRecord::Base
         end
       end
     end
+
+    message
   end
 
   def self.set_url
-    response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 1, cursor: [] })
-    Rails.logger.info "#{response.results.total} DOIs with no URL found in the database."
+    response = Doi.query("-url:* (-aasm_status:draft)", page: { size: 1, cursor: [] })
+    message = "#{response.results.total} DOIs with no URL found in the database."
 
     if response.results.total > 0
       # walk through results using cursor
       cursor = []
 
       while response.results.results.length.postive? do
-        response = Doi.query("-url:* (+provider_id:ethz OR -aasm_status:draft)", page: { size: 1000, cursor: cursor })
+        response = Doi.query("-url:* (-aasm_status:draft)", page: { size: 1000, cursor: cursor })
         break unless response.results.results.length.positive?
 
         Rails.logger.info "[Handle] Update URL for #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
@@ -1813,18 +1740,20 @@ class Doi < ActiveRecord::Base
         end
       end
     end
+
+    message
   end
 
   def self.set_minted
-    response = Doi.query("provider_id:ethz AND +aasm_state:draft +url:*", page: { size: 1, cursor: [] })
-    Rails.logger.info "#{response.results.total} draft DOIs from provider ETHZ found in the database."
+    response = Doi.query("+aasm_state:draft +url:*", page: { size: 1, cursor: [] })
+    message = "#{response.results.total} draft DOIs with URL found in the database."
 
     if response.results.total > 0
       # walk through results using cursor
       cursor = []
 
       while response.results.results.length.positive? do
-        response = Doi.query("provider_id:ethz AND +aasm_state:draft +url:*", page: { size: 1000, cursor: cursor })
+        response = Doi.query("+aasm_state:draft +url:*", page: { size: 1000, cursor: cursor })
         break unless response.results.results.length.positive?
 
         Rails.logger.info "[MySQL] Set minted for #{response.results.results.length} DOIs starting with _id #{response.results.to_a.first[:_id]}."
@@ -1835,6 +1764,8 @@ class Doi < ActiveRecord::Base
         end
       end
     end
+
+    message
   end
 
   def self.transfer(options={})
@@ -1888,9 +1819,8 @@ class Doi < ActiveRecord::Base
     job_name = options[:job_name] || ""
     query = options[:query] || nil
 
-
     response = Doi.query(query, filter.merge(page: { size: 1, cursor: [] }))
-    Rails.logger.info "#{label} #{response.results.total} Dois with #{label}."
+    message = "#{label} #{response.results.total} Dois with #{label}."
 
     # walk through results using cursor
     if response.results.total.positive?
@@ -1909,6 +1839,8 @@ class Doi < ActiveRecord::Base
         end
       end
     end
+
+    message
   end
 
 
@@ -1926,8 +1858,32 @@ class Doi < ActiveRecord::Base
   def update_agency
     if agency.blank? || agency.casecmp?("datacite") 
       self.agency = "datacite"
-    elsif agency.casecmp? ("crossref")
+    elsif agency.casecmp?("crossref")
       self.agency = "crossref"
+      self.type = "OtherDoi"
+    elsif agency.casecmp?("kisti")
+      self.agency = "kisti"
+      self.type = "OtherDoi"
+    elsif agency.casecmp?("medra")
+      self.agency = "medra"
+      self.type = "OtherDoi"
+    elsif agency.casecmp?("istic")
+      self.agency = "istic"
+      self.type = "OtherDoi"
+    elsif agency.casecmp?("jalc")
+      self.agency = "jalc"
+      self.type = "OtherDoi"
+    elsif agency.casecmp?("airiti")
+      self.agency = "airiti"
+      self.type = "OtherDoi"
+    elsif agency.casecmp?("cnki")
+      self.agency = "cnki"
+      self.type = "OtherDoi"
+    elsif agency.casecmp?("op")
+      self.agency = "op"
+      self.type = "OtherDoi"
+    else
+      self.agency = "datacite"
     end
   end
 
@@ -1996,9 +1952,9 @@ class Doi < ActiveRecord::Base
       # Update with changes
       doi.update_columns("landing_page": landing_page)
 
-      Rails.logger.info "Updated landing page data for DOI " + doi.doi
+      "Updated landing page data for DOI " + doi.doi
     rescue TypeError, NoMethodError => error
-      Rails.logger.error "Error updating landing page data for DOI " + doi.doi + " - " + error.message
+      "Error updating landing page data for DOI " + doi.doi + " - " + error.message
     end
   end
 
@@ -2054,10 +2010,11 @@ class Doi < ActiveRecord::Base
         doi.update_columns("landing_page": landing_page)
 
         Rails.logger.info "Updated " + doi.doi
-
       rescue TypeError, NoMethodError => error
         Rails.logger.error "Error updating landing page " + doi.doi + ": " + error.message
       end
     end
+
+    "Finished migrating landing pages."
   end
 end

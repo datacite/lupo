@@ -1,4 +1,4 @@
-class CrossrefDoiByIdJob < ActiveJob::Base
+class OtherDoiByIdJob < ActiveJob::Base
   queue_as :lupo_background
 
   # retry_on ActiveRecord::Deadlocked, wait: 10.seconds, attempts: 3

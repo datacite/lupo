@@ -1782,7 +1782,7 @@ describe "dois", type: :request do
 
       it 'creates a Doi' do
         post '/dois', valid_attributes, headers
-
+        puts last_response.body
         expect(last_response.status).to eq(201)
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/patspec.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
@@ -1832,7 +1832,7 @@ describe "dois", type: :request do
 
       it 'validates a Doi' do
         post '/dois', params, headers
-
+        puts last_response.body
         expect(last_response.status).to eq(201)
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"lang"=>"en-US", "title"=>"Full DataCite XML Example"}, {"lang"=>"en-US", "title"=>"Demonstration of DataCite Properties.", "titleType"=>"Subtitle"}])
         expect(json.dig('data', 'attributes', 'identifiers')).to eq([{"identifier"=>"123", "identifierType"=>"Repository ID"}])

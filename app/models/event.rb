@@ -372,7 +372,7 @@ class Event < ActiveRecord::Base
         cursor = response.results.to_a.last[:sort]
 
         dois = response.results.results.map(&:subj_id).uniq
-        CrossrefDoiJob.perform_later(dois)
+        OtherDoiJob.perform_later(dois)
       end
     end
 
@@ -420,7 +420,7 @@ class Event < ActiveRecord::Base
         dois = response.results.results.map(&:obj_id).uniq
 
         # use same jobs as for crossref dois
-        CrossrefDoiJob.perform_later(dois, options)
+        OtherDoiJob.perform_later(dois, options)
       end
     end
 

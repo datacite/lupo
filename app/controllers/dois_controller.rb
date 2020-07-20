@@ -43,11 +43,11 @@ class DoisController < ApplicationController
     params[:state] = "findable" if current_user.nil? || current_user.role_id == "user"
 
     if params[:id].present?
-      response = Doi.find_by_id(params[:id])
+      response = DataciteDoi.find_by_id(params[:id])
     elsif params[:ids].present?
-      response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
+      response = DataciteDoi.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      response = Doi.query(params[:query],
+      response = DataciteDoi.query(params[:query],
                           state: params[:state],
                           exclude_registration_agencies: params[:exclude_registration_agencies],
                           published: params[:published],
@@ -290,8 +290,8 @@ class DoisController < ApplicationController
     # only show findable DOIs to anonymous users and role user
     # use current_user role to determine permissions to access draft and registered dois
     # instead of using ability
-    # response = Doi.find_by_id(params[:id])
-    doi = Doi.where(doi: params[:id]).first
+    # response = DataciteDoi.find_by_id(params[:id])
+    doi = DataciteDoi.where(doi: params[:id]).first
     fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: doi, user: current_user)
 
     respond_to do |format|
@@ -326,7 +326,7 @@ class DoisController < ApplicationController
   end
 
   def validate
-    @doi = Doi.new(safe_params.merge(only_validate: true))
+    @doi = DataciteDoi.new(safe_params.merge(only_validate: true))
 
     authorize! :validate, @doi
 
@@ -347,7 +347,7 @@ class DoisController < ApplicationController
 
   def create
     fail CanCan::AuthorizationNotPerformed if current_user.blank?
-    @doi = Doi.new(safe_params)
+    @doi = DataciteDoi.new(safe_params)
 
     # capture username and password for reuse in the handle system
     @doi.current_user = current_user
@@ -372,7 +372,7 @@ class DoisController < ApplicationController
   end
 
   def update
-    @doi = Doi.where(doi: params[:id]).first
+    @doi = DataciteDoi.where(doi: params[:id]).first
     exists = @doi.present?
 
     if exists
@@ -396,7 +396,7 @@ class DoisController < ApplicationController
       doi_id = validate_doi(params[:id])
       fail ActiveRecord::RecordNotFound unless doi_id.present?
 
-      @doi = Doi.new(safe_params.merge(doi: doi_id))
+      @doi = DataciteDoi.new(safe_params.merge(doi: doi_id))
       # capture username and password for reuse in the handle system
       @doi.current_user = current_user
 
@@ -421,7 +421,7 @@ class DoisController < ApplicationController
   end
 
   def undo
-    @doi = Doi.where(doi: safe_params[:doi]).first
+    @doi = DataciteDoi.where(doi: safe_params[:doi]).first
     fail ActiveRecord::RecordNotFound if @doi.blank?
 
     authorize! :undo, @doi
@@ -444,7 +444,7 @@ class DoisController < ApplicationController
   end
 
   def destroy
-    @doi = Doi.where(doi: params[:id]).first
+    @doi = DataciteDoi.where(doi: params[:id]).first
     fail ActiveRecord::RecordNotFound if @doi.blank?
 
     authorize! :destroy, @doi
@@ -472,7 +472,7 @@ class DoisController < ApplicationController
   end
 
   def get_url
-    @doi = Doi.where(doi: params[:id]).first
+    @doi = DataciteDoi.where(doi: params[:id]).first
     fail ActiveRecord::RecordNotFound if @doi.blank?
 
     authorize! :get_url, @doi
@@ -507,7 +507,7 @@ class DoisController < ApplicationController
     client_prefix = client.prefixes.first
     head :no_content && return if client_prefix.blank?
 
-    dois = Doi.get_dois(prefix: client_prefix.uid, username: current_user.uid.upcase, password: current_user.password)
+    dois = DataciteDoi.get_dois(prefix: client_prefix.uid, username: current_user.uid.upcase, password: current_user.password)
     if dois.length.positive?
       render json: { dois: dois }.to_json, status: :ok
     else
@@ -517,7 +517,7 @@ class DoisController < ApplicationController
 
   def set_url
     authorize! :set_url, Doi
-    Doi.set_url
+    DataciteDoi.set_url
 
     render json: { message: "Adding missing URLs queued." }.to_json, status: :ok
   end

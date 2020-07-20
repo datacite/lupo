@@ -1,2 +1,0 @@
-class CrossrefDoi < Doi
-end

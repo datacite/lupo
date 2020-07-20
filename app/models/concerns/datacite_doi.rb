@@ -1,2 +1,0 @@
-class DataCiteDoi < Doi
-end
