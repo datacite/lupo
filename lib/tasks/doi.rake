@@ -149,6 +149,16 @@ namespace :doi do
     Doi.loop_through_dois(options)
   end
 
+  desc "Set types"
+  task set_types: :environment do
+    options = {
+      query: "types.resourceTypeGeneral:* AND -types.schemaOrg:*",
+      label: "[SetTypes]",
+      job_name: "UpdateDoiJob",
+    }
+    Doi.loop_through_dois(options)
+  end
+
   desc 'Convert affiliations to new format'
   task :convert_affiliations => :environment do
     from_id = (ENV['FROM_ID'] || Doi.minimum(:id)).to_i
