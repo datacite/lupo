@@ -49,7 +49,6 @@ class DoisController < ApplicationController
     else
       response = DataciteDoi.query(params[:query],
                           state: params[:state],
-                          exclude_registration_agencies: params[:exclude_registration_agencies],
                           published: params[:published],
                           created: params[:created],
                           registered: params[:registered],
@@ -220,7 +219,6 @@ class DoisController < ApplicationController
               self: request.original_url,
               next: results.size < page[:size] || page[:size] == 0 ? nil : request.base_url + "/dois?" + {
                 query: params[:query],
-                "exclude-registration-agencies" => params[:exclude_registration_agencies],
                 "provider-id" => params[:provider_id],
                 "consortium-id" => params[:consortium_id],
                 "client-id" => params[:client_id],

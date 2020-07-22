@@ -30,7 +30,6 @@ class WorksController < ApplicationController
       response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
     else
       response = Doi.query(params[:query],
-                          exclude_registration_agencies: true,
                           state: "findable",
                           created: params[:created],
                           registered: params[:registered],

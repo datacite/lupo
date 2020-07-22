@@ -24,7 +24,7 @@ class ExportController < ApplicationController
     begin
       # Loop through all providers
       page = { size: 1000, number: 1}
-      response = Provider.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true, exclude_registration_agencies: true)
+      response = Provider.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true)
       providers = response.results.to_a
 
       total = response.results.total
@@ -34,7 +34,7 @@ class ExportController < ApplicationController
       page_num = 2
       while page_num <= total_pages
         page = { size: 1000, number: page_num }
-        response = Provider.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true, exclude_registration_agencies: true)
+        response = Provider.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true)
         providers = providers + response.results.to_a
         page_num += 1
       end
@@ -123,7 +123,7 @@ class ExportController < ApplicationController
     begin
       # Loop through all providers
       page = { size: 1000, number: 1 }
-      response = Provider.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true, exclude_registration_agencies: true)
+      response = Provider.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true)
       providers = response.results.to_a
 
       total = response.results.total
@@ -133,7 +133,7 @@ class ExportController < ApplicationController
       page_num = 2
       while page_num <= total_pages
         page = { size: 1000, number: page_num }
-        response = Provider.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true, exclude_registration_agencies: true)
+        response = Provider.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true)
         providers = providers + response.results.to_a
         page_num += 1
       end
@@ -217,7 +217,7 @@ class ExportController < ApplicationController
     begin
       # Loop through all clients
       page = { size: 1000, number: 1 }
-      response = Client.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true, exclude_registration_agencies: true)
+      response = Client.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true)
       clients = response.results.to_a
 
       total = response.results.total
@@ -227,7 +227,7 @@ class ExportController < ApplicationController
       page_num = 2
       while page_num <= total_pages
         page = { size: 1000, number: page_num }
-        response = Client.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true, exclude_registration_agencies: true)
+        response = Client.query(nil, page: page, from_date: params[:from_date], until_date: params[:until_date], include_deleted: true)
         clients = clients + response.results.to_a
         page_num += 1
       end
@@ -235,7 +235,7 @@ class ExportController < ApplicationController
       logger.warn "Exporting #{clients.length} repositories."
 
       # Get doi counts via DOIs query and combine next to clients.
-      response = Doi.query(nil, state: "registered,findable", page: { size: 0, number: 1 }, totals_agg: "client_export")
+      response = DataciteDoi.query(nil, state: "registered,findable", page: { size: 0, number: 1 }, totals_agg: "client_export")
 
       client_totals = {}
       totals_buckets = response.aggregations.clients_totals.buckets

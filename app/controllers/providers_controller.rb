@@ -25,7 +25,6 @@ class ProvidersController < ApplicationController
       response = Provider.find_by_id(params[:ids], page: page, sort: sort)
     else
       response = Provider.query(params[:query],
-        exclude_registration_agencies: params[:exclude_registration_agencies],
         year: params[:year],
         from_date: params[:from_date],
         until_date: params[:until_date],
