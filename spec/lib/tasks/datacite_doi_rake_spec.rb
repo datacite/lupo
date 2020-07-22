@@ -149,6 +149,38 @@ describe "datacite_doi:finish_aliases", elasticsearch: true, order: :defined do
   end
 end
 
+describe "datacite_doi:create_template", elasticsearch: true, order: :defined do
+  include ActiveJob::TestHelper
+  include_context "rake"
+
+  let!(:doi)  { create(:doi) }
+  let(:output) { "Updated template dois-datacite-test.\n" }
+
+  it "prerequisites should include environment" do
+    expect(subject.prerequisites).to include("environment")
+  end
+
+  it "should run the rake task" do
+    expect(capture_stdout { subject.invoke }).to start_with(output)
+  end
+end
+
+describe "datacite_doi:delete_template", elasticsearch: true, order: :defined do
+  include ActiveJob::TestHelper
+  include_context "rake"
+
+  let!(:doi)  { create(:doi) }
+  let(:output) { "Deleted template dois-datacite-test.\n" }
+
+  it "prerequisites should include environment" do
+    expect(subject.prerequisites).to include("environment")
+  end
+
+  it "should run the rake task" do
+    expect(capture_stdout { subject.invoke }).to start_with(output)
+  end
+end
+
 describe "datacite_doi:import", elasticsearch: true, order: :defined do
   include ActiveJob::TestHelper
   include_context "rake"

@@ -1,5 +1,38 @@
 require 'rails_helper'
 
+describe "doi:create_index", elasticsearch: true, order: :defined do
+  include ActiveJob::TestHelper
+  include_context "rake"
+
+  let!(:doi)  { create_list(:doi, 10) }
+  let(:output) { "Created indexes dois-datacite-test_" }
+
+  it "prerequisites should include environment" do
+    expect(subject.prerequisites).to include("environment")
+  end
+
+  it "should run the rake task" do
+    expect(capture_stdout { subject.invoke }).to start_with(output)
+  end
+end
+
+describe "doi:delete_index", elasticsearch: true, order: :defined do
+  include ActiveJob::TestHelper
+  include_context "rake"
+
+  let!(:doi)  { create_list(:doi, 10) }
+  let(:output) { "Deleted indexes dois-datacite-test_v1 and dois-datacite-test_v2.\n" }
+
+  it "prerequisites should include environment" do
+    expect(subject.prerequisites).to include("environment")
+  end
+
+  it "should run the rake task" do
+    Rake::Task["datacite_doi:create_index"].invoke
+    expect(capture_stdout { subject.invoke }).to start_with(output)
+  end
+end
+
 describe "doi:set_url", elasticsearch: true do
   include ActiveJob::TestHelper
   include_context "rake"

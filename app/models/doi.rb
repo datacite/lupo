@@ -134,6 +134,15 @@ class Doi < ActiveRecord::Base
 
   scope :q, ->(query) { where("dataset.doi = ?", query) }
 
+  # use different index for testing
+  if Rails.env.test?
+    index_name "dois-test"
+  elsif ENV["ES_PREFIX"].present?
+    index_name"dois-#{ENV["ES_PREFIX"]}"
+  else
+    index_name "dois"
+  end
+
   settings index: {
     analysis: {
       analyzer: {
@@ -841,8 +850,6 @@ class Doi < ActiveRecord::Base
     filter << { term: { "client.re3data_id" => doi_from_url(options[:re3data_id]) }} if options[:re3data_id].present?
     filter << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
     filter << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
-
-    must_not << { terms: { provider_id: ["crossref", "medra", "op"] }} if options[:exclude_registration_agencies]
 
     # ES query can be optionally defined in different ways
     # So here we build it differently based upon options
@@ -1813,7 +1820,7 @@ class Doi < ActiveRecord::Base
   # +job_name+:: Acive Job class name of the Job that would be executed on every matched results
   def self.loop_through_dois(options)
     size = (options[:size] || 1000).to_i
-    cursor = [options[:from_id] || Doi.minimum(:id).to_i, options[:until_id] || Doi.maximum(:id).to_i]
+    cursor = []
     filter = options[:filter] || {}
     label = options[:label] || ""
     job_name = options[:job_name] || ""

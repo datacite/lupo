@@ -3,7 +3,7 @@ class OtherDoi < Doi
   if Rails.env.test?
     index_name "dois-other-test"
   elsif ENV["ES_PREFIX"].present?
-    index_name"doi-other-#{ENV["ES_PREFIX"]}"
+    index_name"dois-other-#{ENV["ES_PREFIX"]}"
   else
     index_name "dois-other"
   end

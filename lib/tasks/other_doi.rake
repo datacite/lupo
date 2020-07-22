@@ -46,6 +46,16 @@ namespace :other_doi do
     puts OtherDoi.finish_aliases
   end
 
+  desc "Create template for other dois"
+  task :create_template => :environment do
+    puts OtherDoi.create_template
+  end
+
+  desc "Delete template for other dois"
+  task :delete_template => :environment do
+    puts OtherDoi.delete_template
+  end
+
   desc 'Import all other DOIs'
   task :import => :environment do
     from_id = (ENV['FROM_ID'] || OtherDoi.minimum(:id)).to_i
