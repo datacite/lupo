@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 2020_07_18_191826) do
   create_table "allocator", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "system_email", null: false
     t.datetime "created"
-    t.binary "is_active", limit: 1, default: "b'1'"
+    t.binary "is_active", limit: 1
     t.string "name", null: false
     t.string "password"
     t.string "role_name"
@@ -121,7 +121,7 @@ ActiveRecord::Schema.define(version: 2020_07_18_191826) do
     t.string "system_email", null: false
     t.datetime "created"
     t.string "domains"
-    t.binary "is_active", limit: 1, default: "b'1'"
+    t.binary "is_active", limit: 1
     t.string "name", null: false
     t.string "password"
     t.string "role_name"
@@ -158,7 +158,7 @@ ActiveRecord::Schema.define(version: 2020_07_18_191826) do
   create_table "dataset", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created"
     t.string "doi", null: false
-    t.binary "is_active", limit: 1, default: "b'1'", null: false
+    t.binary "is_active", limit: 1, null: false
     t.integer "last_landing_page_status"
     t.datetime "last_landing_page_status_check"
     t.json "last_landing_page_status_result"
@@ -243,61 +243,6 @@ ActiveRecord::Schema.define(version: 2020_07_18_191826) do
     t.index ["target_doi", "target_relation_type_id"], name: "index_events_on_target_doi", length: { target_doi: 100 }
     t.index ["updated_at"], name: "index_events_on_updated_at"
     t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
-  end
-
-  create_table "lhma_2020_07_19_08_12_44_890_dataset", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.datetime "created"
-    t.string "doi", null: false
-    t.binary "is_active", limit: 1, default: "b'1'", null: false
-    t.integer "last_landing_page_status"
-    t.datetime "last_landing_page_status_check"
-    t.json "last_landing_page_status_result"
-    t.string "last_metadata_status"
-    t.datetime "updated"
-    t.bigint "datacentre"
-    t.datetime "minted"
-    t.text "url"
-    t.text "last_landing_page"
-    t.string "last_landing_page_content_type"
-    t.string "aasm_state"
-    t.string "reason"
-    t.string "source", limit: 191
-    t.datetime "indexed", precision: 3, default: "1970-01-01 00:00:00", null: false
-    t.json "creators"
-    t.json "contributors"
-    t.json "titles"
-    t.text "publisher"
-    t.integer "publication_year"
-    t.json "types"
-    t.json "descriptions"
-    t.json "container"
-    t.json "sizes"
-    t.json "formats"
-    t.string "version_info", limit: 191
-    t.string "language", limit: 191
-    t.json "dates"
-    t.json "identifiers"
-    t.json "related_identifiers"
-    t.json "funding_references"
-    t.json "geo_locations"
-    t.json "rights_list"
-    t.json "subjects"
-    t.string "schema_version", limit: 191
-    t.json "content_url"
-    t.binary "xml", limit: 16777215
-    t.json "landing_page"
-    t.string "agency", limit: 191, default: "DataCite"
-    t.binary "is_ref_quality", limit: 1, default: "b'1'"
-    t.integer "version"
-    t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
-    t.index ["created", "indexed", "updated"], name: "index_dataset_on_created_indexed_updated"
-    t.index ["datacentre"], name: "FK5605B47847B5F5FF"
-    t.index ["doi"], name: "doi", unique: true
-    t.index ["last_landing_page_content_type"], name: "index_dataset_on_last_landing_page_content_type"
-    t.index ["last_landing_page_status"], name: "index_dataset_on_last_landing_page_status"
-    t.index ["schema_version"], name: "index_dataset_on_schema_version"
-    t.index ["source"], name: "index_dataset_source"
-    t.index ["url"], name: "index_dataset_on_url", length: 100
   end
 
   create_table "media", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
