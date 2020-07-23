@@ -316,11 +316,12 @@ ActiveRecord::Schema.define(version: 2020_07_18_191826) do
     t.index ["uid"], name: "index_researchers_on_uid", unique: true
   end
 
-  add_foreign_key "client_prefixes", "datacentre", column: "client_id", name: "FK13A1B3BA47B5F5FF", on_delete: :cascade
+  add_foreign_key "client_prefixes", "datacentre", column: "client_id", name: "FK13A1B3BA47B5F5FF"
   add_foreign_key "client_prefixes", "prefixes", name: "FK13A1B3BAAF86A1C7"
-  add_foreign_key "datacentre", "allocator", column: "allocator", name: "FK6695D60546EBD781", on_delete: :cascade
+  add_foreign_key "datacentre", "allocator", column: "allocator", name: "FK6695D60546EBD781"
   add_foreign_key "dataset", "datacentre", column: "datacentre", name: "FK5605B47847B5F5FF"
-  add_foreign_key "media", "lhma_2020_07_19_08_12_44_890_dataset", column: "dataset", name: "FK62F6FE44D3D6B1B", on_delete: :cascade
-  add_foreign_key "provider_prefixes", "allocator", column: "provider_id", name: "FKE7FBD67446EBD781", on_delete: :cascade
+  add_foreign_key "media", "dataset", column: "dataset", name: "FK62F6FE44D3D6B1B"
+  add_foreign_key "metadata", "dataset", column: "dataset", name: "FKE52D7B2F4D3D6B1B"
+  add_foreign_key "provider_prefixes", "allocator", column: "provider_id", name: "FKE7FBD67446EBD781"
   add_foreign_key "provider_prefixes", "prefixes", name: "FKE7FBD674AF86A1C7"
 end
