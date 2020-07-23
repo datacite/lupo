@@ -494,6 +494,44 @@ describe DataciteDoi, type: :model, vcr: true do
     end
   end
 
+  describe "types" do
+    let(:doi) { build(:doi) }
+
+    it "string" do
+      doi.types = "Dataset"
+      expect(doi.save).to be false
+      expect(doi.errors.details).to eq(:types=>[{:error=>"Types 'Dataset' should be an object instead of a string."}])
+    end
+
+    it "only resource_type_general" do
+      doi.types = { "resourceTypeGeneral" => "Dataset" }
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.types).to eq("bibtex"=>"misc", "citeproc"=>"dataset", "resourceTypeGeneral"=>"Dataset", "ris"=>"DATA", "schemaOrg"=>"Dataset")
+    end
+
+    it "resource_type and resource_type_general" do
+      doi.types = { "resourceTypeGeneral" => "Dataset", "resourceType" => "EEG data"}
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.types).to eq("bibtex"=>"misc", "citeproc"=>"dataset", "resourceTypeGeneral"=>"Dataset", "resourceType" => "EEG data", "ris"=>"DATA", "schemaOrg"=>"Dataset")
+    end
+
+    it "resource_type_general and different schema_org" do
+      doi.types = { "resourceTypeGeneral" => "Dataset", "schemaOrg" => "JournalArticle" }
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.types).to eq("bibtex"=>"misc", "citeproc"=>"dataset", "resourceTypeGeneral"=>"Dataset", "ris"=>"DATA", "schemaOrg"=>"JournalArticle")
+    end
+
+    it "resource_type_general and different ris" do
+      doi.types = { "resourceTypeGeneral" => "Dataset", "ris" => "GEN" }
+      expect(doi.save).to be true
+      expect(doi.errors.details).to be_empty
+      expect(doi.types).to eq("bibtex"=>"misc", "citeproc"=>"dataset", "resourceTypeGeneral"=>"Dataset", "ris"=>"GEN", "schemaOrg"=>"Dataset")
+    end
+  end
+
   # describe "related_identifiers" do
   #   it "has part" do
   #     subject = build(:doi, related_identifiers: [      {

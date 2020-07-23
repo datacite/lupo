@@ -129,6 +129,7 @@ class Doi < ActiveRecord::Base
   before_validation :update_language, if: :language?
   before_validation :update_rights_list, if: :rights_list?
   before_validation :update_identifiers
+  before_validation :update_types
   before_save :set_defaults, :save_metadata
   before_create { self.created = Time.zone.now.utc.iso8601 }
 
@@ -1812,18 +1813,18 @@ class Doi < ActiveRecord::Base
     response.results.total
   end
 
-  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filer
+  # Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filter
   # Options:
   # +filter+:: paramaters to filter the index
   # +label+:: String to output in the logs printout
   # +query+:: ES query to filter the index
   # +job_name+:: Acive Job class name of the Job that would be executed on every matched results
-  def self.loop_through_dois(options)
+  def self.loop_through_dois(options={})
     size = (options[:size] || 1000).to_i
     cursor = []
     filter = options[:filter] || {}
     label = options[:label] || ""
-    job_name = options[:job_name] || ""
+    options[:job_name] ||= ""
     query = options[:query] || nil
 
     response = Doi.query(query, filter.merge(page: { size: 1, cursor: [] }))
@@ -1840,16 +1841,12 @@ class Doi < ActiveRecord::Base
         Rails.logger.info "#{label} Cursor: #{cursor} "
 
         ids = response.results.results.map(&:uid)
-        ids.each do |id|
-          Object.const_get(job_name).perform_later(id, options)
-          sleep 0.1
-        end
+        LoopThroughDoisJob.perform_later(ids, options)
       end
     end
 
     message
   end
-
 
   # save to metadata table when xml has changed
   def save_metadata
@@ -1930,6 +1927,20 @@ class Doi < ActiveRecord::Base
 
   def update_identifiers
     self.identifiers = Array.wrap(identifiers).select { |i| i["identifierType"] != "DOI" }
+  end
+
+  def update_types
+    return nil unless types.is_a?(Hash)
+
+    res = types["resourceType"].to_s.underscore.camelcase
+    resgen = types["resourceTypeGeneral"].to_s.dasherize
+    schema_org = Bolognese::Utils::CR_TO_SO_TRANSLATIONS[res] || Bolognese::Utils::DC_TO_SO_TRANSLATIONS[resgen] || "CreativeWork"
+
+    self.types = types.reverse_merge(
+      "schemaOrg" => schema_org,
+      "citeproc" => Bolognese::Utils::CR_TO_CP_TRANSLATIONS[res] || Bolognese::Utils::SO_TO_CP_TRANSLATIONS[schema_org] || "article",
+      "bibtex" => Bolognese::Utils::CR_TO_BIB_TRANSLATIONS[res] || Bolognese::Utils::SO_TO_BIB_TRANSLATIONS[schema_org] || "misc",
+      "ris" => Bolognese::Utils::CR_TO_RIS_TRANSLATIONS[res] || Bolognese::Utils::DC_TO_RIS_TRANSLATIONS[resgen] || "GEN").compact
   end
 
   def self.repair_landing_page(id: nil)
