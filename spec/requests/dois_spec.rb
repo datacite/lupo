@@ -347,7 +347,7 @@ describe "dois", type: :request do
       expect(json['data'].size).to eq(3)
       expect(json.dig('meta', 'total')).to eq(3)
       expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
-      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Dissertation", "resourceTypeGeneral"=>"Text")
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("bibtex"=>"phdthesis", "citeproc"=>"thesis", "resourceType"=>"Dissertation", "resourceTypeGeneral"=>"Text", "ris"=>"THES", "schemaOrg"=>"Thesis")
     end
   end
 
@@ -366,7 +366,7 @@ describe "dois", type: :request do
       expect(json['data'].size).to eq(3)
       expect(json.dig('meta', 'total')).to eq(3)
       expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
-      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Instrument", "resourceTypeGeneral"=>"Other")
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("bibtex"=>"misc", "citeproc"=>"article", "resourceType"=>"Instrument", "resourceTypeGeneral"=>"Other", "ris"=>"GEN", "schemaOrg"=>"CreativeWork")
     end
   end
 
@@ -385,7 +385,7 @@ describe "dois", type: :request do
       expect(json['data'].size).to eq(3)
       expect(json.dig('meta', 'total')).to eq(3)
       expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
-      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Presentation", "resourceTypeGeneral"=>"InteractiveResource")
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("bibtex"=>"misc", "citeproc"=>"article", "resourceType"=>"Presentation", "resourceTypeGeneral"=>"InteractiveResource", "ris"=>"GEN", "schemaOrg"=>"CreativeWork")
       expect(json.dig('meta', 'resourceTypes')).to eq([{"count"=>3, "id"=>"interactive-resource", "title"=>"Interactive Resource"}])
     end
   end
@@ -405,7 +405,7 @@ describe "dois", type: :request do
       expect(json['data'].size).to eq(3)
       expect(json.dig('meta', 'total')).to eq(3)
       expect(json.dig('data', 0, 'attributes', 'publicationYear')).to eq(2011)
-      expect(json.dig('data', 0, 'attributes', 'types')).to eq("resourceType"=>"Presentation", "resourceTypeGeneral"=>"Fake")
+      expect(json.dig('data', 0, 'attributes', 'types')).to eq("bibtex"=>"misc", "citeproc"=>"article", "resourceType"=>"Presentation", "resourceTypeGeneral"=>"Fake", "ris"=>"GEN", "schemaOrg"=>"CreativeWork")
       expect(json.dig('meta', 'resourceTypes')).to eq([])
     end
   end
@@ -1482,7 +1482,7 @@ describe "dois", type: :request do
         expect(last_response.status).to eq(200)
         expect(json.dig('data', 'attributes', 'url')).to eq("http://www.bl.uk/pdf/pat.pdf")
         expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-        expect(json.dig('data', 'attributes', 'types')).to eq("resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"DataPaper")
+        expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"misc", "citeproc"=>"article", "resourceType"=>"BlogPosting", "resourceTypeGeneral"=>"DataPaper", "ris"=>"GEN", "schemaOrg"=>"CreativeWork")
       end
 
       it 'sets state to findable' do
@@ -2065,7 +2065,7 @@ describe "dois", type: :request do
         expect(last_response.status).to eq(201)
         expect(json.dig('data', 'attributes', 'url')).to eq("https://idea.library.drexel.edu/islandora/object/idea:9531")
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/9zwb-rb91")
-        expect(json.dig('data', 'attributes', 'types')).to eq("resourceType"=>"Dissertation", "resourceTypeGeneral"=>"Text")
+        expect(json.dig('data', 'attributes', 'types')).to eq("bibtex"=>"phdthesis", "citeproc"=>"thesis", "resourceType"=>"Dissertation", "resourceTypeGeneral"=>"Text", "ris"=>"THES", "schemaOrg"=>"Thesis")
        expect(json.dig('data', 'attributes', 'descriptions', 0, 'description')).to start_with("Diet and physical activity")
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"lang"=>"en", "title"=>"The Relationship Among Sport Type, Micronutrient Intake and Bone Mineral Density in an Athlete Population","titleType"=>nil},{"lang"=>"en", "title"=>"Subtitle", "titleType"=>"Subtitle"}])
         expect(json.dig('data', 'attributes', 'state')).to eq("findable")
