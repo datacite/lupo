@@ -197,7 +197,7 @@ ActiveRecord::Schema.define(version: 2020_07_18_191826) do
     t.binary "xml", limit: 16777215
     t.json "landing_page"
     t.string "agency", limit: 16, default: "datacite"
-    t.binary "is_ref_quality", limit: 1, default: "b'1'"
+    t.binary "is_ref_quality", limit: 1
     t.integer "version"
     t.string "type", limit: 16, default: "DataciteDoi", null: false
     t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
