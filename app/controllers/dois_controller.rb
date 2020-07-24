@@ -1,5 +1,6 @@
 require 'uri'
 require 'base64'
+require 'pp'
 
 class DoisController < ApplicationController
   include ActionController::MimeResponds
@@ -663,6 +664,14 @@ class DoisController < ApplicationController
 
       # remove leading and trailing whitespace
       xml = xml.strip
+    end
+
+    p[:creators].each do |c|
+      fail(ActionController::UnpermittedParameters, ["nameIdentifiers must be an Array"]) unless c[:nameIdentifiers].respond_to?(:keys)
+    end
+
+    p[:contributors].each do |c|
+      fail(ActionController::UnpermittedParameters, ["nameIdentifiers must be an Array"]) unless c[:nameIdentifiers].respond_to?(:keys)
     end
 
     meta = xml.present? ? parse_xml(xml, doi: p[:doi]) : {}
