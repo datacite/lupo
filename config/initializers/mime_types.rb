@@ -56,6 +56,9 @@ end
     else
       obj.send(f)
     end
+  rescue TypeError => e
+    Rails.logger.error e.message
+    Rails.logger.error obj.inspect
   end
 end
 
