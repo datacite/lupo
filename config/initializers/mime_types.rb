@@ -37,9 +37,11 @@ ActionController::Renderers.add :citation do |obj, options|
       o.locale = options[:locale] || "en-US"
       o.citation
     end.join("\n\n")
-  rescue TypeError => e
-    Rails.logger.error e.message
-    Rails.logger.error obj.inspect
+  rescue TypeError => exception
+    Raven.extra_context object: obj
+    Raven.capture_exception(exception)
+
+    "An error occurred."
   rescue CSL::ParseError # unknown style and/or location
     Array.wrap(obj).map do |o|
       o.style = "apa"
@@ -56,9 +58,9 @@ end
     else
       obj.send(f)
     end
-  rescue TypeError => e
-    Rails.logger.error e.message
-    Rails.logger.error obj.inspect
+  rescue TypeError => exception
+    Raven.extra_context object: obj
+    Raven.capture_exception(exception)
   end
 end
 
