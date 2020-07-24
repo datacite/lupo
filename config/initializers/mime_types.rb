@@ -37,6 +37,9 @@ ActionController::Renderers.add :citation do |obj, options|
       o.locale = options[:locale] || "en-US"
       o.citation
     end.join("\n\n")
+  rescue TypeError => e
+    Rails.logger.error e.message
+    Rails.logger.error obj.inspect
   rescue CSL::ParseError # unknown style and/or location
     Array.wrap(obj).map do |o|
       o.style = "apa"

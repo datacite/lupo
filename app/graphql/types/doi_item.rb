@@ -339,6 +339,8 @@ module DoiItem
       url = "https://doi.org/#{object.doi}"
     end
     bibliography.first.gsub(url, doi_link(url))
+  rescue CSL::ParseError => e
+    "Error: #{e.message}"
   end
 
   def references(**args)
