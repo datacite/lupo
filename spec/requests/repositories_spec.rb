@@ -113,7 +113,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
     it "returns repositories" do
       get "/repositories/totals", nil, headers
-      puts last_response.body
+
       expect(last_response.status).to eq(200)
       expect(json.first.dig('count')).to eq(3)
       expect(json.first.dig('states')).to eq([{"count"=>3, "id"=>"findable", "title"=>"Findable"}])
@@ -125,7 +125,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     let(:provider)  { create(:provider) }
     let(:client)  { create(:client) }
     let!(:client_prefix) { create(:client_prefix, client: client) }
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
 
     before do
       Provider.import
