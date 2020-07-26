@@ -2078,9 +2078,6 @@ describe DataciteDoisController, type: :request do
     end
 
     context 'crossref url', vcr: true do
-      let(:provider) { create(:provider, name: "Crossref", symbol: "CROSSREF", role_name: "ROLE_REGISTRATION_AGENCY") }
-      let(:client) { create(:client, provider: provider, name: "Crossref Citations", symbol: "CROSSREF.CITATIONS") }
-
       let(:xml) { Base64.strict_encode64("https://doi.org/10.7554/elife.01567") }
       let(:valid_attributes) do
         {
@@ -2089,15 +2086,8 @@ describe DataciteDoisController, type: :request do
             "attributes" => {
               "xml" => xml,
               "source" => "test",
+              "agency" => "crossref",
               "event" => "publish"
-            },
-            "relationships" => {
-              "client" =>  {
-                "data" => {
-                  "type" => "clients",
-                  "id" => client.symbol.downcase
-                }
-              }
             }
           }
         }
@@ -2119,9 +2109,6 @@ describe DataciteDoisController, type: :request do
     end
 
     # context 'crossref url not found', vcr: true do
-    #   let(:provider) { create(:provider, name: "Crossref", symbol: "CROSSREF", role_name: "ROLE_REGISTRATION_AGENCY") }
-    #   let(:client) { create(:client, provider: provider, name: "Crossref Citations", symbol: "CROSSREF.CITATIONS") }
-
     #   let(:xml) { Base64.strict_encode64("https://doi.org/10.3389/fmicb.2019.01425") }
     #   let(:valid_attributes) do
     #     {
