@@ -2077,36 +2077,36 @@ describe DataciteDoisController, type: :request do
       end
     end
 
-    context 'crossref url', vcr: true do
-      let(:xml) { Base64.strict_encode64("https://doi.org/10.7554/elife.01567") }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "xml" => xml,
-              "source" => "test",
-              "agency" => "crossref",
-              "event" => "publish"
-            }
-          }
-        }
-      end
+    # context 'crossref url', vcr: true do
+    #   let(:xml) { Base64.strict_encode64("https://doi.org/10.7554/elife.01567") }
+    #   let(:valid_attributes) do
+    #     {
+    #       "data" => {
+    #         "type" => "dois",
+    #         "attributes" => {
+    #           "xml" => xml,
+    #           "source" => "test",
+    #           "agency" => "crossref",
+    #           "event" => "publish"
+    #         }
+    #       }
+    #     }
+    #   end
 
-      it 'updates the record' do
-        patch "/dois/10.7554/elife.01567", valid_attributes, headers
+    #   it 'updates the record' do
+    #     patch "/dois/10.7554/elife.01567", valid_attributes, headers
 
-        expect(last_response.status).to eq(201)
-        expect(json.dig('data', 'attributes', 'url')).to eq("https://elifesciences.org/articles/01567")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.7554/elife.01567")
-        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
-        # expect(json.dig('data', 'attributes', 'agency')).to eq("Crossref")
-        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+    #     expect(last_response.status).to eq(201)
+    #     expect(json.dig('data', 'attributes', 'url')).to eq("https://elifesciences.org/articles/01567")
+    #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.7554/elife.01567")
+    #     expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth"}])
+    #     # expect(json.dig('data', 'attributes', 'agency')).to eq("Crossref")
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("findable")
 
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("titles", "title")).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
-      end
-    end
+    #     xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+    #     expect(xml.dig("titles", "title")).to eq("Automated quantitative histology reveals vascular morphodynamics during Arabidopsis hypocotyl secondary growth")
+    #   end
+    # end
 
     # context 'crossref url not found', vcr: true do
     #   let(:xml) { Base64.strict_encode64("https://doi.org/10.3389/fmicb.2019.01425") }
@@ -2139,169 +2139,169 @@ describe DataciteDoisController, type: :request do
     #   end
     # end
 
-    context 'medra url', vcr: true do
-      let(:provider) { create(:provider, name: "mEDRA", symbol: "MEDRA", role_name: "ROLE_REGISTRATION_AGENCY") }
-      let(:client) { create(:client, provider: provider, name: "mEDRA Citations", symbol: "MEDRA.CITATIONS") }
+    # context 'medra url', vcr: true do
+    #   let(:provider) { create(:provider, name: "mEDRA", symbol: "MEDRA", role_name: "ROLE_REGISTRATION_AGENCY") }
+    #   let(:client) { create(:client, provider: provider, name: "mEDRA Citations", symbol: "MEDRA.CITATIONS") }
 
-      let(:xml) { Base64.strict_encode64("https://doi.org/10.3280/ecag2018-001005") }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "xml" => xml,
-              "source" => "test",
-              "event" => "publish"
-            },
-            "relationships" => {
-              "client" =>  {
-                "data" => {
-                  "type" => "clients",
-                  "id" => client.symbol.downcase
-                }
-              }
-            }
-          }
-        }
-      end
+    #   let(:xml) { Base64.strict_encode64("https://doi.org/10.3280/ecag2018-001005") }
+    #   let(:valid_attributes) do
+    #     {
+    #       "data" => {
+    #         "type" => "dois",
+    #         "attributes" => {
+    #           "xml" => xml,
+    #           "source" => "test",
+    #           "event" => "publish"
+    #         },
+    #         "relationships" => {
+    #           "client" =>  {
+    #             "data" => {
+    #               "type" => "clients",
+    #               "id" => client.symbol.downcase
+    #             }
+    #           }
+    #         }
+    #       }
+    #     }
+    #   end
 
-      it 'updates the record' do
-        patch "/dois/10.3280/ecag2018-001005", valid_attributes, headers
+    #   it 'updates the record' do
+    #     patch "/dois/10.3280/ecag2018-001005", valid_attributes, headers
 
-        expect(last_response.status).to eq(201)
-        expect(json.dig('data', 'attributes', 'url')).to eq("http://www.francoangeli.it/riviste/Scheda_Riviste.asp?IDArticolo=61645")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.3280/ecag2018-001005")
-        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Substitutability between organic and conventional poultry products and organic price premiums"}])
-        # expect(json.dig('data', 'attributes', 'agency')).to eq("mEDRA")
-        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+    #     expect(last_response.status).to eq(201)
+    #     expect(json.dig('data', 'attributes', 'url')).to eq("http://www.francoangeli.it/riviste/Scheda_Riviste.asp?IDArticolo=61645")
+    #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.3280/ecag2018-001005")
+    #     expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Substitutability between organic and conventional poultry products and organic price premiums"}])
+    #     # expect(json.dig('data', 'attributes', 'agency')).to eq("mEDRA")
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("findable")
 
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("titles", "title")).to eq("Substitutability between organic and conventional poultry products and organic price premiums")
-      end
-    end
+    #     xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+    #     expect(xml.dig("titles", "title")).to eq("Substitutability between organic and conventional poultry products and organic price premiums")
+    #   end
+    # end
 
-    context 'kisti url', vcr: true do
-      let(:provider) { create(:provider, name: "KISTI", symbol: "KISTI", role_name: "ROLE_REGISTRATION_AGENCY") }
-      let(:client) { create(:client, provider: provider, name: "KISTI Citations", symbol: "KISTI.CITATIONS") }
+    # context 'kisti url', vcr: true do
+    #   let(:provider) { create(:provider, name: "KISTI", symbol: "KISTI", role_name: "ROLE_REGISTRATION_AGENCY") }
+    #   let(:client) { create(:client, provider: provider, name: "KISTI Citations", symbol: "KISTI.CITATIONS") }
 
-      let(:xml) { Base64.strict_encode64("https://doi.org/10.5012/bkcs.2013.34.10.2889") }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "xml" => xml,
-              "source" => "test",
-              "event" => "publish"
-            },
-            "relationships" => {
-              "client" =>  {
-                "data" => {
-                  "type" => "clients",
-                  "id" => client.symbol.downcase
-                }
-              }
-            }
-          }
-        }
-      end
+    #   let(:xml) { Base64.strict_encode64("https://doi.org/10.5012/bkcs.2013.34.10.2889") }
+    #   let(:valid_attributes) do
+    #     {
+    #       "data" => {
+    #         "type" => "dois",
+    #         "attributes" => {
+    #           "xml" => xml,
+    #           "source" => "test",
+    #           "event" => "publish"
+    #         },
+    #         "relationships" => {
+    #           "client" =>  {
+    #             "data" => {
+    #               "type" => "clients",
+    #               "id" => client.symbol.downcase
+    #             }
+    #           }
+    #         }
+    #       }
+    #     }
+    #   end
 
-      it 'updates the record' do
-        patch "/dois/10.5012/bkcs.2013.34.10.2889", valid_attributes, headers
+    #   it 'updates the record' do
+    #     patch "/dois/10.5012/bkcs.2013.34.10.2889", valid_attributes, headers
 
-        expect(last_response.status).to eq(201)
-        expect(json.dig('data', 'attributes', 'url')).to eq("http://koreascience.or.kr/journal/view.jsp?kj=JCGMCS&py=2013&vnc=v34n10&sp=2889")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.5012/bkcs.2013.34.10.2889")
-        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Synthesis, Crystal Structure and Theoretical Calculation of a Novel Nickel(II) Complex with Dibromotyrosine and 1,10-Phenanthroline"}])
-        # expect(json.dig('data', 'attributes', 'agency')).to eq("mEDRA")
-        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+    #     expect(last_response.status).to eq(201)
+    #     expect(json.dig('data', 'attributes', 'url')).to eq("http://koreascience.or.kr/journal/view.jsp?kj=JCGMCS&py=2013&vnc=v34n10&sp=2889")
+    #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.5012/bkcs.2013.34.10.2889")
+    #     expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Synthesis, Crystal Structure and Theoretical Calculation of a Novel Nickel(II) Complex with Dibromotyrosine and 1,10-Phenanthroline"}])
+    #     # expect(json.dig('data', 'attributes', 'agency')).to eq("mEDRA")
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("findable")
 
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("titles", "title")).to eq("Synthesis, Crystal Structure and Theoretical Calculation of a Novel Nickel(II) Complex with Dibromotyrosine and 1,10-Phenanthroline")
-      end
-    end
+    #     xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+    #     expect(xml.dig("titles", "title")).to eq("Synthesis, Crystal Structure and Theoretical Calculation of a Novel Nickel(II) Complex with Dibromotyrosine and 1,10-Phenanthroline")
+    #   end
+    # end
 
-    context 'jalc url', vcr: true do
-      let(:provider) { create(:provider, name: "JaLC", symbol: "JALC", role_name: "ROLE_REGISTRATION_AGENCY") }
-      let(:client) { create(:client, provider: provider, name: "JALC Citations", symbol: "JALC.CITATIONS") }
+    # context 'jalc url', vcr: true do
+    #   let(:provider) { create(:provider, name: "JaLC", symbol: "JALC", role_name: "ROLE_REGISTRATION_AGENCY") }
+    #   let(:client) { create(:client, provider: provider, name: "JALC Citations", symbol: "JALC.CITATIONS") }
 
-      let(:xml) { Base64.strict_encode64("https://doi.org/10.1241/johokanri.39.979") }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "xml" => xml,
-              "source" => "test",
-              "event" => "publish"
-            },
-            "relationships" => {
-              "client" =>  {
-                "data" => {
-                  "type" => "clients",
-                  "id" => client.symbol.downcase
-                }
-              }
-            }
-          }
-        }
-      end
+    #   let(:xml) { Base64.strict_encode64("https://doi.org/10.1241/johokanri.39.979") }
+    #   let(:valid_attributes) do
+    #     {
+    #       "data" => {
+    #         "type" => "dois",
+    #         "attributes" => {
+    #           "xml" => xml,
+    #           "source" => "test",
+    #           "event" => "publish"
+    #         },
+    #         "relationships" => {
+    #           "client" =>  {
+    #             "data" => {
+    #               "type" => "clients",
+    #               "id" => client.symbol.downcase
+    #             }
+    #           }
+    #         }
+    #       }
+    #     }
+    #   end
 
-      it 'updates the record' do
-        patch "/dois/10.1241/johokanri.39.979", valid_attributes, headers
+    #   it 'updates the record' do
+    #     patch "/dois/10.1241/johokanri.39.979", valid_attributes, headers
 
-        expect(last_response.status).to eq(201)
-        expect(json.dig('data', 'attributes', 'url')).to eq("http://joi.jlc.jst.go.jp/JST.JSTAGE/johokanri/39.979?from=CrossRef")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.1241/johokanri.39.979")
-        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Utilizing the Internet. 12 Series. Future of the Internet."}])
-        # expect(json.dig('data', 'attributes', 'agency')).to eq("mEDRA")
-        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+    #     expect(last_response.status).to eq(201)
+    #     expect(json.dig('data', 'attributes', 'url')).to eq("http://joi.jlc.jst.go.jp/JST.JSTAGE/johokanri/39.979?from=CrossRef")
+    #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.1241/johokanri.39.979")
+    #     expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Utilizing the Internet. 12 Series. Future of the Internet."}])
+    #     # expect(json.dig('data', 'attributes', 'agency')).to eq("mEDRA")
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("findable")
 
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("titles", "title")).to eq("Utilizing the Internet. 12 Series. Future of the Internet.")
-      end
-    end
+    #     xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+    #     expect(xml.dig("titles", "title")).to eq("Utilizing the Internet. 12 Series. Future of the Internet.")
+    #   end
+    # end
 
-    context 'op url', vcr: true do
-      let(:provider) { create(:provider, name: "OP", symbol: "OP", role_name: "ROLE_REGISTRATION_AGENCY") }
-      let(:client) { create(:client, provider: provider, name: "OP Citations", symbol: "OP.CITATIONS") }
+    # context 'op url', vcr: true do
+    #   let(:provider) { create(:provider, name: "OP", symbol: "OP", role_name: "ROLE_REGISTRATION_AGENCY") }
+    #   let(:client) { create(:client, provider: provider, name: "OP Citations", symbol: "OP.CITATIONS") }
 
-      let(:xml) { Base64.strict_encode64("https://doi.org/10.2903/j.efsa.2018.5239") }
-      let(:valid_attributes) do
-        {
-          "data" => {
-            "type" => "dois",
-            "attributes" => {
-              "xml" => xml,
-              "source" => "test",
-              "event" => "publish"
-            },
-            "relationships" => {
-              "client" =>  {
-                "data" => {
-                  "type" => "clients",
-                  "id" => client.symbol.downcase
-                }
-              }
-            }
-          }
-        }
-      end
+    #   let(:xml) { Base64.strict_encode64("https://doi.org/10.2903/j.efsa.2018.5239") }
+    #   let(:valid_attributes) do
+    #     {
+    #       "data" => {
+    #         "type" => "dois",
+    #         "attributes" => {
+    #           "xml" => xml,
+    #           "source" => "test",
+    #           "event" => "publish"
+    #         },
+    #         "relationships" => {
+    #           "client" =>  {
+    #             "data" => {
+    #               "type" => "clients",
+    #               "id" => client.symbol.downcase
+    #             }
+    #           }
+    #         }
+    #       }
+    #     }
+    #   end
 
-      it 'updates the record' do
-        patch "/dois/10.2903/j.efsa.2018.5239", valid_attributes, headers
+    #   it 'updates the record' do
+    #     patch "/dois/10.2903/j.efsa.2018.5239", valid_attributes, headers
 
-        expect(last_response.status).to eq(201)
-        expect(json.dig('data', 'attributes', 'url')).to eq("http://doi.wiley.com/10.2903/j.efsa.2018.5239")
-        expect(json.dig('data', 'attributes', 'doi')).to eq("10.2903/j.efsa.2018.5239")
-        expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Scientific opinion on the safety of green tea catechins"}])
-        # expect(json.dig('data', 'attributes', 'agency')).to eq("mEDRA")
-        expect(json.dig('data', 'attributes', 'state')).to eq("findable")
+    #     expect(last_response.status).to eq(201)
+    #     expect(json.dig('data', 'attributes', 'url')).to eq("http://doi.wiley.com/10.2903/j.efsa.2018.5239")
+    #     expect(json.dig('data', 'attributes', 'doi')).to eq("10.2903/j.efsa.2018.5239")
+    #     expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Scientific opinion on the safety of green tea catechins"}])
+    #     # expect(json.dig('data', 'attributes', 'agency')).to eq("mEDRA")
+    #     expect(json.dig('data', 'attributes', 'state')).to eq("findable")
 
-        xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
-        expect(xml.dig("titles", "title")).to eq("Scientific opinion on the safety of green tea catechins")
-      end
-    end
+    #     xml = Maremma.from_xml(Base64.decode64(json.dig('data', 'attributes', 'xml'))).fetch("resource", {})
+    #     expect(xml.dig("titles", "title")).to eq("Scientific opinion on the safety of green tea catechins")
+    #   end
+    # end
 
     context 'datacite url', vcr: true do
       let(:xml) { Base64.strict_encode64("https://doi.org/10.7272/q6g15xs4") }
@@ -3824,16 +3824,16 @@ describe DataciteDoisController, type: :request do
       end
     end
 
-    context 'not DataCite DOI' do
-      let(:doi) { create(:doi, client: client, doi: "10.1371/journal.pbio.2001414", event: "publish") }
+    # context 'not DataCite DOI' do
+    #   let(:doi) { create(:doi, client: client, doi: "10.1371/journal.pbio.2001414", event: "publish") }
 
-      it 'returns nil' do
-        get "/dois/#{doi.doi}/get-url", nil, headers
+    #   it 'returns nil' do
+    #     get "/dois/#{doi.doi}/get-url", nil, headers
 
-        expect(last_response.status).to eq(403)
-        expect(json).to eq("errors"=>[{"status"=>403, "title"=>"SERVER NOT RESPONSIBLE FOR HANDLE"}])
-      end
-    end
+    #     expect(last_response.status).to eq(403)
+    #     expect(json).to eq("errors"=>[{"status"=>403, "title"=>"SERVER NOT RESPONSIBLE FOR HANDLE"}])
+    #   end
+    # end
   end
 
   describe 'GET /dois/get-dois', vcr: true do

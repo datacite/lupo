@@ -252,7 +252,6 @@ describe EventsController, type: :request, elasticsearch: true do
       it "has registrant aggregation" do
         post uri, params, headers
 
-
         expect(last_response.status).to eq(201)
         expect(json["errors"]).to be_nil
         expect(json.dig("data", "id")).not_to eq(event.uuid)

@@ -13,7 +13,7 @@ describe WorksController, type: :request do
   let(:headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
 
   describe 'GET /works', elasticsearch: true do
-    let!(:dois) { create_list(:doi, 3, client: client, event: "publish") }
+    let!(:dois) { create_list(:doi, 3, client: client, event: "publish", type: "DataciteDoi") }
 
     before do
       DataciteDoi.import
@@ -30,7 +30,7 @@ describe WorksController, type: :request do
   end
 
   describe "citations", elasticsearch: true, vcr: true do
-    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let(:doi) { create(:doi, client: client, aasm_state: "findable", type: "DataciteDoi") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
     let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by") }
 
@@ -98,7 +98,7 @@ describe WorksController, type: :request do
   end
 
   describe 'GET /works/:id', elasticsearch: true do
-    let!(:doi) { create(:doi, client: client, event: "publish") }
+    let!(:doi) { create(:doi, client: client, event: "publish", type: "DataciteDoi") }
 
     before do
       DataciteDoi.import
@@ -130,7 +130,7 @@ describe WorksController, type: :request do
     end
 
     context 'draft doi' do
-      let!(:doi) { create(:doi, client: client) }
+      let!(:doi) { create(:doi, client: client, type: "DataciteDoi") }
 
       it 'returns 404 status' do
         get "/works/#{doi.doi}", nil, headers
