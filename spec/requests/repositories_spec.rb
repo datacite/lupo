@@ -103,12 +103,12 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
   describe 'GET /repositories/totals' do
     let(:client) { create(:client) }
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
+    let!(:datacite_dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
 
     before do
-      Client.import
       DataciteDoi.import
-      sleep 2
+      Client.import
+      sleep 3
     end
 
     it "returns repositories" do
@@ -125,14 +125,14 @@ describe RepositoriesController, type: :request, elasticsearch: true do
     let(:provider)  { create(:provider) }
     let(:client)  { create(:client) }
     let!(:client_prefix) { create(:client_prefix, client: client) }
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
+    let!(:datacite_dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
 
     before do
+      DataciteDoi.import
       Provider.import
       Client.import
       ClientPrefix.import
-      DataciteDoi.import
-      sleep 2
+      sleep 3
     end
 
     it "returns repository" do
@@ -147,7 +147,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
   describe 'GET /repositories/:id/stats' do
     let(:provider)  { create(:provider) }
     let(:client)  { create(:client) }
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
+    let!(:datacite_dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
 
     before do
       Provider.import
