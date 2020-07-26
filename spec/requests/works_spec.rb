@@ -13,7 +13,7 @@ describe WorksController, type: :request do
   let(:headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
 
   describe 'GET /works', elasticsearch: true do
-    let!(:dois) { create_list(:doi, 3, client: client, event: "publish", type: "DataciteDoi") }
+    let!(:datacite_dois) { create_list(:doi, 3, client: client, event: "publish", type: "DataciteDoi") }
 
     before do
       DataciteDoi.import
@@ -22,7 +22,7 @@ describe WorksController, type: :request do
 
     it 'returns works', vcr: true do
       get '/works'
-
+      puts last_response.body
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(3)
       expect(json.dig('meta', 'total')).to eq(3)
@@ -90,7 +90,7 @@ describe WorksController, type: :request do
 
     it "has views with query" do
       get "/works?has-views=1"
-
+      puts last_response.body
       expect(last_response.status).to eq(200)
       expect(json['data'].size).to eq(0)
       expect(json.dig('meta', 'total')).to eq(0)

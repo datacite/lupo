@@ -95,7 +95,7 @@ describe ClientsController, type: :request, elasticsearch: true do
 
   describe 'GET /clients/totals' do
     let(:client)  { create(:client) }
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+    let!(:datacite_dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
 
     before do
       Client.import
