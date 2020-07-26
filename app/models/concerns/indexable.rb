@@ -482,6 +482,24 @@ module Indexable
       "Converted index #{alias_name} into an alias."
     end
 
+    # delete alias
+    def delete_alias
+      alias_name = self.index_name
+      index_name = self.index_name + "_v1"
+      alternate_index_name = self.index_name + "_v2"
+
+      client = Elasticsearch::Model.client
+
+      if client.indices.exists_alias?(name: alias_name, index: [index_name])
+        client.indices.delete_alias index: index_name, name: alias_name
+        "Deleted alias #{alias_name} for index #{index_name}."
+      end
+      if client.indices.exists_alias?(name: alias_name, index: [alternate_index_name])
+        client.indices.delete_alias index: alternate_index_name, name: alias_name
+        "Deleted alias #{alias_name} for index #{alternate_index_name}."
+      end
+    end
+
     # create both indexes used for aliasing
     def create_index
       alias_name = self.index_name

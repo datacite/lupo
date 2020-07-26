@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "dois", type: :request do
+describe DataciteDoisController, type: :request do
   let(:admin) { create(:provider, symbol: "ADMIN") }
   let(:admin_bearer) { Client.generate_token(role_id: "staff_admin", uid: admin.symbol, password: admin.password) }
   let(:admin_headers) { { "HTTP_ACCEPT" => "application/vnd.api+json", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer} }
@@ -18,12 +18,12 @@ describe "dois", type: :request do
     let!(:dois) { create_list(:doi, 10, client: client, aasm_state: "findable") }
 
     before do
-      Doi.import
+      DataciteDoi.import
       sleep 2
-      @dois = Doi.query(nil, page: { cursor: [], size: 10 }).results.to_a
+      @dois = DataciteDoi.query(nil, page: { cursor: [], size: 10 }).results.to_a
     end
 
-    it 'returns dois', vcr: true do
+    it 'returns dois' do
       get "/dois", nil, headers
 
       expect(last_response.status).to eq(200)
@@ -31,7 +31,7 @@ describe "dois", type: :request do
       expect(json.dig('meta', 'total')).to eq(10)
     end
 
-    it 'returns dois with scroll', vcr: true do
+    it 'returns dois with scroll' do
       get "/dois?page[scroll]=1m&page[size]=4", nil, headers
 
       expect(last_response.status).to eq(200)
@@ -59,7 +59,7 @@ describe "dois", type: :request do
       expect(json.dig('links', 'next')).to be_nil
     end
 
-    it 'returns dois with offset', vcr: true do
+    it 'returns dois with offset' do
       get '/dois?page[number]=1&page[size]=4', nil, headers
 
       expect(last_response.status).to eq(200)
@@ -159,7 +159,7 @@ describe "dois", type: :request do
     let!(:dois) { create_list(:doi, 3, aasm_state: "findable") }
 
     before do
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 
@@ -265,7 +265,7 @@ describe "dois", type: :request do
     let!(:doi) { create(:doi, client: client) }
 
     before do
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 
@@ -336,7 +336,7 @@ describe "dois", type: :request do
     let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, client: client, aasm_state: "findable") }
 
     before do
-      Doi.import
+      DataciteDoi.import
       sleep 3
     end
 
@@ -355,7 +355,7 @@ describe "dois", type: :request do
     let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Other", "resourceType" => "Instrument" }, client: client, aasm_state: "findable") }
 
     before do
-      Doi.import
+      DataciteDoi.import
       sleep 3
     end
 
@@ -374,7 +374,7 @@ describe "dois", type: :request do
     let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "InteractiveResource", "resourceType" => "Presentation" }, client: client, aasm_state: "findable") }
 
     before do
-      Doi.import
+      DataciteDoi.import
       sleep 3
     end
 
@@ -394,7 +394,7 @@ describe "dois", type: :request do
     let!(:dois) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Fake", "resourceType" => "Presentation" }, client: client) }
 
     before do
-      Doi.import
+      DataciteDoi.import
       sleep 3
     end
 
@@ -417,7 +417,7 @@ describe "dois", type: :request do
 
     before do
       Event.import
-      Doi.import
+      DataciteDoi.import
       sleep 3
     end
 
@@ -443,7 +443,7 @@ describe "dois", type: :request do
     let!(:views) { create_list(:event_for_datacite_investigations, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-investigations-regular", total: 25) }
 
     before do
-      Doi.import
+      DataciteDoi.import
       Event.import
       sleep 2
     end
@@ -472,7 +472,7 @@ describe "dois", type: :request do
     let!(:downloads) { create_list(:event_for_datacite_investigations, 3, obj_id: "https://doi.org/#{doi.doi}", relation_type_id: "unique-dataset-requests-regular", total: 10) }
 
     before do
-      Doi.import
+      DataciteDoi.import
       Event.import
       sleep 2
     end
@@ -502,7 +502,7 @@ describe "dois", type: :request do
     let!(:reference_event) { create(:event_for_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "references") }
 
     before do
-      Doi.import
+      DataciteDoi.import
       Event.import
       sleep 2
     end
@@ -527,7 +527,7 @@ describe "dois", type: :request do
     let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by") }
 
     before do
-      Doi.import
+      DataciteDoi.import
       Event.import
       sleep 2
     end
@@ -560,7 +560,7 @@ describe "dois", type: :request do
     let!(:part_events) { create(:event_for_datacite_parts, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "has-part") }
 
     before do
-      Doi.import
+      DataciteDoi.import
       Event.import
       sleep 2
     end
@@ -585,7 +585,7 @@ describe "dois", type: :request do
     let!(:version_events) { create(:event_for_datacite_parts, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{target_doi.doi}", relation_type_id: "has-version") }
 
     before do
-      Doi.import
+      DataciteDoi.import
       Event.import
       sleep 2
     end
@@ -614,7 +614,7 @@ describe "dois", type: :request do
       let!(:doi) { create(:doi, client: client) }
 
       before do
-        Doi.import
+        DataciteDoi.import
         sleep 2
       end
 
@@ -1249,7 +1249,6 @@ describe "dois", type: :request do
       end
     end
 
-
     context 'when a doi is created ignore reverting back' do
       let(:xml) { Base64.strict_encode64(file_fixture('datacite.xml').read) }
       let(:valid_attributes) do
@@ -1279,7 +1278,7 @@ describe "dois", type: :request do
 
       it 'creates the record' do
         post '/dois', valid_attributes, headers
-
+        #puts last_response.body
         expect(last_response.status).to eq(201)
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Eating your own Dog Food"}])
       end
@@ -3223,7 +3222,7 @@ describe "dois", type: :request do
       it 'updates the Doi' do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
-        Doi.import
+        DataciteDoi.import
         sleep 2
 
         get "/dois", nil, headers
@@ -3258,7 +3257,7 @@ describe "dois", type: :request do
       it 'updates the Doi' do
         patch "/dois/#{doi.doi}", update_attributes, headers
 
-        Doi.import
+        DataciteDoi.import
         sleep 2
 
         get "/dois", nil, headers
@@ -3456,7 +3455,7 @@ describe "dois", type: :request do
       end
 
       before do
-        Doi.import
+        DataciteDoi.import
         sleep 2
       end
 
@@ -3700,7 +3699,7 @@ describe "dois", type: :request do
       landing_page: landing_page) }
 
     before do
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 
@@ -3778,7 +3777,7 @@ describe "dois", type: :request do
       let!(:doi) { create(:doi, client: client, doi: "10.5438/fj3w-0shd", url: "https://blog.datacite.org/data-driven-development/", event: "publish") }
 
       before do
-        Doi.import
+        DataciteDoi.import
         sleep 2
       end
 
@@ -3794,7 +3793,7 @@ describe "dois", type: :request do
       let!(:doi) { create(:doi, client: client, doi: "10.14454/05mb-q396", event: "publish") }
 
       before do
-        Doi.import
+        DataciteDoi.import
         sleep 2
       end
 
@@ -3810,7 +3809,7 @@ describe "dois", type: :request do
       let!(:doi) { create(:doi, client: client, doi: "10.14454/61y1-e521", event: "publish") }
 
       before do
-        Doi.import
+        DataciteDoi.import
         sleep 2
       end
 
@@ -3826,7 +3825,7 @@ describe "dois", type: :request do
       let!(:doi) { create(:doi, client: client, doi: "10.14454/61y1-e521") }
 
       before do
-        Doi.import
+        DataciteDoi.import
         sleep 2
       end
 
@@ -3858,7 +3857,7 @@ describe "dois", type: :request do
       get "/dois/get-dois", nil, headers
 
       expect(last_response.status).to eq(200)
-      expect(json["dois"].length).to eq(444)
+      expect(json["dois"].length).to eq(446)
       expect(json["dois"].first).to eq("10.5438/0000-00SS")
     end
   end
@@ -3872,22 +3871,22 @@ describe "dois", type: :request do
     end
   end
 
-  describe "content_negotation", type: :request, elasticsearch: true do
+  describe "content_negotation", elasticsearch: true do
     let(:provider) { create(:provider, symbol: "DATACITE") }
     let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
     let(:bearer) { Client.generate_token(role_id: "client_admin", uid: client.symbol, provider_id: provider.symbol.downcase, client_id: client.symbol.downcase, password: client.password) }
-    let!(:doi) { create(:doi, client: client, aasm_state: "findable") }
+    let!(:datacite_doi) { create(:doi, client: client, aasm_state: "findable", type: "DataciteDoi") }
 
     before do
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 
     context "no permission" do
-      let(:doi) { create(:doi) }
+      let(:datacite_doi) { create(:doi) }
 
       it 'returns error message' do
-        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.jats+xml", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.jats+xml", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }
 
         expect(last_response.status).to eq(404)
         expect(json).to eq("errors"=>[{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
@@ -3895,10 +3894,10 @@ describe "dois", type: :request do
     end
 
     context "no authentication" do
-      let(:doi) { create(:doi) }
+      let(:datacite_doi) { create(:doi) }
 
       it 'returns error message' do
-        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.jats+xml" }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.jats+xml" }
 
         expect(last_response.status).to eq(404)
         expect(json).to eq("errors"=>[{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
@@ -3907,7 +3906,7 @@ describe "dois", type: :request do
 
     context "application/vnd.jats+xml" do
       it 'returns the Doi' do
-        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.jats+xml", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.jats+xml", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }
 
         expect(last_response.status).to eq(200)
         jats = Maremma.from_xml(last_response.body).fetch("element_citation", {})
@@ -3918,7 +3917,7 @@ describe "dois", type: :request do
 
     context "application/vnd.jats+xml link" do
       it 'returns the Doi' do
-        get "/dois/application/vnd.jats+xml/#{doi.doi}"
+        get "/dois/application/vnd.jats+xml/#{datacite_doi.doi}"
 
         expect(last_response.status).to eq(200)
         jats = Maremma.from_xml(last_response.body).fetch("element_citation", {})
@@ -3929,7 +3928,7 @@ describe "dois", type: :request do
 
     context "application/vnd.datacite.datacite+xml" do
       it 'returns the Doi' do
-        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
 
         expect(last_response.status).to eq(200)
         data = Maremma.from_xml(last_response.body).to_h.fetch("resource", {})
@@ -3941,7 +3940,7 @@ describe "dois", type: :request do
 
     context "application/vnd.datacite.datacite+xml link" do
       it 'returns the Doi' do
-        get "/dois/application/vnd.datacite.datacite+xml/#{doi.doi}"
+        get "/dois/application/vnd.datacite.datacite+xml/#{datacite_doi.doi}"
 
         expect(last_response.status).to eq(200)
         data = Maremma.from_xml(last_response.body).to_h.fetch("resource", {})
@@ -3953,10 +3952,10 @@ describe "dois", type: :request do
 
     context "application/vnd.datacite.datacite+xml schema 3" do
       let(:xml) { file_fixture('datacite_schema_3.xml').read }
-      let(:doi) { create(:doi, xml: xml, client: client, regenerate: false) }
+      let(:datacite_doi) { create(:doi, xml: xml, client: client, regenerate: false) }
 
       it 'returns the Doi' do
-        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+xml", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
 
         expect(last_response.status).to eq(200)
         data = Maremma.from_xml(last_response.body).to_h.fetch("resource", {})
@@ -3991,43 +3990,43 @@ describe "dois", type: :request do
 
     context "application/vnd.datacite.datacite+json" do
       it 'returns the Doi' do
-        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+json", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.datacite.datacite+json", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
 
         expect(last_response.status).to eq(200)
-        expect(json["doi"]).to eq(doi.doi)
+        expect(json["doi"]).to eq(datacite_doi.doi)
       end
     end
 
     context "application/vnd.datacite.datacite+json link" do
       it 'returns the Doi' do
-        get "/dois/application/vnd.datacite.datacite+json/#{doi.doi}"
+        get "/dois/application/vnd.datacite.datacite+json/#{datacite_doi.doi}"
 
         expect(last_response.status).to eq(200)
-        expect(json["doi"]).to eq(doi.doi)
+        expect(json["doi"]).to eq(datacite_doi.doi)
       end
     end
 
     context "application/vnd.crosscite.crosscite+json" do
       it 'returns the Doi' do
-        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.crosscite.crosscite+json", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.crosscite.crosscite+json", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
 
         expect(last_response.status).to eq(200)
-        expect(json["doi"]).to eq(doi.doi)
+        expect(json["doi"]).to eq(datacite_doi.doi)
       end
     end
 
     context "application/vnd.crosscite.crosscite+json link" do
       it 'returns the Doi' do
-        get "/dois/application/vnd.crosscite.crosscite+json/#{doi.doi}"
+        get "/dois/application/vnd.crosscite.crosscite+json/#{datacite_doi.doi}"
 
         expect(last_response.status).to eq(200)
-        expect(json["doi"]).to eq(doi.doi)
+        expect(json["doi"]).to eq(datacite_doi.doi)
       end
     end
 
     context "application/vnd.schemaorg.ld+json" do
       it 'returns the Doi' do
-        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.schemaorg.ld+json", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.schemaorg.ld+json", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
 
         expect(last_response.status).to eq(200)
         expect(json["@type"]).to eq("Dataset")
@@ -4036,7 +4035,7 @@ describe "dois", type: :request do
 
     context "application/vnd.schemaorg.ld+json link" do
       it 'returns the Doi' do
-        get "/dois/application/vnd.schemaorg.ld+json/#{doi.doi}"
+        get "/dois/application/vnd.schemaorg.ld+json/#{datacite_doi.doi}"
 
         expect(last_response.status).to eq(200)
         expect(json["@type"]).to eq("Dataset")
@@ -4045,7 +4044,7 @@ describe "dois", type: :request do
 
     context "application/ld+json" do
       it 'returns the Doi' do
-        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/ld+json", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/ld+json", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
 
         expect(last_response.status).to eq(200)
         expect(json["@type"]).to eq("Dataset")
@@ -4054,7 +4053,7 @@ describe "dois", type: :request do
 
     context "application/ld+json link" do
       it 'returns the Doi' do
-        get "/dois/application/ld+json/#{doi.doi}"
+        get "/dois/application/ld+json/#{datacite_doi.doi}"
 
         expect(last_response.status).to eq(200)
         expect(json["@type"]).to eq("Dataset")
@@ -4063,7 +4062,7 @@ describe "dois", type: :request do
 
     context "application/vnd.citationstyles.csl+json" do
       it 'returns the Doi' do
-        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.citationstyles.csl+json", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.citationstyles.csl+json", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
 
         expect(last_response.status).to eq(200)
         expect(json["type"]).to eq("dataset")
@@ -4072,7 +4071,7 @@ describe "dois", type: :request do
 
     context "application/vnd.citationstyles.csl+json link" do
       it 'returns the Doi' do
-        get "/dois/application/vnd.citationstyles.csl+json/#{doi.doi}"
+        get "/dois/application/vnd.citationstyles.csl+json/#{datacite_doi.doi}"
 
         expect(last_response.status).to eq(200)
         expect(json["type"]).to eq("dataset")
@@ -4081,7 +4080,7 @@ describe "dois", type: :request do
 
     context "application/x-research-info-systems" do
       it 'returns the Doi' do
-        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/x-research-info-systems", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/x-research-info-systems", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
 
         expect(last_response.status).to eq(200)
         expect(last_response.body).to start_with("TY  - DATA")
@@ -4090,7 +4089,7 @@ describe "dois", type: :request do
 
     context "application/x-research-info-systems link" do
       it 'returns the Doi' do
-        get "/dois/application/x-research-info-systems/#{doi.doi}"
+        get "/dois/application/x-research-info-systems/#{datacite_doi.doi}"
 
         expect(last_response.status).to eq(200)
         expect(last_response.body).to start_with("TY  - DATA")
@@ -4099,44 +4098,44 @@ describe "dois", type: :request do
 
     context "application/x-bibtex" do
       it 'returns the Doi' do
-        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/x-bibtex", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/x-bibtex", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
 
         expect(last_response.status).to eq(200)
-        expect(last_response.body).to start_with("@misc{https://doi.org/#{doi.doi.downcase}")
+        expect(last_response.body).to start_with("@misc{https://doi.org/#{datacite_doi.doi.downcase}")
       end
     end
 
     context "application/x-bibtex link" do
       it 'returns the Doi' do
-        get "/dois/application/x-bibtex/#{doi.doi}"
+        get "/dois/application/x-bibtex/#{datacite_doi.doi}"
 
         expect(last_response.status).to eq(200)
-        expect(last_response.body).to start_with("@misc{https://doi.org/#{doi.doi.downcase}")
+        expect(last_response.body).to start_with("@misc{https://doi.org/#{datacite_doi.doi.downcase}")
       end
     end
 
     context "text/csv" do
       it 'returns the Doi' do
-        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "text/csv", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "text/csv", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
 
         expect(last_response.status).to eq(200)
-        expect(last_response.body).to include(doi.doi)
+        expect(last_response.body).to include(datacite_doi.doi)
       end
     end
 
     context "text/csv link" do
       it 'returns the Doi' do
-        get "/dois/text/csv/#{doi.doi}"
+        get "/dois/text/csv/#{datacite_doi.doi}"
 
         expect(last_response.status).to eq(200)
-        expect(last_response.body).to include(doi.doi)
+        expect(last_response.body).to include(datacite_doi.doi)
       end
     end
 
-    context "text/x-bibliography", vcr: true do
+    context "text/x-bibliography" do
       context "default style" do
         it 'returns the Doi' do
-          get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "text/x-bibliography", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+          get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "text/x-bibliography", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
 
           expect(last_response.status).to eq(200)
           expect(last_response.body).to start_with("Ollomo, B.")
@@ -4145,7 +4144,7 @@ describe "dois", type: :request do
 
       context "default style link" do
         it 'returns the Doi' do
-          get "/dois/text/x-bibliography/#{doi.doi}"
+          get "/dois/text/x-bibliography/#{datacite_doi.doi}"
 
           expect(last_response.status).to eq(200)
           expect(last_response.body).to start_with("Ollomo, B.")
@@ -4154,7 +4153,7 @@ describe "dois", type: :request do
 
       context "ieee style" do
         it 'returns the Doi' do
-          get "/dois/#{doi.doi}?style=ieee", nil, { "HTTP_ACCEPT" => "text/x-bibliography", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+          get "/dois/#{datacite_doi.doi}?style=ieee", nil, { "HTTP_ACCEPT" => "text/x-bibliography", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
 
           expect(last_response.status).to eq(200)
           expect(last_response.body).to start_with("B. Ollomo")
@@ -4163,7 +4162,7 @@ describe "dois", type: :request do
 
       context "ieee style link" do
         it 'returns the Doi' do
-          get "/dois/text/x-bibliography/#{doi.doi}?style=ieee"
+          get "/dois/text/x-bibliography/#{datacite_doi.doi}?style=ieee"
 
           expect(last_response.status).to eq(200)
           expect(last_response.body).to start_with("B. Ollomo")
@@ -4172,7 +4171,7 @@ describe "dois", type: :request do
 
       context "style and locale" do
         it 'returns the Doi' do
-          get "/dois/#{doi.doi}?style=vancouver&locale=de", nil, { "HTTP_ACCEPT" => "text/x-bibliography", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+          get "/dois/#{datacite_doi.doi}?style=vancouver&locale=de", nil, { "HTTP_ACCEPT" => "text/x-bibliography", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
 
           expect(last_response.status).to eq(200)
           expect(last_response.body).to start_with("Ollomo B")
@@ -4182,7 +4181,7 @@ describe "dois", type: :request do
 
     context "unknown content type" do
       it 'returns the Doi' do
-        get "/dois/#{doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.ms-excel", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }
+        get "/dois/#{datacite_doi.doi}", nil, { "HTTP_ACCEPT" => "application/vnd.ms-excel", 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }
 
         expect(last_response.status).to eq(406)
         expect(json["errors"]).to eq([{"status"=>"406", "title"=>"The content type is not recognized."}])
@@ -4191,10 +4190,10 @@ describe "dois", type: :request do
 
     context "missing content type" do
       it 'returns the Doi' do
-        get "/dois/#{doi.doi}", nil, { 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
+        get "/dois/#{datacite_doi.doi}", nil, { 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer  }
 
         expect(last_response.status).to eq(200)
-        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'doi')).to eq(datacite_doi.doi.downcase)
       end
     end
   end

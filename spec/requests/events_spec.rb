@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "/events", type: :request, elasticsearch: true do
+describe EventsController, type: :request, elasticsearch: true do
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
 
@@ -561,7 +561,7 @@ describe "/events", type: :request, elasticsearch: true do
     let(:uri) { "/events/#{event.uuid}?include=doi-for-source,doi-for-target" }
 
     before do
-      Doi.import
+      DataciteDoi.import
       Event.import
       sleep 2
     end

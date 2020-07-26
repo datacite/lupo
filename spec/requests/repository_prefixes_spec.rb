@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "Repository Prefixes", type: :request, elasticsearch: true do
+describe RepositoryPrefixesController, type: :request, elasticsearch: true do
   let(:prefix) { create(:prefix) }
   let(:provider) { create(:provider) }
   let(:client) { create(:client, provider: provider) }

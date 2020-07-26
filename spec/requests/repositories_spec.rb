@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Repositories', type: :request, elasticsearch: true do
+describe RepositoriesController, type: :request, elasticsearch: true do
   let(:ids) { clients.map { |c| c.uid }.join(",") }
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
   let(:provider) { create(:provider, consortium: consortium, symbol: "ABC", role_name: "ROLE_CONSORTIUM_ORGANIZATION", password_input: "12345") }
@@ -103,17 +103,17 @@ describe 'Repositories', type: :request, elasticsearch: true do
 
   describe 'GET /repositories/totals' do
     let(:client) { create(:client) }
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
 
     before do
       Client.import
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 
     it "returns repositories" do
       get "/repositories/totals", nil, headers
-
+      puts last_response.body
       expect(last_response.status).to eq(200)
       expect(json.first.dig('count')).to eq(3)
       expect(json.first.dig('states')).to eq([{"count"=>3, "id"=>"findable", "title"=>"Findable"}])
@@ -131,7 +131,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
       Provider.import
       Client.import
       ClientPrefix.import
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 
@@ -152,7 +152,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
     before do
       Provider.import
       Client.import
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 
@@ -434,7 +434,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
     end
 
     before do
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 

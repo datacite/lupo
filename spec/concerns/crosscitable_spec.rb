@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Doi, vcr: true do
   let(:xml) { file_fixture('datacite.xml').read }
 
-  subject { DoisController.new }
+  subject { DataciteDoisController.new }
 
   context "clean_xml" do
     it "clean_xml" do

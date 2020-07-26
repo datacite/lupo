@@ -5,7 +5,7 @@ class MetadataController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @doi = Doi.where(doi: params[:doi_id]).first
+    @doi = DataciteDoi.where(doi: params[:doi_id]).first
     fail ActiveRecord::RecordNotFound if @doi.blank?
 
     collection = @doi.metadata
@@ -89,7 +89,7 @@ class MetadataController < ApplicationController
   protected
 
   def set_doi
-    @doi = Doi.where(doi: params[:doi_id]).first
+    @doi = DataciteDoi.where(doi: params[:datacite_doi_id]).first
     fail ActiveRecord::RecordNotFound if @doi.blank?
   end
 

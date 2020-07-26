@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "exports", type: :request do
+describe ExportsController, type: :request do
   let(:admin_bearer) { User.generate_token }
   let(:admin_headers) { { "HTTP_ACCEPT" => "text/csv", "HTTP_AUTHORIZATION" => "Bearer " + admin_bearer} }
 
@@ -41,7 +41,7 @@ describe "exports", type: :request do
     let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
 
     before do
-      Doi.import
+      DataciteDoi.import
       Client.import
       sleep 2
     end

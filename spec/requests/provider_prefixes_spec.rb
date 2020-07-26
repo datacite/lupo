@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "Provider Prefixes", type: :request, elasticsearch: true do
+describe ProviderPrefixesController, type: :request, elasticsearch: true do
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
   let(:provider) { create(:provider, consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION", password_input: "12345") }
   let(:prefix) { create(:prefix) }

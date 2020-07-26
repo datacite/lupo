@@ -223,7 +223,7 @@ class ProvidersController < ApplicationController
     page = { size: 0, number: 1 }
 
     state =  current_user.present? && current_user.is_admin_or_staff? && params[:state].present? ? params[:state] : "registered,findable"
-    response = Doi.query(nil, state: state, page: page, totals_agg: "provider")
+    response = DataciteDoi.query(nil, state: state, page: page, totals_agg: "provider")
     registrant = providers_totals(response.response.aggregations.providers_totals.buckets)
 
     render json: registrant, status: :ok

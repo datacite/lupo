@@ -56,6 +56,11 @@ namespace :datacite_doi do
     puts DataciteDoi.delete_template
   end
 
+  desc "Delete aliases for dois"
+  task :delete_alias => :environment do
+    puts DataciteDoi.delete_alias
+  end
+
   desc 'Import all datacite DOIs'
   task :import => :environment do
     from_id = (ENV['FROM_ID'] || DataciteDoi.minimum(:id)).to_i

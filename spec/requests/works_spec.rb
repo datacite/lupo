@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "works", type: :request do
+describe WorksController, type: :request do
   let(:admin) { create(:provider, symbol: "ADMIN") }
   let(:admin_bearer) { Client.generate_token(role_id: "staff_admin", uid: admin.symbol, password: admin.password) }
   let(:admin_headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + admin_bearer}}
@@ -16,7 +16,7 @@ describe "works", type: :request do
     let!(:dois) { create_list(:doi, 3, client: client, event: "publish") }
 
     before do
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 
@@ -35,7 +35,7 @@ describe "works", type: :request do
     let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by") }
 
     before do
-      Doi.import
+      DataciteDoi.import
       Event.import
       sleep 2
     end
@@ -101,7 +101,7 @@ describe "works", type: :request do
     let!(:doi) { create(:doi, client: client, event: "publish") }
 
     before do
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
   

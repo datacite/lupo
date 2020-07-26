@@ -61,7 +61,7 @@ describe Event, type: :model, vcr: true do
     #   before do
     #     Provider.import
     #     Client.import
-    #     Doi.import
+    #     DataciteDoi.import
     #     Event.import
     #     sleep 3
     #   end

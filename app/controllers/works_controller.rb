@@ -25,11 +25,11 @@ class WorksController < ApplicationController
                          end
 
     if params[:id].present?
-      response = Doi.find_by_id(params[:id])
+      response = DataciteDoi.find_by_id(params[:id])
     elsif params[:ids].present?
-      response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
+      response = DataciteDoi.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      response = Doi.query(params[:query],
+      response = DataciteDoi.query(params[:query],
                           state: "findable",
                           created: params[:created],
                           registered: params[:registered],
@@ -121,7 +121,7 @@ class WorksController < ApplicationController
   protected
 
   def set_doi
-    response = Doi.find_by_id(params[:id])
+    response = DataciteDoi.find_by_id(params[:id])
     @doi = response.results.first
 
     fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: @doi, user: current_user)

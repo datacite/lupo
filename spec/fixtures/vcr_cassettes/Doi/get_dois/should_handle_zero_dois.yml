@@ -19,7 +19,7 @@ http_interactions:
       message: Server Error
     headers:
       Date:
-      - Mon, 13 Jul 2020 12:30:16 GMT
+      - Sun, 26 Jul 2020 08:55:42 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Content-Length:
@@ -31,5 +31,5 @@ http_interactions:
       string: '{"responseCode":2,"message":"HandleException (INVALID_VALUE) The requested
         prefix doesn''t live here","handle":"10.70001"}'
     http_version: null
-  recorded_at: Mon, 13 Jul 2020 12:30:16 GMT
+  recorded_at: Sun, 26 Jul 2020 08:55:42 GMT
 recorded_with: VCR 5.1.0

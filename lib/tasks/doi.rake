@@ -11,6 +11,11 @@ namespace :doi do
     puts Doi.delete_index
   end
 
+  desc "Delete aliases for dois"
+  task :delete_alias => :environment do
+    puts Doi.delete_alias
+  end
+
   desc 'Store handle URL'
   task :set_url => :environment do
     puts Doi.set_url
