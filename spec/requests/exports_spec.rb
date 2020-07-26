@@ -48,7 +48,7 @@ describe ExportsController, type: :request do
 
     it 'returns repositories', vcr: false do
       get "/export/repositories", nil, admin_headers
-      puts last_response.body
+
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
       expect(csv.length).to eq(2)
@@ -60,7 +60,7 @@ describe ExportsController, type: :request do
 
     it 'returns repositories from date', vcr: false do
       get "/export/repositories?from-date=#{Date.today}", nil, admin_headers
-      puts last_response.body
+
       expect(last_response.status).to eq(200)
       csv = last_response.body.lines
       expect(csv.length).to eq(2)
