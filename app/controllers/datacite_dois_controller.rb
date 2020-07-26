@@ -475,7 +475,7 @@ class DataciteDoisController < ApplicationController
 
     authorize! :get_url, @doi
 
-    if !@doi.is_registered_or_findable? || %w(europ).include?(@doi.provider_id) || doi.type == "OtherDoi"
+    if !@doi.is_registered_or_findable? || %w(europ).include?(@doi.provider_id) || @doi.type == "OtherDoi"
       url = @doi.url
       head :no_content && return if url.blank?
     else

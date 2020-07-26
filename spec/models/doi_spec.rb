@@ -1177,7 +1177,7 @@ describe Doi, type: :model, vcr: true do
 
       response = subject.stats_query
       expect(response.results.total).to eq(4)
-      expect(response.aggregations.created.buckets).to eq([{"doc_count"=>8, "key"=>1420070400000, "key_as_string"=>"2015"}])
+      expect(response.aggregations.created.buckets).to eq([{"doc_count"=>4, "key"=>1420070400000, "key_as_string"=>"2015"}])
     end
 
     it "counts all consortia dois" do
