@@ -23,30 +23,21 @@ class OtherDoiByIdJob < ActiveJob::Base
 
     # otherwise store DOI metadata with DataCite 
     # check DOI registration agency as Crossref also indexes DOIs from other RAs
-    # using client crossref.citations, medra.citations, etc. and DataCite XML
+    # using DataCite XML
     ra = get_doi_ra(id).downcase
     return {} unless ra.present?
-
-    client_id = ra.downcase + ".citations"
 
     xml = Base64.strict_encode64(id)
     attributes = {
       "xml" => xml,
       "source" => "levriero",
+      "agency" => ra,
       "event" => "publish" }.compact
 
     data = {
       "data" => {
         "type" => "dois",
-        "attributes" => attributes,
-        "relationships" => {
-          "client" =>  {
-            "data" => {
-              "type" => "clients",
-              "id" => client_id
-            }
-          }
-        }
+        "attributes" => attributes
       }
     }
 

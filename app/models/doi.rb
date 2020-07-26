@@ -1574,7 +1574,7 @@ class Doi < ActiveRecord::Base
   # end
 
   def is_registered_or_findable?
-    %w(registered findable).include?(aasm_state) || %w(crossref medra op).include?(provider_id)
+    %w(registered findable).include?(aasm_state) || provider_id == "europ" || type == "OtherDoi"
   end
 
   def validatable?
@@ -1586,7 +1586,7 @@ class Doi < ActiveRecord::Base
   def update_url
     return nil if current_user.nil? || !is_registered_or_findable?
 
-    if %w(europ).include?(provider_id) || %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations).include?(client_id)
+    if %w(europ).include?(provider_id) || type == "OtherDoi"
       UrlJob.perform_later(doi)
     else
       HandleJob.perform_later(doi)
