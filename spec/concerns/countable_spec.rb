@@ -73,8 +73,8 @@ describe "Providers", type: :controller, elasticsearch: true do
     let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM", symbol: "DC") }
     let(:provider) { create(:provider, consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION", symbol: "DATACITE") }
     let(:client) { create(:client, provider: provider, symbol: "DATACITE.TEST") }
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
-    let!(:doi) { create(:doi, type: "DataciteDoi") }
+    let!(:datacite_dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
+    let!(:datacite_doi) { create(:doi, type: "DataciteDoi") }
 
     it "counts all dois" do
       DataciteDoi.import

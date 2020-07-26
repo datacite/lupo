@@ -54,7 +54,7 @@ namespace :doi do
   desc "Set license"
   task set_license: :environment do
     options = {
-      query: "rights_list:* AND !rights_list.rightsIdentifier",
+      query: "rights_list:* AND -rights_list.rightsIdentifier:*",
       label: "[SetLicense]",
       job_name: "UpdateDoiJob",
     }
