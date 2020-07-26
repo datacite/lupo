@@ -113,7 +113,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
     it "returns repositories" do
       get "/repositories/totals", nil, headers
-      puts last_response.body
+
       expect(last_response.status).to eq(200)
       expect(json.first.dig('count')).to eq(3)
       expect(json.first.dig('states')).to eq([{"count"=>3, "id"=>"findable", "title"=>"Findable"}])
@@ -158,7 +158,7 @@ describe RepositoriesController, type: :request, elasticsearch: true do
 
     it "returns repository" do
       get "/repositories/#{client.uid}/stats"
-      puts last_response.body
+
       expect(last_response.status).to eq(200)
       expect(json["resourceTypes"]).to eq([{"count"=>3, "id"=>"dataset", "title"=>"Dataset"}])
       expect(json["dois"]).to eq([{"count"=>3, "id"=>"2020", "title"=>"2020"}])

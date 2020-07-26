@@ -17,45 +17,29 @@ class OtherDoiByIdJob < ActiveJob::Base
     # check whether DOI has been stored with DataCite already
     # unless we want to refresh the metadata
     unless options[:refresh]
-      result = Doi.find_by_id(doi).results.first
-      return {} unless result.blank?
+      result = OtherDoi.find_by_id(doi).results.first
+      return {} if result.present?
     end
 
     # otherwise store DOI metadata with DataCite 
     # check DOI registration agency as Crossref also indexes DOIs from other RAs
     # using DataCite XML
     ra = get_doi_ra(id).downcase
-    return {} unless ra.present?
+    return {} if ra.blank? || ra == "datacite"
 
     xml = Base64.strict_encode64(id)
-    attributes = {
+
+    params = {
       "xml" => xml,
       "source" => "levriero",
       "agency" => ra,
       "event" => "publish" }.compact
 
-    data = {
-      "data" => {
-        "type" => "dois",
-        "attributes" => attributes
-      }
-    }
-
-    url = "http://localhost/dois/#{Addressable::URI.encode(doi)}"
-    response = Maremma.put(url, accept: 'application/vnd.api+json', 
-                                content_type: 'application/vnd.api+json',
-                                data: data.to_json,
-                                username: ENV["ADMIN_USERNAME"],
-                                password: ENV["ADMIN_PASSWORD"])
-
-    if response.status == 201
+    @doi = OtherDoi.new(params)
+    if @doi.save
       Rails.logger.info "DOI #{doi} record created."
-    elsif response.status == 200
-      Rails.logger.info "DOI #{doi} record updated."
-    elsif response.status == 404
-      Rails.logger.warn "[Warn] #{ra} DOI #{doi} not found."
     else
-      Rails.logger.error "[Error parsing #{ra} DOI #{doi}]: " + response.body["errors"].inspect
+      Rails.logger.error "[Error saving DOI #{doi} for #{ra}]: " + response.body["errors"].inspect
     end
   end
 

@@ -414,12 +414,12 @@ class Event < ActiveRecord::Base
         response = Event.query(nil, source_id: source_id, page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
 
-        Rails.logger.info "[Update] Updating #{response.results.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Update] Updating #{response.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         dois = response.results.results.map(&:obj_id).uniq
 
-        # use same jobs as for crossref dois
+        # use same job for all non-DataCite dois
         OtherDoiJob.perform_later(dois, options)
       end
     end
@@ -707,6 +707,8 @@ class Event < ActiveRecord::Base
   end
 
   def set_source_and_target_doi
+    return nil unless subj_id && obj_id
+    
     case relation_type_id
     when *ACTIVE_RELATION_TYPES
       self.source_doi = uppercase_doi_from_url(subj_id)

@@ -10,8 +10,10 @@ module Indexable
 
       if self.class.name == "Doi" && (saved_change_to_attribute?("related_identifiers") || saved_change_to_attribute?("creators") || saved_change_to_attribute?("funding_references"))
         send_import_message(self.to_jsonapi) if aasm_state == "findable" && !Rails.env.test?
-      # reindex prefix, not triggered by standard callbacks
+      elsif self.class.name == "Event"
+        OtherDoiJob.perform_later([self.subj_id, self.obj_id].compact)
       elsif ["ProviderPrefix", "ClientPrefix"].include?(self.class.name)
+        # reindex prefix, not triggered by standard callbacks
         IndexJob.perform_later(self.prefix)
       end
     end

@@ -274,12 +274,10 @@ describe ProvidersController, type: :request, elasticsearch: true  do
         # get "/providers?consortium-lead-id=#{consortium_lead.symbol.downcase}", nil, headers
 
         # expect(last_response.status).to eq(200)
-        # puts last_response.body
 
         # get "/providers/#{consortium_lead.symbol.downcase}/organizations", nil, headers
 
         # expect(last_response.status).to eq(200)
-        # puts last_response.body
       end
     end
 
