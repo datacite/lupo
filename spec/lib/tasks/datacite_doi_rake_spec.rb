@@ -100,22 +100,6 @@ require 'rails_helper'
 #   end
 # end
 
-# describe "datacite_doi:start_aliases", order: :defined do
-#   include ActiveJob::TestHelper
-#   include_context "rake"
-
-#   let!(:doi)  { create_list(:doi, 10) }
-#   let(:output) { "Index dois-datacite-test is already an alias.\n" }
-
-#   it "prerequisites should include environment" do
-#     expect(subject.prerequisites).to include("environment")
-#   end
-
-#   it "should run the rake task" do
-#     expect(capture_stdout { subject.invoke }).to start_with(output)
-#   end
-# end
-
 # describe "datacite_doi:monitor_reindex", order: :defined do
 #   include ActiveJob::TestHelper
 #   include_context "rake"
@@ -129,23 +113,6 @@ require 'rails_helper'
 
 #   it "should run the rake task" do
 #     expect(capture_stdout { subject.invoke }).to start_with(output)
-#   end
-# end
-
-# describe "datacite_doi:finish_aliases", order: :defined do
-#   include ActiveJob::TestHelper
-#   include_context "rake"
-
-#   let!(:doi)  { create_list(:doi, 10) }
-#   let(:output) { "Index dois-datacite-test is already an alias.\n" }
-
-#   it "prerequisites should include environment" do
-#     expect(subject.prerequisites).to include("environment")
-#   end
-
-#   it "should run the rake task" do
-#     Rake::Task["datacite_doi:create_index"].invoke
-#     expect(capture_stdout { subject.invoke }).to eq(output)
 #   end
 # end
 

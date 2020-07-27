@@ -31,19 +31,9 @@ namespace :provider do
     puts Provider.active_index + " is the active index."
   end
 
-  desc "Start using alias indexes for providers"
-  task start_aliases: :environment do
-    puts Provider.start_aliases
-  end
-
   desc "Monitor reindexing for providers"
   task monitor_reindex: :environment do
     puts Provider.monitor_reindex
-  end
-
-  desc "Wrap up starting using alias indexes for providers"
-  task finish_aliases: :environment do
-    puts Provider.finish_aliases
   end
 
   desc 'Import all providers'

@@ -16,6 +16,16 @@ namespace :other_doi do
     puts OtherDoi.upgrade_index
   end
 
+  desc "Create alias for other dois"
+  task :create_alias => :environment do
+    puts OtherDoi.create_alias
+  end
+
+  desc "Delete alias for other dois"
+  task :delete_alias => :environment do
+    puts OtherDoi.delete_alias
+  end
+
   desc "Show index stats for other dois"
   task :index_stats => :environment do
     puts OtherDoi.index_stats
@@ -31,19 +41,9 @@ namespace :other_doi do
     puts OtherDoi.active_index + " is the active index."
   end
 
-  desc "Start using alias indexes for other dois"
-  task :start_aliases => :environment do
-    puts OtherDoi.start_aliases
-  end
-
   desc "Monitor reindexing for other dois"
   task :monitor_reindex => :environment do
     puts OtherDoi.monitor_reindex
-  end
-
-  desc "Wrap up starting using alias indexes for other dois"
-  task :finish_aliases => :environment do
-    puts OtherDoi.finish_aliases
   end
 
   desc "Create template for other dois"

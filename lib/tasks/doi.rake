@@ -1,17 +1,12 @@
 # frozen_string_literal: true
 
 namespace :doi do
-  desc "Create index for dois"
-  task :create_index => :environment do
-    puts Doi.create_index
+  desc "Create alias for dois"
+  task :create_alias => :environment do
+    puts Doi.create_alias
   end
 
-  desc "Delete index for dois"
-  task :delete_index => :environment do
-    puts Doi.delete_index
-  end
-
-  desc "Delete aliases for dois"
+  desc "Delete alias for dois"
   task :delete_alias => :environment do
     puts Doi.delete_alias
   end

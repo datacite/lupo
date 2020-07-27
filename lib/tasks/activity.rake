@@ -31,19 +31,9 @@ namespace :activity do
     puts Activity.active_index + " is the active index."
   end
 
-  desc "Start using alias indexes for activities"
-  task :start_aliases => :environment do
-    puts Activity.start_aliases
-  end
-
   desc "Monitor reindexing for activities"
   task :monitor_reindex => :environment do
     puts Activity.monitor_reindex
-  end
-
-  desc "Wrap up starting using alias indexes for activities"
-  task :finish_aliases => :environment do
-    puts Activity.finish_aliases
   end
 
   desc 'Import all activities'

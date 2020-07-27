@@ -16,6 +16,16 @@ namespace :datacite_doi do
     puts DataciteDoi.upgrade_index
   end
 
+  desc "Create alias for datacite dois"
+  task :create_alias => :environment do
+    puts DataciteDoi.create_alias
+  end
+
+  desc "Delete alias for datacite dois"
+  task :delete_alias => :environment do
+    puts DataciteDoi.delete_alias
+  end
+
   desc "Show index stats for datacite dois"
   task :index_stats => :environment do
     puts DataciteDoi.index_stats
@@ -31,19 +41,9 @@ namespace :datacite_doi do
     puts DataciteDoi.active_index + " is the active index."
   end
 
-  desc "Start using alias indexes for datacite dois"
-  task :start_aliases => :environment do
-    puts DataciteDoi.start_aliases
-  end
-
   desc "Monitor reindexing for datacite dois"
   task :monitor_reindex => :environment do
     puts DataciteDoi.monitor_reindex
-  end
-
-  desc "Wrap up starting using alias indexes for datacite dois"
-  task :finish_aliases => :environment do
-    puts DataciteDoi.finish_aliases
   end
 
   desc "Create template for datacite dois"
