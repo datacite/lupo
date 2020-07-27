@@ -452,8 +452,6 @@ module Indexable
 
       client = Elasticsearch::Model.client
 
-      self.__elasticsearch__.delete_index!(index: alias_name) if self.__elasticsearch__.index_exists?(index: alias_name)
-
       # indexes in DOI model are aliased from DataciteDoi and OtherDoi models
       if self.name == "Doi"
         datacite_index_name = DataciteDoi.index_name + "_v1"
@@ -461,24 +459,24 @@ module Indexable
         other_index_name = OtherDoi.index_name + "_v1"
         other_alternate_index_name = OtherDoi.index_name + "_v2"
 
-        unless client.indices.exists_alias?(name: alias_name, index: [datacite_index_name])
-          client.indices.put_alias index: datacite_index_name, name: alias_name
-          "Created alias #{alias_name} for index #{datacite_index_name}."
-        else
+        if client.indices.exists_alias?(name: alias_name, index: [datacite_index_name])
           "Alias #{alias_name} for index #{datacite_index_name} already exists."
+        else
+          client.indices.put_alias index: datacite_index_name, name: alias_name
+          "Created alias #{alias_name} for index #{datacite_index_name}."          
         end
-        unless client.indices.exists_alias?(name: alias_name, index: [other_index_name])
+        if client.indices.exists_alias?(name: alias_name, index: [other_index_name])
+          "Alias #{alias_name} for index #{other_index_name} already exists."
+        else
           client.indices.put_alias index: other_index_name, name: alias_name
           "Created alias #{alias_name} for index #{other_index_name}."
-        else
-          "Alias #{alias_name} for index #{other_index_name} already exists."
         end
       else
-        unless client.indices.exists_alias?(name: alias_name, index: [index_name])
-          client.indices.put_alias index: index_name, name: alias_name
-          "Created alias #{alias_name} for index #{index_name}."
-        else
+        if client.indices.exists_alias?(name: alias_name, index: [index_name])
           "Alias #{alias_name} for index #{index_name} already exists."
+        else
+          client.indices.put_alias index: index_name, name: alias_name
+          "Created alias #{alias_name} for index #{index_name}."          
         end
       end
     end
@@ -490,6 +488,8 @@ module Indexable
       alternate_index_name = self.index_name + "_v2"
 
       client = Elasticsearch::Model.client
+
+      self.__elasticsearch__.delete_index!(index: alias_name) if self.__elasticsearch__.index_exists?(index: alias_name)
 
       # indexes in DOI model are aliased from DataciteDoi and OtherDoi models
       if self.name == "Doi"
