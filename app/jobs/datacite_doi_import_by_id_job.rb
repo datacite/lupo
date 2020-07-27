@@ -1,4 +1,4 @@
-class DoiImportByIdJob < ActiveJob::Base
+class DataciteDoiImportByIdJob < ActiveJob::Base
   queue_as :lupo_import
 
   rescue_from ActiveJob::DeserializationError, Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
@@ -6,6 +6,6 @@ class DoiImportByIdJob < ActiveJob::Base
   end
 
   def perform(options={})
-    Doi.import_by_id(options)
+    DataciteDoi.import_by_id(options)
   end
 end
