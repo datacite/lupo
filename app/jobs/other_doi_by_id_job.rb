@@ -39,7 +39,7 @@ class OtherDoiByIdJob < ActiveJob::Base
     if @doi.save
       Rails.logger.info "DOI #{doi} record created."
     else
-      Rails.logger.error "[Error saving DOI #{doi} for #{ra}]: " + response.body["errors"].inspect
+      Rails.logger.error "[Error saving DOI #{doi} for #{ra}]: " + @doi.errors.messages
     end
   end
 
