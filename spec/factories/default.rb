@@ -249,7 +249,7 @@ FactoryBot.define do
     minted { Faker::Time.backward(15, :evening) }
     updated { Faker::Time.backward(5, :evening) }
 
-    initialize_with { Doi.where(doi: doi).first_or_initialize }
+    initialize_with { DataciteDoi.where(doi: doi).first_or_initialize }
   end
 
   factory :metadata do

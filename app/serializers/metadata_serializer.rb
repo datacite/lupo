@@ -7,7 +7,7 @@ class MetadataSerializer
 
   attributes :version, :namespace, :xml, :created
 
-  belongs_to :doi, record_type: :dois
+  belongs_to :datacite_doi, record_type: :datacite_dois
 
   attribute :xml do |object|
     Base64.strict_encode64(object.xml)

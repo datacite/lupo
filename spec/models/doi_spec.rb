@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 describe Doi, type: :model, vcr: true do
+  it_behaves_like "an STI class"
+
   describe "validations" do
     it { should validate_presence_of(:doi) }
   end
@@ -96,8 +98,8 @@ describe Doi, type: :model, vcr: true do
 
     it "XXX" do
       subject = build(:doi, agency: "xxx")
-      expect(subject).to_not be_valid
-      expect(subject.errors.messages).to eq(:agency=>["is not included in the list"])
+      expect(subject).to be_valid
+      expect(subject.agency).to eq("datacite")
     end
 
     it "default" do
@@ -1045,10 +1047,10 @@ describe Doi, type: :model, vcr: true do
   describe "repair landing page" do
     let(:provider)  { create(:provider, symbol: "ADMIN") }
     let(:client)  { create(:client, provider: provider) }
-    let(:timeNow) { Time.zone.now.iso8601 }
+    let(:time_now) { Time.zone.now.iso8601 }
 
     let(:landing_page) { {
-      "checked" => timeNow,
+      "checked" => time_now,
       "status" => 200,
       "url" => "http://example.com",
       "contentType" => "text/html",
@@ -1070,17 +1072,13 @@ describe Doi, type: :model, vcr: true do
     } }
 
     let(:doi) {
-      create(
-        :doi,
-        client: client,
-        landing_page: landing_page
-        )
+      create(:doi, client: client, landing_page: landing_page)
     }
 
     before { doi.save }
 
     let(:fixed_landing_page) { {
-      "checked" => timeNow,
+      "checked" => time_now,
       "status" => 200,
       "url" => "http://example.com",
       "contentType" => "text/html",
@@ -1120,14 +1118,13 @@ describe Doi, type: :model, vcr: true do
       "body-has-pid" => true
     } }
 
-    let(:timeNow) { Time.zone.now.iso8601 }
+    let(:time_now) { Time.zone.now.iso8601 }
 
     let(:doi) {
-      create(
-        :doi,
+      create(:doi,
         client: client,
         last_landing_page_status: 200,
-        last_landing_page_status_check: timeNow,
+        last_landing_page_status_check: time_now,
         last_landing_page_content_type: "text/html",
         last_landing_page: "http://example.com",
         last_landing_page_status_result: last_landing_page_status_result
@@ -1135,7 +1132,7 @@ describe Doi, type: :model, vcr: true do
     }
 
     let(:landing_page) { {
-      "checked" => timeNow,
+      "checked" => time_now,
       "status" => 200,
       "url" => "http://example.com",
       "contentType" => "text/html",

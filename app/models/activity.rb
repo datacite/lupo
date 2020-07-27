@@ -34,9 +34,6 @@ class Activity < Audited::Audit
     indexes :request_uuid,                   type: :keyword
     indexes :changes,                        type: :object
     indexes :created,                        type: :date, ignore_malformed: true
-
-    # include parent objects
-    #indexes :doi,                            type: :object
   end
 
   def as_indexed_json(options={})

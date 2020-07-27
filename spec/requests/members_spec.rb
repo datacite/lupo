@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Members', type: :request do
+describe MembersController, type: :request do
   let!(:providers)  { create_list(:provider, 10) }
   let(:provider)  { create(:provider) }
 

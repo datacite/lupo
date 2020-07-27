@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe "/events", type: :request, elasticsearch: true do
+describe EventsController, type: :request, elasticsearch: true do
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
 
@@ -252,7 +252,6 @@ describe "/events", type: :request, elasticsearch: true do
       it "has registrant aggregation" do
         post uri, params, headers
 
-
         expect(last_response.status).to eq(201)
         expect(json["errors"]).to be_nil
         expect(json.dig("data", "id")).not_to eq(event.uuid)
@@ -267,7 +266,7 @@ describe "/events", type: :request, elasticsearch: true do
       end
     end
 
-    context "with nested attrtibutes" do
+    context "with nested attributes" do
       let(:uri) { "/events" }
       let(:params) do
         { "data" => { "type" => "events",
@@ -290,6 +289,132 @@ describe "/events", type: :request, elasticsearch: true do
         expect(event[:obj].has_key?('registrantId')).to be_truthy
         expect(event[:obj].has_key?('proxyIdentifiers')).to be_truthy
       end
+    end
+  end
+
+  context "create crossref doi", vcr: true do
+    let(:uri) { "/events" }
+    let(:params) do
+      { "data" => { "type" => "events",
+                    "attributes" => {
+                      "subjId" => "https://doi.org/10.7554/elife.01567",
+                      "sourceId" => "crossref-import",
+                      "relationTypeId" => nil,
+                      "sourceToken" => event.source_token } } }
+    end
+
+    it "registered" do
+      post uri, params, headers
+
+      expect(last_response.status).to eq(201)
+      expect(json["errors"]).to be_nil
+      expect(json.dig("data", "id")).to be_present
+      expect(json.dig("data", "attributes", "subjId")).to eq("https://doi.org/10.7554/elife.01567")
+    end
+  end
+
+  context "create crossref doi not found", vcr: true do
+    let(:uri) { "/events" }
+    let(:params) do
+      { "data" => { "type" => "events",
+                    "attributes" => {
+                      "subjId" => "https://doi.org/10.3389/fmicb.2019.01425",
+                      "sourceId" => "crossref-import",
+                      "relationTypeId" => nil,
+                      "sourceToken" => event.source_token } } }
+    end
+
+    it "not registered" do
+      post uri, params, headers
+      puts json
+      expect(last_response.status).to eq(201)
+      expect(json["errors"]).to be_nil
+      expect(json.dig("data", "id")).to be_present
+      expect(json.dig("data", "attributes", "subjId")).to eq("https://doi.org/10.3389/fmicb.2019.01425")
+    end
+  end
+
+  context "create medra doi", vcr: true do
+    let(:uri) { "/events" }
+    let(:params) do
+      { "data" => { "type" => "events",
+                    "attributes" => {
+                      "subjId" => "https://doi.org/10.3280/ecag2018-001005",
+                      "sourceId" => "medra-import",
+                      "relationTypeId" => nil,
+                      "sourceToken" => event.source_token } } }
+    end
+
+    it "registered" do
+      post uri, params, headers
+
+      expect(last_response.status).to eq(201)
+      expect(json["errors"]).to be_nil
+      expect(json.dig("data", "id")).to be_present
+      expect(json.dig("data", "attributes", "subjId")).to eq("https://doi.org/10.3280/ecag2018-001005")
+    end
+  end
+ 
+  context "create kisti doi", vcr: true do
+    let(:uri) { "/events" }
+    let(:params) do
+      { "data" => { "type" => "events",
+                    "attributes" => {
+                      "subjId" => "https://doi.org/10.5012/bkcs.2013.34.10.2889",
+                      "sourceId" => "kisti-import",
+                      "relationTypeId" => nil,
+                      "sourceToken" => event.source_token } } }
+    end
+
+    it "registered" do
+      post uri, params, headers
+
+      expect(last_response.status).to eq(201)
+      expect(json["errors"]).to be_nil
+      expect(json.dig("data", "id")).to be_present
+      expect(json.dig("data", "attributes", "subjId")).to eq("https://doi.org/10.5012/bkcs.2013.34.10.2889")
+    end
+  end
+  
+  context "create jalc doi", vcr: true do
+    let(:uri) { "/events" }
+    let(:params) do
+      { "data" => { "type" => "events",
+                    "attributes" => {
+                      "subjId" => "https://doi.org/10.1241/johokanri.39.979",
+                      "sourceId" => "jalc-import",
+                      "relationTypeId" => nil,
+                      "sourceToken" => event.source_token } } }
+    end
+
+    it "registered" do
+      post uri, params, headers
+
+      expect(last_response.status).to eq(201)
+      expect(json["errors"]).to be_nil
+      expect(json.dig("data", "id")).to be_present
+      expect(json.dig("data", "attributes", "subjId")).to eq("https://doi.org/10.1241/johokanri.39.979")
+    end
+  end 
+
+  context "create op doi", vcr: true do
+    let(:uri) { "/events" }
+    let(:params) do
+      { "data" => { "type" => "events",
+                    "attributes" => {
+                      "subjId" => "https://doi.org/10.2903/j.efsa.2018.5239",
+                      "sourceId" => "op-import",
+                      "relationTypeId" => nil,
+                      "sourceToken" => event.source_token } } }
+    end
+
+    it "registered" do
+      post uri, params, headers
+
+      expect(last_response.status).to eq(201)
+      expect(json["errors"]).to be_nil
+      expect(json.dig("data", "id")).to be_present
+      expect(json.dig("data", "attributes", "subjId")).to eq("https://doi.org/10.2903/j.efsa.2018.5239")
     end
   end
 
@@ -561,7 +686,7 @@ describe "/events", type: :request, elasticsearch: true do
     let(:uri) { "/events/#{event.uuid}?include=doi-for-source,doi-for-target" }
 
     before do
-      Doi.import
+      DataciteDoi.import
       Event.import
       sleep 2
     end

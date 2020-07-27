@@ -372,7 +372,7 @@ class Event < ActiveRecord::Base
         cursor = response.results.to_a.last[:sort]
 
         dois = response.results.results.map(&:subj_id).uniq
-        CrossrefDoiJob.perform_later(dois)
+        OtherDoiJob.perform_later(dois)
       end
     end
 
@@ -414,13 +414,13 @@ class Event < ActiveRecord::Base
         response = Event.query(nil, source_id: source_id, page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
 
-        Rails.logger.info "[Update] Updating #{response.results.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Update] Updating #{response.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         dois = response.results.results.map(&:obj_id).uniq
 
-        # use same jobs as for crossref dois
-        CrossrefDoiJob.perform_later(dois, options)
+        # use same job for all non-DataCite dois
+        OtherDoiJob.perform_later(dois, options)
       end
     end
 
@@ -696,7 +696,7 @@ class Event < ActiveRecord::Base
   def citation_year
     "" unless (INCLUDED_RELATION_TYPES + RELATIONS_RELATION_TYPES).include?(relation_type_id)
     subj_publication = subj["datePublished"] || subj["date_published"] || (date_published(subj_id) || year_month)
-    obj_publication =  obj["datePublished"]  || obj["date_published"]  || (date_published(obj_id) || year_month)
+    obj_publication =  obj["datePublished"] || obj["date_published"] || (date_published(obj_id) || year_month)
     [subj_publication[0..3].to_i, obj_publication[0..3].to_i].max
   end
 
@@ -707,6 +707,8 @@ class Event < ActiveRecord::Base
   end
 
   def set_source_and_target_doi
+    return nil unless subj_id && obj_id
+    
     case relation_type_id
     when *ACTIVE_RELATION_TYPES
       self.source_doi = uppercase_doi_from_url(subj_id)

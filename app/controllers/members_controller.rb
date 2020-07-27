@@ -19,7 +19,6 @@ class MembersController < ApplicationController
       response = Provider.find_by_id(params[:ids], page: page, sort: sort)
     else
       response = Provider.query(params[:query], 
-        exclude_registration_agencies: true, 
         year: params[:year], 
         region: params[:region], 
         organization_type: params[:organization_type], 

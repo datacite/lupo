@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_13_163242) do
+ActiveRecord::Schema.define(version: 2020_07_18_191826) do
 
-  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
     t.string "name", limit: 191, null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
+  create_table "active_storage_blobs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
     t.string "key", limit: 191, null: false
     t.string "filename", limit: 191, null: false
     t.string "content_type", limit: 191
@@ -36,17 +36,12 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
   create_table "allocator", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "system_email", null: false
     t.datetime "created"
-    t.integer "doi_quota_allowed", null: false
-    t.integer "doi_quota_used", null: false
     t.binary "is_active", limit: 1
     t.string "name", null: false
     t.string "password"
     t.string "role_name"
     t.string "symbol", null: false
     t.datetime "updated"
-    t.integer "version"
-    t.text "comments", limit: 4294967295
-    t.string "experiments"
     t.text "description"
     t.string "region"
     t.string "country_code"
@@ -76,11 +71,14 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
     t.string "logo_content_type"
     t.bigint "logo_file_size"
     t.datetime "logo_updated_at"
-    t.string "uid", limit: 32
+    t.text "comments", limit: 4294967295
+    t.integer "doi_quota_allowed", null: false
+    t.integer "doi_quota_used", null: false
+    t.string "experiments"
+    t.integer "version"
     t.index ["globus_uuid"], name: "index_allocator_on_globus_uuid"
     t.index ["organization_type"], name: "index_allocator_organization_type"
     t.index ["symbol"], name: "symbol", unique: true
-    t.index ["uid"], name: "index_allocator_on_uid"
   end
 
   create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
@@ -111,7 +109,7 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "provider_prefix_id"
-    t.string "uid"
+    t.string "uid", null: false
     t.index ["client_id", "prefix_id"], name: "index_client_prefixes_on_client_id_and_prefix_id", unique: true
     t.index ["client_id"], name: "FK13A1B3BA47B5F5FF"
     t.index ["prefix_id"], name: "FK13A1B3BAAF86A1C7"
@@ -120,11 +118,8 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
   end
 
   create_table "datacentre", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.text "comments", limit: 4294967295
     t.string "system_email", null: false
     t.datetime "created"
-    t.integer "doi_quota_allowed", null: false
-    t.integer "doi_quota_used", null: false
     t.string "domains"
     t.binary "is_active", limit: 1
     t.string "name", null: false
@@ -132,9 +127,7 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
     t.string "role_name"
     t.string "symbol", null: false
     t.datetime "updated"
-    t.integer "version"
-    t.bigint "allocator", null: false
-    t.string "experiments"
+    t.bigint "allocator"
     t.datetime "deleted_at"
     t.string "re3data_id"
     t.text "url"
@@ -150,12 +143,15 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
     t.string "salesforce_id", limit: 191
     t.json "service_contact"
     t.string "globus_uuid", limit: 191
-    t.string "uid", limit: 32
+    t.text "comments", limit: 4294967295
+    t.integer "doi_quota_allowed", null: false
+    t.integer "doi_quota_used", null: false
+    t.string "experiments"
+    t.integer "version"
     t.index ["allocator"], name: "FK6695D60546EBD781"
     t.index ["globus_uuid"], name: "index_datacentre_on_globus_uuid"
     t.index ["re3data_id"], name: "index_datacentre_on_re3data_id"
     t.index ["symbol"], name: "symbol", unique: true
-    t.index ["uid"], name: "index_datacentre_on_uid"
     t.index ["url"], name: "index_datacentre_on_url", length: 100
   end
 
@@ -163,14 +159,12 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
     t.datetime "created"
     t.string "doi", null: false
     t.binary "is_active", limit: 1, null: false
-    t.binary "is_ref_quality", limit: 1
     t.integer "last_landing_page_status"
     t.datetime "last_landing_page_status_check"
     t.json "last_landing_page_status_result"
     t.string "last_metadata_status"
     t.datetime "updated"
-    t.integer "version"
-    t.bigint "datacentre", null: false
+    t.bigint "datacentre"
     t.datetime "minted"
     t.text "url"
     t.text "last_landing_page"
@@ -202,7 +196,10 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
     t.json "content_url"
     t.binary "xml", limit: 16777215
     t.json "landing_page"
-    t.string "agency", limit: 191, default: "DataCite"
+    t.string "agency", limit: 16, default: "datacite"
+    t.binary "is_ref_quality", limit: 1
+    t.integer "version"
+    t.string "type", limit: 16, default: "DataciteDoi", null: false
     t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
     t.index ["created", "indexed", "updated"], name: "index_dataset_on_created_indexed_updated"
     t.index ["datacentre"], name: "FK5605B47847B5F5FF"
@@ -211,6 +208,7 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
     t.index ["last_landing_page_status"], name: "index_dataset_on_last_landing_page_status"
     t.index ["schema_version"], name: "index_dataset_on_schema_version"
     t.index ["source"], name: "index_dataset_source"
+    t.index ["type"], name: "index_dataset_on_type"
     t.index ["url"], name: "index_dataset_on_url", length: 100
   end
 
@@ -247,33 +245,6 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
     t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
   end
 
-  create_table "lhmn_events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
-    t.text "uuid", null: false
-    t.text "subj_id", null: false
-    t.text "obj_id"
-    t.string "source_id", limit: 191
-    t.string "aasm_state"
-    t.string "state_event"
-    t.text "callback"
-    t.text "error_messages"
-    t.text "source_token"
-    t.datetime "created_at", precision: 3, null: false
-    t.datetime "updated_at", precision: 3, null: false
-    t.datetime "indexed_at", default: "1970-01-01 00:00:00", null: false
-    t.datetime "occurred_at"
-    t.string "message_action", limit: 191, default: "create", null: false
-    t.string "relation_type_id", limit: 191
-    t.text "subj", limit: 16777215
-    t.text "obj", limit: 16777215
-    t.integer "total", default: 1
-    t.string "license", limit: 191
-    t.index ["created_at", "indexed_at", "updated_at"], name: "index_events_on_created_indexed_updated"
-    t.index ["source_id", "created_at"], name: "index_events_on_source_id_created_at"
-    t.index ["subj_id", "obj_id", "source_id", "relation_type_id"], name: "index_events_on_multiple_columns", unique: true, length: { subj_id: 191, obj_id: 191 }
-    t.index ["updated_at"], name: "index_events_on_updated_at"
-    t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
-  end
-
   create_table "media", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created"
     t.string "media_type", limit: 80
@@ -301,7 +272,6 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
   create_table "prefixes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created_at"
     t.string "uid", limit: 80, null: false
-    t.string "ra", default: "DataCite"
     t.index ["uid"], name: "prefix", unique: true
   end
 
@@ -310,12 +280,40 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
     t.bigint "prefix_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string "uuid"
-    t.string "uid"
+    t.string "uid", null: false
     t.index ["prefix_id"], name: "FKE7FBD674AF86A1C7"
     t.index ["provider_id", "prefix_id"], name: "index_provider_prefixes_on_provider_id_and_prefix_id", unique: true
     t.index ["provider_id"], name: "FKE7FBD67446EBD781"
     t.index ["uid"], name: "index_provider_prefixes_on_uid", length: 128
+  end
+
+  create_table "researchers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin", force: :cascade do |t|
+    t.string "name", limit: 191
+    t.string "family_name", limit: 191
+    t.string "given_names", limit: 191
+    t.string "email", limit: 191
+    t.string "provider", default: "orcid"
+    t.string "uid", limit: 191
+    t.string "authentication_token", limit: 191
+    t.string "role_id", default: "user"
+    t.boolean "auto_update", default: true
+    t.datetime "expires_at", default: "1970-01-01 00:00:00", null: false
+    t.datetime "created_at", precision: 3
+    t.datetime "updated_at", precision: 3
+    t.text "other_names"
+    t.string "confirmation_token", limit: 191
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string "unconfirmed_email"
+    t.string "github", limit: 191
+    t.string "github_uid", limit: 191
+    t.string "github_token", limit: 191
+    t.string "google_uid", limit: 191
+    t.string "google_token", limit: 191
+    t.integer "github_put_code"
+    t.boolean "is_public", default: true
+    t.boolean "beta_tester", default: false
+    t.index ["uid"], name: "index_researchers_on_uid", unique: true
   end
 
   add_foreign_key "client_prefixes", "datacentre", column: "client_id", name: "FK13A1B3BA47B5F5FF"
