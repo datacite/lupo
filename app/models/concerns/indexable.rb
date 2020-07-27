@@ -452,6 +452,8 @@ module Indexable
 
       client = Elasticsearch::Model.client
 
+      self.__elasticsearch__.delete_index!(index: alias_name) if self.__elasticsearch__.index_exists?(index: alias_name)
+
       # indexes in DOI model are aliased from DataciteDoi and OtherDoi models
       if self.name == "Doi"
         datacite_index_name = DataciteDoi.index_name + "_v1"
