@@ -249,61 +249,6 @@ ActiveRecord::Schema.define(version: 2020_07_18_191826) do
     t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
   end
 
-  create_table "lhma_2020_07_28_05_22_30_424_dataset", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.datetime "created"
-    t.string "doi", null: false
-    t.binary "is_active", limit: 1, null: false
-    t.binary "is_ref_quality", limit: 1
-    t.integer "last_landing_page_status"
-    t.datetime "last_landing_page_status_check"
-    t.json "last_landing_page_status_result"
-    t.string "last_metadata_status"
-    t.datetime "updated"
-    t.integer "version"
-    t.bigint "datacentre", null: false
-    t.datetime "minted"
-    t.text "url"
-    t.text "last_landing_page"
-    t.string "last_landing_page_content_type"
-    t.string "aasm_state"
-    t.string "reason"
-    t.string "source", limit: 191
-    t.datetime "indexed", precision: 3, default: "1970-01-01 00:00:00", null: false
-    t.json "creators"
-    t.json "contributors"
-    t.json "titles"
-    t.text "publisher"
-    t.integer "publication_year"
-    t.json "types"
-    t.json "descriptions"
-    t.json "container"
-    t.json "sizes"
-    t.json "formats"
-    t.string "version_info", limit: 191
-    t.string "language", limit: 191
-    t.json "dates"
-    t.json "identifiers"
-    t.json "related_identifiers"
-    t.json "funding_references"
-    t.json "geo_locations"
-    t.json "rights_list"
-    t.json "subjects"
-    t.string "schema_version", limit: 191
-    t.json "content_url"
-    t.binary "xml", limit: 16777215
-    t.json "landing_page"
-    t.string "agency", limit: 191, default: "DataCite"
-    t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
-    t.index ["created", "indexed", "updated"], name: "index_dataset_on_created_indexed_updated"
-    t.index ["datacentre"], name: "FK5605B47847B5F5FF"
-    t.index ["doi"], name: "doi", unique: true
-    t.index ["last_landing_page_content_type"], name: "index_dataset_on_last_landing_page_content_type"
-    t.index ["last_landing_page_status"], name: "index_dataset_on_last_landing_page_status"
-    t.index ["schema_version"], name: "index_dataset_on_schema_version"
-    t.index ["source"], name: "index_dataset_source"
-    t.index ["url"], name: "index_dataset_on_url", length: 100
-  end
-
   create_table "media", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.datetime "created"
     t.string "media_type", limit: 80
@@ -351,8 +296,8 @@ ActiveRecord::Schema.define(version: 2020_07_18_191826) do
   add_foreign_key "client_prefixes", "datacentre", column: "client_id", name: "FK13A1B3BA47B5F5FF"
   add_foreign_key "client_prefixes", "prefixes", name: "FK13A1B3BAAF86A1C7"
   add_foreign_key "datacentre", "allocator", column: "allocator", name: "FK6695D60546EBD781"
-  add_foreign_key "media", "lhma_2020_07_28_05_22_30_424_dataset", column: "dataset", name: "FK62F6FE44D3D6B1B"
-  add_foreign_key "metadata", "lhma_2020_07_28_05_22_30_424_dataset", column: "dataset", name: "FKE52D7B2F4D3D6B1B"
+  add_foreign_key "media", "dataset", column: "dataset", name: "FK62F6FE44D3D6B1B"
+  add_foreign_key "metadata", "dataset", column: "dataset", name: "FKE52D7B2F4D3D6B1B"
   add_foreign_key "provider_prefixes", "allocator", column: "provider_id", name: "FKE7FBD67446EBD781"
   add_foreign_key "provider_prefixes", "prefixes", name: "FKE7FBD674AF86A1C7"
 end
