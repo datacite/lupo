@@ -436,6 +436,14 @@ FactoryBot.define do
       relation_type_id { "references" }
     end
 
+    factory :event_for_crossref_import do
+      source_id { "crossref_import" }
+      source_token { "crossref_123" }
+      subj_id { "https://doi.org/10.1371/journal.pbio.2001414" }
+      obj_id { nil }
+      relation_type_id { nil }
+    end
+
     factory :event_for_datacite_investigations do
       source_id { "datacite-usage" }
       source_token { "5348967fhdjksr3wyui325" }

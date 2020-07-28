@@ -9,6 +9,10 @@ groups:
     concurrency: 10
     queues:
       - lupo_import
+  import_other_doi:
+    concurrency: 10
+    queues:
+      - lupo_import_other_doi
   transfer:
     concurrency: 10
     queues:

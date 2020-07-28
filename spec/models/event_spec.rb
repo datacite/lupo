@@ -15,6 +15,65 @@ describe Event, type: :model, vcr: true do
     end
   end
 
+  context "class_methods" do
+    it "import_doi crossref" do
+      id = "https://doi.org/10.1371/journal.pbio.2001414"
+      doi = Event.import_doi(id)
+      expect(doi.doi).to eq("10.1371/JOURNAL.PBIO.2001414")
+      expect(doi.agency).to eq("crossref")
+      expect(doi.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"JournalArticle", "resourceTypeGeneral"=>"Text", "ris"=>"JOUR", "schemaOrg"=>"ScholarlyArticle")
+      expect(doi.titles).to eq([{"title"=>"Identifiers for the 21st century: How to design, provision, and reuse persistent identifiers to maximize utility and impact of life science data"}])
+      expect(doi.schema_version).to eq("http://datacite.org/schema/kernel-4")
+      expect(doi.datacentre).to eq(0)
+    end
+
+    it "import_doi medra" do
+      id = "https://doi.org/10.3280/ecag2018-001005"
+      doi = Event.import_doi(id)
+      expect(doi.doi).to eq("10.3280/ECAG2018-001005")
+      expect(doi.agency).to eq("medra")
+      expect(doi.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"JournalArticle", "resourceTypeGeneral"=>"Text", "ris"=>"JOUR", "schemaOrg"=>"ScholarlyArticle")
+      expect(doi.titles).to eq([{"title"=>"Substitutability between organic and conventional poultry products and organic price premiums"}])
+      expect(doi.datacentre).to eq(0)
+    end
+
+    it "import_doi kisti" do
+      id = "https://doi.org/10.5012/bkcs.2013.34.10.2889"
+      doi = Event.import_doi(id)
+      expect(doi.doi).to eq("10.5012/BKCS.2013.34.10.2889")
+      expect(doi.agency).to eq("kisti")
+      expect(doi.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"JournalArticle", "resourceTypeGeneral"=>"Text", "ris"=>"JOUR", "schemaOrg"=>"ScholarlyArticle")
+      expect(doi.titles).to eq([{"title"=>"Synthesis, Crystal Structure and Theoretical Calculation of a Novel Nickel(II) Complex with Dibromotyrosine and 1,10-Phenanthroline"}])
+      expect(doi.datacentre).to eq(0)
+    end
+
+    it "import_doi jalc" do
+      id = "https://doi.org/10.1241/johokanri.39.979"
+      doi = Event.import_doi(id)
+      expect(doi.doi).to eq("10.1241/JOHOKANRI.39.979")
+      expect(doi.agency).to eq("jalc")
+      expect(doi.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"JournalArticle", "resourceTypeGeneral"=>"Text", "ris"=>"JOUR", "schemaOrg"=>"ScholarlyArticle")
+      expect(doi.titles).to eq([{"title"=>"Utilizing the Internet. 12 Series. Future of the Internet."}])
+      expect(doi.datacentre).to eq(0)
+    end
+
+    it "import_doi op" do
+      id = "https://doi.org/10.2903/j.efsa.2018.5239"
+      doi = Event.import_doi(id)
+      expect(doi.doi).to eq("10.2903/J.EFSA.2018.5239")
+      expect(doi.agency).to eq("op")
+      expect(doi.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"JournalArticle", "resourceTypeGeneral"=>"Text", "ris"=>"JOUR", "schemaOrg"=>"ScholarlyArticle")
+      expect(doi.titles).to eq([{"title"=>"Scientific opinion on the safety of green tea catechins"}])
+      expect(doi.datacentre).to eq(0)
+    end
+
+    it "import_doi datacite" do
+      id = "https://doi.org/10.5061/dryad.8515"
+      doi = Event.import_doi(id)
+      expect(doi).to be_nil
+    end
+  end
+
   context "citation" do
     subject { create(:event_for_datacite_related, subj_id: "https://doi.org/10.5061/dryad.47sd5e/2") }
 
@@ -70,6 +129,17 @@ describe Event, type: :model, vcr: true do
     #     expect(Event.subj_id_check(cursor: [Event.minimum(:id),Event.maximum(:id)])).to eq(true)
     #   end
     # end
+  end
+
+  context "crossref import" do
+    subject { create(:event_for_crossref_import) }
+
+    it "creates event" do
+      expect(subject.subj_id).to eq("https://doi.org/10.1371/journal.pbio.2001414")
+      expect(subject.obj_id).to be_nil
+      expect(subject.relation_type_id).to eq("references")
+      expect(subject.source_id).to eq("crossref_import")
+    end
   end
 
   describe "camelcase_nested_objects" do

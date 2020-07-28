@@ -1,6 +1,8 @@
 class OtherDoi < Doi
   include Elasticsearch::Model
   
+  belongs_to :client, foreign_key: :datacentre, optional: true
+  
   # use different index for testing
   if Rails.env.test?
     index_name "dois-other-test"
@@ -8,6 +10,17 @@ class OtherDoi < Doi
     index_name"dois-other-#{ENV["ES_PREFIX"]}"
   else
     index_name "dois-other"
+  end
+
+  def client_id=(value)
+    write_attribute(:datacentre, 0)
+  end
+
+  def set_defaults
+    self.is_active = (aasm_state == "findable") ? "\x01" : "\x00"
+    self.version = version.present? ? version + 1 : 1
+    self.updated = Time.zone.now.utc.iso8601
+    self.datacentre = 0
   end
 
   def self.import_by_ids(options={})

@@ -69,7 +69,7 @@ class Doi < ActiveRecord::Base
   attribute :only_validate, :boolean, default: false
   attribute :should_validate, :boolean, default: false
 
-  belongs_to :client, foreign_key: :datacentre, optional: true
+  belongs_to :client, foreign_key: :datacentre
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy, inverse_of: :doi
   has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy, inverse_of: :doi
   has_many :view_events, -> { where target_relation_type_id: "views" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy

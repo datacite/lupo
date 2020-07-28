@@ -1,5 +1,5 @@
 class OtherDoiImportByIdJob < ActiveJob::Base
-  queue_as :lupo_import
+  queue_as :lupo_import_other_doi
 
   rescue_from ActiveJob::DeserializationError, Elasticsearch::Transport::Transport::Errors::BadRequest do |error|
     Rails.logger.error error.message

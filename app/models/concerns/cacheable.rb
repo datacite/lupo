@@ -95,5 +95,11 @@ module Cacheable
         years = years.map { |k,v| { id: k, title: k, count: v } }
       end
     end
+
+    def cached_get_doi_ra(prefix)
+      Rails.cache.fetch("ras/#{prefix}", expires_in: 1.month) do
+        self.get_doi_ra(prefix)
+      end
+    end
   end
 end

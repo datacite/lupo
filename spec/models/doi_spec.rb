@@ -733,24 +733,6 @@ describe Doi, type: :model, vcr: true do
     end
   end
 
-  describe "import_by_ids", elasticsearch: true do
-    let(:provider)  { create(:provider) }
-    let(:client)  { create(:client, provider: provider) }
-    let(:target) { create(:client, provider: provider, symbol: provider.symbol + ".TARGET", name: "Target Client") }
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
-    let(:doi) { dois.first }
-
-    it "import by ids" do
-      response = Doi.import_by_ids
-      expect(response).to be > 0
-    end
-
-    it "import by id" do
-      response = Doi.import_by_id(id: doi.id)
-      expect(response).to eq(3)
-    end
-  end
-
   describe "transfer", elasticsearch: true do
     let(:provider)  { create(:provider) }
     let(:client)  { create(:client, provider: provider) }

@@ -10,4 +10,26 @@ module Identifiable
       "https://doi.org/#{doi}" if doi.present?
     end
   end
+
+  module ClassMethods
+    def get_doi_ra(prefix)
+      return nil if prefix.blank?
+
+      url = "https://doi.org/ra/#{prefix}"
+      result = Maremma.get(url)
+
+      result.body.dig("data", 0, "RA")
+    end
+
+    def validate_prefix(doi)
+      Array(/\A(?:(http|https):\/(\/)?(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}).*\z/.match(doi)).last
+    end
+
+    def doi_from_url(url)
+      if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match(url)
+        uri = Addressable::URI.parse(url)
+        uri.path.gsub(/^\//, '').downcase
+      end
+    end
+  end
 end

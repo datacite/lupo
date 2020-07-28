@@ -480,6 +480,49 @@ class Event < ActiveRecord::Base
     response.results.total
   end
 
+  def self.import_doi(id, options={})
+    doi_id = doi_from_url(id)
+    return nil unless doi_id.present?
+
+    # check whether DOI has been stored with DataCite already
+    # unless we want to refresh the metadata
+    unless options[:refresh]
+      result = Doi.where(doi: doi_id).first
+      return nil if result.present?
+    end
+
+    # otherwise store DOI metadata with DataCite 
+    # check DOI registration agency as Crossref also indexes DOIs from other RAs
+    # using DataCite XML
+    prefix = validate_prefix(doi_id)
+    ra = get_doi_ra(prefix).downcase
+    return nil if ra.blank? || ra == "datacite"
+
+    subject = Bolognese::Metadata.new(input: id, from: "crossref")
+    params = {
+      "doi" => subject.doi,
+      "url" => subject.url,
+      "xml" => subject.datacite_xml,
+      "schema_version" => subject.schema_version || LAST_SCHEMA_VERSION,
+      "client_id" => 0,
+      "source" => "levriero",
+      "agency" => ra,
+      "event" => "publish" }
+    
+    attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).each do |a|
+      params[a] = subject.send(a.to_s)
+    end
+
+    doi = OtherDoi.new(params)
+    if doi.save
+      Rails.logger.info "Record for #{ra} DOI #{doi.doi} created."
+    else
+      Rails.logger.error "[Error saving #{ra} DOI #{doi.doi}]: " + doi.errors.messages.inspect
+    end
+
+    doi
+  end
+
   def to_param  # overridden, use uuid instead of id
     uuid
   end
