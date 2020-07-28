@@ -1,5 +1,5 @@
 class OtherDoiByIdJob < ActiveJob::Base
-  queue_as :lupo_background_other_doi
+  queue_as :lupo_background
 
   # retry_on ActiveRecord::Deadlocked, wait: 10.seconds, attempts: 3
   # retry_on Faraday::TimeoutError, wait: 10.minutes, attempts: 3
