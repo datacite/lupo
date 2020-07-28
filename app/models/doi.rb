@@ -69,7 +69,7 @@ class Doi < ActiveRecord::Base
   attribute :only_validate, :boolean, default: false
   attribute :should_validate, :boolean, default: false
 
-  belongs_to :client, foreign_key: :datacentre
+  belongs_to :client, foreign_key: :datacentre, optional: true
   has_many :media, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy, inverse_of: :doi
   has_many :metadata, -> { order "created DESC" }, foreign_key: :dataset, dependent: :destroy, inverse_of: :doi
   has_many :view_events, -> { where target_relation_type_id: "views" }, class_name: "Event", primary_key: :doi, foreign_key: :target_doi, dependent: :destroy
@@ -975,9 +975,9 @@ class Doi < ActiveRecord::Base
     end
 
     meta = doi.read_datacite(string: string, sandbox: doi.sandbox)
-    attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).map do |a|
+    attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url version_info).map do |a|
       [a.to_sym, meta[a]]
-    end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", version_info: meta["version"], xml: string)
+    end.to_h.merge(schema_version: meta["schema_version"] || "http://datacite.org/schema/kernel-4", xml: string)
 
     # update_attributes will trigger validations and Elasticsearch indexing
     doi.update_attributes(attrs)

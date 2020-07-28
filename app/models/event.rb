@@ -498,19 +498,20 @@ class Event < ActiveRecord::Base
     ra = get_doi_ra(prefix).downcase
     return nil if ra.blank? || ra == "datacite"
 
-    subject = Bolognese::Metadata.new(input: id, from: "crossref")
+    meta = Bolognese::Metadata.new(input: id, from: "crossref")
+
     params = {
-      "doi" => subject.doi,
-      "url" => subject.url,
-      "xml" => subject.datacite_xml,
-      "schema_version" => subject.schema_version || LAST_SCHEMA_VERSION,
+      "doi" => meta.doi,
+      "url" => meta.url,
+      "xml" => meta.datacite_xml,
+      "schema_version" => meta.schema_version || LAST_SCHEMA_VERSION,
       "client_id" => 0,
       "source" => "levriero",
       "agency" => ra,
       "event" => "publish" }
     
     attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).each do |a|
-      params[a] = subject.send(a.to_s)
+      params[a] = meta.send(a.to_s)
     end
 
     doi = OtherDoi.new(params)

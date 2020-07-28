@@ -1,8 +1,6 @@
 class OtherDoi < Doi
   include Elasticsearch::Model
-  
-  belongs_to :client, foreign_key: :datacentre, optional: true
-  
+
   # use different index for testing
   if Rails.env.test?
     index_name "dois-other-test"
