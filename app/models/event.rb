@@ -523,6 +523,9 @@ class Event < ActiveRecord::Base
     end
 
     doi
+  rescue ActiveRecord::RecordNotUnique => e
+    # handle race condition, no need to do anything else
+    Rails.logger.warn e.message
   end
 
   def to_param  # overridden, use uuid instead of id
