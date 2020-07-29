@@ -60,6 +60,12 @@ module Cacheable
       end
     end
 
+    def cached_get_doi_ra(prefix)
+      Rails.cache.fetch("ras/#{prefix}", expires_in: 1.month) do
+        self.get_doi_ra(prefix)
+      end
+    end
+
     def cached_alb_public_key(kid)
       Rails.cache.fetch("alb_public_key/#{kid}", expires_in: 1.day) do
         url = "https://public-keys.auth.elb.eu-west-1.amazonaws.com/" + kid

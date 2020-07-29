@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe EventsController, type: :request, elasticsearch: true do
+describe EventsController, type: :request, elasticsearch: true, vcr: true do
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
 

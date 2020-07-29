@@ -495,7 +495,7 @@ class Event < ActiveRecord::Base
     # check DOI registration agency as Crossref also indexes DOIs from other RAs
     # using DataCite XML
     prefix = doi_id.split("/", 2).first
-    ra = get_doi_ra(prefix).downcase
+    ra = cached_get_doi_ra(prefix).downcase
     return nil if ra.blank? || ra == "datacite"
 
     meta = Bolognese::Metadata.new(input: id, from: "crossref")
@@ -537,7 +537,7 @@ class Event < ActiveRecord::Base
       next sum if prefix == "10.13039"
 
       # ignore DataCite DOIs
-      ra = get_doi_ra(prefix).downcase
+      ra = cached_get_doi_ra(prefix).downcase
       next sum if ra.blank? || ra == "datacite"
       
       sum.push d
