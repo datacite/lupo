@@ -1,0 +1,90 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://doi.org/ra/10.1016
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Date:
+      - Wed, 29 Jul 2020 20:41:56 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - __cfduid=dd912c71fc8d106694c6a3475c14ee8441596055316; expires=Fri, 28-Aug-20
+        20:41:56 GMT; path=/; domain=.doi.org; HttpOnly; SameSite=Lax; Secure
+      Cf-Cache-Status:
+      - DYNAMIC
+      Cf-Request-Id:
+      - 043de87eaa0000978a8bbd5200000001
+      Expect-Ct:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 5ba9a9ddde8b978a-FRA
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        [
+          {
+            "DOI": "10.1016",
+            "RA": "Crossref"
+          }
+        ]
+    http_version: null
+  recorded_at: Wed, 29 Jul 2020 20:41:56 GMT
+- request:
+    method: get
+    uri: https://api.crossref.org/works/10.1016/s0091-6749(99)70393-3)/transform/application/vnd.crossref.unixsd+xml
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
+      Accept:
+      - text/xml
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Content-Type:
+      - text/plain
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - X-Requested-With
+      Content-Length:
+      - '19'
+      Server:
+      - http-kit
+      Date:
+      - Wed, 29 Jul 2020 20:41:56 GMT
+      X-Rate-Limit-Limit:
+      - '50'
+      X-Rate-Limit-Interval:
+      - 1s
+      Connection:
+      - close
+    body:
+      encoding: ASCII-8BIT
+      string: Resource not found.
+    http_version: null
+  recorded_at: Wed, 29 Jul 2020 20:41:56 GMT
+recorded_with: VCR 5.1.0

@@ -499,6 +499,12 @@ class Event < ActiveRecord::Base
     return nil if ra.blank? || ra == "datacite"
 
     meta = Bolognese::Metadata.new(input: id, from: "crossref")
+    
+    # if DOi isn't registered
+    if meta.state == "not_found"
+      Rails.logger.error "[Error saving #{ra} DOI #{doi_id}]: DOI not found"
+      return nil
+    end
 
     params = {
       "doi" => meta.doi,

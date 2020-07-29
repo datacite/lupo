@@ -78,6 +78,12 @@ describe Event, type: :model, vcr: true do
       expect(doi).to be_nil
     end
 
+    it "import_doi not found" do
+      id = "10.1016/S0091-6749(99)70393-3)"
+      doi = Event.import_doi(id)
+      expect(doi).to be_nil
+    end
+
     it "import_doi invalid doi" do
       id = "20.5061/dryad.8515"
       doi = Event.import_doi(id)
