@@ -481,7 +481,7 @@ class Event < ActiveRecord::Base
   end
 
   def self.import_doi(id, options={})
-    doi_id = doi_from_url(id)
+    doi_id = validate_doi(id)
     return nil unless doi_id.present?
 
     # check whether DOI has been stored with DataCite already
@@ -494,7 +494,7 @@ class Event < ActiveRecord::Base
     # otherwise store DOI metadata with DataCite 
     # check DOI registration agency as Crossref also indexes DOIs from other RAs
     # using DataCite XML
-    prefix = validate_prefix(doi_id)
+    prefix = doi_id.split("/", 2).first
     ra = get_doi_ra(prefix).downcase
     return nil if ra.blank? || ra == "datacite"
 
@@ -526,6 +526,23 @@ class Event < ActiveRecord::Base
 
   def to_param  # overridden, use uuid instead of id
     uuid
+  end
+
+  # import DOIs unless they are from DataCite or are a Crossref Funder ID
+  def dois_to_import
+    [doi_from_url(subj_id), doi_from_url(obj_id)].compact.reduce([]) do |sum, d|
+      prefix = d.split("/", 2).first
+      
+      # ignore Crossref Funder ID
+      next sum if prefix == "10.13039"
+
+      # ignore DataCite DOIs
+      ra = get_doi_ra(prefix).downcase
+      next sum if ra.blank? || ra == "datacite"
+      
+      sum.push d
+      sum
+    end
   end
 
   def send_callback

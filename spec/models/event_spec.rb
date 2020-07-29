@@ -17,7 +17,7 @@ describe Event, type: :model, vcr: true do
 
   context "class_methods" do
     it "import_doi crossref" do
-      id = "https://doi.org/10.1371/journal.pbio.2001414"
+      id = "10.1371/journal.pbio.2001414"
       doi = Event.import_doi(id)
       expect(doi.doi).to eq("10.1371/JOURNAL.PBIO.2001414")
       expect(doi.agency).to eq("crossref")
@@ -28,7 +28,7 @@ describe Event, type: :model, vcr: true do
     end
 
     it "import_doi medra" do
-      id = "https://doi.org/10.3280/ecag2018-001005"
+      id = "10.3280/ecag2018-001005"
       doi = Event.import_doi(id)
       expect(doi.doi).to eq("10.3280/ECAG2018-001005")
       expect(doi.agency).to eq("medra")
@@ -38,7 +38,7 @@ describe Event, type: :model, vcr: true do
     end
 
     it "import_doi kisti" do
-      id = "https://doi.org/10.5012/bkcs.2013.34.10.2889"
+      id = "10.5012/bkcs.2013.34.10.2889"
       doi = Event.import_doi(id)
       expect(doi.doi).to eq("10.5012/BKCS.2013.34.10.2889")
       expect(doi.agency).to eq("kisti")
@@ -48,7 +48,7 @@ describe Event, type: :model, vcr: true do
     end
 
     it "import_doi jalc" do
-      id = "https://doi.org/10.1241/johokanri.39.979"
+      id = "10.1241/johokanri.39.979"
       doi = Event.import_doi(id)
       expect(doi.doi).to eq("10.1241/JOHOKANRI.39.979")
       expect(doi.agency).to eq("jalc")
@@ -58,7 +58,7 @@ describe Event, type: :model, vcr: true do
     end
 
     it "import_doi op" do
-      id = "https://doi.org/10.2903/j.efsa.2018.5239"
+      id = "10.2903/j.efsa.2018.5239"
       doi = Event.import_doi(id)
       expect(doi.doi).to eq("10.2903/J.EFSA.2018.5239")
       expect(doi.agency).to eq("op")
@@ -68,7 +68,13 @@ describe Event, type: :model, vcr: true do
     end
 
     it "import_doi datacite" do
-      id = "https://doi.org/10.5061/dryad.8515"
+      id = "10.5061/dryad.8515"
+      doi = Event.import_doi(id)
+      expect(doi).to be_nil
+    end
+
+    it "import_doi invalid doi" do
+      id = "20.5061/dryad.8515"
       doi = Event.import_doi(id)
       expect(doi).to be_nil
     end
@@ -131,6 +137,18 @@ describe Event, type: :model, vcr: true do
     # end
   end
 
+  context "crossref" do
+    subject { create(:event_for_crossref) }
+
+    it "creates event" do
+      expect(subject.subj_id).to eq("https://doi.org/10.1371/journal.pbio.2001414")
+      expect(subject.obj_id).to eq("https://doi.org/10.5061/dryad.47sd5e/1")
+      expect(subject.relation_type_id).to eq("references")
+      expect(subject.source_id).to eq("crossref")
+      expect(subject.dois_to_import).to eq(["10.1371/journal.pbio.2001414"])
+    end
+  end
+
   context "crossref import" do
     subject { create(:event_for_crossref_import) }
 
@@ -139,6 +157,43 @@ describe Event, type: :model, vcr: true do
       expect(subject.obj_id).to be_nil
       expect(subject.relation_type_id).to eq("references")
       expect(subject.source_id).to eq("crossref_import")
+      expect(subject.dois_to_import).to eq(["10.1371/journal.pbio.2001414"])
+    end
+  end
+
+  context "datacite orcid auto-update" do
+    subject { create(:event_for_datacite_orcid_auto_update) }
+
+    it "creates event" do
+      expect(subject.subj_id).to eq("https://doi.org/10.5061/dryad.47sd5e/1")
+      expect(subject.obj_id).to eq("https://orcid.org/0000-0003-1419-2111")
+      expect(subject.relation_type_id).to eq("is-authored-by")
+      expect(subject.source_id).to eq("datacite-orcid-auto-update")
+      expect(subject.dois_to_import).to eq([])
+    end
+  end
+
+  context "datacite funder" do
+    subject { create(:event_for_datacite_funder) }
+
+    it "creates event" do
+      expect(subject.subj_id).to eq("https://doi.org/10.5061/dryad.47sd5e/1")
+      expect(subject.obj_id).to eq("https://doi.org/10.13039/100000001")
+      expect(subject.relation_type_id).to eq("is-funded-by")
+      expect(subject.source_id).to eq("datacite_funder")
+      expect(subject.dois_to_import).to eq([])
+    end
+  end
+
+  context "datacite versions" do
+    subject { create(:event_for_datacite_versions) }
+
+    it "creates event" do
+      expect(subject.subj_id).to eq("https://doi.org/10.5061/dryad.47sd5")
+      expect(subject.obj_id).to eq("https://doi.org/10.5061/dryad.47sd5/1")
+      expect(subject.relation_type_id).to eq("has-version")
+      expect(subject.source_id).to eq("datacite_related")
+      expect(subject.dois_to_import).to eq([])
     end
   end
 
