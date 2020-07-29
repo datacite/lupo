@@ -504,6 +504,7 @@ class Event < ActiveRecord::Base
       "doi" => meta.doi,
       "url" => meta.url,
       "xml" => meta.datacite_xml,
+      "minted" => meta.date_registered,
       "schema_version" => meta.schema_version || LAST_SCHEMA_VERSION,
       "client_id" => 0,
       "source" => "levriero",

@@ -23,6 +23,7 @@ describe Event, type: :model, vcr: true do
       expect(doi.agency).to eq("crossref")
       expect(doi.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"JournalArticle", "resourceTypeGeneral"=>"Text", "ris"=>"JOUR", "schemaOrg"=>"ScholarlyArticle")
       expect(doi.titles).to eq([{"title"=>"Identifiers for the 21st century: How to design, provision, and reuse persistent identifiers to maximize utility and impact of life science data"}])
+      expect(doi.minted.to_s).to start_with("2017-06-29")
       expect(doi.schema_version).to eq("http://datacite.org/schema/kernel-4")
       expect(doi.datacentre).to eq(0)
     end
@@ -34,6 +35,7 @@ describe Event, type: :model, vcr: true do
       expect(doi.agency).to eq("medra")
       expect(doi.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"JournalArticle", "resourceTypeGeneral"=>"Text", "ris"=>"JOUR", "schemaOrg"=>"ScholarlyArticle")
       expect(doi.titles).to eq([{"title"=>"Substitutability between organic and conventional poultry products and organic price premiums"}])
+      expect(doi.minted.to_s).to start_with("2018-07-12")
       expect(doi.datacentre).to eq(0)
     end
 
@@ -44,6 +46,7 @@ describe Event, type: :model, vcr: true do
       expect(doi.agency).to eq("kisti")
       expect(doi.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"JournalArticle", "resourceTypeGeneral"=>"Text", "ris"=>"JOUR", "schemaOrg"=>"ScholarlyArticle")
       expect(doi.titles).to eq([{"title"=>"Synthesis, Crystal Structure and Theoretical Calculation of a Novel Nickel(II) Complex with Dibromotyrosine and 1,10-Phenanthroline"}])
+      expect(doi.minted.to_s).to start_with("2013-11-25")
       expect(doi.datacentre).to eq(0)
     end
 
@@ -54,6 +57,7 @@ describe Event, type: :model, vcr: true do
       expect(doi.agency).to eq("jalc")
       expect(doi.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"JournalArticle", "resourceTypeGeneral"=>"Text", "ris"=>"JOUR", "schemaOrg"=>"ScholarlyArticle")
       expect(doi.titles).to eq([{"title"=>"Utilizing the Internet. 12 Series. Future of the Internet."}])
+      expect(doi.minted.to_s).to start_with("2002-08-08")
       expect(doi.datacentre).to eq(0)
     end
 
@@ -64,6 +68,7 @@ describe Event, type: :model, vcr: true do
       expect(doi.agency).to eq("op")
       expect(doi.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"JournalArticle", "resourceTypeGeneral"=>"Text", "ris"=>"JOUR", "schemaOrg"=>"ScholarlyArticle")
       expect(doi.titles).to eq([{"title"=>"Scientific opinion on the safety of green tea catechins"}])
+      expect(doi.minted.to_s).to start_with("2018-12-17")
       expect(doi.datacentre).to eq(0)
     end
 
