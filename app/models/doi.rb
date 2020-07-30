@@ -1825,7 +1825,7 @@ class Doi < ActiveRecord::Base
     filter = options[:filter] || {}
     label = options[:label] || ""
     options[:job_name] ||= ""
-    query = options[:query] || nil
+    query = options[:query].presence
 
     response = Doi.query(query, filter.merge(page: { size: 1, cursor: [] }))
     message = "#{label} #{response.results.total} Dois with #{label}."

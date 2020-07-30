@@ -88,16 +88,38 @@ class OtherDoi < Doi
     count
   end
 
-  def self.refresh_by_ids(options={})
-    from_id = (options[:from_id] || OtherDoi.minimum(:id)).to_i
-    until_id = (options[:until_id] || OtherDoi.maximum(:id)).to_i
+# Transverses the index in batches and using the cursor pagination and executes a Job that matches the query and filter
+  # Options:
+  # +filter+:: paramaters to filter the index
+  # +label+:: String to output in the logs printout
+  # +query+:: ES query to filter the index
+  # +job_name+:: Acive Job class name of the Job that would be executed on every matched results
+  def self.loop_through_dois(options={})
+    size = (options[:size] || 1000).to_i
+    cursor = options[:cursor] || []
+    filter = options[:filter] || {}
+    label = options[:label] || ""
+    options[:job_name] ||= ""
+    query = options[:query].presence
 
-    # get every id between from_id and end_id
-    (from_id..until_id).step(500).each do |id|
-      OtherDoiRefreshByIdJob.perform_later(options.merge(id: id))
-      Rails.logger.info "Queued refreshing for other DOIs with IDs starting with #{id}." unless Rails.env.test?
+    response = OtherDoi.query(query, filter.merge(page: { size: 1, cursor: [] }))
+    message = "#{label} #{response.results.total} other dois with #{label}."
+
+    # walk through results using cursor
+    if response.results.total.positive?
+      while response.results.results.length.positive?
+        response = OtherDoi.query(query, filter.merge(page: { size: size, cursor: cursor }))
+        break unless response.results.results.length.positive?
+
+        Rails.logger.info "#{label} #{response.results.results.length} other dois starting with _id #{response.results.to_a.first[:_id]}."
+        cursor = response.results.to_a.last[:sort]
+        Rails.logger.info "#{label} Cursor: #{cursor} "
+
+        ids = response.results.results.map(&:uid)
+        LoopThroughDoisJob.perform_later(ids, options)
+      end
     end
 
-    (from_id..until_id).to_a.length
+    message
   end
 end

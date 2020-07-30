@@ -170,13 +170,13 @@ describe "other_doi:refresh", elasticsearch: true do
   include ActiveJob::TestHelper
   include_context "rake"
 
-  let(:output) { "[RefreshMetadata] 0 Dois with [RefreshMetadata].\n" }
+  let(:output) { "[RefreshMetadata]" }
 
   it "prerequisites should include environment" do
     expect(subject.prerequisites).to include("environment")
   end
 
   it "should run the rake task" do
-    expect(capture_stdout { subject.invoke }).to eq(output)
+    expect(capture_stdout { subject.invoke }).to start_with(output)
   end
 end
