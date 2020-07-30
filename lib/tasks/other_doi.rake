@@ -82,4 +82,15 @@ namespace :other_doi do
 
     puts OtherDoi.index_one(doi_id: ENV['DOI'])
   end
+
+  desc "Refresh metadata for other dois"
+  task refresh: :environment do
+    options = {
+      query: ENV["QUERY"],
+      label: "[RefreshMetadata]",
+      job_name: "OtherDoiRefreshJob",
+      cursor: ENV["CURSOR"],
+    }
+    puts OtherDoi.loop_through_dois(options)
+  end
 end

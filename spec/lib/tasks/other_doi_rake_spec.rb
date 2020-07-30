@@ -153,7 +153,7 @@ describe "other_doi:index_one", order: :defined do
   include ActiveJob::TestHelper
   include_context "rake"
 
-  let!(:doi)  { create(:doi) }
+  let!(:doi)  { create(:doi, type: "OtherDoi") }
   let(:output) { "Started indexing DOI #{doi.doi}.\n" }
 
   it "prerequisites should include environment" do
@@ -163,5 +163,20 @@ describe "other_doi:index_one", order: :defined do
   it "should run the rake task" do
     ENV["DOI"] = doi.doi
     expect(capture_stdout { subject.invoke }).to start_with(output)
+  end
+end
+
+describe "other_doi:refresh", elasticsearch: true do
+  include ActiveJob::TestHelper
+  include_context "rake"
+
+  let(:output) { "[RefreshMetadata] 0 Dois with [RefreshMetadata].\n" }
+
+  it "prerequisites should include environment" do
+    expect(subject.prerequisites).to include("environment")
+  end
+
+  it "should run the rake task" do
+    expect(capture_stdout { subject.invoke }).to eq(output)
   end
 end

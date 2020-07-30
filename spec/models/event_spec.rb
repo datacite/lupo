@@ -28,6 +28,18 @@ describe Event, type: :model, vcr: true do
       expect(doi.datacentre).to eq(0)
     end
 
+    it "import_doi crossref refresh" do
+      doi = create(:doi, doi: "10.1371/journal.pbio.2001414", type: "OtherDoi")
+      doi = Event.import_doi(doi.doi, refresh: true)
+      expect(doi.doi).to eq("10.1371/JOURNAL.PBIO.2001414")
+      expect(doi.agency).to eq("crossref")
+      expect(doi.types).to eq("bibtex"=>"article", "citeproc"=>"article-journal", "resourceType"=>"JournalArticle", "resourceTypeGeneral"=>"Text", "ris"=>"JOUR", "schemaOrg"=>"ScholarlyArticle")
+      expect(doi.titles).to eq([{"title"=>"Identifiers for the 21st century: How to design, provision, and reuse persistent identifiers to maximize utility and impact of life science data"}])
+      expect(doi.minted.to_s).to start_with("2017-06-29")
+      expect(doi.schema_version).to eq("http://datacite.org/schema/kernel-4")
+      expect(doi.datacentre).to eq(0)
+    end
+
     it "import_doi medra" do
       id = "10.3280/ecag2018-001005"
       doi = Event.import_doi(id)

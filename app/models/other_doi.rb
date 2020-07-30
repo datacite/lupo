@@ -87,4 +87,17 @@ class OtherDoi < Doi
 
     count
   end
+
+  def self.refresh_by_ids(options={})
+    from_id = (options[:from_id] || OtherDoi.minimum(:id)).to_i
+    until_id = (options[:until_id] || OtherDoi.maximum(:id)).to_i
+
+    # get every id between from_id and end_id
+    (from_id..until_id).step(500).each do |id|
+      OtherDoiRefreshByIdJob.perform_later(options.merge(id: id))
+      Rails.logger.info "Queued refreshing for other DOIs with IDs starting with #{id}." unless Rails.env.test?
+    end
+
+    (from_id..until_id).to_a.length
+  end
 end

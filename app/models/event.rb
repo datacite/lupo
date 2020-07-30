@@ -486,21 +486,18 @@ class Event < ActiveRecord::Base
 
     # check whether DOI has been stored with DataCite already
     # unless we want to refresh the metadata
-    unless options[:refresh]
-      result = Doi.where(doi: doi_id).first
-      return nil if result.present?
-    end
+    doi = OtherDoi.where(doi: doi_id).first
+    return nil if doi.present? && options[:refresh].blank?
 
-    # otherwise store DOI metadata with DataCite 
+    # otherwise store DOI metadata with DataCite
     # check DOI registration agency as Crossref also indexes DOIs from other RAs
-    # using DataCite XML
     prefix = doi_id.split("/", 2).first
     ra = cached_get_doi_ra(prefix).downcase
     return nil if ra.blank? || ra == "datacite"
 
     meta = Bolognese::Metadata.new(input: id, from: "crossref")
     
-    # if DOi isn't registered
+    # if DOi isn't registered yet
     if meta.state == "not_found"
       Rails.logger.error "[Error saving #{ra} DOI #{doi_id}]: DOI not found"
       return nil
@@ -521,9 +518,15 @@ class Event < ActiveRecord::Base
       params[a] = meta.send(a.to_s)
     end
 
-    doi = OtherDoi.new(params)
+    # if we refresh the metadata
+    if doi.present?
+      doi.assign_attributes(params.except("doi", "client_id"))
+    else
+      doi = OtherDoi.new(params)
+    end
+
     if doi.save
-      Rails.logger.info "Record for #{ra} DOI #{doi.doi} created."
+      Rails.logger.info "Record for #{ra} DOI #{doi.doi}" + (options[:refresh] ? " updated." : " created.")
     else
       Rails.logger.error "[Error saving #{ra} DOI #{doi.doi}]: " + doi.errors.messages.inspect
     end
