@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe EventImportByIdJob, type: :job do
+describe EventImportByIdJob, type: :job, vcr: true do
   let(:event) { create(:event) }
   subject(:job) { EventImportByIdJob.perform_later(event.id) }
 

@@ -241,7 +241,7 @@ describe Doi, vcr: true do
       expect(meta["publication_year"]).to eq("2014")
       expect(meta["publisher"]).to eq("eLife Sciences Publications, Ltd")
       expect(meta["container"]).to eq("identifier" => "2050-084X", "identifierType"=>"ISSN", "title"=>"eLife", "type"=>"Journal", "volume"=>"3")
-      expect(meta["agency"]).to eq("Crossref")
+      expect(meta["agency"]).to eq("crossref")
     end
 
     it "from datacite url" do
@@ -258,7 +258,7 @@ describe Doi, vcr: true do
       expect(meta["titles"]).to eq([{"title"=>"Cool DOI's"}])
       expect(meta["publication_year"]).to eq("2016")
       expect(meta["publisher"]).to eq("DataCite")
-      expect(meta["agency"]).to eq("DataCite")
+      expect(meta["agency"]).to eq("datacite")
     end
 
     it "from bibtex" do
