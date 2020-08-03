@@ -4,7 +4,7 @@ source "https://rubygems.org"
 
 gem "rails", "~> 5.2.0"
 gem "bootsnap", "~> 1.4", ">= 1.4.4", require: false
-gem "mysql2", "~> 0.4.4"
+gem 'mysql2', '~> 0.5.3'
 gem 'ddtrace', '~> 0.32.0'
 gem "dotenv"
 gem "rake", "~> 12.0"
@@ -67,9 +67,8 @@ gem 'apollo-federation', '~> 1.0', '>= 1.0.4'
 gem "google-protobuf", "3.10.0.rc.1"
 gem "sprockets", "~> 3.7", ">= 3.7.2"
 gem 'uuid', '~> 2.3', '>= 2.3.9'
-gem 'strong_migrations', '~> 0.6.0'
+gem 'departure', '~> 6.2'
 gem 'crawler_detect'
-gem 'lhm', '~> 2.2'
 gem 'kt-paperclip', '~> 6.2', '>= 6.2.2'
 gem 'kaminari', '~> 1.2'
 gem 'iso-639', '~> 0.3.5'

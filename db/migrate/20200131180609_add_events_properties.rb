@@ -1,27 +1,19 @@
 # frozen_string_literal: true
 
-require 'lhm'
-
 class AddEventsProperties < ActiveRecord::Migration[5.2]
   def up
-    Lhm.change_table :events do |m|
-      m.add_column :source_doi, "TEXT"
-      m.add_column :target_doi, "TEXT"
-      m.add_column :source_relation_type_id, "VARCHAR(191)"
-      m.add_column :target_relation_type_id, "VARCHAR(191)"
-      m.add_index ["source_doi(100)", "source_relation_type_id(191)"], :index_events_on_source_doi
-      m.add_index ["target_doi(100)", "target_relation_type_id(191)"], :index_events_on_target_doi
-    end
+    add_column :events, :source_doi, :text
+    add_column :events, :target_doi, :text
+    add_column :events, :source_relation_type_id, :string, limit: 191
+    add_column :events, :target_relation_type_id, :string, limit: 191
+    add_index :events, [:source_doi, :source_relation_type_id], name: "index_events_on_source_doi", length: { source_doi: 100 }
+    add_index :events, [:target_doi, :target_relation_type_id], name: "index_events_on_target_doi", length: { target_doi: 100 }
   end
 
   def down
-    Lhm.change_table :events do |m|
-      m.remove_column :source_doi
-      m.remove_column :target_doi
-      m.remove_column :source_relation_type_id
-      m.remove_column :target_relation_type_id
-      m.remove_index ["source_doi(100)", "source_relation_type_id(191)"], :index_events_on_source_doi
-      m.remove_index ["target_doi(100)", "target_relation_type_id(191)"], :index_events_on_target_doi
-    end
+    remove_column :events, :source_doi
+    remove_column :events, :target_doi
+    remove_column :events, :source_relation_type_id
+    remove_column :events, :target_relation_type_id
   end
 end
