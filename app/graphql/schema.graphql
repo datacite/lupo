@@ -5352,6 +5352,11 @@ type Organization implements ActorItem {
   type: String!
 
   """
+  The type of organization.
+  """
+  types: [String!]
+
+  """
   URL of the organization.
   """
   url: [Url!]

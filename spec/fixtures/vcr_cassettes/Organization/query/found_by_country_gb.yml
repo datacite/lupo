@@ -1,0 +1,114 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.ror.org/organizations?filter=country.country_code:GB&page=1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '11233'
+      Connection:
+      - keep-alive
+      Date:
+      - Tue, 04 Aug 2020 16:38:45 GMT
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      Allow:
+      - GET, HEAD, OPTIONS
+      X-Powered-By:
+      - Phusion Passenger 6.0.5
+      Server:
+      - nginx/1.18.0 + Phusion Passenger 6.0.5
+      Vary:
+      - Accept-Encoding,Cookie,Origin
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 0406d08716a9781a5c19ff86db2debd3.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - DUS51-C1
+      X-Amz-Cf-Id:
+      - t1-zj0HssyFYrp8aWJc2sPDMq7G9EkC0XKX7o2IC6txfzbnmPHoOKg==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"number_of_results":7166,"time_taken":2,"items":[{"id":"https://ror.org/04jzmdh37","name":"Centre
+        for Economic Policy Research","types":["Nonprofit"],"links":["http://www.cepr.org/"],"aliases":[],"acronyms":["CEPR"],"status":"active","wikipedia_url":"http://en.wikipedia.org/wiki/Centre_for_Economic_Policy_Research","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0001 1954 7426"]},"Wikidata":{"preferred":null,"all":["Q380062"]},"GRID":{"preferred":"grid.410315.2","all":"grid.410315.2"}}},{"id":"https://ror.org/03r6k1a05","name":"Institute
+        of Occupational Medicine","types":["Nonprofit"],"links":["http://www.iom-world.org/"],"aliases":[],"acronyms":["IOM"],"status":"active","wikipedia_url":"http://en.wikipedia.org/wiki/Institute_of_Occupational_Medicine","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0001 2224 0230"]},"Wikidata":{"preferred":null,"all":["Q17163473"]},"GRID":{"preferred":"grid.410343.1","all":"grid.410343.1"}}},{"id":"https://ror.org/015w2mp89","name":"National
+        Physical Laboratory","types":["Facility"],"links":["http://www.npl.co.uk/"],"aliases":[],"acronyms":["NPL"],"status":"active","wikipedia_url":"http://en.wikipedia.org/wiki/National_Physical_Laboratory_(United_Kingdom)","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0000 8991 6349"]},"OrgRef":{"preferred":null,"all":["250381"]},"Wikidata":{"preferred":null,"all":["Q1967606"]},"GRID":{"preferred":"grid.410351.2","all":"grid.410351.2"}}},{"id":"https://ror.org/04nm1cv11","name":"University
+        Hospitals Bristol NHS Foundation Trust","types":["Healthcare"],"links":["http://www.uhbristol.nhs.uk/"],"aliases":[],"acronyms":[],"status":"active","wikipedia_url":"http://en.wikipedia.org/wiki/University_Hospitals_Bristol_NHS_Foundation_Trust","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0004 0380 7336"]},"OrgRef":{"preferred":null,"all":["40907549"]},"Wikidata":{"preferred":null,"all":["Q17028004"]},"GRID":{"preferred":"grid.410421.2","all":"grid.410421.2"}}},{"id":"https://ror.org/03h2bh287","name":"Oxford
+        University Hospitals NHS Trust","types":["Healthcare"],"links":["http://www.ouh.nhs.uk/"],"aliases":[],"acronyms":[],"status":"active","wikipedia_url":"https://en.wikipedia.org/wiki/Oxford_University_Hospitals_NHS_Foundation_Trust","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0001 0440 1440"]},"FundRef":{"preferred":null,"all":["501100006149"]},"Wikidata":{"preferred":null,"all":["Q16976147"]},"GRID":{"preferred":"grid.410556.3","all":"grid.410556.3"}}},{"id":"https://ror.org/008j59125","name":"Aintree
+        University Hospital","types":["Healthcare"],"links":["http://www.aintreehospital.nhs.uk/"],"aliases":["Fazakerley
+        Hospital"],"acronyms":[],"status":"active","wikipedia_url":"","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"GRID":{"preferred":"grid.411255.6","all":"grid.411255.6"}}},{"id":"https://ror.org/02vqh3346","name":"James
+        Cook University Hospital","types":["Healthcare"],"links":["http://southtees.nhs.uk/hospitals/james-cook/"],"aliases":[],"acronyms":[],"status":"active","wikipedia_url":"https://en.wikipedia.org/wiki/James_Cook_University_Hospital","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0004 0400 2812"]},"OrgRef":{"preferred":null,"all":["4297086"]},"Wikidata":{"preferred":null,"all":["Q6131686"]},"GRID":{"preferred":"grid.411812.f","all":"grid.411812.f"}}},{"id":"https://ror.org/00nm7k655","name":"James
+        Paget University Hospital","types":["Healthcare"],"links":["https://www.nhs.uk/Services/hospitals/Overview/DefaultView.aspx?id=1088"],"aliases":["James
+        Paget Hospital"],"acronyms":["JPUH"],"status":"active","wikipedia_url":"https://en.wikipedia.org/wiki/James_Paget_Hospital","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0004 0400 5511"]},"OrgRef":{"preferred":null,"all":["1264334"]},"Wikidata":{"preferred":null,"all":["Q14956745"]},"GRID":{"preferred":"grid.411814.9","all":"grid.411814.9"}}},{"id":"https://ror.org/02q3bak66","name":"Buckinghamshire
+        New University","types":["Education"],"links":["http://bucks.ac.uk/"],"aliases":["Bucks
+        New University"],"acronyms":[],"status":"active","wikipedia_url":"http://en.wikipedia.org/wiki/Buckinghamshire_New_University","labels":[{"label":"Prifysgol
+        Newydd Swydd Buckingham","iso639":"cy"}],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0001 2154 0135"]},"FundRef":{"preferred":null,"all":["100010024"]},"HESA":{"preferred":null,"all":["0009"]},"UCAS":{"preferred":null,"all":["B94"]},"UKPRN":{"preferred":null,"all":["10000975"]},"OrgRef":{"preferred":null,"all":["1030678"]},"Wikidata":{"preferred":null,"all":["Q448403"]},"GRID":{"preferred":"grid.411820.e","all":"grid.411820.e"}}},{"id":"https://ror.org/03vamsh08","name":"County
+        Durham and Darlington NHS Foundation Trust","types":["Healthcare"],"links":["https://www.cddft.nhs.uk/"],"aliases":[],"acronyms":[],"status":"active","wikipedia_url":"https://en.wikipedia.org/wiki/County_Durham_and_Darlington_NHS_Foundation_Trust","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"FundRef":{"preferred":null,"all":["100009213","100009214"]},"OrgRef":{"preferred":null,"all":["8133362"]},"Wikidata":{"preferred":null,"all":["Q7894770"]},"GRID":{"preferred":"grid.412907.9","all":"grid.412907.9"}}},{"id":"https://ror.org/04npk0q16","name":"Animal
+        Health Trust","types":["Healthcare"],"links":["http://www.aht.org.uk/"],"aliases":[],"acronyms":["AHT"],"status":"active","wikipedia_url":"https://en.wikipedia.org/wiki/Animal_Health_Trust","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0001 1090 3666"]},"FundRef":{"preferred":null,"all":["100007612"]},"Wikidata":{"preferred":null,"all":["Q4764816"]},"GRID":{"preferred":"grid.412911.e","all":"grid.412911.e"}}},{"id":"https://ror.org/00mrq3p58","name":"Frimley
+        Park Hospital NHS Foundation Trust","types":["Healthcare"],"links":["http://www.frimleyhealth.nhs.uk/"],"aliases":[],"acronyms":[],"status":"active","wikipedia_url":"https://en.wikipedia.org/wiki/Frimley_Park_Hospital_NHS_Foundation_Trust","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0000 8542 5921"]},"OrgRef":{"preferred":null,"all":["40966143"]},"Wikidata":{"preferred":null,"all":["Q22908525"]},"GRID":{"preferred":"grid.412923.f","all":"grid.412923.f"}}},{"id":"https://ror.org/05xh7ac43","name":"Kettering
+        General Hospital NHS Trust","types":["Healthcare"],"links":["http://www.kgh.nhs.uk/welcome/"],"aliases":[],"acronyms":["KGH"],"status":"active","wikipedia_url":"","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0004 0415 818X"]},"GRID":{"preferred":"grid.412932.f","all":"grid.412932.f"}}},{"id":"https://ror.org/01qbebb31","name":"Papworth
+        Hospital NHS Foundation Trust","types":["Healthcare"],"links":["http://www.papworthhospital.nhs.uk/"],"aliases":[],"acronyms":[],"status":"active","wikipedia_url":"","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0004 0383 5994"]},"GRID":{"preferred":"grid.412939.4","all":"grid.412939.4"}}},{"id":"https://ror.org/03kdm3q80","name":"Poole
+        Hospital NHS Foundation Trust","types":["Healthcare"],"links":["https://www.poole.nhs.uk/"],"aliases":[],"acronyms":[],"status":"active","wikipedia_url":"","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0004 0455 6778"]},"GRID":{"preferred":"grid.412940.a","all":"grid.412940.a"}}},{"id":"https://ror.org/02e22bh87","name":"Western
+        Infirmary","types":["Healthcare"],"links":[],"aliases":[],"acronyms":[],"status":"active","wikipedia_url":"https://en.wikipedia.org/wiki/Western_Infirmary","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0004 0642 009X"]},"OrgRef":{"preferred":null,"all":["4196406"]},"Wikidata":{"preferred":null,"all":["Q14956751"]},"GRID":{"preferred":"grid.412947.d","all":"grid.412947.d"}}},{"id":"https://ror.org/00j8ram51","name":"Cambridge
+        Military Hospital","types":["Healthcare"],"links":[],"aliases":[],"acronyms":[],"status":"active","wikipedia_url":"https://en.wikipedia.org/wiki/Cambridge_Military_Hospital","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"Wikidata":{"preferred":null,"all":["Q5025477"]},"GRID":{"preferred":"grid.413268.a","all":"grid.413268.a"}}},{"id":"https://ror.org/014tckg45","name":"Crichton
+        Royal Hospital","types":["Healthcare"],"links":["http://www.johnandmoragwilliams.co.uk/croyalh.html"],"aliases":[],"acronyms":[],"status":"active","wikipedia_url":"https://en.wikipedia.org/wiki/The_Crichton#Crichton_Royal_Hospital","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0000 9823 8455"]},"Wikidata":{"preferred":null,"all":["Q21036442"]},"GRID":{"preferred":"grid.413276.5","all":"grid.413276.5"}}},{"id":"https://ror.org/03z2mza16","name":"Dewsbury
+        and District Hospital","types":["Healthcare"],"links":["https://www.midyorks.nhs.uk/dewsbury-and-district-hospital/"],"aliases":[],"acronyms":[],"status":"active","wikipedia_url":"","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"GRID":{"preferred":"grid.413666.0","all":"grid.413666.0"}}},{"id":"https://ror.org/03b2b5383","name":"Diana
+        Princess of Wales Hospital","types":["Healthcare"],"links":["http://www.nlg.nhs.uk/hospitals/grimsby/"],"aliases":["Scartho
+        Road hospital"],"acronyms":[],"status":"active","wikipedia_url":"https://en.wikipedia.org/wiki/Diana,_Princess_of_Wales_Hospital","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0004 0400 0964"]},"Wikidata":{"preferred":null,"all":["Q5271054"]},"GRID":{"preferred":"grid.413686.e","all":"grid.413686.e"}}}],"meta":{"types":[{"id":"company","title":"Company","count":2500},{"id":"healthcare","title":"Healthcare","count":1334},{"id":"nonprofit","title":"Nonprofit","count":1310},{"id":"other","title":"Other","count":677},{"id":"education","title":"Education","count":545},{"id":"government","title":"Government","count":314},{"id":"archive","title":"Archive","count":236},{"id":"facility","title":"Facility","count":235}],"countries":[{"id":"gb","title":"United
+        Kingdom of Great Britain and Northern Ireland","count":7166}]}}'
+    http_version: null
+  recorded_at: Tue, 04 Aug 2020 16:38:45 GMT
+recorded_with: VCR 5.1.0

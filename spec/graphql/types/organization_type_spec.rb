@@ -142,6 +142,10 @@ describe OrganizationType do
           nodes {
             id
             name
+            types
+            address {
+              country
+            }
             alternateName
             identifiers {
               identifier
@@ -175,12 +179,83 @@ describe OrganizationType do
       organization = response.dig("data", "organizations", "nodes", 0)
       expect(organization.fetch("id")).to eq("https://ror.org/013meh722")
       expect(organization.fetch("name")).to eq("University of Cambridge")
+      expect(organization.fetch("types")).to eq(["Education"])
+      expect(organization.fetch("address")).to eq("country"=>"United Kingdom")
       expect(organization.fetch("alternateName")).to eq(["Cambridge University"])
       expect(organization.fetch("identifiers").length).to eq(38)
       expect(organization.fetch("identifiers").last).to eq("identifier"=>"http://en.wikipedia.org/wiki/University_of_Cambridge", "identifierType"=>"wikipedia")
 
       expect(organization.dig("works", "totalCount")).to eq(1)
       expect(organization.dig("works", "published")).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
+    end
+  end
+
+  describe "query organizations by tyoe", elasticsearch: true, vcr: true do
+    let(:query) do
+      %(query {
+        organizations(types: "government", country: "de", after: "MQ") {
+          totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          types {
+            id
+            title
+            count
+          }
+          countries {
+            id
+            title
+            count
+          }
+          nodes {
+            id
+            name
+            types
+            address {
+              country
+            }
+            alternateName
+            identifiers {
+              identifier
+              identifierType
+            }
+            works {
+              totalCount
+              published {
+                id
+                title
+                count
+              }
+            }
+          }
+        }
+      })
+    end
+
+    it "returns organization information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "organizations", "totalCount")).to eq(182)
+      expect(response.dig("data", "organizations", "pageInfo", "endCursor")).to eq("Mg")
+      expect(response.dig("data", "organizations", "pageInfo", "hasNextPage")).to be true
+      
+      expect(response.dig("data", "organizations", "types").length).to eq(1)
+      expect(response.dig("data", "organizations", "types").first).to eq("count"=>182, "id"=>"government", "title"=>"Government")
+      expect(response.dig("data", "organizations", "countries").length).to eq(1)
+      expect(response.dig("data", "organizations", "countries").first).to eq("count"=>182, "id"=>"de", "title"=>"Federal Republic of Germany")
+      expect(response.dig("data", "organizations", "nodes").length).to eq(20)
+      organization = response.dig("data", "organizations", "nodes", 0)
+      expect(organization.fetch("id")).to eq("https://ror.org/04bqwzd17")
+      expect(organization.fetch("name")).to eq("Bayerisches Landesamt für Gesundheit und Lebensmittelsicherheit")
+      expect(organization.fetch("types")).to eq(["Government"])
+      expect(organization.fetch("address")).to eq("country"=>"Germany")
+      expect(organization.fetch("alternateName")).to eq(["LGL"])
+      expect(organization.fetch("identifiers").length).to eq(2)
+      expect(organization.fetch("identifiers").first).to eq("identifier"=>"grid.414279.d", "identifierType"=>"grid")
+
+      expect(organization.dig("works", "totalCount")).to eq(0)
     end
   end
 end
