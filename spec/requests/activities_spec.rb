@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "activities", type: :request do
+describe ActivitiesController, type: :request do
   let(:provider) { create(:provider, symbol: "DATACITE") }
   let(:client) { create(:client, provider: provider, symbol: ENV['MDS_USERNAME'], password: ENV['MDS_PASSWORD']) }
   let(:doi) { create(:doi, client: client) }
@@ -11,7 +11,7 @@ describe "activities", type: :request do
     let!(:doi) { create(:doi, client: client) }
 
     before do
-      Doi.import
+      DataciteDoi.import
       Activity.import
       sleep 2
     end

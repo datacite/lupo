@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "Prefixes", type: :request, elasticsearch: true do
+describe PrefixesController, type: :request, elasticsearch: true do
   let!(:prefixes) { create_list(:prefix, 10) }
   let(:bearer) { User.generate_token }
   let(:prefix_id) { prefixes.first.uid }

@@ -5,6 +5,8 @@ class Metadata < ActiveRecord::Base
   include Cacheable
 
   alias_attribute :created_at, :created
+  alias_attribute :datacite_doi_id, :doi_id
+  
   validates_associated :doi
   validates_presence_of :xml, :namespace
   validate :metadata_must_be_valid

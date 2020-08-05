@@ -71,11 +71,16 @@ module DoiItem
   field :references, WorkConnectionWithTotalType, null: true, max_page_size: 100, description: "References for this DOI" do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
     argument :affiliation_id, String, required: false
+    argument :registration_agency, String, required: false
+    argument :resource_type_id, String, required: false
+    argument :license, String, required: false
+    argument :language, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -92,11 +97,16 @@ module DoiItem
   field :citations, WorkConnectionWithTotalType, null: true, max_page_size: 100, description: "Citations for this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
     argument :affiliation_id, String, required: false
+    argument :registration_agency, String, required: false
+    argument :resource_type_id, String, required: false
+    argument :license, String, required: false
+    argument :language, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -113,11 +123,16 @@ module DoiItem
   field :parts, WorkConnectionWithTotalType, null: true, max_page_size: 100, description: "Parts of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
     argument :affiliation_id, String, required: false
+    argument :registration_agency, String, required: false
+    argument :resource_type_id, String, required: false
+    argument :license, String, required: false
+    argument :language, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -134,11 +149,16 @@ module DoiItem
   field :part_of, WorkConnectionWithTotalType, null: true, max_page_size: 100, description: "The DOI is a part of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
     argument :affiliation_id, String, required: false
+    argument :registration_agency, String, required: false
+    argument :resource_type_id, String, required: false
+    argument :license, String, required: false
+    argument :language, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -155,13 +175,18 @@ module DoiItem
   field :versions, WorkConnectionWithTotalType, null: true, max_page_size: 100, description: "Versions of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
+    argument :affiliation_id, String, required: false
+    argument :registration_agency, String, required: false
+    argument :resource_type_id, String, required: false
+    argument :license, String, required: false
+    argument :language, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
-    argument :affiliation_id, String, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
@@ -176,11 +201,16 @@ module DoiItem
   field :version_of, WorkConnectionWithTotalType, null: true, max_page_size: 100, description: "The DOI is a version of this DOI." do
     argument :query, String, required: false
     argument :ids, [String], required: false
+    argument :published, String, required: false
     argument :user_id, String, required: false
     argument :funder_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
     argument :affiliation_id, String, required: false
+    argument :registration_agency, String, required: false
+    argument :resource_type_id, String, required: false
+    argument :license, String, required: false
+    argument :language, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_funder, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -374,7 +404,7 @@ module DoiItem
   def response(**args)
     # make sure no dois are returnded if there are no :ids
     args[:ids] = "999" if args[:ids].blank?
-
+    
     Doi.query(args[:query], ids: args[:ids], funder_id: args[:funder_id], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], affiliation_id: args[:affiliation_id], has_person: args[:has_person], has_funder: args[:has_funder], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
   end
 

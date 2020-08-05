@@ -25,12 +25,11 @@ class WorksController < ApplicationController
                          end
 
     if params[:id].present?
-      response = Doi.find_by_id(params[:id])
+      response = DataciteDoi.find_by_id(params[:id])
     elsif params[:ids].present?
-      response = Doi.find_by_ids(params[:ids], page: page, sort: sort)
+      response = DataciteDoi.find_by_ids(params[:ids], page: page, sort: sort)
     else
-      response = Doi.query(params[:query],
-                          exclude_registration_agencies: true,
+      response = DataciteDoi.query(params[:query],
                           state: "findable",
                           created: params[:created],
                           registered: params[:registered],
@@ -59,7 +58,6 @@ class WorksController < ApplicationController
       registered = total > 0 ? facet_by_year(response.response.aggregations.registered.buckets) : nil
       providers = total > 0 ? facet_by_combined_key(response.response.aggregations.providers.buckets) : nil
       clients = total > 0 ? facet_by_combined_key(response.response.aggregations.clients.buckets) : nil
-
       affiliations = total > 0 ? facet_by_combined_key(response.response.aggregations.affiliations.buckets) : nil
 
       @dois = response.results
@@ -122,10 +120,9 @@ class WorksController < ApplicationController
   protected
 
   def set_doi
-    response = Doi.find_by_id(params[:id])
-    @doi = response.results.first
+    @doi = DataciteDoi.where(doi: params[:id]).where(aasm_state: "findable").first
 
-    fail ActiveRecord::RecordNotFound if not_allowed_by_doi_and_user(doi: @doi, user: current_user)
+    fail ActiveRecord::RecordNotFound if @doi.blank?
   end
 
   def set_include
@@ -134,8 +131,6 @@ class WorksController < ApplicationController
         "data_center" => :client,
         "member" => :provider,
         "resource_type" => :resource_type,
-        "references" => :references,
-        "citations" => :citations,
       }
       @include = params[:include].split(",").reduce([]) do |sum, i|
         k = include_keys[i.downcase.underscore]

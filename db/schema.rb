@@ -111,7 +111,7 @@ ActiveRecord::Schema.define(version: 2020_07_18_191826) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "provider_prefix_id"
-    t.string "uid"
+    t.string "uid", null: false
     t.index ["client_id", "prefix_id"], name: "index_client_prefixes_on_client_id_and_prefix_id", unique: true
     t.index ["client_id"], name: "FK13A1B3BA47B5F5FF"
     t.index ["prefix_id"], name: "FK13A1B3BAAF86A1C7"
@@ -286,7 +286,7 @@ ActiveRecord::Schema.define(version: 2020_07_18_191826) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "uuid"
-    t.string "uid"
+    t.string "uid", null: false
     t.index ["prefix_id"], name: "FKE7FBD674AF86A1C7"
     t.index ["provider_id", "prefix_id"], name: "index_provider_prefixes_on_provider_id_and_prefix_id", unique: true
     t.index ["provider_id"], name: "FKE7FBD67446EBD781"
@@ -296,8 +296,8 @@ ActiveRecord::Schema.define(version: 2020_07_18_191826) do
   add_foreign_key "client_prefixes", "datacentre", column: "client_id", name: "FK13A1B3BA47B5F5FF"
   add_foreign_key "client_prefixes", "prefixes", name: "FK13A1B3BAAF86A1C7"
   add_foreign_key "datacentre", "allocator", column: "allocator", name: "FK6695D60546EBD781"
-  add_foreign_key "media", "dataset", column: "dataset", name: "__FK62F6FE44D3D6B1B"
-  add_foreign_key "metadata", "dataset", column: "dataset", name: "__FKE52D7B2F4D3D6B1B"
+  add_foreign_key "media", "dataset", column: "dataset", name: "FK62F6FE44D3D6B1B"
+  add_foreign_key "metadata", "dataset", column: "dataset", name: "FKE52D7B2F4D3D6B1B"
   add_foreign_key "provider_prefixes", "allocator", column: "provider_id", name: "FKE7FBD67446EBD781"
   add_foreign_key "provider_prefixes", "prefixes", name: "FKE7FBD674AF86A1C7"
 end

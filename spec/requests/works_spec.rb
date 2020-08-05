@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "works", type: :request do
+describe WorksController, type: :request do
   let(:admin) { create(:provider, symbol: "ADMIN") }
   let(:admin_bearer) { Client.generate_token(role_id: "staff_admin", uid: admin.symbol, password: admin.password) }
   let(:admin_headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + admin_bearer}}
@@ -13,14 +13,14 @@ describe "works", type: :request do
   let(:headers) { { 'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
 
   describe 'GET /works', elasticsearch: true do
-    let!(:dois) { create_list(:doi, 3, client: client, event: "publish") }
+    let!(:datacite_dois) { create_list(:doi, 3, client: client, event: "publish", type: "DataciteDoi") }
 
     before do
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 
-    it 'returns works', vcr: true do
+    it 'returns works' do
       get '/works'
 
       expect(last_response.status).to eq(200)
@@ -29,88 +29,15 @@ describe "works", type: :request do
     end
   end
 
-  describe "citations", elasticsearch: true, vcr: true do
-    let(:doi) { create(:doi, client: client, aasm_state: "findable") }
-    let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
-    let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by") }
-
-    before do
-      Doi.import
-      Event.import
-      sleep 2
-    end
-
-    # it "has citations" do
-    #   get "/works/#{doi.doi}?include=citation-events"
-
-    #   expect(last_response.status).to eq(200)
-    #   expect(json.dig('data', 'attributes', 'url')).to eq(doi.url)
-    #   expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
-    #   expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
-    #   expect(json.dig('data', 'attributes', 'citation-count')).to eq(1)
-    #   expect(json.dig('data', 'attributes', 'view-count')).to eq(0)
-    #   expect(json.dig('data', 'attributes', 'views-over-time')).to eq([])
-    #   expect(json.dig('data', 'attributes', 'download-count')).to eq(0)
-    #   expect(json.dig('data', 'attributes', 'downloads-over-time')).to eq([])
-    #   expect(json.dig('data', 'relationships', 'citation-events', 'data')).to eq([{"id" => citation_event.uuid, "type"=>"events"}])
-    #   expect(json.dig('included').length).to eq(1)
-    #   expect(json.dig('included', 0, 'attributes', 'relationTypeId')).to eq("is-referenced-by")
-    # end
-
-    # it "has citations list" do
-    #   get "/works"
-
-    #   expect(last_response.status).to eq(200)
-    #   expect(json['data'].size).to eq(2)
-    #   expect(json.dig('meta', 'total')).to eq(2)
-    #   work = json['data'].first
-    #   expect(work.dig('attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
-    #   expect(work.dig('attributes', 'citation-count')).to eq(1)
-    #   expect(work.dig('attributes', 'view-count')).to eq(0)
-    #   expect(work.dig('attributes', 'views-over-time')).to eq([])
-    #   expect(work.dig('attributes', 'download-count')).to eq(0)
-    #   expect(work.dig('attributes', 'downloads-over-time')).to eq([])
-    # end
-
-    # it "has citations with query" do
-    #   get "/works?has-citations=1"
-
-    #   expect(last_response.status).to eq(200)
-    #   expect(json['data'].size).to eq(1)
-    #   expect(json.dig('meta', 'total')).to eq(1)
-    #   work = json['data'].first
-    #   expect(work.dig('attributes', 'doi')).to eq(doi.doi.downcase)
-    #   expect(work.dig('attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
-    #   expect(work.dig('attributes', 'citation-count')).to eq(1)
-    #   expect(work.dig('attributes', 'view-count')).to eq(0)
-    #   expect(work.dig('attributes', 'views-over-time')).to eq([])
-    #   expect(work.dig('attributes', 'download-count')).to eq(0)
-    #   expect(work.dig('attributes', 'downloads-over-time')).to eq([])
-    # end
-
-    it "has views with query" do
-      get "/works?has-views=1"
-
-      expect(last_response.status).to eq(200)
-      expect(json['data'].size).to eq(0)
-      expect(json.dig('meta', 'total')).to eq(0)
-    end
-  end
-
-  describe 'GET /works/:id', elasticsearch: true do
-    let!(:doi) { create(:doi, client: client, event: "publish") }
-
-    before do
-      Doi.import
-      sleep 2
-    end
+  describe 'GET /works/:id' do
+    let!(:datacite_doi) { create(:doi, client: client, event: "publish", type: "DataciteDoi") }
   
     context 'when the record exists' do
       it 'returns the work' do
-        get "/works/#{doi.doi}"
+        get "/works/#{datacite_doi.doi}"
 
         expect(last_response.status).to eq(200)
-        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'doi')).to eq(datacite_doi.doi.downcase)
         expect(json.dig('data', 'attributes', 'author').length).to eq(8)
         expect(json.dig('data', 'attributes', 'author').first).to eq("family"=>"Ollomo", "given"=>"Benjamin")
         expect(json.dig('data', 'attributes', 'title')).to eq("Data from: A new malaria agent in African hominids.")
@@ -130,10 +57,10 @@ describe "works", type: :request do
     end
 
     context 'draft doi' do
-      let!(:doi) { create(:doi, client: client) }
+      let!(:datacite_doi) { create(:doi, client: client, type: "DataciteDoi") }
 
       it 'returns 404 status' do
-        get "/works/#{doi.doi}", nil, headers
+        get "/works/#{datacite_doi.doi}", nil, headers
 
         expect(last_response.status).to eq(404)
         expect(json).to eq("errors"=>[{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
@@ -142,18 +69,18 @@ describe "works", type: :request do
 
     context 'anonymous user' do
       it 'returns the Doi' do
-        get "/works/#{doi.doi}"
+        get "/works/#{datacite_doi.doi}"
 
         expect(last_response.status).to eq(200)
-        expect(json.dig('data', 'attributes', 'doi')).to eq(doi.doi.downcase)
+        expect(json.dig('data', 'attributes', 'doi')).to eq(datacite_doi.doi.downcase)
       end
     end
 
     context 'anonymous user draft doi' do
-      let!(:doi) { create(:doi, client: client) }
+      let!(:datacite_doi) { create(:doi, client: client, type: "DataciteDoi") }
 
       it 'returns 404 status' do
-        get "/works/#{doi.doi}"
+        get "/works/#{datacite_doi.doi}"
 
         expect(last_response.status).to eq(404)
         expect(json).to eq("errors"=>[{"status"=>"404", "title"=>"The resource you are looking for doesn't exist."}])
