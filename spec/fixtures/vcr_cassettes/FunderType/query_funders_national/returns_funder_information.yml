@@ -29,7 +29,7 @@ http_interactions:
       Server:
       - http-kit
       Date:
-      - Fri, 31 Jul 2020 06:37:20 GMT
+      - Wed, 05 Aug 2020 06:38:04 GMT
       X-Rate-Limit-Limit:
       - '50'
       X-Rate-Limit-Interval:
@@ -54,5 +54,5 @@ http_interactions:
         States","name":"National Institute of Environmental Health Sciences","alt-names":["NIEHS"],"uri":"http:\/\/dx.doi.org\/10.13039\/100000066","replaces":[],"replaced-by":[],"tokens":["national","institute","of","environmental","health","sciences","niehs"]},{"id":"501100001445","location":"Singapore","name":"DSO
         National Laboratories - Singapore","alt-names":["DSO"],"uri":"http:\/\/dx.doi.org\/10.13039\/501100001445","replaces":[],"replaced-by":[],"tokens":["dso","national","laboratories","singapore","dso"]}]}}'
     http_version: null
-  recorded_at: Fri, 31 Jul 2020 06:37:20 GMT
+  recorded_at: Wed, 05 Aug 2020 06:38:04 GMT
 recorded_with: VCR 5.1.0
