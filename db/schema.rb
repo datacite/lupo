@@ -202,8 +202,8 @@ ActiveRecord::Schema.define(version: 2020_07_18_191826) do
     t.json "content_url"
     t.binary "xml", limit: 16777215
     t.json "landing_page"
-    t.string "agency", limit: 16, default: "datacite"
-    t.string "type", limit: 16, default: "DataciteDoi", null: false
+    t.string "agency", limit: 191, default: "datacite"
+    t.string "type", limit: 16, default: "DataCiteDoi"
     t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
     t.index ["created", "indexed", "updated"], name: "index_dataset_on_created_indexed_updated"
     t.index ["datacentre"], name: "FK5605B47847B5F5FF"

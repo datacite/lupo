@@ -58,6 +58,42 @@ describe Organization, type: :model, vcr: true do
       expect(organization.links).to eq(["https://www.lincolnagritech.co.nz/"])
     end
 
+    it "found by types government" do
+      organizations = Organization.query(nil, types: "government")
+      expect(organizations.dig(:meta, "total")).to eq(5762)
+      expect(organizations[:data].size).to eq(20)
+      organization = organizations[:data].first
+      expect(organization.id).to eq("https://ror.org/027bk5v43")
+      expect(organization.name).to eq("Illinois Department of Public Health")
+      expect(organization.types).to eq(["Government"])
+      expect(organization.labels).to eq([])
+      expect(organization.links).to eq(["http://www.dph.illinois.gov/"])
+    end
+
+    it "found by country gb" do
+      organizations = Organization.query(nil, country: "gb")
+      expect(organizations.dig(:meta, "total")).to eq(7166)
+      expect(organizations[:data].size).to eq(20)
+      organization = organizations[:data].first
+      expect(organization.id).to eq("https://ror.org/04jzmdh37")
+      expect(organization.name).to eq("Centre for Economic Policy Research")
+      expect(organization.types).to eq(["Nonprofit"])
+      expect(organization.labels).to eq([])
+      expect(organization.links).to eq(["http://www.cepr.org/"])
+    end
+
+    it "found by types and country" do
+      organizations = Organization.query(nil, types: "government", country: "gb")
+      expect(organizations.dig(:meta, "total")).to eq(314)
+      expect(organizations[:data].size).to eq(20)
+      organization = organizations[:data].first
+      expect(organization.id).to eq("https://ror.org/04jswqb94")
+      expect(organization.name).to eq("Defence Science and Technology Laboratory")
+      expect(organization.types).to eq(["Government"])
+      expect(organization.labels).to eq([])
+      expect(organization.links).to eq(["https://www.gov.uk/government/organisations/defence-science-and-technology-laboratory"])
+    end
+
     it "not found" do
       query = "xxx"
       organizations = Organization.query(query)

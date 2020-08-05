@@ -7,6 +7,7 @@ class OrganizationType < BaseObject
 
   field :identifiers, [IdentifierType], null: true, description: "The identifier(s) for the organization."
   field :url, [Url], null: true, hash_key: "links", description: "URL of the organization."
+  field :types, [String], null: true, description: "The type of organization."
   field :address, AddressType, null: true, description: "Physical address of the organization."
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
@@ -84,6 +85,7 @@ class OrganizationType < BaseObject
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
+    argument :resource_type_id, String, required: false
     argument :license, String, required: false
     argument :language, String, required: false
     argument :has_citations, Int, required: false
