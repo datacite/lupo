@@ -31,19 +31,9 @@ namespace :event do
     puts Event.active_index + " is the active index."
   end
 
-  desc "Start using alias indexes for events"
-  task :start_aliases => :environment do
-    puts Event.start_aliases
-  end
-
   desc "Monitor reindexing for events"
   task :monitor_reindex => :environment do
     puts Event.monitor_reindex
-  end
-
-  desc "Wrap up starting using alias indexes for events"
-  task :finish_aliases => :environment do
-    puts Event.finish_aliases
   end
 
   desc 'Import all events'

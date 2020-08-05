@@ -110,10 +110,12 @@ class QueryType < BaseObject
   field :organizations, OrganizationConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :after, String, required: false
+    argument :types, String, required: false
+    argument :country, String, required: false
   end
 
   def organizations(**args)
-    response = Organization.query(args[:query], offset: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil)
+    response = Organization.query(args[:query], types: args[:types], country: args[:country], offset: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil)
     HashConnection.new(response, context: self.context, after: args[:after])
   end
 

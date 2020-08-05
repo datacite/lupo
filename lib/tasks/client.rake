@@ -31,19 +31,9 @@ namespace :client do
     puts Client.active_index + " is the active index."
   end
 
-  desc "Start using alias indexes for clients"
-  task :start_aliases => :environment do
-    puts Client.start_aliases
-  end
-
   desc "Monitor reindexing for clients"
   task :monitor_reindex => :environment do
     puts Client.monitor_reindex
-  end
-
-  desc "Wrap up starting using alias indexes for clients"
-  task :finish_aliases => :environment do
-    puts Client.finish_aliases
   end
 
   desc 'Import all clients'

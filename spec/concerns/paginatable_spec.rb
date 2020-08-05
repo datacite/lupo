@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe "Dois", type: :controller do
-  subject { DoisController.new }
+  subject { DataciteDoisController.new }
   
   it "no params" do
     params = ActionController::Parameters.new

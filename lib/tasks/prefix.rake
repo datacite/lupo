@@ -31,19 +31,9 @@ namespace :prefix do
     puts Prefix.active_index + " is the active index."
   end
 
-  desc "Start using alias indexes for prefixes"
-  task :start_aliases => :environment do
-    puts Prefix.start_aliases
-  end
-
   desc "Monitor reindexing for prefixes"
   task :monitor_reindex => :environment do
     puts Prefix.monitor_reindex
-  end
-
-  desc "Wrap up starting using alias indexes for prefixes"
-  task :finish_aliases => :environment do
-    puts Prefix.finish_aliases
   end
 
   desc 'Import all prefixes'

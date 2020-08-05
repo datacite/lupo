@@ -19,11 +19,17 @@ class Organization
   def self.query(query, options={})
     # rows = options[:limit] || 20
     page = options[:offset] || 1
+    types = options[:types]
+    country = options[:country]
 
-    if query.present?
-      url = "https://api.ror.org/organizations?query=#{query}&page=#{page}"
-    else
-      url = "https://api.ror.org/organizations?page=#{page}"
+    url = "https://api.ror.org/organizations?page=#{page}"
+    url += "&query=#{query}" if query.present?
+    if types.present? && country.present?
+      url += "&filter=types:#{types.upcase_first},country.country_code:#{country.upcase}"
+    elsif types.present?
+      url += "&filter=types:#{types.upcase_first}"
+    elsif country.present?
+      url += "&filter=country.country_code:#{country.upcase}"
     end
 
     response = Maremma.get(url, host: true)
@@ -63,6 +69,7 @@ class Organization
     Hashie::Mash.new({
       id: id,
       type: "Organization",
+      types: message["types"],
       name: message["name"],
       aliases: message["aliases"],
       acronyms: message["acronyms"],

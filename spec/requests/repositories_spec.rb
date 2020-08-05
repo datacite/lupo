@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Repositories', type: :request, elasticsearch: true do
+describe RepositoriesController, type: :request, elasticsearch: true do
   let(:ids) { clients.map { |c| c.uid }.join(",") }
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
   let(:provider) { create(:provider, consortium: consortium, symbol: "ABC", role_name: "ROLE_CONSORTIUM_ORGANIZATION", password_input: "12345") }
@@ -103,12 +103,12 @@ describe 'Repositories', type: :request, elasticsearch: true do
 
   describe 'GET /repositories/totals' do
     let(:client) { create(:client) }
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+    let!(:datacite_dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
 
     before do
+      DataciteDoi.import
       Client.import
-      Doi.import
-      sleep 2
+      sleep 3
     end
 
     it "returns repositories" do
@@ -125,14 +125,14 @@ describe 'Repositories', type: :request, elasticsearch: true do
     let(:provider)  { create(:provider) }
     let(:client)  { create(:client) }
     let!(:client_prefix) { create(:client_prefix, client: client) }
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+    let!(:datacite_dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
 
     before do
+      DataciteDoi.import
       Provider.import
       Client.import
       ClientPrefix.import
-      Doi.import
-      sleep 2
+      sleep 3
     end
 
     it "returns repository" do
@@ -147,12 +147,12 @@ describe 'Repositories', type: :request, elasticsearch: true do
   describe 'GET /repositories/:id/stats' do
     let(:provider)  { create(:provider) }
     let(:client)  { create(:client) }
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+    let!(:datacite_dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
 
     before do
       Provider.import
       Client.import
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 
@@ -434,7 +434,7 @@ describe 'Repositories', type: :request, elasticsearch: true do
     end
 
     before do
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 

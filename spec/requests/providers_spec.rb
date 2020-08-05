@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "Providers", type: :request, elasticsearch: true  do
+describe ProvidersController, type: :request, elasticsearch: true  do
   let(:consortium) { create(:provider, role_name: "ROLE_CONSORTIUM") }
   let(:provider) { create(:provider, consortium: consortium, role_name: "ROLE_CONSORTIUM_ORGANIZATION") }
   let(:token) { User.generate_token(role_id: "consortium_admin", provider_id: consortium.symbol.downcase) }
@@ -92,7 +92,7 @@ describe "Providers", type: :request, elasticsearch: true  do
     before do
       Provider.import
       Client.import
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 
@@ -114,7 +114,7 @@ describe "Providers", type: :request, elasticsearch: true  do
     before do
       Provider.import
       Client.import
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 
@@ -131,12 +131,12 @@ describe "Providers", type: :request, elasticsearch: true  do
   describe 'GET /providers/:id/stats' do
     let(:provider)  { create(:provider) }
     let(:client)  { create(:client, provider: provider) }
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
 
     before do
       Provider.import
       Client.import
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 
@@ -274,12 +274,10 @@ describe "Providers", type: :request, elasticsearch: true  do
         # get "/providers?consortium-lead-id=#{consortium_lead.symbol.downcase}", nil, headers
 
         # expect(last_response.status).to eq(200)
-        # puts last_response.body
 
         # get "/providers/#{consortium_lead.symbol.downcase}/organizations", nil, headers
 
         # expect(last_response.status).to eq(200)
-        # puts last_response.body
       end
     end
 

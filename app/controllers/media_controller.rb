@@ -94,7 +94,7 @@ class MediaController < ApplicationController
   protected
 
   def set_doi
-    @doi = Doi.where(doi: params[:doi_id]).first
+    @doi = DataciteDoi.where(doi: params[:datacite_doi_id]).first
     fail ActiveRecord::RecordNotFound unless @doi.present?
   end
 

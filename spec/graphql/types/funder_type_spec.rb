@@ -180,9 +180,9 @@ describe FunderType do
       expect(response.dig("data", "funders", "nodes").length).to eq(10)
       
       funder = response.dig("data", "funders", "nodes", 0)
-      expect(funder.fetch("id")).to eq("https://doi.org/10.13039/100014368")
-      expect(funder.fetch("name")).to eq("National Sporting Library and Museum")
-      expect(funder.fetch("alternateName")).to eq(["NSLM", "National Sporting Library & Museum"])
+      expect(funder.fetch("id")).to eq("https://doi.org/10.13039/100000051")
+      expect(funder.fetch("name")).to eq("National Human Genome Research Institute")
+      expect(funder.fetch("alternateName")).to eq(["NHGRI"])
       expect(funder.dig("address", "country")).to eq("United States") 
     end
   end

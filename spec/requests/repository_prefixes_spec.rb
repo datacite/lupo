@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "Repository Prefixes", type: :request, elasticsearch: true do
+describe RepositoryPrefixesController, type: :request do
   let(:prefix) { create(:prefix) }
   let(:provider) { create(:provider) }
   let(:client) { create(:client, provider: provider) }
@@ -10,7 +10,7 @@ describe "Repository Prefixes", type: :request, elasticsearch: true do
   let(:bearer) { User.generate_token(role_id: "staff_admin") }
   let(:headers) { {'HTTP_ACCEPT'=>'application/vnd.api+json', 'HTTP_AUTHORIZATION' => 'Bearer ' + bearer }}
 
-  describe 'GET /repository-prefixes' do
+  describe 'GET /repository-prefixes', elasticsearch: true do
     before do
       Prefix.import
       ClientPrefix.import
@@ -61,12 +61,6 @@ describe "Repository Prefixes", type: :request, elasticsearch: true do
   end
 
   describe 'GET /repository-prefixes/:uid' do
-    before do
-      Prefix.import
-      ClientPrefix.import
-      sleep 2
-    end
-
     context 'when the record exists' do
       it 'returns the repository-prefix' do
         get "/repository-prefixes/#{client_prefix.uid}", nil, headers
@@ -98,13 +92,6 @@ describe "Repository Prefixes", type: :request, elasticsearch: true do
   describe 'DELETE /repository-prefixes/:uid' do
     let!(:client_prefix) { create(:client_prefix, client: client, prefix: prefix, provider_prefix: provider_prefix) }
 
-    before do
-      ProviderPrefix.import
-      Prefix.import
-      ClientPrefix.import
-      sleep 2
-    end
-
     it 'deletes a repository-prefix' do
       delete "/repository-prefixes/#{client_prefix.uid}", nil, headers
 
@@ -112,7 +99,15 @@ describe "Repository Prefixes", type: :request, elasticsearch: true do
     end
   end
 
-  describe 'POST /repository-prefixes' do
+  describe 'POST /repository-prefixes', elasticsearch: true do
+    before do
+      Prefix.import
+      Client.import
+      ProviderPrefix.import
+      ClientPrefix.import
+      sleep 3
+    end
+
     context 'when the request is valid' do
       let(:valid_attributes) do
         {

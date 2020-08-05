@@ -20,7 +20,6 @@ class DataCentersController < ApplicationController
       response = Client.find_by_id(params[:ids], page: page, sort: sort)
     else
       response = Client.query(params[:query], 
-        exclude_registration_agencies: true, 
         year: params[:year], 
         provider_id: params[:member_id], 
         fields: params[:fields], 

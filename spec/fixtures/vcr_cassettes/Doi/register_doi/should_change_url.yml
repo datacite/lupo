@@ -21,7 +21,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Mon, 13 Jul 2020 12:30:17 GMT
+      - Sun, 26 Jul 2020 08:55:35 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Connection:
@@ -32,7 +32,7 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"responseCode":1,"handle":"10.5438/MCNV-GA6N"}'
     http_version: null
-  recorded_at: Mon, 13 Jul 2020 12:30:17 GMT
+  recorded_at: Sun, 26 Jul 2020 08:55:35 GMT
 - request:
     method: get
     uri: https://handle.test.datacite.org/api/handles/10.5438/MCNV-GA6N?index=1
@@ -50,7 +50,7 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Mon, 13 Jul 2020 12:30:18 GMT
+      - Sun, 26 Jul 2020 08:55:35 GMT
       Content-Type:
       - application/json;charset=UTF-8
       Connection:
@@ -59,7 +59,7 @@ http_interactions:
       - Accept-Encoding
     body:
       encoding: ASCII-8BIT
-      string: '{"responseCode":1,"handle":"10.5438/MCNV-GA6N","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/re3data-science-europe/"},"ttl":86400,"timestamp":"2020-07-13T12:30:17Z"}]}'
+      string: '{"responseCode":1,"handle":"10.5438/MCNV-GA6N","values":[{"index":1,"type":"URL","data":{"format":"string","value":"https://blog.datacite.org/re3data-science-europe/"},"ttl":86400,"timestamp":"2020-07-26T08:55:35Z"}]}'
     http_version: null
-  recorded_at: Mon, 13 Jul 2020 12:30:18 GMT
+  recorded_at: Sun, 26 Jul 2020 08:55:35 GMT
 recorded_with: VCR 5.1.0

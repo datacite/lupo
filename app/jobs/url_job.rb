@@ -19,7 +19,7 @@ class UrlJob < ActiveJob::Base
           doi.update_attributes(url: url)
         end
 
-        doi.update_attributes(aasm_state: "findable") if %w(crossref.citations medra.citations jalc.citations kisti.citations op.citations).include?(doi.client_id)
+        doi.update_attributes(aasm_state: "findable") if doi.type == "OtherDoi"
 
         doi.__elasticsearch__.index_document
 

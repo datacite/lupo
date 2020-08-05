@@ -17,10 +17,11 @@ class FunderType < BaseObject
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
-    argument :license, String, required: false
+    argument :affiliation_id, String, required: false
     argument :registration_agency, String, required: false
-    argument :language, String, required: false
     argument :has_person, Boolean, required: false
+    argument :license, String, required: false
+    argument :language, String, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
@@ -39,10 +40,11 @@ class FunderType < BaseObject
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
-    argument :license, String, required: false
+    argument :affiliation_id, String, required: false
     argument :registration_agency, String, required: false
-    argument :language, String, required: false
     argument :has_person, Boolean, required: false
+    argument :license, String, required: false
+    argument :language, String, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
@@ -61,10 +63,11 @@ class FunderType < BaseObject
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
-    argument :license, String, required: false
+    argument :affiliation_id, String, required: false
     argument :registration_agency, String, required: false
-    argument :language, String, required: false
     argument :has_person, Boolean, required: false
+    argument :license, String, required: false
+    argument :language, String, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
@@ -83,12 +86,12 @@ class FunderType < BaseObject
     argument :user_id, String, required: false
     argument :repository_id, String, required: false
     argument :member_id, String, required: false
-    argument :license, String, required: false
-    argument :registration_agency, String, required: false
-    argument :language, String, required: false
     argument :affiliation_id, String, required: false
+    argument :registration_agency, String, required: false
     argument :resource_type_id, String, required: false
     argument :has_person, Boolean, required: false
+    argument :license, String, required: false
+    argument :language, String, required: false
     argument :has_organization, Boolean, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
