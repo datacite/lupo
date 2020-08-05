@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'Clients', type: :request, elasticsearch: true do
+describe ClientsController, type: :request, elasticsearch: true do
   let(:ids) { clients.map { |c| c.uid }.join(",") }
   let(:bearer) { User.generate_token }
   let(:provider) { create(:provider, password_input: "12345") }
@@ -95,11 +95,11 @@ describe 'Clients', type: :request, elasticsearch: true do
 
   describe 'GET /clients/totals' do
     let(:client)  { create(:client) }
-    let!(:dois) { create_list(:doi, 3, client: client, aasm_state: "findable") }
+    let!(:datacite_dois) { create_list(:doi, 3, client: client, aasm_state: "findable", type: "DataciteDoi") }
 
     before do
       Client.import
-      Doi.import
+      DataciteDoi.import
       sleep 3
     end
 
@@ -342,7 +342,7 @@ describe 'Clients', type: :request, elasticsearch: true do
     end
 
     before do
-      Doi.import
+      DataciteDoi.import
       sleep 2
     end
 

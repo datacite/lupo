@@ -158,7 +158,7 @@ describe RepositoryType do
     end
   end
 
-  describe "find repository with citations", elasticsearch: true do
+  describe "find repository with citations", elasticsearch: true, vcr: true do
     let(:provider) { create(:provider, symbol: "TESTR") }
     let(:client) { create(:client, symbol: "TESTR.TESTR", provider: provider) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable", creators:

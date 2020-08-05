@@ -249,7 +249,7 @@ FactoryBot.define do
     minted { Faker::Time.backward(15, :evening) }
     updated { Faker::Time.backward(5, :evening) }
 
-    initialize_with { Doi.where(doi: doi).first_or_initialize }
+    initialize_with { DataciteDoi.where(doi: doi).first_or_initialize }
   end
 
   factory :metadata do
@@ -428,12 +428,29 @@ FactoryBot.define do
       relation_type_id { "is-referenced-by" }
     end
 
+    factory :event_for_datacite_funder do
+      source_id { "datacite_funder" }
+      source_token { "datacite_funder_123" }
+      sequence(:subj_id) { |n| "https://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
+      subj { { "datePublished" => "2006-06-13T16:14:19Z" } }
+      obj_id { "https://doi.org/10.13039/100000001" }
+      relation_type_id { "is-funded-by" }
+    end
+
     factory :event_for_crossref do
       source_id { "crossref" }
       source_token { "crossref_123" }
       subj_id { "https://doi.org/10.1371/journal.pbio.2001414" }
       sequence(:obj_id) { |n| "https://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
       relation_type_id { "references" }
+    end
+
+    factory :event_for_crossref_import do
+      source_id { "crossref_import" }
+      source_token { "crossref_123" }
+      subj_id { "https://doi.org/10.1371/journal.pbio.2001414" }
+      obj_id { nil }
+      relation_type_id { nil }
     end
 
     factory :event_for_datacite_investigations do
@@ -487,7 +504,7 @@ FactoryBot.define do
     factory :event_for_datacite_orcid_auto_update do
       source_id { "datacite-orcid-auto-update" }
       source_token { "5348967fhdjksr3wyui325" }
-      sequence(:obj_id) { |n| "https://orcid.org/0000-0003-1419-211#{n}}" }
+      sequence(:obj_id) { |n| "https://orcid.org/0000-0003-1419-211#{n}" }
       sequence(:subj_id) { |n| "http://doi.org/10.5061/DRYAD.47SD5e/#{n}" }
       relation_type_id { "is-authored-by" }
       occurred_at { "2015-06-13T16:14:19Z" }

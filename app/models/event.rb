@@ -372,7 +372,7 @@ class Event < ActiveRecord::Base
         cursor = response.results.to_a.last[:sort]
 
         dois = response.results.results.map(&:subj_id).uniq
-        CrossrefDoiJob.perform_later(dois)
+        OtherDoiJob.perform_later(dois)
       end
     end
 
@@ -414,13 +414,13 @@ class Event < ActiveRecord::Base
         response = Event.query(nil, source_id: source_id, page: { size: size, cursor: cursor })
         break unless response.results.results.length > 0
 
-        Rails.logger.info "[Update] Updating #{response.results.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "[Update] Updating #{response.results.length} #{source_id} events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
 
         dois = response.results.results.map(&:obj_id).uniq
 
-        # use same jobs as for crossref dois
-        CrossrefDoiJob.perform_later(dois, options)
+        # use same job for all non-DataCite dois
+        OtherDoiJob.perform_later(dois, options)
       end
     end
 
@@ -480,8 +480,82 @@ class Event < ActiveRecord::Base
     response.results.total
   end
 
+  def self.import_doi(id, options={})
+    doi_id = validate_doi(id)
+    return nil unless doi_id.present?
+
+    # check whether DOI has been stored with DataCite already
+    # unless we want to refresh the metadata
+    doi = OtherDoi.where(doi: doi_id).first
+    return nil if doi.present? && options[:refresh].blank?
+
+    # otherwise store DOI metadata with DataCite
+    # check DOI registration agency as Crossref also indexes DOIs from other RAs
+    prefix = doi_id.split("/", 2).first
+    ra = cached_get_doi_ra(prefix).downcase
+    return nil if ra.blank? || ra == "datacite"
+
+    meta = Bolognese::Metadata.new(input: id, from: "crossref")
+    
+    # if DOi isn't registered yet
+    if meta.state == "not_found"
+      Rails.logger.error "[Error saving #{ra} DOI #{doi_id}]: DOI not found"
+      return nil
+    end
+
+    params = {
+      "doi" => meta.doi,
+      "url" => meta.url,
+      "xml" => meta.datacite_xml,
+      "minted" => meta.date_registered,
+      "schema_version" => meta.schema_version || LAST_SCHEMA_VERSION,
+      "client_id" => 0,
+      "source" => "levriero",
+      "agency" => ra,
+      "event" => "publish" }
+    
+    attrs = %w(creators contributors titles publisher publication_year types descriptions container sizes formats version_info language dates identifiers related_identifiers funding_references geo_locations rights_list subjects content_url).each do |a|
+      params[a] = meta.send(a.to_s)
+    end
+
+    # if we refresh the metadata
+    if doi.present?
+      doi.assign_attributes(params.except("doi", "client_id"))
+    else
+      doi = OtherDoi.new(params)
+    end
+
+    if doi.save
+      Rails.logger.info "Record for #{ra} DOI #{doi.doi}" + (options[:refresh] ? " updated." : " created.")
+    else
+      Rails.logger.error "[Error saving #{ra} DOI #{doi.doi}]: " + doi.errors.messages.inspect
+    end
+
+    doi
+  rescue ActiveRecord::RecordNotUnique => e
+    # handle race condition, no need to do anything else
+    Rails.logger.warn e.message
+  end
+
   def to_param  # overridden, use uuid instead of id
     uuid
+  end
+
+  # import DOIs unless they are from DataCite or are a Crossref Funder ID
+  def dois_to_import
+    [doi_from_url(subj_id), doi_from_url(obj_id)].compact.reduce([]) do |sum, d|
+      prefix = d.split("/", 2).first
+      
+      # ignore Crossref Funder ID
+      next sum if prefix == "10.13039"
+
+      # ignore DataCite DOIs
+      ra = cached_get_doi_ra(prefix).downcase
+      next sum if ra.blank? || ra == "datacite"
+      
+      sum.push d
+      sum
+    end
   end
 
   def send_callback
@@ -696,7 +770,7 @@ class Event < ActiveRecord::Base
   def citation_year
     "" unless (INCLUDED_RELATION_TYPES + RELATIONS_RELATION_TYPES).include?(relation_type_id)
     subj_publication = subj["datePublished"] || subj["date_published"] || (date_published(subj_id) || year_month)
-    obj_publication =  obj["datePublished"]  || obj["date_published"]  || (date_published(obj_id) || year_month)
+    obj_publication =  obj["datePublished"] || obj["date_published"] || (date_published(obj_id) || year_month)
     [subj_publication[0..3].to_i, obj_publication[0..3].to_i].max
   end
 
@@ -707,6 +781,8 @@ class Event < ActiveRecord::Base
   end
 
   def set_source_and_target_doi
+    return nil unless subj_id && obj_id
+    
     case relation_type_id
     when *ACTIVE_RELATION_TYPES
       self.source_doi = uppercase_doi_from_url(subj_id)

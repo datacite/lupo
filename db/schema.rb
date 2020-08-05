@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_13_163242) do
+ActiveRecord::Schema.define(version: 2020_07_18_191826) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -111,7 +111,7 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "provider_prefix_id"
-    t.string "uid"
+    t.string "uid", null: false
     t.index ["client_id", "prefix_id"], name: "index_client_prefixes_on_client_id_and_prefix_id", unique: true
     t.index ["client_id"], name: "FK13A1B3BA47B5F5FF"
     t.index ["prefix_id"], name: "FK13A1B3BAAF86A1C7"
@@ -202,7 +202,8 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
     t.json "content_url"
     t.binary "xml", limit: 16777215
     t.json "landing_page"
-    t.string "agency", limit: 191, default: "DataCite"
+    t.string "agency", limit: 16, default: "datacite"
+    t.string "type", limit: 16, default: "DataciteDoi", null: false
     t.index ["aasm_state"], name: "index_dataset_on_aasm_state"
     t.index ["created", "indexed", "updated"], name: "index_dataset_on_created_indexed_updated"
     t.index ["datacentre"], name: "FK5605B47847B5F5FF"
@@ -211,6 +212,7 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
     t.index ["last_landing_page_status"], name: "index_dataset_on_last_landing_page_status"
     t.index ["schema_version"], name: "index_dataset_on_schema_version"
     t.index ["source"], name: "index_dataset_source"
+    t.index ["type"], name: "index_dataset_on_type"
     t.index ["url"], name: "index_dataset_on_url", length: 100
   end
 
@@ -243,33 +245,6 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
     t.index ["source_id", "created_at"], name: "index_events_on_source_id_created_at"
     t.index ["subj_id", "obj_id", "source_id", "relation_type_id"], name: "index_events_on_multiple_columns", unique: true, length: { subj_id: 191, obj_id: 191 }
     t.index ["target_doi", "target_relation_type_id"], name: "index_events_on_target_doi", length: { target_doi: 100 }
-    t.index ["updated_at"], name: "index_events_on_updated_at"
-    t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
-  end
-
-  create_table "lhmn_events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin", force: :cascade do |t|
-    t.text "uuid", null: false
-    t.text "subj_id", null: false
-    t.text "obj_id"
-    t.string "source_id", limit: 191
-    t.string "aasm_state"
-    t.string "state_event"
-    t.text "callback"
-    t.text "error_messages"
-    t.text "source_token"
-    t.datetime "created_at", precision: 3, null: false
-    t.datetime "updated_at", precision: 3, null: false
-    t.datetime "indexed_at", default: "1970-01-01 00:00:00", null: false
-    t.datetime "occurred_at"
-    t.string "message_action", limit: 191, default: "create", null: false
-    t.string "relation_type_id", limit: 191
-    t.text "subj", limit: 16777215
-    t.text "obj", limit: 16777215
-    t.integer "total", default: 1
-    t.string "license", limit: 191
-    t.index ["created_at", "indexed_at", "updated_at"], name: "index_events_on_created_indexed_updated"
-    t.index ["source_id", "created_at"], name: "index_events_on_source_id_created_at"
-    t.index ["subj_id", "obj_id", "source_id", "relation_type_id"], name: "index_events_on_multiple_columns", unique: true, length: { subj_id: 191, obj_id: 191 }
     t.index ["updated_at"], name: "index_events_on_updated_at"
     t.index ["uuid"], name: "index_events_on_uuid", unique: true, length: 36
   end
@@ -311,7 +286,7 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "uuid"
-    t.string "uid"
+    t.string "uid", null: false
     t.index ["prefix_id"], name: "FKE7FBD674AF86A1C7"
     t.index ["provider_id", "prefix_id"], name: "index_provider_prefixes_on_provider_id_and_prefix_id", unique: true
     t.index ["provider_id"], name: "FKE7FBD67446EBD781"
@@ -321,7 +296,6 @@ ActiveRecord::Schema.define(version: 2020_03_13_163242) do
   add_foreign_key "client_prefixes", "datacentre", column: "client_id", name: "FK13A1B3BA47B5F5FF"
   add_foreign_key "client_prefixes", "prefixes", name: "FK13A1B3BAAF86A1C7"
   add_foreign_key "datacentre", "allocator", column: "allocator", name: "FK6695D60546EBD781"
-  add_foreign_key "dataset", "datacentre", column: "datacentre", name: "FK5605B47847B5F5FF"
   add_foreign_key "media", "dataset", column: "dataset", name: "FK62F6FE44D3D6B1B"
   add_foreign_key "metadata", "dataset", column: "dataset", name: "FKE52D7B2F4D3D6B1B"
   add_foreign_key "provider_prefixes", "allocator", column: "provider_id", name: "FKE7FBD67446EBD781"
