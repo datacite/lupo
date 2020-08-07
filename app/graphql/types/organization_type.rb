@@ -7,6 +7,7 @@ class OrganizationType < BaseObject
 
   field :identifiers, [IdentifierType], null: true, description: "The identifier(s) for the organization."
   field :url, [Url], null: true, hash_key: "links", description: "URL of the organization."
+  field :wikipedia_url, Url, null: true, hash_key: "wikipedia_url", description: "Wikipedia URL of the organization."
   field :types, [String], null: true, description: "The type of organization."
   field :address, AddressType, null: true, description: "Physical address of the organization."
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
@@ -103,10 +104,10 @@ class OrganizationType < BaseObject
   end
 
   def identifiers
-    Array.wrap(object.fund_ref).map { |o| { "identifierType" => "fundRef", "identifier" => o } } + 
+    Array.wrap(object.fundref).map { |o| { "identifierType" => "fundref", "identifier" => o } } + 
     Array.wrap(object.wikidata).map { |o| { "identifierType" => "wikidata", "identifier" => o } } + 
     Array.wrap(object.grid).map { |o| { "identifierType" => "grid", "identifier" => o } } + 
-    Array.wrap(object.wikipedia_url).map { |o| { "identifierType" => "wikipedia", "identifier" => o } }
+    Array.wrap(object.isni).map { |o| { "identifierType" => "isni", "identifier" => o } } 
   end
 
   def address

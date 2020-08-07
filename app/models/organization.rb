@@ -78,7 +78,7 @@ class Organization
       wikipedia_url: message["wikipedia_url"],
       country: country,
       isni: message.dig("external_ids", "ISNI", "all"),
-      fund_ref: message.dig("external_ids", "FundRef", "all"),
+      fundref: message.dig("external_ids", "FundRef", "all"),
       wikidata: message.dig("external_ids", "Wikidata", "all"),
       grid: message.dig("external_ids", "GRID", "all") })
   end

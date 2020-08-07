@@ -147,6 +147,8 @@ describe OrganizationType do
               country
             }
             alternateName
+            url
+            wikipediaUrl
             identifiers {
               identifier
               identifierType
@@ -177,13 +179,16 @@ describe OrganizationType do
       expect(response.dig("data", "organizations", "countries").first).to eq("count"=>1771, "id" => "us", "title"=>"United States of America")
       expect(response.dig("data", "organizations", "nodes").length).to eq(20)
       organization = response.dig("data", "organizations", "nodes", 0)
+      puts organization.fetch("identifiers")
       expect(organization.fetch("id")).to eq("https://ror.org/013meh722")
       expect(organization.fetch("name")).to eq("University of Cambridge")
       expect(organization.fetch("types")).to eq(["Education"])
       expect(organization.fetch("address")).to eq("country"=>"United Kingdom")
       expect(organization.fetch("alternateName")).to eq(["Cambridge University"])
+      expect(organization.fetch("url")).to eq(["http://www.cam.ac.uk/"])
+      expect(organization.fetch("wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(organization.fetch("identifiers").length).to eq(38)
-      expect(organization.fetch("identifiers").last).to eq("identifier"=>"http://en.wikipedia.org/wiki/University_of_Cambridge", "identifierType"=>"wikipedia")
+      expect(organization.fetch("identifiers").last).to eq("identifier"=>"0000000121885934", "identifierType"=>"isni")
 
       expect(organization.dig("works", "totalCount")).to eq(1)
       expect(organization.dig("works", "published")).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
