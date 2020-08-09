@@ -40,10 +40,18 @@ class Organization
       parse_message(id: message["id"], message: message)
     end
 
+    countries = (Array.wrap(response.body.dig("data", "meta", "countries"))).map do |hsh|
+      country = ISO3166::Country[hsh["id"]]
+
+      { "id" => hsh["id"],
+        "title" => country.present? ? country.name : hsh["id"],
+        "count" => hsh["count"] }
+    end
+
     meta = { 
       "total" => response.body.dig("data", "number_of_results"),
       "types" => response.body.dig("data", "meta", "types"),
-      "countries" => response.body.dig("data", "meta", "countries"),
+      "countries" => countries,
     }.compact
 
     errors = response.body.fetch("errors", nil)
@@ -78,7 +86,7 @@ class Organization
       wikipedia_url: message["wikipedia_url"],
       country: country,
       isni: message.dig("external_ids", "ISNI", "all"),
-      fundref: message.dig("external_ids", "FundRef", "all"),
+      fund_ref: message.dig("external_ids", "FundRef", "all"),
       wikidata: message.dig("external_ids", "Wikidata", "all"),
       grid: message.dig("external_ids", "GRID", "all") })
   end

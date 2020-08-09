@@ -179,7 +179,7 @@ describe OrganizationType do
       expect(response.dig("data", "organizations", "countries").first).to eq("count"=>1771, "id" => "us", "title"=>"United States of America")
       expect(response.dig("data", "organizations", "nodes").length).to eq(20)
       organization = response.dig("data", "organizations", "nodes", 0)
-      puts organization.fetch("identifiers")
+
       expect(organization.fetch("id")).to eq("https://ror.org/013meh722")
       expect(organization.fetch("name")).to eq("University of Cambridge")
       expect(organization.fetch("types")).to eq(["Education"])
@@ -187,7 +187,7 @@ describe OrganizationType do
       expect(organization.fetch("alternateName")).to eq(["Cambridge University"])
       expect(organization.fetch("url")).to eq(["http://www.cam.ac.uk/"])
       expect(organization.fetch("wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
-      expect(organization.fetch("identifiers").length).to eq(38)
+      expect(organization.fetch("identifiers").length).to eq(6)
       expect(organization.fetch("identifiers").last).to eq("identifier"=>"0000000121885934", "identifierType"=>"isni")
 
       expect(organization.dig("works", "totalCount")).to eq(1)
@@ -249,7 +249,7 @@ describe OrganizationType do
       expect(response.dig("data", "organizations", "types").length).to eq(1)
       expect(response.dig("data", "organizations", "types").first).to eq("count"=>182, "id"=>"government", "title"=>"Government")
       expect(response.dig("data", "organizations", "countries").length).to eq(1)
-      expect(response.dig("data", "organizations", "countries").first).to eq("count"=>182, "id"=>"de", "title"=>"Federal Republic of Germany")
+      expect(response.dig("data", "organizations", "countries").first).to eq("count"=>182, "id"=>"de", "title"=>"Germany")
       expect(response.dig("data", "organizations", "nodes").length).to eq(20)
       organization = response.dig("data", "organizations", "nodes", 0)
       expect(organization.fetch("id")).to eq("https://ror.org/04bqwzd17")
