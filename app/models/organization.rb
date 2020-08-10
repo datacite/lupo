@@ -40,10 +40,18 @@ class Organization
       parse_message(id: message["id"], message: message)
     end
 
+    countries = (Array.wrap(response.body.dig("data", "meta", "countries"))).map do |hsh|
+      country = ISO3166::Country[hsh["id"]]
+
+      { "id" => hsh["id"],
+        "title" => country.present? ? country.name : hsh["id"],
+        "count" => hsh["count"] }
+    end
+
     meta = { 
       "total" => response.body.dig("data", "number_of_results"),
       "types" => response.body.dig("data", "meta", "types"),
-      "countries" => response.body.dig("data", "meta", "countries"),
+      "countries" => countries,
     }.compact
 
     errors = response.body.fetch("errors", nil)
