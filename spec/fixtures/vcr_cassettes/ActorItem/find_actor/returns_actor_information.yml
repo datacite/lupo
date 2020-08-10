@@ -23,7 +23,7 @@ http_interactions:
       Connection:
       - keep-alive
       Date:
-      - Fri, 31 Jul 2020 06:37:16 GMT
+      - Sun, 09 Aug 2020 16:56:08 GMT
       Status:
       - 200 OK
       X-Frame-Options:
@@ -39,18 +39,18 @@ http_interactions:
       X-Cache:
       - Hit from cloudfront
       Via:
-      - 1.1 d47fba004c254adb4e354d0cef499808.cloudfront.net (CloudFront)
+      - 1.1 cfe78f21e6a560afb18f3b92eb4e9605.cloudfront.net (CloudFront)
       X-Amz-Cf-Pop:
       - DUS51-C1
       X-Amz-Cf-Id:
-      - _VF0_93UCzOfgqGbrvJD_7s9UTMaqSxQWC_tZgPjjxev-T-HeojKRw==
+      - ycpHdb7-Ul-AMKOUF-AN5GT_0EXstxxyPEzSI6r21R5iivq5jGiVeA==
       Age:
-      - '167'
+      - '85852'
     body:
       encoding: ASCII-8BIT
       string: '{"id":"https://ror.org/013meh722","name":"University of Cambridge","types":["Education"],"links":["http://www.cam.ac.uk/"],"aliases":["Cambridge
         University"],"acronyms":[],"status":"active","wikipedia_url":"http://en.wikipedia.org/wiki/University_of_Cambridge","labels":[{"label":"Prifysgol
         Caergrawnt","iso639":"cy"}],"country":{"country_name":"United Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000000121885934"]},"FundRef":{"preferred":"501100000735","all":["501100000735","501100007552","501100008420","100010441","501100000580","501100000585","501100000587","501100000602","501100000603","501100000705","501100000710","501100003987","501100004537","501100005796","501100006299","501100004222","501100004495","501100005962","501100006646","501100000727","501100000590","501100000742","501100001625","501100000591","501100000609","501100000621","501100000622","501100000644","501100000648","501100000653","501100000663","501100005705"]},"HESA":{"preferred":null,"all":["0114"]},"UCAS":{"preferred":null,"all":["C0121"]},"UKPRN":{"preferred":null,"all":["10007788"]},"OrgRef":{"preferred":"25978572","all":["25978572","26015915","498120","31803","75963","23747745","31805","457564","157283","7317906","151267","480151","212179","498109","201369","239420","48671","1167853","73199","327748","180326","2793352"]},"Wikidata":{"preferred":"Q35794","all":["Q35794","Q10899168","Q24679079","Q181892"]},"GRID":{"preferred":"grid.5335.0","all":"grid.5335.0"}}}'
     http_version: null
-  recorded_at: Fri, 31 Jul 2020 06:40:03 GMT
+  recorded_at: Mon, 10 Aug 2020 16:47:00 GMT
 recorded_with: VCR 5.1.0

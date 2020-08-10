@@ -10,6 +10,10 @@ describe PersonType do
     it { is_expected.to have_field(:givenName).of_type("String") }
     it { is_expected.to have_field(:familyName).of_type("String") }
     it { is_expected.to have_field(:alternateName).of_type("[String!]") }
+    it { is_expected.to have_field(:description).of_type("String") }
+    it { is_expected.to have_field(:links).of_type("[Link!]") }
+    it { is_expected.to have_field(:identifiers).of_type("[Identifier!]") }
+    it { is_expected.to have_field(:country).of_type("Country") }
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
     it { is_expected.to have_field(:downloadCount).of_type("Int") }
@@ -50,7 +54,17 @@ describe PersonType do
           givenName
           familyName
           alternateName
-          affiliation {
+          description
+          links {
+            name
+            url
+          }
+          identifiers {
+            identifier
+            identifierType
+          }
+          country {
+            id
             name
           }
           citationCount
@@ -87,8 +101,11 @@ describe PersonType do
       expect(response.dig("data", "person", "name")).to eq("K. J. Garza")
       expect(response.dig("data", "person", "givenName")).to eq("Kristian")
       expect(response.dig("data", "person", "familyName")).to eq("Garza")
-      expect(response.dig("data", "person", "alternateName")).to eq([])
-      expect(response.dig("data", "person", "affiliation")).to eq([])
+      expect(response.dig("data", "person", "alternateName")).to eq(["Kristian Javier Garza Gutierrez"])
+      expect(response.dig("data", "person", "description")).to be_nil
+      expect(response.dig("data", "person", "links")).to eq([{"name"=>"Mendeley profile", "url"=>"https://www.mendeley.com/profiles/kristian-g/"}])
+      expect(response.dig("data", "person", "identifiers")).to eq([{"identifier"=>"kjgarza", "identifierType"=>"GitHub"}])
+      expect(response.dig("data", "person", "country")).to eq("id"=>"DE", "name"=>"Germany")
       expect(response.dig("data", "person", "citationCount")).to eq(0)
       expect(response.dig("data", "person", "works", "totalCount")).to eq(1)
       expect(response.dig("data", "person", "works", "published")).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
@@ -116,9 +133,6 @@ describe PersonType do
             givenName
             familyName
             alternateName
-            affiliation {
-              name
-            }
             works {
               totalCount
               published {
@@ -146,7 +160,6 @@ describe PersonType do
       expect(person.fetch("givenName")).to eq("Nelida")
       expect(person.fetch("familyName")).to eq("Villasenor")
       expect(person.fetch("alternateName")).to eq(["Nélida R. Villaseñor"])
-      expect(person.fetch("affiliation")).to eq([{"name"=>"Australian National University"}, {"name"=>"Universidad de Chile"}])
     end
   end
 end

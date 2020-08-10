@@ -8,15 +8,34 @@ class Person
 
     url = "https://pub.orcid.org/v3.0/#{orcid}/person"
     response = Maremma.get(url, accept: "json")
-    return {} if response.status != 200 #|| response.body.dig("data", "orcid-identifier", "path") != orcid
+    return {} if response.status != 200
     
     message = response.body.dig("data")
+
+    other_name = Array.wrap(message.dig("other-names", "other-name")).map do |n|
+      n["content"]
+    end
+
+    researcher_urls = Array.wrap(message.dig("researcher-urls", "researcher-url")).map do |r|
+      { "name" => r["url-name"],
+        "url"  => r.dig("url", "value") }
+    end
+
+    identifiers = Array.wrap(message.dig("external-identifiers", "external-identifier")).map do |i|
+      { "identifierType" => i["external-id-type"],
+        "identifier"  => i["external-id-value"] }
+    end
+
     message = {
       "orcid-id" => message.dig("name", "path"),
+      "credit-name" => message.dig("name", "credit-name", "value"),
       "given-names" => message.dig("name", "given-names", "value"),
       "family-names" => message.dig("name", "family-name", "value"),
-      "other-name" => message.dig("name", "other-names", "other-name"),
-      "credit-name" => message.dig("name", "credit-name", "value"),
+      "other-name" => other_name,
+      "description" => message.dig("biography", "content"),
+      "researcher-urls" => researcher_urls,
+      "identifiers" => identifiers,
+      "country-code" => message.dig("addresses", "address", 0, "country", "value"),
     }
     
     data = [parse_message(message: message)]
@@ -55,9 +74,14 @@ class Person
 
   def self.parse_message(message: nil)
     orcid = message.fetch("orcid-id", nil)
+
     given_name = message.fetch("given-names", nil)
     family_name = message.fetch("family-names", nil)
     alternate_name = Array.wrap(message.fetch("other-name", nil))
+    description = message.fetch("description", nil)
+    links = message.fetch("researcher-urls", [])
+    identifiers = message.fetch("identifiers", [])
+
     if message.fetch("credit-name", nil).present?
       name = message.fetch("credit-name")
     elsif given_name.present? || family_name.present?
@@ -65,17 +89,27 @@ class Person
     else
       name = orcid
     end
-    # TODO affiliation for find_by_id
-    affiliation = Array.wrap(message.fetch("institution-name", nil)).map { |a| { name: a } }.compact
 
+    if message.fetch("country-code", nil).present?
+      c = ISO3166::Country[message.fetch("country-code")]
+      country = {
+        id: message.fetch("country-code"),
+        name: c.present? ? c.name : message.fetch("country-code") }
+    else
+      country = nil
+    end
+    
     Hashie::Mash.new({
       id: orcid_as_url(orcid),
       type: "Person",
       orcid: orcid,
+      name: name,
       given_name: given_name,
       family_name: family_name,
       alternate_name: alternate_name,
-      name: name,
-      affiliation: affiliation }.compact)
+      description: description,
+      links: links,
+      identifiers: identifiers,
+      country: country }.compact)
   end
 end

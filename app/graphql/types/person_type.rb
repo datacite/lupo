@@ -5,9 +5,12 @@ class PersonType < BaseObject
 
   description "A person."
 
-  field :given_name, String, null: true, description: "Given name. In the U.S., the first name of a Person."
-  field :family_name, String, null: true, description: "Family name. In the U.S., the last name of an Person."
-  field :affiliation, [AffiliationType], null: true, description: "Affiliations(s) of the person."
+  field :given_name, String, null: true, description: "Given name. In the U.S., the first name of a person."
+  field :family_name, String, null: true, description: "Family name. In the U.S., the last name of an person."
+  field :description, String, null: true, description: "Biography of a Person."
+  field :links, [LinkType], null: true, description: "The links to other relevant web pages about the person."
+  field :identifiers, [IdentifierType], null: true, description: "The identifier(s) for the person."
+  field :country, CountryType, null: true, description: "Country where the person is located."
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."
