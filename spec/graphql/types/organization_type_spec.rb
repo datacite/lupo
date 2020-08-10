@@ -17,85 +17,90 @@ describe OrganizationType do
     it { is_expected.to have_field(:works).of_type("WorkConnectionWithTotal") }
   end
 
-  # describe "find organization", elasticsearch: true, vcr: true do
-  #   let(:client) { create(:client) }
-  #   let!(:doi) { create(:doi, client: client, aasm_state: "findable", creators:
-  #     [{
-  #       "familyName" => "Garza",
-  #       "givenName" => "Kristian",
-  #       "name" => "Garza, Kristian",
-  #       "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
-  #       "nameType" => "Personal",
-  #       "affiliation": [
-  #         {
-  #           "name": "University of Cambridge",
-  #           "affiliationIdentifier": "https://ror.org/013meh722",
-  #           "affiliationIdentifierScheme": "ROR"
-  #         },
-  #       ]
-  #     }])
-  #   }
-  #   let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
-  #   let(:source_doi2) { create(:doi, client: client, aasm_state: "findable") }
-  #   let!(:citation_event) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi.doi}", relation_type_id: "is-referenced-by", occurred_at: "2015-06-13T16:14:19Z") }
-  #   let!(:citation_event2) { create(:event_for_datacite_crossref, subj_id: "https://doi.org/#{doi.doi}", obj_id: "https://doi.org/#{source_doi2.doi}", relation_type_id: "is-referenced-by", occurred_at: "2016-06-13T16:14:19Z") }
+  describe "find organization", elasticsearch: true, vcr: true do
+    let!(:doi) { create(:doi, aasm_state: "findable", creators:
+      [{
+        "familyName" => "Garza",
+        "givenName" => "Kristian",
+        "name" => "Garza, Kristian",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameType" => "Personal",
+        "affiliation": [
+          {
+            "name": "University of Cambridge",
+            "affiliationIdentifier": "https://ror.org/013meh722",
+            "affiliationIdentifierScheme": "ROR"
+          },
+        ]
+      }])
+    }
+    let!(:funder_doi) { create(:doi, aasm_state: "findable", funding_references:
+      [{
+        "funderIdentifier" => "https://doi.org/10.13039/501100000735",
+        "funderIdentifierType" => "Crossref Funder ID",
+        "funderName" => "University of Cambridge"
+      }])
+    }
 
-  #   before do
-  #     Client.import
-  #     Event.import
-  #     Doi.import
-  #     sleep 2
-  #   end
+    before do
+      Doi.import
+      sleep 2
+    end
 
-  #   let(:query) do
-  #     %(query {
-  #       organization(id: "https://ror.org/013meh722") {
-  #         id
-  #         name
-  #         alternateName
-  #         citationCount
-  #         viewCount
-  #         downloadCount
-  #         works {
-  #           totalCount
-  #           published {
-  #             id
-  #             title
-  #             count
-  #           }
-  #           resourceTypes {
-  #             title
-  #             count
-  #           }
-  #           nodes {
-  #             id
-  #             titles {
-  #               title
-  #             }
-  #             citationCount
-  #           }
-  #         }
-  #       }
-  #     })
-  #   end
+    let(:query) do
+      %(query {
+        organization(id: "https://ror.org/013meh722") {
+          id
+          name
+          alternateName
+          identifiers {
+            identifier
+            identifierType
+          }
+          citationCount
+          viewCount
+          downloadCount
+          works {
+            totalCount
+            published {
+              id
+              title
+              count
+            }
+            resourceTypes {
+              title
+              count
+            }
+            nodes {
+              id
+              titles {
+                title
+              }
+            }
+          }
+        }
+      })
+    end
 
-  #   it "returns organization information" do
-  #     response = LupoSchema.execute(query).as_json
+    it "returns organization information" do
+      response = LupoSchema.execute(query).as_json
 
-  #     expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
-  #     expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
-  #     expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
-  #     expect(response.dig("data", "organization", "citationCount")).to eq(0)
-  #     expect(response.dig("data", "organization", "works", "totalCount")).to eq(1)
-  #     expect(response.dig("data", "organization", "works", "published")).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
-  #     expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{"count"=>1, "title"=>"Dataset"}])
-  #     expect(response.dig("data", "organization", "works", "nodes").length).to eq(1)
+      expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
+      expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
+      expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
+      expect(response.dig("data", "organization", "citationCount")).to eq(0)
+      expect(response.dig("data", "organization", "identifiers").count).to eq(38)
+      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
 
-  #     work = response.dig("data", "organization", "works", "nodes", 0)
-  #     expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
-  #     expect(work.dig("citationCount")).to eq(2)
-  #   end
-  # end
+      expect(response.dig("data", "organization", "works", "totalCount")).to eq(2)
+      expect(response.dig("data", "organization", "works", "published")).to eq([{"count"=>2, "id"=>"2011", "title"=>"2011"}])
+      expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{"count"=>2, "title"=>"Dataset"}])
+      expect(response.dig("data", "organization", "works", "nodes").length).to eq(2)
+
+      work = response.dig("data", "organization", "works", "nodes", 0)
+      expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
+    end
+  end
 
   describe "query organizations", elasticsearch: true, vcr: true do
     let!(:dois) { create_list(:doi, 3) }
@@ -187,7 +192,8 @@ describe OrganizationType do
       expect(organization.fetch("alternateName")).to eq(["Cambridge University"])
       expect(organization.fetch("url")).to eq(["http://www.cam.ac.uk/"])
       expect(organization.fetch("wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
-      expect(organization.fetch("identifiers").length).to eq(6)
+
+      expect(organization.fetch("identifiers").length).to eq(38)
       expect(organization.fetch("identifiers").last).to eq("identifier"=>"0000000121885934", "identifierType"=>"isni")
 
       expect(organization.dig("works", "totalCount")).to eq(1)

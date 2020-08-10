@@ -195,6 +195,14 @@ describe DataciteDoisController, type: :request do
       expect(json.dig('data', 0, 'attributes', 'fundingReferences')).to eq([{"funderIdentifier"=>"https://doi.org/10.13039/501100009053", "funderIdentifierType"=>"Crossref Funder ID", "funderName"=>"The Wellcome Trust DBT India Alliance"}])
     end
 
+    it 'returns dois with multiple crossref funder id', vcr: true do
+      get "/dois?funder-id=10.13039/501100009053,10.13039/501100000735", nil, headers
+
+      expect(last_response.status).to eq(200)
+      expect(json.dig('meta', 'total')).to eq(1)
+      expect(json.dig('data', 0, 'attributes', 'fundingReferences')).to eq([{"funderIdentifier"=>"https://doi.org/10.13039/501100009053", "funderIdentifierType"=>"Crossref Funder ID", "funderName"=>"The Wellcome Trust DBT India Alliance"}])
+    end
+
     it 'returns dois with crossref funder id as url', vcr: true do
       get "/dois?funder-id=https://doi.org/10.13039/501100009053", nil, headers
 

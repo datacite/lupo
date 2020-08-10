@@ -801,6 +801,8 @@ class Doi < ActiveRecord::Base
 
     must_not = []
     filter = []
+    should = []
+    minimum_should_match = 0
 
     filter << { terms: { doi: options[:ids].map(&:upcase) }} if options[:ids].present?
     filter << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
@@ -844,8 +846,6 @@ class Doi < ActiveRecord::Base
     filter << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
     filter << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
     filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
-    filter << { term: { "affiliation_id" => ror_from_url(options[:affiliation_id]) }} if options[:affiliation_id].present?
-    filter << { term: { "funding_references.funderIdentifier" => "https://doi.org/#{doi_from_url(options[:funder_id])}" }} if options[:funder_id].present?
     filter << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" }} if options[:has_person].present?
     filter << { term: { "creators.affiliation.affiliationIdentifierScheme" => "ROR" }} if options[:has_organization].present?
     filter << { term: { "funding_references.funderIdentifierType" => "Crossref Funder ID" }} if options[:has_funder].present?
@@ -854,6 +854,17 @@ class Doi < ActiveRecord::Base
     filter << { term: { "client.re3data_id" => doi_from_url(options[:re3data_id]) }} if options[:re3data_id].present?
     filter << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
     filter << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
+
+    # match either ROR ID or Crossref Funder ID if either affiliation_id or funder_id 
+    # is a query parameter
+    if options[:affiliation_id].present?
+      should << { term: { "affiliation_id" => ror_from_url(options[:affiliation_id]) }}
+      minimum_should_match = 1
+    end
+    if options[:funder_id].present?
+      should << { terms: { "funding_references.funderIdentifier" => options[:funder_id].split(",").map { |f| "https://doi.org/#{doi_from_url(f)}" } } }
+      minimum_should_match = 1
+    end
 
     # ES query can be optionally defined in different ways
     # So here we build it differently based upon options
@@ -864,7 +875,9 @@ class Doi < ActiveRecord::Base
     bool_query = {
       must: must,
       must_not: must_not,
-      filter: filter
+      filter: filter,
+      should: should,
+      minimum_should_match: minimum_should_match,
     }
 
     # Function score is used to provide varying score to return different values

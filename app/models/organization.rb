@@ -73,6 +73,16 @@ class Organization
         code: code,
         name: label["label"] }.compact
     end
+
+    # remove whitespace from isni identifier
+    isni = Array.wrap(message.dig("external_ids", "ISNI", "all")).map do |i|
+      i.gsub(/ /, "")
+    end
+
+    # add DOI prefix to Crossref Funder ID
+    fundref = Array.wrap(message.dig("external_ids", "FundRef", "all")).map do |f|
+      "10.13039/#{f}"
+    end
     
     Hashie::Mash.new({
       id: id,
@@ -85,8 +95,8 @@ class Organization
       links: message["links"],
       wikipedia_url: message["wikipedia_url"],
       country: country,
-      isni: message.dig("external_ids", "ISNI", "all"),
-      fund_ref: message.dig("external_ids", "FundRef", "all"),
+      isni: isni,
+      fundref: fundref,
       wikidata: message.dig("external_ids", "Wikidata", "all"),
       grid: message.dig("external_ids", "GRID", "all") })
   end

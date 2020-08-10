@@ -2,6 +2,54 @@
 http_interactions:
 - request:
     method: get
+    uri: https://doi.org/ra/10.14454
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Date:
+      - Sun, 09 Aug 2020 17:15:13 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - __cfduid=d627b6879928c8421d1f751c08f6936cb1596993313; expires=Tue, 08-Sep-20
+        17:15:13 GMT; path=/; domain=.doi.org; HttpOnly; SameSite=Lax; Secure
+      Cf-Cache-Status:
+      - DYNAMIC
+      Cf-Request-Id:
+      - 0475d1323500000601d03c8200000001
+      Expect-Ct:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 5c031e3058570601-FRA
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        [
+          {
+            "DOI": "10.14454",
+            "RA": "DataCite"
+          }
+        ]
+    http_version: null
+  recorded_at: Sun, 09 Aug 2020 17:15:13 GMT
+- request:
+    method: get
     uri: https://api.crossref.org/funders/10.13039/501100009053
     body:
       encoding: US-ASCII
@@ -29,7 +77,7 @@ http_interactions:
       Server:
       - http-kit
       Date:
-      - Wed, 05 Aug 2020 06:38:39 GMT
+      - Sun, 09 Aug 2020 17:15:24 GMT
       X-Rate-Limit-Limit:
       - '50'
       X-Rate-Limit-Interval:
@@ -39,10 +87,10 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"status":"ok","message-type":"funder","message-version":"1.0.0","message":{"hierarchy-names":{"501100009053":"The
-        Wellcome Trust DBT India Alliance"},"replaced-by":[],"work-count":453,"name":"The
-        Wellcome Trust DBT India Alliance","descendants":[],"descendant-work-count":453,"id":"501100009053","tokens":["the","wellcome","trust","dbt","india","alliance","india","alliance","wtdbt","india","alliance","wellcome","trust\/dbt","india","alliance","wellcome","trust","dbt","india","alliance"],"replaces":[],"uri":"http:\/\/dx.doi.org\/10.13039\/501100009053","hierarchy":{"501100009053":{}},"alt-names":["India
+        Wellcome Trust DBT India Alliance"},"replaced-by":[],"work-count":455,"name":"The
+        Wellcome Trust DBT India Alliance","descendants":[],"descendant-work-count":455,"id":"501100009053","tokens":["the","wellcome","trust","dbt","india","alliance","india","alliance","wtdbt","india","alliance","wellcome","trust\/dbt","india","alliance","wellcome","trust","dbt","india","alliance"],"replaces":[],"uri":"http:\/\/dx.doi.org\/10.13039\/501100009053","hierarchy":{"501100009053":{}},"alt-names":["India
         Alliance","WTDBT India Alliance","Wellcome Trust\/DBT India Alliance","Wellcome
         Trust DBt India Alliance"],"location":"India"}}'
     http_version: null
-  recorded_at: Wed, 05 Aug 2020 06:38:39 GMT
+  recorded_at: Sun, 09 Aug 2020 17:15:24 GMT
 recorded_with: VCR 5.1.0
