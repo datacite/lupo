@@ -5,4 +5,5 @@ class IdentifierType < BaseObject
 
   field :identifier_type, String, null: false, hash_key: "identifierType", description: "The type of identifier."
   field :identifier, String, null: false, description: "The value of the identifier."
+  field :identifier_url, String, null: true, hash_key: "identifierUrl", description: "The url of the identifier."
 end

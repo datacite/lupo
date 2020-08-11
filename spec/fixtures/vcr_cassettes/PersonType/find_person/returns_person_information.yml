@@ -23,7 +23,7 @@ http_interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Mon, 10 Aug 2020 16:04:16 GMT
+      - Tue, 11 Aug 2020 14:32:21 GMT
       Expires:
       - '0'
       Pragma:
@@ -37,7 +37,7 @@ http_interactions:
       Connection:
       - keep-alive
       Set-Cookie:
-      - X-Mapping-fjhppofk=EDEB8B375DA428655747278237992826; path=/
+      - X-Mapping-fjhppofk=ED381B330E0E589099E2A39D5201DC2A; path=/
       X-Frame-Options:
       - DENY
     body:
@@ -53,5 +53,5 @@ http_interactions:
         J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"email":"k.garza@manchester.ac.uk","path":null,"visibility":"public","verified":true,"primary":false,"put-code":null}],"path":"/0000-0003-3484-6875/email"},"addresses":{"last-modified-date":{"value":1516113934881},"address":[{"created-date":{"value":1516113934881},"last-modified-date":{"value":1516113934881},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-3484-6875","path":"0000-0003-3484-6875","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"K.
         J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"country":{"value":"DE"},"visibility":"public","path":"/0000-0003-3484-6875/address/874810","put-code":874810,"display-index":1}],"path":"/0000-0003-3484-6875/address"},"keywords":{"last-modified-date":null,"keyword":[],"path":"/0000-0003-3484-6875/keywords"},"external-identifiers":{"last-modified-date":{"value":1492778212570},"external-identifier":[{"created-date":{"value":1492778212567},"last-modified-date":{"value":1492778212570},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0001-8099-6984","path":"0000-0001-8099-6984","host":"orcid.org"},"source-name":{"value":"DataCite"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"external-id-type":"GitHub","external-id-value":"kjgarza","external-id-url":{"value":"https://github.com/kjgarza"},"external-id-relationship":"self","visibility":"public","path":"/0000-0003-3484-6875/external-identifiers/692978","put-code":692978,"display-index":0}],"path":"/0000-0003-3484-6875/external-identifiers"},"path":"/0000-0003-3484-6875/person"}'
     http_version: null
-  recorded_at: Mon, 10 Aug 2020 16:04:17 GMT
+  recorded_at: Tue, 11 Aug 2020 14:32:20 GMT
 recorded_with: VCR 5.1.0

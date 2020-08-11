@@ -30,7 +30,9 @@ describe Person, type: :model, vcr: true do
       expect(person.alternate_name).to eq(["Kristian Javier Garza Gutierrez"])
       expect(person.description).to be_nil
       expect(person.links).to eq([{"name"=>"Mendeley profile", "url"=>"https://www.mendeley.com/profiles/kristian-g/"}])
-      expect(person.identifiers).to eq([{"identifier"=>"kjgarza", "identifierType"=>"GitHub"}])
+      expect(person.identifiers).to eq([{"identifier"=>"kjgarza",
+        "identifierType"=>"GitHub",
+        "identifierUrl"=>"https://github.com/kjgarza"}])
       expect(person.country).to eq("id"=>"DE", "name"=>"Germany")
     end
 
@@ -48,7 +50,16 @@ describe Person, type: :model, vcr: true do
       expect(person.links).to eq([{ "name" => "My SciENCV", "url"=>"http://www.ncbi.nlm.nih.gov/myncbi/mfenner/cv/1413/" }, 
         { "name"=>"Twitter", "url"=>"http://twitter.com/mfenner" },
         { "name"=>"Blog", "url"=>"http://blog.martinfenner.org" }])
-      expect(person.identifiers).to eq([{"identifier"=>"7006600825", "identifierType"=>"Scopus Author ID"}, {"identifier"=>"000000035060549X", "identifierType"=>"ISNI"}, {"identifier"=>"mfenner", "identifierType"=>"GitHub"}])
+      expect(person.identifiers).to eq([{"identifier"=>"7006600825",
+        "identifierType"=>"Scopus Author ID",
+        "identifierUrl"=>
+        "http://www.scopus.com/inward/authorDetails.url?authorID=7006600825&partnerID=MN8TOARS"},
+       {"identifier"=>"000000035060549X",
+        "identifierType"=>"ISNI",
+        "identifierUrl"=>"http://isni.org/000000035060549X"},
+        {"identifier"=>"mfenner",
+         "identifierType"=>"GitHub",
+         "identifierUrl"=>"https://github.com/mfenner"}])
       expect(person.country).to eq("id"=>"DE", "name"=>"Germany")
     end
 

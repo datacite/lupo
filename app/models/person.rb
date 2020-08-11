@@ -23,6 +23,7 @@ class Person
 
     identifiers = Array.wrap(message.dig("external-identifiers", "external-identifier")).map do |i|
       { "identifierType" => i["external-id-type"],
+        "identifierUrl"  => i.dig("external-id-url", "value"),
         "identifier"  => i["external-id-value"] }
     end
 

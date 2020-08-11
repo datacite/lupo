@@ -3660,6 +3660,11 @@ type Identifier {
   The type of identifier.
   """
   identifierType: String!
+
+  """
+  The url of the identifier.
+  """
+  identifierUrl: String
 }
 
 type Image implements DoiItem {

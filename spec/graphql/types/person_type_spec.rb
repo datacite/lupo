@@ -62,6 +62,7 @@ describe PersonType do
           identifiers {
             identifier
             identifierType
+            identifierUrl
           }
           country {
             id
@@ -104,7 +105,7 @@ describe PersonType do
       expect(response.dig("data", "person", "alternateName")).to eq(["Kristian Javier Garza Gutierrez"])
       expect(response.dig("data", "person", "description")).to be_nil
       expect(response.dig("data", "person", "links")).to eq([{"name"=>"Mendeley profile", "url"=>"https://www.mendeley.com/profiles/kristian-g/"}])
-      expect(response.dig("data", "person", "identifiers")).to eq([{"identifier"=>"kjgarza", "identifierType"=>"GitHub"}])
+      expect(response.dig("data", "person", "identifiers")).to eq([{"identifier"=>"kjgarza", "identifierType"=>"GitHub", "identifierUrl"=>"https://github.com/kjgarza"}])
       expect(response.dig("data", "person", "country")).to eq("id"=>"DE", "name"=>"Germany")
       expect(response.dig("data", "person", "citationCount")).to eq(0)
       expect(response.dig("data", "person", "works", "totalCount")).to eq(1)
