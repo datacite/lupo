@@ -1,0 +1,69 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://pub.orcid.org/v3.0/0000-0003-1419-2405/person
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
+      Accept:
+      - application/json;charset=UTF-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.16.1
+      Cache-Control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Mon, 10 Aug 2020 09:13:09 GMT
+      Expires:
+      - '0'
+      Pragma:
+      - no-cache
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Content-Type-Options:
+      - nosniff
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - X-Mapping-fjhppofk=EDEB8B375DA428655747278237992826; path=/
+      X-Frame-Options:
+      - DENY
+    body:
+      encoding: ASCII-8BIT
+      string: '{"last-modified-date":{"value":1517873256636},"name":{"created-date":{"value":1460763664405},"last-modified-date":{"value":1460763664405},"given-names":{"value":"Martin"},"family-name":{"value":"Fenner"},"credit-name":{"value":"Martin
+        Fenner"},"source":null,"visibility":"public","path":"0000-0003-1419-2405"},"other-names":{"last-modified-date":{"value":1446760703722},"other-name":[{"created-date":{"value":1406836421699},"last-modified-date":{"value":1406836421699},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
+        Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"content":"M
+        Fenner","visibility":"public","path":"/0000-0003-1419-2405/other-names/247043","put-code":247043,"display-index":0},{"created-date":{"value":1406836421700},"last-modified-date":{"value":1406836421700},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
+        Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"content":"MH
+        Fenner","visibility":"public","path":"/0000-0003-1419-2405/other-names/247044","put-code":247044,"display-index":0},{"created-date":{"value":1438321583994},"last-modified-date":{"value":1438321583994},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
+        Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"content":"Martin
+        H. Fenner","visibility":"public","path":"/0000-0003-1419-2405/other-names/509846","put-code":509846,"display-index":0},{"created-date":{"value":1446760703722},"last-modified-date":{"value":1446760703722},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
+        Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"content":"Martin
+        Hellmut Fenner","visibility":"public","path":"/0000-0003-1419-2405/other-names/566914","put-code":566914,"display-index":0}],"path":"/0000-0003-1419-2405/other-names"},"biography":{"created-date":{"value":1460763664408},"last-modified-date":{"value":1585387891929},"content":"Martin
+        Fenner is the DataCite Technical Director and manages the technical architecture
+        for Datacite. From 2012 to 2015 he was the technical lead for the PLOS Article-Level
+        Metrics project. Martin has a medical degree from the Free University of Berlin
+        and is a Board-certified medical oncologist.","visibility":"public","path":"/0000-0003-1419-2405/biography"},"researcher-urls":{"last-modified-date":{"value":1480255200394},"researcher-url":[{"created-date":{"value":1406836421703},"last-modified-date":{"value":1480255200394},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
+        Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"url-name":"My
+        SciENCV","url":{"value":"http://www.ncbi.nlm.nih.gov/myncbi/mfenner/cv/1413/"},"visibility":"public","path":"/0000-0003-1419-2405/researcher-urls/334415","put-code":334415,"display-index":4},{"created-date":{"value":1406836421702},"last-modified-date":{"value":1480255200394},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
+        Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"url-name":"Twitter","url":{"value":"http://twitter.com/mfenner"},"visibility":"public","path":"/0000-0003-1419-2405/researcher-urls/334414","put-code":334414,"display-index":3},{"created-date":{"value":1406836421702},"last-modified-date":{"value":1480255200394},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
+        Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"url-name":"Blog","url":{"value":"http://blog.martinfenner.org"},"visibility":"public","path":"/0000-0003-1419-2405/researcher-urls/334413","put-code":334413,"display-index":2}],"path":"/0000-0003-1419-2405/researcher-urls"},"emails":{"last-modified-date":null,"email":[],"path":"/0000-0003-1419-2405/email"},"addresses":{"last-modified-date":{"value":1465226976952},"address":[{"created-date":{"value":1453660427119},"last-modified-date":{"value":1465226976952},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
+        Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"country":{"value":"DE"},"visibility":"public","path":"/0000-0003-1419-2405/address/348071","put-code":348071,"display-index":0}],"path":"/0000-0003-1419-2405/address"},"keywords":{"last-modified-date":null,"keyword":[],"path":"/0000-0003-1419-2405/keywords"},"external-identifiers":{"last-modified-date":{"value":1517873256636},"external-identifier":[{"created-date":{"value":1378921887304},"last-modified-date":{"value":1517873256636},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0002-5982-8983","path":"0000-0002-5982-8983","host":"orcid.org"},"source-name":{"value":"Scopus
+        - Elsevier"},"assertion-origin-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"assertion-origin-client-id":null,"assertion-origin-name":{"value":"Martin
+        Fenner"}},"external-id-type":"Scopus Author ID","external-id-value":"7006600825","external-id-url":{"value":"http://www.scopus.com/inward/authorDetails.url?authorID=7006600825&partnerID=MN8TOARS"},"external-id-relationship":"self","visibility":"public","path":"/0000-0003-1419-2405/external-identifiers/143928","put-code":143928,"display-index":3},{"created-date":{"value":1387382277259},"last-modified-date":{"value":1517873256636},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0003-0412-1857","path":"0000-0003-0412-1857","host":"orcid.org"},"source-name":{"value":"ISNI2ORCID
+        search and link"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"external-id-type":"ISNI","external-id-value":"000000035060549X","external-id-url":{"value":"http://isni.org/000000035060549X"},"external-id-relationship":"self","visibility":"public","path":"/0000-0003-1419-2405/external-identifiers/182778","put-code":182778,"display-index":2},{"created-date":{"value":1497972789448},"last-modified-date":{"value":1497972789448},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0001-8099-6984","path":"0000-0001-8099-6984","host":"orcid.org"},"source-name":{"value":"DataCite"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"external-id-type":"GitHub","external-id-value":"mfenner","external-id-url":{"value":"https://github.com/mfenner"},"external-id-relationship":"self","visibility":"public","path":"/0000-0003-1419-2405/external-identifiers/737549","put-code":737549,"display-index":0}],"path":"/0000-0003-1419-2405/external-identifiers"},"path":"/0000-0003-1419-2405/person"}'
+    http_version: null
+  recorded_at: Mon, 10 Aug 2020 09:13:09 GMT
+recorded_with: VCR 5.1.0

@@ -12,7 +12,10 @@ describe Person, type: :model, vcr: true do
       expect(person.given_name).to eq("Agnes")
       expect(person.family_name).to eq("Ebenberger")
       expect(person.alternate_name).to eq([])
-      expect(person.affiliation).to eq([])
+      expect(person.description).to be_nil
+      expect(person.links).to be_empty
+      expect(person.identifiers).to be_empty
+      expect(person.country).to be_nil
     end
 
     it "also found" do
@@ -24,8 +27,29 @@ describe Person, type: :model, vcr: true do
       expect(person.name).to eq("K. J. Garza")
       expect(person.given_name).to eq("Kristian")
       expect(person.family_name).to eq("Garza")
-      expect(person.alternate_name).to eq([])
-      expect(person.affiliation).to eq([])
+      expect(person.alternate_name).to eq(["Kristian Javier Garza Gutierrez"])
+      expect(person.description).to be_nil
+      expect(person.links).to eq([{"name"=>"Mendeley profile", "url"=>"https://www.mendeley.com/profiles/kristian-g/"}])
+      expect(person.identifiers).to eq([{"identifier"=>"kjgarza", "identifierType"=>"GitHub"}])
+      expect(person.country).to eq("id"=>"DE", "name"=>"Germany")
+    end
+
+    it "found with biography" do
+      id = "https://orcid.org/0000-0003-1419-2405"
+      people = Person.find_by_id(id)
+      expect(people[:data].size).to eq(1)
+      person = people[:data].first
+      expect(person.id).to eq("https://orcid.org/0000-0003-1419-2405")
+      expect(person.name).to eq("Martin Fenner")
+      expect(person.given_name).to eq("Martin")
+      expect(person.family_name).to eq("Fenner")
+      expect(person.alternate_name).to eq(["M Fenner", "MH Fenner", "Martin H. Fenner", "Martin Hellmut Fenner"])
+      expect(person.description).to eq("Martin Fenner is the DataCite Technical Director and manages the technical architecture for Datacite. From 2012 to 2015 he was the technical lead for the PLOS Article-Level Metrics project. Martin has a medical degree from the Free University of Berlin and is a Board-certified medical oncologist.")
+      expect(person.links).to eq([{ "name" => "My SciENCV", "url"=>"http://www.ncbi.nlm.nih.gov/myncbi/mfenner/cv/1413/" }, 
+        { "name"=>"Twitter", "url"=>"http://twitter.com/mfenner" },
+        { "name"=>"Blog", "url"=>"http://blog.martinfenner.org" }])
+      expect(person.identifiers).to eq([{"identifier"=>"7006600825", "identifierType"=>"Scopus Author ID"}, {"identifier"=>"000000035060549X", "identifierType"=>"ISNI"}, {"identifier"=>"mfenner", "identifierType"=>"GitHub"}])
+      expect(person.country).to eq("id"=>"DE", "name"=>"Germany")
     end
 
     it "found with X in ID" do
@@ -38,7 +62,10 @@ describe Person, type: :model, vcr: true do
       expect(person.given_name).to eq("Rory")
       expect(person.family_name).to eq("O'Bryen")
       expect(person.alternate_name).to eq([])
-      expect(person.affiliation).to eq([])
+      expect(person.description).to be_nil
+      expect(person.links).to be_empty
+      expect(person.identifiers).to be_empty
+      expect(person.country).to be_nil
     end
 
     it "not found" do
@@ -61,14 +88,10 @@ describe Person, type: :model, vcr: true do
       expect(person.given_name).to eq("Mohammed")
       expect(person.family_name).to eq("Al-Dhahir")
       expect(person.alternate_name).to eq(["Mohammed Ali Al-Dhahir"])
-      expect(person.affiliation).to eq([{"name"=>"AOSpine International"},
-        {"name"=>"Al-Ra'afa Medical Centre"},
-        {"name"=>"Al-Thawra Modren General Hospital"},
-        {"name"=>"Al-mustansiryia- college of Medicine"},
-        {"name"=>"Alsamawah General Hospital"},
-        {"name"=>"Arab Board of Health Specializations"},
-        {"name"=>"University of Rochester"},
-        {"name"=>"Yemeni German Hospital"}])
+      expect(person.description).to be_nil
+      expect(person.links).to be_empty
+      expect(person.identifiers).to be_empty
+      expect(person.country).to be_nil
     end
 
     it "found miller" do
@@ -81,13 +104,11 @@ describe Person, type: :model, vcr: true do
       expect(person.name).to eq("Edmund Miller")
       expect(person.given_name).to eq("Edmund")
       expect(person.family_name).to eq("Miller")
-      expect(person.affiliation).to eq([{"name"=>"ABT"},
-        {"name"=>"Feinstein Institute for Medical Research"},
-        {"name"=>"Hofstra Northwell School of Medicine at Hofstra University"},
-        {"name"=>"King's College London"},
-        {"name"=>"RDS2 Solutions"},
-        {"name"=>"Royal Society of Chemistry"},
-        {"name"=>"University of Texas Health Northeast"}])
+      expect(person.alternate_name).to eq([])
+      expect(person.description).to be_nil
+      expect(person.links).to be_empty
+      expect(person.identifiers).to be_empty
+      expect(person.country).to be_nil
     end
 
     it "found datacite" do
@@ -101,7 +122,10 @@ describe Person, type: :model, vcr: true do
       expect(person.given_name).to eq("Patricia")
       expect(person.family_name).to eq("Cruse")
       expect(person.alternate_name).to eq(["Trisha Cruse"])
-      expect(person.affiliation).to eq([{"name"=>"DataCite"}, {"name"=>"University of California Berkeley"}])
+      expect(person.description).to be_nil
+      expect(person.links).to be_empty
+      expect(person.identifiers).to be_empty
+      expect(person.country).to be_nil
     end
   end
 end
