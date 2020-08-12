@@ -31,6 +31,8 @@ describe WorkType do
             name
           }
           bibtex
+          xml
+          schemaOrg
         }
       })
     end
@@ -44,12 +46,21 @@ describe WorkType do
       expect(response.dig("data", "work", "member", "id")).to eq(work.provider_id)
       expect(response.dig("data", "work", "member", "name")).to eq(work.provider.name)
       expect(response.dig("data", "work", "id")).to eq("https://handle.test.datacite.org/#{work.doi.downcase}")
+      
       bibtex = BibTeX.parse(response.dig("data", "work", "bibtex")).to_a(quotes: '').first
       expect(bibtex[:bibtex_type].to_s).to eq("misc")
       expect(bibtex[:bibtex_key]).to eq("https://doi.org/#{work.doi.downcase}")
       expect(bibtex[:author]).to eq("Ollomo, Benjamin and Durand, Patrick and Prugnolle, Franck and Douzery, Emmanuel J. P. and Arnathau, Céline and Nkoghe, Dieudonné and Leroy, Eric and Renaud, François")
       expect(bibtex[:title]).to eq("Data from: A new malaria agent in African hominids.")
       expect(bibtex[:year]).to eq("2011")
+
+      schema_org = JSON.parse(response.dig("data", "work", "schemaOrg"))
+      expect(schema_org["@id"]).to eq("https://doi.org/#{work.doi.downcase}")
+      expect(schema_org["name"]).to eq("Data from: A new malaria agent in African hominids.")
+
+      doc = Nokogiri::XML(response.dig("data", "work", "xml"), nil, 'UTF-8', &:noblanks)
+      expect(doc.at_css("identifier").content).to eq(work.doi)
+      expect(doc.at_css("titles").content).to eq("Data from: A new malaria agent in African hominids.")
     end
   end
 

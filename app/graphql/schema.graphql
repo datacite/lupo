@@ -113,7 +113,7 @@ type Audiovisual implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -273,7 +273,7 @@ type Audiovisual implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -339,6 +339,11 @@ type Audiovisual implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -388,7 +393,7 @@ type Book implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -548,7 +553,7 @@ type Book implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -614,13 +619,18 @@ type Book implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 type BookChapter implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -780,7 +790,7 @@ type BookChapter implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -846,6 +856,11 @@ type BookChapter implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -938,7 +953,7 @@ type Collection implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -1098,7 +1113,7 @@ type Collection implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -1164,6 +1179,11 @@ type Collection implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -1212,7 +1232,7 @@ type ConferencePaper implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -1372,7 +1392,7 @@ type ConferencePaper implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -1438,6 +1458,11 @@ type ConferencePaper implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -1687,7 +1712,7 @@ type DataPaper implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -1847,7 +1872,7 @@ type DataPaper implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -1913,6 +1938,11 @@ type DataPaper implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -1962,7 +1992,7 @@ type Dataset implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -2122,7 +2152,7 @@ type Dataset implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -2209,6 +2239,11 @@ type Dataset implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -2348,7 +2383,7 @@ type Dissertation implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -2508,7 +2543,7 @@ type Dissertation implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -2574,6 +2609,11 @@ type Dissertation implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -2627,7 +2667,7 @@ interface DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -2787,7 +2827,7 @@ interface DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -2853,13 +2893,18 @@ interface DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 type Event implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -3019,7 +3064,7 @@ type Event implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -3085,6 +3130,11 @@ type Event implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -3119,7 +3169,7 @@ type EventData implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -3279,7 +3329,7 @@ type EventData implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -3345,6 +3395,11 @@ type EventData implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -3671,7 +3726,7 @@ type Image implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -3831,7 +3886,7 @@ type Image implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -3897,6 +3952,11 @@ type Image implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -3946,7 +4006,7 @@ type Instrument implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -4106,7 +4166,7 @@ type Instrument implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -4172,6 +4232,11 @@ type Instrument implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -4220,7 +4285,7 @@ type InteractiveResource implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -4380,7 +4445,7 @@ type InteractiveResource implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -4446,6 +4511,11 @@ type InteractiveResource implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -4520,7 +4590,7 @@ type JournalArticle implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -4680,7 +4750,7 @@ type JournalArticle implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -4746,6 +4816,11 @@ type JournalArticle implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -5041,7 +5116,7 @@ type Model implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -5201,7 +5276,7 @@ type Model implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -5267,6 +5342,11 @@ type Model implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -5441,7 +5521,7 @@ type Other implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -5601,7 +5681,7 @@ type Other implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -5667,6 +5747,11 @@ type Other implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -5741,7 +5826,7 @@ type PeerReview implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -5901,7 +5986,7 @@ type PeerReview implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -5967,6 +6052,11 @@ type PeerReview implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -6147,7 +6237,7 @@ type PhysicalObject implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -6307,7 +6397,7 @@ type PhysicalObject implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -6373,6 +6463,11 @@ type PhysicalObject implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -6475,7 +6570,7 @@ type Preprint implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -6635,7 +6730,7 @@ type Preprint implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -6701,6 +6796,11 @@ type Preprint implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -6751,7 +6851,7 @@ type Publication implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -6911,7 +7011,7 @@ type Publication implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -6977,6 +7077,11 @@ type Publication implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -7469,7 +7574,7 @@ type Service implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -7629,7 +7734,7 @@ type Service implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -7695,6 +7800,11 @@ type Service implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -7746,7 +7856,7 @@ type Software implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -7906,7 +8016,7 @@ type Software implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -7972,6 +8082,11 @@ type Software implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -8053,7 +8168,7 @@ type Sound implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -8213,7 +8328,7 @@ type Sound implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -8279,6 +8394,11 @@ type Sound implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -8511,7 +8631,7 @@ type Work implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -8671,7 +8791,7 @@ type Work implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -8737,6 +8857,11 @@ type Work implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
@@ -8788,7 +8913,7 @@ type Workflow implements DoiItem {
   """
   Metadata in bibtex format
   """
-  bibtex: String
+  bibtex: String!
 
   """
   Total number of citations
@@ -8948,7 +9073,7 @@ type Workflow implements DoiItem {
   """
   Metadata in schema.org format
   """
-  schemaOrg: JSON
+  schemaOrg: JSON!
 
   """
   Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
@@ -9014,6 +9139,11 @@ type Workflow implements DoiItem {
   Views by month
   """
   viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
 }
 
 """
