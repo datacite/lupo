@@ -2,8 +2,6 @@ Rails.application.routes.draw do
   post "/client-api/graphql", to: "graphql#execute"
   get "/client-api/graphql", to: "index#method_not_allowed"
 
-  root to: "index#index"
-
   # authentication
   post "token", to: "sessions#create_token"
 
@@ -12,6 +10,20 @@ Rails.application.routes.draw do
 
   # send reset link
   post 'reset', :to => 'sessions#reset'
+
+  # content negotiation via index path
+  get '/application/vnd.datacite.datacite+xml/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :datacite }
+  get '/application/vnd.datacite.datacite+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :datacite_json }
+  get '/application/vnd.crosscite.crosscite+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :crosscite }
+  get '/application/vnd.schemaorg.ld+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :schema_org }
+  get '/application/ld+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :schema_org }
+  get '/application/vnd.codemeta.ld+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :codemeta }
+  get '/application/vnd.citationstyles.csl+json/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :citeproc }
+  get '/application/vnd.jats+xml/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :jats }
+  get '/application/x-bibtex/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :bibtex }
+  get '/application/x-research-info-systems/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :ris }
+  get '/text/csv/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :csv }
+  get '/text/x-bibliography/:id', :to => 'index#show', constraints: { :id => /.+/ }, defaults: { format: :citation }
 
   # content negotiation
   get '/dois/application/vnd.datacite.datacite+xml/:id', :to => 'datacite_dois#show', constraints: { :id => /.+/ }, defaults: { format: :datacite }
@@ -72,8 +84,9 @@ Rails.application.routes.draw do
   get 'export/contacts', :to => 'exports#contacts', defaults: { format: :csv }
 
   resources :heartbeat, only: [:index]
-  resources :index, only: [:index]
-
+  resources :index, path: '/', only: [:show, :index], constraints: { id: /.+/, format: false }
+  root to: "index#index"
+  
   resources :activities, only: [:index, :show]
 
   resources :clients, constraints: { id: /.+/ } do
