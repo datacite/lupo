@@ -1,6 +1,22 @@
 # frozen_string_literal: true
 
 namespace :doi do
+  # TODO switch to DataCite DOI index
+  desc "Create index for dois"
+  task :create_index => :environment do
+    puts Doi.create_index
+  end
+
+  desc "Delete index for dois"
+  task :delete_index => :environment do
+    puts Doi.delete_index
+  end
+
+  desc "Upgrade index for dois"
+  task :upgrade_index => :environment do
+    puts Doi.upgrade_index
+  end
+
   desc "Create alias for dois"
   task :create_alias => :environment do
     puts Doi.create_alias
@@ -9,6 +25,26 @@ namespace :doi do
   desc "Delete alias for dois"
   task :delete_alias => :environment do
     puts Doi.delete_alias
+  end
+
+  desc "Show index stats for dois"
+  task :index_stats => :environment do
+    puts Doi.index_stats
+  end
+
+  desc "Switch index for dois"
+  task :switch_index => :environment do
+    puts Doi.switch_index
+  end
+
+  desc "Return active index for dois"
+  task :active_index => :environment do
+    puts Doi.active_index + " is the active index."
+  end
+
+  desc "Monitor reindexing for dois"
+  task :monitor_reindex => :environment do
+    puts Doi.monitor_reindex
   end
 
   desc 'Store handle URL'

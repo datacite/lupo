@@ -3,12 +3,20 @@ class DataciteDoi < Doi
   
   # use different index for testing
   if Rails.env.test?
-    index_name "dois-datacite-test"
+    index_name "dois-test"
   elsif ENV["ES_PREFIX"].present?
-    index_name"dois-datacite-#{ENV["ES_PREFIX"]}"
+    index_name"dois-#{ENV["ES_PREFIX"]}"
   else
-    index_name "dois-datacite"
+    index_name "dois"
   end
+  # TODO switch index
+  # if Rails.env.test?
+  #   index_name "dois-datacite-test"
+  # elsif ENV["ES_PREFIX"].present?
+  #   index_name"dois-datacite-#{ENV["ES_PREFIX"]}"
+  # else
+  #   index_name "dois-datacite"
+  # end
 
   def self.import_by_ids(options={})
     from_id = (options[:from_id] || DataciteDoi.minimum(:id)).to_i
