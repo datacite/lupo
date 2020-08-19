@@ -1924,8 +1924,34 @@ class Doi < ActiveRecord::Base
   def update_agency
     if agency.blank? || agency.casecmp?("datacite") 
       self.agency = "datacite"
-    elsif agency.casecmp? ("crossref")
+      self.type = "DataciteDoi"
+    elsif agency.casecmp?("crossref")
       self.agency = "crossref"
+      self.type = "OtherDoi"
+    elsif agency.casecmp?("kisti")
+      self.agency = "kisti"
+      self.type = "OtherDoi"
+    elsif agency.casecmp?("medra")
+      self.agency = "medra"
+      self.type = "OtherDoi"
+    elsif agency.casecmp?("istic")
+      self.agency = "istic"
+      self.type = "OtherDoi"
+    elsif agency.casecmp?("jalc")
+      self.agency = "jalc"
+      self.type = "OtherDoi"
+    elsif agency.casecmp?("airiti")
+      self.agency = "airiti"
+      self.type = "OtherDoi"
+    elsif agency.casecmp?("cnki")
+      self.agency = "cnki"
+      self.type = "OtherDoi"
+    elsif agency.casecmp?("op")
+      self.agency = "op"
+      self.type = "OtherDoi"
+    else
+      self.agency = "datacite"
+      self.type = "DataciteDoi"
     end
   end
 
