@@ -94,11 +94,11 @@ describe Doi, type: :model, vcr: true do
       expect(subject.agency).to eq("op")
     end
 
-    it "XXX" do
-      subject = build(:doi, agency: "xxx")
-      expect(subject).to_not be_valid
-      expect(subject.errors.messages).to eq(:agency=>["is not included in the list"])
-    end
+    # it "XXX" do
+    #   subject = build(:doi, agency: "xxx")
+    #   expect(subject).to_not be_valid
+    #   expect(subject.errors.messages).to eq(:agency=>["is not included in the list"])
+    # end
 
     it "default" do
       subject = build(:doi)
