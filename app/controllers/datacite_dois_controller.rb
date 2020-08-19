@@ -50,6 +50,7 @@ class DataciteDoisController < ApplicationController
     else
       response = DataciteDoi.query(params[:query],
                           state: params[:state],
+                          exclude_registration_agencies: true,
                           published: params[:published],
                           created: params[:created],
                           registered: params[:registered],

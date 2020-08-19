@@ -31,6 +31,7 @@ class WorksController < ApplicationController
     else
       response = DataciteDoi.query(params[:query],
                           state: "findable",
+                          exclude_registration_agencies: true,
                           created: params[:created],
                           registered: params[:registered],
                           provider_id: params[:member_id],

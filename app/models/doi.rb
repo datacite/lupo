@@ -855,6 +855,8 @@ class Doi < ActiveRecord::Base
     filter << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
     filter << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
 
+    must_not << { terms: { agency: ["crossref", "kisti", "medra", "jalc", "istic", "airiti", "cnki", "op"] }} if options[:exclude_registration_agencies]
+
     # match either ROR ID or Crossref Funder ID if either affiliation_id or funder_id 
     # is a query parameter
     if options[:affiliation_id].present?
