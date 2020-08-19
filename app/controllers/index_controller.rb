@@ -1,11 +1,35 @@
 class IndexController < ApplicationController
   include ActionController::MimeResponds
-
-  prepend_before_action :authenticate_user!
-  before_action :set_doi, only: [:show]
   
   def index
     render plain: ENV['SITE_TITLE']
+  end
+
+  def show
+    doi = Doi.where(doi: params[:id], aasm_state: "findable").first
+    fail ActiveRecord::RecordNotFound if doi.blank?
+
+    respond_to do |format|
+      format.html do
+        # forward to URL registered in handle system for no content negotiation
+        redirect_to doi.url, status: 303
+      end
+      format.citation do
+        # extract optional style and locale from header
+        headers = request.headers["HTTP_ACCEPT"].to_s.gsub(/\s+/, "").split(";", 3).reduce({}) do |sum, item|
+          sum[:style] = item.split("=").last if item.start_with?("style")
+          sum[:locale] = item.split("=").last if item.start_with?("locale")
+          sum
+        end
+        render citation: doi, style: params[:style] || headers[:style] || "apa", locale: params[:locale] || headers[:locale] || "en-US"
+      end
+      format.any(:bibtex, :citeproc, :codemeta, :crosscite, :datacite, :datacite_json, :jats, :ris, :schema_org) { render request.format.to_sym => doi }
+      header = %w(doi url registered state resourceTypeGeneral resourceType title author publisher publicationYear)
+      format.csv { render request.format.to_sym => doi, header: header }
+    end
+  rescue ActionController::UnknownFormat, ActionController::RoutingError
+    # forward to URL registered in handle system for unrecognized format
+    redirect_to doi.url, status: 303
   end
 
   def routing_error
