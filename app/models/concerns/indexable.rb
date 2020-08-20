@@ -536,10 +536,10 @@ module Indexable
     end
 
     # create both indexes used for aliasing
-    def create_index
-      alias_name = self.index_name
-      index_name = self.index_name + "_v1"
-      alternate_index_name = self.index_name + "_v2"
+    def create_index(options={})
+      alias_name = options[:alias_name] || self.index_name
+      index_name = (options[:index_name] || self.index_name) + "_v1"
+      alternate_index_name = (options[:index_name] || self.index_name) + "_v2"
       client = Elasticsearch::Model.client
 
       # delete index if it has the same name as the alias
@@ -608,8 +608,8 @@ module Indexable
 
     # delete and create inactive index to use current mappings
     # Needs to run every time we change the mappings
-    def upgrade_index
-      inactive_index ||= self.inactive_index
+    def upgrade_index(options={})
+      inactive_index ||= (options[:index] || self.inactive_index)
 
       self.__elasticsearch__.create_index!(index: inactive_index, force: true)
       "Upgraded inactive index #{inactive_index}."
@@ -617,8 +617,8 @@ module Indexable
 
     # show stats for both indexes
     def index_stats(options={})
-      active_index = self.active_index
-      inactive_index = self.inactive_index
+      active_index = options[:active_index] || self.active_index
+      inactive_index = options[:inactive_index] || self.inactive_index
       client = Elasticsearch::Model.client
 
       # TODO switch to DataciteDoi index
@@ -659,9 +659,9 @@ module Indexable
 
     # switch between the two indexes, i.e. the index that is aliased
     def switch_index(options={})
-      alias_name = self.index_name
-      index_name = self.index_name + "_v1"
-      alternate_index_name = self.index_name + "_v2"
+      alias_name = options[:alias_name] || self.index_name
+      index_name = (options[:index_name] || self.index_name) + "_v1"
+      alternate_index_name = (options[:index_name] || self.index_name) + "_v2"
 
       client = Elasticsearch::Model.client
 

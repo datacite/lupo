@@ -3,7 +3,7 @@
 namespace :datacite_doi do
   desc "Create index for datacite dois"
   task :create_index => :environment do
-    puts DataciteDoi.create_index
+    puts DataciteDoi.create_index(alias_name: ENV["ALIAS"], index_name: ENV["INDEX"])
   end
 
   desc "Delete index for datacite dois"
@@ -13,7 +13,7 @@ namespace :datacite_doi do
 
   desc "Upgrade index for datacite dois"
   task :upgrade_index => :environment do
-    puts DataciteDoi.upgrade_index
+    puts DataciteDoi.upgrade_index(index_name: ENV["INDEX"])
   end
 
   desc "Create alias for datacite dois"
@@ -28,12 +28,12 @@ namespace :datacite_doi do
 
   desc "Show index stats for datacite dois"
   task :index_stats => :environment do
-    puts DataciteDoi.index_stats
+    puts DataciteDoi.index_stats(active_index: ENV["ACTIVE"], inactive_index: ENV["INACTIVE"])
   end
 
   desc "Switch index for datacite dois"
   task :switch_index => :environment do
-    puts DataciteDoi.switch_index
+    puts DataciteDoi.switch_index(alias_name: ENV["ALIAS"], index_name: ENV["INDEX"])
   end
 
   desc "Return active index for datacite dois"
