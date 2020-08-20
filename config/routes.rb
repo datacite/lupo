@@ -84,8 +84,6 @@ Rails.application.routes.draw do
   get 'export/contacts', :to => 'exports#contacts', defaults: { format: :csv }
 
   resources :heartbeat, only: [:index]
-  resources :index, path: '/', only: [:show, :index], constraints: { id: /.+/, format: false }
-  root to: "index#index"
   
   resources :activities, only: [:index, :show]
 
@@ -139,6 +137,11 @@ Rails.application.routes.draw do
   resources :members, only: [:show, :index]
   resources :data_centers, only: [:show, :index], constraints: { id: /.+/ }, path: "/data-centers"
   resources :works, only: [:show, :index], constraints: { id: /.+/ }
+
+  # content negotiation
+  resources :index, path: '/', only: [:show, :index], constraints: { id: /.+/, format: false }
+  
+  root to: "index#index"
 
   # rescue routing errors
   match "*path", to: "index#routing_error", via: :all
