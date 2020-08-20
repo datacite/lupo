@@ -9,7 +9,7 @@ namespace :doi do
 
   desc "Delete index for dois"
   task :delete_index => :environment do
-    puts Doi.delete_index
+    puts Doi.delete_index(index: ENV["INDEX"])
   end
 
   desc "Upgrade index for dois"
@@ -20,6 +20,11 @@ namespace :doi do
   desc "Create alias for dois"
   task :create_alias => :environment do
     puts Doi.create_alias
+  end
+
+  desc "List aliases for dois"
+  task :list_aliases => :environment do
+    puts Doi.list_aliases
   end
 
   desc "Delete alias for dois"
@@ -35,6 +40,11 @@ namespace :doi do
   desc "Switch index for dois"
   task :switch_index => :environment do
     puts Doi.switch_index
+  end
+
+  desc "List templates for dois"
+  task :list_templates => :environment do
+    puts Doi.list_templates(name: "dois*")
   end
 
   desc "Return active index for dois"

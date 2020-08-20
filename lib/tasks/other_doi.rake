@@ -8,7 +8,7 @@ namespace :other_doi do
 
   desc "Delete index for other dois"
   task :delete_index => :environment do
-    puts OtherDoi.delete_index
+    puts OtherDoi.delete_index(index: ENV["INDEX"])
   end
 
   desc "Upgrade index for other dois"

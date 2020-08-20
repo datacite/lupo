@@ -482,13 +482,20 @@ module Indexable
       # end
     end
 
+    # list all aliases
+    def list_aliases
+      client = Elasticsearch::Model.client
+      cat_client = Elasticsearch::API::Cat::CatClient.new(client)
+      puts cat_client.aliases
+    end
+
     # delete alias
     def delete_alias
+      client = Elasticsearch::Model.client
+
       alias_name = self.index_name
       index_name = self.index_name + "_v1"
       alternate_index_name = self.index_name + "_v2"
-
-      client = Elasticsearch::Model.client
 
       self.__elasticsearch__.delete_index!(index: alias_name) if self.__elasticsearch__.index_exists?(index: alias_name)
 
@@ -565,11 +572,17 @@ module Indexable
     end
 
     # delete index and both indexes used for aliasing
-    def delete_index
+    def delete_index(options={})
+      client = Elasticsearch::Model.client
+
+      if options[:index]
+        self.__elasticsearch__.delete_index!(index: options[:index])
+        return "Deleted index #{options[:index]}."
+      end
+
       alias_name = self.index_name
       index_name = self.index_name + "_v1"
       alternate_index_name = self.index_name + "_v2"
-      client = Elasticsearch::Model.client
 
       # indexes in DOI model are aliased from DataciteDoi and OtherDoi models
       # TODO switch to DataciteDoi index
@@ -810,6 +823,13 @@ module Indexable
       else
         exists ? "An error occured updating template #{alias_name}." : "An error occured creating template #{alias_name}."
       end
+    end
+
+    # list all templates
+    def list_templates(options={})
+      client = Elasticsearch::Model.client
+      cat_client = Elasticsearch::API::Cat::CatClient.new(client)
+      puts cat_client.templates(name: options[:name])
     end
 
     # delete index template 

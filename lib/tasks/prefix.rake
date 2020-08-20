@@ -8,7 +8,7 @@ namespace :prefix do
 
   desc "Delete index for prefixes"
   task :delete_index => :environment do
-    puts Prefix.delete_index
+    puts Prefix.delete_index(index: ENV["INDEX"])
   end
 
   desc "Upgrade index for prefixes"

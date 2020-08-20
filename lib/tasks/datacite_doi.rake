@@ -8,7 +8,7 @@ namespace :datacite_doi do
 
   desc "Delete index for datacite dois"
   task :delete_index => :environment do
-    puts DataciteDoi.delete_index
+    puts DataciteDoi.delete_index(index: ENV["INDEX"])
   end
 
   desc "Upgrade index for datacite dois"

@@ -8,7 +8,7 @@ namespace :event do
 
   desc "Delete index for events"
   task :delete_index => :environment do
-    puts Event.delete_index
+    puts Event.delete_index(index: ENV["INDEX"])
   end
 
   desc "Upgrade index for events"

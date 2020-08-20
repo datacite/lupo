@@ -8,7 +8,7 @@ namespace :provider do
 
   desc "Delete index for providers"
   task delete_index: :environment do
-    puts Provider.delete_index
+    puts Provider.delete_index(index: ENV["INDEX"])
   end
 
   desc "Upgrade index for providers"

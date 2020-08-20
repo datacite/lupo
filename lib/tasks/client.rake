@@ -8,7 +8,7 @@ namespace :client do
 
   desc "Delete index for clients"
   task :delete_index => :environment do
-    puts Client.delete_index
+    puts Client.delete_index(index: ENV["INDEX"])
   end
 
   desc "Upgrade index for clients"
