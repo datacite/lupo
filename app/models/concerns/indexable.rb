@@ -445,10 +445,10 @@ module Indexable
     end
 
     # create alias
-    def create_alias
-      alias_name = self.index_name
-      index_name = self.index_name + "_v1"
-      alternate_index_name = self.index_name + "_v2"
+    def create_alias(options={})
+      alias_name = options[:alias] || self.index_name
+      index_name = options[:index] || self.index_name + "_v1"
+      alternate_index_name = options[:index] || self.index_name + "_v2"
 
       client = Elasticsearch::Model.client
 
@@ -490,12 +490,12 @@ module Indexable
     end
 
     # delete alias
-    def delete_alias
-      client = Elasticsearch::Model.client
+    def delete_alias(options={})
+      alias_name = options[:alias] || self.index_name
+      index_name = options[:index] || self.index_name + "_v1"
+      alternate_index_name = options[:index] || self.index_name + "_v2"
 
-      alias_name = self.index_name
-      index_name = self.index_name + "_v1"
-      alternate_index_name = self.index_name + "_v2"
+      client = Elasticsearch::Model.client
 
       self.__elasticsearch__.delete_index!(index: alias_name) if self.__elasticsearch__.index_exists?(index: alias_name)
 
@@ -537,9 +537,9 @@ module Indexable
 
     # create both indexes used for aliasing
     def create_index(options={})
-      alias_name = options[:alias_name] || self.index_name
-      index_name = (options[:index_name] || self.index_name) + "_v1"
-      alternate_index_name = (options[:index_name] || self.index_name) + "_v2"
+      alias_name = options[:alias] || self.index_name
+      index_name = (options[:index] || self.index_name) + "_v1"
+      alternate_index_name = (options[:index] || self.index_name) + "_v2"
       client = Elasticsearch::Model.client
 
       # delete index if it has the same name as the alias
@@ -606,6 +606,13 @@ module Indexable
       # end
     end
 
+    # list all indices
+    def list_indices
+      client = Elasticsearch::Model.client
+      cat_client = Elasticsearch::API::Cat::CatClient.new(client)
+      puts cat_client.indices
+    end
+
     # delete and create inactive index to use current mappings
     # Needs to run every time we change the mappings
     def upgrade_index(options={})
@@ -659,9 +666,9 @@ module Indexable
 
     # switch between the two indexes, i.e. the index that is aliased
     def switch_index(options={})
-      alias_name = options[:alias_name] || self.index_name
-      index_name = (options[:index_name] || self.index_name) + "_v1"
-      alternate_index_name = (options[:index_name] || self.index_name) + "_v2"
+      alias_name = options[:alias] || self.index_name
+      index_name = (options[:index] || self.index_name) + "_v1"
+      alternate_index_name = (options[:index] || self.index_name) + "_v2"
 
       client = Elasticsearch::Model.client
 

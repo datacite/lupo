@@ -3,7 +3,7 @@
 namespace :other_doi do
   desc "Create index for other dois"
   task :create_index => :environment do
-    puts OtherDoi.create_index
+    puts OtherDoi.create_index(alias: ENV["ALIAS"], index: ENV["INDEX"])
   end
 
   desc "Delete index for other dois"
@@ -13,27 +13,27 @@ namespace :other_doi do
 
   desc "Upgrade index for other dois"
   task :upgrade_index => :environment do
-    puts OtherDoi.upgrade_index
+    puts OtherDoi.upgrade_index(index: ENV["INDEX"])
   end
 
   desc "Create alias for other dois"
   task :create_alias => :environment do
-    puts OtherDoi.create_alias
+    puts OtherDoi.create_alias(alias: ENV["ALIAS"], index: ENV["INDEX"])
   end
 
   desc "Delete alias for other dois"
   task :delete_alias => :environment do
-    puts OtherDoi.delete_alias
+    puts OtherDoi.delete_alias(alias: ENV["ALIAS"], index: ENV["INDEX"])
   end
 
   desc "Show index stats for other dois"
   task :index_stats => :environment do
-    puts OtherDoi.index_stats
+    puts OtherDoi.index_stats(active_index: ENV["ACTIVE"], inactive_index: ENV["INACTIVE"])
   end
 
   desc "Switch index for other dois"
   task :switch_index => :environment do
-    puts OtherDoi.switch_index
+    puts OtherDoi.switch_index(alias: ENV["ALIAS"], index: ENV["INDEX"])
   end
 
   desc "Return active index for other dois"

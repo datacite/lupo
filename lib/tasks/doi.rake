@@ -4,7 +4,7 @@ namespace :doi do
   # TODO switch to DataCite DOI index
   desc "Create index for dois"
   task :create_index => :environment do
-    puts Doi.create_index
+    puts Doi.create_index(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
   desc "Delete index for dois"
@@ -12,14 +12,19 @@ namespace :doi do
     puts Doi.delete_index(index: ENV["INDEX"])
   end
 
+  desc "List indices for dois"
+  task :list_indices => :environment do
+    puts Doi.list_indices
+  end
+
   desc "Upgrade index for dois"
   task :upgrade_index => :environment do
-    puts Doi.upgrade_index
+    puts Doi.upgrade_index(index: ENV["INDEX"])
   end
 
   desc "Create alias for dois"
   task :create_alias => :environment do
-    puts Doi.create_alias
+    puts Doi.create_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
   desc "List aliases for dois"
@@ -29,17 +34,17 @@ namespace :doi do
 
   desc "Delete alias for dois"
   task :delete_alias => :environment do
-    puts Doi.delete_alias
+    puts Doi.delete_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
   desc "Show index stats for dois"
   task :index_stats => :environment do
-    puts Doi.index_stats
+    puts Doi.index_stats(active_index: ENV["ACTIVE"], inactive_index: ENV["INACTIVE"])
   end
 
   desc "Switch index for dois"
   task :switch_index => :environment do
-    puts Doi.switch_index
+    puts Doi.switch_index(index: ENV["INDEX"], alias: ENV["ALIAS"])
   end
 
   desc "List templates for dois"
