@@ -486,7 +486,7 @@ module Indexable
     def list_aliases
       client = Elasticsearch::Model.client
       cat_client = Elasticsearch::API::Cat::CatClient.new(client)
-      puts cat_client.aliases
+      puts cat_client.aliases(s: "alias")
     end
 
     # delete alias
@@ -610,7 +610,7 @@ module Indexable
     def list_indices
       client = Elasticsearch::Model.client
       cat_client = Elasticsearch::API::Cat::CatClient.new(client)
-      puts cat_client.indices
+      puts cat_client.indices(s: "index")
     end
 
     # delete and create inactive index to use current mappings
