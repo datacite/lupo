@@ -5,7 +5,7 @@ class Doi < ActiveRecord::Base
   audited only: [:doi, :url, :creators, :contributors, :titles, :publisher, :publication_year, :types, :descriptions, :container, :sizes, :formats, :version_info, :language, :dates, :identifiers, :related_identifiers, :funding_references, :geo_locations, :rights_list, :subjects, :schema_version, :content_url, :landing_page, :aasm_state, :source, :reason]
 
   # disable STI
-  self.inheritance_column = :_type_disabled
+  # self.inheritance_column = :_type_disabled
 
   include Metadatable
   include Cacheable
