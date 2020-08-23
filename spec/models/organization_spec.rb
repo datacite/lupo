@@ -46,6 +46,18 @@ describe Organization, type: :model, vcr: true do
       expect(organization.links).to eq(["http://www.lincoln.ac.nz/"])
     end
 
+    it "found with umlaut" do
+      query = "münster"
+      organizations = Organization.query(query)
+      expect(organizations.dig(:meta, "total")).to eq(10764)
+      expect(organizations[:data].size).to eq(20)
+      organization = organizations[:data].first
+      expect(organization.id).to eq("https://ror.org/04ps1r162")
+      expect(organization.name).to eq("Lincoln University")
+      expect(organization.labels).to eq([{"code"=>"MI", "name"=>"Te Whare Wanaka o Aoraki"}])
+      expect(organization.links).to eq(["http://www.lincoln.ac.nz/"])
+    end
+
     it "found page 2" do
       query = "lincoln university"
       organizations = Organization.query(query, offset: 2)
