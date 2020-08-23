@@ -131,6 +131,11 @@ type Audiovisual implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
+
+  """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
@@ -411,6 +416,11 @@ type Book implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
+
+  """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
@@ -646,6 +656,11 @@ type BookChapter implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
@@ -971,6 +986,11 @@ type Collection implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
+
+  """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
@@ -1250,6 +1270,11 @@ type ConferencePaper implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
+
+  """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
@@ -1510,6 +1535,51 @@ type ConferencePaperEdge {
 }
 
 """
+Information about containers for content.
+"""
+type Container {
+  """
+  First page.
+  """
+  firstPage: String
+
+  """
+  The value of the identifier.
+  """
+  identifier: String
+
+  """
+  The type of identifier.
+  """
+  identifierType: String
+
+  """
+  Issue.
+  """
+  issue: String
+
+  """
+  Last page.
+  """
+  lastPage: String
+
+  """
+  Container title.
+  """
+  title: String
+
+  """
+  Container type.
+  """
+  type: String
+
+  """
+  Volume.
+  """
+  volume: String
+}
+
+"""
 Information about countries
 """
 type Country {
@@ -1728,6 +1798,11 @@ type DataPaper implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
@@ -2008,6 +2083,11 @@ type Dataset implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
@@ -2401,6 +2481,11 @@ type Dissertation implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
+
+  """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
@@ -2685,6 +2770,11 @@ interface DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
+
+  """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
@@ -2920,6 +3010,11 @@ type Event implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
@@ -3185,6 +3280,11 @@ type EventData implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
@@ -3744,6 +3844,11 @@ type Image implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
+
+  """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
@@ -4024,6 +4129,11 @@ type Instrument implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
+
+  """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
@@ -4301,6 +4411,11 @@ type InteractiveResource implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
@@ -4606,6 +4721,11 @@ type JournalArticle implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
@@ -5134,6 +5254,11 @@ type Model implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
+
+  """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
@@ -5539,6 +5664,11 @@ type Other implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
+
+  """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
@@ -5842,6 +5972,11 @@ type PeerReview implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
@@ -6255,6 +6390,11 @@ type PhysicalObject implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
+
+  """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
@@ -6588,6 +6728,11 @@ type Preprint implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
+
+  """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
@@ -6867,6 +7012,11 @@ type Publication implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
@@ -7592,6 +7742,11 @@ type Service implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
+
+  """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
@@ -7872,6 +8027,11 @@ type Software implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
@@ -8184,6 +8344,11 @@ type Sound implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
@@ -8649,6 +8814,11 @@ type Work implements DoiItem {
   citationsOverTime: [YearTotal!]
 
   """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
+
+  """
   The main researchers involved in producing the data, or the authors of the publication, in priority order
   """
   creators(first: Int = 20): [Creator!]
@@ -8929,6 +9099,11 @@ type Workflow implements DoiItem {
   Citations by year
   """
   citationsOverTime: [YearTotal!]
+
+  """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order

@@ -185,7 +185,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with citations", elasticsearch: true do
+  describe "query with citations", elasticsearch: true, vcr:true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -243,7 +243,7 @@ describe DatasetType do
   end
 
 
-  describe "query with views", elasticsearch: true do
+  describe "query with views", elasticsearch: true, vcr:true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -294,7 +294,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with references", elasticsearch: true do
+  describe "query with references", elasticsearch: true, vcr:true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, aasm_state: "findable") }
@@ -346,7 +346,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with versions", elasticsearch: true do
+  describe "query with versions", elasticsearch: true, vcr:true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -397,7 +397,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with version of", elasticsearch: true do
+  describe "query with version of", elasticsearch: true, vcr:true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -448,7 +448,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with parts", elasticsearch: true do
+  describe "query with parts", elasticsearch: true, vcr:true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:target_doi) { create(:doi, client: client, aasm_state: "findable") }
@@ -505,7 +505,7 @@ describe DatasetType do
     end
   end
 
-  describe "query with part of", elasticsearch: true do
+  describe "query with part of", elasticsearch: true, vcr:true do
     let(:client) { create(:client) }
     let(:doi) { create(:doi, client: client, aasm_state: "findable") }
     let(:source_doi) { create(:doi, client: client, aasm_state: "findable") }

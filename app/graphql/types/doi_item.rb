@@ -44,6 +44,7 @@ module DoiItem
   field :descriptions, [DescriptionType], null: true, description: "All additional information that does not fit in any of the other categories" do
     argument :first, Int, required: false, default_value: 5
   end
+  field :container, ContainerType, null: true, description: "The container (e.g. journal or repository) hosting the resource."
   field :geolocations, [GeolocationType], null: true, hash_key: "geo_locations", description: "Spatial region or named place where the data was gathered or about which the data is focused."
   field :funding_references, [FundingType], null: true, description: "Information about financial support (funding) for the resource being registered"
   field :url, Url, null: true, description: "The URL registered for the resource"

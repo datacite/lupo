@@ -18,6 +18,7 @@ describe DoiItem do
     it { is_expected.to have_field(:types).of_type("ResourceType!") }
     it { is_expected.to have_field(:formats).of_type("[String!]") }
     it { is_expected.to have_field(:sizes).of_type("[String!]") }
+    it { is_expected.to have_field(:container).of_type("Container") }
     it { is_expected.to have_field(:version).of_type("String") }
     it { is_expected.to have_field(:rights).of_type("[Rights!]") }
     it { is_expected.to have_field(:descriptions).of_type("[Description!]") }

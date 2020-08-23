@@ -9,7 +9,15 @@ describe WorkType do
   end
 
   describe "find work", elasticsearch: true do
-    let!(:work) { create(:doi, aasm_state: "findable") }
+    let!(:work) { create(:doi, aasm_state: "findable", container:
+      { "type" => "Journal", 
+        "issue" => "9", 
+        "title" => "Inorganica Chimica Acta", 
+        "volume" => "362", 
+        "lastPage" => "3180", 
+        "firstPage" => "3172", 
+        "identifier" => "0020-1693", 
+        "identifierType" => "ISSN" }) }
 
     before do
       Doi.import
@@ -30,6 +38,11 @@ describe WorkType do
             type
             name
           }
+          container {
+            identifier
+            identifierType
+            title
+          }
           bibtex
           xml
           schemaOrg
@@ -39,8 +52,9 @@ describe WorkType do
 
     it "returns work" do
       response = LupoSchema.execute(query).as_json
-
+      
       expect(response.dig("data", "work", "id")).to eq("https://handle.test.datacite.org/#{work.doi.downcase}")
+      expect(response.dig("data", "work", "container")).to eq("identifier"=>"0020-1693", "identifierType"=>"ISSN", "title"=>"Inorganica Chimica Acta")
       expect(response.dig("data", "work", "repository", "id")).to eq(work.client_id)
       expect(response.dig("data", "work", "repository", "name")).to eq(work.client.name)
       expect(response.dig("data", "work", "member", "id")).to eq(work.provider_id)
