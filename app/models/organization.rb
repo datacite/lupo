@@ -32,8 +32,6 @@ class Organization
       url += "&filter=country.country_code:#{country.upcase}"
     end
 
-    puts url
-
     response = Maremma.get(url, host: true)
 
     return {} if response.status != 200
@@ -95,7 +93,7 @@ class Organization
       acronyms: message["acronyms"],
       labels: labels,
       links: message["links"],
-      wikipedia_url: message["wikipedia_url"],
+      wikipedia_url: message["wikipedia_url"].presence,
       country: country,
       isni: isni,
       fundref: fundref,

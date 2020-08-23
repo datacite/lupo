@@ -49,13 +49,13 @@ describe Organization, type: :model, vcr: true do
     it "found with umlaut" do
       query = "münster"
       organizations = Organization.query(query)
-      expect(organizations.dig(:meta, "total")).to eq(10764)
-      expect(organizations[:data].size).to eq(20)
+      expect(organizations.dig(:meta, "total")).to eq(10)
+      expect(organizations[:data].size).to eq(10)
       organization = organizations[:data].first
-      expect(organization.id).to eq("https://ror.org/04ps1r162")
-      expect(organization.name).to eq("Lincoln University")
-      expect(organization.labels).to eq([{"code"=>"MI", "name"=>"Te Whare Wanaka o Aoraki"}])
-      expect(organization.links).to eq(["http://www.lincoln.ac.nz/"])
+      expect(organization.id).to eq("https://ror.org/01856cw59")
+      expect(organization.name).to eq("University Hospital Münster")
+      expect(organization.labels).to eq([{"code"=>"DE", "name"=>"Universitätsklinikum Münster"}])
+      expect(organization.links).to eq(["http://klinikum.uni-muenster.de/"])
     end
 
     it "found page 2" do

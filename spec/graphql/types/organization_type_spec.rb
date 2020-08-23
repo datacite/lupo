@@ -245,7 +245,69 @@ describe OrganizationType do
     end
   end
 
-  describe "query organizations by tyoe", elasticsearch: true, vcr: true do
+  describe "query organizations with umlaut", elasticsearch: true, vcr: true do
+    let(:query) do
+      %(query {
+        organizations(query: "münster") {
+          totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          types {
+            id
+            title
+            count
+          }
+          countries {
+            id
+            title
+            count
+          }
+          nodes {
+            id
+            name
+            types
+            address {
+              country
+            }
+            alternateName
+            url
+            wikipediaUrl
+            identifiers {
+              identifier
+              identifierType
+            }
+          }
+        }
+      })
+    end
+
+    it "returns organization information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "organizations", "totalCount")).to eq(10)      
+      expect(response.dig("data", "organizations", "types").length).to eq(5)
+      expect(response.dig("data", "organizations", "types").first).to eq("count"=>4, "id"=>"education", "title"=>"Education")
+      expect(response.dig("data", "organizations", "countries").length).to eq(1)
+      expect(response.dig("data", "organizations", "countries").first).to eq("count"=>10, "id"=>"de", "title"=>"Germany")
+      expect(response.dig("data", "organizations", "nodes").length).to eq(10)
+      organization = response.dig("data", "organizations", "nodes", 0)
+
+      expect(organization.fetch("id")).to eq("https://ror.org/01856cw59")
+      expect(organization.fetch("name")).to eq("University Hospital Münster")
+      expect(organization.fetch("types")).to eq(["Healthcare"])
+      expect(organization.fetch("address")).to eq("country"=>"Germany")
+      expect(organization.fetch("alternateName")).to eq(["UKM"])
+      expect(organization.fetch("url")).to eq(["http://klinikum.uni-muenster.de/"])
+      expect(organization.fetch("wikipediaUrl")).to be_nil
+
+      expect(organization.fetch("identifiers").length).to eq(2)
+      expect(organization.fetch("identifiers").last).to eq("identifier"=>"0000000405514246", "identifierType"=>"isni")
+    end
+  end
+
+  describe "query organizations by type", elasticsearch: true, vcr: true do
     let(:query) do
       %(query {
         organizations(types: "government", country: "de", after: "MQ") {
