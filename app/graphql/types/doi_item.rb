@@ -276,11 +276,11 @@ module DoiItem
   end
 
   def titles(first: nil)
-    object.titles[0...first]
+    Array.wrap(object.titles)[0...first]
   end
 
   def descriptions(first: nil)
-    object.descriptions[0...first]
+    Array.wrap(object.descriptions)[0...first]
   end
 
   def bibtex
