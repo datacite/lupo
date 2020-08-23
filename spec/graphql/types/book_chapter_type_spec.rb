@@ -14,7 +14,7 @@ describe BookChapterType do
     before do
       Doi.import
       sleep 2
-      @dois = Doi.query(nil, page: { cursor: [], size: 3 }).results.to_a
+      @dois = Doi.gql_query(nil, page: { cursor: [], size: 3 }).results.to_a
     end
 
     let(:query) do
@@ -51,7 +51,7 @@ describe BookChapterType do
     before do
       Doi.import
       sleep 2
-      @dois = Doi.query(nil, page: { cursor: [], size: 4 }).results.to_a
+      @dois = Doi.gql_query(nil, page: { cursor: [], size: 4 }).results.to_a
     end
 
     let(:query) do

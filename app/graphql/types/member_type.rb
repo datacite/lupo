@@ -164,12 +164,12 @@ class MemberType < BaseObject
   end
 
   def prefixes(**args)
-    response = ProviderPrefix.query(args[:query], provider_id: object.uid, state: args[:state], year: args[:year], page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
+    response = ProviderPrefix.query(args[:query], provider_id: object.uid, state: args[:state], year: args[:year], page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [], size: args[:first] })
     ElasticsearchModelResponseConnection.new(response, context: self.context, first: args[:first], after: args[:after])
   end
 
   def repositories(**args)
-    response = Client.query(args[:query], provider_id: object.uid, year: args[:year], software: args[:software], page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
+    response = Client.query(args[:query], provider_id: object.uid, year: args[:year], software: args[:software], page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [], size: args[:first] })
     ElasticsearchModelResponseConnection.new(response, context: self.context, first: args[:first], after: args[:after])
   end
 
@@ -192,6 +192,6 @@ class MemberType < BaseObject
   end
 
   def response(**args)
-    Doi.query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: object.member_type == "consortium" ? nil : object.uid, consortium_id: object.member_type == "consortium" ? object.uid : nil, funder_id: args[:funder_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_affiliation: args[:has_affiliation], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], published: args[:published], language: args[:language], license: args[:license], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
+    Doi.gql_query(args[:query], ids: args[:ids], user_id: args[:user_id], client_id: args[:repository_id], provider_id: object.member_type == "consortium" ? nil : object.uid, consortium_id: object.member_type == "consortium" ? object.uid : nil, funder_id: args[:funder_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], has_person: args[:has_person], has_funder: args[:has_funder], has_affiliation: args[:has_affiliation], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], published: args[:published], language: args[:language], license: args[:license], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [], size: args[:first] })
   end
 end

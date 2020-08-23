@@ -135,7 +135,7 @@ describe WorkType do
     before do
       Doi.import
       sleep 2
-      @works = Doi.query(nil, page: { cursor: [], size: 10 }).results.to_a
+      @works = Doi.gql_query(nil, page: { cursor: [], size: 10 }).results.to_a
     end
 
     it "returns all works" do
@@ -210,7 +210,7 @@ describe WorkType do
     before do
       Doi.import
       sleep 2
-      @works = Doi.query(nil, page: { cursor: [], size: 11 }).results.to_a
+      @works = Doi.gql_query(nil, page: { cursor: [], size: 11 }).results.to_a
     end
 
     it "returns all works" do
@@ -262,7 +262,7 @@ describe WorkType do
     before do
       Doi.import
       sleep 2
-      @works = Doi.query(nil, page: { cursor: [], size: 11 }).results.to_a
+      @works = Doi.gql_query(nil, page: { cursor: [], size: 11 }).results.to_a
     end
 
     it "returns all works" do

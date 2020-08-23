@@ -13,7 +13,7 @@ describe SoftwareType do
     before do
       Doi.import
       sleep 2
-      @dois = Doi.query(nil, page: { cursor: [], size: 1 }).results.to_a
+      @dois = Doi.gql_query(nil, page: { cursor: [], size: 1 }).results.to_a
     end
 
     let(:query) do

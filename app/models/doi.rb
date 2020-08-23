@@ -543,6 +543,62 @@ class Doi < ActiveRecord::Base
     }
   end
 
+  def self.gql_query_aggregations
+    {
+      resource_types: { terms: { field: 'resource_type_id_and_name', size: 16, min_doc_count: 1 } },
+      published: {
+        date_histogram: {
+          field: 'publication_year',
+          interval: 'year',
+          format: 'year',
+          order: {
+            _key: "desc"
+          },
+          min_doc_count: 1
+        },
+      },
+      registration_agencies: { terms: { field: 'agency', size: 10, min_doc_count: 1 } },
+      affiliations: { terms: { field: 'affiliation_id_and_name', size: 10, min_doc_count: 1 } },
+      pid_entities: {
+        filter: { term: { "subjects.subjectScheme": "PidEntity" } },
+        aggs: {
+          subject: { terms: { field: 'subjects.subject', size: 10, min_doc_count: 1,
+            include: %w(Dataset Publication Software Organization Funder Person Grant Sample Instrument Repository Project) } },
+        },
+      },
+      fields_of_science: {
+        filter: { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } },
+        aggs: {
+          subject: { terms: { field: 'subjects.subject', size: 10, min_doc_count: 1,
+            include: "FOS:.*" } },
+        },
+      },
+      licenses: { terms: { field: 'rights_list.rightsIdentifier', size: 10, min_doc_count: 1 } },
+      languages: { terms: { field: 'language', size: 10, min_doc_count: 1 } },
+      views: {
+        date_histogram: { field: 'publication_year', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+        aggs: {
+          metric_count: { sum: { field: "view_count" } },
+          bucket_truncate: { bucket_sort: { size: 10 } },
+        },
+      },
+      downloads: {
+        date_histogram: { field: 'publication_year', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+        aggs: {
+          metric_count: { sum: { field: "download_count" } },
+          bucket_truncate: { bucket_sort: { size: 10 } },
+        },
+      },
+      citations: {
+        date_histogram: { field: 'publication_year', interval: 'year', format: 'year', order: { _key: "desc" }, min_doc_count: 1 },
+        aggs: {
+          metric_count: { sum: { field: "citation_count" } },
+          bucket_truncate: { bucket_sort: { size: 10 } },
+        },
+      },
+    }
+  end
+
   def self.query_aggregations
     {
       resource_types: { terms: { field: 'resource_type_id_and_name', size: 16, min_doc_count: 1 } },
@@ -714,6 +770,133 @@ class Doi < ActiveRecord::Base
       },
       aggregations: aggregations,
     })
+  end
+
+  # query for graphql, removing options that are not needed
+  def self.gql_query(query, options={})
+    options[:page] ||= {}
+    aggregations = gql_query_aggregations
+
+    # cursor nav uses search_after, this should always be an array of values that match the sort.
+    # make sure we have a valid cursor
+    cursor = [0, ""]
+    if options.dig(:page, :cursor).is_a?(Array)
+      timestamp, uid = options.dig(:page, :cursor)
+      cursor = [timestamp.to_i, uid.to_s]
+    elsif options.dig(:page, :cursor).is_a?(String)
+      timestamp, uid = options.dig(:page, :cursor).split(",")
+      cursor = [timestamp.to_i, uid.to_s]
+    end
+
+    from = 0
+    search_after = cursor
+    sort = [{ created: "asc", uid: "asc" }]
+
+    # make sure field name uses underscore
+    # escape forward slash, but not other Elasticsearch special characters
+    if query.present?
+      query = query.gsub(/publicationYear/, "publication_year")
+      query = query.gsub(/relatedIdentifiers/, "related_identifiers")
+      query = query.gsub(/rightsList/, "rights_list")
+      query = query.gsub(/fundingReferences/, "funding_references")
+      query = query.gsub(/geoLocations/, "geo_locations")
+      query = query.gsub(/landingPage/, "landing_page")
+      query = query.gsub(/contentUrl/, "content_url")
+      query = query.gsub("/", '\/')
+    end
+
+    # turn ids into an array if provided as comma-separated string
+    options[:ids] = options[:ids].split(",") if options[:ids].is_a?(String)
+
+    if query.present?
+      must = [{ query_string: { query: query, fields: query_fields, default_operator: "AND", phrase_slop: 1 } }]
+    else
+      must = [{ match_all: {} }]
+    end
+
+    filter = []
+    should = []
+    minimum_should_match = 0
+
+    filter << { terms: { doi: options[:ids].map(&:upcase) }} if options[:ids].present?
+    filter << { term: { "types.resourceTypeGeneral": options[:resource_type_id].underscore.camelize }} if options[:resource_type_id].present?
+    filter << { terms: { "types.resourceType": options[:resource_type].split(",") }} if options[:resource_type].present?
+    filter << { terms: { provider_id: options[:provider_id].split(",") } } if options[:provider_id].present?
+    filter << { terms: { client_id: options[:client_id].to_s.split(",") } } if options[:client_id].present?
+    filter << { terms: { agency: options[:agency].split(",").map(&:downcase) } } if options[:agency].present?
+    filter << { terms: { prefix: options[:prefix].to_s.split(",") } } if options[:prefix].present?
+    filter << { terms: { language: options[:language].to_s.split(",").map(&:downcase) } } if options[:language].present?
+    filter << { term: { uid: options[:uid] }} if options[:uid].present?
+    filter << { range: { created: { gte: "#{options[:created].split(",").min}||/y", lte: "#{options[:created].split(",").max}||/y", format: "yyyy" }}} if options[:created].present?
+    filter << { range: { publication_year: { gte: "#{options[:published].split(",").min}||/y", lte: "#{options[:published].split(",").max}||/y", format: "yyyy" }}} if options[:published].present?
+    filter << { term: { schema_version: "http://datacite.org/schema/kernel-#{options[:schema_version]}" }} if options[:schema_version].present?
+    filter << { terms: { "subjects.subject": options[:subject].split(",") } } if options[:subject].present?
+    if options[:pid_entity].present?
+      filter << { term: { "subjects.subjectScheme": "PidEntity" } }
+      filter << { terms: { "subjects.subject": options[:pid_entity].split(",").map(&:humanize) } }
+    end
+    if options[:field_of_science].present?
+      filter << { term: { "subjects.subjectScheme": "Fields of Science and Technology (FOS)" } }
+      filter << { terms: { "subjects.subject": options[:field_of_science].split(",").map { |s| "FOS: " + s.humanize } } }
+    end
+    filter << { terms: { "rights_list.rightsIdentifier" => options[:license].split(",") } } if options[:license].present?
+    filter << { term: { source: options[:source] } } if options[:source].present?
+    filter << { range: { reference_count: { "gte": options[:has_references].to_i } } } if options[:has_references].present?
+    filter << { range: { citation_count: { "gte": options[:has_citations].to_i } } } if options[:has_citations].present?
+    filter << { range: { part_count: { "gte": options[:has_parts].to_i } } } if options[:has_parts].present?
+    filter << { range: { part_of_count: { "gte": options[:has_part_of].to_i } } } if options[:has_part_of].present?
+    filter << { range: { version_count: { "gte": options[:has_versions].to_i } } } if options[:has_versions].present?
+    filter << { range: { version_of_count: { "gte": options[:has_version_of].to_i } } } if options[:has_version_of].present?
+    filter << { range: { view_count: { "gte": options[:has_views].to_i } } } if options[:has_views].present?
+    filter << { range: { download_count: { "gte": options[:has_downloads].to_i } } } if options[:has_downloads].present?
+    filter << { term: { "landing_page.status": options[:link_check_status] } } if options[:link_check_status].present?
+    filter << { exists: { field: "landing_page.checked" }} if options[:link_checked].present?
+    filter << { term: { "landing_page.hasSchemaOrg": options[:link_check_has_schema_org] }} if options[:link_check_has_schema_org].present?
+    filter << { term: { "landing_page.bodyHasPid": options[:link_check_body_has_pid] }} if options[:link_check_body_has_pid].present?
+    filter << { exists: { field: "landing_page.schemaOrgId" }} if options[:link_check_found_schema_org_id].present?
+    filter << { exists: { field: "landing_page.dcIdentifier" }} if options[:link_check_found_dc_identifier].present?
+    filter << { exists: { field: "landing_page.citationDoi" }} if options[:link_check_found_citation_doi].present?
+    filter << { range: { "landing_page.redirectCount": { "gte": options[:link_check_redirect_count_gte] } } } if options[:link_check_redirect_count_gte].present?
+    filter << { terms: { aasm_state: options[:state].to_s.split(",") }} if options[:state].present?
+    filter << { range: { registered: { gte: "#{options[:registered].split(",").min}||/y", lte: "#{options[:registered].split(",").max}||/y", format: "yyyy" }}} if options[:registered].present?
+    filter << { term: { "creators.nameIdentifiers.nameIdentifier" => "https://orcid.org/#{orcid_from_url(options[:user_id])}" }} if options[:user_id].present?
+    filter << { term: { "creators.nameIdentifiers.nameIdentifierScheme" => "ORCID" }} if options[:has_person].present?
+    filter << { term: { "creators.affiliation.affiliationIdentifierScheme" => "ROR" }} if options[:has_organization].present?
+    filter << { term: { "funding_references.funderIdentifierType" => "Crossref Funder ID" }} if options[:has_funder].present?
+    filter << { term: { consortium_id: options[:consortium_id] }} if options[:consortium_id].present?
+    # TODO align PID parsing
+    filter << { term: { "client.re3data_id" => doi_from_url(options[:re3data_id]) }} if options[:re3data_id].present?
+    filter << { term: { "client.opendoar_id" => options[:opendoar_id] }} if options[:opendoar_id].present?
+    filter << { terms: { "client.certificate" => options[:certificate].split(",") }} if options[:certificate].present?
+
+    # match either ROR ID or Crossref Funder ID if either affiliation_id or funder_id 
+    # is a query parameter
+    if options[:affiliation_id].present?
+      should << { term: { "affiliation_id" => ror_from_url(options[:affiliation_id]) }}
+      minimum_should_match = 1
+    end
+    if options[:funder_id].present?
+      should << { terms: { "funding_references.funderIdentifier" => options[:funder_id].split(",").map { |f| "https://doi.org/#{doi_from_url(f)}" } } }
+      minimum_should_match = 1
+    end
+
+    es_query = {
+      bool: {
+        must: must,
+        filter: filter,
+        should: should,
+        minimum_should_match: minimum_should_match,
+      }
+    }
+
+    __elasticsearch__.search({
+      size: options.dig(:page, :size),
+      search_after: search_after,
+      sort: sort,
+      query: es_query,
+      aggregations: aggregations,
+      track_total_hits: true
+    }.compact)
   end
 
   def self.query(query, options={})

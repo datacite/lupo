@@ -130,22 +130,22 @@ class FunderType < BaseObject
   def view_count
     args = { first: 0 }
     r = response(args)
-    r.results.total.positive? ? aggregate_count(r.response.aggregations.views.buckets) : 0
+    aggregate_count(r.response.aggregations.views.buckets)
   end
 
   def download_count
     args = { first: 0 }
     r = response(args)
-    r.results.total.positive? ? aggregate_count(r.response.aggregations.downloads.buckets) : 0
+    aggregate_count(r.response.aggregations.downloads.buckets)
   end
 
   def citation_count
     args = { first: 0 }
     r = response(args)
-    r.results.total.positive? ? aggregate_count(r.response.aggregations.citations.buckets) : 0
+    aggregate_count(r.response.aggregations.citations.buckets)
   end
 
   def response(**args)
-    Doi.query(args[:query], ids: args[:ids], funder_id: object.id, user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], agency: args[:registration_agency], language: args[:language], license: args[:license], has_person: args[:has_person], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], published: args[:published], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil, size: args[:first] })
+    Doi.gql_query(args[:query], ids: args[:ids], funder_id: object.id, user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], agency: args[:registration_agency], language: args[:language], license: args[:license], has_person: args[:has_person], has_organization: args[:has_organization], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], published: args[:published], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [], size: args[:first] })
   end
 end

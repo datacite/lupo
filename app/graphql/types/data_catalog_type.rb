@@ -79,7 +79,7 @@ class DataCatalogType < BaseObject
   end
 
   def datasets(**args)
-    Doi.query(args[:query], re3data_id: object[:id], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], license: args[:license], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Dataset", published: args[:published], state: "findable", page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
+    Doi.gql_query(args[:query], re3data_id: object[:id], user_id: args[:user_id], client_id: args[:repository_id], provider_id: args[:member_id], license: args[:license], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], resource_type_id: "Dataset", published: args[:published], state: "findable", page: { cursor: args[:cursor].present? ? Base64.urlsafe_decode64(args[:cursor]) : nil, size: args[:size] })
   end
 
   def view_count
@@ -95,6 +95,6 @@ class DataCatalogType < BaseObject
   end
 
   def response
-    @response ||= Doi.query(nil, re3data_id: object[:id], state: "findable", page: { number: 1, size: 0 })
+    @response ||= Doi.gql_query(nil, re3data_id: object[:id], state: "findable", page: { number: 1, size: 0 })
   end
 end
