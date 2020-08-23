@@ -96,11 +96,17 @@ class OtherDoi < Doi
   # +job_name+:: Acive Job class name of the Job that would be executed on every matched results
   def self.loop_through_dois(options={})
     size = (options[:size] || 1000).to_i
-    cursor = options[:cursor] || []
     filter = options[:filter] || {}
     label = options[:label] || ""
     options[:job_name] ||= ""
     query = options[:query].presence
+
+    if options[:cursor].present? 
+      timestamp, doi = options[:cursor].split(",", 2)
+      cursor = [timestamp.to_i, doi]
+    else
+      cursor = []
+    end
 
     response = OtherDoi.query(query, filter.merge(page: { size: 1, cursor: [] }))
     message = "#{label} #{response.results.total} other dois with #{label}."

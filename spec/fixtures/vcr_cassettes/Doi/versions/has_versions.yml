@@ -1,0 +1,51 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://doi.org/ra/10.14454
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Date:
+      - Sun, 23 Aug 2020 11:57:59 GMT
+      Content-Type:
+      - application/json;charset=UTF-8
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - __cfduid=d479de5e934af472f119d0c8ff93070241598183879; expires=Tue, 22-Sep-20
+        11:57:59 GMT; path=/; domain=.doi.org; HttpOnly; SameSite=Lax; Secure
+      Cf-Cache-Status:
+      - DYNAMIC
+      Cf-Request-Id:
+      - 04bcc7ca140000dfebd63f2200000001
+      Expect-Ct:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubDomains; preload
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 5c74a8bcee87dfeb-FRA
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        [
+          {
+            "DOI": "10.14454",
+            "RA": "DataCite"
+          }
+        ]
+    http_version: null
+  recorded_at: Sun, 23 Aug 2020 11:57:59 GMT
+recorded_with: VCR 5.1.0
