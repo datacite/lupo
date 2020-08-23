@@ -52,7 +52,7 @@ describe WorkType do
 
     it "returns work" do
       response = LupoSchema.execute(query).as_json
-      
+
       expect(response.dig("data", "work", "id")).to eq("https://handle.test.datacite.org/#{work.doi.downcase}")
       expect(response.dig("data", "work", "container")).to eq("identifier"=>"0020-1693", "identifierType"=>"ISSN", "title"=>"Inorganica Chimica Acta")
       expect(response.dig("data", "work", "repository", "id")).to eq(work.client_id)
@@ -75,6 +75,41 @@ describe WorkType do
       doc = Nokogiri::XML(response.dig("data", "work", "xml"), nil, 'UTF-8', &:noblanks)
       expect(doc.at_css("identifier").content).to eq(work.doi)
       expect(doc.at_css("titles").content).to eq("Data from: A new malaria agent in African hominids.")
+    end
+  end
+
+  describe "find work not found", elasticsearch: true do
+    let(:query) do
+      %(query {
+        work(id: "https://doi.org/10.14454/xxx") {
+          id
+          repository {
+            id
+            type
+            name
+          }
+          member {
+            id
+            type
+            name
+          }
+          container {
+            identifier
+            identifierType
+            title
+          }
+          bibtex
+          xml
+          schemaOrg
+        }
+      })
+    end
+
+    it "returns error" do
+      response = LupoSchema.execute(query).as_json
+      
+      expect(response.dig("data")).to be_nil
+      expect(response.dig("errors")).to eq([{"locations"=>[{"column"=>9, "line"=>2}], "message"=>"Record not found", "path"=>["work"]}])
     end
   end
 

@@ -1,0 +1,50 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://pub.orcid.org/v3.0/XXXX/person
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
+      Accept:
+      - application/json;charset=UTF-8
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Server:
+      - nginx/1.16.1
+      Cache-Control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Sun, 23 Aug 2020 07:27:35 GMT
+      Expires:
+      - '0'
+      Pragma:
+      - no-cache
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Content-Type-Options:
+      - nosniff
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - X-Mapping-fjhppofk=1F5FD8D0B8B1A8DD0F8680D854A2C10B; path=/
+      X-Frame-Options:
+      - DENY
+    body:
+      encoding: ASCII-8BIT
+      string: '{"response-code":404,"developer-message":"404 Not Found: The resource
+        was not found. Full validation error: ORCID iD XXXX not found","user-message":"The
+        resource was not found.","error-code":9016,"more-info":"https://members.orcid.org/api/resources/troubleshooting"}'
+    http_version: null
+  recorded_at: Sun, 23 Aug 2020 07:27:35 GMT
+recorded_with: VCR 5.1.0

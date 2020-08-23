@@ -102,6 +102,50 @@ describe OrganizationType do
     end
   end
 
+  describe "find organization not found", elasticsearch: true, vcr: true do
+    let(:query) do
+      %(query {
+        organization(id: "https://ror.org/xxxx") {
+          id
+          name
+          alternateName
+          identifiers {
+            identifier
+            identifierType
+          }
+          citationCount
+          viewCount
+          downloadCount
+          works {
+            totalCount
+            published {
+              id
+              title
+              count
+            }
+            resourceTypes {
+              title
+              count
+            }
+            nodes {
+              id
+              titles {
+                title
+              }
+            }
+          }
+        }
+      })
+    end
+
+    it "returns organization information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data")).to be_nil
+      expect(response.dig("errors")).to eq([{"locations"=>[{"column"=>9, "line"=>2}], "message"=>"Record not found", "path"=>["organization"]}])
+    end
+  end
+
   describe "query organizations", elasticsearch: true, vcr: true do
     let!(:dois) { create_list(:doi, 3) }
     let!(:doi) { create(:doi, aasm_state: "findable", creators:

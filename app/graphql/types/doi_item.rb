@@ -305,6 +305,10 @@ module DoiItem
     BibTeX::Entry.new(bib).to_s
   end
 
+  def xml
+    object.xml.force_encoding("UTF-8") if object.xml.present?
+  end
+
   def schema_org
     hsh = { 
       "@context" => "http://schema.org",

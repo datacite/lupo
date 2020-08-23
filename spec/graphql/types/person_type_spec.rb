@@ -119,6 +119,64 @@ describe PersonType do
     end
   end
 
+  describe "find person not found", elasticsearch: true, vcr: true do
+    let(:query) do
+      %(query {
+        person(id: "https://orcid.org/xxxx") {
+          id
+          name
+          givenName
+          familyName
+          alternateName
+          description
+          links {
+            name
+            url
+          }
+          identifiers {
+            identifier
+            identifierType
+            identifierUrl
+          }
+          country {
+            id
+            name
+          }
+          citationCount
+          viewCount
+          downloadCount
+          works {
+            totalCount
+            published {
+              id
+              title
+              count
+            }
+            resourceTypes {
+              id
+              title
+              count
+            }
+            nodes {
+              id
+              titles {
+                title
+              }
+              citationCount
+            }
+          }
+        }
+      })
+    end
+
+    it "returns error" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data")).to be_nil
+      expect(response.dig("errors")).to eq([{"locations"=>[{"column"=>9, "line"=>2}], "message"=>"Record not found", "path"=>["person"]}])
+    end
+  end
+
   describe "query people", elasticsearch: true, vcr: true do
     let(:query) do
       %(query {
