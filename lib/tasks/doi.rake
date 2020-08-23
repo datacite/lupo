@@ -154,6 +154,18 @@ namespace :doi do
     Doi.loop_through_dois(options)
   end
 
+  # until all Crossref DOIs are indexed as otherDoi
+  desc "Refresh metadata"
+  task refresh: :environment do
+    options = {
+      query: ENV["QUERY"],
+      label: "[RefreshMetadata]",
+      job_name: "DoiRefreshJob",
+      cursor: ENV["CURSOR"],
+    }
+    puts Doi.loop_through_dois(options)
+  end
+
   desc 'Convert affiliations to new format'
   task :convert_affiliations => :environment do
     from_id = (ENV['FROM_ID'] || Doi.minimum(:id)).to_i
