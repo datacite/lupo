@@ -246,6 +246,10 @@ describe WorkType do
             id
             doi
             registered
+            subjects {
+              subject
+              subjectScheme
+            }
             rights {
               rights
               rightsUri
@@ -256,7 +260,11 @@ describe WorkType do
       })
     end
     
-    let!(:works) { create_list(:doi, 10, aasm_state: "findable", agency: "datacite") }
+    let!(:works) { create_list(:doi, 10, aasm_state: "findable", agency: "datacite", subjects:
+      [{
+        "subject" => "Computer and information sciences"
+      }])
+    }
     let!(:work) { create(:doi, aasm_state: "findable", agency: "crossref", rights_list: []) }
 
     before do
@@ -275,9 +283,10 @@ describe WorkType do
       expect(response.dig("data", "works", "nodes").length).to eq(4)
       expect(response.dig("data", "works", "nodes", 0, "id")).to eq(@works[0].identifier)
       expect(response.dig("data", "works", "nodes", 0, "registered")).to start_with(@works[0].registered[0..9])
+      expect(response.dig("data", "works", "nodes", 0, "subjects")).to eq([{"subject"=>"Computer and information sciences", "subjectScheme"=>nil}, {"subject"=>"FOS: Computer and information sciences", "subjectScheme"=>"Fields of Science and Technology (FOS)"}])
       expect(response.dig("data", "works", "nodes", 0, "rights")).to eq([{"rights"=>"Creative Commons Zero v1.0 Universal",
-      +  "rightsIdentifier"=>"cc0-1.0",
-      +  "rightsUri"=>"https://creativecommons.org/publicdomain/zero/1.0/legalcode"}])
+        "rightsIdentifier"=>"cc0-1.0",
+        "rightsUri"=>"https://creativecommons.org/publicdomain/zero/1.0/legalcode"}])
     end
   end
 end

@@ -255,9 +255,9 @@ module DoiItem
 
   def fields_of_science
     Array.wrap(object.subjects)
-      .select { |s| s.subjectScheme == "Fields of Science and Technology (FOS)" }
+      .select { |s| s["subjectScheme"] == "Fields of Science and Technology (FOS)" }
       .map do |s|
-        name = s.subject.gsub("FOS: ", "")
+        name = s["subject"].gsub("FOS: ", "")
         {
           "id" => name.parameterize(separator: '_'),
           "name" => name }
