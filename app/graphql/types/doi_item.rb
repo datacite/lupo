@@ -40,7 +40,7 @@ module DoiItem
   field :formats, [String], null: true, description: "Technical format of the resource"
   field :sizes, [String], null: true, description: "Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource"
   field :version, String, null: true, hash_key: "version_info", description: "The version number of the resource"
-  field :rights, [RightsType], null: true, hash_key: "rights_list", description: "Any rights information for this resource"
+  field :rights, [RightsType], null: true, description: "Any rights information for this resource"
   field :descriptions, [DescriptionType], null: true, description: "All additional information that does not fit in any of the other categories" do
     argument :first, Int, required: false, default_value: 5
   end
@@ -228,6 +228,10 @@ module DoiItem
 
   def type
     object.types["resourceTypeGeneral"] || "Work"
+  end
+
+  def rights
+    Array.wrap(object.rights_list)
   end
 
   def language
