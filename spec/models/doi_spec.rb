@@ -809,7 +809,7 @@ describe Doi, type: :model, vcr: true do
 
     # removing duplicate dois in citation_ids, citation_count and citations_over_time (different relation_type_id)
     it "has citations" do
-      expect(doi.citations.count).to eq(3)
+      expect(doi.citations.count).to eq(2)
       expect(doi.citation_ids.count).to eq(2)
       expect(doi.citation_count).to eq(2)
       expect(doi.citations_over_time).to eq([{"total"=>1, "year"=>"2015"}, {"total"=>1, "year"=>"2016"}])
