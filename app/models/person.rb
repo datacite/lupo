@@ -8,6 +8,12 @@ class Person
 
     url = "https://pub.orcid.org/v3.0/#{orcid}/person"
     response = Maremma.get(url, accept: "json")
+
+    if response.status >= 405
+      message = response.body.dig("errors", 0, "title", "developer-message") || "Something went wrong in ORCID"
+      fail ::Faraday::ClientError, message
+    end 
+
     return {} if response.status != 200
     
     message = response.body.dig("data")
@@ -58,6 +64,10 @@ class Person
     url = "https://pub.orcid.org/v3.0/expanded-search/?" + URI.encode_www_form(params)
 
     response = Maremma.get(url, accept: "json")
+    if response.status >= 400
+      message = response.body.dig("errors", 0, "title", "developer-message") || "Something went wrong in ORCID"
+      fail ::Faraday::ClientError, message
+    end 
 
     return [] if response.status != 200
     

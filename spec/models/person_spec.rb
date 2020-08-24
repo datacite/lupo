@@ -138,5 +138,10 @@ describe Person, type: :model, vcr: true do
       expect(person.identifiers).to be_empty
       expect(person.country).to be_nil
     end
+
+    it "handle errors gracefully" do
+      query = "container.identifier:2658-719X"
+      expect { Person.query(query) }.to raise_error(Faraday::ClientError, /Error from server/)
+    end
   end
 end

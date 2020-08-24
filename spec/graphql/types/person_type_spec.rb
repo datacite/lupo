@@ -221,4 +221,40 @@ describe PersonType do
       expect(person.fetch("alternateName")).to eq(["Nélida R. Villaseñor"])
     end
   end
+
+  describe "query people with error", elasticsearch: true, vcr: true do
+    let(:query) do
+      %(query {
+        people(query: "container.identifier:2658-719X") {
+          totalCount
+          pageInfo {
+            endCursor
+            hasNextPage
+          }
+          nodes {
+            id
+            name
+            givenName
+            familyName
+            alternateName
+            works {
+              totalCount
+              published {
+                id
+                title
+                count
+              }
+            }
+          }
+        }
+      })
+    end
+
+    it "returns error" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data")).to be_nil
+      expect(response.dig("errors", 0, "message")).to eq("org.apache.solr.client.solrj.impl.HttpSolrClient.RemoteSolrException Full validation error: Error from server at http://solr-loc.orcid.org/solr/profile: undefined field container.identifier")
+    end
+  end
 end
