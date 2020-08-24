@@ -83,7 +83,7 @@ namespace :doi do
       query: "+aasm_state:(findable OR registered) -schema_version:*",
       label: "[SetSchemaVersion]",
       job_name: "SchemaVersionJob",
-      cursor: ENV["CURSOR"],
+      cursor: ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : [],
     }
     puts Doi.loop_through_dois(options)
   end
@@ -94,7 +94,7 @@ namespace :doi do
       query: "agency:DataCite OR agency:Crossref",
       label: "[SetRegistrationAgency]",
       job_name: "UpdateDoiJob",
-      cursor: ENV["CURSOR"],
+      cursor: ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : [],
     }
     puts Doi.loop_through_dois(options)
   end
@@ -105,7 +105,7 @@ namespace :doi do
       query: "rights_list:* AND -rights_list.rightsIdentifier:*",
       label: "[SetLicense]",
       job_name: "UpdateDoiJob",
-      cursor: ENV["CURSOR"],
+      cursor: ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : [],
     }
     puts Doi.loop_through_dois(options)
   end
@@ -116,7 +116,7 @@ namespace :doi do
       query: "language:*",
       label: "[SetLanguage]",
       job_name: "UpdateDoiJob",
-      cursor: ENV["CURSOR"],
+      cursor: ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : [],
     }
     puts Doi.loop_through_dois(options)
   end
@@ -127,7 +127,7 @@ namespace :doi do
       query: "identifiers.identifierType:DOI",
       label: "[SetIdentifiers]",
       job_name: "UpdateDoiJob",
-      cursor: ENV["CURSOR"],
+      cursor: ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : [],
     }
     puts Doi.loop_through_dois(options)
   end
@@ -138,7 +138,7 @@ namespace :doi do
       query: "subjects.subjectScheme:FOR",
       label: "[SetFieldOfScience]",
       job_name: "UpdateDoiJob",
-      cursor: ENV["CURSOR"],
+      cursor: ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : [],
     }
     puts Doi.loop_through_dois(options)
   end
@@ -149,7 +149,7 @@ namespace :doi do
       query: "types.resourceTypeGeneral:* AND -types.schemaOrg:*",
       label: "[SetTypes]",
       job_name: "UpdateDoiJob",
-      cursor: ENV["CURSOR"],
+      cursor: ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : [],
     }
     Doi.loop_through_dois(options)
   end
@@ -161,7 +161,7 @@ namespace :doi do
       query: ENV["QUERY"],
       label: "[RefreshMetadata]",
       job_name: "DoiRefreshJob",
-      cursor: ENV["CURSOR"],
+      cursor: ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : [],
     }
     puts Doi.loop_through_dois(options)
   end

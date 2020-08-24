@@ -16,6 +16,16 @@ namespace :event do
     puts Event.upgrade_index
   end
 
+  desc "Create alias for events"
+  task :create_alias => :environment do
+    puts Event.create_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
+  end
+
+  desc "Delete alias for events"
+  task :delete_alias => :environment do
+    puts Event.delete_alias(index: ENV["INDEX"], alias: ENV["ALIAS"])
+  end
+
   desc "Show index stats for events"
   task :index_stats => :environment do
     puts Event.index_stats
@@ -56,6 +66,7 @@ namespace :event do
     options = {
       cursor: ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : [],
       filter: { update_target_doi: true },
+      query: ENV["QUERY"],
       label: "[UpdateTargetDoi] Updating",
       job_name: "TargetDoiByIdJob",
     }
@@ -66,7 +77,7 @@ end
 namespace :crossref do
   desc 'Import crossref dois for all events'
   task :import_doi => :environment do
-    cursor = ENV['CURSOR'].to_s.split(",") || [Event.minimum(:id), Event.minimum(:id)]
+    cursor = ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : []
 
     Event.update_crossref(cursor: cursor)
   end
@@ -107,7 +118,7 @@ end
 namespace :datacite_crossref do
   desc 'Import crossref dois for all events'
   task :import_doi => :environment do
-    cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
+    cursor = ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : []
 
     Event.update_datacite_crossref(cursor: cursor, refresh: ENV['REFRESH'], size: ENV['SIZE'])
   end
@@ -116,7 +127,7 @@ end
 namespace :datacite_medra do
   desc 'Import medra dois for all events'
   task :import_doi => :environment do
-    cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
+    cursor = ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : []
 
     Event.update_datacite_medra(cursor: cursor, refresh: ENV['REFRESH'], size: ENV['SIZE'])
   end
@@ -125,7 +136,7 @@ end
 namespace :datacite_kisti do
   desc 'Import kisti dois for all events'
   task :import_doi => :environment do
-    cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
+    cursor = ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : []
 
     Event.update_datacite_kisti(cursor: cursor, refresh: ENV['REFRESH'], size: ENV['SIZE'])
   end
@@ -134,7 +145,7 @@ end
 namespace :datacite_jalc do
   desc 'Import jalc dois for all events'
   task :import_doi => :environment do
-    cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
+    cursor = ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : [],
 
     Event.update_datacite_jalc(cursor: cursor, refresh: ENV['REFRESH'], size: ENV['SIZE'])
   end
@@ -143,7 +154,7 @@ end
 namespace :datacite_op do
   desc 'Import op dois for all events'
   task :import_doi => :environment do
-    cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
+    cursor = ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : []
 
     Event.update_datacite_op(cursor: cursor, refresh: ENV['REFRESH'], size: ENV['SIZE'])
   end
@@ -152,7 +163,7 @@ end
 namespace :datacite_orcid_auto_update do
   desc 'Import orcid ids for all events'
   task :import_orcid => :environment do
-    cursor = (ENV['CURSOR'] || Event.minimum(:id)).to_i
+    cursor = ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : []
 
     Event.update_datacite_orcid_auto_update(cursor: cursor, refresh: ENV['REFRESH'], size: ENV['SIZE'])
   end

@@ -72,14 +72,16 @@ class Event < ActiveRecord::Base
     "references", "is-referenced-by"
   ]
 
-  ACTIVE_RELATION_TYPES = [
-    "cites",
+  # renamed to make it clearer that these relation types are grouped together as references
+  REFERENCE_RELATION_TYPES = [
+    "is-cited-by",
     "is-supplement-to",
     "references"
   ]
 
-  PASSIVE_RELATION_TYPES = [
-     "is-cited-by",
+  # renamed to make it clearer that these relation types are grouped together as citations
+  CITATION_RELATION_TYPES = [
+     "cites",
      "is-supplemented-by",
      "is-referenced-by"
   ]
@@ -649,11 +651,11 @@ class Event < ActiveRecord::Base
   # +job_name+:: Acive Job class name of the Job that would be executed on every matched results 
   def self.loop_through_events(options)
     size = (options[:size] || 1000).to_i
-    cursor = options[:cursor] || [options[:from_id] || Event.minimum(:id).to_i, options[:until_id] || Event.maximum(:id).to_i]
+    cursor = options[:cursor] || []
     filter = options[:filter] || {}
     label = options[:label] || ""
     job_name = options[:job_name] || ""
-    query = options[:query] || nil
+    query = options[:query].presence
 
     response = Event.query(query, filter.merge(page: { size: 1, cursor: [] }))
     Rails.logger.info "#{label} #{response.results.total} events with #{label}."
@@ -664,7 +666,7 @@ class Event < ActiveRecord::Base
         response = Event.query(query, filter.merge(page: { size: size, cursor: cursor }))
         break unless response.results.results.length.positive?
 
-        Rails.logger.info "#{label} #{response.results.results.length}  events starting with _id #{response.results.to_a.first[:_id]}."
+        Rails.logger.info "#{label} #{response.results.results.length} events starting with _id #{response.results.to_a.first[:_id]}."
         cursor = response.results.to_a.last[:sort]
         Rails.logger.info "#{label} Cursor: #{cursor} "
 
@@ -784,12 +786,12 @@ class Event < ActiveRecord::Base
     return nil unless subj_id && obj_id
     
     case relation_type_id
-    when *ACTIVE_RELATION_TYPES
+    when *REFERENCE_RELATION_TYPES
       self.source_doi = uppercase_doi_from_url(subj_id)
       self.target_doi = uppercase_doi_from_url(obj_id)
       self.source_relation_type_id = "references"
       self.target_relation_type_id = "citations"
-    when *PASSIVE_RELATION_TYPES
+    when *CITATION_RELATION_TYPES
       self.source_doi = uppercase_doi_from_url(obj_id)
       self.target_doi = uppercase_doi_from_url(subj_id)
       self.source_relation_type_id = "references"
