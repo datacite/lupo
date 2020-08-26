@@ -67,7 +67,7 @@ namespace :event do
       cursor: ENV["CURSOR"].present? ? Base64.urlsafe_decode64(ENV["CURSOR"]).split(",", 2) : [],
       filter: { update_target_doi: true },
       query: ENV["QUERY"],
-      label: "[UpdateTargetDoi] Updating",
+      label: "[UpdateTargetDoi]",
       job_name: "TargetDoiByIdJob",
     }
     Event.loop_through_events(options)

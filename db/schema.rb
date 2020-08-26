@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_18_191826) do
+ActiveRecord::Schema.define(version: 2020_08_26_173254) do
 
   create_table "active_storage_attachments", options: "ENGINE=InnoDB DEFAULT CHARSET=latin1", force: :cascade do |t|
     t.string "name", limit: 191, null: false
@@ -111,7 +111,7 @@ ActiveRecord::Schema.define(version: 2020_07_18_191826) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.bigint "provider_prefix_id"
-    t.string "uid", null: false
+    t.string "uid"
     t.index ["client_id", "prefix_id"], name: "index_client_prefixes_on_client_id_and_prefix_id", unique: true
     t.index ["client_id"], name: "FK13A1B3BA47B5F5FF"
     t.index ["prefix_id"], name: "FK13A1B3BAAF86A1C7"
@@ -286,7 +286,7 @@ ActiveRecord::Schema.define(version: 2020_07_18_191826) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string "uuid"
-    t.string "uid", null: false
+    t.string "uid"
     t.index ["prefix_id"], name: "FKE7FBD674AF86A1C7"
     t.index ["provider_id", "prefix_id"], name: "index_provider_prefixes_on_provider_id_and_prefix_id", unique: true
     t.index ["provider_id"], name: "FKE7FBD67446EBD781"
