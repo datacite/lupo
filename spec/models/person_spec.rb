@@ -79,6 +79,11 @@ describe Person, type: :model, vcr: true do
       expect(person.country).to be_nil
     end
 
+    it "account locked" do
+      id = "https://orcid.org/0000-0003-1315-5960"
+      expect { Person.find_by_id(id) }.to raise_error(Faraday::ClientError, /ORCID record is locked/)
+    end
+
     it "not found" do
       id = "https://orcid.org/xxxxx"
       people = Person.find_by_id(id)

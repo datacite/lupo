@@ -177,6 +177,64 @@ describe PersonType do
     end
   end
 
+  describe "find person account locked", elasticsearch: true, vcr: true do
+    let(:query) do
+      %(query {
+        person(id: "https://orcid.org/0000-0003-1315-5960") {
+          id
+          name
+          givenName
+          familyName
+          alternateName
+          description
+          links {
+            name
+            url
+          }
+          identifiers {
+            identifier
+            identifierType
+            identifierUrl
+          }
+          country {
+            id
+            name
+          }
+          citationCount
+          viewCount
+          downloadCount
+          works {
+            totalCount
+            published {
+              id
+              title
+              count
+            }
+            resourceTypes {
+              id
+              title
+              count
+            }
+            nodes {
+              id
+              titles {
+                title
+              }
+              citationCount
+            }
+          }
+        }
+      })
+    end
+
+    it "returns error" do
+      response = LupoSchema.execute(query).as_json
+      puts response
+      expect(response.dig("data")).to be_nil
+      expect(response.dig("errors")).to eq([{"locations"=>[{"column"=>9, "line"=>2}], "message"=>"409 Conflict: The ORCID record is locked and cannot be edited. ORCID https://orcid.org/0000-0003-1315-5960", "path"=>["person"]}])
+    end
+  end
+
   describe "query people", elasticsearch: true, vcr: true do
     let(:query) do
       %(query {
