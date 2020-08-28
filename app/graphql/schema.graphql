@@ -1848,6 +1848,292 @@ type DataCatalogEdge {
   node: DataCatalog
 }
 
+type DataManagementPlan implements DoiItem {
+  """
+  Metadata in bibtex format
+  """
+  bibtex: String!
+
+  """
+  Total number of citations
+  """
+  citationCount: Int
+
+  """
+  Citations for this DOI.
+  """
+  citations(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Citations by year
+  """
+  citationsOverTime: [YearTotal!]
+
+  """
+  The container (e.g. journal or repository) hosting the resource.
+  """
+  container: Container
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  """
+  creators(first: Int = 20): [Creator!]
+
+  """
+  Different dates relevant to the work
+  """
+  dates: [Date!]
+
+  """
+  All additional information that does not fit in any of the other categories
+  """
+  descriptions(first: Int = 5): [Description!]
+
+  """
+  The DOI for the resource.
+  """
+  doi: String!
+
+  """
+  Total number of downloads
+  """
+  downloadCount: Int
+
+  """
+  Downloads by month
+  """
+  downloadsOverTime: [YearMonthTotal!]
+
+  """
+  OECD Fields of Science of the resource
+  """
+  fieldsOfScience: [FieldOfScience!]
+
+  """
+  Technical format of the resource
+  """
+  formats: [String!]
+
+  """
+  Metadata as formatted citation
+  """
+  formattedCitation(locale: String = "en-US", style: String = "apa"): String
+
+  """
+  Information about financial support (funding) for the resource being registered
+  """
+  fundingReferences: [Funding!]
+
+  """
+  Spatial region or named place where the data was gathered or about which the data is focused.
+  """
+  geolocations: [Geolocation!]
+
+  """
+  The persistent identifier for the resource
+  """
+  id: ID!
+
+  """
+  An identifier or identifiers applied to the resource being registered
+  """
+  identifiers: [Identifier!]
+
+  """
+  The primary language of the resource
+  """
+  language: Language
+
+  """
+  The member account managing this resource
+  """
+  member: Member
+
+  """
+  Total number of parts
+  """
+  partCount: Int
+
+  """
+  The DOI is a part of this DOI.
+  """
+  partOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs the resource is a part of
+  """
+  partOfCount: Int
+
+  """
+  Parts of this DOI.
+  """
+  parts(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  The year when the data was or will be made publicly available
+  """
+  publicationYear: Int
+
+  """
+  The name of the entity that holds, archives, publishes prints, distributes, releases, issues, or produces the resource
+  """
+  publisher: String
+
+  """
+  Total number of references
+  """
+  referenceCount: Int
+
+  """
+  References for this DOI
+  """
+  references(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  DOI registration date
+  """
+  registered: ISO8601DateTime
+
+  """
+  The DOI registration agency for the resource
+  """
+  registrationAgency: RegistrationAgency
+
+  """
+  Identifiers of related resources. These must be globally unique identifiers
+  """
+  relatedIdentifiers: [RelatedIdentifier!]
+
+  """
+  The repository account managing this resource
+  """
+  repository: Repository
+
+  """
+  Any rights information for this resource
+  """
+  rights: [Rights!]
+
+  """
+  Metadata in schema.org format
+  """
+  schemaOrg: JSON!
+
+  """
+  Size (e.g. bytes, pages, inches, etc.) or duration (extent), e.g. hours, minutes, days, etc., of a resource
+  """
+  sizes: [String!]
+
+  """
+  Subject, keyword, classification code, or key phrase describing the resource
+  """
+  subjects: [Subject!]
+
+  """
+  A name or title by which a resource is known
+  """
+  titles(first: Int = 5): [Title!]
+
+  """
+  The type of the item.
+  """
+  type: String!
+
+  """
+  The resource type
+  """
+  types: ResourceType!
+
+  """
+  The URL registered for the resource
+  """
+  url: Url
+
+  """
+  The version number of the resource
+  """
+  version: String
+
+  """
+  Total number of versions
+  """
+  versionCount: Int
+
+  """
+  The DOI is a version of this DOI.
+  """
+  versionOf(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of DOIs the resource is a version of
+  """
+  versionOfCount: Int
+
+  """
+  Versions of this DOI.
+  """
+  versions(affiliationId: String, after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, resourceTypeId: String, userId: String): WorkConnectionWithTotal
+
+  """
+  Total number of views
+  """
+  viewCount: Int
+
+  """
+  Views by month
+  """
+  viewsOverTime: [YearMonthTotal!]
+
+  """
+  Metadata in DataCite XML format.
+  """
+  xml: String!
+}
+
+"""
+The connection type for DataManagementPlan.
+"""
+type DataManagementPlanConnectionWithTotal {
+  affiliations: [Facet!]
+
+  """
+  A list of edges.
+  """
+  edges: [DataManagementPlanEdge]
+  fieldsOfScience: [Facet!]
+  languages: [Facet!]
+  licenses: [Facet!]
+
+  """
+  A list of nodes.
+  """
+  nodes: [DataManagementPlan]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  published: [Facet!]
+  registrationAgencies: [Facet!]
+  repositories: [Facet!]
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type DataManagementPlanEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: DataManagementPlan
+}
+
 type DataPaper implements DoiItem {
   """
   Metadata in bibtex format
@@ -7466,6 +7752,8 @@ type Query {
   conferencePapers(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ConferencePaperConnectionWithTotal!
   dataCatalog(id: ID!): DataCatalog!
   dataCatalogs(after: String, first: Int = 25, query: String): DataCatalogConnectionWithTotal!
+  dataManagementPlan(id: ID!): DataManagementPlan!
+  dataManagementPlans(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DataManagementPlanConnectionWithTotal!
   dataPaper(id: ID!): DataPaper!
   dataPapers(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DataPaperConnectionWithTotal!
   dataset(id: ID!): Dataset!
