@@ -26,8 +26,9 @@ module DoiItem
   end
   field :contributors, [ContributorType], null: true, description: "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource." do
     argument :first, Int, required: false, default_value: 20
+    argument :contributor_type, String, required: false
   end
-  field :titles, [TitleType], null: true, description: "A name or title by which a resource is known" do
+  field :titles, [TitleType], null: true, description: "A name or title by which a resource is known." do
     argument :first, Int, required: false, default_value: 5
   end
   field :publication_year, Int, null: true, description: "The year when the data was or will be made publicly available"
@@ -283,7 +284,7 @@ module DoiItem
   end
 
   def contributors(**args)
-    Array.wrap(object.contributors[0...args[:first]]).map do |c|
+    Array.wrap(object.contributors[0...args[:first]]).select { |c| c["contributorType"] == args[:contributor_type] }.map do |c|
       Hashie::Mash.new(
         "id" => c.fetch("nameIdentifiers", []).find { |n| %w(ORCID ROR).include?(n.fetch("nameIdentifierScheme", nil)) }.to_h.fetch("nameIdentifier", nil),
         "contributor_type" => c.fetch("contributorType", nil),

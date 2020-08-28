@@ -139,7 +139,7 @@ type Audiovisual implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -297,7 +297,7 @@ type Audiovisual implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -430,7 +430,7 @@ type Book implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -588,7 +588,7 @@ type Book implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -678,7 +678,7 @@ type BookChapter implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -836,7 +836,7 @@ type BookChapter implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -1012,7 +1012,7 @@ type Collection implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -1170,7 +1170,7 @@ type Collection implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -1302,7 +1302,7 @@ type ConferencePaper implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -1460,7 +1460,7 @@ type ConferencePaper implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -1875,7 +1875,13 @@ type DataManagementPlan implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -2030,7 +2036,7 @@ type DataManagementPlan implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -2164,7 +2170,7 @@ type DataPaper implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -2322,7 +2328,7 @@ type DataPaper implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -2455,7 +2461,7 @@ type Dataset implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -2613,7 +2619,7 @@ type Dataset implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -2857,7 +2863,7 @@ type Dissertation implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -3015,7 +3021,7 @@ type Dissertation implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -3152,7 +3158,7 @@ interface DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -3310,7 +3316,7 @@ interface DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -3400,7 +3406,7 @@ type Event implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -3558,7 +3564,7 @@ type Event implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -3676,7 +3682,7 @@ type EventData implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -3834,7 +3840,7 @@ type EventData implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -4244,7 +4250,7 @@ type Image implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -4402,7 +4408,7 @@ type Image implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -4535,7 +4541,7 @@ type Instrument implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -4693,7 +4699,7 @@ type Instrument implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -4825,7 +4831,7 @@ type InteractiveResource implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -4983,7 +4989,7 @@ type InteractiveResource implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -5141,7 +5147,7 @@ type JournalArticle implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -5299,7 +5305,7 @@ type JournalArticle implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -5678,7 +5684,7 @@ type Model implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -5836,7 +5842,7 @@ type Model implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -6094,7 +6100,7 @@ type Other implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -6252,7 +6258,7 @@ type Other implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -6410,7 +6416,7 @@ type PeerReview implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -6568,7 +6574,7 @@ type PeerReview implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -6832,7 +6838,7 @@ type PhysicalObject implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -6990,7 +6996,7 @@ type PhysicalObject implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -7176,7 +7182,7 @@ type Preprint implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -7334,7 +7340,7 @@ type Preprint implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -7468,7 +7474,7 @@ type Publication implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -7626,7 +7632,7 @@ type Publication implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -8204,7 +8210,7 @@ type Service implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -8362,7 +8368,7 @@ type Service implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -8497,7 +8503,7 @@ type Software implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -8655,7 +8661,7 @@ type Software implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -8820,7 +8826,7 @@ type Sound implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -8978,7 +8984,7 @@ type Sound implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -9294,7 +9300,7 @@ type Work implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -9452,7 +9458,7 @@ type Work implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
@@ -9587,7 +9593,7 @@ type Workflow implements DoiItem {
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
-  contributors(first: Int = 20): [Contributor!]
+  contributors(contributorType: String, first: Int = 20): [Contributor!]
 
   """
   The main researchers involved in producing the data, or the authors of the publication, in priority order.
@@ -9745,7 +9751,7 @@ type Workflow implements DoiItem {
   subjects: [Subject!]
 
   """
-  A name or title by which a resource is known
+  A name or title by which a resource is known.
   """
   titles(first: Int = 5): [Title!]
 
