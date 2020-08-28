@@ -136,7 +136,13 @@ type Audiovisual implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -421,7 +427,13 @@ type Book implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -663,7 +675,13 @@ type BookChapter implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -991,7 +1009,13 @@ type Collection implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -1275,7 +1299,13 @@ type ConferencePaper implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -1580,6 +1610,46 @@ type Container {
 }
 
 """
+A contributor.
+"""
+type Contributor {
+  """
+  The organizational or institutional affiliation of the contributor.
+  """
+  affiliation: [Affiliation!]
+
+  """
+  The type of the item.
+  """
+  contributorType: String!
+
+  """
+  Family name. In the U.S., the last name of an person.
+  """
+  familyName: String
+
+  """
+  Given name. In the U.S., the first name of a person.
+  """
+  givenName: String
+
+  """
+  The ID of the contributor.
+  """
+  id: ID
+
+  """
+  The name of the contributor.
+  """
+  name: String
+
+  """
+  The type of the item.
+  """
+  type: String!
+}
+
+"""
 Information about countries
 """
 type Country {
@@ -1805,7 +1875,13 @@ type DataPaper implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -2090,7 +2166,13 @@ type Dataset implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -2486,7 +2568,13 @@ type Dissertation implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -2775,7 +2863,13 @@ interface DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -3017,7 +3111,13 @@ type Event implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -3287,7 +3387,13 @@ type EventData implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -3849,7 +3955,13 @@ type Image implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -4134,7 +4246,13 @@ type Instrument implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -4418,7 +4536,13 @@ type InteractiveResource implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -4728,7 +4852,13 @@ type JournalArticle implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -5259,7 +5389,13 @@ type Model implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -5669,7 +5805,13 @@ type Other implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -5979,7 +6121,13 @@ type PeerReview implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -6395,7 +6543,13 @@ type PhysicalObject implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -6733,7 +6887,13 @@ type Preprint implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -7019,7 +7179,13 @@ type Publication implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -7747,7 +7913,13 @@ type Service implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -8034,7 +8206,13 @@ type Software implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -8351,7 +8529,13 @@ type Sound implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -8819,7 +9003,13 @@ type Work implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 
@@ -9106,7 +9296,13 @@ type Workflow implements DoiItem {
   container: Container
 
   """
-  The main researchers involved in producing the data, or the authors of the publication, in priority order
+  The institution or person responsible for collecting, managing, distributing,
+  or otherwise contributing to the development of the resource.
+  """
+  contributors(first: Int = 20): [Contributor!]
+
+  """
+  The main researchers involved in producing the data, or the authors of the publication, in priority order.
   """
   creators(first: Int = 20): [Creator!]
 

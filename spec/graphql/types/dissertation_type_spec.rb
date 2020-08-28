@@ -162,7 +162,13 @@ describe DissertationType do
   end
 
   describe "query dissertations by person", elasticsearch: true do
-    let!(:dissertations) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, aasm_state: "findable") }
+    let!(:dissertations) { create_list(:doi, 3, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, aasm_state: "findable", contributors: 
+      [{
+        "name" => "Freie Universität Berlin",
+        "contributorType" => "HostingInstitution",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://ror.org/046ak2485", "nameIdentifierScheme"=>"ROR", "schemeUri"=>"https://ror.org"}],
+        "nameType" => "Organizational",
+      }]) }
     let!(:dissertation) { create(:doi, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Dissertation" }, aasm_state: "findable", creators:
       [{
         "familyName" => "Garza",
@@ -189,6 +195,12 @@ describe DissertationType do
           }
           nodes {
             id
+            contributors {
+              id
+              type
+              name
+              contributorType
+            }
           }
         }
       })
@@ -200,7 +212,7 @@ describe DissertationType do
       expect(response.dig("data", "dissertations", "totalCount")).to eq(3)
       expect(response.dig("data", "dissertations", "published")).to eq([{"count"=>3, "id"=>"2011", "title"=>"2011"}])
       expect(response.dig("data", "dissertations", "nodes").length).to eq(3)
-      # expect(response.dig("data", "dissertations", "nodes", 0, "id")).to eq(@dois.first.identifier)
+      expect(response.dig("data", "dissertations", "nodes", 0, "contributors")).to eq([{"contributorType"=>"HostingInstitution", "id"=>"https://ror.org/046ak2485", "name"=>"Freie Universität Berlin", "type"=>"Organization"}])
     end
   end
 end

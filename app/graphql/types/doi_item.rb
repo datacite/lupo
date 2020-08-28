@@ -21,7 +21,10 @@ module DoiItem
   field :id, ID, null: false, hash_key: "identifier", description: "The persistent identifier for the resource"
   field :type, String, null: false, description: "The type of the item."
   field :doi, String, null: false, hash_key: "uid", description: "The DOI for the resource."
-  field :creators, [CreatorType], null: true, description: "The main researchers involved in producing the data, or the authors of the publication, in priority order" do
+  field :creators, [CreatorType], null: true, description: "The main researchers involved in producing the data, or the authors of the publication, in priority order." do
+    argument :first, Int, required: false, default_value: 20
+  end
+  field :contributors, [ContributorType], null: true, description: "The institution or person responsible for collecting, managing, distributing, or otherwise contributing to the development of the resource." do
     argument :first, Int, required: false, default_value: 20
   end
   field :titles, [TitleType], null: true, description: "A name or title by which a resource is known" do
@@ -268,6 +271,22 @@ module DoiItem
     Array.wrap(object.creators[0...args[:first]]).map do |c|
       Hashie::Mash.new(
         "id" => c.fetch("nameIdentifiers", []).find { |n| %w(ORCID ROR).include?(n.fetch("nameIdentifierScheme", nil)) }.to_h.fetch("nameIdentifier", nil),
+        "name_type" => c.fetch("nameType", nil),
+        "name" => c.fetch("name", nil),
+        "given_name" => c.fetch("givenName", nil),
+        "family_name" => c.fetch("familyName", nil),
+        "affiliation" => c.fetch("affiliation", []).map do |a|
+          { "id" => a["affiliationIdentifier"],
+            "name" => a["name"] }.compact
+        end)
+    end
+  end
+
+  def contributors(**args)
+    Array.wrap(object.contributors[0...args[:first]]).map do |c|
+      Hashie::Mash.new(
+        "id" => c.fetch("nameIdentifiers", []).find { |n| %w(ORCID ROR).include?(n.fetch("nameIdentifierScheme", nil)) }.to_h.fetch("nameIdentifier", nil),
+        "contributor_type" => c.fetch("contributorType", nil),
         "name_type" => c.fetch("nameType", nil),
         "name" => c.fetch("name", nil),
         "given_name" => c.fetch("givenName", nil),
