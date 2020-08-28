@@ -767,6 +767,43 @@ class QueryType < BaseObject
     set_doi(id)
   end
 
+  field :data_management_plans, DataManagementPlanConnectionWithTotalType, null: false do
+    argument :query, String, required: false
+    argument :ids, [String], required: false
+    argument :published, String, required: false
+    argument :user_id, String, required: false
+    argument :repository_id, String, required: false
+    argument :member_id, String, required: false
+    argument :registration_agency, String, required: false
+    argument :license, String, required: false
+    argument :language, String, required: false
+    argument :has_person, Boolean, required: false
+    argument :has_funder, Boolean, required: false
+    argument :has_organization, Boolean, required: false
+    argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :field_of_science, String, required: false
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
+  end
+
+  def data_management_plans(**args)
+    args[:resource_type_id] = "Text"
+    args[:resource_type] = "Data Management Plan"
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+  end
+
+  field :data_management_plan, DataManagementPlanType, null: false do
+    argument :id, ID, required: true
+  end
+
+  def data_management_plan(id:)
+    set_doi(id)
+  end
+
   field :preprints, PreprintConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :ids, [String], required: false
