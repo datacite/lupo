@@ -11,6 +11,27 @@ class Organization
     message = response.body.fetch("data", {})
     data = [parse_message(id: id, message: message)]
 
+    wikidata = data.dig(0, "wikidata", 0)
+    wikidata_data = find_by_wikidata_id(wikidata)
+    data = [data.first.reverse_merge(wikidata_data[:data].first)] if wikidata_data
+    
+    errors = response.body.fetch("errors", nil)
+
+    { data: data, errors: errors }
+  end
+
+  def self.find_by_wikidata_id(wikidata_id)
+    return {} unless wikidata_id.present?
+
+    url = "https://www.wikidata.org/w/api.php?action=wbgetentities&ids=#{wikidata_id}&languages=en&props=labels|descriptions|claims&format=json"
+    
+    response = Maremma.get(url, host: true)
+
+    return {} if response.status != 200
+    
+    message = response.body.fetch("data", {})
+    data = [parse_wikidata_message(id: wikidata_id, message: message)]
+
     errors = response.body.fetch("errors", nil)
 
     { data: data, errors: errors }
@@ -99,6 +120,35 @@ class Organization
       fundref: fundref,
       wikidata: message.dig("external_ids", "Wikidata", "all"),
       grid: message.dig("external_ids", "GRID", "all") })
+  end
+
+  def self.parse_wikidata_message(id: nil, message: nil)
+    name = message.dig("entities", id, "labels", "en", "value")
+    description = message.dig("entities", id, "descriptions", "en", "value")
+    description = description.upcase_first if description.present?
+
+    claims = message.dig("entities", id, "claims") || {}
+    twitter = claims.dig("P2002", 0, "mainsnak", "datavalue", "value")
+    inception = claims.dig("P571", 0, "mainsnak", "datavalue", "value", "time")
+    # remove plus sign at beginning of datetime strings
+    inception = inception.gsub(/^\+/, "") if inception.present?
+    geolocation = claims.dig("P625", 0, "mainsnak", "datavalue", "value") || 
+                  claims.dig("P625", 0, "datavalue", "value") || 
+                  claims.dig("P159", 0, "qualifiers", "P625", 0, "datavalue", "value") || {}
+    ringgold = claims.dig("P3500", 0, "mainsnak", "datavalue", "value")
+    geonames = claims.dig("P1566", 0, "mainsnak", "datavalue", "value") || 
+               claims.dig("P1566", 0, "datavalue", "value")
+
+    Hashie::Mash.new({
+      id: id,
+      type: "Organization",
+      name: name,
+      description: description,
+      twitter: twitter,
+      inception: inception,
+      geolocation: geolocation.extract!("longitude", "latitude"),
+      ringgold: ringgold,
+      geonames: geonames }) 
   end
 
   def self.ror_id_from_url(url)
