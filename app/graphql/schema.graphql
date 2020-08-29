@@ -5970,9 +5970,19 @@ type Organization implements ActorItem {
   datasets(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
 
   """
+  The description of the organization.
+  """
+  description: String
+
+  """
   The number of downloads according to the Counter Code of Practice.
   """
   downloadCount: Int
+
+  """
+  Geolocation of the organization.
+  """
+  geolocation: GeolocationPoint
 
   """
   The persistent identifier for the actor.
@@ -5983,6 +5993,11 @@ type Organization implements ActorItem {
   The identifier(s) for the organization.
   """
   identifiers: [Identifier!]
+
+  """
+  Date or point in time when the organization came into existence .
+  """
+  inception: ISO8601DateTime
 
   """
   The name of the actor.
@@ -5998,6 +6013,11 @@ type Organization implements ActorItem {
   Software from this organization
   """
   softwares(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal
+
+  """
+  Twitter username of the organization.
+  """
+  twitter: String
 
   """
   The type of the actor.

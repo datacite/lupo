@@ -19,6 +19,23 @@ describe Organization, type: :model, vcr: true do
       expect(organization.geonames).to eq("4559217")
     end
 
+    it "also found" do
+      id = "https://ror.org/013meh722"
+      organizations = Organization.find_by_id(id)
+      expect(organizations[:data].size).to eq(1)
+      organization = organizations[:data].first
+      expect(organization.id).to eq("https://ror.org/013meh722")
+      expect(organization.name).to eq("University of Cambridge")
+      expect(organization.labels).to eq([{"code"=>"CY", "name"=>"Prifysgol Caergrawnt"}])
+      expect(organization.links).to eq(["http://www.cam.ac.uk/"])
+      expect(organization.description).to eq("Collegiate public research university in Cambridge, England, United Kingdom")
+      expect(organization.twitter).to eq("Cambridge_Uni")
+      expect(organization.inception).to eq("1209-01-01T00:00:00Z")
+      expect(organization.geolocation).to eq("latitude"=>52.205277777778, "longitude"=>0.11722222222222)
+      expect(organization.ringgold).to eq("2152")
+      expect(organization.geonames).to eq("7288046")
+    end
+
     it "found funder" do
       id = "https://ror.org/018mejw64"
       organizations = Organization.find_by_id(id)
