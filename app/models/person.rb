@@ -183,12 +183,10 @@ class Person
     grid_filter = "(%3Fgrid%20in%20(%22#{grid_filter}%22)" if grid_filter.present?
     filter = [ringgold_filter, grid_filter].compact.join("%20%7C%7C%20")
 
-    #filter = "(%3Fringgold%20in%20(%229177%22%2C%20%22219874%22%2C%20%2214903%22)%20%7C%7C%20%3Fgrid%20in%20(%22grid.475826.a%22))"
     url = "https://query.wikidata.org/sparql?query=PREFIX%20wikibase%3A%20%3Chttp%3A%2F%2Fwikiba.se%2Fontology%23%3E%0APREFIX%20wd%3A%20%3Chttp%3A%2F%2Fwww.wikidata.org%2Fentity%2F%3E%20%0APREFIX%20wdt%3A%20%3Chttp%3A%2F%2Fwww.wikidata.org%2Fprop%2Fdirect%2F%3E%0APREFIX%20rdfs%3A%20%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0APREFIX%20p%3A%20%3Chttp%3A%2F%2Fwww.wikidata.org%2Fprop%2F%3E%0APREFIX%20v%3A%20%3Chttp%3A%2F%2Fwww.wikidata.org%2Fprop%2Fstatement%2F%3E%0A%0ASELECT%20%3Fitem%20%3FitemLabel%20%3Fror%20%3Fgrid%20%3Fringgold%20WHERE%20%7B%20%20%0A%20%20%3Fitem%20wdt%3AP6782%20%3Fror%3B%0A%20%20%20%20%20%20%20%20wdt%3AP3500%20%3Fringgold%3B%0A%20%20%20%20%20%20%20%20wdt%3AP2427%20%3Fgrid%20.%0A%20%20FILTER(#{filter})).%0A%20%20SERVICE%20wikibase%3Alabel%20%7B%0A%20%20%20%20bd%3AserviceParam%20wikibase%3Alanguage%20%22%5BAUTO_LANGUAGE%5D%22%20.%0A%20%20%20%7D%0A%7D"
     response = Maremma.get(url, host: true)
 
-    #puts response.body["errors"] if response.status >= 400
-    # return [] if response.status != 200
+    return [] if response.status != 200
 
     ringgold_to_ror = Array.wrap(response.body.dig("data", "results", "bindings")).reduce({}) do |sum, r|
       if ror = r.dig("ror", "value") && r.dig("ringgold", "value")
