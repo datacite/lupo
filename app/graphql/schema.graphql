@@ -6005,6 +6005,11 @@ type Organization implements ActorItem {
   name: String
 
   """
+  People from this organization
+  """
+  people(after: String, first: Int = 25, query: String): PersonConnectionWithTotal
+
+  """
   Publications from this organization
   """
   publications(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): PublicationConnectionWithTotal

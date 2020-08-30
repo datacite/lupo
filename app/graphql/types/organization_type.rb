@@ -103,6 +103,12 @@ class OrganizationType < BaseObject
     argument :after, String, required: false
   end
 
+  field :people, PersonConnectionWithTotalType, null: true, description: "People from this organization" do
+    argument :query, String, required: false
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
+  end
+
   def alternate_name
     object.aliases + object.acronyms
   end
@@ -143,6 +149,17 @@ class OrganizationType < BaseObject
 
   def works(**args)
     ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+  end
+
+  def people(**args)
+    grid_query = "grid-org-id:#{object.grid}"
+    ringgold_query = object.ringgold.present? ? "ringgold-org-id:#{object.ringgold}" : ""
+    org_query = [grid_query, ringgold_query].compact.join(" OR ")
+    query_query = args[:query].present? ? "(#{args[:query]})" : nil
+    query = ["(#{org_query})", query_query].compact.join(" AND ")
+
+    response = Person.query(query, limit: args[:first], offset: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil)
+    HashConnection.new(response, context: self.context, first: args[:first], after: args[:after])
   end
 
   def view_count
