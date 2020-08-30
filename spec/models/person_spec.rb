@@ -16,6 +16,7 @@ describe Person, type: :model, vcr: true do
       expect(person.links).to be_empty
       expect(person.identifiers).to be_empty
       expect(person.country).to be_nil
+      expect(person.employment.length).to eq(0)
     end
 
     it "also found" do
@@ -29,11 +30,12 @@ describe Person, type: :model, vcr: true do
       expect(person.family_name).to eq("Garza")
       expect(person.alternate_name).to eq(["Kristian Javier Garza Gutierrez"])
       expect(person.description).to be_nil
-      expect(person.links).to eq([{"name"=>"Mendeley profile", "url"=>"https://www.mendeley.com/profiles/kristian-g/"}])
+      expect(person.links).to eq([{"name"=>"Mendeley profile", "url"=>"https://www.mendeley.com/profiles/kristian-g/"}, {"name"=>"github", "url"=>"https://github.com/kjgarza"}])
       expect(person.identifiers).to eq([{"identifier"=>"kjgarza",
         "identifierType"=>"GitHub",
         "identifierUrl"=>"https://github.com/kjgarza"}])
       expect(person.country).to eq("id"=>"DE", "name"=>"Germany")
+      expect(person.employment.length).to eq(0)
     end
 
     it "found with biography" do
@@ -45,11 +47,9 @@ describe Person, type: :model, vcr: true do
       expect(person.name).to eq("Martin Fenner")
       expect(person.given_name).to eq("Martin")
       expect(person.family_name).to eq("Fenner")
-      expect(person.alternate_name).to eq(["M Fenner", "MH Fenner", "Martin H. Fenner", "Martin Hellmut Fenner"])
-      expect(person.description).to eq("Martin Fenner is the DataCite Technical Director and manages the technical architecture for Datacite. From 2012 to 2015 he was the technical lead for the PLOS Article-Level Metrics project. Martin has a medical degree from the Free University of Berlin and is a Board-certified medical oncologist.")
-      expect(person.links).to eq([{ "name" => "My SciENCV", "url"=>"http://www.ncbi.nlm.nih.gov/myncbi/mfenner/cv/1413/" }, 
-        { "name"=>"Twitter", "url"=>"http://twitter.com/mfenner" },
-        { "name"=>"Blog", "url"=>"http://blog.martinfenner.org" }])
+      expect(person.alternate_name).to eq(["Martin Hellmut Fenner"])
+      expect(person.description).to eq("Martin Fenner is the DataCite Technical Director since 2015. From 2012 to 2015 he was the technical lead for the PLOS Article-Level Metrics project. Martin has a medical degree from the Free University of Berlin and is a Board-certified medical oncologist.")
+      expect(person.links).to eq([{"name"=>"Twitter", "url"=>"http://twitter.com/mfenner"}])
       expect(person.identifiers).to eq([{"identifier"=>"7006600825",
         "identifierType"=>"Scopus Author ID",
         "identifierUrl"=>
@@ -61,6 +61,8 @@ describe Person, type: :model, vcr: true do
          "identifierType"=>"GitHub",
          "identifierUrl"=>"https://github.com/mfenner"}])
       expect(person.country).to eq("id"=>"DE", "name"=>"Germany")
+      expect(person.employment.length).to eq(3)
+      expect(person.employment.first).to eq("OrganizationName"=>"Medizinische Hochschule Hannover", "endDate"=>"2017-05-01T00:00:00Z", "organizationId"=>"https://ror.org/00f2yqf98", "startDate"=>"2005-11-01T00:00:00Z")
     end
 
     it "found with X in ID" do
@@ -77,6 +79,7 @@ describe Person, type: :model, vcr: true do
       expect(person.links).to be_empty
       expect(person.identifiers).to be_empty
       expect(person.country).to be_nil
+      expect(person.employment.length).to eq(0)
     end
 
     it "account locked" do
