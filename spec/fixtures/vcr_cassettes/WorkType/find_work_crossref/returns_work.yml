@@ -1,0 +1,176 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.unpaywall.org/v2/10.1038/NATURE12373?email=info@datacite.org
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Connection:
+      - keep-alive
+      Server:
+      - gunicorn/19.9.0
+      Date:
+      - Mon, 31 Aug 2020 07:09:00 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '4437'
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Methods:
+      - POST, GET, OPTIONS, PUT, DELETE, PATCH
+      Access-Control-Allow-Headers:
+      - origin, content-type, accept, x-requested-with
+      Via:
+      - 1.1 vegur
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "best_oa_location": {
+            "endpoint_id": "8c9d8ba370a84253deb",
+            "evidence": "oa repository (via OAI-PMH doi match)",
+            "host_type": "repository",
+            "is_best": true,
+            "license": null,
+            "pmh_id": "oai:dash.harvard.edu:1/12285462",
+            "repository_institution": "Harvard University - Digital Access to Scholarship at Harvard (DASH)",
+            "updated": "2020-08-13T02:05:07.139585",
+            "url": "https://dash.harvard.edu/bitstream/1/12285462/1/Nanometer-Scale%20Thermometry.pdf",
+            "url_for_landing_page": "http://nrs.harvard.edu/urn-3:HUL.InstRepos:12285462",
+            "url_for_pdf": "https://dash.harvard.edu/bitstream/1/12285462/1/Nanometer-Scale%20Thermometry.pdf",
+            "version": "publishedVersion"
+          },
+          "data_standard": 2,
+          "doi": "10.1038/nature12373",
+          "doi_url": "https://doi.org/10.1038/nature12373",
+          "genre": "journal-article",
+          "has_repository_copy": true,
+          "is_oa": true,
+          "is_paratext": false,
+          "journal_is_in_doaj": false,
+          "journal_is_oa": false,
+          "journal_issn_l": "0028-0836",
+          "journal_issns": "0028-0836,1476-4687",
+          "journal_name": "Nature",
+          "oa_locations": [
+            {
+              "endpoint_id": "8c9d8ba370a84253deb",
+              "evidence": "oa repository (via OAI-PMH doi match)",
+              "host_type": "repository",
+              "is_best": true,
+              "license": null,
+              "pmh_id": "oai:dash.harvard.edu:1/12285462",
+              "repository_institution": "Harvard University - Digital Access to Scholarship at Harvard (DASH)",
+              "updated": "2020-08-13T02:05:07.139585",
+              "url": "https://dash.harvard.edu/bitstream/1/12285462/1/Nanometer-Scale%20Thermometry.pdf",
+              "url_for_landing_page": "http://nrs.harvard.edu/urn-3:HUL.InstRepos:12285462",
+              "url_for_pdf": "https://dash.harvard.edu/bitstream/1/12285462/1/Nanometer-Scale%20Thermometry.pdf",
+              "version": "publishedVersion"
+            },
+            {
+              "endpoint_id": "pubmedcentral.nih.gov",
+              "evidence": "oa repository (via OAI-PMH doi match)",
+              "host_type": "repository",
+              "is_best": false,
+              "license": null,
+              "pmh_id": "oai:pubmedcentral.nih.gov:4221854",
+              "repository_institution": "pubmedcentral.nih.gov",
+              "updated": "2017-10-21T12:34:56.074727",
+              "url": "http://europepmc.org/articles/pmc4221854?pdf=render",
+              "url_for_landing_page": "http://europepmc.org/articles/pmc4221854",
+              "url_for_pdf": "http://europepmc.org/articles/pmc4221854?pdf=render",
+              "version": "acceptedVersion"
+            },
+            {
+              "endpoint_id": null,
+              "evidence": "oa repository (via pmcid lookup)",
+              "host_type": "repository",
+              "is_best": false,
+              "license": null,
+              "pmh_id": null,
+              "repository_institution": null,
+              "updated": "2020-08-31T07:09:00.270481",
+              "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4221854",
+              "url_for_landing_page": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4221854",
+              "url_for_pdf": null,
+              "version": "acceptedVersion"
+            },
+            {
+              "endpoint_id": "arXiv.org",
+              "evidence": "oa repository (via OAI-PMH doi match)",
+              "host_type": "repository",
+              "is_best": false,
+              "license": null,
+              "pmh_id": "oai:arXiv.org:1304.1068",
+              "repository_institution": "arXiv.org",
+              "updated": "2017-10-22T03:05:35.844774",
+              "url": "http://arxiv.org/pdf/1304.1068",
+              "url_for_landing_page": "http://arxiv.org/abs/1304.1068",
+              "url_for_pdf": "http://arxiv.org/pdf/1304.1068",
+              "version": "submittedVersion"
+            }
+          ],
+          "oa_status": "green",
+          "published_date": "2013-07-31",
+          "publisher": "Springer Science and Business Media LLC",
+          "title": "Nanometre-scale thermometry in a living cell",
+          "updated": "2020-02-22T03:36:14.193537",
+          "year": 2013,
+          "z_authors": [
+            {
+              "family": "Kucsko",
+              "given": "G.",
+              "sequence": "first"
+            },
+            {
+              "family": "Maurer",
+              "given": "P. C.",
+              "sequence": "additional"
+            },
+            {
+              "family": "Yao",
+              "given": "N. Y.",
+              "sequence": "additional"
+            },
+            {
+              "family": "Kubo",
+              "given": "M.",
+              "sequence": "additional"
+            },
+            {
+              "family": "Noh",
+              "given": "H. J.",
+              "sequence": "additional"
+            },
+            {
+              "family": "Lo",
+              "given": "P. K.",
+              "sequence": "additional"
+            },
+            {
+              "family": "Park",
+              "given": "H.",
+              "sequence": "additional"
+            },
+            {
+              "family": "Lukin",
+              "given": "M. D.",
+              "sequence": "additional"
+            }
+          ]
+        }
+    http_version: null
+  recorded_at: Mon, 31 Aug 2020 07:09:00 GMT
+recorded_with: VCR 5.1.0
