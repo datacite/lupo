@@ -35,7 +35,8 @@ describe Person, type: :model, vcr: true do
         "identifierType"=>"GitHub",
         "identifierUrl"=>"https://github.com/kjgarza"}])
       expect(person.country).to eq("id"=>"DE", "name"=>"Germany")
-      expect(person.employment.length).to eq(0)
+      expect(person.employment.length).to eq(1)
+      expect(person.employment).to eq([{"organizationName"=>"DataCite", "roleTitle"=>"Application Developer", "startDate"=>"2016-08-01T00:00:00Z"}])
     end
 
     it "found with biography" do
@@ -61,7 +62,10 @@ describe Person, type: :model, vcr: true do
          "identifierType"=>"GitHub",
          "identifierUrl"=>"https://github.com/mfenner"}])
       expect(person.country).to eq("id"=>"DE", "name"=>"Germany")
-      expect(person.employment).to eq([{"endDate"=>"2017-05-01T00:00:00Z",
+      expect(person.employment).to eq([{"organizationName"=>"DataCite",
+        "roleTitle"=>"Technical Director",
+        "startDate"=>"2015-08-01T00:00:00Z"},
+       {"endDate"=>"2017-05-01T00:00:00Z",
         "organizationId"=>"https://ror.org/00f2yqf98",
         "organizationName"=>"Medizinische Hochschule Hannover",
         "startDate"=>"2005-11-01T00:00:00Z"},

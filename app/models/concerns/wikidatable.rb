@@ -127,14 +127,12 @@ SPARQL
       Array.wrap(employment).reduce([]) do |sum, e|
         if ringgold_to_ror[e["ringgold"]]
           e["organizationId"] = ringgold_to_ror[e["ringgold"]]
-          e.except!("ringgold", "grid")
-          sum << e
         elsif grid_to_ror[e["grid"]]
           e["organizationId"] = grid_to_ror[e["grid"]]
-          e.except!("grid", "ringgold")
-          sum << e
         end
 
+        e.except!("ringgold", "grid")
+        sum << e
         sum
       end
     end
