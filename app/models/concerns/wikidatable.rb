@@ -73,41 +73,54 @@ module Wikidatable
     #     bd:serviceParam wikibase:language "[AUTO_LANGUAGE]" .
     #   }
     # }
-
     def wikidata_query(employment)
+      return [] if employment.blank?
+
       ringgold_filter = Array.wrap(employment).reduce([]) do |sum, f|
         sum << f["ringgold"] if f["ringgold"]
 
         sum
-      end.join("%22%2C%20%22")
-      ringgold_filter = "%3Fringgold%20in%20(%22#{ringgold_filter}%22)" if ringgold_filter.present?
+      end.join('", "')
 
       grid_filter = Array.wrap(employment).reduce([]) do |sum, f|
         sum << f["grid"] if f["grid"]
 
         sum
-      end.join("%22%2C%20%22")
-      grid_filter = "(%3Fgrid%20in%20(%22#{grid_filter}%22)" if grid_filter.present?
-      filter = [ringgold_filter, grid_filter].compact.join("%20%7C%7C%20")
+      end.join('", "')
 
-      url = "https://query.wikidata.org/sparql?query=PREFIX%20wikibase%3A%20%3Chttp%3A%2F%2Fwikiba.se%2Fontology%23%3E%0APREFIX%20wd%3A%20%3Chttp%3A%2F%2Fwww.wikidata.org%2Fentity%2F%3E%20%0APREFIX%20wdt%3A%20%3Chttp%3A%2F%2Fwww.wikidata.org%2Fprop%2Fdirect%2F%3E%0APREFIX%20rdfs%3A%20%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0APREFIX%20p%3A%20%3Chttp%3A%2F%2Fwww.wikidata.org%2Fprop%2F%3E%0APREFIX%20v%3A%20%3Chttp%3A%2F%2Fwww.wikidata.org%2Fprop%2Fstatement%2F%3E%0A%0ASELECT%20%3Fitem%20%3FitemLabel%20%3Fror%20%3Fgrid%20%3Fringgold%20WHERE%20%7B%20%20%0A%20%20%3Fitem%20wdt%3AP6782%20%3Fror%3B%0A%20%20%20%20%20%20%20%20wdt%3AP3500%20%3Fringgold%3B%0A%20%20%20%20%20%20%20%20wdt%3AP2427%20%3Fgrid%20.%0A%20%20FILTER(#{filter})).%0A%20%20SERVICE%20wikibase%3Alabel%20%7B%0A%20%20%20%20bd%3AserviceParam%20wikibase%3Alanguage%20%22%5BAUTO_LANGUAGE%5D%22%20.%0A%20%20%20%7D%0A%7D"
-      response = Maremma.get(url, host: true)
+      user_agent = "Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)"
+      endpoint = "https://query.wikidata.org/sparql"
+      sparql = <<"SPARQL".chop
+      PREFIX wikibase: <http://wikiba.se/ontology#>
+      PREFIX wd: <http://www.wikidata.org/entity/> 
+      PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+      PREFIX p: <http://www.wikidata.org/prop/>
+      PREFIX v: <http://www.wikidata.org/prop/statement/>
 
-      return [] if response.status != 200
+      SELECT ?item ?itemLabel ?ror ?grid ?ringgold WHERE {  
+        ?item wdt:P6782 ?ror;
+              wdt:P3500 ?ringgold;
+              wdt:P2427 ?grid .
+        FILTER(?ringgold in ("#{ringgold_filter}") || ?grid in ("#{grid_filter}")).
+           SERVICE wikibase:label {
+             bd:serviceParam wikibase:language "[AUTO_LANGUAGE]" .
+           }
+         }
+SPARQL
 
-      ringgold_to_ror = Array.wrap(response.body.dig("data", "results", "bindings")).reduce({}) do |sum, r|
-        if ror = r.dig("ror", "value") && r.dig("ringgold", "value")
-          sum[r.dig("ringgold", "value")] = "https://ror.org/" + r.dig("ror", "value") 
-        end
+      client = SPARQL::Client.new(endpoint,
+                            :method => :get,
+                            headers: { 'User-Agent' => user_agent })
+      response = client.query(sparql)
 
+      ringgold_to_ror = Array.wrap(response).reduce({}) do |sum, r|
+        sum[r[:ringgold].to_s] = "https://ror.org/" + r[:ror] if r[:ror] && r[:ringgold]
         sum
       end
 
-      grid_to_ror = Array.wrap(response.body.dig("data", "results", "bindings")).reduce({}) do |sum, r|
-        if ror = r.dig("ror", "value") && r.dig("grid", "value")
-          sum[r.dig("grid", "value")] = "https://ror.org/" + r.dig("ror", "value") 
-        end
-
+      grid_to_ror = Array.wrap(response).reduce({}) do |sum, r|
+        sum[r[:grid].to_s] = "https://ror.org/" + r[:ror] if r[:ror] && r[:grid]
         sum
       end
 

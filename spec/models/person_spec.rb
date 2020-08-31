@@ -90,7 +90,8 @@ describe Person, type: :model, vcr: true do
       expect(person.links).to be_empty
       expect(person.identifiers).to be_empty
       expect(person.country).to be_nil
-      expect(person.employment.length).to eq(0)
+      expect(person.employment.length).to eq(1)
+      expect(person.employment).to eq([{"organizationId"=>"https://ror.org/013meh722", "organizationName"=>"University of Cambridge", "roleTitle"=>"Senior Lecturer in Latin American Literature and Culture", "startDate"=>"2006-01-01T00:00:00Z"}])
     end
 
     it "account locked" do
