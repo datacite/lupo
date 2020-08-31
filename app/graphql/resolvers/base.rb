@@ -1,5 +1,2 @@
-module Resolvers
-  class Base < GraphQL::Schema::Resolver
-
-  end
+class Base < GraphQL::Schema::Resolver
 end

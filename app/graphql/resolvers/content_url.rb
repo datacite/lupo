@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ContentUrl < Resolvers::Base
+class ContentUrl < Base
   type Url, null: false
 
   def resolve
