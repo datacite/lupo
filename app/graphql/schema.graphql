@@ -3376,6 +3376,36 @@ interface DoiItem {
   xml: String!
 }
 
+"""
+Information about employments
+"""
+type Employment {
+  """
+  Employment end date.
+  """
+  endDate: ISO8601DateTime
+
+  """
+  The organization ID of the employment.
+  """
+  organizationId: String
+
+  """
+  The organization name of the employment.
+  """
+  organizationName: String!
+
+  """
+  The role title of the employment.
+  """
+  roleTitle: String
+
+  """
+  Employment start date.
+  """
+  startDate: ISO8601DateTime
+}
+
 type Event implements DoiItem {
   """
   Metadata in bibtex format
@@ -6735,6 +6765,11 @@ type Person implements ActorItem {
   The number of downloads according to the Counter Code of Practice.
   """
   downloadCount: Int
+
+  """
+  The employments of the person
+  """
+  employment: [Employment!]
 
   """
   Family name. In the U.S., the last name of an person.

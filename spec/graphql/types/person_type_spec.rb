@@ -12,6 +12,7 @@ describe PersonType do
     it { is_expected.to have_field(:alternateName).of_type("[String!]") }
     it { is_expected.to have_field(:description).of_type("String") }
     it { is_expected.to have_field(:links).of_type("[Link!]") }
+    it { is_expected.to have_field(:employment).of_type("[Employment!]") }
     it { is_expected.to have_field(:identifiers).of_type("[Identifier!]") }
     it { is_expected.to have_field(:country).of_type("Country") }
     it { is_expected.to have_field(:citationCount).of_type("Int") }
@@ -104,7 +105,7 @@ describe PersonType do
       expect(response.dig("data", "person", "familyName")).to eq("Garza")
       expect(response.dig("data", "person", "alternateName")).to eq(["Kristian Javier Garza Gutierrez"])
       expect(response.dig("data", "person", "description")).to be_nil
-      expect(response.dig("data", "person", "links")).to eq([{"name"=>"Mendeley profile", "url"=>"https://www.mendeley.com/profiles/kristian-g/"}])
+      expect(response.dig("data", "person", "links")).to eq([{"name"=>"Mendeley profile", "url"=>"https://www.mendeley.com/profiles/kristian-g/"}, {"name"=>"github", "url"=>"https://github.com/kjgarza"}])
       expect(response.dig("data", "person", "identifiers")).to eq([{"identifier"=>"kjgarza", "identifierType"=>"GitHub", "identifierUrl"=>"https://github.com/kjgarza"}])
       expect(response.dig("data", "person", "country")).to eq("id"=>"DE", "name"=>"Germany")
       expect(response.dig("data", "person", "citationCount")).to eq(0)
@@ -116,6 +117,68 @@ describe PersonType do
       work = response.dig("data", "person", "works", "nodes", 0)
       expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
       expect(work.dig("citationCount")).to eq(2)
+    end
+  end
+
+  describe "find person with employment", elasticsearch: true, vcr: true do
+    let(:query) do
+      %(query {
+        person(id: "https://orcid.org/0000-0003-1419-2405") {
+          id
+          name
+          givenName
+          familyName
+          alternateName
+          description
+          links {
+            name
+            url
+          }
+          identifiers {
+            identifier
+            identifierType
+            identifierUrl
+          }
+          country {
+            id
+            name
+          }
+          employment {
+            organizationId
+            organizationName
+            roleTitle
+            startDate
+            endDate
+          }
+        }
+      })
+    end
+
+    it "returns person information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "person", "id")).to eq("https://orcid.org/0000-0003-1419-2405")
+      expect(response.dig("data", "person", "name")).to eq("Martin Fenner")
+      expect(response.dig("data", "person", "givenName")).to eq("Martin")
+      expect(response.dig("data", "person", "familyName")).to eq("Fenner")
+      expect(response.dig("data", "person", "alternateName")).to eq(["Martin Hellmut Fenner"])
+      expect(response.dig("data", "person", "description")).to eq("Martin Fenner is the DataCite Technical Director since 2015. From 2012 to 2015 he was the technical lead for the PLOS Article-Level Metrics project. Martin has a medical degree from the Free University of Berlin and is a Board-certified medical oncologist.")
+      expect(response.dig("data", "person", "links")).to eq([{"name"=>"Twitter", "url"=>"http://twitter.com/mfenner"}])
+      expect(response.dig("data", "person", "identifiers")).to eq([{"identifier"=>"7006600825",
+        "identifierType"=>"Scopus Author ID",
+        "identifierUrl"=>
+        "http://www.scopus.com/inward/authorDetails.url?authorID=7006600825&partnerID=MN8TOARS"},
+       {"identifier"=>"000000035060549X",
+        "identifierType"=>"ISNI",
+        "identifierUrl"=>"http://isni.org/000000035060549X"},
+       {"identifier"=>"mfenner",
+        "identifierType"=>"GitHub",
+        "identifierUrl"=>"https://github.com/mfenner"}])
+      expect(response.dig("data", "person", "country")).to eq("id"=>"DE", "name"=>"Germany")
+      expect(response.dig("data", "person", "employment")).to eq([
+        {"organizationId"=>"https://ror.org/00f2yqf98", "organizationName"=>"Medizinische Hochschule Hannover", "roleTitle"=>nil, "startDate"=>"2005-11-01T00:00:00Z", "endDate"=>"2017-05-01T00:00:00Z"},
+        {"organizationId"=>"https://ror.org/008zgvp64", "organizationName"=>"Public Library of Science", "roleTitle"=>"Technical lead article-level metrics project (contractor)", "startDate"=>"2012-04-01T00:00:00Z", "endDate"=>"2015-07-01T00:00:00Z"},
+        {"organizationId"=>"https://ror.org/001w7jn25", "organizationName"=>"Charité Universitätsmedizin Berlin", "roleTitle"=>nil, "startDate"=>"1998-09-01T00:00:00Z", "endDate"=>"2005-10-01T00:00:00Z"}])
     end
   end
 
@@ -229,7 +292,7 @@ describe PersonType do
 
     it "returns error" do
       response = LupoSchema.execute(query).as_json
-      puts response
+
       expect(response.dig("data")).to be_nil
       expect(response.dig("errors")).to eq([{"locations"=>[{"column"=>9, "line"=>2}], "message"=>"409 Conflict: The ORCID record is locked and cannot be edited. ORCID https://orcid.org/0000-0003-1315-5960", "path"=>["person"]}])
     end

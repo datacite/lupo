@@ -61,8 +61,19 @@ describe Person, type: :model, vcr: true do
          "identifierType"=>"GitHub",
          "identifierUrl"=>"https://github.com/mfenner"}])
       expect(person.country).to eq("id"=>"DE", "name"=>"Germany")
-      expect(person.employment.length).to eq(3)
-      expect(person.employment.first).to eq("OrganizationName"=>"Medizinische Hochschule Hannover", "endDate"=>"2017-05-01T00:00:00Z", "organizationId"=>"https://ror.org/00f2yqf98", "startDate"=>"2005-11-01T00:00:00Z")
+      expect(person.employment).to eq([{"endDate"=>"2017-05-01T00:00:00Z",
+        "organizationId"=>"https://ror.org/00f2yqf98",
+        "organizationName"=>"Medizinische Hochschule Hannover",
+        "startDate"=>"2005-11-01T00:00:00Z"},
+       {"endDate"=>"2015-07-01T00:00:00Z",
+        "organizationId"=>"https://ror.org/008zgvp64",
+        "organizationName"=>"Public Library of Science",
+        "roleTitle"=>"Technical lead article-level metrics project (contractor)",
+        "startDate"=>"2012-04-01T00:00:00Z"},
+       {"endDate"=>"2005-10-01T00:00:00Z",
+        "organizationId"=>"https://ror.org/001w7jn25",
+        "organizationName"=>"Charité Universitätsmedizin Berlin",
+        "startDate"=>"1998-09-01T00:00:00Z"}])
     end
 
     it "found with X in ID" do

@@ -123,7 +123,6 @@ class OrganizationType < BaseObject
     Array.wrap(object.wikidata).map { |o| { "identifierType" => "wikidata", "identifier" => o } } + 
     Array.wrap(object.grid).map { |o| { "identifierType" => "grid", "identifier" => o } } + 
     object.isni.map { |o| { "identifierType" => "isni", "identifier" => o } } +
-    Array.wrap(object.ringgold).map { |o| { "identifierType" => "ringgold", "identifier" => o } } +
     Array.wrap(object.geonames).map { |o| { "identifierType" => "geonames", "identifier" => o } }
   end
 

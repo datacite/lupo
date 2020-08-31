@@ -34,7 +34,7 @@ class Person
       s = a.dig("summaries", 0, "employment-summary", "start-date") || {}
       e = a.dig("summaries", 0, "employment-summary", "end-date") || {}
       
-      { "OrganizationName" => a.dig("summaries", 0, "employment-summary", "organization", "name"),
+      { "organizationName" => a.dig("summaries", 0, "employment-summary", "organization", "name"),
         "ringgold"  => i.dig("disambiguation-source") == "RINGGOLD" ? i.dig("disambiguated-organization-identifier") : nil,
         "grid"  => i.dig("disambiguation-source") == "GRID" ? i.dig("disambiguated-organization-identifier") : nil,
         "roleTitle" => a.dig("summaries", 0, "employment-summary", "role-title"),

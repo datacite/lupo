@@ -108,7 +108,7 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "inception")).to eq("1209-01-01T00:00:00Z")
       expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
-      expect(response.dig("data", "organization", "identifiers").count).to eq(40)
+      expect(response.dig("data", "organization", "identifiers").count).to eq(39)
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
       expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"7288046", "identifierType"=>"geonames")
 
@@ -166,7 +166,7 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
       expect(response.dig("data", "organization", "inception")).to eq("1209-01-01T00:00:00Z")
       expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
-      expect(response.dig("data", "organization", "identifiers").count).to eq(40)
+      expect(response.dig("data", "organization", "identifiers").count).to eq(39)
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
       expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"7288046", "identifierType"=>"geonames")
 
@@ -222,7 +222,7 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
       expect(response.dig("data", "organization", "inception")).to eq("1209-01-01T00:00:00Z")
       expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
-      expect(response.dig("data", "organization", "identifiers").count).to eq(40)
+      expect(response.dig("data", "organization", "identifiers").count).to eq(39)
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
       expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"7288046", "identifierType"=>"geonames")
 
