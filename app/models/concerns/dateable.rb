@@ -39,20 +39,27 @@ module Dateable
       time.iso8601
     end
 
+    def get_date_from_parts(year, month = nil, day = nil)
+      return nil if year.blank?
+      
+      iso8601_time = [year.to_s.rjust(4, '0'), month.to_s.rjust(2, '0'), day.to_s.rjust(2, '0')].reject { |part| part == "00" }.join("-")
+      get_datetime_from_iso8601(iso8601_time)
+    end
+
     # parsing of incomplete iso8601 timestamps such as 2015-04 is broken
     # in standard library
     # return nil if invalid iso8601 timestamp
     def get_datetime_from_iso8601(iso8601_time, options={})
       if options[:until_date]
         if iso8601_time[8..9].present?
-          ISO8601::DateTime.new(iso8601_time).to_time.utc.at_end_of_day
+          ISO8601::DateTime.new(iso8601_time).to_time.utc.at_end_of_day.iso8601
         elsif iso8601_time[5..6].present?
-          ISO8601::DateTime.new(iso8601_time).to_time.utc.at_end_of_month
+          ISO8601::DateTime.new(iso8601_time).to_time.utc.at_end_of_month.iso8601
         else
-          ISO8601::DateTime.new(iso8601_time).to_time.utc.at_end_of_year
+          ISO8601::DateTime.new(iso8601_time).to_time.utc.at_end_of_year.iso8601
         end
       else
-        ISO8601::DateTime.new(iso8601_time).to_time.utc
+        ISO8601::DateTime.new(iso8601_time).to_time.utc.iso8601
       end
     rescue
       nil

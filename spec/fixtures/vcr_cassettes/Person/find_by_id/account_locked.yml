@@ -23,7 +23,7 @@ http_interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Thu, 27 Aug 2020 16:28:00 GMT
+      - Mon, 31 Aug 2020 19:20:42 GMT
       Expires:
       - '0'
       Pragma:
@@ -37,7 +37,7 @@ http_interactions:
       Connection:
       - keep-alive
       Set-Cookie:
-      - X-Mapping-fjhppofk=26484D0F5DA32D2D6AF64AA1C9DBBA16; path=/
+      - X-Mapping-fjhppofk=EDEB8B375DA428655747278237992826; path=/
       X-Frame-Options:
       - DENY
     body:
@@ -46,5 +46,5 @@ http_interactions:
         is locked and cannot be edited. ORCID https://orcid.org/0000-0003-1315-5960","user-message":"The
         ORCID record is locked.","error-code":9018,"more-info":"https://members.orcid.org/api/resources/troubleshooting"}'
     http_version: null
-  recorded_at: Thu, 27 Aug 2020 16:28:00 GMT
+  recorded_at: Mon, 31 Aug 2020 19:20:42 GMT
 recorded_with: VCR 5.1.0

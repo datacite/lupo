@@ -8,7 +8,7 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
       Accept:
       - application/json;charset=UTF-8
   response:
@@ -23,7 +23,54 @@ http_interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Mon, 13 Jul 2020 12:14:12 GMT
+      - Mon, 31 Aug 2020 19:20:35 GMT
+      Expires:
+      - '0'
+      Pragma:
+      - no-cache
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Content-Type-Options:
+      - nosniff
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - X-Mapping-fjhppofk=1F5FD8D0B8B1A8DD0F8680D854A2C10B; path=/
+      X-Frame-Options:
+      - DENY
+    body:
+      encoding: ASCII-8BIT
+      string: '{"last-modified-date":{"value":1446458024437},"name":{"created-date":{"value":1460764482041},"last-modified-date":{"value":1460764482041},"given-names":{"value":"Agnes"},"family-name":{"value":"Ebenberger"},"credit-name":null,"source":null,"visibility":"public","path":"0000-0003-2706-4082"},"other-names":{"last-modified-date":null,"other-name":[],"path":"/0000-0003-2706-4082/other-names"},"biography":null,"researcher-urls":{"last-modified-date":null,"researcher-url":[],"path":"/0000-0003-2706-4082/researcher-urls"},"emails":{"last-modified-date":{"value":1446458024437},"email":[{"created-date":{"value":1446458024436},"last-modified-date":{"value":1446458024436},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0002-4407-7742","path":"0000-0002-4407-7742","host":"orcid.org"},"source-name":{"value":"ORCID
+        Integration at the University of Oxford"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"email":"agnes.ebenberger@spi.ox.ac.uk","path":null,"visibility":"public","verified":false,"primary":false,"put-code":null},{"created-date":{"value":1446458024437},"last-modified-date":{"value":1446458024437},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0002-4407-7742","path":"0000-0002-4407-7742","host":"orcid.org"},"source-name":{"value":"ORCID
+        Integration at the University of Oxford"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"email":"agnes.ebenberger@sant.ox.ac.uk","path":null,"visibility":"public","verified":false,"primary":true,"put-code":null}],"path":"/0000-0003-2706-4082/email"},"addresses":{"last-modified-date":null,"address":[],"path":"/0000-0003-2706-4082/address"},"keywords":{"last-modified-date":null,"keyword":[],"path":"/0000-0003-2706-4082/keywords"},"external-identifiers":{"last-modified-date":null,"external-identifier":[],"path":"/0000-0003-2706-4082/external-identifiers"},"path":"/0000-0003-2706-4082/person"}'
+    http_version: null
+  recorded_at: Mon, 31 Aug 2020 19:20:36 GMT
+- request:
+    method: get
+    uri: https://pub.orcid.org/v3.0/0000-0003-2706-4082/employments
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      Accept:
+      - application/json;charset=UTF-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.16.1
+      Cache-Control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Mon, 31 Aug 2020 19:20:37 GMT
       Expires:
       - '0'
       Pragma:
@@ -42,9 +89,7 @@ http_interactions:
       - DENY
     body:
       encoding: ASCII-8BIT
-      string: '{"last-modified-date":{"value":1446458024437},"name":{"created-date":{"value":1460764482041},"last-modified-date":{"value":1460764482041},"given-names":{"value":"Agnes"},"family-name":{"value":"Ebenberger"},"credit-name":null,"source":null,"visibility":"public","path":"0000-0003-2706-4082"},"other-names":{"last-modified-date":null,"other-name":[],"path":"/0000-0003-2706-4082/other-names"},"biography":null,"researcher-urls":{"last-modified-date":null,"researcher-url":[],"path":"/0000-0003-2706-4082/researcher-urls"},"emails":{"last-modified-date":{"value":1446458024437},"email":[{"created-date":{"value":1446458024436},"last-modified-date":{"value":1446458024436},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0002-4407-7742","path":"0000-0002-4407-7742","host":"orcid.org"},"source-name":{"value":"ORCID
-        Integration at the University of Oxford"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"email":"agnes.ebenberger@spi.ox.ac.uk","path":null,"visibility":"public","verified":false,"primary":false,"put-code":null},{"created-date":{"value":1446458024437},"last-modified-date":{"value":1446458024437},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0002-4407-7742","path":"0000-0002-4407-7742","host":"orcid.org"},"source-name":{"value":"ORCID
-        Integration at the University of Oxford"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"email":"agnes.ebenberger@sant.ox.ac.uk","path":null,"visibility":"public","verified":false,"primary":true,"put-code":null}],"path":"/0000-0003-2706-4082/email"},"addresses":{"last-modified-date":null,"address":[],"path":"/0000-0003-2706-4082/address"},"keywords":{"last-modified-date":null,"keyword":[],"path":"/0000-0003-2706-4082/keywords"},"external-identifiers":{"last-modified-date":null,"external-identifier":[],"path":"/0000-0003-2706-4082/external-identifiers"},"path":"/0000-0003-2706-4082/person"}'
+      string: '{"last-modified-date":null,"affiliation-group":[],"path":"/0000-0003-2706-4082/employments"}'
     http_version: null
-  recorded_at: Mon, 13 Jul 2020 12:14:12 GMT
+  recorded_at: Mon, 31 Aug 2020 19:20:37 GMT
 recorded_with: VCR 5.1.0

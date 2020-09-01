@@ -8,7 +8,7 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
       Accept:
       - application/json;charset=UTF-8
   response:
@@ -23,7 +23,7 @@ http_interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Mon, 13 Jul 2020 12:14:14 GMT
+      - Mon, 31 Aug 2020 19:20:31 GMT
       Expires:
       - '0'
       Pragma:
@@ -37,12 +37,157 @@ http_interactions:
       Connection:
       - keep-alive
       Set-Cookie:
-      - X-Mapping-fjhppofk=EDEB8B375DA428655747278237992826; path=/
+      - X-Mapping-fjhppofk=1F5FD8D0B8B1A8DD0F8680D854A2C10B; path=/
       X-Frame-Options:
       - DENY
     body:
       encoding: ASCII-8BIT
       string: '{"last-modified-date":null,"name":{"created-date":{"value":1511861313087},"last-modified-date":{"value":1511861313309},"given-names":{"value":"Rory"},"family-name":{"value":"O''Bryen"},"credit-name":null,"source":null,"visibility":"public","path":"0000-0001-7701-701X"},"other-names":{"last-modified-date":null,"other-name":[],"path":"/0000-0001-7701-701X/other-names"},"biography":null,"researcher-urls":{"last-modified-date":null,"researcher-url":[],"path":"/0000-0001-7701-701X/researcher-urls"},"emails":{"last-modified-date":null,"email":[],"path":"/0000-0001-7701-701X/email"},"addresses":{"last-modified-date":null,"address":[],"path":"/0000-0001-7701-701X/address"},"keywords":{"last-modified-date":null,"keyword":[],"path":"/0000-0001-7701-701X/keywords"},"external-identifiers":{"last-modified-date":null,"external-identifier":[],"path":"/0000-0001-7701-701X/external-identifiers"},"path":"/0000-0001-7701-701X/person"}'
     http_version: null
-  recorded_at: Mon, 13 Jul 2020 12:14:14 GMT
+  recorded_at: Mon, 31 Aug 2020 19:20:31 GMT
+- request:
+    method: get
+    uri: https://pub.orcid.org/v3.0/0000-0001-7701-701X/employments
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      Accept:
+      - application/json;charset=UTF-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.16.1
+      Cache-Control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Mon, 31 Aug 2020 19:20:31 GMT
+      Expires:
+      - '0'
+      Pragma:
+      - no-cache
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Content-Type-Options:
+      - nosniff
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - X-Mapping-fjhppofk=1F5FD8D0B8B1A8DD0F8680D854A2C10B; path=/
+      X-Frame-Options:
+      - DENY
+    body:
+      encoding: ASCII-8BIT
+      string: '{"last-modified-date":{"value":1511861690547},"affiliation-group":[{"last-modified-date":{"value":1511861690547},"external-ids":{"external-id":[]},"summaries":[{"employment-summary":{"created-date":{"value":1511861690547},"last-modified-date":{"value":1511861690547},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0001-7701-701X","path":"0000-0001-7701-701X","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Rory
+        O''Bryen"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"put-code":4977986,"department-name":"Faculty
+        of Modern and Medieval Languages","role-title":"Senior Lecturer in Latin American
+        Literature and Culture","start-date":{"year":{"value":"2006"},"month":null,"day":null},"end-date":null,"organization":{"name":"University
+        of Cambridge","address":{"city":"Cambridge ","region":"Cambridgeshire ","country":"GB"},"disambiguated-organization":{"disambiguated-organization-identifier":"2152","disambiguation-source":"RINGGOLD"}},"url":null,"external-ids":null,"display-index":"0","visibility":"public","path":"/0000-0001-7701-701X/employment/4977986"}}]}],"path":"/0000-0001-7701-701X/employments"}'
+    http_version: null
+  recorded_at: Mon, 31 Aug 2020 19:20:32 GMT
+- request:
+    method: get
+    uri: https://query.wikidata.org/sparql?query=%20%20%20%20%20%20PREFIX%20wikibase:%20%3Chttp://wikiba.se/ontology%23%3E%0A%20%20%20%20%20%20PREFIX%20wd:%20%3Chttp://www.wikidata.org/entity/%3E%20%0A%20%20%20%20%20%20PREFIX%20wdt:%20%3Chttp://www.wikidata.org/prop/direct/%3E%0A%20%20%20%20%20%20PREFIX%20rdfs:%20%3Chttp://www.w3.org/2000/01/rdf-schema%23%3E%0A%20%20%20%20%20%20PREFIX%20p:%20%3Chttp://www.wikidata.org/prop/%3E%0A%20%20%20%20%20%20PREFIX%20v:%20%3Chttp://www.wikidata.org/prop/statement/%3E%0A%0A%20%20%20%20%20%20SELECT%20?item%20?itemLabel%20?ror%20?grid%20?ringgold%20WHERE%20%7B%20%20%0A%20%20%20%20%20%20%20%20?item%20wdt:P6782%20?ror;%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20wdt:P3500%20?ringgold;%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20wdt:P2427%20?grid%20.%0A%20%20%20%20%20%20%20%20FILTER(?ringgold%20in%20(%222152%22)%20%7C%7C%20?grid%20in%20(%22%22)).%0A%20%20%20%20%20%20%20%20%20%20%20SERVICE%20wikibase:label%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20bd:serviceParam%20wikibase:language%20%22%5BAUTO_LANGUAGE%5D%22%20.%0A%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%7D
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
+      Accept:
+      - application/sparql-results+json, application/sparql-results+xml, text/boolean,
+        text/tab-separated-values;q=0.8, text/csv;q=0.2, */*;q=0.1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - '120'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.13.6
+      Date:
+      - Mon, 31 Aug 2020 19:20:34 GMT
+      Content-Type:
+      - application/sparql-results+json;charset=utf-8
+      X-First-Solution-Millis:
+      - '7'
+      X-Served-By:
+      - wdqs2001
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - public, max-age=300
+      Vary:
+      - Accept, Accept-Encoding
+      Age:
+      - '2'
+      X-Cache:
+      - cp3052 miss, cp3064 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Set-Cookie:
+      - WMF-Last-Access-Global=31-Aug-2020;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Fri,
+        02 Oct 2020 12:00:00 GMT
+      - WMF-Last-Access=31-Aug-2020;Path=/;HttpOnly;secure;Expires=Fri, 02 Oct 2020
+        12:00:00 GMT
+      X-Client-Ip:
+      - 87.155.5.120
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '228'
+      Connection:
+      - keep-alive
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "head" : {
+            "vars" : [ "item", "itemLabel", "ror", "grid", "ringgold" ]
+          },
+          "results" : {
+            "bindings" : [ {
+              "item" : {
+                "type" : "uri",
+                "value" : "http://www.wikidata.org/entity/Q35794"
+              },
+              "ringgold" : {
+                "type" : "literal",
+                "value" : "2152"
+              },
+              "ror" : {
+                "type" : "literal",
+                "value" : "013meh722"
+              },
+              "grid" : {
+                "type" : "literal",
+                "value" : "grid.5335.0"
+              },
+              "itemLabel" : {
+                "type" : "literal",
+                "value" : "Q35794"
+              }
+            } ]
+          }
+        }
+    http_version: null
+  recorded_at: Mon, 31 Aug 2020 19:20:34 GMT
 recorded_with: VCR 5.1.0

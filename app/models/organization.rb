@@ -1,4 +1,7 @@
 class Organization
+  # include helper module for working with Wikidata
+  include Wikidatable
+
   def self.find_by_id(id)
     ror_id = ror_id_from_url(id)
     return {} unless ror_id.present?
@@ -11,6 +14,10 @@ class Organization
     message = response.body.fetch("data", {})
     data = [parse_message(id: id, message: message)]
 
+    wikidata = data.dig(0, "wikidata", 0)
+    wikidata_data = find_by_wikidata_id(wikidata)
+    data = [data.first.reverse_merge(wikidata_data[:data].first)] if wikidata_data
+    
     errors = response.body.fetch("errors", nil)
 
     { data: data, errors: errors }

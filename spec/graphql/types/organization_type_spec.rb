@@ -7,7 +7,13 @@ describe OrganizationType do
     it { is_expected.to have_field(:id).of_type(!types.ID) }
     it { is_expected.to have_field(:type).of_type("String!") }
     it { is_expected.to have_field(:name).of_type("String") }
+    it { is_expected.to have_field(:description).of_type("String") }
+    it { is_expected.to have_field(:wikipediaUrl).of_type("Url") }
+    it { is_expected.to have_field(:twitter).of_type("String") }
+    it { is_expected.to have_field(:inception).of_type("ISO8601DateTime") }
+    it { is_expected.to have_field(:geolocation).of_type("GeolocationPoint") }
     it { is_expected.to have_field(:alternateName).of_type("[String!]") }
+    it { is_expected.to have_field(:identifiers).of_type("[Identifier!]") }
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
     it { is_expected.to have_field(:downloadCount).of_type("Int") }
@@ -53,6 +59,14 @@ describe OrganizationType do
           id
           name
           alternateName
+          description
+          wikipediaUrl
+          twitter
+          inception
+          geolocation {
+            pointLongitude
+            pointLatitude
+          }
           identifiers {
             identifier
             identifierType
@@ -88,9 +102,15 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
+      expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom")
+      expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
+      expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
+      expect(response.dig("data", "organization", "inception")).to eq("1209-01-01T00:00:00Z")
+      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
-      expect(response.dig("data", "organization", "identifiers").count).to eq(38)
+      expect(response.dig("data", "organization", "identifiers").count).to eq(39)
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"7288046", "identifierType"=>"geonames")
 
       expect(response.dig("data", "organization", "works", "totalCount")).to eq(2)
       expect(response.dig("data", "organization", "works", "published")).to eq([{"count"=>2, "id"=>"2011", "title"=>"2011"}])
@@ -99,6 +119,118 @@ describe OrganizationType do
 
       work = response.dig("data", "organization", "works", "nodes", 0)
       expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
+    end
+  end
+
+  describe "find organization with people", elasticsearch: true, vcr: true do
+    let(:query) do
+      %(query {
+        organization(id: "https://ror.org/013meh722") {
+          id
+          name
+          alternateName
+          description
+          wikipediaUrl
+          twitter
+          inception
+          geolocation {
+            pointLongitude
+            pointLatitude
+          }
+          identifiers {
+            identifier
+            identifierType
+          }
+          people {
+            totalCount
+            nodes {
+              id
+              name
+              givenName
+              familyName
+              alternateName
+            }
+          }
+        }
+      })
+    end
+
+    it "returns organization information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
+      expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
+      expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
+      expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom")
+      expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
+      expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
+      expect(response.dig("data", "organization", "inception")).to eq("1209-01-01T00:00:00Z")
+      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
+      expect(response.dig("data", "organization", "identifiers").count).to eq(39)
+      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"7288046", "identifierType"=>"geonames")
+
+      expect(response.dig("data", "organization", "people", "totalCount")).to eq(14181)
+      expect(response.dig("data", "organization", "people", "nodes").length).to eq(25)
+
+      person = response.dig("data", "organization", "people", "nodes", 0)
+      expect(person.dig("name")).to eq("Michael Edwards")
+    end
+  end
+
+  describe "find organization with people query", elasticsearch: true, vcr: true do
+    let(:query) do
+      %(query {
+        organization(id: "https://ror.org/013meh722") {
+          id
+          name
+          alternateName
+          description
+          wikipediaUrl
+          twitter
+          inception
+          geolocation {
+            pointLongitude
+            pointLatitude
+          }
+          identifiers {
+            identifier
+            identifierType
+          }
+          people(query: "oxford") {
+            totalCount
+            nodes {
+              id
+              name
+              givenName
+              familyName
+              alternateName
+            }
+          }
+        }
+      })
+    end
+
+    it "returns organization information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
+      expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
+      expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
+      expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom")
+      expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
+      expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
+      expect(response.dig("data", "organization", "inception")).to eq("1209-01-01T00:00:00Z")
+      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
+      expect(response.dig("data", "organization", "identifiers").count).to eq(39)
+      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"7288046", "identifierType"=>"geonames")
+
+      expect(response.dig("data", "organization", "people", "totalCount")).to eq(1988)
+      expect(response.dig("data", "organization", "people", "nodes").length).to eq(25)
+
+      person = response.dig("data", "organization", "people", "nodes", 0)
+      expect(person.dig("name")).to eq("Christopher Haley")
     end
   end
 

@@ -8,7 +8,7 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
       Accept:
       - application/json;charset=UTF-8
   response:
@@ -23,7 +23,7 @@ http_interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Mon, 10 Aug 2020 09:13:09 GMT
+      - Mon, 31 Aug 2020 19:20:37 GMT
       Expires:
       - '0'
       Pragma:
@@ -37,33 +37,208 @@ http_interactions:
       Connection:
       - keep-alive
       Set-Cookie:
-      - X-Mapping-fjhppofk=EDEB8B375DA428655747278237992826; path=/
+      - X-Mapping-fjhppofk=1F5FD8D0B8B1A8DD0F8680D854A2C10B; path=/
       X-Frame-Options:
       - DENY
     body:
       encoding: ASCII-8BIT
       string: '{"last-modified-date":{"value":1517873256636},"name":{"created-date":{"value":1460763664405},"last-modified-date":{"value":1460763664405},"given-names":{"value":"Martin"},"family-name":{"value":"Fenner"},"credit-name":{"value":"Martin
-        Fenner"},"source":null,"visibility":"public","path":"0000-0003-1419-2405"},"other-names":{"last-modified-date":{"value":1446760703722},"other-name":[{"created-date":{"value":1406836421699},"last-modified-date":{"value":1406836421699},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
-        Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"content":"M
-        Fenner","visibility":"public","path":"/0000-0003-1419-2405/other-names/247043","put-code":247043,"display-index":0},{"created-date":{"value":1406836421700},"last-modified-date":{"value":1406836421700},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
-        Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"content":"MH
-        Fenner","visibility":"public","path":"/0000-0003-1419-2405/other-names/247044","put-code":247044,"display-index":0},{"created-date":{"value":1438321583994},"last-modified-date":{"value":1438321583994},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
+        Fenner"},"source":null,"visibility":"public","path":"0000-0003-1419-2405"},"other-names":{"last-modified-date":{"value":1446760703722},"other-name":[{"created-date":{"value":1446760703722},"last-modified-date":{"value":1446760703722},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
         Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"content":"Martin
-        H. Fenner","visibility":"public","path":"/0000-0003-1419-2405/other-names/509846","put-code":509846,"display-index":0},{"created-date":{"value":1446760703722},"last-modified-date":{"value":1446760703722},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
-        Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"content":"Martin
-        Hellmut Fenner","visibility":"public","path":"/0000-0003-1419-2405/other-names/566914","put-code":566914,"display-index":0}],"path":"/0000-0003-1419-2405/other-names"},"biography":{"created-date":{"value":1460763664408},"last-modified-date":{"value":1585387891929},"content":"Martin
-        Fenner is the DataCite Technical Director and manages the technical architecture
-        for Datacite. From 2012 to 2015 he was the technical lead for the PLOS Article-Level
-        Metrics project. Martin has a medical degree from the Free University of Berlin
-        and is a Board-certified medical oncologist.","visibility":"public","path":"/0000-0003-1419-2405/biography"},"researcher-urls":{"last-modified-date":{"value":1480255200394},"researcher-url":[{"created-date":{"value":1406836421703},"last-modified-date":{"value":1480255200394},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
-        Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"url-name":"My
-        SciENCV","url":{"value":"http://www.ncbi.nlm.nih.gov/myncbi/mfenner/cv/1413/"},"visibility":"public","path":"/0000-0003-1419-2405/researcher-urls/334415","put-code":334415,"display-index":4},{"created-date":{"value":1406836421702},"last-modified-date":{"value":1480255200394},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
-        Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"url-name":"Twitter","url":{"value":"http://twitter.com/mfenner"},"visibility":"public","path":"/0000-0003-1419-2405/researcher-urls/334414","put-code":334414,"display-index":3},{"created-date":{"value":1406836421702},"last-modified-date":{"value":1480255200394},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
-        Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"url-name":"Blog","url":{"value":"http://blog.martinfenner.org"},"visibility":"public","path":"/0000-0003-1419-2405/researcher-urls/334413","put-code":334413,"display-index":2}],"path":"/0000-0003-1419-2405/researcher-urls"},"emails":{"last-modified-date":null,"email":[],"path":"/0000-0003-1419-2405/email"},"addresses":{"last-modified-date":{"value":1465226976952},"address":[{"created-date":{"value":1453660427119},"last-modified-date":{"value":1465226976952},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
+        Hellmut Fenner","visibility":"public","path":"/0000-0003-1419-2405/other-names/566914","put-code":566914,"display-index":0}],"path":"/0000-0003-1419-2405/other-names"},"biography":{"created-date":{"value":1460763664408},"last-modified-date":{"value":1597330779095},"content":"Martin
+        Fenner is the DataCite Technical Director since 2015. From 2012 to 2015 he
+        was the technical lead for the PLOS Article-Level Metrics project. Martin
+        has a medical degree from the Free University of Berlin and is a Board-certified
+        medical oncologist.","visibility":"public","path":"/0000-0003-1419-2405/biography"},"researcher-urls":{"last-modified-date":{"value":1480255200394},"researcher-url":[{"created-date":{"value":1406836421702},"last-modified-date":{"value":1480255200394},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
+        Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"url-name":"Twitter","url":{"value":"http://twitter.com/mfenner"},"visibility":"public","path":"/0000-0003-1419-2405/researcher-urls/334414","put-code":334414,"display-index":3}],"path":"/0000-0003-1419-2405/researcher-urls"},"emails":{"last-modified-date":null,"email":[],"path":"/0000-0003-1419-2405/email"},"addresses":{"last-modified-date":{"value":1465226976952},"address":[{"created-date":{"value":1453660427119},"last-modified-date":{"value":1465226976952},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"Martin
         Fenner"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"country":{"value":"DE"},"visibility":"public","path":"/0000-0003-1419-2405/address/348071","put-code":348071,"display-index":0}],"path":"/0000-0003-1419-2405/address"},"keywords":{"last-modified-date":null,"keyword":[],"path":"/0000-0003-1419-2405/keywords"},"external-identifiers":{"last-modified-date":{"value":1517873256636},"external-identifier":[{"created-date":{"value":1378921887304},"last-modified-date":{"value":1517873256636},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0002-5982-8983","path":"0000-0002-5982-8983","host":"orcid.org"},"source-name":{"value":"Scopus
         - Elsevier"},"assertion-origin-orcid":{"uri":"https://orcid.org/0000-0003-1419-2405","path":"0000-0003-1419-2405","host":"orcid.org"},"assertion-origin-client-id":null,"assertion-origin-name":{"value":"Martin
         Fenner"}},"external-id-type":"Scopus Author ID","external-id-value":"7006600825","external-id-url":{"value":"http://www.scopus.com/inward/authorDetails.url?authorID=7006600825&partnerID=MN8TOARS"},"external-id-relationship":"self","visibility":"public","path":"/0000-0003-1419-2405/external-identifiers/143928","put-code":143928,"display-index":3},{"created-date":{"value":1387382277259},"last-modified-date":{"value":1517873256636},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0003-0412-1857","path":"0000-0003-0412-1857","host":"orcid.org"},"source-name":{"value":"ISNI2ORCID
         search and link"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"external-id-type":"ISNI","external-id-value":"000000035060549X","external-id-url":{"value":"http://isni.org/000000035060549X"},"external-id-relationship":"self","visibility":"public","path":"/0000-0003-1419-2405/external-identifiers/182778","put-code":182778,"display-index":2},{"created-date":{"value":1497972789448},"last-modified-date":{"value":1497972789448},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0001-8099-6984","path":"0000-0001-8099-6984","host":"orcid.org"},"source-name":{"value":"DataCite"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"external-id-type":"GitHub","external-id-value":"mfenner","external-id-url":{"value":"https://github.com/mfenner"},"external-id-relationship":"self","visibility":"public","path":"/0000-0003-1419-2405/external-identifiers/737549","put-code":737549,"display-index":0}],"path":"/0000-0003-1419-2405/external-identifiers"},"path":"/0000-0003-1419-2405/person"}'
     http_version: null
-  recorded_at: Mon, 10 Aug 2020 09:13:09 GMT
+  recorded_at: Mon, 31 Aug 2020 19:20:38 GMT
+- request:
+    method: get
+    uri: https://pub.orcid.org/v3.0/0000-0003-1419-2405/employments
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      Accept:
+      - application/json;charset=UTF-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.16.1
+      Cache-Control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Mon, 31 Aug 2020 19:20:38 GMT
+      Expires:
+      - '0'
+      Pragma:
+      - no-cache
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Content-Type-Options:
+      - nosniff
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - X-Mapping-fjhppofk=1F5FD8D0B8B1A8DD0F8680D854A2C10B; path=/
+      X-Frame-Options:
+      - DENY
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJsYXN0LW1vZGlmaWVkLWRhdGUiOnsidmFsdWUiOjE1NjE4MjMzNDc0OTl9LCJhZmZpbGlhdGlvbi1ncm91cCI6W3sibGFzdC1tb2RpZmllZC1kYXRlIjp7InZhbHVlIjoxNTYxODIzMTkxMTk4fSwiZXh0ZXJuYWwtaWRzIjp7ImV4dGVybmFsLWlkIjpbXX0sInN1bW1hcmllcyI6W3siZW1wbG95bWVudC1zdW1tYXJ5Ijp7ImNyZWF0ZWQtZGF0ZSI6eyJ2YWx1ZSI6MTQzOTMyODUzMzA4N30sImxhc3QtbW9kaWZpZWQtZGF0ZSI6eyJ2YWx1ZSI6MTU2MTgyMzE5MTE5OH0sInNvdXJjZSI6eyJzb3VyY2Utb3JjaWQiOnsidXJpIjoiaHR0cHM6Ly9vcmNpZC5vcmcvMDAwMC0wMDAzLTE0MTktMjQwNSIsInBhdGgiOiIwMDAwLTAwMDMtMTQxOS0yNDA1IiwiaG9zdCI6Im9yY2lkLm9yZyJ9LCJzb3VyY2UtY2xpZW50LWlkIjpudWxsLCJzb3VyY2UtbmFtZSI6eyJ2YWx1ZSI6Ik1hcnRpbiBGZW5uZXIifSwiYXNzZXJ0aW9uLW9yaWdpbi1vcmNpZCI6bnVsbCwiYXNzZXJ0aW9uLW9yaWdpbi1jbGllbnQtaWQiOm51bGwsImFzc2VydGlvbi1vcmlnaW4tbmFtZSI6bnVsbH0sInB1dC1jb2RlIjoxMDg5MjU3LCJkZXBhcnRtZW50LW5hbWUiOm51bGwsInJvbGUtdGl0bGUiOiJUZWNobmljYWwgRGlyZWN0b3IiLCJzdGFydC1kYXRlIjp7InllYXIiOnsidmFsdWUiOiIyMDE1In0sIm1vbnRoIjp7InZhbHVlIjoiMDgifSwiZGF5IjpudWxsfSwiZW5kLWRhdGUiOm51bGwsIm9yZ2FuaXphdGlvbiI6eyJuYW1lIjoiRGF0YUNpdGUiLCJhZGRyZXNzIjp7ImNpdHkiOiJIYW5vdmVyIiwicmVnaW9uIjpudWxsLCJjb3VudHJ5IjoiREUifSwiZGlzYW1iaWd1YXRlZC1vcmdhbml6YXRpb24iOnsiZGlzYW1iaWd1YXRlZC1vcmdhbml6YXRpb24taWRlbnRpZmllciI6ImdyaWQuNDc1ODI2LmEiLCJkaXNhbWJpZ3VhdGlvbi1zb3VyY2UiOiJHUklEIn19LCJ1cmwiOnsidmFsdWUiOiJodHRwczovL3d3dy5kYXRhY2l0ZS5vcmcifSwiZXh0ZXJuYWwtaWRzIjpudWxsLCJkaXNwbGF5LWluZGV4IjoiMSIsInZpc2liaWxpdHkiOiJwdWJsaWMiLCJwYXRoIjoiLzAwMDAtMDAwMy0xNDE5LTI0MDUvZW1wbG95bWVudC8xMDg5MjU3In19XX0seyJsYXN0LW1vZGlmaWVkLWRhdGUiOnsidmFsdWUiOjE1NjE4MjMyNjA0OTR9LCJleHRlcm5hbC1pZHMiOnsiZXh0ZXJuYWwtaWQiOltdfSwic3VtbWFyaWVzIjpbeyJlbXBsb3ltZW50LXN1bW1hcnkiOnsiY3JlYXRlZC1kYXRlIjp7InZhbHVlIjoxMzg2MzU3ODMxNjU4fSwibGFzdC1tb2RpZmllZC1kYXRlIjp7InZhbHVlIjoxNTYxODIzMjYwNDk0fSwic291cmNlIjp7InNvdXJjZS1vcmNpZCI6eyJ1cmkiOiJodHRwczovL29yY2lkLm9yZy8wMDAwLTAwMDMtMTQxOS0yNDA1IiwicGF0aCI6IjAwMDAtMDAwMy0xNDE5LTI0MDUiLCJob3N0Ijoib3JjaWQub3JnIn0sInNvdXJjZS1jbGllbnQtaWQiOm51bGwsInNvdXJjZS1uYW1lIjp7InZhbHVlIjoiTWFydGluIEZlbm5lciJ9LCJhc3NlcnRpb24tb3JpZ2luLW9yY2lkIjpudWxsLCJhc3NlcnRpb24tb3JpZ2luLWNsaWVudC1pZCI6bnVsbCwiYXNzZXJ0aW9uLW9yaWdpbi1uYW1lIjpudWxsfSwicHV0LWNvZGUiOjQzMzYsImRlcGFydG1lbnQtbmFtZSI6bnVsbCwicm9sZS10aXRsZSI6bnVsbCwic3RhcnQtZGF0ZSI6eyJ5ZWFyIjp7InZhbHVlIjoiMjAwNSJ9LCJtb250aCI6eyJ2YWx1ZSI6IjExIn0sImRheSI6bnVsbH0sImVuZC1kYXRlIjp7InllYXIiOnsidmFsdWUiOiIyMDE3In0sIm1vbnRoIjp7InZhbHVlIjoiMDUifSwiZGF5IjpudWxsfSwib3JnYW5pemF0aW9uIjp7Im5hbWUiOiJNZWRpemluaXNjaGUgSG9jaHNjaHVsZSBIYW5ub3ZlciIsImFkZHJlc3MiOnsiY2l0eSI6Ikhhbm5vdmVyIiwicmVnaW9uIjoiTmllZGVyc2FjaHNlbiIsImNvdW50cnkiOiJERSJ9LCJkaXNhbWJpZ3VhdGVkLW9yZ2FuaXphdGlvbiI6eyJkaXNhbWJpZ3VhdGVkLW9yZ2FuaXphdGlvbi1pZGVudGlmaWVyIjoiOTE3NyIsImRpc2FtYmlndWF0aW9uLXNvdXJjZSI6IlJJTkdHT0xEIn19LCJ1cmwiOm51bGwsImV4dGVybmFsLWlkcyI6bnVsbCwiZGlzcGxheS1pbmRleCI6IjEiLCJ2aXNpYmlsaXR5IjoicHVibGljIiwicGF0aCI6Ii8wMDAwLTAwMDMtMTQxOS0yNDA1L2VtcGxveW1lbnQvNDMzNiJ9fV19LHsibGFzdC1tb2RpZmllZC1kYXRlIjp7InZhbHVlIjoxNTYxODIzMzA5NTY4fSwiZXh0ZXJuYWwtaWRzIjp7ImV4dGVybmFsLWlkIjpbXX0sInN1bW1hcmllcyI6W3siZW1wbG95bWVudC1zdW1tYXJ5Ijp7ImNyZWF0ZWQtZGF0ZSI6eyJ2YWx1ZSI6MTM4NjM2NDExNjQ4NH0sImxhc3QtbW9kaWZpZWQtZGF0ZSI6eyJ2YWx1ZSI6MTU2MTgyMzMwOTU2OH0sInNvdXJjZSI6eyJzb3VyY2Utb3JjaWQiOnsidXJpIjoiaHR0cHM6Ly9vcmNpZC5vcmcvMDAwMC0wMDAzLTE0MTktMjQwNSIsInBhdGgiOiIwMDAwLTAwMDMtMTQxOS0yNDA1IiwiaG9zdCI6Im9yY2lkLm9yZyJ9LCJzb3VyY2UtY2xpZW50LWlkIjpudWxsLCJzb3VyY2UtbmFtZSI6eyJ2YWx1ZSI6Ik1hcnRpbiBGZW5uZXIifSwiYXNzZXJ0aW9uLW9yaWdpbi1vcmNpZCI6bnVsbCwiYXNzZXJ0aW9uLW9yaWdpbi1jbGllbnQtaWQiOm51bGwsImFzc2VydGlvbi1vcmlnaW4tbmFtZSI6bnVsbH0sInB1dC1jb2RlIjo0NTY4LCJkZXBhcnRtZW50LW5hbWUiOm51bGwsInJvbGUtdGl0bGUiOiJUZWNobmljYWwgbGVhZCBhcnRpY2xlLWxldmVsIG1ldHJpY3MgcHJvamVjdCAoY29udHJhY3RvcikiLCJzdGFydC1kYXRlIjp7InllYXIiOnsidmFsdWUiOiIyMDEyIn0sIm1vbnRoIjp7InZhbHVlIjoiMDQifSwiZGF5IjpudWxsfSwiZW5kLWRhdGUiOnsieWVhciI6eyJ2YWx1ZSI6IjIwMTUifSwibW9udGgiOnsidmFsdWUiOiIwNyJ9LCJkYXkiOm51bGx9LCJvcmdhbml6YXRpb24iOnsibmFtZSI6IlB1YmxpYyBMaWJyYXJ5IG9mIFNjaWVuY2UiLCJhZGRyZXNzIjp7ImNpdHkiOiJTYW4gRnJhbmNpc2NvIiwicmVnaW9uIjoiQ0EiLCJjb3VudHJ5IjoiVVMifSwiZGlzYW1iaWd1YXRlZC1vcmdhbml6YXRpb24iOnsiZGlzYW1iaWd1YXRlZC1vcmdhbml6YXRpb24taWRlbnRpZmllciI6IjIxOTg3NCIsImRpc2FtYmlndWF0aW9uLXNvdXJjZSI6IlJJTkdHT0xEIn19LCJ1cmwiOm51bGwsImV4dGVybmFsLWlkcyI6bnVsbCwiZGlzcGxheS1pbmRleCI6IjEiLCJ2aXNpYmlsaXR5IjoicHVibGljIiwicGF0aCI6Ii8wMDAwLTAwMDMtMTQxOS0yNDA1L2VtcGxveW1lbnQvNDU2OCJ9fV19LHsibGFzdC1tb2RpZmllZC1kYXRlIjp7InZhbHVlIjoxNTYxODIzMzQ3NDk5fSwiZXh0ZXJuYWwtaWRzIjp7ImV4dGVybmFsLWlkIjpbXX0sInN1bW1hcmllcyI6W3siZW1wbG95bWVudC1zdW1tYXJ5Ijp7ImNyZWF0ZWQtZGF0ZSI6eyJ2YWx1ZSI6MTM4NjM1ODUyODMyMX0sImxhc3QtbW9kaWZpZWQtZGF0ZSI6eyJ2YWx1ZSI6MTU2MTgyMzM0NzQ5OX0sInNvdXJjZSI6eyJzb3VyY2Utb3JjaWQiOnsidXJpIjoiaHR0cHM6Ly9vcmNpZC5vcmcvMDAwMC0wMDAzLTE0MTktMjQwNSIsInBhdGgiOiIwMDAwLTAwMDMtMTQxOS0yNDA1IiwiaG9zdCI6Im9yY2lkLm9yZyJ9LCJzb3VyY2UtY2xpZW50LWlkIjpudWxsLCJzb3VyY2UtbmFtZSI6eyJ2YWx1ZSI6Ik1hcnRpbiBGZW5uZXIifSwiYXNzZXJ0aW9uLW9yaWdpbi1vcmNpZCI6bnVsbCwiYXNzZXJ0aW9uLW9yaWdpbi1jbGllbnQtaWQiOm51bGwsImFzc2VydGlvbi1vcmlnaW4tbmFtZSI6bnVsbH0sInB1dC1jb2RlIjo0MzYzLCJkZXBhcnRtZW50LW5hbWUiOm51bGwsInJvbGUtdGl0bGUiOm51bGwsInN0YXJ0LWRhdGUiOnsieWVhciI6eyJ2YWx1ZSI6IjE5OTgifSwibW9udGgiOnsidmFsdWUiOiIwOSJ9LCJkYXkiOm51bGx9LCJlbmQtZGF0ZSI6eyJ5ZWFyIjp7InZhbHVlIjoiMjAwNSJ9LCJtb250aCI6eyJ2YWx1ZSI6IjEwIn0sImRheSI6bnVsbH0sIm9yZ2FuaXphdGlvbiI6eyJuYW1lIjoiQ2hhcml0w6kgVW5pdmVyc2l0w6R0c21lZGl6aW4gQmVybGluIiwiYWRkcmVzcyI6eyJjaXR5IjoiQmVybGluIiwicmVnaW9uIjoiQmVybGluIiwiY291bnRyeSI6IkRFIn0sImRpc2FtYmlndWF0ZWQtb3JnYW5pemF0aW9uIjp7ImRpc2FtYmlndWF0ZWQtb3JnYW5pemF0aW9uLWlkZW50aWZpZXIiOiIxNDkwMyIsImRpc2FtYmlndWF0aW9uLXNvdXJjZSI6IlJJTkdHT0xEIn19LCJ1cmwiOm51bGwsImV4dGVybmFsLWlkcyI6bnVsbCwiZGlzcGxheS1pbmRleCI6IjAiLCJ2aXNpYmlsaXR5IjoicHVibGljIiwicGF0aCI6Ii8wMDAwLTAwMDMtMTQxOS0yNDA1L2VtcGxveW1lbnQvNDM2MyJ9fV19XSwicGF0aCI6Ii8wMDAwLTAwMDMtMTQxOS0yNDA1L2VtcGxveW1lbnRzIn0=
+    http_version: null
+  recorded_at: Mon, 31 Aug 2020 19:20:38 GMT
+- request:
+    method: get
+    uri: https://query.wikidata.org/sparql?query=%20%20%20%20%20%20PREFIX%20wikibase:%20%3Chttp://wikiba.se/ontology%23%3E%0A%20%20%20%20%20%20PREFIX%20wd:%20%3Chttp://www.wikidata.org/entity/%3E%20%0A%20%20%20%20%20%20PREFIX%20wdt:%20%3Chttp://www.wikidata.org/prop/direct/%3E%0A%20%20%20%20%20%20PREFIX%20rdfs:%20%3Chttp://www.w3.org/2000/01/rdf-schema%23%3E%0A%20%20%20%20%20%20PREFIX%20p:%20%3Chttp://www.wikidata.org/prop/%3E%0A%20%20%20%20%20%20PREFIX%20v:%20%3Chttp://www.wikidata.org/prop/statement/%3E%0A%0A%20%20%20%20%20%20SELECT%20?item%20?itemLabel%20?ror%20?grid%20?ringgold%20WHERE%20%7B%20%20%0A%20%20%20%20%20%20%20%20?item%20wdt:P6782%20?ror;%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20wdt:P3500%20?ringgold;%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20wdt:P2427%20?grid%20.%0A%20%20%20%20%20%20%20%20FILTER(?ringgold%20in%20(%229177%22,%20%22219874%22,%20%2214903%22)%20%7C%7C%20?grid%20in%20(%22grid.475826.a%22)).%0A%20%20%20%20%20%20%20%20%20%20%20SERVICE%20wikibase:label%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20bd:serviceParam%20wikibase:language%20%22%5BAUTO_LANGUAGE%5D%22%20.%0A%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%7D
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
+      Accept:
+      - application/sparql-results+json, application/sparql-results+xml, text/boolean,
+        text/tab-separated-values;q=0.8, text/csv;q=0.2, */*;q=0.1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - '120'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.13.6
+      Date:
+      - Mon, 31 Aug 2020 19:20:41 GMT
+      Content-Type:
+      - application/sparql-results+json;charset=utf-8
+      X-First-Solution-Millis:
+      - '6'
+      X-Served-By:
+      - wdqs2001
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - public, max-age=300
+      Vary:
+      - Accept, Accept-Encoding
+      Age:
+      - '3'
+      X-Cache:
+      - cp3054 miss, cp3064 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Set-Cookie:
+      - WMF-Last-Access-Global=31-Aug-2020;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Fri,
+        02 Oct 2020 12:00:00 GMT
+      - WMF-Last-Access=31-Aug-2020;Path=/;HttpOnly;secure;Expires=Fri, 02 Oct 2020
+        12:00:00 GMT
+      X-Client-Ip:
+      - 87.155.5.120
+      Accept-Ranges:
+      - bytes
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "head" : {
+            "vars" : [ "item", "itemLabel", "ror", "grid", "ringgold" ]
+          },
+          "results" : {
+            "bindings" : [ {
+              "item" : {
+                "type" : "uri",
+                "value" : "http://www.wikidata.org/entity/Q162684"
+              },
+              "ringgold" : {
+                "type" : "literal",
+                "value" : "14903"
+              },
+              "ror" : {
+                "type" : "literal",
+                "value" : "001w7jn25"
+              },
+              "grid" : {
+                "type" : "literal",
+                "value" : "grid.6363.0"
+              },
+              "itemLabel" : {
+                "type" : "literal",
+                "value" : "Q162684"
+              }
+            }, {
+              "item" : {
+                "type" : "uri",
+                "value" : "http://www.wikidata.org/entity/Q911561"
+              },
+              "ringgold" : {
+                "type" : "literal",
+                "value" : "9177"
+              },
+              "ror" : {
+                "type" : "literal",
+                "value" : "00f2yqf98"
+              },
+              "grid" : {
+                "type" : "literal",
+                "value" : "grid.10423.34"
+              },
+              "itemLabel" : {
+                "type" : "literal",
+                "value" : "Q911561"
+              }
+            }, {
+              "item" : {
+                "type" : "uri",
+                "value" : "http://www.wikidata.org/entity/Q233358"
+              },
+              "ringgold" : {
+                "type" : "literal",
+                "value" : "219874"
+              },
+              "ror" : {
+                "type" : "literal",
+                "value" : "008zgvp64"
+              },
+              "grid" : {
+                "type" : "literal",
+                "value" : "grid.431302.7"
+              },
+              "itemLabel" : {
+                "type" : "literal",
+                "value" : "Q233358"
+              }
+            } ]
+          }
+        }
+    http_version: null
+  recorded_at: Mon, 31 Aug 2020 19:20:41 GMT
 recorded_with: VCR 5.1.0
