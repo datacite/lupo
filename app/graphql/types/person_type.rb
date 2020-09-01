@@ -11,6 +11,7 @@ class PersonType < BaseObject
   field :links, [LinkType], null: true, description: "The links to other relevant web pages about the person."
   field :identifiers, [IdentifierType], null: true, description: "The identifier(s) for the person."
   field :country, CountryType, null: true, description: "Country where the person is located."
+  field :employment, [EmploymentType], null: true, description: "The employments of the person"
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."

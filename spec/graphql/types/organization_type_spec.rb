@@ -13,6 +13,7 @@ describe OrganizationType do
     it { is_expected.to have_field(:inception).of_type("ISO8601Date") }
     it { is_expected.to have_field(:geolocation).of_type("GeolocationPoint") }
     it { is_expected.to have_field(:alternateName).of_type("[String!]") }
+    it { is_expected.to have_field(:identifiers).of_type("[Identifier!]") }
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
     it { is_expected.to have_field(:downloadCount).of_type("Int") }
@@ -58,6 +59,14 @@ describe OrganizationType do
           id
           name
           alternateName
+          description
+          wikipediaUrl
+          twitter
+          inception
+          geolocation {
+            pointLongitude
+            pointLatitude
+          }
           identifiers {
             identifier
             identifierType
@@ -99,8 +108,9 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
       expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
-      expect(response.dig("data", "organization", "identifiers").count).to eq(38)
+      expect(response.dig("data", "organization", "identifiers").count).to eq(39)
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"7288046", "identifierType"=>"geonames")
 
       expect(response.dig("data", "organization", "works", "totalCount")).to eq(2)
       expect(response.dig("data", "organization", "works", "published")).to eq([{"count"=>2, "id"=>"2011", "title"=>"2011"}])

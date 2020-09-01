@@ -8,7 +8,7 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
       Accept:
       - application/json;charset=UTF-8
   response:
@@ -23,7 +23,7 @@ http_interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Mon, 13 Jul 2020 12:14:13 GMT
+      - Mon, 31 Aug 2020 19:20:24 GMT
       Expires:
       - '0'
       Pragma:
@@ -37,21 +37,144 @@ http_interactions:
       Connection:
       - keep-alive
       Set-Cookie:
-      - X-Mapping-fjhppofk=EDEB8B375DA428655747278237992826; path=/
+      - X-Mapping-fjhppofk=1F5FD8D0B8B1A8DD0F8680D854A2C10B; path=/
       X-Frame-Options:
       - DENY
     body:
       encoding: ASCII-8BIT
-      string: '{"last-modified-date":{"value":1584600392142},"name":{"created-date":{"value":1460764991842},"last-modified-date":{"value":1460764991842},"given-names":{"value":"Kristian"},"family-name":{"value":"Garza"},"credit-name":{"value":"K.
+      string: '{"last-modified-date":{"value":1597159301643},"name":{"created-date":{"value":1460764991842},"last-modified-date":{"value":1460764991842},"given-names":{"value":"Kristian"},"family-name":{"value":"Garza"},"credit-name":{"value":"K.
         J. Garza"},"source":null,"visibility":"public","path":"0000-0003-3484-6875"},"other-names":{"last-modified-date":{"value":1405917710280},"other-name":[{"created-date":{"value":1405917710280},"last-modified-date":{"value":1405917710280},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-3484-6875","path":"0000-0003-3484-6875","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"K.
         J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"content":"Kristian
-        Javier Garza Gutierrez","visibility":"public","path":"/0000-0003-3484-6875/other-names/225968","put-code":225968,"display-index":0}],"path":"/0000-0003-3484-6875/other-names"},"biography":null,"researcher-urls":{"last-modified-date":{"value":1583069232459},"researcher-url":[{"created-date":{"value":1583069232459},"last-modified-date":{"value":1583069232459},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0001-6478-3604","path":"0000-0001-6478-3604","host":"orcid.org"},"source-name":{"value":"Elsevier
+        Javier Garza Gutierrez","visibility":"public","path":"/0000-0003-3484-6875/other-names/225968","put-code":225968,"display-index":0}],"path":"/0000-0003-3484-6875/other-names"},"biography":null,"researcher-urls":{"last-modified-date":{"value":1597159301643},"researcher-url":[{"created-date":{"value":1583069232459},"last-modified-date":{"value":1597159301643},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0001-6478-3604","path":"0000-0001-6478-3604","host":"orcid.org"},"source-name":{"value":"Elsevier
         - Mendeley"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"url-name":"Mendeley
-        profile","url":{"value":"https://www.mendeley.com/profiles/kristian-g/"},"visibility":"public","path":"/0000-0003-3484-6875/researcher-urls/1977662","put-code":1977662,"display-index":0}],"path":"/0000-0003-3484-6875/researcher-urls"},"emails":{"last-modified-date":{"value":1584600392142},"email":[{"created-date":{"value":1472212558828},"last-modified-date":{"value":1584600276734},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-3484-6875","path":"0000-0003-3484-6875","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"K.
+        profile","url":{"value":"https://www.mendeley.com/profiles/kristian-g/"},"visibility":"public","path":"/0000-0003-3484-6875/researcher-urls/1977662","put-code":1977662,"display-index":2},{"created-date":{"value":1597159301641},"last-modified-date":{"value":1597159301641},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-3484-6875","path":"0000-0003-3484-6875","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"K.
+        J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"url-name":"github","url":{"value":"https://github.com/kjgarza"},"visibility":"public","path":"/0000-0003-3484-6875/researcher-urls/2177689","put-code":2177689,"display-index":1}],"path":"/0000-0003-3484-6875/researcher-urls"},"emails":{"last-modified-date":{"value":1584600392142},"email":[{"created-date":{"value":1472212558828},"last-modified-date":{"value":1584600276734},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-3484-6875","path":"0000-0003-3484-6875","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"K.
         J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"email":"kgarza@datacite.org","path":null,"visibility":"public","verified":true,"primary":true,"put-code":null},{"created-date":{"value":1458954696062},"last-modified-date":{"value":1584600392142},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-3484-6875","path":"0000-0003-3484-6875","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"K.
         J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"email":"kj.garza@gmail.com","path":null,"visibility":"public","verified":true,"primary":false,"put-code":null},{"created-date":{"value":1379601154943},"last-modified-date":{"value":1379603095886},"source":{"source-orcid":null,"source-client-id":null,"source-name":null,"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"email":"garzaguk@cs.man.ac.uk","path":null,"visibility":"public","verified":true,"primary":false,"put-code":null},{"created-date":{"value":1458954686052},"last-modified-date":{"value":1458954716077},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-3484-6875","path":"0000-0003-3484-6875","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"K.
         J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"email":"k.garza@manchester.ac.uk","path":null,"visibility":"public","verified":true,"primary":false,"put-code":null}],"path":"/0000-0003-3484-6875/email"},"addresses":{"last-modified-date":{"value":1516113934881},"address":[{"created-date":{"value":1516113934881},"last-modified-date":{"value":1516113934881},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-3484-6875","path":"0000-0003-3484-6875","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"K.
         J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"country":{"value":"DE"},"visibility":"public","path":"/0000-0003-3484-6875/address/874810","put-code":874810,"display-index":1}],"path":"/0000-0003-3484-6875/address"},"keywords":{"last-modified-date":null,"keyword":[],"path":"/0000-0003-3484-6875/keywords"},"external-identifiers":{"last-modified-date":{"value":1492778212570},"external-identifier":[{"created-date":{"value":1492778212567},"last-modified-date":{"value":1492778212570},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0001-8099-6984","path":"0000-0001-8099-6984","host":"orcid.org"},"source-name":{"value":"DataCite"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"external-id-type":"GitHub","external-id-value":"kjgarza","external-id-url":{"value":"https://github.com/kjgarza"},"external-id-relationship":"self","visibility":"public","path":"/0000-0003-3484-6875/external-identifiers/692978","put-code":692978,"display-index":0}],"path":"/0000-0003-3484-6875/external-identifiers"},"path":"/0000-0003-3484-6875/person"}'
     http_version: null
-  recorded_at: Mon, 13 Jul 2020 12:14:13 GMT
+  recorded_at: Mon, 31 Aug 2020 19:20:25 GMT
+- request:
+    method: get
+    uri: https://pub.orcid.org/v3.0/0000-0003-3484-6875/employments
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      Accept:
+      - application/json;charset=UTF-8
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.16.1
+      Cache-Control:
+      - no-cache, no-store, max-age=0, must-revalidate
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Mon, 31 Aug 2020 19:20:25 GMT
+      Expires:
+      - '0'
+      Pragma:
+      - no-cache
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Content-Type-Options:
+      - nosniff
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - X-Mapping-fjhppofk=1F5FD8D0B8B1A8DD0F8680D854A2C10B; path=/
+      X-Frame-Options:
+      - DENY
+    body:
+      encoding: ASCII-8BIT
+      string: '{"last-modified-date":{"value":1594804137969},"affiliation-group":[{"last-modified-date":{"value":1594804137969},"external-ids":{"external-id":[]},"summaries":[{"employment-summary":{"created-date":{"value":1486468878353},"last-modified-date":{"value":1594804137969},"source":{"source-orcid":{"uri":"https://orcid.org/0000-0003-3484-6875","path":"0000-0003-3484-6875","host":"orcid.org"},"source-client-id":null,"source-name":{"value":"K.
+        J. Garza"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"put-code":3139844,"department-name":null,"role-title":"Application
+        Developer","start-date":{"year":{"value":"2016"},"month":{"value":"08"},"day":null},"end-date":null,"organization":{"name":"DataCite","address":{"city":"Berlin","region":null,"country":"DE"},"disambiguated-organization":null},"url":{"value":"https://ror.org/04wxnsj81"},"external-ids":null,"display-index":"1","visibility":"public","path":"/0000-0003-3484-6875/employment/3139844"}}]}],"path":"/0000-0003-3484-6875/employments"}'
+    http_version: null
+  recorded_at: Mon, 31 Aug 2020 19:20:26 GMT
+- request:
+    method: get
+    uri: https://query.wikidata.org/sparql?query=%20%20%20%20%20%20PREFIX%20wikibase:%20%3Chttp://wikiba.se/ontology%23%3E%0A%20%20%20%20%20%20PREFIX%20wd:%20%3Chttp://www.wikidata.org/entity/%3E%20%0A%20%20%20%20%20%20PREFIX%20wdt:%20%3Chttp://www.wikidata.org/prop/direct/%3E%0A%20%20%20%20%20%20PREFIX%20rdfs:%20%3Chttp://www.w3.org/2000/01/rdf-schema%23%3E%0A%20%20%20%20%20%20PREFIX%20p:%20%3Chttp://www.wikidata.org/prop/%3E%0A%20%20%20%20%20%20PREFIX%20v:%20%3Chttp://www.wikidata.org/prop/statement/%3E%0A%0A%20%20%20%20%20%20SELECT%20?item%20?itemLabel%20?ror%20?grid%20?ringgold%20WHERE%20%7B%20%20%0A%20%20%20%20%20%20%20%20?item%20wdt:P6782%20?ror;%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20wdt:P3500%20?ringgold;%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20wdt:P2427%20?grid%20.%0A%20%20%20%20%20%20%20%20FILTER(?ringgold%20in%20(%22%22)%20%7C%7C%20?grid%20in%20(%22%22)).%0A%20%20%20%20%20%20%20%20%20%20%20SERVICE%20wikibase:label%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20bd:serviceParam%20wikibase:language%20%22%5BAUTO_LANGUAGE%5D%22%20.%0A%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%7D
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.1; mailto:info@datacite.org)
+      Accept:
+      - application/sparql-results+json, application/sparql-results+xml, text/boolean,
+        text/tab-separated-values;q=0.8, text/csv;q=0.2, */*;q=0.1
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Connection:
+      - keep-alive
+      Keep-Alive:
+      - '120'
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.13.6
+      Date:
+      - Mon, 31 Aug 2020 19:20:29 GMT
+      Content-Type:
+      - application/sparql-results+json;charset=utf-8
+      X-First-Solution-Millis:
+      - '5'
+      X-Served-By:
+      - wdqs2002
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - public, max-age=300
+      Vary:
+      - Accept, Accept-Encoding
+      Age:
+      - '3'
+      X-Cache:
+      - cp3064 miss, cp3064 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Set-Cookie:
+      - WMF-Last-Access-Global=31-Aug-2020;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Fri,
+        02 Oct 2020 12:00:00 GMT
+      - WMF-Last-Access=31-Aug-2020;Path=/;HttpOnly;secure;Expires=Fri, 02 Oct 2020
+        12:00:00 GMT
+      X-Client-Ip:
+      - 87.155.5.120
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '107'
+      Connection:
+      - keep-alive
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "head" : {
+            "vars" : [ "item", "itemLabel", "ror", "grid", "ringgold" ]
+          },
+          "results" : {
+            "bindings" : [ ]
+          }
+        }
+    http_version: null
+  recorded_at: Mon, 31 Aug 2020 19:20:29 GMT
 recorded_with: VCR 5.1.0

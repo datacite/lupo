@@ -3426,6 +3426,36 @@ interface DoiItem {
   xml: String!
 }
 
+"""
+Information about employments
+"""
+type Employment {
+  """
+  Employment end date.
+  """
+  endDate: ISO8601DateTime
+
+  """
+  The organization ID of the employment.
+  """
+  organizationId: String
+
+  """
+  The organization name of the employment.
+  """
+  organizationName: String!
+
+  """
+  The role title of the employment.
+  """
+  roleTitle: String
+
+  """
+  Employment start date.
+  """
+  startDate: ISO8601DateTime
+}
+
 type Event implements DoiItem {
   """
   Metadata in bibtex format
@@ -6055,9 +6085,19 @@ type Organization implements ActorItem {
   datasets(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): DatasetConnectionWithTotal
 
   """
+  The description of the organization.
+  """
+  description: String
+
+  """
   The number of downloads according to the Counter Code of Practice.
   """
   downloadCount: Int
+
+  """
+  Geolocation of the organization.
+  """
+  geolocation: GeolocationPoint
 
   """
   The persistent identifier for the actor.
@@ -6072,12 +6112,18 @@ type Organization implements ActorItem {
   """
   Date or point in time when the organization came into existence .
   """
+
   inception: ISO8601Date
 
   """
   The name of the actor.
   """
   name: String
+
+  """
+  People from this organization
+  """
+  people(after: String, first: Int = 25, query: String): PersonConnectionWithTotal
 
   """
   Publications from this organization
@@ -6088,6 +6134,11 @@ type Organization implements ActorItem {
   Software from this organization
   """
   softwares(after: String, fieldOfScience: String, first: Int = 25, funderId: String, hasCitations: Int, hasDownloads: Int, hasParts: Int, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): SoftwareConnectionWithTotal
+
+  """
+  Twitter username of the organization.
+  """
+  twitter: String
 
   """
   The type of the actor.
@@ -6810,6 +6861,11 @@ type Person implements ActorItem {
   The number of downloads according to the Counter Code of Practice.
   """
   downloadCount: Int
+
+  """
+  The employments of the person
+  """
+  employment: [Employment!]
 
   """
   Family name. In the U.S., the last name of an person.

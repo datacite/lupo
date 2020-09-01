@@ -5,12 +5,14 @@ class OrganizationType < BaseObject
 
   description "Information about organizations"
 
+  field :description, String, null: true, description: "The description of the organization."
   field :identifiers, [IdentifierType], null: true, description: "The identifier(s) for the organization."
   field :url, [Url], null: true, hash_key: "links", description: "URL of the organization."
   field :wikipedia_url, Url, null: true, hash_key: "wikipedia_url", description: "Wikipedia URL of the organization."
+  field :twitter, String, null: true, description: "Twitter username of the organization."
   field :types, [String], null: true, description: "The type of organization."
   field :address, AddressType, null: true, description: "Physical address of the organization."
-  field :inception, GraphQL::Types::ISO8601Date, null: true, description: "Date or point in time when the organization came into existence ."
+  field :inception, GraphQL::Types::ISO8601Date, null: true, description: "Date or point in time when the organization came into existence."
   field :geolocation, GeolocationPointType, null: true, description: "Geolocation of the organization."
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
@@ -101,15 +103,27 @@ class OrganizationType < BaseObject
     argument :after, String, required: false
   end
 
+  field :people, PersonConnectionWithTotalType, null: true, description: "People from this organization" do
+    argument :query, String, required: false
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
+  end
+
   def alternate_name
     object.aliases + object.acronyms
+  end
+
+  def geolocation
+    { "pointLongitude" => object.dig("geolocation", "longitude"), 
+      "pointLatitude" => object.dig("geolocation", "latitude") }
   end
 
   def identifiers
     object.fundref.map { |o| { "identifierType" => "fundref", "identifier" => o } } + 
     Array.wrap(object.wikidata).map { |o| { "identifierType" => "wikidata", "identifier" => o } } + 
     Array.wrap(object.grid).map { |o| { "identifierType" => "grid", "identifier" => o } } + 
-    object.isni.map { |o| { "identifierType" => "isni", "identifier" => o } } 
+    object.isni.map { |o| { "identifierType" => "isni", "identifier" => o } } +
+    Array.wrap(object.geonames).map { |o| { "identifierType" => "geonames", "identifier" => o } }
   end
 
   def address
@@ -134,6 +148,17 @@ class OrganizationType < BaseObject
 
   def works(**args)
     ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+  end
+
+  def people(**args)
+    grid_query = "grid-org-id:#{object.grid}"
+    ringgold_query = object.ringgold.present? ? "ringgold-org-id:#{object.ringgold}" : ""
+    org_query = [grid_query, ringgold_query].compact.join(" OR ")
+    query_query = args[:query].present? ? "(#{args[:query]})" : nil
+    query = ["(#{org_query})", query_query].compact.join(" AND ")
+
+    response = Person.query(query, limit: args[:first], offset: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : nil)
+    HashConnection.new(response, context: self.context, first: args[:first], after: args[:after])
   end
 
   def view_count
