@@ -78,6 +78,38 @@ describe WorkType do
     end
   end
 
+  describe "find work crossref", elasticsearch: true, vcr: true do
+    let!(:work) { create(:doi, doi: "10.1038/nature12373", agency: "crossref", aasm_state: "findable", titles: [
+      { "title" => "Nanometre-scale thermometry in a living cell" }]) }
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query) do
+      %(query {
+        work(id: "https://doi.org/#{work.doi}") {
+          id
+          titles {
+            title
+          }
+          url
+          contentUrl
+        }
+      })
+    end
+
+    it "returns work" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "work", "id")).to eq("https://handle.test.datacite.org/#{work.doi.downcase}")
+      expect(response.dig("data", "work", "titles")).to eq([{"title"=>"Nanometre-scale thermometry in a living cell"}])
+      expect(response.dig("data", "work", "url")).to eq(work.url)
+      expect(response.dig("data", "work", "contentUrl")).to eq("https://dash.harvard.edu/bitstream/1/12285462/1/Nanometer-Scale%20Thermometry.pdf")
+    end
+  end
+
   describe "find work not found", elasticsearch: true do
     let(:query) do
       %(query {

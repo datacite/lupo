@@ -136,6 +136,11 @@ type Audiovisual implements DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -427,6 +432,11 @@ type Book implements DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -673,6 +683,11 @@ type BookChapter implements DoiItem {
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
+
+  """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -1009,6 +1024,11 @@ type Collection implements DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -1297,6 +1317,11 @@ type ConferencePaper implements DoiItem {
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
+
+  """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -1875,6 +1900,11 @@ type DataManagementPlan implements DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -2167,6 +2197,11 @@ type DataPaper implements DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -2456,6 +2491,11 @@ type Dataset implements DoiItem {
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
+
+  """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -2860,6 +2900,11 @@ type Dissertation implements DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -3155,6 +3200,11 @@ interface DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -3433,6 +3483,11 @@ type Event implements DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -3707,6 +3762,11 @@ type EventData implements DoiItem {
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
+
+  """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -4277,6 +4337,11 @@ type Image implements DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -4568,6 +4633,11 @@ type Instrument implements DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -4856,6 +4926,11 @@ type InteractiveResource implements DoiItem {
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
+
+  """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -5172,6 +5247,11 @@ type JournalArticle implements DoiItem {
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
+
+  """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -5711,6 +5791,11 @@ type Model implements DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -6152,6 +6237,11 @@ type Other implements DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -6466,6 +6556,11 @@ type PeerReview implements DoiItem {
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
+
+  """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -6895,6 +6990,11 @@ type PhysicalObject implements DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -7239,6 +7339,11 @@ type Preprint implements DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -7529,6 +7634,11 @@ type Publication implements DoiItem {
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
+
+  """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -8267,6 +8377,11 @@ type Service implements DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -8558,6 +8673,11 @@ type Software implements DoiItem {
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
+
+  """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -8881,6 +9001,11 @@ type Sound implements DoiItem {
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
+
+  """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -9357,6 +9482,11 @@ type Work implements DoiItem {
   container: Container
 
   """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
+
+  """
   The institution or person responsible for collecting, managing, distributing,
   or otherwise contributing to the development of the resource.
   """
@@ -9648,6 +9778,11 @@ type Workflow implements DoiItem {
   The container (e.g. journal or repository) hosting the resource.
   """
   container: Container
+
+  """
+  Url to download the content directly, if available
+  """
+  contentUrl: Url!
 
   """
   The institution or person responsible for collecting, managing, distributing,
