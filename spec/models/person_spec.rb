@@ -36,7 +36,9 @@ describe Person, type: :model, vcr: true do
         "identifierUrl"=>"https://github.com/kjgarza"}])
       expect(person.country).to eq("id"=>"DE", "name"=>"Germany")
       expect(person.employment.length).to eq(1)
-      expect(person.employment).to eq([{"organizationName"=>"DataCite", "roleTitle"=>"Application Developer", "startDate"=>"2016-08-01T00:00:00Z"}])
+      expect(person.employment).to eq([{"organization_name"=>"DataCite",
+        "role_title"=>"Application Developer",
+        "start_date"=>"2016-08-01T00:00:00Z"}])
     end
 
     it "found with biography" do
@@ -62,22 +64,22 @@ describe Person, type: :model, vcr: true do
          "identifierType"=>"GitHub",
          "identifierUrl"=>"https://github.com/mfenner"}])
       expect(person.country).to eq("id"=>"DE", "name"=>"Germany")
-      expect(person.employment).to eq([{"organizationName"=>"DataCite",
-        "roleTitle"=>"Technical Director",
-        "startDate"=>"2015-08-01T00:00:00Z"},
-       {"endDate"=>"2017-05-01T00:00:00Z",
-        "organizationId"=>"https://ror.org/00f2yqf98",
-        "organizationName"=>"Medizinische Hochschule Hannover",
-        "startDate"=>"2005-11-01T00:00:00Z"},
-       {"endDate"=>"2015-07-01T00:00:00Z",
-        "organizationId"=>"https://ror.org/008zgvp64",
-        "organizationName"=>"Public Library of Science",
-        "roleTitle"=>"Technical lead article-level metrics project (contractor)",
-        "startDate"=>"2012-04-01T00:00:00Z"},
-       {"endDate"=>"2005-10-01T00:00:00Z",
-        "organizationId"=>"https://ror.org/001w7jn25",
-        "organizationName"=>"Charité Universitätsmedizin Berlin",
-        "startDate"=>"1998-09-01T00:00:00Z"}])
+      expect(person.employment).to eq([{"organization_name"=>"DataCite",
+        "role_title"=>"Technical Director",
+        "start_date"=>"2015-08-01T00:00:00Z"},
+       {"end_date"=>"2017-05-01T00:00:00Z",
+        "organization_id"=>"https://ror.org/00f2yqf98",
+        "organization_name"=>"Medizinische Hochschule Hannover",
+        "start_date"=>"2005-11-01T00:00:00Z"},
+       {"end_date"=>"2015-07-01T00:00:00Z",
+        "organization_id"=>"https://ror.org/008zgvp64",
+        "organization_name"=>"Public Library of Science",
+        "role_title"=>"Technical lead article-level metrics project (contractor)",
+        "start_date"=>"2012-04-01T00:00:00Z"},
+       {"end_date"=>"2005-10-01T00:00:00Z",
+        "organization_id"=>"https://ror.org/001w7jn25",
+        "organization_name"=>"Charité Universitätsmedizin Berlin",
+        "start_date"=>"1998-09-01T00:00:00Z"}])
     end
 
     it "found with X in ID" do
@@ -95,7 +97,10 @@ describe Person, type: :model, vcr: true do
       expect(person.identifiers).to be_empty
       expect(person.country).to be_nil
       expect(person.employment.length).to eq(1)
-      expect(person.employment).to eq([{"organizationId"=>"https://ror.org/013meh722", "organizationName"=>"University of Cambridge", "roleTitle"=>"Senior Lecturer in Latin American Literature and Culture", "startDate"=>"2006-01-01T00:00:00Z"}])
+      expect(person.employment).to eq([{"organization_id"=>"https://ror.org/013meh722",
+        "organization_name"=>"University of Cambridge",
+        "role_title"=>"Senior Lecturer in Latin American Literature and Culture",
+        "start_date"=>"2006-01-01T00:00:00Z"}])
     end
 
     it "account locked" do

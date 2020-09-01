@@ -55,24 +55,7 @@ module Wikidatable
         ringgold: ringgold,
         geonames: geonames }) 
     end
-
-    # SPARQL query to fetch organizational identifiers from Wikidata
-    # PREFIX wikibase: <http://wikiba.se/ontology#>
-    # PREFIX wd: <http://www.wikidata.org/entity/> 
-    # PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-    # PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-    # PREFIX p: <http://www.wikidata.org/prop/>
-    # PREFIX v: <http://www.wikidata.org/prop/statement/>
-
-    # SELECT ?item ?itemLabel ?ror ?grid ?ringgold WHERE {  
-    #   ?item wdt:P6782 ?ror;
-    #         wdt:P3500 ?ringgold;
-    #         wdt:P2427 ?grid .
-    #   FILTER(?ringgold in ("9177", "219874", "14903") || ?grid in ("grid.475826.a")).
-    #   SERVICE wikibase:label {
-    #     bd:serviceParam wikibase:language "[AUTO_LANGUAGE]" .
-    #   }
-    # }
+    
     def wikidata_query(employment)
       return [] if employment.blank?
 
@@ -126,9 +109,9 @@ SPARQL
 
       Array.wrap(employment).reduce([]) do |sum, e|
         if ringgold_to_ror[e["ringgold"]]
-          e["organizationId"] = ringgold_to_ror[e["ringgold"]]
+          e["organization_id"] = ringgold_to_ror[e["ringgold"]]
         elsif grid_to_ror[e["grid"]]
-          e["organizationId"] = grid_to_ror[e["grid"]]
+          e["organization_id"] = grid_to_ror[e["grid"]]
         end
 
         e.except!("ringgold", "grid")

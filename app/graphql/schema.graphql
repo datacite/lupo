@@ -138,7 +138,7 @@ type Audiovisual implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -434,7 +434,7 @@ type Book implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -687,7 +687,7 @@ type BookChapter implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -1026,7 +1026,7 @@ type Collection implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -1321,7 +1321,7 @@ type ConferencePaper implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -1902,7 +1902,7 @@ type DataManagementPlan implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -2199,7 +2199,7 @@ type DataPaper implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -2495,7 +2495,7 @@ type Dataset implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -2902,7 +2902,7 @@ type Dissertation implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -3202,7 +3202,7 @@ interface DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -3485,7 +3485,7 @@ type Event implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -3766,7 +3766,7 @@ type EventData implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -4339,7 +4339,7 @@ type Image implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -4635,7 +4635,7 @@ type Instrument implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -4930,7 +4930,7 @@ type InteractiveResource implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -5251,7 +5251,7 @@ type JournalArticle implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -5793,7 +5793,7 @@ type Model implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -6110,9 +6110,8 @@ type Organization implements ActorItem {
   identifiers: [Identifier!]
 
   """
-  Date or point in time when the organization came into existence .
+  Date or point in time when the organization came into existence.
   """
-
   inception: ISO8601Date
 
   """
@@ -6240,7 +6239,7 @@ type Other implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -6561,7 +6560,7 @@ type PeerReview implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -6993,7 +6992,7 @@ type PhysicalObject implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -7342,7 +7341,7 @@ type Preprint implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -7639,7 +7638,7 @@ type Publication implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -8380,7 +8379,7 @@ type Service implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -8678,7 +8677,7 @@ type Software implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -9006,7 +9005,7 @@ type Sound implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -9485,7 +9484,7 @@ type Work implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,
@@ -9783,7 +9782,7 @@ type Workflow implements DoiItem {
   """
   Url to download the content directly, if available
   """
-  contentUrl: Url!
+  contentUrl: Url
 
   """
   The institution or person responsible for collecting, managing, distributing,

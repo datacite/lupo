@@ -106,12 +106,12 @@ class Person
       s = a.dig("summaries", 0, "employment-summary", "start-date") || {}
       e = a.dig("summaries", 0, "employment-summary", "end-date") || {}
       
-      { "organizationName" => a.dig("summaries", 0, "employment-summary", "organization", "name"),
+      { "organization_name" => a.dig("summaries", 0, "employment-summary", "organization", "name"),
         "ringgold"  => i.dig("disambiguation-source") == "RINGGOLD" ? i.dig("disambiguated-organization-identifier") : nil,
         "grid"  => i.dig("disambiguation-source") == "GRID" ? i.dig("disambiguated-organization-identifier") : nil,
-        "roleTitle" => a.dig("summaries", 0, "employment-summary", "role-title"),
-        "startDate" => get_date_from_parts(s.dig("year", "value"), s.dig("month", "value"), s.dig("day", "value")),
-        "endDate" => get_date_from_parts(e.dig("year", "value"), e.dig("month", "value"), e.dig("day", "value")) }.compact
+        "role_title" => a.dig("summaries", 0, "employment-summary", "role-title"),
+        "start_date" => get_date_from_parts(s.dig("year", "value"), s.dig("month", "value"), s.dig("day", "value")),
+        "end_date" => get_date_from_parts(e.dig("year", "value"), e.dig("month", "value"), e.dig("day", "value")) }.compact
     end
   end
 

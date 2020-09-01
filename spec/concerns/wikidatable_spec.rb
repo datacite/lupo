@@ -62,10 +62,22 @@ describe "Person", vcr: true do
       employment = subject.get_employments(employments)
       response = subject.wikidata_query(employment)
 
-      expect(response).to eq([{"organizationName"=>"DataCite","roleTitle"=>"Technical Director","startDate"=>"2015-08-01T00:00:00Z"},
-        {"organizationName"=>"Medizinische Hochschule Hannover", "startDate"=>"2005-11-01T00:00:00Z", "endDate"=>"2017-05-01T00:00:00Z", "organizationId"=>"https://ror.org/00f2yqf98"}, 
-        {"organizationName"=>"Public Library of Science", "roleTitle"=>"Technical lead article-level metrics project (contractor)", "startDate"=>"2012-04-01T00:00:00Z", "endDate"=>"2015-07-01T00:00:00Z", "organizationId"=>"https://ror.org/008zgvp64"}, 
-        {"organizationName"=>"Charité Universitätsmedizin Berlin", "startDate"=>"1998-09-01T00:00:00Z", "endDate"=>"2005-10-01T00:00:00Z", "organizationId"=>"https://ror.org/001w7jn25"}])
+      expect(response).to eq([{"organization_name"=>"DataCite",
+        "role_title"=>"Technical Director",
+        "start_date"=>"2015-08-01T00:00:00Z"},
+       {"end_date"=>"2017-05-01T00:00:00Z",
+        "organization_id"=>"https://ror.org/00f2yqf98",
+        "organization_name"=>"Medizinische Hochschule Hannover",
+        "start_date"=>"2005-11-01T00:00:00Z"},
+       {"end_date"=>"2015-07-01T00:00:00Z",
+        "organization_id"=>"https://ror.org/008zgvp64",
+        "organization_name"=>"Public Library of Science",
+        "role_title"=>"Technical lead article-level metrics project (contractor)",
+        "start_date"=>"2012-04-01T00:00:00Z"},
+       {"end_date"=>"2005-10-01T00:00:00Z",
+        "organization_id"=>"https://ror.org/001w7jn25",
+        "organization_name"=>"Charité Universitätsmedizin Berlin",
+        "start_date"=>"1998-09-01T00:00:00Z"}])
     end
 
     it "empty" do

@@ -69,6 +69,13 @@ describe PersonType do
             id
             name
           }
+          employment {
+            organizationId
+            organizationName
+            roleTitle
+            startDate
+            endDate
+          }
           citationCount
           viewCount
           downloadCount
@@ -108,6 +115,7 @@ describe PersonType do
       expect(response.dig("data", "person", "links")).to eq([{"name"=>"Mendeley profile", "url"=>"https://www.mendeley.com/profiles/kristian-g/"}, {"name"=>"github", "url"=>"https://github.com/kjgarza"}])
       expect(response.dig("data", "person", "identifiers")).to eq([{"identifier"=>"kjgarza", "identifierType"=>"GitHub", "identifierUrl"=>"https://github.com/kjgarza"}])
       expect(response.dig("data", "person", "country")).to eq("id"=>"DE", "name"=>"Germany")
+      expect(response.dig("data", "person", "employment")).to eq([{"endDate"=>nil, "organizationId"=>nil, "organizationName"=>"DataCite", "roleTitle"=>"Application Developer", "startDate"=>"2016-08-01T00:00:00Z"}])
       expect(response.dig("data", "person", "citationCount")).to eq(0)
       expect(response.dig("data", "person", "works", "totalCount")).to eq(1)
       expect(response.dig("data", "person", "works", "published")).to eq([{"count"=>1, "id"=>"2011", "title"=>"2011"}])
@@ -176,9 +184,10 @@ describe PersonType do
         "identifierUrl"=>"https://github.com/mfenner"}])
       expect(response.dig("data", "person", "country")).to eq("id"=>"DE", "name"=>"Germany")
       expect(response.dig("data", "person", "employment")).to eq([
-        {"organizationId"=>"https://ror.org/00f2yqf98", "organizationName"=>"Medizinische Hochschule Hannover", "roleTitle"=>nil, "startDate"=>"2005-11-01T00:00:00Z", "endDate"=>"2017-05-01T00:00:00Z"},
-        {"organizationId"=>"https://ror.org/008zgvp64", "organizationName"=>"Public Library of Science", "roleTitle"=>"Technical lead article-level metrics project (contractor)", "startDate"=>"2012-04-01T00:00:00Z", "endDate"=>"2015-07-01T00:00:00Z"},
-        {"organizationId"=>"https://ror.org/001w7jn25", "organizationName"=>"Charité Universitätsmedizin Berlin", "roleTitle"=>nil, "startDate"=>"1998-09-01T00:00:00Z", "endDate"=>"2005-10-01T00:00:00Z"}])
+        {"organizationId"=>nil, "organizationName"=>"DataCite", "roleTitle"=>"Technical Director", "startDate"=>"2015-08-01T00:00:00Z", "endDate"=>nil},
+{"organizationId"=>"https://ror.org/00f2yqf98", "organizationName"=>"Medizinische Hochschule Hannover", "roleTitle"=>nil, "startDate"=>"2005-11-01T00:00:00Z", "endDate"=>"2017-05-01T00:00:00Z"},
+{"organizationId"=>"https://ror.org/008zgvp64", "organizationName"=>"Public Library of Science", "roleTitle"=>"Technical lead article-level metrics project (contractor)", "startDate"=>"2012-04-01T00:00:00Z", "endDate"=>"2015-07-01T00:00:00Z"},
+{"organizationId"=>"https://ror.org/001w7jn25", "organizationName"=>"Charité Universitätsmedizin Berlin", "roleTitle"=>nil, "startDate"=>"1998-09-01T00:00:00Z", "endDate"=>"2005-10-01T00:00:00Z"}])
     end
   end
 
