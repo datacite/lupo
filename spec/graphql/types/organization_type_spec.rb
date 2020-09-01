@@ -7,14 +7,11 @@ describe OrganizationType do
     it { is_expected.to have_field(:id).of_type(!types.ID) }
     it { is_expected.to have_field(:type).of_type("String!") }
     it { is_expected.to have_field(:name).of_type("String") }
-<<<<<<< Updated upstream
-=======
     it { is_expected.to have_field(:description).of_type("String") }
     it { is_expected.to have_field(:wikipediaUrl).of_type("Url") }
     it { is_expected.to have_field(:twitter).of_type("String") }
     it { is_expected.to have_field(:inception).of_type("ISO8601Date") }
     it { is_expected.to have_field(:geolocation).of_type("GeolocationPoint") }
->>>>>>> Stashed changes
     it { is_expected.to have_field(:alternateName).of_type("[String!]") }
     it { is_expected.to have_field(:citationCount).of_type("Int") }
     it { is_expected.to have_field(:viewCount).of_type("Int") }
@@ -96,14 +93,11 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
-<<<<<<< Updated upstream
-=======
       expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
       expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
       expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
->>>>>>> Stashed changes
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
       expect(response.dig("data", "organization", "identifiers").count).to eq(38)
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
@@ -118,8 +112,6 @@ describe OrganizationType do
     end
   end
 
-<<<<<<< Updated upstream
-=======
   describe "find organization no wikidata", elasticsearch: true, vcr: true do
     let(:query) do
       %(query {
@@ -272,7 +264,6 @@ describe OrganizationType do
     end
   end
 
->>>>>>> Stashed changes
   describe "find organization not found", elasticsearch: true, vcr: true do
     let(:query) do
       %(query {

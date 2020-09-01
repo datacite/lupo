@@ -11,8 +11,6 @@ describe Organization, type: :model, vcr: true do
       expect(organization.name).to eq("Lincoln University - Pennsylvania")
       expect(organization.labels).to eq([{"code"=>"ES", "name"=>"Universidad Lincoln"}])
       expect(organization.links).to eq(["http://www.lincoln.edu/"])
-<<<<<<< Updated upstream
-=======
       expect(organization.description).to eq("University in Pennsylvania.")
       expect(organization.twitter).to be_nil
       expect(organization.inception).to eq("1854-01-01")
@@ -53,7 +51,6 @@ describe Organization, type: :model, vcr: true do
       expect(organization.geolocation).to eq("latitude"=>50.699443, "longitude"=>7.14777)
       expect(organization.ringgold).to eq("39045")
       expect(organization.geonames).to be_nil
->>>>>>> Stashed changes
     end
 
     it "found no wikidata id" do
@@ -81,8 +78,6 @@ describe Organization, type: :model, vcr: true do
     end
   end
 
-<<<<<<< Updated upstream
-=======
   describe "find_by_wikidata_id" do
     it "found" do
       wikidata_id = "Q35794"
@@ -115,7 +110,6 @@ describe Organization, type: :model, vcr: true do
     end
   end
 
->>>>>>> Stashed changes
   describe "query" do
     it "all" do
       query = nil
