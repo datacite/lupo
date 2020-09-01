@@ -6070,6 +6070,14 @@ type Organization implements ActorItem {
   identifiers: [Identifier!]
 
   """
+<<<<<<< Updated upstream
+=======
+  Date or point in time when the organization came into existence .
+  """
+  inception: ISO8601Date
+
+  """
+>>>>>>> Stashed changes
   The name of the actor.
   """
   name: String

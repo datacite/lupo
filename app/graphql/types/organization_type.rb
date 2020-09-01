@@ -10,6 +10,11 @@ class OrganizationType < BaseObject
   field :wikipedia_url, Url, null: true, hash_key: "wikipedia_url", description: "Wikipedia URL of the organization."
   field :types, [String], null: true, description: "The type of organization."
   field :address, AddressType, null: true, description: "Physical address of the organization."
+<<<<<<< Updated upstream
+=======
+  field :inception, GraphQL::Types::ISO8601Date, null: true, description: "Date or point in time when the organization came into existence ."
+  field :geolocation, GeolocationPointType, null: true, description: "Geolocation of the organization."
+>>>>>>> Stashed changes
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
   field :citation_count, Integer, null: true, description: "The number of citations."

@@ -1,0 +1,55 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.ror.org/organizations/ror.org/02q0ygf45
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '422'
+      Connection:
+      - keep-alive
+      Date:
+      - Tue, 01 Sep 2020 12:48:03 GMT
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      Allow:
+      - GET, HEAD, OPTIONS
+      X-Powered-By:
+      - Phusion Passenger 6.0.5
+      Server:
+      - nginx/1.18.0 + Phusion Passenger 6.0.5
+      Vary:
+      - Cookie,Origin
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 dc81a30f5f4fc309ae9445723779b894.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - DUS51-C1
+      X-Amz-Cf-Id:
+      - d5fb0dTugXVup4Ie-vPLZpMCc-w5kLMh48lqOyo9EH3w56dYu0RM-w==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"https://ror.org/02q0ygf45","name":"OBS Medical (United Kingdom)","types":["Company"],"links":["http://www.obsmedical.com/"],"aliases":["Oxford
+        BioSignals"],"acronyms":[],"status":"active","wikipedia_url":"","labels":[],"country":{"country_name":"United
+        Kingdom","country_code":"GB"},"external_ids":{"ISNI":{"preferred":null,"all":["0000
+        0004 0398 7680"]},"GRID":{"preferred":"grid.487335.e","all":"grid.487335.e"}}}'
+    http_version: null
+  recorded_at: Tue, 01 Sep 2020 12:48:03 GMT
+recorded_with: VCR 5.1.0
