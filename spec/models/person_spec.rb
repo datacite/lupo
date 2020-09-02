@@ -64,7 +64,8 @@ describe Person, type: :model, vcr: true do
          "identifierType"=>"GitHub",
          "identifierUrl"=>"https://github.com/mfenner"}])
       expect(person.country).to eq("id"=>"DE", "name"=>"Germany")
-      expect(person.employment).to eq([{"organization_name"=>"DataCite",
+      expect(person.employment).to eq([{"organization_id"=>"https://ror.org/04wxnsj81",
+        "organization_name"=>"DataCite",
         "role_title"=>"Technical Director",
         "start_date"=>"2015-08-01T00:00:00Z"},
        {"end_date"=>"2017-05-01T00:00:00Z",

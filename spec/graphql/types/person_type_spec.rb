@@ -184,7 +184,7 @@ describe PersonType do
         "identifierUrl"=>"https://github.com/mfenner"}])
       expect(response.dig("data", "person", "country")).to eq("id"=>"DE", "name"=>"Germany")
       expect(response.dig("data", "person", "employment")).to eq([
-        {"organizationId"=>nil, "organizationName"=>"DataCite", "roleTitle"=>"Technical Director", "startDate"=>"2015-08-01T00:00:00Z", "endDate"=>nil},
+        {"organizationId"=>"https://ror.org/04wxnsj81","organizationName"=>"DataCite", "roleTitle"=>"Technical Director", "startDate"=>"2015-08-01T00:00:00Z", "endDate"=>nil},
 {"organizationId"=>"https://ror.org/00f2yqf98", "organizationName"=>"Medizinische Hochschule Hannover", "roleTitle"=>nil, "startDate"=>"2005-11-01T00:00:00Z", "endDate"=>"2017-05-01T00:00:00Z"},
 {"organizationId"=>"https://ror.org/008zgvp64", "organizationName"=>"Public Library of Science", "roleTitle"=>"Technical lead article-level metrics project (contractor)", "startDate"=>"2012-04-01T00:00:00Z", "endDate"=>"2015-07-01T00:00:00Z"},
 {"organizationId"=>"https://ror.org/001w7jn25", "organizationName"=>"Charité Universitätsmedizin Berlin", "roleTitle"=>nil, "startDate"=>"1998-09-01T00:00:00Z", "endDate"=>"2005-10-01T00:00:00Z"}])
@@ -338,17 +338,17 @@ describe PersonType do
     it "returns people information" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "people", "totalCount")).to eq(261)
+      expect(response.dig("data", "people", "totalCount")).to eq(262)
       expect(response.dig("data", "people", "pageInfo", "endCursor")).to eq("NQ")
       #expect(response.dig("data", "people", "pageInfo", "hasNextPage")).to be true
       expect(response.dig("data", "people", "nodes").length).to eq(50)
 
       person = response.dig("data", "people", "nodes", 0)
-      expect(person.fetch("id")).to eq("https://orcid.org/0000-0001-8624-4484")
-      expect(person.fetch("name")).to eq("Nelida Villasenor")
-      expect(person.fetch("givenName")).to eq("Nelida")
-      expect(person.fetch("familyName")).to eq("Villasenor")
-      expect(person.fetch("alternateName")).to eq(["Nélida R. Villaseñor"])
+      expect(person.fetch("id")).to eq("https://orcid.org/0000-0003-2494-0518")
+      expect(person.fetch("name")).to eq("Baihua Fu")
+      expect(person.fetch("givenName")).to eq("Baihua")
+      expect(person.fetch("familyName")).to eq("Fu")
+      expect(person.fetch("alternateName")).to eq([])
     end
   end
 
@@ -384,7 +384,7 @@ describe PersonType do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data")).to be_nil
-      expect(response.dig("errors", 0, "message")).to eq("org.apache.solr.client.solrj.impl.HttpSolrClient.RemoteSolrException Full validation error: Error from server at http://solr-loc.orcid.org/solr/profile: undefined field container.identifier")
+      expect(response.dig("errors", 0, "message")).to start_with("org.apache.solr.client.solrj.impl.HttpSolrClient.RemoteSolrException")
     end
   end
 end

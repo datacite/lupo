@@ -62,7 +62,8 @@ describe "Person", vcr: true do
       employment = subject.get_employments(employments)
       response = subject.wikidata_query(employment)
 
-      expect(response).to eq([{"organization_name"=>"DataCite",
+      expect(response).to eq([{"organization_id"=>"https://ror.org/04wxnsj81",
+        "organization_name"=>"DataCite",
         "role_title"=>"Technical Director",
         "start_date"=>"2015-08-01T00:00:00Z"},
        {"end_date"=>"2017-05-01T00:00:00Z",

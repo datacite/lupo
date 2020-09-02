@@ -81,10 +81,11 @@ module Wikidatable
       PREFIX p: <http://www.wikidata.org/prop/>
       PREFIX v: <http://www.wikidata.org/prop/statement/>
 
-      SELECT ?item ?itemLabel ?ror ?grid ?ringgold WHERE {  
-        ?item wdt:P6782 ?ror;
-              wdt:P3500 ?ringgold;
-              wdt:P2427 ?grid .
+      SELECT ?item ?itemLabel ?ror ?grid ?ringgold WHERE {
+        ?item wdt:P6782 ?ror.
+        OPTIONAL { ?item wdt:P2427 ?grid. }
+        OPTIONAL { ?item wdt:P3500 ?ringgold. }
+        
         FILTER(?ringgold in ("#{ringgold_filter}") || ?grid in ("#{grid_filter}")).
            SERVICE wikibase:label {
              bd:serviceParam wikibase:language "[AUTO_LANGUAGE]" .

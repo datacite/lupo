@@ -23,7 +23,7 @@ http_interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Mon, 31 Aug 2020 19:20:37 GMT
+      - Wed, 02 Sep 2020 08:30:40 GMT
       Expires:
       - '0'
       Pragma:
@@ -56,7 +56,7 @@ http_interactions:
         Fenner"}},"external-id-type":"Scopus Author ID","external-id-value":"7006600825","external-id-url":{"value":"http://www.scopus.com/inward/authorDetails.url?authorID=7006600825&partnerID=MN8TOARS"},"external-id-relationship":"self","visibility":"public","path":"/0000-0003-1419-2405/external-identifiers/143928","put-code":143928,"display-index":3},{"created-date":{"value":1387382277259},"last-modified-date":{"value":1517873256636},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0003-0412-1857","path":"0000-0003-0412-1857","host":"orcid.org"},"source-name":{"value":"ISNI2ORCID
         search and link"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"external-id-type":"ISNI","external-id-value":"000000035060549X","external-id-url":{"value":"http://isni.org/000000035060549X"},"external-id-relationship":"self","visibility":"public","path":"/0000-0003-1419-2405/external-identifiers/182778","put-code":182778,"display-index":2},{"created-date":{"value":1497972789448},"last-modified-date":{"value":1497972789448},"source":{"source-orcid":null,"source-client-id":{"uri":"https://orcid.org/client/0000-0001-8099-6984","path":"0000-0001-8099-6984","host":"orcid.org"},"source-name":{"value":"DataCite"},"assertion-origin-orcid":null,"assertion-origin-client-id":null,"assertion-origin-name":null},"external-id-type":"GitHub","external-id-value":"mfenner","external-id-url":{"value":"https://github.com/mfenner"},"external-id-relationship":"self","visibility":"public","path":"/0000-0003-1419-2405/external-identifiers/737549","put-code":737549,"display-index":0}],"path":"/0000-0003-1419-2405/external-identifiers"},"path":"/0000-0003-1419-2405/person"}'
     http_version: null
-  recorded_at: Mon, 31 Aug 2020 19:20:38 GMT
+  recorded_at: Wed, 02 Sep 2020 08:30:40 GMT
 - request:
     method: get
     uri: https://pub.orcid.org/v3.0/0000-0003-1419-2405/employments
@@ -80,7 +80,7 @@ http_interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Mon, 31 Aug 2020 19:20:38 GMT
+      - Wed, 02 Sep 2020 08:30:42 GMT
       Expires:
       - '0'
       Pragma:
@@ -94,7 +94,7 @@ http_interactions:
       Connection:
       - keep-alive
       Set-Cookie:
-      - X-Mapping-fjhppofk=1F5FD8D0B8B1A8DD0F8680D854A2C10B; path=/
+      - X-Mapping-fjhppofk=ED381B330E0E589099E2A39D5201DC2A; path=/
       X-Frame-Options:
       - DENY
     body:
@@ -102,10 +102,10 @@ http_interactions:
       string: !binary |-
         eyJsYXN0LW1vZGlmaWVkLWRhdGUiOnsidmFsdWUiOjE1NjE4MjMzNDc0OTl9LCJhZmZpbGlhdGlvbi1ncm91cCI6W3sibGFzdC1tb2RpZmllZC1kYXRlIjp7InZhbHVlIjoxNTYxODIzMTkxMTk4fSwiZXh0ZXJuYWwtaWRzIjp7ImV4dGVybmFsLWlkIjpbXX0sInN1bW1hcmllcyI6W3siZW1wbG95bWVudC1zdW1tYXJ5Ijp7ImNyZWF0ZWQtZGF0ZSI6eyJ2YWx1ZSI6MTQzOTMyODUzMzA4N30sImxhc3QtbW9kaWZpZWQtZGF0ZSI6eyJ2YWx1ZSI6MTU2MTgyMzE5MTE5OH0sInNvdXJjZSI6eyJzb3VyY2Utb3JjaWQiOnsidXJpIjoiaHR0cHM6Ly9vcmNpZC5vcmcvMDAwMC0wMDAzLTE0MTktMjQwNSIsInBhdGgiOiIwMDAwLTAwMDMtMTQxOS0yNDA1IiwiaG9zdCI6Im9yY2lkLm9yZyJ9LCJzb3VyY2UtY2xpZW50LWlkIjpudWxsLCJzb3VyY2UtbmFtZSI6eyJ2YWx1ZSI6Ik1hcnRpbiBGZW5uZXIifSwiYXNzZXJ0aW9uLW9yaWdpbi1vcmNpZCI6bnVsbCwiYXNzZXJ0aW9uLW9yaWdpbi1jbGllbnQtaWQiOm51bGwsImFzc2VydGlvbi1vcmlnaW4tbmFtZSI6bnVsbH0sInB1dC1jb2RlIjoxMDg5MjU3LCJkZXBhcnRtZW50LW5hbWUiOm51bGwsInJvbGUtdGl0bGUiOiJUZWNobmljYWwgRGlyZWN0b3IiLCJzdGFydC1kYXRlIjp7InllYXIiOnsidmFsdWUiOiIyMDE1In0sIm1vbnRoIjp7InZhbHVlIjoiMDgifSwiZGF5IjpudWxsfSwiZW5kLWRhdGUiOm51bGwsIm9yZ2FuaXphdGlvbiI6eyJuYW1lIjoiRGF0YUNpdGUiLCJhZGRyZXNzIjp7ImNpdHkiOiJIYW5vdmVyIiwicmVnaW9uIjpudWxsLCJjb3VudHJ5IjoiREUifSwiZGlzYW1iaWd1YXRlZC1vcmdhbml6YXRpb24iOnsiZGlzYW1iaWd1YXRlZC1vcmdhbml6YXRpb24taWRlbnRpZmllciI6ImdyaWQuNDc1ODI2LmEiLCJkaXNhbWJpZ3VhdGlvbi1zb3VyY2UiOiJHUklEIn19LCJ1cmwiOnsidmFsdWUiOiJodHRwczovL3d3dy5kYXRhY2l0ZS5vcmcifSwiZXh0ZXJuYWwtaWRzIjpudWxsLCJkaXNwbGF5LWluZGV4IjoiMSIsInZpc2liaWxpdHkiOiJwdWJsaWMiLCJwYXRoIjoiLzAwMDAtMDAwMy0xNDE5LTI0MDUvZW1wbG95bWVudC8xMDg5MjU3In19XX0seyJsYXN0LW1vZGlmaWVkLWRhdGUiOnsidmFsdWUiOjE1NjE4MjMyNjA0OTR9LCJleHRlcm5hbC1pZHMiOnsiZXh0ZXJuYWwtaWQiOltdfSwic3VtbWFyaWVzIjpbeyJlbXBsb3ltZW50LXN1bW1hcnkiOnsiY3JlYXRlZC1kYXRlIjp7InZhbHVlIjoxMzg2MzU3ODMxNjU4fSwibGFzdC1tb2RpZmllZC1kYXRlIjp7InZhbHVlIjoxNTYxODIzMjYwNDk0fSwic291cmNlIjp7InNvdXJjZS1vcmNpZCI6eyJ1cmkiOiJodHRwczovL29yY2lkLm9yZy8wMDAwLTAwMDMtMTQxOS0yNDA1IiwicGF0aCI6IjAwMDAtMDAwMy0xNDE5LTI0MDUiLCJob3N0Ijoib3JjaWQub3JnIn0sInNvdXJjZS1jbGllbnQtaWQiOm51bGwsInNvdXJjZS1uYW1lIjp7InZhbHVlIjoiTWFydGluIEZlbm5lciJ9LCJhc3NlcnRpb24tb3JpZ2luLW9yY2lkIjpudWxsLCJhc3NlcnRpb24tb3JpZ2luLWNsaWVudC1pZCI6bnVsbCwiYXNzZXJ0aW9uLW9yaWdpbi1uYW1lIjpudWxsfSwicHV0LWNvZGUiOjQzMzYsImRlcGFydG1lbnQtbmFtZSI6bnVsbCwicm9sZS10aXRsZSI6bnVsbCwic3RhcnQtZGF0ZSI6eyJ5ZWFyIjp7InZhbHVlIjoiMjAwNSJ9LCJtb250aCI6eyJ2YWx1ZSI6IjExIn0sImRheSI6bnVsbH0sImVuZC1kYXRlIjp7InllYXIiOnsidmFsdWUiOiIyMDE3In0sIm1vbnRoIjp7InZhbHVlIjoiMDUifSwiZGF5IjpudWxsfSwib3JnYW5pemF0aW9uIjp7Im5hbWUiOiJNZWRpemluaXNjaGUgSG9jaHNjaHVsZSBIYW5ub3ZlciIsImFkZHJlc3MiOnsiY2l0eSI6Ikhhbm5vdmVyIiwicmVnaW9uIjoiTmllZGVyc2FjaHNlbiIsImNvdW50cnkiOiJERSJ9LCJkaXNhbWJpZ3VhdGVkLW9yZ2FuaXphdGlvbiI6eyJkaXNhbWJpZ3VhdGVkLW9yZ2FuaXphdGlvbi1pZGVudGlmaWVyIjoiOTE3NyIsImRpc2FtYmlndWF0aW9uLXNvdXJjZSI6IlJJTkdHT0xEIn19LCJ1cmwiOm51bGwsImV4dGVybmFsLWlkcyI6bnVsbCwiZGlzcGxheS1pbmRleCI6IjEiLCJ2aXNpYmlsaXR5IjoicHVibGljIiwicGF0aCI6Ii8wMDAwLTAwMDMtMTQxOS0yNDA1L2VtcGxveW1lbnQvNDMzNiJ9fV19LHsibGFzdC1tb2RpZmllZC1kYXRlIjp7InZhbHVlIjoxNTYxODIzMzA5NTY4fSwiZXh0ZXJuYWwtaWRzIjp7ImV4dGVybmFsLWlkIjpbXX0sInN1bW1hcmllcyI6W3siZW1wbG95bWVudC1zdW1tYXJ5Ijp7ImNyZWF0ZWQtZGF0ZSI6eyJ2YWx1ZSI6MTM4NjM2NDExNjQ4NH0sImxhc3QtbW9kaWZpZWQtZGF0ZSI6eyJ2YWx1ZSI6MTU2MTgyMzMwOTU2OH0sInNvdXJjZSI6eyJzb3VyY2Utb3JjaWQiOnsidXJpIjoiaHR0cHM6Ly9vcmNpZC5vcmcvMDAwMC0wMDAzLTE0MTktMjQwNSIsInBhdGgiOiIwMDAwLTAwMDMtMTQxOS0yNDA1IiwiaG9zdCI6Im9yY2lkLm9yZyJ9LCJzb3VyY2UtY2xpZW50LWlkIjpudWxsLCJzb3VyY2UtbmFtZSI6eyJ2YWx1ZSI6Ik1hcnRpbiBGZW5uZXIifSwiYXNzZXJ0aW9uLW9yaWdpbi1vcmNpZCI6bnVsbCwiYXNzZXJ0aW9uLW9yaWdpbi1jbGllbnQtaWQiOm51bGwsImFzc2VydGlvbi1vcmlnaW4tbmFtZSI6bnVsbH0sInB1dC1jb2RlIjo0NTY4LCJkZXBhcnRtZW50LW5hbWUiOm51bGwsInJvbGUtdGl0bGUiOiJUZWNobmljYWwgbGVhZCBhcnRpY2xlLWxldmVsIG1ldHJpY3MgcHJvamVjdCAoY29udHJhY3RvcikiLCJzdGFydC1kYXRlIjp7InllYXIiOnsidmFsdWUiOiIyMDEyIn0sIm1vbnRoIjp7InZhbHVlIjoiMDQifSwiZGF5IjpudWxsfSwiZW5kLWRhdGUiOnsieWVhciI6eyJ2YWx1ZSI6IjIwMTUifSwibW9udGgiOnsidmFsdWUiOiIwNyJ9LCJkYXkiOm51bGx9LCJvcmdhbml6YXRpb24iOnsibmFtZSI6IlB1YmxpYyBMaWJyYXJ5IG9mIFNjaWVuY2UiLCJhZGRyZXNzIjp7ImNpdHkiOiJTYW4gRnJhbmNpc2NvIiwicmVnaW9uIjoiQ0EiLCJjb3VudHJ5IjoiVVMifSwiZGlzYW1iaWd1YXRlZC1vcmdhbml6YXRpb24iOnsiZGlzYW1iaWd1YXRlZC1vcmdhbml6YXRpb24taWRlbnRpZmllciI6IjIxOTg3NCIsImRpc2FtYmlndWF0aW9uLXNvdXJjZSI6IlJJTkdHT0xEIn19LCJ1cmwiOm51bGwsImV4dGVybmFsLWlkcyI6bnVsbCwiZGlzcGxheS1pbmRleCI6IjEiLCJ2aXNpYmlsaXR5IjoicHVibGljIiwicGF0aCI6Ii8wMDAwLTAwMDMtMTQxOS0yNDA1L2VtcGxveW1lbnQvNDU2OCJ9fV19LHsibGFzdC1tb2RpZmllZC1kYXRlIjp7InZhbHVlIjoxNTYxODIzMzQ3NDk5fSwiZXh0ZXJuYWwtaWRzIjp7ImV4dGVybmFsLWlkIjpbXX0sInN1bW1hcmllcyI6W3siZW1wbG95bWVudC1zdW1tYXJ5Ijp7ImNyZWF0ZWQtZGF0ZSI6eyJ2YWx1ZSI6MTM4NjM1ODUyODMyMX0sImxhc3QtbW9kaWZpZWQtZGF0ZSI6eyJ2YWx1ZSI6MTU2MTgyMzM0NzQ5OX0sInNvdXJjZSI6eyJzb3VyY2Utb3JjaWQiOnsidXJpIjoiaHR0cHM6Ly9vcmNpZC5vcmcvMDAwMC0wMDAzLTE0MTktMjQwNSIsInBhdGgiOiIwMDAwLTAwMDMtMTQxOS0yNDA1IiwiaG9zdCI6Im9yY2lkLm9yZyJ9LCJzb3VyY2UtY2xpZW50LWlkIjpudWxsLCJzb3VyY2UtbmFtZSI6eyJ2YWx1ZSI6Ik1hcnRpbiBGZW5uZXIifSwiYXNzZXJ0aW9uLW9yaWdpbi1vcmNpZCI6bnVsbCwiYXNzZXJ0aW9uLW9yaWdpbi1jbGllbnQtaWQiOm51bGwsImFzc2VydGlvbi1vcmlnaW4tbmFtZSI6bnVsbH0sInB1dC1jb2RlIjo0MzYzLCJkZXBhcnRtZW50LW5hbWUiOm51bGwsInJvbGUtdGl0bGUiOm51bGwsInN0YXJ0LWRhdGUiOnsieWVhciI6eyJ2YWx1ZSI6IjE5OTgifSwibW9udGgiOnsidmFsdWUiOiIwOSJ9LCJkYXkiOm51bGx9LCJlbmQtZGF0ZSI6eyJ5ZWFyIjp7InZhbHVlIjoiMjAwNSJ9LCJtb250aCI6eyJ2YWx1ZSI6IjEwIn0sImRheSI6bnVsbH0sIm9yZ2FuaXphdGlvbiI6eyJuYW1lIjoiQ2hhcml0w6kgVW5pdmVyc2l0w6R0c21lZGl6aW4gQmVybGluIiwiYWRkcmVzcyI6eyJjaXR5IjoiQmVybGluIiwicmVnaW9uIjoiQmVybGluIiwiY291bnRyeSI6IkRFIn0sImRpc2FtYmlndWF0ZWQtb3JnYW5pemF0aW9uIjp7ImRpc2FtYmlndWF0ZWQtb3JnYW5pemF0aW9uLWlkZW50aWZpZXIiOiIxNDkwMyIsImRpc2FtYmlndWF0aW9uLXNvdXJjZSI6IlJJTkdHT0xEIn19LCJ1cmwiOm51bGwsImV4dGVybmFsLWlkcyI6bnVsbCwiZGlzcGxheS1pbmRleCI6IjAiLCJ2aXNpYmlsaXR5IjoicHVibGljIiwicGF0aCI6Ii8wMDAwLTAwMDMtMTQxOS0yNDA1L2VtcGxveW1lbnQvNDM2MyJ9fV19XSwicGF0aCI6Ii8wMDAwLTAwMDMtMTQxOS0yNDA1L2VtcGxveW1lbnRzIn0=
     http_version: null
-  recorded_at: Mon, 31 Aug 2020 19:20:38 GMT
+  recorded_at: Wed, 02 Sep 2020 08:30:41 GMT
 - request:
     method: get
-    uri: https://query.wikidata.org/sparql?query=%20%20%20%20%20%20PREFIX%20wikibase:%20%3Chttp://wikiba.se/ontology%23%3E%0A%20%20%20%20%20%20PREFIX%20wd:%20%3Chttp://www.wikidata.org/entity/%3E%20%0A%20%20%20%20%20%20PREFIX%20wdt:%20%3Chttp://www.wikidata.org/prop/direct/%3E%0A%20%20%20%20%20%20PREFIX%20rdfs:%20%3Chttp://www.w3.org/2000/01/rdf-schema%23%3E%0A%20%20%20%20%20%20PREFIX%20p:%20%3Chttp://www.wikidata.org/prop/%3E%0A%20%20%20%20%20%20PREFIX%20v:%20%3Chttp://www.wikidata.org/prop/statement/%3E%0A%0A%20%20%20%20%20%20SELECT%20?item%20?itemLabel%20?ror%20?grid%20?ringgold%20WHERE%20%7B%20%20%0A%20%20%20%20%20%20%20%20?item%20wdt:P6782%20?ror;%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20wdt:P3500%20?ringgold;%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20wdt:P2427%20?grid%20.%0A%20%20%20%20%20%20%20%20FILTER(?ringgold%20in%20(%229177%22,%20%22219874%22,%20%2214903%22)%20%7C%7C%20?grid%20in%20(%22grid.475826.a%22)).%0A%20%20%20%20%20%20%20%20%20%20%20SERVICE%20wikibase:label%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20bd:serviceParam%20wikibase:language%20%22%5BAUTO_LANGUAGE%5D%22%20.%0A%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%7D
+    uri: https://query.wikidata.org/sparql?query=%20%20%20%20%20%20PREFIX%20wikibase:%20%3Chttp://wikiba.se/ontology%23%3E%0A%20%20%20%20%20%20PREFIX%20wd:%20%3Chttp://www.wikidata.org/entity/%3E%20%0A%20%20%20%20%20%20PREFIX%20wdt:%20%3Chttp://www.wikidata.org/prop/direct/%3E%0A%20%20%20%20%20%20PREFIX%20rdfs:%20%3Chttp://www.w3.org/2000/01/rdf-schema%23%3E%0A%20%20%20%20%20%20PREFIX%20p:%20%3Chttp://www.wikidata.org/prop/%3E%0A%20%20%20%20%20%20PREFIX%20v:%20%3Chttp://www.wikidata.org/prop/statement/%3E%0A%0A%20%20%20%20%20%20SELECT%20?item%20?itemLabel%20?ror%20?grid%20?ringgold%20WHERE%20%7B%0A%20%20%20%20%20%20%20%20?item%20wdt:P6782%20?ror.%0A%20%20%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P2427%20?grid.%20%7D%0A%20%20%20%20%20%20%20%20OPTIONAL%20%7B%20?item%20wdt:P3500%20?ringgold.%20%7D%0A%20%20%20%20%20%20%20%20%0A%20%20%20%20%20%20%20%20FILTER(?ringgold%20in%20(%229177%22,%20%22219874%22,%20%2214903%22)%20%7C%7C%20?grid%20in%20(%22grid.475826.a%22)).%0A%20%20%20%20%20%20%20%20%20%20%20SERVICE%20wikibase:label%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20bd:serviceParam%20wikibase:language%20%22%5BAUTO_LANGUAGE%5D%22%20.%0A%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%7D
     body:
       encoding: US-ASCII
       string: ''
@@ -129,13 +129,13 @@ http_interactions:
       Server:
       - nginx/1.13.6
       Date:
-      - Mon, 31 Aug 2020 19:20:41 GMT
+      - Wed, 02 Sep 2020 08:25:58 GMT
       Content-Type:
       - application/sparql-results+json;charset=utf-8
       X-First-Solution-Millis:
       - '6'
       X-Served-By:
-      - wdqs2001
+      - wdqs2002
       Access-Control-Allow-Origin:
       - "*"
       Cache-Control:
@@ -143,20 +143,20 @@ http_interactions:
       Vary:
       - Accept, Accept-Encoding
       Age:
-      - '3'
+      - '287'
       X-Cache:
-      - cp3054 miss, cp3064 pass
+      - cp3050 hit, cp3064 miss
       X-Cache-Status:
-      - pass
+      - hit-local
       Server-Timing:
-      - cache;desc="pass"
+      - cache;desc="hit-local"
       Strict-Transport-Security:
       - max-age=106384710; includeSubDomains; preload
       Set-Cookie:
-      - WMF-Last-Access-Global=31-Aug-2020;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Fri,
-        02 Oct 2020 12:00:00 GMT
-      - WMF-Last-Access=31-Aug-2020;Path=/;HttpOnly;secure;Expires=Fri, 02 Oct 2020
-        12:00:00 GMT
+      - WMF-Last-Access-Global=02-Sep-2020;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Sun,
+        04 Oct 2020 00:00:00 GMT
+      - WMF-Last-Access=02-Sep-2020;Path=/;HttpOnly;secure;Expires=Sun, 04 Oct 2020
+        00:00:00 GMT
       X-Client-Ip:
       - 87.155.5.120
       Accept-Ranges:
@@ -176,11 +176,24 @@ http_interactions:
             "bindings" : [ {
               "item" : {
                 "type" : "uri",
-                "value" : "http://www.wikidata.org/entity/Q162684"
+                "value" : "http://www.wikidata.org/entity/Q821542"
               },
-              "ringgold" : {
+              "ror" : {
                 "type" : "literal",
-                "value" : "14903"
+                "value" : "04wxnsj81"
+              },
+              "grid" : {
+                "type" : "literal",
+                "value" : "grid.475826.a"
+              },
+              "itemLabel" : {
+                "type" : "literal",
+                "value" : "Q821542"
+              }
+            }, {
+              "item" : {
+                "type" : "uri",
+                "value" : "http://www.wikidata.org/entity/Q162684"
               },
               "ror" : {
                 "type" : "literal",
@@ -190,6 +203,10 @@ http_interactions:
                 "type" : "literal",
                 "value" : "grid.6363.0"
               },
+              "ringgold" : {
+                "type" : "literal",
+                "value" : "14903"
+              },
               "itemLabel" : {
                 "type" : "literal",
                 "value" : "Q162684"
@@ -197,32 +214,7 @@ http_interactions:
             }, {
               "item" : {
                 "type" : "uri",
-                "value" : "http://www.wikidata.org/entity/Q911561"
-              },
-              "ringgold" : {
-                "type" : "literal",
-                "value" : "9177"
-              },
-              "ror" : {
-                "type" : "literal",
-                "value" : "00f2yqf98"
-              },
-              "grid" : {
-                "type" : "literal",
-                "value" : "grid.10423.34"
-              },
-              "itemLabel" : {
-                "type" : "literal",
-                "value" : "Q911561"
-              }
-            }, {
-              "item" : {
-                "type" : "uri",
                 "value" : "http://www.wikidata.org/entity/Q233358"
-              },
-              "ringgold" : {
-                "type" : "literal",
-                "value" : "219874"
               },
               "ror" : {
                 "type" : "literal",
@@ -232,13 +224,38 @@ http_interactions:
                 "type" : "literal",
                 "value" : "grid.431302.7"
               },
+              "ringgold" : {
+                "type" : "literal",
+                "value" : "219874"
+              },
               "itemLabel" : {
                 "type" : "literal",
                 "value" : "Q233358"
+              }
+            }, {
+              "item" : {
+                "type" : "uri",
+                "value" : "http://www.wikidata.org/entity/Q911561"
+              },
+              "ror" : {
+                "type" : "literal",
+                "value" : "00f2yqf98"
+              },
+              "grid" : {
+                "type" : "literal",
+                "value" : "grid.10423.34"
+              },
+              "ringgold" : {
+                "type" : "literal",
+                "value" : "9177"
+              },
+              "itemLabel" : {
+                "type" : "literal",
+                "value" : "Q911561"
               }
             } ]
           }
         }
     http_version: null
-  recorded_at: Mon, 31 Aug 2020 19:20:41 GMT
+  recorded_at: Wed, 02 Sep 2020 08:30:41 GMT
 recorded_with: VCR 5.1.0

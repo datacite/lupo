@@ -23,7 +23,7 @@ http_interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Mon, 24 Aug 2020 06:18:34 GMT
+      - Wed, 02 Sep 2020 11:23:38 GMT
       Expires:
       - '0'
       Pragma:
@@ -37,15 +37,15 @@ http_interactions:
       Connection:
       - close
       Set-Cookie:
-      - X-Mapping-fjhppofk=26484D0F5DA32D2D6AF64AA1C9DBBA16; path=/
+      - X-Mapping-fjhppofk=1F5FD8D0B8B1A8DD0F8680D854A2C10B; path=/
       X-Frame-Options:
       - DENY
     body:
       encoding: ASCII-8BIT
       string: '{"response-code":500,"developer-message":"org.apache.solr.client.solrj.impl.HttpSolrClient.RemoteSolrException
-        Full validation error: Error from server at http://solr-loc.orcid.org/solr/profile:
+        Full validation error: Error from server at http://solr-8-loc.orcid.org:8983/solr/profile:
         undefined field container.identifier","user-message":"Something went wrong
         in ORCID.","error-code":9008,"more-info":"https://members.orcid.org/api/resources/troubleshooting"}'
     http_version: null
-  recorded_at: Mon, 24 Aug 2020 06:18:34 GMT
+  recorded_at: Wed, 02 Sep 2020 11:23:39 GMT
 recorded_with: VCR 5.1.0
