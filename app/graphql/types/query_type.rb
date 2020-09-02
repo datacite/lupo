@@ -120,11 +120,22 @@ class QueryType < BaseObject
   end
 
   field :organization, OrganizationType, null: false do
-    argument :id, ID, required: true
+    argument :id, ID, required: false
+    argument :grid_id, ID, required: false
+    argument :crossref_funder_id, ID, required: false
   end
 
-  def organization(id:)
-    result = Organization.find_by_id(id).fetch(:data, []).first
+  def organization(id: nil, grid_id: nil, crossref_funder_id: nil)
+    result = nil
+    
+    if id.present?
+      result = Organization.find_by_id(id).fetch(:data, []).first
+    elsif grid_id.present?
+      result = Organization.find_by_grid_id(grid_id).fetch(:data, []).first
+    elsif crossref_funder_id.present?
+      result = Organization.find_by_crossref_funder_id(crossref_funder_id).fetch(:data, []).first
+    end
+
     fail ActiveRecord::RecordNotFound if result.nil?
 
     result

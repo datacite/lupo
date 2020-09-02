@@ -1,0 +1,52 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.ror.org/organizations?query=%22xxx%22
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Mozilla/5.0 (compatible; Maremma/4.7.2; mailto:info@datacite.org)
+      Accept:
+      - text/html,application/json,application/xml;q=0.9, text/plain;q=0.8,image/png,*/*;q=0.5
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '84'
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 02 Sep 2020 20:35:12 GMT
+      Status:
+      - 200 OK
+      X-Frame-Options:
+      - SAMEORIGIN
+      Allow:
+      - GET, HEAD, OPTIONS
+      X-Powered-By:
+      - Phusion Passenger 6.0.5
+      Server:
+      - nginx/1.18.0 + Phusion Passenger 6.0.5
+      Vary:
+      - Cookie,Origin
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 dc81a30f5f4fc309ae9445723779b894.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - DUS51-C1
+      X-Amz-Cf-Id:
+      - OYKM9YNEvhcOd8-YXWSVITqHBFOwjkYMY2oMKgOCtbckDfAg8PkPoA==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"number_of_results":0,"time_taken":3,"items":[],"meta":{"types":[],"countries":[]}}'
+    http_version: null
+  recorded_at: Wed, 02 Sep 2020 20:35:12 GMT
+recorded_with: VCR 5.1.0

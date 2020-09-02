@@ -122,6 +122,204 @@ describe OrganizationType do
     end
   end
 
+  describe "find organization by grid_id", elasticsearch: true, vcr: true do
+    let!(:doi) { create(:doi, aasm_state: "findable", creators:
+      [{
+        "familyName" => "Garza",
+        "givenName" => "Kristian",
+        "name" => "Garza, Kristian",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameType" => "Personal",
+        "affiliation": [
+          {
+            "name": "University of Cambridge",
+            "affiliationIdentifier": "https://ror.org/013meh722",
+            "affiliationIdentifierScheme": "ROR"
+          },
+        ]
+      }])
+    }
+    let!(:funder_doi) { create(:doi, aasm_state: "findable", funding_references:
+      [{
+        "funderIdentifier" => "https://doi.org/10.13039/501100000735",
+        "funderIdentifierType" => "Crossref Funder ID",
+        "funderName" => "University of Cambridge"
+      }])
+    }
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query) do
+      %(query {
+        organization(gridId: "grid.5335.0") {
+          id
+          name
+          alternateName
+          description
+          wikipediaUrl
+          twitter
+          inception
+          geolocation {
+            pointLongitude
+            pointLatitude
+          }
+          identifiers {
+            identifier
+            identifierType
+          }
+          citationCount
+          viewCount
+          downloadCount
+          works {
+            totalCount
+            published {
+              id
+              title
+              count
+            }
+            resourceTypes {
+              title
+              count
+            }
+            nodes {
+              id
+              titles {
+                title
+              }
+            }
+          }
+        }
+      })
+    end
+
+    it "returns organization information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
+      expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
+      expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
+      expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
+      expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
+      expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
+      expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
+      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
+      expect(response.dig("data", "organization", "citationCount")).to eq(0)
+      expect(response.dig("data", "organization", "identifiers").count).to eq(39)
+      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"7288046", "identifierType"=>"geonames")
+
+      expect(response.dig("data", "organization", "works", "totalCount")).to eq(2)
+      expect(response.dig("data", "organization", "works", "published")).to eq([{"count"=>2, "id"=>"2011", "title"=>"2011"}])
+      expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{"count"=>2, "title"=>"Dataset"}])
+      expect(response.dig("data", "organization", "works", "nodes").length).to eq(2)
+
+      work = response.dig("data", "organization", "works", "nodes", 0)
+      expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
+    end
+  end
+
+  describe "find organization by crossref_funder_id", elasticsearch: true, vcr: true do
+    let!(:doi) { create(:doi, aasm_state: "findable", creators:
+      [{
+        "familyName" => "Garza",
+        "givenName" => "Kristian",
+        "name" => "Garza, Kristian",
+        "nameIdentifiers" => [{"nameIdentifier"=>"https://orcid.org/0000-0003-3484-6875", "nameIdentifierScheme"=>"ORCID", "schemeUri"=>"https://orcid.org"}],
+        "nameType" => "Personal",
+        "affiliation": [
+          {
+            "name": "University of Cambridge",
+            "affiliationIdentifier": "https://ror.org/013meh722",
+            "affiliationIdentifierScheme": "ROR"
+          },
+        ]
+      }])
+    }
+    let!(:funder_doi) { create(:doi, aasm_state: "findable", funding_references:
+      [{
+        "funderIdentifier" => "https://doi.org/10.13039/501100000735",
+        "funderIdentifierType" => "Crossref Funder ID",
+        "funderName" => "University of Cambridge"
+      }])
+    }
+
+    before do
+      Doi.import
+      sleep 2
+    end
+
+    let(:query) do
+      %(query {
+        organization(crossrefFunderId: "10.13039/501100000735") {
+          id
+          name
+          alternateName
+          description
+          wikipediaUrl
+          twitter
+          inception
+          geolocation {
+            pointLongitude
+            pointLatitude
+          }
+          identifiers {
+            identifier
+            identifierType
+          }
+          citationCount
+          viewCount
+          downloadCount
+          works {
+            totalCount
+            published {
+              id
+              title
+              count
+            }
+            resourceTypes {
+              title
+              count
+            }
+            nodes {
+              id
+              titles {
+                title
+              }
+            }
+          }
+        }
+      })
+    end
+
+    it "returns organization information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
+      expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
+      expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
+      expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
+      expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
+      expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
+      expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
+      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
+      expect(response.dig("data", "organization", "citationCount")).to eq(0)
+      expect(response.dig("data", "organization", "identifiers").count).to eq(39)
+      expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"7288046", "identifierType"=>"geonames")
+
+      expect(response.dig("data", "organization", "works", "totalCount")).to eq(2)
+      expect(response.dig("data", "organization", "works", "published")).to eq([{"count"=>2, "id"=>"2011", "title"=>"2011"}])
+      expect(response.dig("data", "organization", "works", "resourceTypes")).to eq([{"count"=>2, "title"=>"Dataset"}])
+      expect(response.dig("data", "organization", "works", "nodes").length).to eq(2)
+
+      work = response.dig("data", "organization", "works", "nodes", 0)
+      expect(work.dig("titles", 0, "title")).to eq("Data from: A new malaria agent in African hominids.")
+    end
+  end
+
   describe "find organization no wikidata", elasticsearch: true, vcr: true do
     let(:query) do
       %(query {
