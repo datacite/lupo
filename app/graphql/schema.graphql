@@ -7952,7 +7952,7 @@ type Query {
   members(after: String, first: Int = 25, query: String, year: String): MemberConnectionWithTotal!
   model(id: ID!): Model!
   models(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, published: String, query: String, registrationAgency: String, repositoryId: String, userId: String): ModelConnectionWithTotal!
-  organization(id: ID!): Organization!
+  organization(crossrefFunderId: ID, gridId: ID, id: ID): Organization!
   organizations(after: String, country: String, query: String, types: String): OrganizationConnectionWithTotal!
   other(id: ID!): Other!
   others(after: String, fieldOfScience: String, first: Int = 25, hasCitations: Int, hasDownloads: Int, hasFunder: Boolean, hasOrganization: Boolean, hasParts: Int, hasPerson: Boolean, hasVersions: Int, hasViews: Int, ids: [String!], language: String, license: String, memberId: String, query: String, registrationAgency: String, repositoryId: String, userId: String): OtherConnectionWithTotal!
