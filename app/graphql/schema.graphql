@@ -4272,12 +4272,12 @@ type GeolocationPoint {
   """
   Latitudinal dimension of point.
   """
-  pointLatitude: Float!
+  pointLatitude: Float
 
   """
   Longitudinal dimension of point.
   """
-  pointLongitude: Float!
+  pointLongitude: Float
 }
 
 """
