@@ -34,9 +34,9 @@ module Wikidatable
   
       claims = message.dig("entities", id, "claims") || {}
       twitter = claims.dig("P2002", 0, "mainsnak", "datavalue", "value")
-      inception = claims.dig("P571", 0, "mainsnak", "datavalue", "value", "time")
+      # inception = claims.dig("P571", 0, "mainsnak", "datavalue", "value", "time")
       # remove zeros for months and days, so 1961-00-00 to 1961
-      inception = ISO8601::DateTime.new(inception.gsub(/-00/, "")).to_date.iso8601 if inception.present?
+      # inception = ISO8601::DateTime.new(inception.gsub(/-00/, "")).to_date.iso8601 if inception.present?
       geolocation = claims.dig("P625", 0, "mainsnak", "datavalue", "value") || 
                     claims.dig("P625", 0, "datavalue", "value") || 
                     claims.dig("P159", 0, "qualifiers", "P625", 0, "datavalue", "value") || {}
@@ -50,7 +50,7 @@ module Wikidatable
         name: name,
         description: description,
         twitter: twitter,
-        inception: inception,
+        # inception: inception,
         geolocation: geolocation.extract!("longitude", "latitude"),
         ringgold: ringgold,
         geonames: geonames }) 

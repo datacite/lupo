@@ -10,7 +10,7 @@ describe OrganizationType do
     it { is_expected.to have_field(:description).of_type("String") }
     it { is_expected.to have_field(:wikipediaUrl).of_type("Url") }
     it { is_expected.to have_field(:twitter).of_type("String") }
-    it { is_expected.to have_field(:inception).of_type("ISO8601Date") }
+    # it { is_expected.to have_field(:inception).of_type("ISO8601Date") }
     it { is_expected.to have_field(:geolocation).of_type("GeolocationPoint") }
     it { is_expected.to have_field(:alternateName).of_type("[String!]") }
     it { is_expected.to have_field(:identifiers).of_type("[Identifier!]") }
@@ -62,7 +62,6 @@ describe OrganizationType do
           description
           wikipediaUrl
           twitter
-          inception
           geolocation {
             pointLongitude
             pointLatitude
@@ -105,7 +104,7 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
-      expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
+      # expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
       expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
       expect(response.dig("data", "organization", "identifiers").count).to eq(39)
@@ -161,7 +160,6 @@ describe OrganizationType do
           description
           wikipediaUrl
           twitter
-          inception
           geolocation {
             pointLongitude
             pointLatitude
@@ -204,7 +202,7 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
-      expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
+      # expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
       expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
       expect(response.dig("data", "organization", "identifiers").count).to eq(39)
@@ -260,7 +258,6 @@ describe OrganizationType do
           description
           wikipediaUrl
           twitter
-          inception
           geolocation {
             pointLongitude
             pointLatitude
@@ -303,7 +300,7 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
-      expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
+      # expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
       expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
       expect(response.dig("data", "organization", "identifiers").count).to eq(39)
@@ -330,7 +327,6 @@ describe OrganizationType do
           description
           wikipediaUrl
           twitter
-          inception
           geolocation {
             pointLongitude
             pointLatitude
@@ -352,7 +348,7 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "description")).to be_nil
       expect(response.dig("data", "organization", "wikipediaUrl")).to be_nil
       expect(response.dig("data", "organization", "twitter")).to be_nil
-      expect(response.dig("data", "organization", "inception")).to be_nil
+      # expect(response.dig("data", "organization", "inception")).to be_nil
       expect(response.dig("data", "organization", "geolocation")).to be_nil
       expect(response.dig("data", "organization", "identifiers").count).to eq(2)
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"grid.487335.e", "identifierType"=>"grid")
@@ -370,7 +366,6 @@ describe OrganizationType do
           description
           wikipediaUrl
           twitter
-          inception
           geolocation {
             pointLongitude
             pointLatitude
@@ -402,7 +397,7 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
-      expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
+      # expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
       expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
       expect(response.dig("data", "organization", "identifiers").count).to eq(39)
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
@@ -426,7 +421,6 @@ describe OrganizationType do
           description
           wikipediaUrl
           twitter
-          inception
           geolocation {
             pointLongitude
             pointLatitude
@@ -458,7 +452,7 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
-      expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
+      # expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
       expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
       expect(response.dig("data", "organization", "identifiers").count).to eq(39)
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")

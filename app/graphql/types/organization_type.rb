@@ -12,7 +12,7 @@ class OrganizationType < BaseObject
   field :twitter, String, null: true, description: "Twitter username of the organization."
   field :types, [String], null: true, description: "The type of organization."
   field :address, AddressType, null: true, description: "Physical address of the organization."
-  field :inception, GraphQL::Types::ISO8601Date, null: true, description: "Date or point in time when the organization came into existence."
+  # field :inception, GraphQL::Types::ISO8601Date, null: true, description: "Date or point in time when the organization came into existence."
   field :geolocation, GeolocationPointType, null: true, description: "Geolocation of the organization."
   field :view_count, Integer, null: true, description: "The number of views according to the Counter Code of Practice."
   field :download_count, Integer, null: true, description: "The number of downloads according to the Counter Code of Practice."
