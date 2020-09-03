@@ -52,7 +52,7 @@ module DoiItem
   field :geolocations, [GeolocationType], null: true, hash_key: "geo_locations", description: "Spatial region or named place where the data was gathered or about which the data is focused."
   field :funding_references, [FundingType], null: true, description: "Information about financial support (funding) for the resource being registered"
   field :url, Url, null: true, description: "The URL registered for the resource"
-  field :content_url,resolver: ContentUrl, null: true, description: "Url to download the content directly, if available"
+  field :content_url, resolver: ContentUrl, null: true, description: "Url to download the content directly, if available"
   field :repository, RepositoryType, null: true,  hash_key: "client", description: "The repository account managing this resource"
   field :member, MemberType, null: true, hash_key: "provider", description: "The member account managing this resource"
   field :registration_agency, RegistrationAgencyType, hash_key: "agency", null: true, description: "The DOI registration agency for the resource"
