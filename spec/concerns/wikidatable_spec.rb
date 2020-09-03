@@ -62,22 +62,22 @@ describe "Person", vcr: true do
       employment = subject.get_employments(employments)
       response = subject.wikidata_query(employment)
 
-      expect(response).to eq([{"organization_id"=>"https://ror.org/04wxnsj81",
+      expect(response).to eq([{"organization_id"=>"https://grid.ac/institutes/grid.475826.a",
         "organization_name"=>"DataCite",
         "role_title"=>"Technical Director",
         "start_date"=>"2015-08-01T00:00:00Z"},
        {"end_date"=>"2017-05-01T00:00:00Z",
-        "organization_id"=>"https://ror.org/00f2yqf98",
-        "organization_name"=>"Medizinische Hochschule Hannover",
+        "organization_id"=>"https://grid.ac/institutes/grid.10423.34",
+        "organization_name"=>"Hannover Medical School",
+        "role_title"=>"Clinical Fellow in Hematology and Oncology",
         "start_date"=>"2005-11-01T00:00:00Z"},
        {"end_date"=>"2015-07-01T00:00:00Z",
-        "organization_id"=>"https://ror.org/008zgvp64",
         "organization_name"=>"Public Library of Science",
         "role_title"=>"Technical lead article-level metrics project (contractor)",
         "start_date"=>"2012-04-01T00:00:00Z"},
        {"end_date"=>"2005-10-01T00:00:00Z",
-        "organization_id"=>"https://ror.org/001w7jn25",
         "organization_name"=>"Charité Universitätsmedizin Berlin",
+        "role_title"=>"Resident in Internal Medicine",
         "start_date"=>"1998-09-01T00:00:00Z"}])
     end
 

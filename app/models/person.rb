@@ -33,7 +33,7 @@ class Person
     end
 
     employment = get_employments(employments)
-    wikidata_employment = wikidata_query(employment)
+    # wikidata_employment = wikidata_query(employment)
 
     message = {
       "orcid-id" => person.dig("data", "name", "path"),
@@ -45,7 +45,7 @@ class Person
       "researcher-urls" => researcher_urls,
       "identifiers" => identifiers,
       "country-code" => person.dig("data", "addresses", "address", 0, "country", "value"),
-      "employment" => wikidata_employment,
+      "employment" => employment,
     }
     
     data = [parse_message(message: message)]
@@ -106,9 +106,8 @@ class Person
       s = a.dig("summaries", 0, "employment-summary", "start-date") || {}
       e = a.dig("summaries", 0, "employment-summary", "end-date") || {}
       
-      { "organization_name" => a.dig("summaries", 0, "employment-summary", "organization", "name"),
-        "ringgold"  => i.dig("disambiguation-source") == "RINGGOLD" ? i.dig("disambiguated-organization-identifier") : nil,
-        "grid"  => i.dig("disambiguation-source") == "GRID" ? i.dig("disambiguated-organization-identifier") : nil,
+      { "organization_id"  => i.dig("disambiguation-source") == "GRID" ? "https://grid.ac/institutes/" + i.dig("disambiguated-organization-identifier") : nil,
+        "organization_name" => a.dig("summaries", 0, "employment-summary", "organization", "name"),
         "role_title" => a.dig("summaries", 0, "employment-summary", "role-title"),
         "start_date" => get_date_from_parts(s.dig("year", "value"), s.dig("month", "value"), s.dig("day", "value")),
         "end_date" => get_date_from_parts(e.dig("year", "value"), e.dig("month", "value"), e.dig("day", "value")) }.compact
