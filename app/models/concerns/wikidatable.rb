@@ -29,31 +29,28 @@ module Wikidatable
 
     def parse_wikidata_message(id: nil, message: nil)
       name = message.dig("entities", id, "labels", "en", "value")
-      description = message.dig("entities", id, "descriptions", "en", "value")
-      description = description.upcase_first + "." if description.present?
   
       claims = message.dig("entities", id, "claims") || {}
       twitter = claims.dig("P2002", 0, "mainsnak", "datavalue", "value")
-      # inception = claims.dig("P571", 0, "mainsnak", "datavalue", "value", "time")
-      # remove zeros for months and days, so 1961-00-00 to 1961
-      # inception = ISO8601::DateTime.new(inception.gsub(/-00/, "")).to_date.iso8601 if inception.present?
+      inception = claims.dig("P571", 0, "mainsnak", "datavalue", "value", "time")
+      # extract year, e.g. +1961-00-00 to 1961
+      inception_year = inception[1..4] if inception.present?
       geolocation = claims.dig("P625", 0, "mainsnak", "datavalue", "value") || 
                     claims.dig("P625", 0, "datavalue", "value") || 
                     claims.dig("P159", 0, "qualifiers", "P625", 0, "datavalue", "value") || {}
+      address = claims.dig("P6375", 0, "mainsnak", "datavalue", "value", "text") || 
+                claims.dig("P6375", 0, "datavalue", "value", "text")
       ringgold = claims.dig("P3500", 0, "mainsnak", "datavalue", "value")
-      geonames = claims.dig("P1566", 0, "mainsnak", "datavalue", "value") || 
-                 claims.dig("P1566", 0, "datavalue", "value")
-  
+
       Hashie::Mash.new({
         id: id,
         type: "Organization",
         name: name,
-        description: description,
+        address: address,
         twitter: twitter,
-        # inception: inception,
+        inception_year: inception_year,
         geolocation: geolocation.extract!("longitude", "latitude"),
-        ringgold: ringgold,
-        geonames: geonames }) 
+        ringgold: ringgold }) 
     end
     
     def wikidata_query(employment)

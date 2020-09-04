@@ -72,12 +72,11 @@ describe Organization, type: :model, vcr: true do
       expect(organization.name).to eq("Lincoln University - Pennsylvania")
       expect(organization.labels).to eq([{"code"=>"ES", "name"=>"Universidad Lincoln"}])
       expect(organization.links).to eq(["http://www.lincoln.edu/"])
-      expect(organization.description).to eq("University in Pennsylvania.")
+      expect(organization.address).to eq("1570 Baltimore Pike, Lincoln University, PA, 19352-0999")
       expect(organization.twitter).to be_nil
-      # expect(organization.inception).to eq("1854-01-01")
+      expect(organization.inception_year).to eq("1854")
       expect(organization.geolocation).to eq("latitude"=>39.808333333333, "longitude"=>-75.927777777778)
       expect(organization.ringgold).to eq("4558")
-      expect(organization.geonames).to eq("4559217")
     end
 
     it "also found" do
@@ -89,12 +88,11 @@ describe Organization, type: :model, vcr: true do
       expect(organization.name).to eq("University of Cambridge")
       expect(organization.labels).to eq([{"code"=>"CY", "name"=>"Prifysgol Caergrawnt"}])
       expect(organization.links).to eq(["http://www.cam.ac.uk/"])
-      expect(organization.description).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
+      expect(organization.address).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
       expect(organization.twitter).to eq("Cambridge_Uni")
-      # expect(organization.inception).to eq("1209-01-01")
+      expect(organization.inception_year).to eq("1209")
       expect(organization.geolocation).to eq("latitude"=>52.205277777778, "longitude"=>0.11722222222222)
       expect(organization.ringgold).to eq("2152")
-      expect(organization.geonames).to eq("7288046")
     end
 
     it "found funder" do
@@ -106,12 +104,11 @@ describe Organization, type: :model, vcr: true do
       expect(organization.name).to eq("Deutsche Forschungsgemeinschaft")
       expect(organization.labels).to eq([{"code"=>"EN", "name"=>"German Research Foundation"}])
       expect(organization.links).to eq(["http://www.dfg.de/en/"])
-      expect(organization.description).to eq("German research funding organisation, German Research Association in English.")
+      expect(organization.address).to be_nil
       expect(organization.twitter).to be_nil
-      # expect(organization.inception).to eq("1951-08-02")
+      expect(organization.inception_year).to eq("1951")
       expect(organization.geolocation).to eq("latitude"=>50.699443, "longitude"=>7.14777)
       expect(organization.ringgold).to eq("39045")
-      expect(organization.geonames).to be_nil
     end
 
     it "found no wikidata id" do
@@ -123,12 +120,11 @@ describe Organization, type: :model, vcr: true do
       expect(organization.name).to eq("OBS Medical (United Kingdom)")
       expect(organization.labels).to eq([])
       expect(organization.links).to eq(["http://www.obsmedical.com/"])
-      expect(organization.description).to be_nil
+      expect(organization.address).to be_nil
       expect(organization.twitter).to be_nil
-      # expect(organization.inception).to be_nil
+      expect(organization.inception_year).to be_nil
       expect(organization.geolocation).to be_empty
       expect(organization.ringgold).to be_nil
-      expect(organization.geonames).to be_nil
     end
 
     it "not found" do
@@ -149,12 +145,11 @@ describe Organization, type: :model, vcr: true do
       expect(organization.name).to eq("Lincoln University - Pennsylvania")
       expect(organization.labels).to eq([{"code"=>"ES", "name"=>"Universidad Lincoln"}])
       expect(organization.links).to eq(["http://www.lincoln.edu/"])
-      expect(organization.description).to eq("University in Pennsylvania.")
+      expect(organization.address).to eq("1570 Baltimore Pike, Lincoln University, PA, 19352-0999")
       expect(organization.twitter).to be_nil
-      # expect(organization.inception).to eq("1854-01-01")
+      expect(organization.inception_year).to eq("1854")
       expect(organization.geolocation).to eq("latitude"=>39.808333333333, "longitude"=>-75.927777777778)
       expect(organization.ringgold).to eq("4558")
-      expect(organization.geonames).to eq("4559217")
     end
 
     it "also found" do
@@ -166,12 +161,11 @@ describe Organization, type: :model, vcr: true do
       expect(organization.name).to eq("University of Cambridge")
       expect(organization.labels).to eq([{"code"=>"CY", "name"=>"Prifysgol Caergrawnt"}])
       expect(organization.links).to eq(["http://www.cam.ac.uk/"])
-      expect(organization.description).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
+      expect(organization.address).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
       expect(organization.twitter).to eq("Cambridge_Uni")
-      # expect(organization.inception).to eq("1209-01-01")
+      expect(organization.inception_year).to eq("1209")
       expect(organization.geolocation).to eq("latitude"=>52.205277777778, "longitude"=>0.11722222222222)
       expect(organization.ringgold).to eq("2152")
-      expect(organization.geonames).to eq("7288046")
     end
 
     it "found funder" do
@@ -183,12 +177,11 @@ describe Organization, type: :model, vcr: true do
       expect(organization.name).to eq("Deutsche Forschungsgemeinschaft")
       expect(organization.labels).to eq([{"code"=>"EN", "name"=>"German Research Foundation"}])
       expect(organization.links).to eq(["http://www.dfg.de/en/"])
-      expect(organization.description).to eq("German research funding organisation, German Research Association in English.")
+      expect(organization.address).to be_nil
       expect(organization.twitter).to be_nil
-      # expect(organization.inception).to eq("1951-08-02")
+      expect(organization.inception_year).to eq("1951")
       expect(organization.geolocation).to eq("latitude"=>50.699443, "longitude"=>7.14777)
       expect(organization.ringgold).to eq("39045")
-      expect(organization.geonames).to be_nil
     end
 
     it "found no wikidata id" do
@@ -200,12 +193,11 @@ describe Organization, type: :model, vcr: true do
       expect(organization.name).to eq("OBS Medical (United Kingdom)")
       expect(organization.labels).to eq([])
       expect(organization.links).to eq(["http://www.obsmedical.com/"])
-      expect(organization.description).to be_nil
+      expect(organization.address).to be_nil
       expect(organization.twitter).to be_nil
-      # expect(organization.inception).to be_nil
+      expect(organization.inception_year).to be_nil
       expect(organization.geolocation).to be_empty
       expect(organization.ringgold).to be_nil
-      expect(organization.geonames).to be_nil
     end
 
     it "not found" do
@@ -226,12 +218,11 @@ describe Organization, type: :model, vcr: true do
       expect(organization.name).to eq("Lincoln University - Pennsylvania")
       expect(organization.labels).to eq([{"code"=>"ES", "name"=>"Universidad Lincoln"}])
       expect(organization.links).to eq(["http://www.lincoln.edu/"])
-      expect(organization.description).to eq("University in Pennsylvania.")
+      expect(organization.address).to eq("1570 Baltimore Pike, Lincoln University, PA, 19352-0999")
       expect(organization.twitter).to be_nil
-      # expect(organization.inception).to eq("1854-01-01")
+      expect(organization.inception_year).to eq("1854")
       expect(organization.geolocation).to eq("latitude"=>39.808333333333, "longitude"=>-75.927777777778)
       expect(organization.ringgold).to eq("4558")
-      expect(organization.geonames).to eq("4559217")
     end
 
     it "also found" do
@@ -243,12 +234,11 @@ describe Organization, type: :model, vcr: true do
       expect(organization.name).to eq("University of Cambridge")
       expect(organization.labels).to eq([{"code"=>"CY", "name"=>"Prifysgol Caergrawnt"}])
       expect(organization.links).to eq(["http://www.cam.ac.uk/"])
-      expect(organization.description).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
+      expect(organization.address).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
       expect(organization.twitter).to eq("Cambridge_Uni")
-      # expect(organization.inception).to eq("1209-01-01")
+      expect(organization.inception_year).to eq("1209")
       expect(organization.geolocation).to eq("latitude"=>52.205277777778, "longitude"=>0.11722222222222)
       expect(organization.ringgold).to eq("2152")
-      expect(organization.geonames).to eq("7288046")
     end
 
     it "found funder" do
@@ -260,12 +250,11 @@ describe Organization, type: :model, vcr: true do
       expect(organization.name).to eq("Deutsche Forschungsgemeinschaft")
       expect(organization.labels).to eq([{"code"=>"EN", "name"=>"German Research Foundation"}])
       expect(organization.links).to eq(["http://www.dfg.de/en/"])
-      expect(organization.description).to eq("German research funding organisation, German Research Association in English.")
+      expect(organization.address).to be_nil
       expect(organization.twitter).to be_nil
-      # expect(organization.inception).to eq("1951-08-02")
+      expect(organization.inception_year).to eq("1951")
       expect(organization.geolocation).to eq("latitude"=>50.699443, "longitude"=>7.14777)
       expect(organization.ringgold).to eq("39045")
-      expect(organization.geonames).to be_nil
     end
 
     it "not found" do
@@ -284,11 +273,10 @@ describe Organization, type: :model, vcr: true do
       organization = organizations[:data].first
       expect(organization.id).to eq("Q35794")
       expect(organization.name).to eq("University of Cambridge")
-      expect(organization.description).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
+      expect(organization.address).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
       expect(organization.twitter).to eq("Cambridge_Uni")
-      # expect(organization.inception).to eq("1209-01-01")
+      expect(organization.inception_year).to eq("1209")
       expect(organization.geolocation).to eq("latitude"=>52.205277777778, "longitude"=>0.11722222222222)
-      expect(organization.geonames).to eq("7288046")
       expect(organization.ringgold).to eq("2152")
     end
 
@@ -299,11 +287,10 @@ describe Organization, type: :model, vcr: true do
       organization = organizations[:data].first
       expect(organization.id).to eq("Q707283")
       expect(organization.name).to eq("German Research Foundation")
-      expect(organization.description).to eq("German research funding organisation, German Research Association in English.")
+      expect(organization.address).to be_nil
       expect(organization.twitter).to be_nil
-      # expect(organization.inception).to eq("1951-08-02")
+      expect(organization.inception_year).to eq("1951")
       expect(organization.geolocation).to eq("latitude"=>50.699443, "longitude"=>7.14777)
-      expect(organization.geonames).to be_nil
       expect(organization.ringgold).to eq("39045")
     end
   end

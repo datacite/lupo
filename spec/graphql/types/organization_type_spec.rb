@@ -7,10 +7,11 @@ describe OrganizationType do
     it { is_expected.to have_field(:id).of_type(!types.ID) }
     it { is_expected.to have_field(:type).of_type("String!") }
     it { is_expected.to have_field(:name).of_type("String") }
-    it { is_expected.to have_field(:description).of_type("String") }
+    it { is_expected.to have_field(:address).of_type("String") }
+    it { is_expected.to have_field(:country).of_type("Country") }
     it { is_expected.to have_field(:wikipediaUrl).of_type("Url") }
     it { is_expected.to have_field(:twitter).of_type("String") }
-    # it { is_expected.to have_field(:inception).of_type("ISO8601Date") }
+    it { is_expected.to have_field(:inceptionYear).of_type("Int") }
     it { is_expected.to have_field(:geolocation).of_type("GeolocationPoint") }
     it { is_expected.to have_field(:alternateName).of_type("[String!]") }
     it { is_expected.to have_field(:identifiers).of_type("[Identifier!]") }
@@ -59,9 +60,14 @@ describe OrganizationType do
           id
           name
           alternateName
-          description
           wikipediaUrl
           twitter
+          inceptionYear
+          address
+          country {
+            id
+            name
+          }
           geolocation {
             pointLongitude
             pointLatitude
@@ -101,15 +107,15 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
-      expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
+      expect(response.dig("data", "organization", "address")).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
-      # expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
+      expect(response.dig("data", "organization", "inceptionYear")).to eq(1209)
       expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
-      expect(response.dig("data", "organization", "identifiers").count).to eq(39)
+      expect(response.dig("data", "organization", "identifiers").count).to eq(38)
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
-      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"7288046", "identifierType"=>"geonames")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"0000000121885934", "identifierType"=>"isni")
 
       expect(response.dig("data", "organization", "works", "totalCount")).to eq(2)
       expect(response.dig("data", "organization", "works", "published")).to eq([{"count"=>2, "id"=>"2011", "title"=>"2011"}])
@@ -157,9 +163,14 @@ describe OrganizationType do
           id
           name
           alternateName
-          description
           wikipediaUrl
           twitter
+          inceptionYear
+          address
+          country {
+            id
+            name
+          }
           geolocation {
             pointLongitude
             pointLatitude
@@ -199,15 +210,15 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
-      expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
+      expect(response.dig("data", "organization", "address")).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
-      # expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
+      expect(response.dig("data", "organization", "inceptionYear")).to eq(1209)
       expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
-      expect(response.dig("data", "organization", "identifiers").count).to eq(39)
+      expect(response.dig("data", "organization", "identifiers").count).to eq(38)
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
-      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"7288046", "identifierType"=>"geonames")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"0000000121885934", "identifierType"=>"isni")
 
       expect(response.dig("data", "organization", "works", "totalCount")).to eq(2)
       expect(response.dig("data", "organization", "works", "published")).to eq([{"count"=>2, "id"=>"2011", "title"=>"2011"}])
@@ -255,9 +266,14 @@ describe OrganizationType do
           id
           name
           alternateName
-          description
           wikipediaUrl
           twitter
+          inceptionYear
+          address
+          country {
+            id
+            name
+          }
           geolocation {
             pointLongitude
             pointLatitude
@@ -297,15 +313,15 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
-      expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
+      expect(response.dig("data", "organization", "address")).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
-      # expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
+      expect(response.dig("data", "organization", "inceptionYear")).to eq(1209)
       expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
       expect(response.dig("data", "organization", "citationCount")).to eq(0)
-      expect(response.dig("data", "organization", "identifiers").count).to eq(39)
+      expect(response.dig("data", "organization", "identifiers").count).to eq(38)
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
-      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"7288046", "identifierType"=>"geonames")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"0000000121885934", "identifierType"=>"isni")
 
       expect(response.dig("data", "organization", "works", "totalCount")).to eq(2)
       expect(response.dig("data", "organization", "works", "published")).to eq([{"count"=>2, "id"=>"2011", "title"=>"2011"}])
@@ -324,7 +340,7 @@ describe OrganizationType do
           id
           name
           alternateName
-          description
+          address
           wikipediaUrl
           twitter
           geolocation {
@@ -345,11 +361,11 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/02q0ygf45")
       expect(response.dig("data", "organization", "name")).to eq("OBS Medical (United Kingdom)")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Oxford BioSignals"])
-      expect(response.dig("data", "organization", "description")).to be_nil
+      expect(response.dig("data", "organization", "address")).to be_nil
       expect(response.dig("data", "organization", "wikipediaUrl")).to be_nil
       expect(response.dig("data", "organization", "twitter")).to be_nil
-      # expect(response.dig("data", "organization", "inception")).to be_nil
-      expect(response.dig("data", "organization", "geolocation")).to be_nil
+      expect(response.dig("data", "organization", "inception_year")).to be_nil
+      expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>nil, "pointLongitude"=>nil)
       expect(response.dig("data", "organization", "identifiers").count).to eq(2)
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"grid.487335.e", "identifierType"=>"grid")
       expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"0000000403987680", "identifierType"=>"isni")
@@ -363,9 +379,14 @@ describe OrganizationType do
           id
           name
           alternateName
-          description
           wikipediaUrl
           twitter
+          inceptionYear
+          address
+          country {
+            id
+            name
+          }
           geolocation {
             pointLongitude
             pointLatitude
@@ -394,14 +415,15 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
-      expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
+      expect(response.dig("data", "organization", "address")).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
+      expect(response.dig("data", "organization", "country")).to eq("id"=>"GB", "name"=>"United Kingdom")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
-      # expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
+      expect(response.dig("data", "organization", "inceptionYear")).to eq(1209)
       expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
-      expect(response.dig("data", "organization", "identifiers").count).to eq(39)
+      expect(response.dig("data", "organization", "identifiers").count).to eq(38)
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
-      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"7288046", "identifierType"=>"geonames")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"0000000121885934", "identifierType"=>"isni")
 
       expect(response.dig("data", "organization", "people", "totalCount")).to eq(14181)
       expect(response.dig("data", "organization", "people", "nodes").length).to eq(25)
@@ -418,9 +440,14 @@ describe OrganizationType do
           id
           name
           alternateName
-          description
           wikipediaUrl
           twitter
+          inceptionYear
+          address
+          country {
+            id
+            name
+          }
           geolocation {
             pointLongitude
             pointLatitude
@@ -449,14 +476,14 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
-      expect(response.dig("data", "organization", "description")).to eq("Collegiate public research university in Cambridge, England, United Kingdom.")
+      expect(response.dig("data", "organization", "address")).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
-      # expect(response.dig("data", "organization", "inception")).to eq("1209-01-01")
+      expect(response.dig("data", "organization", "inceptionYear")).to eq(1209)
       expect(response.dig("data", "organization", "geolocation")).to eq("pointLatitude"=>52.205277777778, "pointLongitude"=>0.11722222222222)
-      expect(response.dig("data", "organization", "identifiers").count).to eq(39)
+      expect(response.dig("data", "organization", "identifiers").count).to eq(38)
       expect(response.dig("data", "organization", "identifiers").first).to eq("identifier"=>"10.13039/501100000735", "identifierType"=>"fundref")
-      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"7288046", "identifierType"=>"geonames")
+      expect(response.dig("data", "organization", "identifiers").last).to eq("identifier"=>"0000000121885934", "identifierType"=>"isni")
 
       expect(response.dig("data", "organization", "people", "totalCount")).to eq(1988)
       expect(response.dig("data", "organization", "people", "nodes").length).to eq(25)
@@ -556,8 +583,9 @@ describe OrganizationType do
             id
             name
             types
-            address {
-              country
+            country {
+              id
+              name
             }
             alternateName
             url
@@ -596,7 +624,7 @@ describe OrganizationType do
       expect(organization.fetch("id")).to eq("https://ror.org/013meh722")
       expect(organization.fetch("name")).to eq("University of Cambridge")
       expect(organization.fetch("types")).to eq(["Education"])
-      expect(organization.fetch("address")).to eq("country"=>"United Kingdom")
+      expect(organization.fetch("country")).to eq("id"=>"GB", "name"=>"United Kingdom")
       expect(organization.fetch("alternateName")).to eq(["Cambridge University"])
       expect(organization.fetch("url")).to eq(["http://www.cam.ac.uk/"])
       expect(organization.fetch("wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
@@ -632,8 +660,9 @@ describe OrganizationType do
             id
             name
             types
-            address {
-              country
+            country {
+              id
+              name
             }
             alternateName
             url
@@ -661,7 +690,7 @@ describe OrganizationType do
       expect(organization.fetch("id")).to eq("https://ror.org/01856cw59")
       expect(organization.fetch("name")).to eq("University Hospital Münster")
       expect(organization.fetch("types")).to eq(["Healthcare"])
-      expect(organization.fetch("address")).to eq("country"=>"Germany")
+      expect(organization.fetch("country")).to eq("id"=>"DE", "name"=>"Germany")
       expect(organization.fetch("alternateName")).to eq(["UKM"])
       expect(organization.fetch("url")).to eq(["http://klinikum.uni-muenster.de/"])
       expect(organization.fetch("wikipediaUrl")).to be_nil
@@ -694,8 +723,9 @@ describe OrganizationType do
             id
             name
             types
-            address {
-              country
+            country {
+              id
+              name
             }
             alternateName
             identifiers {
@@ -731,7 +761,7 @@ describe OrganizationType do
       expect(organization.fetch("id")).to eq("https://ror.org/04bqwzd17")
       expect(organization.fetch("name")).to eq("Bayerisches Landesamt für Gesundheit und Lebensmittelsicherheit")
       expect(organization.fetch("types")).to eq(["Government"])
-      expect(organization.fetch("address")).to eq("country"=>"Germany")
+      expect(organization.fetch("country")).to eq("id"=>"DE", "name"=>"Germany")
       expect(organization.fetch("alternateName")).to eq(["LGL"])
       expect(organization.fetch("identifiers").length).to eq(2)
       expect(organization.fetch("identifiers").first).to eq("identifier"=>"grid.414279.d", "identifierType"=>"grid")

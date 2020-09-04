@@ -113,7 +113,7 @@ class Organization
 
   def self.parse_message(message)
     country = {
-      code: message.dig("country", "country_code"),
+      id: message.dig("country", "country_code"),
       name: message.dig("country", "country_name") }.compact
 
     labels = Array.wrap(message["labels"]).map do |label|
