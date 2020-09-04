@@ -7,7 +7,6 @@ describe OrganizationType do
     it { is_expected.to have_field(:id).of_type(!types.ID) }
     it { is_expected.to have_field(:type).of_type("String!") }
     it { is_expected.to have_field(:name).of_type("String") }
-    it { is_expected.to have_field(:address).of_type("String") }
     it { is_expected.to have_field(:country).of_type("Country") }
     it { is_expected.to have_field(:wikipediaUrl).of_type("Url") }
     it { is_expected.to have_field(:twitter).of_type("String") }
@@ -63,7 +62,6 @@ describe OrganizationType do
           wikipediaUrl
           twitter
           inceptionYear
-          address
           country {
             id
             name
@@ -107,7 +105,6 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
-      expect(response.dig("data", "organization", "address")).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
       expect(response.dig("data", "organization", "inceptionYear")).to eq(1209)
@@ -166,7 +163,6 @@ describe OrganizationType do
           wikipediaUrl
           twitter
           inceptionYear
-          address
           country {
             id
             name
@@ -210,7 +206,6 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
-      expect(response.dig("data", "organization", "address")).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
       expect(response.dig("data", "organization", "inceptionYear")).to eq(1209)
@@ -269,7 +264,6 @@ describe OrganizationType do
           wikipediaUrl
           twitter
           inceptionYear
-          address
           country {
             id
             name
@@ -313,7 +307,6 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
-      expect(response.dig("data", "organization", "address")).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
       expect(response.dig("data", "organization", "inceptionYear")).to eq(1209)
@@ -339,8 +332,7 @@ describe OrganizationType do
         organization(id: "https://ror.org/02q0ygf45") {
           id
           name
-          alternateName
-          address
+          alternateName 
           wikipediaUrl
           twitter
           geolocation {
@@ -361,7 +353,6 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/02q0ygf45")
       expect(response.dig("data", "organization", "name")).to eq("OBS Medical (United Kingdom)")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Oxford BioSignals"])
-      expect(response.dig("data", "organization", "address")).to be_nil
       expect(response.dig("data", "organization", "wikipediaUrl")).to be_nil
       expect(response.dig("data", "organization", "twitter")).to be_nil
       expect(response.dig("data", "organization", "inception_year")).to be_nil
@@ -382,7 +373,6 @@ describe OrganizationType do
           wikipediaUrl
           twitter
           inceptionYear
-          address
           country {
             id
             name
@@ -415,7 +405,6 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
-      expect(response.dig("data", "organization", "address")).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
       expect(response.dig("data", "organization", "country")).to eq("id"=>"GB", "name"=>"United Kingdom")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
@@ -443,7 +432,6 @@ describe OrganizationType do
           wikipediaUrl
           twitter
           inceptionYear
-          address
           country {
             id
             name
@@ -476,7 +464,6 @@ describe OrganizationType do
       expect(response.dig("data", "organization", "id")).to eq("https://ror.org/013meh722")
       expect(response.dig("data", "organization", "name")).to eq("University of Cambridge")
       expect(response.dig("data", "organization", "alternateName")).to eq(["Cambridge University"])
-      expect(response.dig("data", "organization", "address")).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
       expect(response.dig("data", "organization", "wikipediaUrl")).to eq("http://en.wikipedia.org/wiki/University_of_Cambridge")
       expect(response.dig("data", "organization", "twitter")).to eq("Cambridge_Uni")
       expect(response.dig("data", "organization", "inceptionYear")).to eq(1209)

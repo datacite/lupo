@@ -6065,11 +6065,6 @@ Information about organizations
 """
 type Organization implements ActorItem {
   """
-  Physical address of the organization.
-  """
-  address: String
-
-  """
   An alias for the actor.
   """
   alternateName: [String!]

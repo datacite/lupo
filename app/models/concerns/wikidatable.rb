@@ -38,15 +38,12 @@ module Wikidatable
       geolocation = claims.dig("P625", 0, "mainsnak", "datavalue", "value") || 
                     claims.dig("P625", 0, "datavalue", "value") || 
                     claims.dig("P159", 0, "qualifiers", "P625", 0, "datavalue", "value") || {}
-      address = claims.dig("P6375", 0, "mainsnak", "datavalue", "value", "text") || 
-                claims.dig("P6375", 0, "datavalue", "value", "text")
       ringgold = claims.dig("P3500", 0, "mainsnak", "datavalue", "value")
 
       Hashie::Mash.new({
         id: id,
         type: "Organization",
         name: name,
-        address: address,
         twitter: twitter,
         inception_year: inception_year,
         geolocation: geolocation.extract!("longitude", "latitude"),

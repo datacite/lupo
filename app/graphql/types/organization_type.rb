@@ -10,7 +10,6 @@ class OrganizationType < BaseObject
   field :wikipedia_url, Url, null: true, hash_key: "wikipedia_url", description: "Wikipedia URL of the organization."
   field :twitter, String, null: true, description: "Twitter username of the organization."
   field :types, [String], null: true, description: "The type of organization."
-  field :address, String, null: true, description: "Physical address of the organization."
   field :country, CountryType, null: true, description: "Country of the organization."
   field :inception_year, Int, null: true, description: "Year when the organization came into existence."
   field :geolocation, GeolocationPointType, null: true, description: "Geolocation of the organization."

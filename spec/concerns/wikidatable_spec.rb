@@ -11,7 +11,6 @@ describe "Organization", vcr: true do
 
       expect(organization.id).to eq("Q35794")
       expect(organization.name).to eq("University of Cambridge")
-      expect(organization.address).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
       expect(organization.twitter).to eq("Cambridge_Uni")
       expect(organization.inception_year).to eq("1209")
       expect(organization.geolocation).to eq("latitude"=>52.205277777778, "longitude"=>0.11722222222222)
@@ -41,7 +40,6 @@ describe "Organization", vcr: true do
 
       expect(organization.id).to eq("Q35794")
       expect(organization.name).to eq("University of Cambridge")
-      expect(organization.address).to eq("University of Cambridge, Vice Chancellor's Office, University Offices, The Old Schools, Cambridge, CB2 1TN")
       expect(organization.twitter).to eq("Cambridge_Uni")
       expect(organization.inception_year).to eq("1209")
       expect(organization.geolocation).to eq("latitude"=>52.205277777778, "longitude"=>0.11722222222222)
