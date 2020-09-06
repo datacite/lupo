@@ -23,6 +23,12 @@ class QueryType < BaseObject
     Provider.unscoped.where("allocator.role_name IN ('ROLE_FOR_PROFIT_PROVIDER', 'ROLE_CONTRACTUAL_PROVIDER', 'ROLE_CONSORTIUM' , 'ROLE_CONSORTIUM_ORGANIZATION', 'ROLE_ALLOCATOR', 'ROLE_ADMIN', 'ROLE_MEMBER', 'ROLE_REGISTRATION_AGENCY')").where(deleted_at: nil).where(symbol: id).first
   end
 
+  field :me, MeType, null: true
+
+  def me
+    context[:current_user]
+  end
+
   field :repositories, RepositoryConnectionWithTotalType, null: false do
     argument :query, String, required: false
     argument :year, String, required: false
