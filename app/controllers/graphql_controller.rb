@@ -1,10 +1,13 @@
 class GraphqlController < ApplicationController
+  before_action :authenticate_user!
+  
   def execute
     variables = ensure_hash(params[:variables])
     query = params[:query]
     operation_name = params[:operationName]
     context = {
-      tracing_enabled: ApolloFederation::Tracing.should_add_traces(headers)
+      tracing_enabled: ApolloFederation::Tracing.should_add_traces(headers),
+      current_user: current_user
     }
     result = LupoSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: ApolloFederation::Tracing.attach_trace_to_result(result)
