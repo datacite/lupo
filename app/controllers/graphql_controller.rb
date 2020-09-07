@@ -16,6 +16,12 @@ class GraphqlController < ApplicationController
     handle_error_in_development e
   end
 
+  def cors_preflight_check
+    if request.method == 'OPTIONS'
+      render text: '', content_type: 'text/plain'
+    end
+  end
+
   private
 
   # Handle form data, JSON body, or a blank value
