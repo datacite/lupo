@@ -5554,6 +5554,11 @@ Information about the logged-in user
 """
 type Me {
   """
+  Beta tester status.
+  """
+  betaTester: Boolean!
+
+  """
   User identifier.
   """
   id: ID!
@@ -5562,6 +5567,11 @@ type Me {
   User name.
   """
   name: String!
+
+  """
+  Type.
+  """
+  type: String!
 }
 
 """

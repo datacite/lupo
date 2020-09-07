@@ -21,7 +21,7 @@ describe MeType do
 
     it "returns current_user" do
       # current_user is normally set in the API using the authorization header
-      current_user = { uid: "0000-0001-5489-3594", name: "Josiah Carberry" }
+      current_user = OpenStruct.new(uid: "0000-0001-5489-3594", name: "Josiah Carberry")
       response = LupoSchema.execute(query, context: { current_user: current_user }).as_json
 
       expect(response.dig("data", "me", "id")).to eq("0000-0001-5489-3594")
@@ -39,7 +39,7 @@ describe MeType do
       })
     end
 
-    it "returns current_user" do
+    it "not returns current_user" do
       response = LupoSchema.execute(query).as_json
 
       expect(response.dig("data", "me", "id")).to be_nil
