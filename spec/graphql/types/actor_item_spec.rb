@@ -91,7 +91,7 @@ describe ActorItem do
     it "returns actor information" do
       response = LupoSchema.execute(query).as_json
 
-      expect(response.dig("data", "actors", "totalCount")).to eq(1920563)
+      expect(response.dig("data", "actors", "totalCount")).to eq(1956171)
       expect(response.dig("data", "actors", "nodes").length).to eq(70)
       organization = response.dig("data", "actors", "nodes", 0)
       expect(organization.fetch("id")).to eq("https://ror.org/013meh722")
@@ -100,8 +100,8 @@ describe ActorItem do
       expect(funder.fetch("id")).to eq("https://doi.org/10.13039/501100009163")
       expect(funder.fetch("name")).to eq("Centre of Latin American Studies, University of Cambridge")
       person = response.dig("data", "actors", "nodes", 53)
-      expect(person.fetch("id")).to eq("https://orcid.org/0000-0001-7201-9075")
-      expect(person.fetch("name")).to eq("Robert Harle")
+      expect(person.fetch("id")).to eq("https://orcid.org/0000-0002-0929-8064")
+      expect(person.fetch("name")).to eq("Dr Ahmed Izzidien")
     end
   end
 end

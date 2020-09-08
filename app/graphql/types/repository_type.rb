@@ -30,8 +30,8 @@ class RepositoryType < BaseObject
     argument :registration_agency, String, required: false
     argument :funder_id, String, required: false
     argument :affiliation_id, String, required: false
-    argument :resource_type_id, String, required: false
     argument :license, String, required: false
+    argument :resource_type, String, required: false
     argument :language, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -55,8 +55,8 @@ class RepositoryType < BaseObject
     argument :registration_agency, String, required: false
     argument :funder_id, String, required: false
     argument :affiliation_id, String, required: false
-    argument :resource_type_id, String, required: false
     argument :license, String, required: false
+    argument :resource_type, String, required: false
     argument :language, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_organization, Boolean, required: false
@@ -80,12 +80,33 @@ class RepositoryType < BaseObject
     argument :registration_agency, String, required: false
     argument :funder_id, String, required: false
     argument :affiliation_id, String, required: false
-    argument :resource_type_id, String, required: false
     argument :license, String, required: false
+    argument :resource_type, String, required: false
     argument :language, String, required: false
     argument :has_person, Boolean, required: false
     argument :has_organization, Boolean, required: false
     argument :has_funder, Boolean, required: false
+    argument :has_citations, Int, required: false
+    argument :has_parts, Int, required: false
+    argument :has_versions, Int, required: false
+    argument :has_views, Int, required: false
+    argument :has_downloads, Int, required: false
+    argument :field_of_science, String, required: false
+    argument :first, Int, required: false, default_value: 25
+    argument :after, String, required: false
+  end
+
+  field :data_management_plans, DataManagementPlanConnectionWithTotalType, null: true, description: "Data management plans from this organization" do
+    argument :query, String, required: false
+    argument :ids, [String], required: false
+    argument :published, String, required: false
+    argument :user_id, String, required: false
+    argument :funder_id, String, required: false
+    argument :affiliation_id, String, required: false
+    argument :registration_agency, String, required: false
+    argument :resource_type, String, required: false
+    argument :license, String, required: false
+    argument :language, String, required: false
     argument :has_citations, Int, required: false
     argument :has_parts, Int, required: false
     argument :has_versions, Int, required: false
@@ -106,6 +127,7 @@ class RepositoryType < BaseObject
     argument :funder_id, String, required: false
     argument :affiliation_id, String, required: false
     argument :resource_type_id, String, required: false
+    argument :resource_type, String, required: false
     argument :license, String, required: false
     argument :language, String, required: false
     argument :has_person, Boolean, required: false
@@ -148,6 +170,12 @@ class RepositoryType < BaseObject
     ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
 
+  def data_management_plans(**args)
+    args[:resource_type_id] = "Text"
+    args[:resource_type] = "Data Management Plan"
+    ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
+  end
+
   def works(**args)
     ElasticsearchModelResponseConnection.new(response(args), context: self.context, first: args[:first], after: args[:after])
   end
@@ -176,6 +204,6 @@ class RepositoryType < BaseObject
   end
 
   def response(**args)
-    Doi.gql_query(args[:query], funder_id: args[:funder_id], user_id: args[:user_id], client_id: object.uid, provider_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], agency: args[:registration_agency], language: args[:language], license: args[:license], has_person: args[:has_person], has_organization: args[:has_organization], has_funder: args[:has_funder], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], published: args[:published], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [], size: args[:first] })
+    Doi.gql_query(args[:query], funder_id: args[:funder_id], user_id: args[:user_id], client_id: object.uid, provider_id: args[:member_id], affiliation_id: args[:affiliation_id], resource_type_id: args[:resource_type_id], resource_type: args[:resource_type], agency: args[:registration_agency], language: args[:language], license: args[:license], has_person: args[:has_person], has_organization: args[:has_organization], has_funder: args[:has_funder], has_citations: args[:has_citations], has_parts: args[:has_parts], has_versions: args[:has_versions], has_views: args[:has_views], has_downloads: args[:has_downloads], field_of_science: args[:field_of_science], published: args[:published], state: "findable", page: { cursor: args[:after].present? ? Base64.urlsafe_decode64(args[:after]) : [], size: args[:first] })
   end
 end

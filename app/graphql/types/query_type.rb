@@ -215,6 +215,7 @@ class QueryType < BaseObject
     argument :member_id, String, required: false
     argument :registration_agency, String, required: false
     argument :resource_type_id, String, required: false
+    argument :resource_type, String, required: false
     argument :license, String, required: false
     argument :language, String, required: false
     argument :has_person, Boolean, required: false

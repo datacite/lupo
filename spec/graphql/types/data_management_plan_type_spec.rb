@@ -58,6 +58,72 @@ describe DataManagementPlanType do
     end
   end
 
+  describe "query data_management_plans from an organization", elasticsearch: true, vcr: true do
+    let!(:data_management_plans) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Data Management Plan" }, language: "de", aasm_state: "findable", funding_references:
+      [{
+        "funderIdentifier" => "https://doi.org/10.13039/501100000780",
+        "funderIdentifierType" => "Crossref Funder ID",
+        "funderName" => "European Commission"
+      }]) 
+    }
+    
+    before do
+      Doi.import
+      sleep 2
+      @dois = Doi.gql_query(nil, page: { cursor: [], size: 4 }).results.to_a
+    end
+
+    let(:query) do
+      %(query {
+        organization(id: "https://ror.org/00k4n6c32") {
+          name
+          dataManagementPlans {
+            totalCount
+            registrationAgencies {
+              id
+              title
+              count
+            }
+            licenses {
+              id
+              title
+              count
+            }
+            languages {
+              id
+              title
+              count
+            }
+            nodes {
+              id
+              types {
+                resourceTypeGeneral
+                resourceType
+                schemaOrg
+              }
+              registrationAgency {
+                id
+                name
+              }
+            }
+          }
+        }
+      })
+    end
+
+    it "returns all data_management_plans" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "organization", "name")).to eq("European Commission")
+      expect(response.dig("data", "organization", "dataManagementPlans", "totalCount")).to eq(2)
+      expect(response.dig("data", "organization", "dataManagementPlans", "languages")).to eq([{"count"=>2, "id"=>"de", "title"=>"German"}])
+      expect(response.dig("data", "organization", "dataManagementPlans", "licenses")).to eq([{"count"=>2, "id"=>"cc0-1.0", "title"=>"CC0-1.0"}])
+      expect(response.dig("data", "organization", "dataManagementPlans", "nodes").length).to eq(2)
+      expect(response.dig("data", "organization", "dataManagementPlans", "nodes", 0, "registrationAgency")).to eq("id"=>"datacite", "name"=>"DataCite")
+      expect(response.dig("data", "organization", "dataManagementPlans", "nodes", 0, "types")).to eq("resourceType"=>"Data Management Plan", "resourceTypeGeneral"=>"Text", "schemaOrg"=>"ScholarlyArticle")
+    end
+  end
+
   describe "query data_management_plans by language", elasticsearch: true do
     let!(:data_management_plans) { create_list(:doi, 2, types: { "resourceTypeGeneral" => "Text", "resourceType" => "Data Management Plan" }, language: "de", aasm_state: "findable") }
     

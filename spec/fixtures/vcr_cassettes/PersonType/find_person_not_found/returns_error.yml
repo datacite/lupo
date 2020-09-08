@@ -23,7 +23,7 @@ http_interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Wed, 02 Sep 2020 11:23:59 GMT
+      - Tue, 08 Sep 2020 08:33:40 GMT
       Expires:
       - '0'
       Pragma:
@@ -37,7 +37,7 @@ http_interactions:
       Connection:
       - keep-alive
       Set-Cookie:
-      - X-Mapping-fjhppofk=EDEB8B375DA428655747278237992826; path=/
+      - X-Mapping-fjhppofk=1F5FD8D0B8B1A8DD0F8680D854A2C10B; path=/
       X-Frame-Options:
       - DENY
     body:
@@ -46,5 +46,5 @@ http_interactions:
         was not found. Full validation error: ORCID iD XXXX not found","user-message":"The
         resource was not found.","error-code":9016,"more-info":"https://members.orcid.org/api/resources/troubleshooting"}'
     http_version: null
-  recorded_at: Wed, 02 Sep 2020 11:23:59 GMT
+  recorded_at: Tue, 08 Sep 2020 08:33:41 GMT
 recorded_with: VCR 5.1.0

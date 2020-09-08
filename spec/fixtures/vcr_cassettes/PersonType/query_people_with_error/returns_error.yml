@@ -23,7 +23,7 @@ http_interactions:
       Content-Type:
       - application/json;charset=UTF-8
       Date:
-      - Wed, 02 Sep 2020 11:23:38 GMT
+      - Tue, 08 Sep 2020 08:33:10 GMT
       Expires:
       - '0'
       Pragma:
@@ -47,5 +47,5 @@ http_interactions:
         undefined field container.identifier","user-message":"Something went wrong
         in ORCID.","error-code":9008,"more-info":"https://members.orcid.org/api/resources/troubleshooting"}'
     http_version: null
-  recorded_at: Wed, 02 Sep 2020 11:23:39 GMT
+  recorded_at: Tue, 08 Sep 2020 08:33:11 GMT
 recorded_with: VCR 5.1.0
