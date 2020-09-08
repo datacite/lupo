@@ -2148,6 +2148,32 @@ describe DataciteDoisController, type: :request do
       end
     end
 
+    context 'when the request creates schema 3 with funder contributor type' do
+      let(:xml) { Base64.strict_encode64(file_fixture('datacite_schema_3.xml').read) }
+      let(:valid_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "doi" => "10.14454/10703",
+              "url" => "http://www.bl.uk/pdf/patspec.pdf",
+              "xml" => xml,
+              "contributors" => [{"contributorType"=>"Funder", "name"=>"Wellcome Trust", "nameType"=>"Organizational"}],
+              "source" => "test",
+              "event" => "publish"
+            }
+          }
+        }
+      end
+
+      it 'creates a Doi' do
+        post '/dois', valid_attributes, headers
+
+        expect(last_response.status).to eq(422)
+        expect(json.fetch('errors', nil)).to eq([{"source"=>"xml", "title"=>"Schema http://datacite.org/schema/kernel-2.2 is no longer supported"}])
+      end
+    end
+
     context 'when the request has wrong object in nameIDentifiers' do
       let(:valid_attributes) { JSON.parse(file_fixture('datacite_wrong_nameIdentifiers.json').read) }
 
@@ -2987,6 +3013,27 @@ describe DataciteDoisController, type: :request do
         expect(json.dig('data', 'attributes', 'doi')).to eq("10.14454/10703")
         expect(json.dig('data', 'attributes', 'schemaVersion')).to eq("http://datacite.org/schema/kernel-3")
         expect(json.dig('data', 'attributes', 'titles')).to eq([{"title"=>"Data from: A new malaria agent in African hominids."}])
+      end
+    end
+
+    # Funder has been removed as valid contributor type in schema 4.0
+    context 'update contributor type with funder', elasticsearch: true do
+      let(:update_attributes) do
+        {
+          "data" => {
+            "type" => "dois",
+            "attributes" => {
+              "contributors" => [{"contributorType"=>"Funder", "name"=>"Wellcome Trust", "nameType"=>"Organizational"}],
+            }
+          }
+        }
+      end
+
+      it 'updates the Doi' do
+        patch "/dois/#{doi.doi}", update_attributes, headers
+        puts last_response.body
+        expect(last_response.status).to eq(422)
+        expect(json["errors"]).to eq([{"source"=>"contributors", "title"=>"Contributor type Funder is not supported in schema 4."}])
       end
     end
 
