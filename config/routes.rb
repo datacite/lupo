@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
   post "/client-api/graphql", to: "graphql#execute"
   get "/client-api/graphql", to: "index#method_not_allowed"
-  match "/client-api/graphql" => "graphql#cors_preflight_check", via: :options
+  
+  # global options responder -> makes sure OPTION request for CORS endpoints work
+  match '*path', via: [:options], to: lambda {|_| [204, { 'Content-Type' => 'text/plain' }]}
   
   # authentication
   post "token", to: "sessions#create_token"
