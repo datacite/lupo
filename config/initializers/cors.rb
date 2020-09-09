@@ -13,7 +13,7 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors, debug: true, lo
 
     resource '*',
       headers: :any,
-      expose: ["Authorization", "X-Credential-Username", "X-Anonymous-Consumer"],
+      expose: ["X-Credential-Username", "X-Anonymous-Consumer"],
       methods: [:get, :post, :put, :patch, :delete, :options, :head]
   end
 end
