@@ -187,6 +187,7 @@ class EventsController < ApplicationController
   end
 
   def destroy
+    @event = Event.where(uuid: parmas[:id]).first
     if @event.destroy
       render json: { data: {} }, status: :ok
     else
