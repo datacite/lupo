@@ -7,7 +7,7 @@ class EventsController < ApplicationController
 
   prepend_before_action :authenticate_user!, except: [:index, :show]
   before_action :detect_crawler
-  before_action :load_event, only: [:show, :destroy]
+  before_action :load_event, only: [:show]
   authorize_resource only: [:destroy]
 
   def create
@@ -187,7 +187,7 @@ class EventsController < ApplicationController
   end
 
   def destroy
-    @event = Event.where(uuid: parmas[:id]).first
+    @event = Event.where(uuid: params[:id]).first
     if @event.destroy
       render json: { data: {} }, status: :ok
     else
