@@ -189,7 +189,7 @@ class EventsController < ApplicationController
   def destroy
     @event = Event.where(uuid: params[:id]).first
     if @event.destroy
-      render json: { data: {} }, status: :ok
+      render json: { data: {} }, status: :no_content
     else
       errors = @event.errors.full_messages.map { |message| { status: 422, title: message } }
       render json: { errors: errors }, status: :unprocessable_entity

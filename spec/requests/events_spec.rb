@@ -760,12 +760,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
       it "JSON" do
         delete uri, nil, headers
 
-        puts last_response
-
-        expect(last_response.status).to eq(200)
-        response = JSON.parse(last_response.body)
-        expect(response["errors"]).to be_nil
-        expect(response["data"]).to eq({})
+        expect(last_response.status).to eq(204)
       end
     end
 
