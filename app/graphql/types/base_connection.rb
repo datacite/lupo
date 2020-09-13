@@ -49,6 +49,8 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     "mpl-2.0"         => "MPL-2.0",
     "ogl-canada-2.0"  => "OGL-Canada-2.0"
   }
+
+  LOWER_BOUND_YEAR = 2010
   
   def doi_from_url(url)
     if /\A(?:(http|https):\/\/(dx\.)?(doi.org|handle.test.datacite.org)\/)?(doi:)?(10\.\d{4,5}\/.+)\z/.match?(url)
@@ -139,9 +141,11 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
     end
   end
 
-  # remove years in the future and only keep 10 most recent years
+  # remove years in the future and only keep 12 most recent years
   def facet_by_range(arr)
-    arr.select { |a| a["key_as_string"].to_i <= 2020 }[0..9].map do |hsh|
+    interval = Date.current.year - LOWER_BOUND_YEAR + 1
+
+    arr.select { |a| a["key_as_string"].to_i <= 2020 }[0..interval].map do |hsh|
       { "id" => hsh["key_as_string"],
         "title" => hsh["key_as_string"],
         "count" => hsh["doc_count"] }
