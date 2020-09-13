@@ -55,6 +55,8 @@ module Facetable
     "ogl-canada-2.0"  => "OGL-Canada-2.0"
   }
 
+  LOWER_BOUND_YEAR = 2010
+
   included do
     def facet_by_key_as_string(arr)
       arr.map do |hsh|
@@ -72,9 +74,11 @@ module Facetable
       end
     end
 
-    # remove years in the future and only keep 10 most recent years
+    # remove years in the future and only keep 12 most recent years
     def facet_by_range(arr)
-      arr.select { |a| a["key_as_string"].to_i <= 2020 }[0..9].map do |hsh|
+      interval = Date.current.year - LOWER_BOUND_YEAR
+      
+      arr.select { |a| a["key_as_string"].to_i <= Date.current.year }[0..interval].map do |hsh|
         { "id" => hsh["key_as_string"],
           "title" => hsh["key_as_string"],
           "count" => hsh["doc_count"] }

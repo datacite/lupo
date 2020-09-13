@@ -143,9 +143,9 @@ class BaseConnection < GraphQL::Types::Relay::BaseConnection
 
   # remove years in the future and only keep 12 most recent years
   def facet_by_range(arr)
-    interval = Date.current.year - LOWER_BOUND_YEAR + 1
+    interval = Date.current.year - LOWER_BOUND_YEAR
 
-    arr.select { |a| a["key_as_string"].to_i <= 2020 }[0..interval].map do |hsh|
+    arr.select { |a| a["key_as_string"].to_i <= Date.current.year }[0..interval].map do |hsh|
       { "id" => hsh["key_as_string"],
         "title" => hsh["key_as_string"],
         "count" => hsh["doc_count"] }

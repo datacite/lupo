@@ -17,7 +17,7 @@ class ImageConnectionWithTotalType < BaseConnection
   end
 
   def published
-    facet_by_year(object.aggregations.published.buckets)
+    facet_by_range(object.aggregations.published.buckets)
   end
 
   def registration_agencies
