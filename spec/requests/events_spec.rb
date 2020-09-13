@@ -756,16 +756,13 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
     let(:event) { create(:event) }
     let(:uri) { "/events/#{event.uuid}" }
 
-    # context "as admin user" do
-    #   it "JSON" do
-    #     delete uri, nil, headers
-    #     expect(last_response.status).to eq(200)
+    context "as admin user" do
+      it "JSON" do
+        delete uri, nil, headers
 
-    #     response = JSON.parse(last_response.body)
-    #     expect(response["errors"]).to be_nil
-    #     expect(response["data"]).to eq({})
-    #   end
-    # end
+        expect(last_response.status).to eq(204)
+      end
+    end
 
     # context "as staff user" do
     #   let(:token) { User.generate_token(role_id: "staff_user") }
