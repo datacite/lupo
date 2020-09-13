@@ -145,11 +145,12 @@ describe WorkType do
     end
   end
 
-  describe "query works", elasticsearch: true do
+  describe "query works", elasticsearch: true, vcr: true do
     let(:query) do
       %(query($first: Int, $cursor: String) {
         works(first: $first, after: $cursor) {
           totalCount
+          totalCountFromCrossref
           pageInfo {
             endCursor
             hasNextPage
@@ -174,6 +175,7 @@ describe WorkType do
       response = LupoSchema.execute(query, variables: { first: 4, cursor: nil }).as_json
 
       expect(response.dig("data", "works", "totalCount")).to eq(10)
+      expect(response.dig("data", "works", "totalCountFromCrossref")).to eq(116990655)
       expect(Base64.urlsafe_decode64(response.dig("data", "works", "pageInfo", "endCursor")).split(",", 2).last).to eq(@works[3].uid)
       expect(response.dig("data", "works", "pageInfo", "hasNextPage")).to be true
       expect(response.dig("data", "works", "nodes").length).to eq(4)
@@ -200,11 +202,12 @@ describe WorkType do
     end
   end
 
-  describe "query works by registration agency", elasticsearch: true do
+  describe "query works by registration agency", elasticsearch: true, vcr: true do
     let(:query) do
       %(query($first: Int, $cursor: String, $registrationAgency: String) {
         works(first: $first, after: $cursor, registrationAgency: $registrationAgency) {
           totalCount
+          totalCountFromCrossref
           pageInfo {
             endCursor
             hasNextPage
@@ -249,6 +252,7 @@ describe WorkType do
       response = LupoSchema.execute(query, variables: { first: 4, cursor: nil, registrationAgency: "datacite" }).as_json
 
       expect(response.dig("data", "works", "totalCount")).to eq(10)
+      expect(response.dig("data", "works", "totalCountFromCrossref")).to eq(116990655)
       expect(response.dig("data", "works", "registrationAgencies")).to eq([{"count"=>10, "id"=>"datacite", "title"=>"DataCite"}])
       expect(response.dig("data", "works", "languages")).to eq([{"count"=>10, "id"=>"nl", "title"=>"Dutch"}])
       # expect(Base64.urlsafe_decode64(response.dig("data", "works", "pageInfo", "endCursor")).split(",", 2).last).to eq(@works[3].uid)

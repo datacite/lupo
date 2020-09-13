@@ -9777,6 +9777,7 @@ type WorkConnectionWithTotal {
   repositories: [Facet!]
   resourceTypes: [Facet!]
   totalCount: Int!
+  totalCountFromCrossref: Int
 }
 
 """
