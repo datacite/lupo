@@ -188,8 +188,10 @@ class EventsController < ApplicationController
 
   def destroy
     @event = Event.where(uuid: params[:id]).first
+    fail ActiveRecord::RecordNotFound if @event.blank?
+    
     if @event.destroy
-      render json: { data: {} }, status: :no_content
+      head :no_content
     else
       errors = @event.errors.full_messages.map { |message| { status: 422, title: message } }
       render json: { errors: errors }, status: :unprocessable_entity

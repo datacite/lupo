@@ -761,6 +761,7 @@ describe EventsController, type: :request, elasticsearch: true, vcr: true do
         delete uri, nil, headers
 
         expect(last_response.status).to eq(204)
+        expect(last_response.body).to be_blank
       end
     end
 
