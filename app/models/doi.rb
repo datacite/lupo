@@ -802,6 +802,9 @@ class Doi < ActiveRecord::Base
       query = query.gsub(/geoLocations/, "geo_locations")
       query = query.gsub(/landingPage/, "landing_page")
       query = query.gsub(/contentUrl/, "content_url")
+      query = query.gsub(/citationCount/, "citation_count")
+      query = query.gsub(/viewCount/, "view_count")
+      query = query.gsub(/downloadCount/, "download_count")
       query = query.gsub("/", '\/')
     end
 
