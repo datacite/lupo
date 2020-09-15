@@ -6981,6 +6981,7 @@ type PersonConnectionWithTotal {
   publicationConnectionCount: Int!
   softwareConnectionCount: Int!
   totalCount: Int!
+  years: [Facet!]
 }
 
 """

@@ -310,6 +310,29 @@ describe PersonType do
     end
   end
 
+  describe "query all people", elasticsearch: true, vcr: true do
+    let(:query) do
+      %(query {
+        people {
+          totalCount
+          years {
+            id
+            title
+            count
+          }
+        }
+      })
+    end
+
+    it "returns people information" do
+      response = LupoSchema.execute(query).as_json
+
+      expect(response.dig("data", "people", "totalCount")).to eq(9688620)
+      expect(response.dig("data", "people", "years").first).to eq("count"=>44270, "id"=>"2012", "title"=>"2012")
+      expect(response.dig("data", "people", "years").last).to eq("count"=>1767011, "id"=>"2020", "title"=>"2020")
+    end
+  end
+
   describe "query people", elasticsearch: true, vcr: true do
     let(:query) do
       %(query {
