@@ -2170,7 +2170,7 @@ describe DataciteDoisController, type: :request do
         post '/dois', valid_attributes, headers
 
         expect(last_response.status).to eq(422)
-        expect(json.fetch('errors', nil)).to eq([{"source"=>"xml", "title"=>"Schema http://datacite.org/schema/kernel-2.2 is no longer supported"}])
+        expect(json.fetch('errors', nil)).to eq([{"source"=>"xml", "title"=>"No matching global declaration available for the validation root. at line 2, column 0"}])
       end
     end
 

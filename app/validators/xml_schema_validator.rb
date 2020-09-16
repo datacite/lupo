@@ -25,6 +25,8 @@ class XmlSchemaValidator < ActiveModel::EachValidator
       "http://datacite.org/schema/kernel-3" => "kernel-3",
       "http://datacite.org/schema/kernel-4.0" => "kernel-4",
       "http://datacite.org/schema/kernel-4.1" => "kernel-4",
+      "http://datacite.org/schema/kernel-4.2" => "kernel-4",
+      "http://datacite.org/schema/kernel-4.3" => "kernel-4",
       "http://datacite.org/schema/kernel-4" => "kernel-4"
     }
 
@@ -35,7 +37,7 @@ class XmlSchemaValidator < ActiveModel::EachValidator
     kernel = get_valid_kernel(record.schema_version)
     return false unless kernel.present?
 
-    if record.new_record? && ["http://datacite.org/schema/kernel-2.2", "http://datacite.org/schema/kernel-2.2"].include?(record.schema_version)
+    if record.new_record? && ["http://datacite.org/schema/kernel-2.1", "http://datacite.org/schema/kernel-2.2"].include?(record.schema_version)
       record.errors[:xml] << "Schema #{record.schema_version} is no longer supported"
       return false
     end
