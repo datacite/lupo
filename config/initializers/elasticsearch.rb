@@ -4,7 +4,12 @@ require 'faraday_middleware'
 require 'faraday_middleware/aws_sigv4'
 
 if ENV['ES_HOST'] == "elasticsearch.test.datacite.org" || ENV['ES_HOST'] == "elasticsearch.datacite.org"
-  Elasticsearch::Model.client = Elasticsearch::Client.new(host: ENV['ES_HOST'], port: '80', scheme: 'http') do |f|
+  Elasticsearch::Model.client = Elasticsearch::Client.new(
+    host: ENV['ES_HOST'],
+    port: '80',
+    scheme: 'http',
+    request_timeout: ENV['ES_REQUEST_TIMEOUT']
+    ) do |f|
     f.request :aws_sigv4,
       credentials: Aws::Credentials.new(ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY']),
       service: 'es',
