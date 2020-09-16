@@ -50,6 +50,7 @@ ENV['MYSQL_USER'] ||= "root"
 ENV['MYSQL_PASSWORD'] ||= ""
 ENV['MYSQL_HOST'] ||= "mysql"
 ENV['MYSQL_PORT'] ||= "3306"
+ENV['ES_REQUEST_TIMEOUT'] ||= "120"
 ENV['ES_HOST'] ||= "elasticsearch:9200"
 ENV['ES_NAME'] ||= "elasticsearch"
 ENV['ES_SCHEME'] ||= "http"
@@ -71,7 +72,7 @@ module Lupo
     config.paths.add Rails.root.join('app', 'graphql', 'mutations').to_s, eager_load: true
     config.paths.add Rails.root.join('app', 'graphql', 'connections').to_s, eager_load: true
     config.paths.add Rails.root.join('app', 'graphql', 'resolvers').to_s, eager_load: true
-    
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -84,7 +85,7 @@ module Lupo
     # secret_key_base is not used by Rails API, as there are no sessions
     config.secret_key_base = "blipblapblup"
 
-    # enable datadog tracing here so that we can inject tracing 
+    # enable datadog tracing here so that we can inject tracing
     # information into logs
     Datadog.configure do |c|
       c.tracer hostname: "datadog.local", enabled: Rails.env.production?, env: Rails.env
@@ -116,7 +117,7 @@ module Lupo
       correlation = Datadog.tracer.active_correlation
 
       exceptions = %w(controller action format id)
-      
+
       {
         # Adds IDs as tags to log output
         dd: {
@@ -158,7 +159,7 @@ module Lupo
     end
 
     # use SQS based on environment, use "test" prefix for test system
-    if Rails.env == "stage" 
+    if Rails.env == "stage"
       config.active_job.queue_name_prefix = ENV['ES_PREFIX'].present? ? "stage" : "test"
     else
       config.active_job.queue_name_prefix = Rails.env
